@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Combined Pipeline — CertiFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css"/>
+  <style>
+    .pipeline-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 24px 0 32px;
+      background: #0a1020;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 20px 28px;
+      overflow-x: auto;
+    }
+    .pipeline-stage {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .pipeline-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .pipeline-icon.cert { background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.3); }
+    .pipeline-icon.mail { background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.25); }
+    .pipeline-icon.done { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
+    .pipeline-label { font-size: 0.82rem; color: #94a3b8; }
+    .pipeline-label strong { display: block; font-size: 0.9rem; color: #e2e8f0; }
+    .pipeline-arrow {
+      flex-shrink: 0;
+      margin: 0 16px;
+      color: #334155;
+      font-size: 1.2rem;
+    }
+    .mode-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .mode-card {
+      padding: 20px;
+      background: #0a1020;
+      border: 2px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-card:hover { border-color: rgba(0,212,255,0.3); }
+    .mode-card.active { border-color: #00d4ff; background: rgba(0,212,255,0.06); }
+    .mode-card h4 { font-size: 0.95rem; margin-bottom: 6px; color: #e2e8f0; }
+    .mode-card p { font-size: 0.82rem; color: #64748b; line-height: 1.5; }
+    .section-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 28px 0 20px;
+      color: #475569; font-size: 0.8rem;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06);
+    }
+    .combined-summary-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px; margin: 20px 0;
+    }
+    .summary-stat {
+      background: #0a1020; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 16px; text-align: center;
+    }
+    .summary-stat span { display: block; font-size: 1.6rem; font-weight: 700; color: #e2e8f0; }
+    .summary-stat small { font-size: 0.75rem; color: #64748b; margin-top: 4px; display: block; }
+    .log-entry {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.82rem;
+    }
+    .log-entry:last-child { border-bottom: none; }
+    .log-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .log-dot.cert { background: #a78bfa; }
+    .log-dot.mail { background: #00d4ff; }
+    .log-dot.err  { background: #ef4444; }
+    .log-dot.ok   { background: #10b981; }
+    .log-name { color: #94a3b8; flex: 1; }
+    .log-status { font-size: 0.78rem; }
+    .log-status.ok   { color: #10b981; }
+    .log-status.err  { color: #ef4444; }
+    .log-status.pend { color: #64748b; }
+  </style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ───────────────────────────────────────── -->
+<aside class="app-sidebar" id="appSidebar">
+  <div class="sidebar-header">
+    <a href="dashboard.html" class="sidebar-logo">
+      <div class="sidebar-logo-icon">⚡</div>
+      <span>CertiFlow</span>
+    </a>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html"    class="nav-item" data-page="dashboard.html">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+      Dashboard
+    </a>
+    <a href="mail-tool.html"    class="nav-item" data-page="mail-tool.html">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+      Bulk Mail
+    </a>
+    <a href="cert-tool.html"    class="nav-item" data-page="cert-tool.html">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg>
+      Certificates
+    </a>
+    <a href="combined-tool.html" class="nav-item active" data-page="combined-tool.html">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+      Combined
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+      <div class="sidebar-user-info">
+        <span id="sidebarUserName">Loading...</span>
+        <small id="sidebarUserPlan">Personal</small>
+      </div>
+    </div>
+    <button class="sidebar-logout" onclick="logout()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+      Sign out
+    </button>
+  </div>
+</aside>
+
+<!-- ── MAIN ───────────────────────────────────────────── -->
+<main class="app-main">
+  <div class="app-topbar">
+    <button class="topbar-toggle" id="sidebarToggle">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+    </button>
+    <div class="topbar-title">
+      <h1>Combined Pipeline</h1>
+      <span>Generate certificates + send emails in one workflow</span>
+    </div>
+  </div>
+
+  <div class="tool-container">
+
+    <!-- ── STEP WIZARD ─────────────────────────────── -->
+    <div class="step-wizard" id="stepWizard">
+      <div class="step-item active" data-step="1"><span>1</span>Setup</div>
+      <div class="step-connector"></div>
+      <div class="step-item" data-step="2"><span>2</span>Configure</div>
+      <div class="step-connector"></div>
+      <div class="step-item" data-step="3"><span>3</span>Email</div>
+      <div class="step-connector"></div>
+      <div class="step-item" data-step="4"><span>4</span>Review</div>
+      <div class="step-connector"></div>
+      <div class="step-item" data-step="5"><span>5</span>Results</div>
+    </div>
+
+    <!-- Pipeline flow diagram -->
+    <div class="pipeline-flow">
+      <div class="pipeline-stage">
+        <div class="pipeline-icon cert">🏅</div>
+        <div class="pipeline-label"><strong>Google Slides</strong>Template cloned per person</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage">
+        <div class="pipeline-icon cert">📄</div>
+        <div class="pipeline-label"><strong>PDF Export</strong>Saved to your Drive</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage">
+        <div class="pipeline-icon cert">🔗</div>
+        <div class="pipeline-label"><strong>Link Written</strong>Back to Google Sheet</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage">
+        <div class="pipeline-icon mail">✉️</div>
+        <div class="pipeline-label"><strong>Gmail Send</strong>Personalized email per person</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-stage">
+        <div class="pipeline-icon done">✅</div>
+        <div class="pipeline-label"><strong>Done</strong>Report generated</div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: SETUP ───────────────────────────── -->
+    <div class="step-panel active" id="step1">
+      <div class="panel-card">
+        <h2 class="panel-title">Campaign Setup</h2>
+        <p class="panel-desc">Connect your data source and Google resources.</p>
+
+        <div class="form-group">
+          <label class="form-label">Campaign Name</label>
+          <input type="text" class="form-input" id="campaignName" placeholder="e.g. React Bootcamp — March 2026">
+        </div>
+
+        <div class="section-divider">Participant Data</div>
+
+        <div class="mode-cards">
+          <div class="mode-card active" id="modeSheets" onclick="selectDataMode('sheets')">
+            <h4>📊 Google Sheets</h4>
+            <p>Paste your Sheet ID. CertiFlow reads it directly from your Drive.</p>
+          </div>
+          <div class="mode-card" id="modeUpload" onclick="selectDataMode('upload')">
+            <h4>📁 Upload CSV / Excel</h4>
+            <p>Upload a .csv or .xlsx file from your computer.</p>
+          </div>
+        </div>
+
+        <div id="sheetsInput">
+          <div class="form-group">
+            <label class="form-label">Google Sheet ID</label>
+            <div class="input-with-hint">
+              <input type="text" class="form-input" id="sheetId" placeholder="Paste ID from URL: /d/THIS_PART/edit">
+              <button class="btn-secondary btn-sm" onclick="loadSheet()">Load Sheet</button>
+            </div>
+            <span class="form-hint">Open your Sheet → copy the string between /d/ and /edit in the URL</span>
+          </div>
+        </div>
+
+        <div id="uploadInput" style="display:none">
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+            <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileUpload(event)">
+            <div class="upload-icon">📂</div>
+            <p>Click to upload or drag & drop</p>
+            <small>.csv or .xlsx — max 5MB</small>
+          </div>
+        </div>
+
+        <div id="sheetPreview" style="display:none">
+          <div class="data-preview-header">
+            <span id="previewInfo" class="form-hint"></span>
+            <button class="btn-ghost btn-sm" onclick="clearSheet()">✕ Clear</button>
+          </div>
+          <div class="table-wrapper" id="previewTable"></div>
+        </div>
+
+        <div class="section-divider">Google Resources</div>
+
+        <div class="form-group">
+          <label class="form-label">Google Slides Template ID</label>
+          <input type="text" class="form-input" id="templateId" placeholder="docs.google.com/presentation/d/THIS/edit">
+          <span class="form-hint">The Slides file you designed as your certificate template</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Drive Folder ID (for PDF output)</label>
+          <input type="text" class="form-input" id="folderId" placeholder="drive.google.com/drive/folders/THIS">
+          <span class="form-hint">Generated PDFs will be saved here</span>
+        </div>
+
+        <div class="panel-actions">
+          <button class="btn-primary" onclick="goToStep(2)" id="step1Next">Configure Fields →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: CONFIGURE ───────────────────────── -->
+    <div class="step-panel" id="step2">
+      <div class="panel-card">
+        <h2 class="panel-title">Certificate Field Mapping</h2>
+        <p class="panel-desc">Map your Sheet columns to certificate placeholders.</p>
+
+        <div class="section-divider">Required Fields</div>
+        <div class="mapping-grid" id="requiredMappings">
+          <div class="mapping-row">
+            <span class="mapping-placeholder">{{name}}</span>
+            <span class="mapping-arrow">←</span>
+            <select class="form-select" id="mapName"><option value="">Select column…</option></select>
+          </div>
+          <div class="mapping-row">
+            <span class="mapping-placeholder">{{email}}</span>
+            <span class="mapping-arrow">←</span>
+            <select class="form-select" id="mapEmail"><option value="">Select column…</option></select>
+          </div>
+        </div>
+
+        <div class="section-divider">Custom Fields</div>
+        <p class="form-hint" style="margin-bottom:16px">Add extra placeholders used in your Slides template e.g. <code>{{course}}</code>, <code>{{date}}</code></p>
+        <div id="customMappings"></div>
+        <button class="btn-ghost btn-sm" onclick="addCustomField()" style="margin-top:8px">+ Add field</button>
+
+        <div class="section-divider">Write-Back</div>
+        <label class="toggle-row">
+          <input type="checkbox" id="writeBack" checked>
+          <span class="toggle-label">Save certificate links back to Google Sheet</span>
+        </label>
+        <span class="form-hint">Adds a "Certificate Link" column to your Sheet automatically</span>
+
+        <div class="panel-actions">
+          <button class="btn-ghost" onclick="goToStep(1)">← Back</button>
+          <button class="btn-primary" onclick="goToStep(3)">Email Setup →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: EMAIL ───────────────────────────── -->
+    <div class="step-panel" id="step3">
+      <div class="panel-card">
+        <h2 class="panel-title">Email Template</h2>
+        <p class="panel-desc">Write the email that gets sent after each certificate is generated.</p>
+
+        <div class="form-group">
+          <label class="form-label">Email Subject</label>
+          <input type="text" class="form-input" id="emailSubject" placeholder="Your certificate is ready, {{name}}!">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Available Merge Tags</label>
+          <div class="merge-tags" id="mergeTags">
+            <span class="merge-tag" onclick="insertTag('{{name}}')">{{name}}</span>
+            <span class="merge-tag" onclick="insertTag('{{email}}')">{{email}}</span>
+            <span class="merge-tag" onclick="insertTag('{{cert_link}}')">{{cert_link}}</span>
+          </div>
+          <span class="form-hint">Click a tag to insert it at the cursor position in the template below</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">HTML Email Body</label>
+          <textarea class="form-textarea code-input" id="emailTemplate" rows="14" placeholder="<h2>Hi {{name}},</h2>
+<p>Congratulations! Your certificate is ready.</p>
+<p><a href='{{cert_link}}'>View Certificate →</a></p>
+<p>Best regards,<br>Your Team</p>"></textarea>
+        </div>
+
+        <div class="preview-box" id="emailPreviewBox" style="display:none">
+          <div class="preview-header">
+            <span>Preview — First Recipient</span>
+            <button class="btn-ghost btn-sm" onclick="refreshPreview()">↻ Refresh</button>
+          </div>
+          <div class="preview-meta">
+            <span><b>To:</b> <span id="previewTo">—</span></span>
+            <span><b>Subject:</b> <span id="previewSubject">—</span></span>
+          </div>
+          <div class="preview-body" id="previewBody"></div>
+        </div>
+
+        <div class="panel-actions">
+          <button class="btn-ghost" onclick="goToStep(2)">← Back</button>
+          <button class="btn-primary" onclick="goToStep(4)">Review & Launch →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: REVIEW ──────────────────────────── -->
+    <div class="step-panel" id="step4">
+      <div class="panel-card">
+        <h2 class="panel-title">Review & Launch</h2>
+        <p class="panel-desc">Confirm everything before running the pipeline.</p>
+
+        <div class="combined-summary-grid">
+          <div class="summary-stat">
+            <span id="reviewCount">0</span>
+            <small>Participants</small>
+          </div>
+          <div class="summary-stat">
+            <span id="reviewCerts">0</span>
+            <small>Certificates</small>
+          </div>
+          <div class="summary-stat">
+            <span id="reviewEmails">0</span>
+            <small>Emails</small>
+          </div>
+        </div>
+
+        <div class="review-block" id="reviewDetails"></div>
+
+        <div class="info-box warning">
+          <span>⚠️</span>
+          <div>
+            <strong>This will:</strong> Clone your Slides template for each participant, export PDFs to your Drive, write links to your Sheet, then send emails from your Gmail. This cannot be undone.
+          </div>
+        </div>
+
+        <div class="panel-actions">
+          <button class="btn-ghost" onclick="goToStep(3)">← Back</button>
+          <button class="btn-danger" onclick="launchPipeline()" id="launchBtn">
+            ⚡ Launch Pipeline
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 5: RESULTS ─────────────────────────── -->
+    <div class="step-panel" id="step5">
+      <div class="panel-card">
+
+        <!-- Running state -->
+        <div id="runningState">
+          <h2 class="panel-title">Pipeline Running…</h2>
+          <p class="panel-desc">Do not close this tab. Large batches may take several minutes.</p>
+          <div class="progress-section">
+            <div class="progress-labels">
+              <span id="progressLabel">Generating certificates…</span>
+              <span id="progressCount">0 / 0</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar" id="progressBar" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="log-box" id="logBox"></div>
+        </div>
+
+        <!-- Done state -->
+        <div id="doneState" style="display:none">
+          <div class="result-header">
+            <div class="result-icon success">✅</div>
+            <h2>Pipeline Complete</h2>
+            <p>Certificates generated and emails dispatched.</p>
+          </div>
+          <div class="combined-summary-grid">
+            <div class="summary-stat">
+              <span id="resCertDone">0</span>
+              <small>Certs Generated</small>
+            </div>
+            <div class="summary-stat">
+              <span id="resMailDone">0</span>
+              <small>Emails Sent</small>
+            </div>
+            <div class="summary-stat">
+              <span id="resFailed">0</span>
+              <small>Failed</small>
+            </div>
+          </div>
+          <div class="log-box" id="finalLog"></div>
+          <div class="panel-actions" style="justify-content:center; margin-top:24px">
+            <button class="btn-primary" onclick="resetPipeline()">Run Another Campaign</button>
+            <a href="dashboard.html" class="btn-ghost">Back to Dashboard</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- END STEPS -->
+
+  </div>
+</main>
+
+<script src="dashboard.js"></script>
+<script src="combined-tool.js"></script>
+</body>
+</html>
