@@ -125,7 +125,13 @@
                 <div class="form-group" style="margin-bottom:12px;">
                   <label class="form-label">Google Sheet ID <span class="req">*</span></label>
                   <div style="display:flex;gap:8px;">
-                    <input type="text" id="mSheetId" class="form-input" placeholder="Paste the Sheet ID from the URL" style="flex:1"/>
+                    <div class="picker-field">
+                      <div class="picker-selected" id="sheetSelected">
+                        <span class="picker-icon">📊</span>
+                        <span id="sheetName">No sheet selected</span>
+                      </div>
+                      <button class="btn-secondary" onclick="pickSheet()">Browse Drive →</button>
+                    </div>
                     <button class="btn btn-primary" onclick="mLoadSheet()">Load Sheet</button>
                   </div>
                   <span class="form-hint">docs.google.com/spreadsheets/d/<strong>THIS_PART</strong>/edit</span>
