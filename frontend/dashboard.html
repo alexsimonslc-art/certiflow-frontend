@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CertiFlow — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #060a12;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid #1e2a3a;
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; color: #fff; }
+    .logo span { color: #3b82f6; }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-info img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+    .user-name { font-size: 0.95rem; color: #94a3b8; }
+    .logout-btn {
+      background: #1e2a3a;
+      border: none;
+      color: #94a3b8;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .logout-btn:hover { background: #2d3f55; color: #fff; }
+    main { padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: #64748b; margin-bottom: 48px; }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .tool-card {
+      background: #0d1626;
+      border: 1px solid #1e2a3a;
+      border-radius: 16px;
+      padding: 32px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .tool-card:hover { border-color: #3b82f6; transform: translateY(-4px); }
+    .tool-icon {
+      width: 48px;
+      height: 48px;
+      background: #1e3a5f;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .tool-card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .tool-card p { color: #64748b; font-size: 0.9rem; line-height: 1.6; }
+    .badge {
+      display: inline-block;
+      background: #1e3a5f;
+      color: #60a5fa;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top: 16px;
+    }
+    .coming-soon { opacity: 0.5; cursor: not-allowed; }
+    .coming-soon:hover { transform: none; border-color: #1e2a3a; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Certi<span>Flow</span></div>
+  <div class="user-info">
+    <img id="userAvatar" src="" alt="avatar" onerror="this.style.display='none'"/>
+    <span class="user-name" id="userName">Loading...</span>
+    <button class="logout-btn" onclick="logout()">Sign out</button>
+  </div>
+</header>
+
+<main>
+  <h1 id="welcomeMsg">Welcome back 👋</h1>
+  <p class="subtitle">Choose a tool to get started</p>
+
+  <div class="tools-grid">
+
+    <div class="tool-card" onclick="openTool('mail')">
+      <div class="tool-icon">✉️</div>
+      <h2>Bulk Email Sender</h2>
+      <p>Upload your Google Sheet, pick an HTML template, and send personalized emails via your Gmail to hundreds of recipients in minutes.</p>
+      <span class="badge">Gmail API</span>
+    </div>
+
+    <div class="tool-card" onclick="openTool('certificate')">
+      <div class="tool-icon">🏅</div>
+      <h2>Certificate Generator</h2>
+      <p>Connect your Google Slides template and participant sheet. CertiFlow generates PDF certificates and saves them to your Drive automatically.</p>
+      <span class="badge">Drive + Slides API</span>
+    </div>
+
+    <div class="tool-card" onclick="openTool('combined')">
+      <div class="tool-icon">⚡</div>
+      <h2>Combined Pipeline</h2>
+      <p>Generate certificates AND send emails in one automated workflow. Perfect for event completion and course certificates.</p>
+      <span class="badge">Full Pipeline</span>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  // Capture token from URL and store it
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (token) {
+    localStorage.setItem('certiflow_token', token);
+    window.history.replaceState({}, '', '/dashboard.html');
+  }
+
+  // Decode JWT to get user info (no library needed)
+  function parseJWT(token) {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch { return null; }
+  }
+
+  const storedToken = localStorage.getItem('certiflow_token');
+  if (!storedToken) {
+    window.location.href = '/login.html';
+  } else {
+    const user = parseJWT(storedToken);
+    if (user) {
+      document.getElementById('userName').textContent = user.name || user.email;
+      document.getElementById('userAvatar').src = user.picture || '';
+      document.getElementById('welcomeMsg').textContent = `Welcome back, ${user.name?.split(' ')[0]} 👋`;
+    }
+  }
+
+  function openTool(tool) {
+    alert(`${tool} tool coming soon! UI will be built next.`);
+  }
+
+  function logout() {
+    localStorage.removeItem('certiflow_token');
+    window.location.href = '/index.html';
+  }
+</script>
+
+</body>
+</html>
