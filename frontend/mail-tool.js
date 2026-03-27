@@ -388,3 +388,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sidebarMount').outerHTML = renderSidebar('mail-tool.html');
   lucide.createIcons();
 });
+
+let selectedSheetId = null;
+
+async function pickSheet() {
+  await openGooglePicker('sheet', ({ id, name }) => {
+    selectedSheetId = id;
+    document.getElementById('sheetName').textContent = name;
+    loadSheetData(id); // auto-loads after picking
+  });
+}

@@ -6,96 +6,94 @@
   <title>Combined Pipeline — CertiFlow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="dashboard.css"/>
+  <link rel="stylesheet" href="dashboard.css">
   <style>
-    .pipeline-flow {
+    /* Dashboard-specific overrides */
+    .tool-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .tool-launch-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 22px 18px;
+      transition: all 0.2s ease;
+      cursor: pointer;
       display: flex;
-      align-items: center;
-      gap: 0;
-      margin: 24px 0 32px;
-      background: #0a1020;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px;
-      padding: 20px 28px;
-      overflow-x: auto;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
     }
-    .pipeline-stage {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
+    .tool-launch-card:hover {
+      border-color: var(--border-2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
     }
-    .pipeline-icon {
-      width: 44px; height: 44px;
+    .tool-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .tool-card-icon {
+      width: 40px; height: 40px;
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
-      flex-shrink: 0;
     }
-    .pipeline-icon.cert { background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.3); }
-    .pipeline-icon.mail { background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.25); }
-    .pipeline-icon.done { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
-    .pipeline-label { font-size: 0.82rem; color: #94a3b8; }
-    .pipeline-label strong { display: block; font-size: 0.9rem; color: #e2e8f0; }
-    .pipeline-arrow {
-      flex-shrink: 0;
-      margin: 0 16px;
-      color: #334155;
-      font-size: 1.2rem;
+    .tool-card-icon svg { width: 19px; height: 19px; }
+    .tool-card-icon.cyan { background: var(--cyan-dim); color: var(--cyan); }
+    .tool-card-icon.purple { background: var(--purple-dim); color: #a78bfa; }
+    .tool-card-icon.green { background: var(--green-dim); color: var(--green); }
+    .tool-card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .tool-card-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
+    .tool-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 12px; border-top: 1px solid var(--border);
+      font-size: 12px; color: var(--cyan);
     }
-    .mode-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 28px;
+    .tool-card-footer svg { width: 14px; height: 14px; }
+
+    .activity-list { display: flex; flex-direction: column; }
+    .activity-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
     }
-    .mode-card {
-      padding: 20px;
-      background: #0a1020;
-      border: 2px solid rgba(255,255,255,0.07);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
     }
-    .mode-card:hover { border-color: rgba(0,212,255,0.3); }
-    .mode-card.active { border-color: #00d4ff; background: rgba(0,212,255,0.06); }
-    .mode-card h4 { font-size: 0.95rem; margin-bottom: 6px; color: #e2e8f0; }
-    .mode-card p { font-size: 0.82rem; color: #64748b; line-height: 1.5; }
-    .section-divider {
-      display: flex; align-items: center; gap: 12px;
-      margin: 28px 0 20px;
-      color: #475569; font-size: 0.8rem;
-      text-transform: uppercase; letter-spacing: 0.08em;
+    .activity-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .activity-dot.cyan { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+    .activity-dot.gold { background: var(--gold); }
+    .activity-dot.red { background: var(--red); }
+    .activity-text { flex: 1; font-size: 13px; color: var(--text-2); line-height: 1.4; }
+    .activity-text strong { color: var(--text); display: block; }
+    .activity-time { font-size: 11.5px; color: var(--text-3); white-space: nowrap; }
+
+    .quick-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+
+    .content-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+
+    .campaign-table { width: 100%; border-collapse: collapse; }
+    .campaign-table th {
+      padding: 10px 14px; background: var(--surface-2);
+      font-size: 11px; font-weight: 600; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      text-align: left;
     }
-    .section-divider::before, .section-divider::after {
-      content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06);
+    .campaign-table td {
+      padding: 11px 14px; border-top: 1px solid var(--border);
+      font-size: 12.5px; color: var(--text-2);
     }
-    .combined-summary-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 12px; margin: 20px 0;
+    .campaign-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .limit-bar-wrap { margin-bottom: 16px; }
+    .limit-label {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--text-2); margin-bottom: 5px;
     }
-    .summary-stat {
-      background: #0a1020; border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 10px; padding: 16px; text-align: center;
-    }
-    .summary-stat span { display: block; font-size: 1.6rem; font-weight: 700; color: #e2e8f0; }
-    .summary-stat small { font-size: 0.75rem; color: #64748b; margin-top: 4px; display: block; }
-    .log-entry {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 0.82rem;
-    }
-    .log-entry:last-child { border-bottom: none; }
-    .log-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-    .log-dot.cert { background: #a78bfa; }
-    .log-dot.mail { background: #00d4ff; }
-    .log-dot.err  { background: #ef4444; }
-    .log-dot.ok   { background: #10b981; }
-    .log-name { color: #94a3b8; flex: 1; }
-    .log-status { font-size: 0.78rem; }
-    .log-status.ok   { color: #10b981; }
-    .log-status.err  { color: #ef4444; }
-    .log-status.pend { color: #64748b; }
+    .limit-bar { height: 4px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+    .limit-fill { height: 100%; border-radius: 99px; }
+    .limit-fill.cyan { background: var(--cyan); }
+    .limit-fill.gold { background: var(--gold); }
+
+    @media (max-width: 1100px) { .content-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .tool-card-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .tool-card-grid { grid-template-columns: 1fr; } .quick-stat-row { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>

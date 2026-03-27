@@ -235,7 +235,13 @@
               <div class="form-grid form-grid-2">
                 <div class="form-group">
                   <label class="form-label">Slides Template File ID <span class="req">*</span></label>
-                  <input type="text" id="templateId" class="form-input" placeholder="From your Slides URL"/>
+                  <div class="picker-field">
+                      <div class="picker-selected" id="sheetSelected">
+                        <span class="picker-icon">📊</span>
+                        <span id="sheetName">No sheet selected</span>
+                      </div>
+                      <button class="btn-secondary" onclick="pickSheet()">Browse Drive →</button>
+                    </div>
                   <span class="form-hint">docs.google.com/presentation/d/<strong>THIS</strong>/edit</span>
                 </div>
                 <div class="form-group">
@@ -353,7 +359,13 @@
               <div style="margin-top:12px;">
                 <div class="form-group">
                   <label class="form-label">Column name <span class="opt">(optional)</span></label>
-                  <input type="text" class="form-input" id="certLinkColName" value="Certificate Link" placeholder="Certificate Link"/>
+                  <div class="picker-field">
+                  <div class="picker-selected" id="sheetSelected">
+                    <span class="picker-icon">📊</span>
+                    <span id="sheetName">No sheet selected</span>
+                  </div>
+                  <button class="btn-secondary" onclick="pickSheet()">Browse Drive →</button>
+                </div>
                 </div>
               </div>
             </div>

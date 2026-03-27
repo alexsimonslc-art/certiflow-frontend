@@ -336,39 +336,49 @@ function buildPreview() {
 /* ── Start Generation ────────────────────────────────────────────── */
 async function startGeneration() {
   goToStep(4, true);
-  addLog('info', 'Starting certificate generation...');
-
-  const payload = {
-    campaignName:    document.getElementById('campaignName').value,
-    sheetId:         document.getElementById('sheetId').value.trim(),
-    templateId:      document.getElementById('templateId').value.trim(),
-    folderId:        document.getElementById('folderId').value.trim(),
-    nameColumn:      document.getElementById('nameCol').value,
-    emailColumn:     document.getElementById('emailCol').value,
-    fieldMappings:   certState.fieldMappings.filter(m => m.column && m.placeholder),
-    writeLinksBack:  document.getElementById('writeBackToggle').classList.contains('on'),
-    certLinkColumn:  document.getElementById('certLinkColName').value || 'Certificate Link',
-    // For CSV uploads, send the parsed data directly
-    ...(certState.sourceType === 'csv' ? { participants: certState.parsedRows } : {}),
-  };
-
-  const total = certState.parsedRows.length;
-  document.getElementById('genCounter').textContent = `0 / ${total}`;
-  document.getElementById('genStatus').textContent  = 'Sending to server...';
+  const templateRaw = localStorage.getItem('certiflow_template');
+  if (!templateRaw) {
+    toast('No template found. Design one in the Template Editor first.', 'error');
+    goToStep(1, true);
+    return;
+  }
+  const template = JSON.parse(templateRaw);
+  const nameCol  = document.getElementById('nameCol').value;
+  const emailCol = document.getElementById('emailCol').value;
 
   try {
     const res = await apiFetch('/api/certificates/generate', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        campaignName: document.getElementById('campaignName').value,
+        template,
+        participants: certState.parsedRows,
+        nameCol,
+        emailCol,
+        sheetId:   certState.sheetId || null,
+        writeBack: document.getElementById('writeBackToggle')?.checked || false,
+      }),
     });
-    certState.jobId = res.jobId;
-    addLog('info', `Job started (ID: ${res.jobId}) — ${total} certificates queued`);
-    pollProgress(total);
-  } catch (err) {
-    addLog('err', 'Failed to start: ' + err.message);
-    toast('Generation failed: ' + err.message, 'error');
+
+    certState.results = res.results;
+    const success = res.results.filter(r => r.status === 'success').length;
+    const failed  = res.results.filter(r => r.status === 'failed').length;
+
+    document.getElementById('resDoneCount').textContent  = success;
+    document.getElementById('resFailCount').textContent  = failed;
+    document.getElementById('resTotalCount').textContent = res.total;
+    document.getElementById('resFolderLink').href        = res.folderLink;
+    document.getElementById('resFolderLink').style.display = '';
+
+    renderResultsTable(res.results);
+    goToStep(5, true);
+    toast(`${success} certificates generated!`, 'success', 5000);
+  } catch (e) {
+    toast('Generation failed: ' + e.message, 'error');
+    goToStep(3, true);
   }
 }
+
 
 function pollProgress(total) {
   certState.pollInterval = setInterval(async () => {
@@ -503,3 +513,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sidebarMount').outerHTML = renderSidebar('cert-tool.html');
   lucide.createIcons();
 });
+
+let selectedSheetId = null;
+
+async function pickSheet() {
+  await openGooglePicker('sheet', ({ id, name }) => {
+    selectedSheetId = id;
+    document.getElementById('sheetName').textContent = name;
+    loadSheetData(id); // auto-loads after picking
+  });
+}
