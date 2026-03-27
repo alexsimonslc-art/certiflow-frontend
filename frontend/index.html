@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CertiFlow — Bulk Mail & Certificate Automation Platform</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+
+  <!-- ───────────────────────── HEADER ───────────────────────── -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">
+          <i data-lucide="zap"></i>
+        </div>
+        <span class="logo-text">CertiFlow</span>
+      </a>
+
+      <nav class="nav" id="nav">
+        <a href="#products" class="nav-link">Products</a>
+        <div class="nav-dropdown">
+          <a href="#tools" class="nav-link">Tools <i data-lucide="chevron-down" class="nav-chevron"></i></a>
+          <div class="dropdown-menu">
+            <a href="login.html" class="dropdown-item">
+              <i data-lucide="mail"></i>
+              <div>
+                <strong>Bulk Mailer</strong>
+                <span>Send personalized mails at scale</span>
+              </div>
+            </a>
+            <a href="login.html" class="dropdown-item">
+              <i data-lucide="award"></i>
+              <div>
+                <strong>Certificate Generator</strong>
+                <span>Auto-generate & distribute PDFs</span>
+              </div>
+            </a>
+            <a href="login.html" class="dropdown-item">
+              <i data-lucide="file-spreadsheet"></i>
+              <div>
+                <strong>Sheet Manager</strong>
+                <span>Sync & manage participant data</span>
+              </div>
+            </a>
+          </div>
+        </div>
+        <a href="#about" class="nav-link">About Us</a>
+        <a href="#guide" class="nav-link">User Guide</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="login.html" class="btn-ghost">Sign In</a>
+        <a href="login.html" class="btn-primary">Get Started Free</a>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ───────────────────────── HERO ───────────────────────── -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="mesh-gradient"></div>
+      <div class="grid-overlay"></div>
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+      <div class="hero-badge">
+        <i data-lucide="sparkles"></i>
+        <span>Powered by Google Workspace APIs</span>
+      </div>
+
+      <h1 class="hero-title">
+        Send Thousands of<br/>
+        <span class="gradient-text">Personalized Mails</span><br/>
+        Without Writing a Single Script
+      </h1>
+
+      <p class="hero-sub">
+        CertiFlow connects directly to your Google Account — automate bulk email campaigns, generate and distribute certificates as PDFs, and manage participant data, all from one clean interface.
+      </p>
+
+      <div class="hero-actions">
+        <a href="login.html" class="btn-primary btn-large">
+          <i data-lucide="chrome"></i>
+          Continue with Google — It's Free
+        </a>
+        <a href="#how-it-works" class="btn-outline btn-large">
+          <i data-lucide="play-circle"></i>
+          See How It Works
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">10,000+</span>
+          <span class="stat-label">Mails Delivered</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Certificates Generated</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">Zero</span>
+          <span class="stat-label">Scripting Required</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-scroll-indicator">
+      <i data-lucide="chevrons-down"></i>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── LOGO STRIP ───────────────────────── -->
+  <section class="logo-strip">
+    <div class="container">
+      <p class="strip-label">Seamlessly integrates with your existing Google Workspace</p>
+      <div class="strip-logos">
+        <div class="strip-item"><i data-lucide="mail"></i> <span>Gmail</span></div>
+        <div class="strip-item"><i data-lucide="file-spreadsheet"></i> <span>Google Sheets</span></div>
+        <div class="strip-item"><i data-lucide="presentation"></i> <span>Google Slides</span></div>
+        <div class="strip-item"><i data-lucide="hard-drive"></i> <span>Google Drive</span></div>
+        <div class="strip-item"><i data-lucide="code-2"></i> <span>Apps Script</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── TOOLS ───────────────────────── -->
+  <section class="tools" id="tools">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Core Tools</span>
+        <h2 class="section-title">Everything You Need,<br/><span class="gradient-text">Nothing You Don't</span></h2>
+        <p class="section-sub">Three powerful tools that replace hours of manual work — all connected to your Google Account.</p>
+      </div>
+
+      <div class="tools-grid">
+        <div class="tool-card tool-card-featured" onclick="requireLogin(event)">
+          <div class="tool-card-glow"></div>
+          <div class="tool-icon-wrap">
+            <i data-lucide="send"></i>
+          </div>
+          <div class="tool-badge">Most Used</div>
+          <h3>Bulk Mailer</h3>
+          <p>Upload your participant list from Google Sheets, pick an HTML template, and send thousands of personalized emails through your own Gmail account in minutes.</p>
+          <ul class="tool-features">
+            <li><i data-lucide="check"></i> Custom HTML templates with variable fields</li>
+            <li><i data-lucide="check"></i> Sends via your Gmail — no third-party relay</li>
+            <li><i data-lucide="check"></i> Real-time delivery status tracking</li>
+            <li><i data-lucide="check"></i> Schedule or send immediately</li>
+          </ul>
+          <a href="login.html" class="tool-cta">Launch Tool <i data-lucide="arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card" onclick="requireLogin(event)">
+          <div class="tool-card-glow"></div>
+          <div class="tool-icon-wrap">
+            <i data-lucide="award"></i>
+          </div>
+          <h3>Certificate Generator</h3>
+          <p>Connect your Google Slides template, link your participant sheet — CertiFlow generates individual PDF certificates, saves them to your Drive, and injects shareable links back into your sheet.</p>
+          <ul class="tool-features">
+            <li><i data-lucide="check"></i> Slide template + participant data = PDF certificates</li>
+            <li><i data-lucide="check"></i> Auto-saves PDFs to your Google Drive folder</li>
+            <li><i data-lucide="check"></i> Shareable Drive links injected into Sheet</li>
+            <li><i data-lucide="check"></i> Batch process hundreds in one click</li>
+          </ul>
+          <a href="login.html" class="tool-cta">Launch Tool <i data-lucide="arrow-right"></i></a>
+        </div>
+
+        <div class="tool-card" onclick="requireLogin(event)">
+          <div class="tool-card-glow"></div>
+          <div class="tool-icon-wrap">
+            <i data-lucide="layers"></i>
+          </div>
+          <div class="tool-badge tool-badge-new">Coming Soon</div>
+          <h3>Campaign Builder</h3>
+          <p>Combine certificate generation and email dispatch into a single automated pipeline. Generate, attach certificate links, and send — all in one scheduled workflow.</p>
+          <ul class="tool-features">
+            <li><i data-lucide="check"></i> End-to-end automation pipeline</li>
+            <li><i data-lucide="check"></i> Certificate links auto-attached to mails</li>
+            <li><i data-lucide="check"></i> Schedule campaigns in advance</li>
+            <li><i data-lucide="check"></i> Analytics and delivery reports</li>
+          </ul>
+          <a href="#" class="tool-cta tool-cta-disabled">Notify Me <i data-lucide="bell"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── HOW IT WORKS ───────────────────────── -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Workflow</span>
+        <h2 class="section-title">From Zero to Sent<br/><span class="gradient-text">in Four Steps</span></h2>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-line"></div>
+
+        <div class="step">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <div class="step-icon"><i data-lucide="log-in"></i></div>
+            <h3>Connect Your Google Account</h3>
+            <p>Sign in with Google. CertiFlow requests only the permissions it needs — Gmail send access, Drive read/write, and Sheets access. You stay in full control.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <div class="step-icon"><i data-lucide="file-plus"></i></div>
+            <h3>Paste Your Sheet & Template IDs</h3>
+            <p>Copy your Google Sheet ID (with participant names and emails) and your Slides template ID. No downloads, no uploads — CertiFlow reads them directly from your Drive.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <div class="step-icon"><i data-lucide="cpu"></i></div>
+            <h3>CertiFlow Processes in the Background</h3>
+            <p>For each participant, a personalized certificate PDF is generated from your Slides template, saved to a designated Drive folder, and the shareable link is written back to your Sheet.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">04</div>
+          <div class="step-content">
+            <div class="step-icon"><i data-lucide="send"></i></div>
+            <h3>Review and Send</h3>
+            <p>Preview your email template with live variable substitution, review the recipient list, and hit Send. CertiFlow dispatches all emails via your Gmail — with certificate links embedded.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── FEATURES ───────────────────────── -->
+  <section class="features" id="products">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Why CertiFlow</span>
+        <h2 class="section-title">Built for Colleges,<br/><span class="gradient-text">NGOs, and Organizers</span></h2>
+        <p class="section-sub">Stop wrestling with App Script. Start focusing on what matters.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+          <h4>Your Data Stays Yours</h4>
+          <p>CertiFlow never stores your emails or Drive files. All operations run via Google APIs on your own account — we act only as the interface.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="zap"></i></div>
+          <h4>No Code Required</h4>
+          <p>Replace complex App Script pipelines with a clean visual interface. No debugging, no syntax errors, no Stack Overflow tabs.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="users"></i></div>
+          <h4>Designed for Organizations</h4>
+          <p>Built for colleges, NGOs, startups, and event organizers who regularly send certificates and announcements to large groups.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="folder-open"></i></div>
+          <h4>Auto Drive Organization</h4>
+          <p>CertiFlow creates a dedicated folder in your Google Drive for each campaign, keeping every generated certificate neatly organized.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="link-2"></i></div>
+          <h4>Shareable Links in Sheet</h4>
+          <p>Generated PDF links are automatically written back into a new column in your Google Sheet — ready to share or embed in emails.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i data-lucide="bar-chart-2"></i></div>
+          <h4>Delivery Tracking</h4>
+          <p>Know exactly how many emails were sent, which ones bounced, and the overall campaign status — without leaving the platform.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── USE CASES ───────────────────────── -->
+  <section class="use-cases">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Use Cases</span>
+        <h2 class="section-title">Who Uses <span class="gradient-text">CertiFlow</span></h2>
+      </div>
+
+      <div class="use-cases-grid">
+        <div class="use-case-card">
+          <div class="use-case-icon"><i data-lucide="graduation-cap"></i></div>
+          <h4>Universities & Colleges</h4>
+          <p>Send course completion certificates, event participation certificates, and semester newsletters to hundreds of students at once.</p>
+          <div class="use-case-tag">E-Certificates</div>
+          <div class="use-case-tag">Bulk Announcements</div>
+        </div>
+        <div class="use-case-card">
+          <div class="use-case-icon"><i data-lucide="heart-handshake"></i></div>
+          <h4>NGOs & Non-Profits</h4>
+          <p>Distribute volunteer appreciation certificates and program completion acknowledgements to your community at no extra cost.</p>
+          <div class="use-case-tag">Volunteer Certificates</div>
+          <div class="use-case-tag">Impact Reports</div>
+        </div>
+        <div class="use-case-card">
+          <div class="use-case-icon"><i data-lucide="calendar-check"></i></div>
+          <h4>Event Organizers</h4>
+          <p>Send post-event thank-you mails, participation certificates, and follow-up communications to all registered attendees in minutes.</p>
+          <div class="use-case-tag">Event Certificates</div>
+          <div class="use-case-tag">Post-Event Mails</div>
+        </div>
+        <div class="use-case-card">
+          <div class="use-case-icon"><i data-lucide="building-2"></i></div>
+          <h4>Corporate Training Teams</h4>
+          <p>Automate training completion certificates and onboarding communications for employees across departments.</p>
+          <div class="use-case-tag">Training Completion</div>
+          <div class="use-case-tag">HR Communications</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── GUIDE ───────────────────────── -->
+  <section class="guide" id="guide">
+    <div class="container">
+      <div class="guide-inner">
+        <div class="guide-content">
+          <span class="section-tag">User Guide</span>
+          <h2 class="section-title">Up and Running<br/><span class="gradient-text">in Under 5 Minutes</span></h2>
+          <p>No installation. No setup. Just connect your Google Account and start your first campaign.</p>
+          <div class="guide-steps">
+            <div class="guide-step">
+              <span class="guide-num">1</span>
+              <p>Sign in with Google and choose your account type (Personal or Organization)</p>
+            </div>
+            <div class="guide-step">
+              <span class="guide-num">2</span>
+              <p>Grant the required Google API permissions (Gmail, Drive, Sheets, Slides)</p>
+            </div>
+            <div class="guide-step">
+              <span class="guide-num">3</span>
+              <p>Open any tool, paste your Sheet ID and template ID</p>
+            </div>
+            <div class="guide-step">
+              <span class="guide-num">4</span>
+              <p>Preview, configure, and launch your campaign</p>
+            </div>
+          </div>
+          <a href="login.html" class="btn-primary">Start Free — No Credit Card</a>
+        </div>
+        <div class="guide-visual">
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <div class="traffic-light">
+                <span class="tl-red"></span>
+                <span class="tl-yellow"></span>
+                <span class="tl-green"></span>
+              </div>
+              <span class="guide-card-title">campaign_setup.certiflow</span>
+            </div>
+            <div class="guide-card-body">
+              <div class="code-line"><span class="code-key">sheet_id</span> <span class="code-op">=</span> <span class="code-val">"1BxiMVs0XRA..."</span></div>
+              <div class="code-line"><span class="code-key">template_id</span> <span class="code-op">=</span> <span class="code-val">"1mDpQ2xkZJ..."</span></div>
+              <div class="code-line"><span class="code-key">drive_folder</span> <span class="code-op">=</span> <span class="code-val">"Certificates_2025"</span></div>
+              <div class="code-line"><span class="code-key">name_col</span> <span class="code-op">=</span> <span class="code-val">"Column B"</span></div>
+              <div class="code-line"><span class="code-key">email_col</span> <span class="code-op">=</span> <span class="code-val">"Column C"</span></div>
+              <div class="code-line code-comment"># All templates are auto-detected</div>
+              <div class="code-line code-comment"># from your Slides file</div>
+              <div class="code-run">
+                <button class="run-btn"><i data-lucide="play"></i> Generate &amp; Send</button>
+                <span class="run-status run-success"><i data-lucide="check-circle-2"></i> 247 sent</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── PRICING ───────────────────────── -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Pricing</span>
+        <h2 class="section-title">Simple, Transparent,<br/><span class="gradient-text">Always Free to Start</span></h2>
+        <p class="section-sub">CertiFlow is free for individuals and small organizations. Scale up only when you need to.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-plan">Free</div>
+          <div class="pricing-price"><span class="price-amount">0</span><span class="price-currency">INR/mo</span></div>
+          <p class="pricing-desc">Perfect for individuals, small clubs, and getting started.</p>
+          <ul class="pricing-features">
+            <li><i data-lucide="check"></i> Up to 500 emails per day (Gmail limit)</li>
+            <li><i data-lucide="check"></i> Up to 50 certificates per batch</li>
+            <li><i data-lucide="check"></i> 1 active campaign at a time</li>
+            <li><i data-lucide="check"></i> Google Drive auto-save</li>
+            <li><i data-lucide="check"></i> Basic delivery tracking</li>
+            <li><i data-lucide="x" class="feature-no"></i> Priority processing</li>
+            <li><i data-lucide="x" class="feature-no"></i> Team collaboration</li>
+          </ul>
+          <a href="login.html" class="btn-outline btn-full">Get Started Free</a>
+        </div>
+
+        <div class="pricing-card pricing-card-featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-plan">Pro</div>
+          <div class="pricing-price"><span class="price-amount">299</span><span class="price-currency">INR/mo</span></div>
+          <p class="pricing-desc">For active organizers, colleges, and growing teams.</p>
+          <ul class="pricing-features">
+            <li><i data-lucide="check"></i> Unlimited emails (Gmail/Workspace limits)</li>
+            <li><i data-lucide="check"></i> Unlimited certificates per batch</li>
+            <li><i data-lucide="check"></i> Unlimited concurrent campaigns</li>
+            <li><i data-lucide="check"></i> Google Drive auto-organize</li>
+            <li><i data-lucide="check"></i> Full delivery analytics</li>
+            <li><i data-lucide="check"></i> Priority background processing</li>
+            <li><i data-lucide="x" class="feature-no"></i> Team collaboration</li>
+          </ul>
+          <a href="login.html" class="btn-primary btn-full">Start Pro Trial</a>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-plan">Organization</div>
+          <div class="pricing-price"><span class="price-amount">999</span><span class="price-currency">INR/mo</span></div>
+          <p class="pricing-desc">For universities, NGOs, and multi-department organizations.</p>
+          <ul class="pricing-features">
+            <li><i data-lucide="check"></i> Everything in Pro</li>
+            <li><i data-lucide="check"></i> Up to 5 team members</li>
+            <li><i data-lucide="check"></i> Shared campaign templates</li>
+            <li><i data-lucide="check"></i> Organization-level Drive folder</li>
+            <li><i data-lucide="check"></i> Dedicated account manager</li>
+            <li><i data-lucide="check"></i> Priority support</li>
+            <li><i data-lucide="check"></i> Custom domain sender name</li>
+          </ul>
+          <a href="login.html" class="btn-outline btn-full">Contact Sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── ABOUT ───────────────────────── -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-inner">
+        <div class="about-content">
+          <span class="section-tag">About CertiFlow</span>
+          <h2 class="section-title">Built by Someone Who<br/><span class="gradient-text">Got Tired of App Script</span></h2>
+          <p>CertiFlow was born out of a real frustration — spending hours managing Google Sheets, writing App Script code, debugging mail merge errors, and repeating the entire process for every event.</p>
+          <p>We built CertiFlow to be the platform we always wished existed: one that respects your Google setup, works entirely within your existing tools, and requires zero technical knowledge to operate.</p>
+          <div class="about-values">
+            <div class="about-value">
+              <i data-lucide="lock"></i>
+              <span>Privacy-first. Your data never leaves your Google Account.</span>
+            </div>
+            <div class="about-value">
+              <i data-lucide="heart"></i>
+              <span>Built for real workflows, not hypothetical ones.</span>
+            </div>
+            <div class="about-value">
+              <i data-lucide="globe"></i>
+              <span>Accessible to anyone with a Google Account.</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual">
+          <div class="about-card-stack">
+            <div class="acard acard-1">
+              <i data-lucide="mail-check"></i>
+              <div>
+                <strong>247 emails sent</strong>
+                <span>Annual Day 2025 — Certificate Dispatch</span>
+              </div>
+            </div>
+            <div class="acard acard-2">
+              <i data-lucide="file-check-2"></i>
+              <div>
+                <strong>247 PDFs generated</strong>
+                <span>Saved to Drive: /Certificates/Annual_Day_2025/</span>
+              </div>
+            </div>
+            <div class="acard acard-3">
+              <i data-lucide="clock"></i>
+              <div>
+                <strong>Time saved: ~4 hours</strong>
+                <span>Compared to manual App Script workflow</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── CTA BANNER ───────────────────────── -->
+  <section class="cta-banner">
+    <div class="cta-bg">
+      <div class="cta-orb cta-orb-1"></div>
+      <div class="cta-orb cta-orb-2"></div>
+    </div>
+    <div class="container">
+      <div class="cta-inner">
+        <h2>Ready to Automate Your<br/><span class="gradient-text">Next Certificate Campaign?</span></h2>
+        <p>Join hundreds of organizers who have replaced manual App Script workflows with CertiFlow.</p>
+        <a href="login.html" class="btn-primary btn-large">
+          <i data-lucide="chrome"></i>
+          Get Started with Google — Free
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── FOOTER ───────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <div class="logo-icon"><i data-lucide="zap"></i></div>
+            <span class="logo-text">CertiFlow</span>
+          </a>
+          <p>The fastest way to send personalized bulk emails and generate certificates — powered entirely by your Google Account.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="GitHub"><i data-lucide="github"></i></a>
+            <a href="#" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Product</h5>
+          <a href="login.html">Bulk Mailer</a>
+          <a href="login.html">Certificate Generator</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#">Changelog</a>
+        </div>
+
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="#about">About Us</a>
+          <a href="#">Blog</a>
+          <a href="#">Careers</a>
+          <a href="#">Contact</a>
+        </div>
+
+        <div class="footer-col">
+          <h5>Resources</h5>
+          <a href="#guide">User Guide</a>
+          <a href="#">API Docs</a>
+          <a href="#">FAQ</a>
+          <a href="#">Status</a>
+        </div>
+
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+          <a href="#">Google API Disclosure</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 CertiFlow. All rights reserved.</p>
+        <p class="footer-note">CertiFlow is not affiliated with Google LLC. Google, Gmail, Drive, and Slides are trademarks of Google LLC.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Login Required Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+      <div class="modal-icon"><i data-lucide="lock"></i></div>
+      <h3>Sign In Required</h3>
+      <p>You need to sign in with your Google Account to access CertiFlow tools.</p>
+      <a href="login.html" class="btn-primary btn-full">
+        <i data-lucide="chrome"></i> Continue with Google
+      </a>
+      <button class="btn-ghost btn-full" onclick="closeModal()">Maybe Later</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

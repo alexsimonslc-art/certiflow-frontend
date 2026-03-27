@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — CertiFlow</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="login.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="login-body">
+
+  <!-- Background -->
+  <div class="login-bg">
+    <div class="login-mesh"></div>
+    <div class="login-grid"></div>
+    <div class="login-orb login-orb-1"></div>
+    <div class="login-orb login-orb-2"></div>
+  </div>
+
+  <!-- Header -->
+  <a href="index.html" class="login-back">
+    <i data-lucide="arrow-left"></i>
+    Back to Home
+  </a>
+
+  <!-- Main Login Container -->
+  <div class="login-wrapper">
+    <div class="login-panel" id="loginPanel">
+
+      <!-- Logo -->
+      <div class="login-logo">
+        <div class="logo-icon"><i data-lucide="zap"></i></div>
+        <span class="logo-text">CertiFlow</span>
+      </div>
+
+      <!-- ─── STEP 1: MAIN LOGIN ─── -->
+      <div class="login-step active" id="step1">
+        <h1 class="login-title">Welcome Back</h1>
+        <p class="login-subtitle">Sign in to access your tools and campaigns.</p>
+
+        <!-- Google Sign In -->
+        <button class="google-btn" onclick="handleGoogleLogin()">
+          <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="login-divider">
+          <span>or choose your account type below</span>
+        </div>
+
+        <!-- Account Type Selection -->
+        <div class="account-type-label">I am signing in as a</div>
+        <div class="type-grid">
+          <button class="type-card active" id="typePersonal" onclick="selectType('personal')">
+            <div class="type-icon"><i data-lucide="user"></i></div>
+            <span class="type-name">Personal</span>
+            <span class="type-desc">Individual use, freelancers, personal events</span>
+            <div class="type-check"><i data-lucide="check"></i></div>
+          </button>
+          <button class="type-card" id="typeOrg" onclick="selectType('organization')">
+            <div class="type-icon"><i data-lucide="building-2"></i></div>
+            <span class="type-name">Organization</span>
+            <span class="type-desc">Colleges, NGOs, companies, institutions</span>
+            <div class="type-check"><i data-lucide="check"></i></div>
+          </button>
+        </div>
+
+        <button class="btn-primary btn-full login-continue" id="continueBtn" onclick="continueLogin()">
+          Continue
+          <i data-lucide="arrow-right"></i>
+        </button>
+
+        <p class="login-terms">
+          By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+          CertiFlow requests only necessary Google API permissions.
+        </p>
+      </div>
+
+      <!-- ─── STEP 2: ORGANIZATION TYPE ─── -->
+      <div class="login-step" id="step2">
+        <button class="step-back" onclick="goBack(1)">
+          <i data-lucide="arrow-left"></i> Back
+        </button>
+        <h2 class="login-title">Organization Type</h2>
+        <p class="login-subtitle">Help us tailor CertiFlow to your organization's needs.</p>
+
+        <div class="org-grid">
+          <button class="org-card" onclick="selectOrg('university')">
+            <div class="org-icon"><i data-lucide="graduation-cap"></i></div>
+            <span class="org-name">University</span>
+          </button>
+          <button class="org-card" onclick="selectOrg('college')">
+            <div class="org-icon"><i data-lucide="school"></i></div>
+            <span class="org-name">College</span>
+          </button>
+          <button class="org-card" onclick="selectOrg('ngo')">
+            <div class="org-icon"><i data-lucide="heart-handshake"></i></div>
+            <span class="org-name">NGO</span>
+          </button>
+          <button class="org-card" onclick="selectOrg('company')">
+            <div class="org-icon"><i data-lucide="briefcase"></i></div>
+            <span class="org-name">Company</span>
+          </button>
+          <button class="org-card" onclick="selectOrg('startup')">
+            <div class="org-icon"><i data-lucide="rocket"></i></div>
+            <span class="org-name">Startup</span>
+          </button>
+          <button class="org-card" onclick="selectOrg('other')">
+            <div class="org-icon"><i data-lucide="more-horizontal"></i></div>
+            <span class="org-name">Other</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ─── STEP 3: ORGANIZATION DETAILS ─── -->
+      <div class="login-step" id="step3">
+        <button class="step-back" onclick="goBack(2)">
+          <i data-lucide="arrow-left"></i> Back
+        </button>
+        <h2 class="login-title">Tell Us About Your <span class="gradient-text" id="orgTypeLabel">Organization</span></h2>
+        <p class="login-subtitle">This helps us configure the right settings and limits for your account.</p>
+
+        <div class="org-form">
+          <div class="form-group">
+            <label>Organization Name <span class="required">*</span></label>
+            <div class="input-wrap">
+              <i data-lucide="building-2"></i>
+              <input type="text" id="orgName" placeholder="e.g. National Institute of Technology" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Official Website <span class="optional">(optional)</span></label>
+            <div class="input-wrap">
+              <i data-lucide="globe"></i>
+              <input type="url" id="orgWebsite" placeholder="https://yourorganization.edu" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Estimated Participants Per Campaign <span class="required">*</span></label>
+            <div class="select-wrap">
+              <i data-lucide="users"></i>
+              <select id="orgSize">
+                <option value="">Select a range</option>
+                <option value="1-50">1 – 50 participants</option>
+                <option value="51-200">51 – 200 participants</option>
+                <option value="201-500">201 – 500 participants</option>
+                <option value="500+">500+ participants</option>
+              </select>
+              <i data-lucide="chevron-down" class="select-chevron"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Primary Use Case</label>
+            <div class="use-case-checks">
+              <label class="check-opt">
+                <input type="checkbox" value="certificates" /> E-Certificates
+              </label>
+              <label class="check-opt">
+                <input type="checkbox" value="bulk-mail" /> Bulk Announcements
+              </label>
+              <label class="check-opt">
+                <input type="checkbox" value="events" /> Event Management
+              </label>
+              <label class="check-opt">
+                <input type="checkbox" value="training" /> Training Completion
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary btn-full" onclick="completeOrgSetup()">
+          <i data-lucide="chrome"></i>
+          Connect Google Account
+        </button>
+        <p class="login-terms" style="margin-top:16px;">We'll request Drive, Sheets, Slides, and Gmail permissions from your Google Account.</p>
+      </div>
+
+      <!-- ─── STEP 4: GOOGLE PERMISSIONS EXPLAINED ─── -->
+      <div class="login-step" id="step4">
+        <button class="step-back" id="step4Back" onclick="goBackFromPermissions()">
+          <i data-lucide="arrow-left"></i> Back
+        </button>
+        <h2 class="login-title">Permissions We Need</h2>
+        <p class="login-subtitle">CertiFlow requests these Google permissions. You can revoke them any time from your Google Account settings.</p>
+
+        <div class="permissions-list">
+          <div class="permission-item">
+            <div class="perm-icon perm-gmail"><i data-lucide="mail"></i></div>
+            <div class="perm-content">
+              <strong>Gmail — Send emails only</strong>
+              <span>CertiFlow can send emails on your behalf but cannot read your inbox.</span>
+            </div>
+            <div class="perm-badge perm-required">Required</div>
+          </div>
+          <div class="permission-item">
+            <div class="perm-icon perm-drive"><i data-lucide="hard-drive"></i></div>
+            <div class="perm-content">
+              <strong>Google Drive — Read &amp; Write</strong>
+              <span>To read your Slides templates and create/save certificate PDFs in your Drive.</span>
+            </div>
+            <div class="perm-badge perm-required">Required</div>
+          </div>
+          <div class="permission-item">
+            <div class="perm-icon perm-sheets"><i data-lucide="file-spreadsheet"></i></div>
+            <div class="perm-content">
+              <strong>Google Sheets — Read &amp; Write</strong>
+              <span>To read participant names/emails and write generated certificate links back.</span>
+            </div>
+            <div class="perm-badge perm-required">Required</div>
+          </div>
+          <div class="permission-item">
+            <div class="perm-icon perm-slides"><i data-lucide="presentation"></i></div>
+            <div class="perm-content">
+              <strong>Google Slides — Read only</strong>
+              <span>To read your certificate template and substitute participant names.</span>
+            </div>
+            <div class="perm-badge perm-required">Required</div>
+          </div>
+          <div class="permission-item">
+            <div class="perm-icon perm-profile"><i data-lucide="user-circle"></i></div>
+            <div class="perm-content">
+              <strong>Profile — Name &amp; Email</strong>
+              <span>Your name and email are used to personalize your CertiFlow dashboard.</span>
+            </div>
+            <div class="perm-badge perm-minimal">Minimal</div>
+          </div>
+        </div>
+
+        <button class="google-btn google-btn-full" onclick="triggerGoogleOAuth()">
+          <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Authorize with Google
+        </button>
+
+        <div class="security-note">
+          <i data-lucide="shield-check"></i>
+          <span>Your credentials are never stored on CertiFlow servers. All operations run via Google's secure OAuth 2.0 flow.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Side Panel (decorative — desktop only) -->
+    <div class="login-side" aria-hidden="true">
+      <div class="side-content">
+        <div class="side-badge">
+          <i data-lucide="cpu"></i>
+          Live Campaign
+        </div>
+        <h3>Annual Day 2025 <br/> Certificate Dispatch</h3>
+        <div class="side-progress">
+          <div class="progress-row">
+            <span>Generating PDFs</span>
+            <span class="prog-num">247 / 247</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+        </div>
+        <div class="side-progress">
+          <div class="progress-row">
+            <span>Sending Emails</span>
+            <span class="prog-num">243 / 247</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:98%"></div></div>
+        </div>
+        <div class="side-stats">
+          <div class="side-stat">
+            <span class="side-stat-num">247</span>
+            <span class="side-stat-label">Certificates</span>
+          </div>
+          <div class="side-stat">
+            <span class="side-stat-num">4m 12s</span>
+            <span class="side-stat-label">Time Taken</span>
+          </div>
+          <div class="side-stat">
+            <span class="side-stat-num">0</span>
+            <span class="side-stat-label">Errors</span>
+          </div>
+        </div>
+        <div class="side-testimonial">
+          <p>"What used to take me 4 hours of App Script debugging now takes 4 minutes."</p>
+          <div class="side-author">
+            <div class="author-avatar">SK</div>
+            <div>
+              <strong>Suresh Kumar</strong>
+              <span>Event Coordinator, NIT Trichy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
