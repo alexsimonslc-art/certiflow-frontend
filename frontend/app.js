@@ -222,7 +222,7 @@ function handleGoogleLogin() {
 
 function triggerGoogleOAuth() {
   sessionStorage.setItem('certiflow_account_type', state.accountType);
-  window.location.href = `https://certiflow-backend.onrender.com/auth/google?type=${state.accountType}`;
+  window.location.href = `https://certiflow-backend-73xk.onrender.com/auth/google?type=${state.accountType}`;
 }
 
 function showOAuthLoader() {
