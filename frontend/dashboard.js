@@ -220,11 +220,6 @@ function initSidebar() {
   // Restore saved state
   setSidebarCollapsed(localStorage.getItem('cf_sidebar_collapsed') === '1');
 
-  if (collapseBtn) {
-    collapseBtn.addEventListener('click', () => {
-      setSidebarCollapsed(!sidebar.classList.contains('collapsed'));
-    });
-  }
 
 
 
