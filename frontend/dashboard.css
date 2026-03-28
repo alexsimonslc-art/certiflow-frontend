@@ -1596,55 +1596,34 @@ body::after {
   padding-right: 4px;
 }
 
-.sidebar-toggle-btn {
-  flex-shrink: 0;
-  width: 24px; height: 24px;
-  border-radius: 6px;
-  background: transparent;
-  border: 1px solid transparent;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-3);
-  cursor: pointer;
-  transition: var(--transition);
-}
-.sidebar-toggle-btn:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: var(--border-2);
-  color: var(--text);
-}
-
-/* Hide collapse arrow button if it still exists */
-.sidebar-collapse-btn { display: none !important; }
-
-/* When collapsed — hide label text, keep button centred and visible */
-.sidebar.collapsed .nav-section-label span {
-  display: none;
-}
-.sidebar.collapsed .nav-section-with-toggle {
-  justify-content: center;
-  padding: 10px 0 6px;
-}
-.sidebar.collapsed .sidebar-toggle-btn {
-  display: flex !important;
-}
-
 /* Normal state — always show hamburger button */
 .sidebar-toggle-btn {
   flex-shrink: 0;
-  width: 26px; height: 26px;
-  border-radius: 6px;
-  background: transparent;
-  border: 1px solid transparent;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-3);
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: var(--text) !important;
   cursor: pointer;
   transition: var(--transition);
 }
-.sidebar-toggle-btn:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: var(--border-2);
-  color: var(--text);
+.sidebar-toggle-btn svg {
+  width: 15px !important;
+  height: 15px !important;
+  stroke: #c8d8f0 !important;
+  stroke-width: 2.2 !important;
 }
+.sidebar-toggle-btn:hover {
+  background: rgba(0,212,255,0.12) !important;
+  border-color: rgba(0,212,255,0.3) !important;
+}
+.sidebar-toggle-btn:hover svg {
+  stroke: var(--cyan) !important;
+}
+
 
 /* ── Workspace row with hamburger ────────────────────────── */
 .nav-section-with-toggle {
