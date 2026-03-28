@@ -1,15 +1,13 @@
+// @ts-nocheck
 /* ================================================================
    CertiFlow — Shared Dashboard JS
-   js/dashboard.js  |  Include on every dashboard page
+   dashboard.js | Include on every dashboard page
    ================================================================ */
 
-/* ── Config ─────────────────────────────────────────────────────── */
 const API = 'https://certiflow-backend-73xk.onrender.com';
 
-/* ── Auth ────────────────────────────────────────────────────────── */
-function getToken() {
-  return localStorage.getItem('certiflow_token');
-}
+/* ── Auth ─────────────────────────────────────────────────────── */
+function getToken() { return localStorage.getItem('certiflow_token'); }
 
 function getUser() {
   const token = getToken();
@@ -25,7 +23,6 @@ function getUser() {
 }
 
 function requireAuth() {
-  // Capture token from URL (redirect from OAuth callback)
   const params = new URLSearchParams(window.location.search);
   const urlToken = params.get('token');
   if (urlToken) {
@@ -33,10 +30,7 @@ function requireAuth() {
     window.history.replaceState({}, '', window.location.pathname);
   }
   const user = getUser();
-  if (!user) {
-    window.location.href = '/login.html';
-    return null;
-  }
+  if (!user) { window.location.href = '/login.html'; return null; }
   return user;
 }
 
@@ -45,110 +39,176 @@ function logout() {
   window.location.href = '/index.html';
 }
 
-/* ── API Helper ──────────────────────────────────────────────────── */
+/* ── API Helper ───────────────────────────────────────────────── */
 async function apiFetch(path, options = {}) {
   const token = getToken();
   const res = await fetch(API + path, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      'Authorization': 'Bearer ' + token,
       ...(options.headers || {}),
     },
   });
-  if (res.status === 401) {
-    logout();
-    return null;
-  }
+  if (res.status === 401) { logout(); return null; }
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'API error');
   return data;
 }
 
-/* ── Sidebar setup ───────────────────────────────────────────────── */
+/* ── Render Sidebar ───────────────────────────────────────────── */
+function renderSidebar(activePage) {
+  const navItems = [
+    { page: 'dashboard.html',     icon: 'layout-dashboard', label: 'Dashboard',         section: 'Workspace' },
+    { page: 'cert-tool.html',     icon: 'file-badge',        label: 'Certificates',      section: null },
+    { page: 'mail-tool.html',     icon: 'mail',              label: 'Bulk Mail',         section: null },
+    { page: 'combined-tool.html', icon: 'zap',               label: 'Combined Pipeline', section: null },
+    { page: 'campaigns.html',     icon: 'folder-open',       label: 'Campaigns',         section: 'Manage' },
+    { page: 'settings.html',      icon: 'settings',          label: 'Settings',          section: null },
+  ];
+
+  let navHtml = '';
+  navItems.forEach(item => {
+    if (item.section) navHtml += '<span class="nav-section-label">' + item.section + '</span>';
+    navHtml += '<a class="nav-item' + (item.page === activePage ? ' active' : '') + '" href="' + item.page + '" data-page="' + item.page + '">' +
+      '<i data-lucide="' + item.icon + '"></i>' + item.label + '</a>';
+  });
+
+  return '<aside class="sidebar" id="appSidebar">' +
+    '<div class="sidebar-logo">' +
+      '<div class="logo-mark"><i data-lucide="zap"></i></div>' +
+      '<span class="logo-name">Certi<span>Flow</span></span>' +
+    '</div>' +
+    '<nav class="sidebar-nav">' + navHtml + '</nav>' +
+    '<div class="sidebar-footer">' +
+      '<div class="user-row" id="userRow">' +
+        '<div class="user-avatar" id="sidebarAvatar">U</div>' +
+        '<div class="user-info">' +
+          '<div class="user-name" id="sidebarUserName">Loading…</div>' +
+          '<div class="user-plan" id="sidebarUserPlan">Personal</div>' +
+        '</div>' +
+        '<i data-lucide="chevrons-up-down" style="width:14px;height:14px;color:var(--text-3);flex-shrink:0"></i>' +
+      '</div>' +
+      '<div class="account-dropdown" id="accountDropdown">' +
+        '<a class="acct-item" href="settings.html"><i data-lucide="user-circle"></i> Account Settings</a>' +
+        '<a class="acct-item" href="settings.html#quota"><i data-lucide="bar-chart-2"></i> Usage & Quota</a>' +
+        '<a class="acct-item" href="campaigns.html"><i data-lucide="folder-open"></i> My Campaigns</a>' +
+        '<div class="acct-divider"></div>' +
+        '<button class="acct-item acct-logout" onclick="logout()"><i data-lucide="log-out"></i> Sign Out</button>' +
+      '</div>' +
+    '</div>' +
+  '</aside>';
+}
+
+/* ── Init Sidebar ─────────────────────────────────────────────── */
 function initSidebar() {
   const user = getUser();
   if (!user) return;
 
-  // Set user info in sidebar
-  const nameEl = document.getElementById('sidebarUserName');
+  const nameEl   = document.getElementById('sidebarUserName');
   const avatarEl = document.getElementById('sidebarAvatar');
-  const planEl = document.getElementById('sidebarUserPlan');
+  const planEl   = document.getElementById('sidebarUserPlan');
 
-  if (nameEl) nameEl.textContent = user.name || user.email.split('@')[0];
-  if (planEl) planEl.textContent = (user.accountType === 'organization') ? 'Organization' : 'Personal';
+  if (nameEl)   nameEl.textContent   = user.name || user.email.split('@')[0];
+  if (planEl)   planEl.textContent   = user.hd ? 'Workspace' : 'Personal Gmail';
   if (avatarEl) {
     if (user.picture) {
-      avatarEl.innerHTML = `<img src="${user.picture}" alt="avatar" />`;
+      avatarEl.innerHTML = '<img src="' + user.picture + '" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
     } else {
       avatarEl.textContent = (user.name || 'U').charAt(0).toUpperCase();
     }
   }
 
-  // Mark active nav item
-  const currentPath = window.location.pathname.split('/').pop();
-  document.querySelectorAll('.nav-item[data-page]').forEach(el => {
-    if (el.dataset.page === currentPath) {
-      el.classList.add('active');
-    }
-  });
+  // ── Account dropdown toggle (NOT logout on click) ──
+  const userRow  = document.getElementById('userRow');
+  const dropdown = document.getElementById('accountDropdown');
+  if (userRow && dropdown) {
+    userRow.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropdown.classList.contains('open');
+      dropdown.classList.toggle('open', !isOpen);
+    });
+    document.addEventListener('click', () => dropdown.classList.remove('open'));
+    dropdown.addEventListener('click', e => e.stopPropagation());
+  }
 
   // Mobile sidebar toggle
-  const toggle = document.getElementById('sidebarToggle');
+  const toggle  = document.getElementById('sidebarToggle');
   const sidebar = document.getElementById('appSidebar');
   if (toggle && sidebar) {
     toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
     document.addEventListener('click', (e) => {
-      if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-        sidebar.classList.remove('open');
-      }
+      if (!sidebar.contains(e.target) && !toggle.contains(e.target)) sidebar.classList.remove('open');
     });
   }
 }
 
-/* ── Toast notification ──────────────────────────────────────────── */
+/* ── Live Quota (dashboard widget) ───────────────────────────── */
+async function loadQuota() {
+  const sentEl  = document.getElementById('quotaSent');
+  const limitEl = document.getElementById('quotaLimit');
+  const barEl   = document.getElementById('quotaBar');
+  const certEl  = document.getElementById('quotaCerts');
+  if (!sentEl) return;
+
+  try {
+    const data = await apiFetch('/api/quota');
+    if (!data) return;
+
+    const limit = data.dailyLimit || 500;
+    const sent  = data.sentToday  || 0;
+    const certs = data.certsToday || 0;
+    const pct   = Math.min(Math.round(sent / limit * 100), 100);
+
+    sentEl.textContent  = sent;
+    limitEl.textContent = limit;
+    if (certEl) certEl.textContent = certs;
+    if (barEl)  {
+      barEl.style.width = pct + '%';
+      barEl.className   = 'progress-fill' + (pct > 80 ? ' gold' : '');
+    }
+  } catch (e) {
+    if (sentEl) sentEl.textContent = '—';
+  }
+}
+
+/* ── Toast ────────────────────────────────────────────────────── */
 function toast(message, type = 'info', duration = 3500) {
   const existing = document.getElementById('cf-toast');
   if (existing) existing.remove();
-
   const icons = {
-    success: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
-    error:   `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
-    info:    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
-    warning: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>',
+    error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>',
   };
-  const colors = {
-    success: '#10b981', error: '#ef4444', info: '#00d4ff', warning: '#f59e0b',
-  };
-
+  const colors = { success: '#10b981', error: '#ef4444', info: '#00d4ff', warning: '#f59e0b' };
   const el = document.createElement('div');
   el.id = 'cf-toast';
-  el.style.cssText = `
-    position:fixed; bottom:24px; right:24px; z-index:9999;
-    display:flex; align-items:center; gap:10px;
-    padding:12px 18px; border-radius:10px;
-    background:#0d1726; border:1px solid rgba(255,255,255,0.10);
-    color:#dde6f5; font-size:13.5px; font-family:'DM Sans',sans-serif;
-    box-shadow:0 16px 48px rgba(0,0,0,0.5);
-    animation:slideIn 0.3s ease both;
-    max-width:340px;
-  `;
-  el.innerHTML = `
-    <span style="color:${colors[type]};flex-shrink:0;">${icons[type]}</span>
-    <span style="flex:1">${message}</span>
-  `;
-
+  el.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:10px;background:#0d1726;border:1px solid rgba(255,255,255,0.10);color:#dde6f5;font-size:13.5px;font-family:\'Plus Jakarta Sans\',sans-serif;box-shadow:0 16px 48px rgba(0,0,0,0.5);animation:cfSlideIn 0.3s ease both;max-width:340px;';
+  el.innerHTML = '<span style="color:' + colors[type] + ';flex-shrink:0">' + (icons[type] || '') + '</span><span>' + message + '</span>';
   const style = document.createElement('style');
-  style.textContent = `@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}`;
+  style.textContent = '@keyframes cfSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}';
   document.head.appendChild(style);
   document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; el.style.transition = 'all 0.3s ease'; setTimeout(() => el.remove(), 300); }, duration);
+}
 
-  setTimeout(() => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(8px)';
-    el.style.transition = 'all 0.3s ease';
-    setTimeout(() => el.remove(), 300);
-  }, duration);
+/* ── Utilities ────────────────────────────────────────────────── */
+function copyToClipboard(text, label = 'Copied') {
+  navigator.clipboard.writeText(text)
+    .then(() => toast(label + ' to clipboard', 'success', 2000))
+    .catch(() => toast('Could not copy', 'error', 2000));
+}
+
+function downloadCSV(rows, filename) {
+  if (!rows.length) return;
+  const headers = Object.keys(rows[0]);
+  const csv = [headers.join(','), ...rows.map(r => headers.map(h => JSON.stringify(r[h] ?? '')).join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = filename;
+  a.click();
 }
 
 /* ── Copy to clipboard ───────────────────────────────────────────── */
@@ -268,3 +328,51 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebar();
   lucide.createIcons();
 });
+
+/* ── Google Picker ───────────────────────────────────────────── */
+async function openGooglePicker(type, callback) {
+  // type: 'sheet' | 'presentation' | 'folder'
+  const { clientId } = await apiFetch('/auth/config');
+  const token = getToken();
+  const user = getUser();
+
+  await loadScript('https://apis.google.com/js/api.js');
+  await loadScript('https://accounts.google.com/gsi/client');
+
+  gapi.load('picker', () => {
+    const mimeTypes = {
+      sheet: 'application/vnd.google-apps.spreadsheet',
+      presentation: 'application/vnd.google-apps.presentation',
+      folder: 'application/vnd.google-apps.folder',
+    };
+
+    const view = type === 'folder'
+      ? new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+          .setSelectFolderEnabled(true)
+      : new google.picker.DocsView()
+          .setMimeTypes(mimeTypes[type]);
+
+    const picker = new google.picker.PickerBuilder()
+      .addView(view)
+      .setOAuthToken(user.accessToken)
+      .setDeveloperKey('') // leave empty — OAuth token is enough
+      .setCallback((data) => {
+        if (data.action === google.picker.Action.PICKED) {
+          const doc = data.docs[0];
+          callback({ id: doc.id, name: doc.name, url: doc.url });
+        }
+      })
+      .build();
+
+    picker.setVisible(true);
+  });
+}
+
+function loadScript(src) {
+  return new Promise((resolve) => {
+    if (document.querySelector(`script[src="${src}"]`)) return resolve();
+    const s = document.createElement('script');
+    s.src = src; s.onload = resolve;
+    document.head.appendChild(s);
+  });
+}
