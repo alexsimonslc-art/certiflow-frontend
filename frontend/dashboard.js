@@ -106,7 +106,23 @@ function renderSidebar(activePage) {
 
   let navHtml = '';
   navItems.forEach(item => {
-    if (item.section) navHtml += `<div class="nav-section-label">${item.section}</div>`;
+    if (item.section) {
+      if (item.section === 'Workspace') {
+        navHtml += `
+          <div class="nav-section-label nav-section-with-toggle">
+            <span>${item.section}</span>
+            <button class="sidebar-toggle-btn" id="sidebarCollapseBtn" title="Collapse sidebar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </button>
+          </div>`;
+      } else {
+        navHtml += `<div class="nav-section-label">${item.section}</div>`;
+      }
+    }
     const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
     navHtml += `
       <a class="nav-item${item.page === activePage ? ' active' : ''}"
@@ -127,11 +143,7 @@ function renderSidebar(activePage) {
       </div>
       <span class="logo-name">Certi<span>Flow</span></span>
     </div>
-    <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Collapse sidebar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
-    </button>
+    
     <nav class="sidebar-nav">${navHtml}</nav>
     <div class="sidebar-footer">
       <div class="user-row">
@@ -191,7 +203,7 @@ function initSidebar() {
   const sidebar      = document.getElementById('appSidebar');
   const mainArea     = document.querySelector('.main-area');
   const collapseBtn  = document.getElementById('sidebarCollapseBtn');
-  const headerToggle = document.getElementById('sidebarToggle');
+ 
 
   function setSidebarCollapsed(collapsed) {
     if (!sidebar) return;
@@ -214,20 +226,7 @@ function initSidebar() {
     });
   }
 
-  if (headerToggle && sidebar) {
-    headerToggle.addEventListener('click', () => {
-      if (window.innerWidth <= 900) {
-        sidebar.classList.toggle('mobile-open');
-      } else {
-        setSidebarCollapsed(!sidebar.classList.contains('collapsed'));
-      }
-    });
-    document.addEventListener('click', (e) => {
-      if (!sidebar.contains(e.target) && !headerToggle.contains(e.target)) {
-        sidebar.classList.remove('mobile-open');
-      }
-    });
-  }
+
 
   // Mark active nav
   const currentPage = window.location.pathname.split('/').pop();

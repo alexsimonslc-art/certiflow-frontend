@@ -1587,3 +1587,31 @@ body::after {
   color: #ef4444;
 }
 .logout-btn svg { width: 15px; height: 15px; }
+
+/* ── Sidebar section label with toggle ── */
+.nav-section-with-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 4px;
+}
+
+.sidebar-toggle-btn {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.sidebar-toggle-btn:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: var(--border-2);
+  color: var(--text);
+}
+
+/* Hide collapse arrow button if it still exists */
+.sidebar-collapse-btn { display: none !important; }
