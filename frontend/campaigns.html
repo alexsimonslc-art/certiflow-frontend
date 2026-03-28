@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Campaigns — CertiFlow</title>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebarMount"></div>
+  <div class="main-area">
+    <header class="top-header">
+      <div class="page-breadcrumb">
+        <i data-lucide="folder-open" style="width:15px;height:15px"></i>
+        <i data-lucide="chevron-right" style="width:14px;height:14px"></i>
+        <span>Campaigns</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="exportCampaigns()">
+          <i data-lucide="download"></i> Export CSV
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">
+          <i data-lucide="trash-2"></i> Clear All
+        </button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="page-title">Campaign History</div>
+      <div class="page-subtitle">All certificate and email campaigns run from your account.</div>
+
+      <!-- Filter bar -->
+      <div style="display:flex;gap:12px;margin-bottom:24px;align-items:center;flex-wrap:wrap">
+        <div class="tab-bar" style="width:auto">
+          <button class="tab-btn active" id="filterAll"   onclick="filterCampaigns('all')">All</button>
+          <button class="tab-btn"        id="filterCerts" onclick="filterCampaigns('cert')">Certificates</button>
+          <button class="tab-btn"        id="filterMail"  onclick="filterCampaigns('mail')">Emails</button>
+          <button class="tab-btn"        id="filterCombo" onclick="filterCampaigns('combined')">Combined</button>
+        </div>
+        <div class="input-wrap" style="flex:1;min-width:200px">
+          <i data-lucide="search" class="input-icon"></i>
+          <input class="form-input with-icon" id="campaignSearch" placeholder="Search campaigns…" oninput="renderCampaigns()"/>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px" id="campaignStats"></div>
+
+      <!-- Campaign list -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div id="campaignList"></div>
+        <div id="campaignEmpty" style="display:none;padding:64px 32px;text-align:center">
+          <div style="width:56px;height:56px;border-radius:16px;background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+            <i data-lucide="folder-open" style="width:24px;height:24px;color:var(--cyan)"></i>
+          </div>
+          <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">No campaigns yet</div>
+          <div style="font-size:14px;color:var(--text-2)">Run your first campaign from the Certificate Generator or Bulk Mail Sender.</div>
+          <div style="display:flex;gap:12px;justify-content:center;margin-top:20px">
+            <a href="cert-tool.html" class="btn btn-primary btn-sm"><i data-lucide="file-badge"></i> Generate Certificates</a>
+            <a href="mail-tool.html" class="btn btn-secondary btn-sm"><i data-lucide="mail"></i> Send Emails</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="dashboard.js"></script>
+<script>
+// @ts-nocheck
+let allCampaigns = [];
+let activeFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+  requireAuth();
+  document.getElementById('sidebarMount').outerHTML = renderSidebar('campaigns.html');
+  initSidebar();
+  lucide.createIcons();
+  loadCampaigns();
+});
+
+function loadCampaigns() {
+  allCampaigns = JSON.parse(localStorage.getItem('cf_campaigns') || '[]');
+  renderStats();
+  renderCampaigns();
+}
+
+function renderStats() {
+  const total   = allCampaigns.length;
+  const certs   = allCampaigns.filter(c => c.type === 'cert').length;
+  const mails   = allCampaigns.filter(c => c.type === 'mail').length;
+  const combos  = allCampaigns.filter(c => c.type === 'combined').length;
+  const stats   = [
+    { label: 'Total Campaigns',    value: total,  icon: 'folder', color: 'cyan'   },
+    { label: 'Certificate Runs',   value: certs,  icon: 'file-badge', color: 'purple' },
+    { label: 'Email Campaigns',    value: mails,  icon: 'mail',   color: 'green'  },
+    { label: 'Combined Pipelines', value: combos, icon: 'zap',    color: 'gold'   },
+  ];
+  document.getElementById('campaignStats').innerHTML = stats.map(s =>
+    '<div class="card card-sm">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
+        '<i data-lucide="' + s.icon + '" style="width:16px;height:16px;color:var(--' + s.color + ')"></i>' +
+        '<span style="font-size:12.5px;color:var(--text-2)">' + s.label + '</span>' +
+      '</div>' +
+      '<div style="font-size:28px;font-weight:800;font-family:var(--font-display);color:var(--text)">' + s.value + '</div>' +
+    '</div>'
+  ).join('');
+  lucide.createIcons();
+}
+
+function filterCampaigns(type) {
+  activeFilter = type;
+  ['All','Certs','Mail','Combo'].forEach((t, i) => {
+    const keys = ['all','cert','mail','combined'];
+    const el   = document.getElementById('filter' + t);
+    if (el) el.className = 'tab-btn' + (keys[i] === type ? ' active' : '');
+  });
+  renderCampaigns();
+}
+
+function renderCampaigns() {
+  const q    = (document.getElementById('campaignSearch').value || '').toLowerCase();
+  const list = allCampaigns
+    .filter(c => activeFilter === 'all' || c.type === activeFilter)
+    .filter(c => !q || (c.name || '').toLowerCase().includes(q))
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const el   = document.getElementById('campaignList');
+  const none = document.getElementById('campaignEmpty');
+
+  if (!list.length) { el.innerHTML = ''; none.style.display = 'block'; lucide.createIcons(); return; }
+  none.style.display = 'none';
+
+  const typeInfo = {
+    cert:     { label: 'Certificates', color: 'purple', icon: 'file-badge'  },
+    mail:     { label: 'Bulk Mail',    color: 'cyan',   icon: 'mail'        },
+    combined: { label: 'Combined',     color: 'gold',   icon: 'zap'         },
+  };
+
+  el.innerHTML = list.map((c, i) => {
+    const t   = typeInfo[c.type] || typeInfo.mail;
+    const dt  = new Date(c.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+    const pct = c.total > 0 ? Math.round((c.success || 0) / c.total * 100) : 0;
+    return '<div style="display:flex;align-items:center;gap:16px;padding:16px 22px;border-bottom:1px solid var(--glass-border);transition:background 0.15s" onmouseover="this.style.background=\'rgba(255,255,255,0.02)\'" onmouseout="this.style.background=\'\'">'+
+      '<div style="width:40px;height:40px;border-radius:10px;background:var(--' + t.color + '-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0">'+
+        '<i data-lucide="' + t.icon + '" style="width:17px;height:17px;color:var(--' + t.color + ')"></i>'+
+      '</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (c.name || 'Untitled Campaign') + '</div>'+
+        '<div style="font-size:12.5px;color:var(--text-3)">' + dt + ' · ' + t.label + '</div>'+
+      '</div>'+
+      '<div style="text-align:center;min-width:60px">'+
+        '<div style="font-size:18px;font-weight:700;color:var(--text)">' + (c.total || 0) + '</div>'+
+        '<div style="font-size:11.5px;color:var(--text-3)">total</div>'+
+      '</div>'+
+      '<div style="text-align:center;min-width:60px">'+
+        '<div style="font-size:18px;font-weight:700;color:var(--green)">' + (c.success || 0) + '</div>'+
+        '<div style="font-size:11.5px;color:var(--text-3)">success</div>'+
+      '</div>'+
+      '<div style="text-align:center;min-width:54px">'+
+        '<span class="badge ' + (pct === 100 ? 'badge-green' : pct > 50 ? 'badge-gold' : 'badge-red') + '">' + pct + '%</span>'+
+      '</div>'+
+      (c.folderLink ? '<a href="' + c.folderLink + '" target="_blank" class="btn btn-ghost btn-sm" title="Open in Drive"><i data-lucide="external-link"></i></a>' : '<div style="width:34px"></div>')+
+    '</div>';
+  }).join('');
+  lucide.createIcons();
+}
+
+function exportCampaigns() {
+  downloadCSV(allCampaigns.map(c => ({
+    Name: c.name || '', Type: c.type, Date: c.date,
+    Total: c.total || 0, Success: c.success || 0,
+    FolderLink: c.folderLink || ''
+  })), 'certiflow-campaigns-' + Date.now() + '.csv');
+}
+
+function confirmClearAll() {
+  if (window.confirm('Clear all campaign history? This cannot be undone.')) {
+    localStorage.removeItem('cf_campaigns');
+    allCampaigns = [];
+    renderStats();
+    renderCampaigns();
+    toast('Campaign history cleared', 'success');
+  }
+}
+</script>
+</body>
+</html>
