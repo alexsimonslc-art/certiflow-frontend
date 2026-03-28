@@ -1703,3 +1703,27 @@ body::after {
   overflow: visible !important;
   padding-top: 8px !important;
 }
+
+/* ── Rescue hamburger from nav-section-label collapse ── */
+.sidebar.collapsed .nav-section-with-toggle {
+  opacity: 1 !important;
+  height: auto !important;
+  overflow: visible !important;
+  padding: 10px 0 8px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+.sidebar.collapsed .nav-section-with-toggle .section-text {
+  display: none !important;
+}
+.sidebar.collapsed .nav-section-with-toggle .sidebar-toggle-btn {
+  display: flex !important;
+  opacity: 1 !important;
+  width: 28px !important;
+  height: 28px !important;
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+}
+.sidebar.collapsed .nav-section-with-toggle .sidebar-toggle-btn svg {
+  stroke: #c8d8f0 !important;
+}
