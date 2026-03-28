@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    CertiFlow — Login Page
-   Fonts: Syne (display) + DM Sans (body)
+   Fonts: DM Sans (display) + DM Sans (body)
 ═══════════════════════════════════════════════ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,7 +20,7 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
-  --font-display: 'Syne', sans-serif;
+  --font-display: 'DM Sans', sans-serif;
   --font-body: 'DM Sans', sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -117,7 +117,7 @@ body {
 
 .step-header { margin-bottom: 28px; }
 
-/* Title — matches hero: Syne 800, -0.04em, bigger */
+/* Title — matches hero: DM Sans 800, -0.04em, bigger */
 .step-title {
   font-family: var(--font-display);
   font-size: 2.2rem; font-weight: 800;
