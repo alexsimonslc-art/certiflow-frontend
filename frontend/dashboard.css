@@ -1671,3 +1671,35 @@ body::after {
 
 /* Hide collapse arrow if it still exists anywhere */
 .sidebar-collapse-btn { display: none !important; }
+
+/* ── Keep hamburger visible when sidebar is collapsed ── */
+.sidebar.collapsed .nav-section-with-toggle {
+  justify-content: center !important;
+  padding: 10px 0 8px !important;
+  overflow: visible !important;
+}
+
+.sidebar.collapsed .section-text {
+  display: none !important;
+}
+
+.sidebar.collapsed .sidebar-toggle-btn {
+  display: flex !important;
+  width: 28px !important;
+  height: 28px !important;
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  margin: 0 auto !important;
+}
+
+.sidebar.collapsed .sidebar-toggle-btn svg {
+  stroke: #c8d8f0 !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+
+/* Make sure collapsed sidebar nav doesn't clip content */
+.sidebar.collapsed .sidebar-nav {
+  overflow: visible !important;
+  padding-top: 8px !important;
+}
