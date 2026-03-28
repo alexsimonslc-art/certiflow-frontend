@@ -582,7 +582,13 @@ async function startGeneration() {
 
   const payload = {
     campaignName:  document.getElementById('campaignName').value,
-    template:      { width: ED.w, height: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64, fields: ED.fields },
+    template: {
+    width: ED.w,
+    height: ED.h,
+    backgroundBase64: ED.bgBase64,   // ← only rename the KEY, not the value
+    bgColor: ED.bgColor,
+    fields: ED.fields,
+    },
     participants:  CS.rows,
     nameCol:       document.getElementById('nameCol').value,
     emailCol:      document.getElementById('emailCol').value,
