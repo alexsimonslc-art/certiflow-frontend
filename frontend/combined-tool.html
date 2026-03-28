@@ -4,448 +4,1060 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Combined Pipeline — CertiFlow</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   <style>
-    /* Dashboard-specific overrides */
-    .tool-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .tool-launch-card {
+    /* ── TEXT COLOR OVERRIDES — higher contrast everywhere ── */
+    :root {
+      --text:   #f0f6ff;
+      --text-2: #a8bdd4;
+      --text-3: #5a7490;
+      --bg:     #04080f;
+      --surface: rgba(12, 22, 40, 0.75);
+      --glass-border: rgba(255,255,255,0.09);
+      --glass-border-2: rgba(255,255,255,0.15);
+    }
+
+    /* ── Layout ── */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: fadeInUp 0.3s var(--ease,cubic-bezier(.16,1,.3,1)) both; }
+
+    /* ── Pipeline Flow Banner ── */
+    .pipeline-banner {
+      display: flex;
+      align-items: center;
+      gap: 0;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 22px 22px 18px;
-      transition: all 0.2s ease;
-      cursor: pointer;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .pipe-stage {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      text-decoration: none;
+      align-items: center;
+      gap: 8px;
+      padding: 18px 14px;
+      position: relative;
+      border-right: 1px solid var(--glass-border);
+      transition: background 0.2s;
     }
-    .tool-launch-card:hover {
-      border-color: var(--border-2);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    .pipe-stage:last-child { border-right: none; }
+    .pipe-stage.active-stage { background: rgba(0,212,255,0.06); }
+    .pipe-stage.done-stage { background: rgba(16,185,129,0.04); }
+    .pipe-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
     }
-    .tool-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .tool-card-icon {
-      width: 40px; height: 40px;
-      border-radius: 10px;
+    .pipe-icon svg { width: 20px; height: 20px; }
+    .pipe-icon.cert { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.2); color: var(--cyan); }
+    .pipe-icon.mail { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); color: #a78bfa; }
+    .pipe-icon.done { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.2); color: var(--green); }
+    .pipe-icon.active { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.2); color: var(--gold); }
+    .pipe-label { font-size: 12px; font-weight: 600; color: var(--text-2); text-align: center; line-height: 1.3; }
+    .pipe-sub { font-size: 11px; color: var(--text-3); text-align: center; }
+    .pipe-arrow {
+      font-size: 14px; color: var(--text-3); padding: 0 2px; flex-shrink: 0;
+      display: flex; align-items: center;
+    }
+
+    /* ── Source Picker ── */
+    .src-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .src-opt {
+      padding: 18px 16px; border: 1.5px solid var(--glass-border);
+      border-radius: var(--radius-lg); cursor: pointer;
+      background: var(--glass); transition: all 0.2s;
+      text-align: center;
+    }
+    .src-opt:hover { border-color: var(--glass-border-2); background: rgba(255,255,255,0.04); }
+    .src-opt.active { border-color: rgba(0,212,255,0.45); background: rgba(0,212,255,0.08); }
+    .src-opt-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px; border: 1px solid var(--glass-border);
+    }
+    .src-opt-icon svg { width: 20px; height: 20px; }
+    .src-opt .opt-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .src-opt .opt-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.4; }
+    .src-opt.active .src-opt-icon { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.2); color: var(--cyan); }
+    .src-opt.active .opt-title { color: var(--cyan); }
+
+    /* ── Canvas Editor (Step 2) ── */
+    .editor-shell {
+      display: grid;
+      grid-template-columns: 1fr 264px;
+      gap: 0;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      height: 560px;
+      background: var(--surface);
+    }
+    .editor-canvas-col {
+      display: flex; flex-direction: column; border-right: 1px solid var(--glass-border);
+    }
+    .editor-toolbar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 10px 14px; background: rgba(0,0,0,0.25);
+      border-bottom: 1px solid var(--glass-border); flex-shrink: 0;
+    }
+    .editor-toolbar .tb-sep { width: 1px; height: 18px; background: var(--glass-border); margin: 0 4px; flex-shrink: 0; }
+    .canvas-zone {
+      flex: 1; overflow: auto; display: flex;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      background: repeating-conic-gradient(rgba(255,255,255,0.016) 0% 25%, transparent 0% 50%) 0 0 / 18px 18px;
+    }
+    .c-container {
+      position: relative;
+      box-shadow: 0 12px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+      border-radius: 3px; overflow: hidden;
+    }
+    #certCanvas { display: block; }
+    #fieldOverlay { position: absolute; inset: 0; }
+    .tf-handle {
+      position: absolute; cursor: move; pointer-events: all;
+      user-select: none; border: 2px solid transparent;
+      border-radius: 3px; padding: 1px 5px; white-space: nowrap;
+      transition: border-color 0.12s;
+    }
+    .tf-handle:hover { border-color: rgba(0,212,255,0.6); }
+    .tf-handle.sel { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.12); }
+    .tf-del {
+      display: none; position: absolute; top: -10px; right: -10px;
+      width: 20px; height: 20px; background: #f43f5e; border-radius: 50%;
+      font-size: 13px; line-height: 20px; text-align: center;
+      color: #fff; cursor: pointer; z-index: 10;
+    }
+    .tf-handle.sel .tf-del { display: block; }
+
+    /* Editor right col */
+    .editor-props-col { display: flex; flex-direction: column; overflow: hidden; }
+    .ep-tabs { display: flex; border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
+    .ep-tab {
+      flex: 1; padding: 11px; text-align: center; font-size: 13px;
+      font-weight: 600; color: var(--text-3); cursor: pointer;
+      border-bottom: 2px solid transparent; transition: all 0.2s;
+    }
+    .ep-tab:hover { color: var(--text-2); }
+    .ep-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); background: rgba(0,212,255,0.04); }
+    .ep-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+    .ep-body::-webkit-scrollbar { width: 4px; }
+    .ep-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    .ep-panel { display: none; flex-direction: column; gap: 10px; }
+    .ep-panel.active { display: flex; }
+    .ep-section-hd { font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-3); margin-top: 4px; }
+
+    .field-chip {
+      display: flex; align-items: center; gap: 9px; padding: 9px 11px;
+      border-radius: 9px; cursor: pointer; border: 1px solid transparent;
+      transition: all 0.15s; background: var(--glass);
+    }
+    .field-chip:hover { border-color: var(--glass-border); }
+    .field-chip.sel { border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.08); }
+    .fc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .fc-label { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+    .fc-tag { font-size: 10.5px; color: var(--text-3); font-family: var(--font-mono,'monospace'); }
+
+    .prop-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .prop-mini .form-input { padding: 8px 10px; font-size: 13px; }
+    .align-row { display: flex; gap: 5px; }
+    .al-btn {
+      flex: 1; padding: 7px; border-radius: 7px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      color: var(--text-3); cursor: pointer; transition: all 0.15s;
       display: flex; align-items: center; justify-content: center;
     }
-    .tool-card-icon svg { width: 19px; height: 19px; }
-    .tool-card-icon.cyan { background: var(--cyan-dim); color: var(--cyan); }
-    .tool-card-icon.purple { background: var(--purple-dim); color: #a78bfa; }
-    .tool-card-icon.green { background: var(--green-dim); color: var(--green); }
-    .tool-card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .tool-card-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
-    .tool-card-footer {
+    .al-btn:hover { color: var(--text-2); }
+    .al-btn.active { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.3); }
+    .al-btn svg { width: 15px; height: 15px; }
+
+    /* Add-field modal */
+    .af-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(14px);
+      z-index: 300; align-items: center; justify-content: center;
+    }
+    .af-overlay.open { display: flex; }
+    .af-box {
+      background: #0a1625; border: 1px solid var(--glass-border-2);
+      border-radius: 22px; padding: 32px; width: 460px; max-width: 92vw;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    }
+    .af-box h3 { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 24px; }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2px dashed rgba(255,255,255,0.12); border-radius: 14px;
+      padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .upload-zone:hover, .upload-zone.dz-over { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.04); }
+    .uz-icon { width: 52px; height: 52px; border-radius: 14px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .uz-icon svg { width: 22px; height: 22px; color: var(--cyan); }
+    .upload-zone h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .upload-zone p { font-size: 13px; color: var(--text-2); }
+
+    /* ── Field mapping rows ── */
+    .fm-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; background: var(--glass);
+      border: 1px solid var(--glass-border); border-radius: 11px;
+    }
+    .fm-row .form-select, .fm-row .form-input { flex: 1; min-width: 0; }
+    .fm-arrow { color: var(--text-3); flex-shrink: 0; }
+    .fm-del {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-3); cursor: pointer; flex-shrink: 0; transition: all 0.15s;
+      background: transparent;
+    }
+    .fm-del:hover { color: #f43f5e; background: rgba(244,63,94,0.1); }
+    .fm-del svg { width: 14px; height: 14px; }
+
+    /* ── Email editor ── */
+    .email-editor-wrap { border: 1px solid var(--glass-border); border-radius: 14px; overflow: hidden; }
+    .email-toolbar {
       display: flex; align-items: center; justify-content: space-between;
-      padding-top: 12px; border-top: 1px solid var(--border);
-      font-size: 12px; color: var(--cyan);
+      padding: 11px 16px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--glass-border);
+      gap: 12px; flex-wrap: wrap;
     }
-    .tool-card-footer svg { width: 14px; height: 14px; }
-
-    .activity-list { display: flex; flex-direction: column; }
-    .activity-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 13px 0;
-      border-bottom: 1px solid var(--border);
+    .e-tabs { display: flex; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 9px; padding: 3px; gap: 2px; }
+    .e-tab { padding: 6px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: all 0.18s; white-space: nowrap; }
+    .e-tab.active { background: linear-gradient(135deg,#00d4ff,#7c3aed); color: #fff; font-weight: 600; }
+    .merge-tag-row { display: flex; flex-wrap: wrap; gap: 7px; padding: 10px 16px; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.1); }
+    .mtag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 6px;
+      background: rgba(124,58,237,0.12); color: #c4b5fd;
+      border: 1px solid rgba(124,58,237,0.2);
+      font-size: 12.5px; font-weight: 500; cursor: pointer;
+      transition: all 0.15s; font-family: 'JetBrains Mono',monospace;
     }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    .mtag:hover { background: rgba(124,58,237,0.22); transform: scale(1.04); }
+    .mtag-label { font-size: 11px; font-weight: 600; color: var(--text-3); align-self: center; }
+
+    /* Email preview */
+    .eprev-wrap { background: #f0f4f8; border-radius: 0 0 12px 12px; overflow: hidden; }
+    .eprev-head { background: #dde5ef; padding: 12px 18px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+    .eprev-head div { font-size: 13px; color: #3d5a72; margin-bottom: 4px; }
+    .eprev-head div:last-child { margin-bottom: 0; }
+    .eprev-body { padding: 24px; color: #1a2a3a; font-size: 14px; line-height: 1.7; min-height: 130px; max-height: 320px; overflow-y: auto; }
+
+    /* ── Review panel ── */
+    .review-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
+    .review-stat {
+      text-align: center; padding: 22px 16px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 14px;
     }
-    .activity-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
-    .activity-dot.cyan { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
-    .activity-dot.gold { background: var(--gold); }
-    .activity-dot.red { background: var(--red); }
-    .activity-text { flex: 1; font-size: 13px; color: var(--text-2); line-height: 1.4; }
-    .activity-text strong { color: var(--text); display: block; }
-    .activity-time { font-size: 11.5px; color: var(--text-3); white-space: nowrap; }
+    .review-stat-num { font-family: 'Syne',sans-serif; font-size: 36px; font-weight: 800; line-height: 1; color: var(--text); margin-bottom: 6px; }
+    .review-stat-label { font-size: 13px; color: var(--text-2); }
 
-    .quick-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-
-    .content-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
-
-    .campaign-table { width: 100%; border-collapse: collapse; }
-    .campaign-table th {
-      padding: 10px 14px; background: var(--surface-2);
-      font-size: 11px; font-weight: 600; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.5px;
-      text-align: left;
+    .review-detail-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 13px 16px; border-bottom: 1px solid var(--glass-border); font-size: 14px;
     }
-    .campaign-table td {
-      padding: 11px 14px; border-top: 1px solid var(--border);
-      font-size: 12.5px; color: var(--text-2);
-    }
-    .campaign-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .review-detail-row:last-child { border-bottom: none; }
+    .review-key { color: var(--text-2); font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+    .review-val { color: var(--text); font-weight: 600; text-align: right; word-break: break-all; max-width: 60%; }
+    .review-val.mono { font-family: 'JetBrains Mono',monospace; font-size: 12.5px; }
 
-    .limit-bar-wrap { margin-bottom: 16px; }
-    .limit-label {
-      display: flex; justify-content: space-between;
-      font-size: 12px; color: var(--text-2); margin-bottom: 5px;
+    /* ── Running state ── */
+    .pipeline-running {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 36px 24px 28px;
     }
-    .limit-bar { height: 4px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
-    .limit-fill { height: 100%; border-radius: 99px; }
-    .limit-fill.cyan { background: var(--cyan); }
-    .limit-fill.gold { background: var(--gold); }
+    .run-ring {
+      position: relative; width: 110px; height: 110px; margin-bottom: 24px;
+    }
+    .run-ring svg { width: 110px; height: 110px; transform: rotate(-90deg); }
+    .run-ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
+    .run-ring-fg { fill: none; stroke: url(#ringGrad); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 314; stroke-dashoffset: 314; transition: stroke-dashoffset 0.5s ease; }
+    .run-ring-text {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .run-pct { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; color: var(--text); line-height: 1; }
+    .run-done-label { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .run-title { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .run-status { font-size: 15px; color: var(--text-2); margin-bottom: 24px; min-height: 22px; }
+    .run-progress-row { width: 100%; max-width: 520px; margin-bottom: 8px; }
+    .run-counts { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); margin-bottom: 6px; }
+    .run-counts strong { color: var(--text); }
 
-    @media (max-width: 1100px) { .content-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 900px) { .tool-card-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 560px) { .tool-card-grid { grid-template-columns: 1fr; } .quick-stat-row { grid-template-columns: 1fr 1fr; } }
+    /* ── Live log ── */
+    .live-log {
+      background: rgba(2,5,10,0.85);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px; padding: 14px;
+      font-family: 'JetBrains Mono',monospace; font-size: 12.5px;
+      color: #4a6080; height: 200px; overflow-y: auto;
+      text-align: left; display: flex; flex-direction: column; gap: 5px;
+    }
+    .live-log::-webkit-scrollbar { width: 4px; }
+    .live-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    .ll-row { display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+    .ll-ts { color: #2d4060; flex-shrink: 0; font-size: 11px; margin-top: 1px; }
+    .ll-ok   { color: #10b981; }
+    .ll-err  { color: #f43f5e; }
+    .ll-info { color: #00d4ff; }
+    .ll-warn { color: #f59e0b; }
+    .ll-cert { color: #a78bfa; }
+    .ll-mail { color: #34d399; }
+
+    /* ── Results table ── */
+    .results-table { width: 100%; border-collapse: collapse; }
+    .results-table thead th {
+      padding: 12px 16px; background: rgba(255,255,255,0.03);
+      font-size: 11.5px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.6px; text-align: left; white-space: nowrap;
+    }
+    .results-table tbody tr { border-top: 1px solid var(--glass-border); transition: background 0.12s; }
+    .results-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .results-table tbody td { padding: 13px 16px; font-size: 14px; color: var(--text-2); }
+    .results-table tbody td:first-child { font-weight: 600; color: var(--text); }
+
+    /* ── Completion ── */
+    .done-ring {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; animation: popIn 0.5s cubic-bezier(.16,1,.3,1) both;
+    }
+    .done-ring svg { width: 34px; height: 34px; color: #fff; }
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .result-mini-row { display: flex; border-top: 1px solid var(--glass-border); }
+    .result-mini-cell { flex: 1; padding: 18px; text-align: center; border-right: 1px solid var(--glass-border); }
+    .result-mini-cell:last-child { border-right: none; }
+    .rmc-num { font-family: 'Syne',sans-serif; font-size: 30px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .rmc-label { font-size: 13px; color: var(--text-2); }
+
+    .icon-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      color: var(--text-2); cursor: pointer; transition: all 0.15s;
+    }
+    .icon-btn:hover { color: var(--cyan); border-color: rgba(0,212,255,0.25); background: rgba(0,212,255,0.08); }
+    .icon-btn svg { width: 14px; height: 14px; }
+
+    /* ── Cols ── */
+    .two-cols { display: grid; grid-template-columns: 1fr 300px; gap: 22px; }
+    .three-col-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+
+    @media (max-width:1100px) { .two-cols { grid-template-columns: 1fr; } .editor-shell { grid-template-columns: 1fr; height: auto; } .editor-props-col { height: 340px; } }
+    @media (max-width: 800px) { .pipeline-banner { display: none; } .review-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .review-grid { grid-template-columns: 1fr; } .src-picker { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
+<div class="app-layout">
+  <div id="sidebarMount"></div>
 
-<!-- ── SIDEBAR ───────────────────────────────────────── -->
-<aside class="app-sidebar" id="appSidebar">
-  <div class="sidebar-header">
-    <a href="dashboard.html" class="sidebar-logo">
-      <div class="sidebar-logo-icon">⚡</div>
-      <span>CertiFlow</span>
-    </a>
-  </div>
-  <nav class="sidebar-nav">
-    <a href="dashboard.html"    class="nav-item" data-page="dashboard.html">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-      Dashboard
-    </a>
-    <a href="mail-tool.html"    class="nav-item" data-page="mail-tool.html">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
-      Bulk Mail
-    </a>
-    <a href="cert-tool.html"    class="nav-item" data-page="cert-tool.html">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg>
-      Certificates
-    </a>
-    <a href="combined-tool.html" class="nav-item active" data-page="combined-tool.html">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
-      Combined
-    </a>
-  </nav>
-  <div class="sidebar-footer">
-    <div class="sidebar-user">
-      <div class="sidebar-avatar" id="sidebarAvatar">A</div>
-      <div class="sidebar-user-info">
-        <span id="sidebarUserName">Loading...</span>
-        <small id="sidebarUserPlan">Personal</small>
+  <div class="main-area">
+    <header class="top-header">
+      <div class="page-breadcrumb">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Combined Pipeline</span>
       </div>
-    </div>
-    <button class="sidebar-logout" onclick="logout()">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
-      Sign out
-    </button>
-  </div>
-</aside>
-
-<!-- ── MAIN ───────────────────────────────────────────── -->
-<main class="app-main">
-  <div class="app-topbar">
-    <button class="topbar-toggle" id="sidebarToggle">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
-    </button>
-    <div class="topbar-title">
-      <h1>Combined Pipeline</h1>
-      <span>Generate certificates + send emails in one workflow</span>
-    </div>
-  </div>
-
-  <div class="tool-container">
-
-    <!-- ── STEP WIZARD ─────────────────────────────── -->
-    <div class="step-wizard" id="stepWizard">
-      <div class="step-item active" data-step="1"><span>1</span>Setup</div>
-      <div class="step-connector"></div>
-      <div class="step-item" data-step="2"><span>2</span>Configure</div>
-      <div class="step-connector"></div>
-      <div class="step-item" data-step="3"><span>3</span>Email</div>
-      <div class="step-connector"></div>
-      <div class="step-item" data-step="4"><span>4</span>Review</div>
-      <div class="step-connector"></div>
-      <div class="step-item" data-step="5"><span>5</span>Results</div>
-    </div>
-
-    <!-- Pipeline flow diagram -->
-    <div class="pipeline-flow">
-      <div class="pipeline-stage">
-        <div class="pipeline-icon cert">🏅</div>
-        <div class="pipeline-label"><strong>Google Slides</strong>Template cloned per person</div>
+      <div class="header-actions">
+        <button class="header-btn" id="sidebarToggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
       </div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-stage">
-        <div class="pipeline-icon cert">📄</div>
-        <div class="pipeline-label"><strong>PDF Export</strong>Saved to your Drive</div>
-      </div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-stage">
-        <div class="pipeline-icon cert">🔗</div>
-        <div class="pipeline-label"><strong>Link Written</strong>Back to Google Sheet</div>
-      </div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-stage">
-        <div class="pipeline-icon mail">✉️</div>
-        <div class="pipeline-label"><strong>Gmail Send</strong>Personalized email per person</div>
-      </div>
-      <div class="pipeline-arrow">→</div>
-      <div class="pipeline-stage">
-        <div class="pipeline-icon done">✅</div>
-        <div class="pipeline-label"><strong>Done</strong>Report generated</div>
-      </div>
-    </div>
+    </header>
 
-    <!-- ── STEP 1: SETUP ───────────────────────────── -->
-    <div class="step-panel active" id="step1">
-      <div class="panel-card">
-        <h2 class="panel-title">Campaign Setup</h2>
-        <p class="panel-desc">Connect your data source and Google resources.</p>
+    <main class="page-content fade-in">
 
-        <div class="form-group">
-          <label class="form-label">Campaign Name</label>
-          <input type="text" class="form-input" id="campaignName" placeholder="e.g. React Bootcamp — March 2026">
-        </div>
+      <!-- Page header -->
+      <div style="margin-bottom:28px">
+        <h1 class="page-title">Combined Pipeline</h1>
+        <p class="page-subtitle">Design a certificate template, connect participant data, and send personalised emails — all in a single automated workflow.</p>
+      </div>
 
-        <div class="section-divider">Participant Data</div>
-
-        <div class="mode-cards">
-          <div class="mode-card active" id="modeSheets" onclick="selectDataMode('sheets')">
-            <h4>📊 Google Sheets</h4>
-            <p>Paste your Sheet ID. CertiFlow reads it directly from your Drive.</p>
+      <!-- Pipeline Flow Banner -->
+      <div class="pipeline-banner">
+        <div class="pipe-stage" id="ps1">
+          <div class="pipe-icon active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
           </div>
-          <div class="mode-card" id="modeUpload" onclick="selectDataMode('upload')">
-            <h4>📁 Upload CSV / Excel</h4>
-            <p>Upload a .csv or .xlsx file from your computer.</p>
-          </div>
+          <div class="pipe-label">Participant Data</div>
+          <div class="pipe-sub">Sheet or CSV</div>
         </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-stage" id="ps2">
+          <div class="pipe-icon cert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="pipe-label">Certificate Design</div>
+          <div class="pipe-sub">Visual editor</div>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-stage" id="ps3">
+          <div class="pipe-icon cert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+          </div>
+          <div class="pipe-label">Field Mapping</div>
+          <div class="pipe-sub">Column → Tag</div>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-stage" id="ps4">
+          <div class="pipe-icon mail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="pipe-label">Email Template</div>
+          <div class="pipe-sub">HTML with merge tags</div>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-stage" id="ps5">
+          <div class="pipe-icon done">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="pipe-label">Launch & Report</div>
+          <div class="pipe-sub">Auto-generate + send</div>
+        </div>
+      </div>
 
-        <div id="sheetsInput">
-          <div class="form-group">
-            <label class="form-label">Google Sheet ID</label>
-            <div class="input-with-hint">
-              <input type="text" class="form-input" id="sheetId" placeholder="Paste ID from URL: /d/THIS_PART/edit">
-              <button class="btn-secondary btn-sm" onclick="loadSheet()">Load Sheet</button>
+      <!-- Stepper -->
+      <div class="stepper" id="stepper" style="margin-bottom:28px"></div>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- STEP 1 — DATA & CAMPAIGN                   -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="step-panel active" id="sp1">
+        <div class="two-cols">
+          <div style="display:flex;flex-direction:column;gap:20px">
+
+            <div class="card">
+              <div class="card-title" style="margin-bottom:20px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Campaign Details
+              </div>
+              <div class="form-group">
+                <label class="form-label">Campaign Name <span style="color:#f43f5e">*</span></label>
+                <input type="text" id="cpName" class="form-input" placeholder="e.g. React Bootcamp March 2025 — Certificate + Email" style="font-size:16px;padding:14px 16px"/>
+              </div>
             </div>
-            <span class="form-hint">Open your Sheet → copy the string between /d/ and /edit in the URL</span>
+
+            <div class="card">
+              <div class="card-title" style="margin-bottom:20px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                Participant Data Source
+              </div>
+
+              <div class="src-picker">
+                <div class="src-opt active" id="srcSheetsBtn" onclick="switchDataSrc('sheets')">
+                  <div class="src-opt-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                  </div>
+                  <div class="opt-title">Google Sheets</div>
+                  <div class="opt-desc">Connect directly with your Sheet ID</div>
+                </div>
+                <div class="src-opt" id="srcFileBtn" onclick="switchDataSrc('file')">
+                  <div class="src-opt-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  </div>
+                  <div class="opt-title">Upload File</div>
+                  <div class="opt-desc">CSV or Excel from your computer</div>
+                </div>
+              </div>
+
+              <!-- Sheets panel -->
+              <div id="panelSheets">
+                <div class="form-group" style="margin-bottom:14px">
+                  <label class="form-label">Google Sheet ID <span style="color:#f43f5e">*</span></label>
+                  <div style="display:flex;gap:10px">
+                    <input type="text" id="sheetId" class="form-input" placeholder="Paste Sheet ID from URL" style="flex:1;font-size:15px"/>
+                    <button class="btn btn-primary" id="loadSheetBtn" onclick="loadSheetData()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                      Load
+                    </button>
+                  </div>
+                  <span class="form-hint" style="color:var(--text-3)">From URL: docs.google.com/spreadsheets/d/<strong style="color:var(--cyan)">THIS_ID</strong>/edit</span>
+                </div>
+                <div id="sheetLoadedMsg" style="display:none"></div>
+              </div>
+
+              <!-- File panel -->
+              <div id="panelFile" style="display:none">
+                <div class="upload-zone" id="cpUploadZone" onclick="document.getElementById('cpFileInput').click()">
+                  <div class="uz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+                  <h4>Click or drag & drop</h4>
+                  <p>Supports <strong>.csv</strong>, <strong>.xlsx</strong>, <strong>.xls</strong></p>
+                  <input type="file" id="cpFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileUpload(event)"/>
+                </div>
+                <div id="fileLoadedMsg" style="display:none;margin-top:12px"></div>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end">
+              <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(2)">
+                Continue to Certificate Design
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div id="uploadInput" style="display:none">
-          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-            <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileUpload(event)">
-            <div class="upload-icon">📂</div>
-            <p>Click to upload or drag & drop</p>
-            <small>.csv or .xlsx — max 5MB</small>
+          <!-- Tips -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:14px;font-size:14px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                How the pipeline works
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--text-2)">
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">1</span><span>Load participant data from your Sheet or a file</span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">2</span><span>Design your certificate visually with text fields</span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">3</span><span>Map sheet columns to certificate placeholders</span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">4</span><span>Write your HTML email template</span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(16,185,129,0.15);color:var(--green);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">5</span><span>Launch — PDFs are saved to Drive, emails sent from Gmail</span></div>
+              </div>
+            </div>
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:12px;font-size:14px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Privacy Notice
+              </div>
+              <p style="font-size:13px;color:var(--text-2);line-height:1.65">Everything runs through your Google OAuth token. No participant data, emails, or certificates ever pass through our servers.</p>
+            </div>
           </div>
-        </div>
-
-        <div id="sheetPreview" style="display:none">
-          <div class="data-preview-header">
-            <span id="previewInfo" class="form-hint"></span>
-            <button class="btn-ghost btn-sm" onclick="clearSheet()">✕ Clear</button>
-          </div>
-          <div class="table-wrapper" id="previewTable"></div>
-        </div>
-
-        <div class="section-divider">Google Resources</div>
-
-        <div class="form-group">
-          <label class="form-label">Google Slides Template ID</label>
-          <input type="text" class="form-input" id="templateId" placeholder="docs.google.com/presentation/d/THIS/edit">
-          <span class="form-hint">The Slides file you designed as your certificate template</span>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Drive Folder ID (for PDF output)</label>
-          <input type="text" class="form-input" id="folderId" placeholder="drive.google.com/drive/folders/THIS">
-          <span class="form-hint">Generated PDFs will be saved here</span>
-        </div>
-
-        <div class="panel-actions">
-          <button class="btn-primary" onclick="goToStep(2)" id="step1Next">Configure Fields →</button>
         </div>
       </div>
-    </div>
 
-    <!-- ── STEP 2: CONFIGURE ───────────────────────── -->
-    <div class="step-panel" id="step2">
-      <div class="panel-card">
-        <h2 class="panel-title">Certificate Field Mapping</h2>
-        <p class="panel-desc">Map your Sheet columns to certificate placeholders.</p>
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- STEP 2 — CERTIFICATE TEMPLATE DESIGNER     -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="step-panel" id="sp2">
+        <div style="display:flex;flex-direction:column;gap:20px">
 
-        <div class="section-divider">Required Fields</div>
-        <div class="mapping-grid" id="requiredMappings">
-          <div class="mapping-row">
-            <span class="mapping-placeholder">{{name}}</span>
-            <span class="mapping-arrow">←</span>
-            <select class="form-select" id="mapName"><option value="">Select column…</option></select>
+          <div class="notice" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--text-2)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span><strong style="color:var(--text)">Visual Certificate Editor</strong> — Upload a background image or pick a colour. Click <strong style="color:var(--cyan)">"+ Add Field"</strong> to place a dynamic text block. Drag fields to position. Select a field to change font, size, colour, and alignment on the right panel.</span>
           </div>
-          <div class="mapping-row">
-            <span class="mapping-placeholder">{{email}}</span>
-            <span class="mapping-arrow">←</span>
-            <select class="form-select" id="mapEmail"><option value="">Select column…</option></select>
+
+          <div class="editor-shell">
+            <!-- Canvas side -->
+            <div class="editor-canvas-col">
+              <div class="editor-toolbar">
+                <label class="btn btn-secondary btn-sm" style="cursor:pointer;padding:7px 13px">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  Background
+                  <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBG(event)"/>
+                </label>
+                <div class="tb-sep"></div>
+                <label style="font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:6px">
+                  Colour
+                  <input type="color" id="bgColor" value="#ffffff" onchange="changeBGColor()" style="width:28px;height:28px;border:1px solid var(--glass-border);border-radius:6px;padding:2px;background:var(--glass);cursor:pointer"/>
+                </label>
+                <button class="btn btn-ghost btn-sm" onclick="clearBG()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  Clear
+                </button>
+                <div class="tb-sep"></div>
+                <select id="canvasSize" class="form-select btn-sm" style="width:155px;padding:7px 28px 7px 10px;font-size:13px" onchange="changeSize()">
+                  <option value="1122,794">A4 Landscape</option>
+                  <option value="794,1122">A4 Portrait</option>
+                  <option value="1280,720">HD 16:9</option>
+                  <option value="1000,700">Wide 1000×700</option>
+                </select>
+                <div style="margin-left:auto;display:flex;gap:8px">
+                  <button class="btn btn-ghost btn-sm" onclick="clearCanvas()">Clear All</button>
+                  <button class="btn btn-primary btn-sm" onclick="openAFModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Field
+                  </button>
+                </div>
+              </div>
+              <div class="canvas-zone" id="canvasZone">
+                <div class="c-container" id="cContainer">
+                  <canvas id="certCanvas"></canvas>
+                  <div id="fieldOverlay"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Properties side -->
+            <div class="editor-props-col">
+              <div class="ep-tabs">
+                <div class="ep-tab active" id="epTab_fields" onclick="switchEPTab('fields')">Fields</div>
+                <div class="ep-tab" id="epTab_props" onclick="switchEPTab('props')">Properties</div>
+              </div>
+              <div class="ep-body">
+                <div class="ep-panel active" id="epPanel_fields">
+                  <div style="font-size:12.5px;color:var(--text-3)">Click a field on the canvas to select it, or use this list.</div>
+                  <div id="fieldChipList">
+                    <div style="text-align:center;padding:28px 12px;color:var(--text-3);font-size:13px">
+                      No fields yet.<br/>
+                      <span style="color:var(--cyan)">Click "+ Add Field"</span> to start.
+                    </div>
+                  </div>
+                </div>
+                <div class="ep-panel" id="epPanel_props">
+                  <div id="propsEmpty" style="padding:16px 0;text-align:center;font-size:13.5px;color:var(--text-3)">Select a field to edit its properties.</div>
+                  <div id="propsForm" style="display:none;flex-direction:column;gap:10px">
+                    <div class="form-group">
+                      <label class="form-label" style="font-size:12px">Placeholder Tag</label>
+                      <input type="text" id="pPh" class="form-input" onchange="setFP('placeholder',this.value)" style="font-family:monospace;font-size:13px;padding:8px 11px"/>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-size:12px">Preview Text</label>
+                      <input type="text" id="pPrev" class="form-input" onchange="setFP('previewText',this.value)" style="font-size:13.5px;padding:8px 11px"/>
+                    </div>
+                    <div class="tb-sep" style="width:100%;height:1px;margin:2px 0"></div>
+                    <div class="ep-section-hd">Typography</div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-size:12px">Font</label>
+                      <select id="pFont" class="form-select" onchange="setFP('fontFamily',this.value)" style="padding:8px 30px 8px 11px;font-size:13.5px">
+                        <option>Helvetica</option><option>Helvetica Bold</option>
+                        <option>Times New Roman</option><option>Times Bold</option>
+                        <option>Courier</option><option>Georgia</option>
+                      </select>
+                    </div>
+                    <div class="prop-mini">
+                      <div class="form-group">
+                        <label class="form-label" style="font-size:12px">Size (px)</label>
+                        <input type="number" id="pSize" class="form-input" min="8" max="200" onchange="setFP('fontSize',+this.value)" oninput="setFP('fontSize',+this.value)"/>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" style="font-size:12px">Colour</label>
+                        <div style="display:flex;gap:7px;align-items:center">
+                          <input type="color" id="pColor" onchange="setFP('color',this.value)" style="width:38px;height:36px;border:1px solid var(--glass-border-2);border-radius:8px;padding:3px;background:var(--glass);cursor:pointer;flex-shrink:0"/>
+                          <span id="pColorHex" style="font-size:11.5px;color:var(--text-2);font-family:monospace">#000000</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" style="font-size:12px">Alignment</label>
+                      <div class="align-row">
+                        <button class="al-btn active" id="alL" onclick="setAlign('left')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="15" y1="14" x2="3" y2="14"/></svg></button>
+                        <button class="al-btn" id="alC" onclick="setAlign('center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="18" y1="14" x2="6" y2="14"/></svg></button>
+                        <button class="al-btn" id="alR" onclick="setAlign('right')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/></svg></button>
+                      </div>
+                    </div>
+                    <div class="tb-sep" style="width:100%;height:1px;margin:2px 0"></div>
+                    <div class="ep-section-hd">Position</div>
+                    <div class="prop-mini">
+                      <div class="form-group"><label class="form-label" style="font-size:12px">X (%)</label><input type="number" id="pX" class="form-input" step="0.5" onchange="setFPXY()"/></div>
+                      <div class="form-group"><label class="form-label" style="font-size:12px">Y (%)</label><input type="number" id="pY" class="form-input" step="0.5" onchange="setFPXY()"/></div>
+                    </div>
+                    <div class="form-group"><label class="form-label" style="font-size:12px">Width (%)</label><input type="number" id="pW" class="form-input" min="10" max="100" onchange="setFP('width',+this.value)"/></div>
+                    <button class="btn btn-danger btn-full btn-sm" onclick="deleteSelField()" style="margin-top:4px">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      Delete Field
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="section-divider">Custom Fields</div>
-        <p class="form-hint" style="margin-bottom:16px">Add extra placeholders used in your Slides template e.g. <code>{{course}}</code>, <code>{{date}}</code></p>
-        <div id="customMappings"></div>
-        <button class="btn-ghost btn-sm" onclick="addCustomField()" style="margin-top:8px">+ Add field</button>
-
-        <div class="section-divider">Write-Back</div>
-        <label class="toggle-row">
-          <input type="checkbox" id="writeBack" checked>
-          <span class="toggle-label">Save certificate links back to Google Sheet</span>
-        </label>
-        <span class="form-hint">Adds a "Certificate Link" column to your Sheet automatically</span>
-
-        <div class="panel-actions">
-          <button class="btn-ghost" onclick="goToStep(1)">← Back</button>
-          <button class="btn-primary" onclick="goToStep(3)">Email Setup →</button>
+          <div style="display:flex;justify-content:space-between;gap:12px">
+            <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(1)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Back
+            </button>
+            <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(3)">
+              Continue to Field Mapping
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ── STEP 3: EMAIL ───────────────────────────── -->
-    <div class="step-panel" id="step3">
-      <div class="panel-card">
-        <h2 class="panel-title">Email Template</h2>
-        <p class="panel-desc">Write the email that gets sent after each certificate is generated.</p>
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- STEP 3 — FIELD MAPPING                     -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="step-panel" id="sp3">
+        <div class="two-cols">
+          <div style="display:flex;flex-direction:column;gap:20px">
 
-        <div class="form-group">
-          <label class="form-label">Email Subject</label>
-          <input type="text" class="form-input" id="emailSubject" placeholder="Your certificate is ready, {{name}}!">
-        </div>
+            <div class="card">
+              <div class="three-col-header">
+                <div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                    Required Columns
+                  </div>
+                  <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Map the Name and Email columns from your sheet.</div>
+                </div>
+              </div>
+              <div class="form-grid form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Name Column <span style="color:#f43f5e">*</span></label>
+                  <select id="mapName" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"><option value="">Select column…</option></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email Column <span style="color:#f43f5e">*</span></label>
+                  <select id="mapEmail" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"><option value="">Select column…</option></select>
+                </div>
+              </div>
+            </div>
 
-        <div class="form-group">
-          <label class="form-label">Available Merge Tags</label>
-          <div class="merge-tags" id="mergeTags">
-            <span class="merge-tag" onclick="insertTag('{{name}}')">{{name}}</span>
-            <span class="merge-tag" onclick="insertTag('{{email}}')">{{email}}</span>
-            <span class="merge-tag" onclick="insertTag('{{cert_link}}')">{{cert_link}}</span>
+            <div class="card">
+              <div class="three-col-header">
+                <div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Custom Field Mappings
+                  </div>
+                  <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Map additional columns to template placeholders like <code style="background:var(--glass);padding:1px 6px;border-radius:4px;font-size:12px;font-family:monospace">{{course}}</code></div>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="addFMapping()" style="flex-shrink:0">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Add
+                </button>
+              </div>
+              <div id="customMappings" style="display:flex;flex-direction:column;gap:10px;margin-top:8px"></div>
+              <div id="noMappingsNote" class="notice" style="background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.13);border-radius:10px;padding:12px 14px;display:flex;gap:10px;font-size:13.5px;color:var(--text-2);margin-top:12px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Template fields detected: <span id="detectedFields" style="color:var(--cyan);font-family:monospace;font-size:12.5px">loading…</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title" style="margin-bottom:16px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                Write Links Back to Sheet
+              </div>
+              <div class="toggle-row" style="margin-bottom:12px">
+                <div class="toggle-info">
+                  <strong>Auto-save certificate links to your Sheet</strong>
+                  <span style="color:var(--text-2)">Adds a column with each participant's PDF URL</span>
+                </div>
+                <div class="toggle on" id="writeBackToggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Column Header Name</label>
+                <input type="text" id="certColName" class="form-input" value="Certificate Link" placeholder="Certificate Link"/>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;gap:12px">
+              <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(2)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Back
+              </button>
+              <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(4)">
+                Continue to Email Template
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
           </div>
-          <span class="form-hint">Click a tag to insert it at the cursor position in the template below</span>
-        </div>
 
-        <div class="form-group">
-          <label class="form-label">HTML Email Body</label>
-          <textarea class="form-textarea code-input" id="emailTemplate" rows="14" placeholder="<h2>Hi {{name}},</h2>
-<p>Congratulations! Your certificate is ready.</p>
-<p><a href='{{cert_link}}'>View Certificate →</a></p>
-<p>Best regards,<br>Your Team</p>"></textarea>
-        </div>
-
-        <div class="preview-box" id="emailPreviewBox" style="display:none">
-          <div class="preview-header">
-            <span>Preview — First Recipient</span>
-            <button class="btn-ghost btn-sm" onclick="refreshPreview()">↻ Refresh</button>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:14px;font-size:14px">Your Sheet Columns</div>
+              <div id="colList" style="font-size:13.5px;color:var(--text-2);display:flex;flex-direction:column;gap:5px">
+                <span style="color:var(--text-3)">Load your sheet first.</span>
+              </div>
+            </div>
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:12px;font-size:14px">Placeholder Guide</div>
+              <div style="background:rgba(2,5,10,0.6);border-radius:9px;padding:13px;font-family:monospace;font-size:12px;color:var(--text-3);line-height:2">
+                <div><span style="color:#10b981">{{name}}</span> → Participant name</div>
+                <div><span style="color:#00d4ff">{{course}}</span> → Course/event</div>
+                <div><span style="color:#a78bfa">{{date}}</span> → Any date column</div>
+                <div><span style="color:#f59e0b">{{score}}</span> → Score/grade</div>
+                <div><span style="color:#f472b6">{{cert_link}}</span> → PDF link in email</div>
+              </div>
+            </div>
           </div>
-          <div class="preview-meta">
-            <span><b>To:</b> <span id="previewTo">—</span></span>
-            <span><b>Subject:</b> <span id="previewSubject">—</span></span>
-          </div>
-          <div class="preview-body" id="previewBody"></div>
-        </div>
-
-        <div class="panel-actions">
-          <button class="btn-ghost" onclick="goToStep(2)">← Back</button>
-          <button class="btn-primary" onclick="goToStep(4)">Review & Launch →</button>
         </div>
       </div>
-    </div>
 
-    <!-- ── STEP 4: REVIEW ──────────────────────────── -->
-    <div class="step-panel" id="step4">
-      <div class="panel-card">
-        <h2 class="panel-title">Review & Launch</h2>
-        <p class="panel-desc">Confirm everything before running the pipeline.</p>
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- STEP 4 — EMAIL TEMPLATE                    -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="step-panel" id="sp4">
+        <div style="display:flex;flex-direction:column;gap:20px">
 
-        <div class="combined-summary-grid">
-          <div class="summary-stat">
-            <span id="reviewCount">0</span>
-            <small>Participants</small>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:20px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+              Email Subject
+            </div>
+            <div class="form-group">
+              <input type="text" id="emailSubject" class="form-input" placeholder="Your certificate is ready, {{name}}!" oninput="refreshEmailPreview()" style="font-size:16px;padding:14px 16px"/>
+              <span class="form-hint" style="color:var(--text-3)">Use merge tags to personalise each subject line</span>
+            </div>
           </div>
-          <div class="summary-stat">
-            <span id="reviewCerts">0</span>
-            <small>Certificates</small>
-          </div>
-          <div class="summary-stat">
-            <span id="reviewEmails">0</span>
-            <small>Emails</small>
-          </div>
-        </div>
 
-        <div class="review-block" id="reviewDetails"></div>
-
-        <div class="info-box warning">
-          <span>⚠️</span>
-          <div>
-            <strong>This will:</strong> Clone your Slides template for each participant, export PDFs to your Drive, write links to your Sheet, then send emails from your Gmail. This cannot be undone.
+          <div class="email-editor-wrap">
+            <div class="email-toolbar">
+              <div>
+                <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text)">HTML Email Body</div>
+                <div style="font-size:12.5px;color:var(--text-2);margin-top:2px">Click a merge tag to insert it at the cursor position</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <button class="btn btn-secondary btn-sm" onclick="loadEmailSample()">Load Sample</button>
+                <div class="e-tabs">
+                  <div class="e-tab active" id="etabHTML" onclick="setETab('html')">HTML</div>
+                  <div class="e-tab" id="etabPrev" onclick="setETab('prev')">Preview</div>
+                </div>
+              </div>
+            </div>
+            <div class="merge-tag-row">
+              <span class="mtag-label">INSERT:</span>
+              <div id="emailMergeTags" style="display:flex;flex-wrap:wrap;gap:7px"></div>
+            </div>
+            <div id="emailHTMLPane">
+              <textarea id="emailTemplate" class="form-textarea" placeholder="Write your HTML email here…" oninput="refreshEmailPreview()" style="border:none;border-radius:0;min-height:300px;font-size:13.5px;resize:vertical;padding:18px 20px"></textarea>
+            </div>
+            <div id="emailPrevPane" style="display:none">
+              <div class="eprev-wrap">
+                <div class="eprev-head">
+                  <div><strong>To:</strong> <span id="eprvTo">First Recipient</span></div>
+                  <div><strong>Subject:</strong> <span id="eprvSubject">—</span></div>
+                </div>
+                <div class="eprev-body" id="eprvBody">Preview will appear here.</div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="panel-actions">
-          <button class="btn-ghost" onclick="goToStep(3)">← Back</button>
-          <button class="btn-danger" onclick="launchPipeline()" id="launchBtn">
-            ⚡ Launch Pipeline
-          </button>
+          <div style="display:flex;justify-content:space-between;gap:12px">
+            <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(3)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Back
+            </button>
+            <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(5)">
+              Review & Launch
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ── STEP 5: RESULTS ─────────────────────────── -->
-    <div class="step-panel" id="step5">
-      <div class="panel-card">
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- STEP 5 — REVIEW & CONFIRM                  -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="step-panel" id="sp5">
+        <div style="display:flex;flex-direction:column;gap:22px">
 
-        <!-- Running state -->
+          <div class="review-grid">
+            <div class="review-stat">
+              <div class="review-stat-num" id="rvParticipants">0</div>
+              <div class="review-stat-label">Participants</div>
+            </div>
+            <div class="review-stat" style="border-color:rgba(0,212,255,0.15);background:rgba(0,212,255,0.04)">
+              <div class="review-stat-num" id="rvCerts" style="background:linear-gradient(135deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div>
+              <div class="review-stat-label">Certificates to Generate</div>
+            </div>
+            <div class="review-stat" style="border-color:rgba(124,58,237,0.15);background:rgba(124,58,237,0.04)">
+              <div class="review-stat-num" id="rvEmails" style="background:linear-gradient(135deg,#7c3aed,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div>
+              <div class="review-stat-label">Emails to Send</div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border)">
+              <div class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Configuration Summary
+              </div>
+            </div>
+            <div id="reviewDetailsEl"></div>
+          </div>
+
+          <div class="notice" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:16px;display:flex;gap:12px;font-size:14px;color:#fde68a">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div><strong style="color:#fbbf24">This will:</strong> Generate individual PDFs for each participant and save them to your Google Drive, then send personalised emails from your Gmail. This process cannot be reversed.</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;gap:12px">
+            <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(4)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Back
+            </button>
+            <button class="btn" id="launchBtn" onclick="launchPipeline()" style="padding:16px 40px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 28px rgba(245,158,11,0.3);border-radius:12px;display:inline-flex;align-items:center;gap:9px;transition:all 0.2s;border:none;cursor:pointer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Launch Pipeline
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════ -->
+      <!-- STEP 6 — RUNNING / RESULTS                 -->
+      <!-- ═══════════════════════════════════════════ -->
+      <div class="step-panel" id="sp6">
+
+        <!-- RUNNING STATE -->
         <div id="runningState">
-          <h2 class="panel-title">Pipeline Running…</h2>
-          <p class="panel-desc">Do not close this tab. Large batches may take several minutes.</p>
-          <div class="progress-section">
-            <div class="progress-labels">
-              <span id="progressLabel">Generating certificates…</span>
-              <span id="progressCount">0 / 0</span>
+          <div style="display:grid;grid-template-columns:1fr 320px;gap:22px">
+            <div class="card">
+              <div class="pipeline-running">
+                <!-- SVG ring progress -->
+                <div class="run-ring">
+                  <svg viewBox="0 0 110 110">
+                    <defs>
+                      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#00d4ff"/>
+                        <stop offset="100%" stop-color="#7c3aed"/>
+                      </linearGradient>
+                    </defs>
+                    <circle class="run-ring-bg" cx="55" cy="55" r="50"/>
+                    <circle class="run-ring-fg" id="ringCircle" cx="55" cy="55" r="50"/>
+                  </svg>
+                  <div class="run-ring-text">
+                    <div class="run-pct" id="runPct">0%</div>
+                    <div class="run-done-label" id="runFraction">0 / 0</div>
+                  </div>
+                </div>
+                <div class="run-title">Pipeline Running…</div>
+                <div class="run-status" id="runStatus">Preparing…</div>
+                <div class="run-progress-row">
+                  <div class="run-counts">
+                    <span><strong style="color:var(--cyan)" id="runCertsDone">0</strong> certificates</span>
+                    <span><strong style="color:#a78bfa" id="runMailsDone">0</strong> emails</span>
+                    <span><strong style="color:#f43f5e" id="runFailed">0</strong> failed</span>
+                  </div>
+                  <div class="progress-track" style="height:10px"><div class="progress-fill" id="runBar" style="width:0%"></div></div>
+                </div>
+              </div>
+              <div style="padding:0 24px 24px">
+                <div style="font-size:11.5px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Live Log</div>
+                <div class="live-log" id="liveLog"></div>
+              </div>
             </div>
-            <div class="progress-bar-wrap">
-              <div class="progress-bar" id="progressBar" style="width:0%"></div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="card card-sm">
+                <div class="card-title" style="margin-bottom:14px;font-size:14px">Job Info</div>
+                <div id="runJobInfo" style="display:flex;flex-direction:column;gap:8px;font-size:13.5px"></div>
+              </div>
+              <div class="notice" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:14px 16px;display:flex;gap:10px;font-size:13.5px;color:#fde68a">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                Keep this tab open. Large batches may take several minutes.
+              </div>
             </div>
           </div>
-          <div class="log-box" id="logBox"></div>
         </div>
 
-        <!-- Done state -->
+        <!-- DONE STATE -->
         <div id="doneState" style="display:none">
-          <div class="result-header">
-            <div class="result-icon success">✅</div>
-            <h2>Pipeline Complete</h2>
-            <p>Certificates generated and emails dispatched.</p>
-          </div>
-          <div class="combined-summary-grid">
-            <div class="summary-stat">
-              <span id="resCertDone">0</span>
-              <small>Certs Generated</small>
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <div class="card" style="padding:0;overflow:hidden">
+              <div style="text-align:center;padding:44px 28px 28px">
+                <div class="done-ring" id="doneRing" style="background:linear-gradient(135deg,#10b981,#00d4ff);box-shadow:0 0 48px rgba(16,185,129,0.35)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <h2 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px" id="doneTitle">Pipeline Complete</h2>
+                <p style="font-size:15px;color:var(--text-2)" id="doneSub">Certificates generated and emails dispatched.</p>
+              </div>
+              <div class="result-mini-row">
+                <div class="result-mini-cell"><div class="rmc-num" id="dCerts" style="color:var(--cyan)">0</div><div class="rmc-label">Certs Generated</div></div>
+                <div class="result-mini-cell"><div class="rmc-num" id="dEmails" style="color:#a78bfa">0</div><div class="rmc-label">Emails Sent</div></div>
+                <div class="result-mini-cell"><div class="rmc-num" id="dFailed" style="color:#f43f5e">0</div><div class="rmc-label">Failed</div></div>
+              </div>
+              <div style="padding:18px 24px;border-top:1px solid var(--glass-border);display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+                <button class="btn btn-secondary" style="padding:12px 22px" onclick="downloadFullReport()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Export Full Report CSV
+                </button>
+                <a href="dashboard.html" class="btn btn-ghost" style="padding:12px 22px">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  Dashboard
+                </a>
+                <button class="btn btn-primary" style="padding:12px 22px" onclick="resetAll()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  New Campaign
+                </button>
+              </div>
             </div>
-            <div class="summary-stat">
-              <span id="resMailDone">0</span>
-              <small>Emails Sent</small>
+
+            <!-- Results table -->
+            <div class="card" style="padding:0;overflow:hidden">
+              <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Delivery Report
+                </div>
+                <input type="text" id="resultSearch" class="form-input" placeholder="Search name or email…" oninput="filterResultTable()" style="width:230px"/>
+              </div>
+              <div style="overflow-x:auto">
+                <table class="results-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Certificate</th>
+                      <th>Email Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="resultTbody"></tbody>
+                </table>
+              </div>
             </div>
-            <div class="summary-stat">
-              <span id="resFailed">0</span>
-              <small>Failed</small>
-            </div>
-          </div>
-          <div class="log-box" id="finalLog"></div>
-          <div class="panel-actions" style="justify-content:center; margin-top:24px">
-            <button class="btn-primary" onclick="resetPipeline()">Run Another Campaign</button>
-            <a href="dashboard.html" class="btn-ghost">Back to Dashboard</a>
           </div>
         </div>
 
       </div>
-    </div>
-    <!-- END STEPS -->
+      <!-- END STEPS -->
 
+    </main>
   </div>
-</main>
+</div>
+
+<!-- Add Field Modal -->
+<div class="af-overlay" id="afOverlay">
+  <div class="af-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <h3>Add Text Field</h3>
+      <button onclick="closeAFModal()" style="width:32px;height:32px;border-radius:8px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="form-group">
+        <label class="form-label">Field Type / Placeholder</label>
+        <select id="afPh" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="document.getElementById('afCustomRow').style.display=this.value==='custom'?'flex':'none'">
+          <option value="{{name}}">{{name}} — Participant Name</option>
+          <option value="{{course}}">{{course}} — Course / Event</option>
+          <option value="{{date}}">{{date}} — Date</option>
+          <option value="{{score}}">{{score}} — Score / Grade</option>
+          <option value="{{org}}">{{org}} — Organisation</option>
+          <option value="{{email}}">{{email}} — Email</option>
+          <option value="custom">Custom placeholder…</option>
+        </select>
+      </div>
+      <div id="afCustomRow" class="form-group" style="display:none">
+        <label class="form-label">Custom placeholder (without braces)</label>
+        <input type="text" id="afCustom" class="form-input" placeholder="e.g. venue" style="font-family:monospace"/>
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="form-group">
+          <label class="form-label">Preview Text</label>
+          <input type="text" id="afPreview" class="form-input" placeholder="e.g. John Smith"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Font Size (px)</label>
+          <input type="number" id="afSize" class="form-input" value="36" min="8" max="200"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-secondary btn-full" onclick="closeAFModal()">Cancel</button>
+        <button class="btn btn-primary btn-full" style="padding:13px;font-size:15px" onclick="addCanvasField()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add to Canvas
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="dashboard.js"></script>
 <script src="combined-tool.js"></script>
