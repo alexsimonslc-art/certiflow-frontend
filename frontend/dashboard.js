@@ -96,7 +96,7 @@ function getLocalStats() {
 /* ── Render Sidebar ──────────────────────────────────────────── */
 function renderSidebar(activePage) {
   const navItems = [
-    { page: 'dashboard.html',     icon: 'layout-dashboard', label: 'Overview',          section: 'Workspace' },
+    { page: 'dashboard.html', icon: 'layout-dashboard', label: 'Overview', section: null },
     { page: 'cert-tool.html',     icon: 'file-badge',        label: 'Certificates',      section: 'Tools' },
     { page: 'mail-tool.html',     icon: 'mail',              label: 'Bulk Mail',         section: null },
     { page: 'combined-tool.html', icon: 'zap', label: 'Combined Pipeline', section: null },
@@ -133,7 +133,7 @@ function renderSidebar(activePage) {
       </a>`;
   });
 
-  return `
+    return `
   <aside class="sidebar" id="appSidebar">
     <div class="sidebar-logo">
       <div class="logo-mark">
@@ -143,11 +143,24 @@ function renderSidebar(activePage) {
       </div>
       <span class="logo-name">Certi<span>Flow</span></span>
     </div>
-    
-    <nav class="sidebar-nav">${navHtml}</nav>
+    <nav class="sidebar-nav">
+
+      <!-- ☰ Workspace row — hamburger always stays here -->
+      <div class="nav-section-label nav-section-with-toggle">
+        <span class="section-text">Workspace</span>
+        <button class="sidebar-toggle-btn" id="sidebarCollapseBtn" title="Toggle sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <line x1="3" y1="5" x2="21" y2="5"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="19" x2="21" y2="19"/>
+          </svg>
+        </button>
+      </div>
+
+      ${navHtml}
+    </nav>
     <div class="sidebar-footer">
       <div class="user-row">
-        <!-- Name/avatar → Settings -->
         <a class="user-row-info" id="sidebarUserInfo" href="settings.html" title="Account Settings">
           <div class="user-avatar" id="sidebarAvatar">U</div>
           <div class="user-info">
@@ -155,7 +168,6 @@ function renderSidebar(activePage) {
             <div class="user-plan" id="sidebarUserPlan">Personal</div>
           </div>
         </a>
-        <!-- Logout icon → confirmation -->
         <button class="sidebar-logout-btn" id="sidebarLogoutBtn" title="Sign out" aria-label="Sign out">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -206,16 +218,13 @@ function initSidebar() {
  
 
   function setSidebarCollapsed(collapsed) {
-    if (!sidebar) return;
-    sidebar.classList.toggle('collapsed', collapsed);
-    if (mainArea) mainArea.classList.toggle('sidebar-collapsed', collapsed);
-    localStorage.setItem('cf_sidebar_collapsed', collapsed ? '1' : '0');
-    if (collapseBtn) {
-      collapseBtn.innerHTML = collapsed
-        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`
-        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
-    }
+  if (!sidebar) return;
+  sidebar.classList.toggle('collapsed', collapsed);
+  if (mainArea) mainArea.classList.toggle('sidebar-collapsed', collapsed);
+  localStorage.setItem('cf_sidebar_collapsed', collapsed ? '1' : '0');
+  // ✅ Do NOT touch collapseBtn innerHTML — icon stays as ☰ always
   }
+
 
   // Restore saved state
   setSidebarCollapsed(localStorage.getItem('cf_sidebar_collapsed') === '1');
