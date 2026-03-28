@@ -433,7 +433,7 @@ function clearAll() {
 
 /* ── Save / Load Template ────────────────────────────────────────── */
 function saveTemplate() {
-  localStorage.setItem('cf_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, bgBase64: ED.bgBase64, fields: ED.fields }));
+  localStorage.setItem('cf_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64,  fields: ED.fields }));
 }
 
 function loadSavedTemplate() {
