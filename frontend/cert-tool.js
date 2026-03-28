@@ -1,535 +1,689 @@
 /* ================================================================
-   CertiFlow — Certificate Generator Logic
-   js/cert-tool.js
+   CertiFlow v2 — Certificate Generator
+   cert-tool.js
    ================================================================ */
 
-/* ── State ───────────────────────────────────────────────────────── */
-const certState = {
-  currentStep: 1,
-  sourceType: 'sheets',
-  sheetHeaders: [],
-  sheetData: [],
-  parsedRows: [],
-  fieldMappings: [],
+/* ── App State ─────────────────────────────────────────────────── */
+const CS = {
+  step: 1,
+  totalSteps: 6,
+  srcType: 'sheets',
+  headers: [],
+  rows: [],        // [{Name:'', Email:'', ...}, ...]
+  fieldMappings: [], // [{col:'', ph:''}]
   results: [],
-  sheetId: null,        // ✅ Bug 5 fix — added to state
+  jobId: null,
+  pollTimer: null,
 };
 
-/* ── Init ────────────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {           // ✅ Bug 6 fix — single DOMContentLoaded
-  requireAuth();
+/* ── Canvas Editor State ────────────────────────────────────────── */
+let canvas, ctx, fieldOverlay;
+const ED = {
+  w: 1122, h: 794,
+  bgImg: null, bgBase64: null, bgColor: '#ffffff',
+  fields: [],
+  selId: null,
+  scale: 1,
+};
+
+const STEPS = [
+  { label: 'Data Source' },
+  { label: 'Design Template' },
+  { label: 'Field Mapping' },
+  { label: 'Preview' },
+  { label: 'Generate' },
+  { label: 'Results' },
+];
+
+/* ════════════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sidebarMount').outerHTML = renderSidebar('cert-tool.html');
   initSidebar();
-  if (localStorage.getItem('certiflow_template')) {
-    const statusEl  = document.getElementById('templateStatus');
-    const warnEl    = document.getElementById('noTemplateWarning');
-    if (statusEl) statusEl.style.display = '';
-    if (warnEl)   warnEl.style.display   = 'none';
-  }
+  buildStepper();
+  initCanvas();
+  loadSavedTemplate();
+  lucide.createIcons();
 });
 
-/* ── Step Navigation ─────────────────────────────────────────────── */
-function goToStep(n, force = false) {
-  if (!force && !validateStep(certState.currentStep)) return;
-  certState.currentStep = n;
+/* ── Build Stepper ──────────────────────────────────────────────── */
+function buildStepper() {
+  const el = document.getElementById('stepper');
+  el.innerHTML = STEPS.map((s, i) => {
+    const n = i + 1;
+    const isActive = n === CS.step;
+    return `
+      ${n > 1 ? `<div class="step-connector" id="sc${n}"></div>` : ''}
+      <div class="step-node ${isActive ? 'active' : ''}" id="sn${n}">
+        <div class="step-circle" id="scircle${n}">${n}</div>
+        <div class="step-label">
+          <div class="step-num-label">Step ${n}</div>
+          <div class="step-title">${s.label}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
 
-  for (let i = 1; i <= 5; i++) {
-    const node   = document.getElementById(`sn${i}`);
-    const line   = document.getElementById(`sl${i}`);
-    node.className = 'step-node' + (i < n ? ' done' : i === n ? ' active' : '');
-    if (line) line.className = 'step-line' + (i < n ? ' done' : '');
-    const circle = node.querySelector('.step-circle');
-    if (i < n) {
+function updateStepper() {
+  STEPS.forEach((_, i) => {
+    const n = i + 1;
+    const node = document.getElementById(`sn${n}`);
+    const circle = document.getElementById(`scircle${n}`);
+    const conn = document.getElementById(`sc${n}`);
+    if (!node) return;
+
+    node.className = `step-node ${n < CS.step ? 'done' : n === CS.step ? 'active' : ''}`;
+    if (n < CS.step) {
       circle.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
     } else {
-      circle.textContent = i;
+      circle.textContent = n;
     }
-  }
+    if (conn) conn.className = `step-connector ${n <= CS.step ? 'done' : ''}`;
+  });
+}
 
-  document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
-  document.getElementById(`step${n}`).classList.add('active');
+/* ── Navigation ─────────────────────────────────────────────────── */
+function goStep(n, force = false) {
+  if (!force && !validateStep(CS.step)) return;
+  CS.step = n;
+  updateStepper();
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`sp${n}`).classList.add('active');
 
-  if (n === 2) populateColumnDropdowns();
-  if (n === 3) buildPreview();
+  if (n === 2) setTimeout(resizeCanvas, 100);
+  if (n === 3) populateStep3();
+  if (n === 4) buildPreview();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ── Validate Steps ──────────────────────────────────────────────── */
 function validateStep(n) {
   if (n === 1) {
-    if (!document.getElementById('campaignName').value.trim()) {
-      toast('Please enter a campaign name', 'error'); return false;
-    }
-    // ✅ Bug 1 fix — check localStorage instead of removed input fields
-    const tmpl = localStorage.getItem('certiflow_template');
-    if (!tmpl) {
-      toast('No template found — design one in the Template Editor first', 'error');
-      setTimeout(() => window.location.href = 'cert-editor.html', 2000);
-      return false;
-    }
-    const statusEl = document.getElementById('templateStatus');
-    const warnEl   = document.getElementById('noTemplateWarning');
-    if (statusEl) statusEl.style.display = '';
-    if (warnEl)   warnEl.style.display   = 'none';
-
-    if (certState.parsedRows.length === 0) {
-      toast('Please load your participant data first (Sheet or file upload)', 'error'); return false;
-    }
-    return true;
+    if (!document.getElementById('campaignName').value.trim()) { toast('Please enter a campaign name', 'error'); return false; }
+    if (CS.rows.length === 0) { toast('Please load participant data first', 'error'); return false; }
   }
   if (n === 2) {
-    if (!document.getElementById('nameCol').value) {
-      toast('Please select the Name column', 'error'); return false;
-    }
-    if (!document.getElementById('emailCol').value) {
-      toast('Please select the Email column', 'error'); return false;
-    }
-    return true;
+    if (ED.fields.length === 0) { toast('Please add at least one text field to your template', 'warning'); return false; }
+  }
+  if (n === 3) {
+    if (!document.getElementById('nameCol').value) { toast('Please select the Name column', 'error'); return false; }
+    if (!document.getElementById('emailCol').value) { toast('Please select the Email column', 'error'); return false; }
   }
   return true;
 }
 
-/* ── Source Toggle ───────────────────────────────────────────────── */
-function switchSource(type) {
-  certState.sourceType = type;
-  document.getElementById('sourceSheets').style.display = type === 'sheets' ? 'block' : 'none';
-  document.getElementById('sourceCSV').style.display    = type === 'csv'    ? 'block' : 'none';
-  document.getElementById('tabSheets').className = 'source-tab' + (type === 'sheets' ? ' active' : '');
-  document.getElementById('tabCSV').className    = 'source-tab' + (type === 'csv'    ? ' active' : '');
+/* ════════════════════════════════════════════════════════════════
+   STEP 1 — DATA SOURCE
+════════════════════════════════════════════════════════════════ */
+function switchSrc(type) {
+  CS.srcType = type;
+  document.getElementById('srcSheets').style.display = type === 'sheets' ? 'block' : 'none';
+  document.getElementById('srcFile').style.display   = type === 'file'   ? 'block' : 'none';
+  document.getElementById('srcSheetsOpt').className  = 'source-opt' + (type === 'sheets' ? ' active' : '');
+  document.getElementById('srcFileOpt').className    = 'source-opt' + (type === 'file'   ? ' active' : '');
 }
 
-/* ── Google Sheets Loading ───────────────────────────────────────── */
 async function loadSheet() {
-  const sheetId = document.getElementById('sheetId').value.trim();
-  if (!sheetId) { toast('Please enter a Sheet ID', 'error'); return; }
-
-  certState.sheetId = sheetId;  // ✅ Bug 5 fix — save to state
-
-  const btn = document.querySelector('#sourceSheets .btn-primary');
+  const id  = document.getElementById('sheetId').value.trim();
+  if (!id) { toast('Paste your Sheet ID first', 'error'); return; }
+  const btn = document.getElementById('loadSheetBtn');
   btn.classList.add('loading'); btn.disabled = true;
-
   try {
-    const data = await apiFetch(`/api/sheets/read?sheetId=${encodeURIComponent(sheetId)}&range=Sheet1`);
-    if (!data || !data.data || data.data.length < 2) {
-      toast('Sheet is empty or has only headers', 'warning'); return;
-    }
-
-    certState.sheetHeaders = data.data[0].map(h => h.toString().trim());
-    const rows = data.data.slice(1);
-    certState.sheetData  = rows;
-    certState.parsedRows = rows.map(row => {
-      const obj = {};
-      certState.sheetHeaders.forEach((h, i) => { obj[h] = row[i] || ''; });
-      return obj;
-    });
-
-    document.getElementById('sheetLoadMsg').textContent =
-      `Sheet loaded — ${certState.parsedRows.length} participants, ${certState.sheetHeaders.length} columns`;
-    document.getElementById('sheetPreviewWrap').style.display = 'block';
+    const data = await apiFetch(`/api/sheets/read?sheetId=${encodeURIComponent(id)}&range=Sheet1`);
+    if (!data?.data?.length || data.data.length < 2) { toast('Sheet is empty or has no data rows', 'warning'); return; }
+    CS.headers = data.data[0].map(h => h.toString().trim());
+    CS.rows    = data.data.slice(1).map(row => Object.fromEntries(CS.headers.map((h, i) => [h, row[i] || ''])));
     renderSheetPreview();
-    toast(`Loaded ${certState.parsedRows.length} participants`, 'success');
-  } catch (err) {
-    toast('Failed to load Sheet: ' + err.message, 'error');
-  } finally {
-    btn.classList.remove('loading'); btn.disabled = false;
-  }
+    toast(`Loaded ${CS.rows.length} participants`, 'success');
+  } catch (e) {
+    toast('Could not load sheet: ' + e.message, 'error');
+  } finally { btn.classList.remove('loading'); btn.disabled = false; }
 }
 
 function renderSheetPreview() {
-  const headers = certState.sheetHeaders;
-  const rows    = certState.parsedRows.slice(0, 5);
-  let html = `<div class="data-table">
-    <div class="data-row header">${headers.map(h => `<div class="data-cell">${h}</div>`).join('')}</div>`;
-  rows.forEach(row => {
-    html += `<div class="data-row">${headers.map(h => `<div class="data-cell">${row[h] || ''}</div>`).join('')}</div>`;
-  });
-  if (certState.parsedRows.length > 5) {
-    html += `<div style="padding:10px 12px;font-size:12px;color:var(--text-3);text-align:center;">
-      +${certState.parsedRows.length - 5} more rows</div>`;
-  }
-  html += '</div>';
-  document.getElementById('sheetPreviewTable').innerHTML = html;
+  const el = document.getElementById('sheetResult');
+  const preview = CS.rows.slice(0, 5);
+  el.innerHTML = `
+    <div class="notice notice-green" style="margin-bottom:12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span>Sheet loaded — <strong>${CS.rows.length} participants</strong>, ${CS.headers.length} columns detected</span>
+    </div>
+    <div class="data-table-wrap">
+      <table>
+        <thead><tr>${CS.headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${preview.map(r => `<tr>${CS.headers.map(h => `<td>${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+    </div>
+    ${CS.rows.length > 5 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${CS.rows.length - 5} more rows not shown</div>` : ''}
+  `;
+  el.style.display = 'block';
 }
 
-/* ── CSV / Excel Upload ──────────────────────────────────────────── */
-function handleFileUpload(event) {
-  const file = event.target.files[0];
+function handleFile(e) {
+  const file = e.target.files[0];
   if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
-
   if (ext === 'csv') {
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (res) => {
-        certState.sheetHeaders = res.meta.fields;
-        certState.parsedRows   = res.data;
-        showCSVPreview(file.name);
-      },
-    });
-  } else if (ext === 'xlsx' || ext === 'xls') {
+    Papa.parse(file, { header: true, skipEmptyLines: true, complete: r => {
+      CS.headers = r.meta.fields; CS.rows = r.data; showFilePreview(file.name);
+    }});
+  } else if (['xlsx', 'xls'].includes(ext)) {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const wb  = XLSX.read(e.target.result, { type: 'array' });
-      const ws  = wb.Sheets[wb.SheetNames[0]];
-      const arr = XLSX.utils.sheet_to_json(ws, { defval: '' });
-      certState.sheetHeaders = Object.keys(arr[0] || {});
-      certState.parsedRows   = arr;
-      showCSVPreview(file.name);
+    reader.onload = e2 => {
+      const wb  = XLSX.read(e2.target.result, { type: 'array' });
+      const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+      CS.headers = Object.keys(arr[0] || {}); CS.rows = arr; showFilePreview(file.name);
     };
     reader.readAsArrayBuffer(file);
+  } else { toast('Use .csv, .xlsx or .xls', 'error'); }
+}
+
+function showFilePreview(name) {
+  document.getElementById('fileResult').innerHTML = `
+    <div class="notice notice-green" style="margin-bottom:12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>${name}</strong> — ${CS.rows.length} rows, ${CS.headers.length} columns</span>
+    </div>`;
+  document.getElementById('fileResult').style.display = 'block';
+  toast(`Loaded ${CS.rows.length} participants from file`, 'success');
+}
+
+// Drag & drop
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('uploadZone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); handleFile({ target: { files: e.dataTransfer.files } }); });
+});
+
+/* ════════════════════════════════════════════════════════════════
+   STEP 2 — CANVAS EDITOR
+════════════════════════════════════════════════════════════════ */
+function initCanvas() {
+  canvas       = document.getElementById('certCanvas');
+  ctx          = canvas.getContext('2d');
+  fieldOverlay = document.getElementById('fieldOverlay');
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+}
+
+function resizeCanvas() {
+  const wrap = document.getElementById('canvasWrap');
+  if (!wrap) return;
+  const maxW = wrap.clientWidth  - 48;
+  const maxH = wrap.clientHeight - 48;
+  ED.scale = Math.min(maxW / ED.w, maxH / ED.h, 1);
+  const cw = Math.round(ED.w * ED.scale);
+  const ch = Math.round(ED.h * ED.scale);
+  const container = document.getElementById('canvasContainer');
+  if (container) { container.style.width = cw + 'px'; container.style.height = ch + 'px'; }
+  canvas.width  = cw;
+  canvas.height = ch;
+  redraw();
+}
+
+function redraw() {
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  if (ED.bgImg) {
+    ctx.drawImage(ED.bgImg, 0, 0, w, h);
   } else {
-    toast('Unsupported file type. Use .csv, .xlsx or .xls', 'error');
+    ctx.fillStyle = ED.bgColor;
+    ctx.fillRect(0, 0, w, h);
   }
+  renderHandles();
 }
 
-function showCSVPreview(filename) {
-  const wrap    = document.getElementById('csvPreviewWrap');
-  const rows    = certState.parsedRows.slice(0, 5);
-  const headers = certState.sheetHeaders;
-  let html = `<div class="notice notice-green" style="margin-bottom:10px;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-    <span><strong>${filename}</strong> loaded — ${certState.parsedRows.length} rows, ${headers.length} columns</span>
-  </div>`;
-  html += `<div class="data-table">
-    <div class="data-row header">${headers.map(h => `<div class="data-cell">${h}</div>`).join('')}</div>`;
-  rows.forEach(row => {
-    html += `<div class="data-row">${headers.map(h => `<div class="data-cell">${row[h] || ''}</div>`).join('')}</div>`;
+/* ── Field Handles ──────────────────────────────────────────────── */
+function renderHandles() {
+  if (!fieldOverlay) return;
+  fieldOverlay.innerHTML = '';
+  ED.fields.forEach(f => {
+    const x = (f.x / 100) * canvas.width;
+    const y = (f.y / 100) * canvas.height;
+    const w = (f.width / 100) * canvas.width;
+    const fs = f.fontSize * ED.scale;
+    const bold = (f.fontFamily || '').toLowerCase().includes('bold');
+
+    const el = document.createElement('div');
+    el.className = 'text-field-handle' + (f.id === ED.selId ? ' selected' : '');
+    el.id = 'hdl_' + f.id;
+    el.style.cssText = `left:${x}px;top:${y}px;font-size:${fs}px;font-family:${f.fontFamily||'Helvetica'},sans-serif;color:${f.color||'#000'};font-weight:${bold?700:400};text-align:${f.align||'left'};width:${w}px;line-height:1.2;`;
+    el.textContent = f.previewText || f.placeholder;
+
+    const del = document.createElement('div');
+    del.className = 'field-del';
+    del.innerHTML = '×';
+    del.onclick = e => { e.stopPropagation(); deleteField(f.id); };
+    el.appendChild(del);
+
+    el.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startDrag(e, f, el); });
+    fieldOverlay.appendChild(el);
   });
-  html += '</div>';
-  wrap.innerHTML      = html;
-  wrap.style.display  = 'block';
-  toast(`Loaded ${certState.parsedRows.length} participants from file`, 'success');
+  renderFieldList();
 }
 
-/* ── Drag & Drop ─────────────────────────────────────────────────── */
-const uploadZone = document.getElementById('uploadZone');
-if (uploadZone) {
-  uploadZone.addEventListener('dragover',  (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-  uploadZone.addEventListener('dragleave', ()  => uploadZone.classList.remove('drag-over'));
-  uploadZone.addEventListener('drop', (e) => {
-    e.preventDefault(); uploadZone.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file) handleFileUpload({ target: { files: [file] } });
-  });
+/* ── Drag ─────────────────────────────────────────────────────── */
+function startDrag(e, field, el) {
+  const sx = e.clientX, sy = e.clientY;
+  const sfx = field.x, sfy = field.y;
+  const mm = ev => {
+    field.x = Math.max(0, Math.min(95, sfx + ((ev.clientX - sx) / canvas.width) * 100));
+    field.y = Math.max(0, Math.min(95, sfy + ((ev.clientY - sy) / canvas.height) * 100));
+    el.style.left = (field.x / 100 * canvas.width)  + 'px';
+    el.style.top  = (field.y / 100 * canvas.height) + 'px';
+    if (field.id === ED.selId) {
+      const px = document.getElementById('propX'), py = document.getElementById('propY');
+      if (px) px.value = field.x.toFixed(1);
+      if (py) py.value = field.y.toFixed(1);
+    }
+  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
 }
 
-/* ── Column Dropdowns ────────────────────────────────────────────── */
-function populateColumnDropdowns() {
-  const headers     = certState.sheetHeaders;
-  const nameSelect  = document.getElementById('nameCol');
-  const emailSelect = document.getElementById('emailCol');
-  const opts = headers.map(h => `<option value="${h}">${h}</option>`).join('');
+/* ── Add Field ─────────────────────────────────────────────────── */
+function openAddFieldModal() {
+  document.getElementById('addFieldModal').classList.add('open');
+}
+function closeAddFieldModal() {
+  document.getElementById('addFieldModal').classList.remove('open');
+}
 
-  nameSelect.innerHTML  = `<option value="">Select column...</option>${opts}`;
-  emailSelect.innerHTML = `<option value="">Select column...</option>${opts}`;
-
-  const nameGuess  = headers.find(h => /name/i.test(h));
-  const emailGuess = headers.find(h => /email|mail/i.test(h));
-  if (nameGuess)  nameSelect.value  = nameGuess;
-  if (emailGuess) emailSelect.value = emailGuess;
-
-  const colPreview = document.getElementById('colPreview');
-  if (colPreview) {
-    colPreview.innerHTML = headers.map(h => `
-      <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);">
-        <span style="width:6px;height:6px;background:var(--cyan);border-radius:50%;flex-shrink:0;"></span>
-        <span>${h}</span>
-      </div>
-    `).join('');
+function addField() {
+  let ph = document.getElementById('newFieldPh').value;
+  if (ph === 'custom') {
+    const custom = document.getElementById('customPhInput').value.trim();
+    if (!custom) { toast('Enter a custom placeholder', 'error'); return; }
+    ph = '{{' + custom.replace(/[{}]/g, '') + '}}';
   }
+  const prev = document.getElementById('newFieldPreview').value.trim();
+  const size = parseInt(document.getElementById('newFieldSize').value) || 36;
+  const previews = { '{{name}}':'John Smith','{{course}}':'Web Development','{{date}}':'March 2026','{{score}}':'95%','{{email}}':'john@example.com','{{org}}':'NIT Trichy' };
 
-  document.querySelectorAll('.field-col-select').forEach(sel => {
-    sel.innerHTML = `<option value="">Select column...</option>${opts}`;
+  const field = {
+    id: 'f_' + Date.now(),
+    placeholder: ph,
+    previewText: prev || previews[ph] || ph.replace(/[{}]/g, ''),
+    column: '',
+    x: 10, y: 35 + ED.fields.length * 14,
+    width: 80, fontSize: size,
+    fontFamily: 'Helvetica', color: '#1a1a1a', align: 'center',
+  };
+  ED.fields.push(field);
+  closeAddFieldModal();
+  selectField(field.id);
+  toast(`Added ${ph} field`, 'success', 2000);
+}
+
+/* ── Select / Delete Field ──────────────────────────────────────── */
+function selectField(id) {
+  ED.selId = id;
+  const f = ED.fields.find(f => f.id === id);
+  if (!f) return;
+
+  switchErTab('props');
+  document.getElementById('noFieldMsg').style.display  = 'none';
+  document.getElementById('fieldProps').style.display  = 'flex';
+
+  document.getElementById('propPlaceholder').value = f.placeholder;
+  document.getElementById('propPreview').value     = f.previewText || '';
+  document.getElementById('propFont').value        = f.fontFamily;
+  document.getElementById('propSize').value        = f.fontSize;
+  document.getElementById('propColor').value       = f.color;
+  document.getElementById('propColorHex').textContent = f.color;
+  document.getElementById('propX').value           = f.x.toFixed(1);
+  document.getElementById('propY').value           = f.y.toFixed(1);
+  document.getElementById('propWidth').value       = f.width;
+
+  ['alignLeft','alignCenter','alignRight'].forEach(b => document.getElementById(b).classList.remove('active'));
+  const btn = f.align === 'center' ? 'alignCenter' : f.align === 'right' ? 'alignRight' : 'alignLeft';
+  document.getElementById(btn).classList.add('active');
+  renderHandles();
+}
+
+function deleteField(id) {
+  ED.fields = ED.fields.filter(f => f.id !== id);
+  if (ED.selId === id) {
+    ED.selId = null;
+    const nm = document.getElementById('noFieldMsg');
+    const fp = document.getElementById('fieldProps');
+    if (nm) nm.style.display = '';
+    if (fp) fp.style.display = 'none';
+  }
+  renderHandles();
+}
+
+function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
+
+function updateFieldProp(key, val) {
+  const f = ED.fields.find(f => f.id === ED.selId);
+  if (!f) return;
+  f[key] = val;
+  if (key === 'color') document.getElementById('propColorHex').textContent = val;
+  renderHandles();
+}
+
+function updateFieldFromProp() {
+  const f = ED.fields.find(f => f.id === ED.selId);
+  if (!f) return;
+  f.x = parseFloat(document.getElementById('propX').value) || f.x;
+  f.y = parseFloat(document.getElementById('propY').value) || f.y;
+  renderHandles();
+}
+
+function setAlign(align) {
+  updateFieldProp('align', align);
+  ['alignLeft','alignCenter','alignRight'].forEach(b => document.getElementById(b).classList.remove('active'));
+  const btn = align === 'center' ? 'alignCenter' : align === 'right' ? 'alignRight' : 'alignLeft';
+  document.getElementById(btn).classList.add('active');
+}
+
+/* ── Right Panel Tab ─────────────────────────────────────────────── */
+function switchErTab(tab) {
+  ['fields','props'].forEach(t => {
+    document.getElementById(`erTab_${t}`).className   = 'er-tab' + (t === tab ? ' active' : '');
+    document.getElementById(`erPanel_${t}`).className = 'er-panel' + (t === tab ? ' active' : '');
   });
 }
 
-/* ── Custom Field Mappings ───────────────────────────────────────── */
-function addFieldMapping() {
-  const container = document.getElementById('fieldMappings');
-  document.getElementById('noMappings').style.display = 'none';
-
-  const idx     = certState.fieldMappings.length;
-  certState.fieldMappings.push({ column: '', placeholder: '' });
-  const headers = certState.sheetHeaders;
-  const opts    = headers.map(h => `<option value="${h}">${h}</option>`).join('');
-
-  const row = document.createElement('div');
-  row.className   = 'field-map-row';
-  row.dataset.idx = idx;
-  row.innerHTML = `
-    <select class="form-select field-col-select" onchange="updateMapping(${idx},'column',this.value)">
-      <option value="">Sheet column...</option>${opts}
-    </select>
-    <svg class="field-map-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-    </svg>
-    <div style="position:relative;flex:1;">
-      <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:13px;pointer-events:none;">{{</span>
-      <input type="text" class="form-input" placeholder="placeholder" style="padding-left:28px;"
-        onchange="updateMapping(${idx},'placeholder',this.value)"
-        oninput="updateMapping(${idx},'placeholder',this.value)"/>
-      <span style="position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:13px;pointer-events:none;">}}</span>
-    </div>
-    <button class="remove-btn" onclick="removeMapping(${idx},this.parentElement)" title="Remove">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
-  `;
-  container.appendChild(row);
-}
-
-function updateMapping(idx, key, val) {
-  if (certState.fieldMappings[idx]) certState.fieldMappings[idx][key] = val.trim();
-}
-
-function removeMapping(idx, el) {
-  certState.fieldMappings.splice(idx, 1);
-  el.remove();
-  if (certState.fieldMappings.length === 0)
-    document.getElementById('noMappings').style.display = 'flex';
-}
-
-/* ── Preview (Step 3) ────────────────────────────────────────────── */
-function buildPreview() {
-  const nameCol  = document.getElementById('nameCol').value;
-  const emailCol = document.getElementById('emailCol').value;
-  const rows     = certState.parsedRows;
-  const count    = rows.length;
-
-  document.getElementById('participantCount').textContent = `${count} participants`;
-  document.getElementById('confirmCount').textContent     = `(${count})`;
-
-  const campaignName   = document.getElementById('campaignName').value;
-  const writeBack      = document.getElementById('writeBackToggle')?.classList.contains('on');
-  // ✅ Bug 1 fix — no templateId / folderId references, use localStorage check
-  const templateLoaded = !!localStorage.getItem('certiflow_template');
-
-  const summaryItems = [
-    { key: 'Campaign',         val: campaignName },
-    { key: 'Participants',     val: `${count} rows` },
-    { key: 'Name column',      val: nameCol },
-    { key: 'Email column',     val: emailCol },
-    { key: 'Template',         val: templateLoaded ? '✅ Loaded from editor' : '⚠️ Not designed yet' },
-    { key: 'Write links back', val: writeBack ? 'Yes' : 'No' },
-  ];
-
-  document.getElementById('summaryList').innerHTML = summaryItems.map(i => `
-    <div class="summary-item">
-      <span class="summary-key">${i.key}</span>
-      <span class="summary-val">${i.val}</span>
-    </div>
-  `).join('');
-
-  const cols    = [nameCol, emailCol, ...certState.fieldMappings.filter(m => m.column).map(m => m.column)];
-  const preview = rows.slice(0, 10);
-  let html = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">
-    <thead><tr>${cols.map(c => `
-      <th style="padding:9px 12px;background:var(--surface-2);font-size:11px;font-weight:600;
-          color:var(--text-3);text-transform:uppercase;text-align:left;white-space:nowrap;">${c}</th>
-    `).join('')}</tr></thead><tbody>`;
-  preview.forEach(row => {
-    html += `<tr style="border-top:1px solid var(--border);">${cols.map(c => `
-      <td style="padding:9px 12px;font-size:12.5px;color:var(--text-2);">${row[c] || ''}</td>
-    `).join('')}</tr>`;
-  });
-  if (rows.length > 10) {
-    html += `<tr><td colspan="${cols.length}" style="padding:9px 12px;font-size:12px;color:var(--text-3);text-align:center;">
-      + ${rows.length - 10} more</td></tr>`;
-  }
-  html += '</tbody></table></div>';
-  document.getElementById('previewTable').innerHTML = html;
-
-  const allMappings = [
-    { column: nameCol,  placeholder: 'name' },
-    { column: emailCol, placeholder: 'email' },
-    ...certState.fieldMappings.filter(m => m.column && m.placeholder),
-  ];
-  document.getElementById('mappingsPreview').innerHTML = allMappings.map(m => `
-    <div style="display:flex;align-items:center;justify-content:space-between;
-        padding:7px 10px;background:var(--surface-2);border-radius:6px;">
-      <span style="color:var(--text);">${m.column}</span>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2">
-        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-      </svg>
-      <code style="background:var(--purple-dim);color:#a78bfa;padding:2px 7px;border-radius:4px;font-size:12px;">
-        {{${m.placeholder}}}
-      </code>
-    </div>
-  `).join('');
-
-  const processSummary = document.getElementById('processSummary');
-  if (processSummary) {
-    processSummary.innerHTML = summaryItems.slice(0, 4).map(i => `
-      <div class="summary-item"><span class="summary-key">${i.key}</span><span class="summary-val">${i.val}</span></div>
-    `).join('');
-  }
-}
-
-/* ── Generate (Step 4) ───────────────────────────────────────────── */
-async function startGeneration() {
-  goToStep(4, true);
-
-  const templateRaw = localStorage.getItem('certiflow_template');
-  if (!templateRaw) {
-    toast('No template found. Design one in the Template Editor first.', 'error');
-    goToStep(1, true);
+/* ── Field List in "Fields" tab ─────────────────────────────────── */
+function renderFieldList() {
+  const list = document.getElementById('fieldList');
+  if (!list) return;
+  if (!ED.fields.length) {
+    list.innerHTML = `<div class="empty-state" style="padding:32px 12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><h3>No fields yet</h3><p>Click "+ Add Field" to start.</p></div>`;
     return;
   }
+  list.innerHTML = ED.fields.map(f => `
+    <div class="field-chip ${f.id === ED.selId ? 'selected' : ''}" onclick="selectField('${f.id}')">
+      <div class="field-chip-dot" style="background:${f.color}"></div>
+      <span class="field-chip-label">${f.previewText || f.placeholder}</span>
+      <span class="field-chip-tag">${f.placeholder}</span>
+    </div>`).join('');
+}
 
-  const template = JSON.parse(templateRaw);
-  const nameCol  = document.getElementById('nameCol').value;
-  const emailCol = document.getElementById('emailCol').value;
+/* ── Background ──────────────────────────────────────────────────── */
+function uploadBackground(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => { ED.bgImg = img; ED.bgBase64 = ev.target.result; redraw(); toast('Background uploaded', 'success', 2000); };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function changeBgColor() { ED.bgColor = document.getElementById('bgColor').value; if (!ED.bgImg) redraw(); }
+function clearBackground() { ED.bgImg = null; ED.bgBase64 = null; document.getElementById('bgUpload').value = ''; redraw(); toast('Background removed', 'info', 2000); }
+function changeCanvasSize() {
+  const [w, h] = document.getElementById('canvasSize').value.split(',').map(Number);
+  ED.w = w; ED.h = h; resizeCanvas();
+}
+function clearAll() {
+  if (!ED.fields.length && !ED.bgImg) return;
+  ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null;
+  const nm = document.getElementById('noFieldMsg'), fp = document.getElementById('fieldProps');
+  if (nm) nm.style.display = ''; if (fp) fp.style.display = 'none';
+  redraw(); toast('Canvas cleared', 'info', 2000);
+}
 
-  // Show generating state
-  document.getElementById('genCounter').textContent = `0 / ${certState.parsedRows.length}`;
-  document.getElementById('genStatus').textContent  = 'Sending to server…';
-  addLog('info', `Starting generation for ${certState.parsedRows.length} participants`);
+/* ── Save / Load Template ────────────────────────────────────────── */
+function saveTemplate() {
+  localStorage.setItem('cf_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, bgBase64: ED.bgBase64, fields: ED.fields }));
+}
+
+function loadSavedTemplate() {
+  const raw = localStorage.getItem('cf_template');
+  if (!raw) return;
+  try {
+    const t = JSON.parse(raw);
+    ED.w = t.w || 1122; ED.h = t.h || 794;
+    ED.bgColor = t.bgColor || '#ffffff';
+    ED.fields  = t.fields  || [];
+    if (t.bgBase64) { const img = new Image(); img.onload = () => { ED.bgImg = img; redraw(); }; img.src = t.bgBase64; ED.bgBase64 = t.bgBase64; }
+    resizeCanvas();
+    if (t.fields?.length) toast('Previous template restored', 'info', 2500);
+  } catch {}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   STEP 3 — FIELD MAPPING
+════════════════════════════════════════════════════════════════ */
+function populateStep3() {
+  saveTemplate();
+  const opts = CS.headers.map(h => `<option value="${h}">${h}</option>`).join('');
+  ['nameCol','emailCol'].forEach(id => {
+    document.getElementById(id).innerHTML = `<option value="">Select column…</option>${opts}`;
+  });
+  const ng = CS.headers.find(h => /name/i.test(h));
+  const eg = CS.headers.find(h => /email|mail/i.test(h));
+  if (ng) document.getElementById('nameCol').value  = ng;
+  if (eg) document.getElementById('emailCol').value = eg;
+
+  // Column hint list
+  const hints = CS.headers.map(h => `
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--glass-border)">
+      <span style="width:7px;height:7px;background:var(--cyan);border-radius:50%;flex-shrink:0"></span>
+      <span style="font-size:14px;color:var(--text)">${h}</span>
+    </div>`).join('');
+  const ch = document.getElementById('colsListHint');
+  if (ch) ch.innerHTML = hints;
+
+  // Detected tags from template
+  const tags = ED.fields.map(f => f.placeholder);
+  const tagEl = document.getElementById('detectedTagsList');
+  if (tagEl) tagEl.textContent = tags.join(', ') || 'none';
+
+  // Refresh mapping dropdowns
+  document.querySelectorAll('.map-col-select').forEach(sel => {
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">Sheet column…</option>${opts}`;
+    if (cur) sel.value = cur;
+  });
+}
+
+function addMapping() {
+  CS.fieldMappings.push({ col: '', ph: '' });
+  renderMappingRows();
+  document.getElementById('noMappingsMsg').style.display = 'none';
+}
+
+function renderMappingRows() {
+  const opts  = CS.headers.map(h => `<option value="${h}">${h}</option>`).join('');
+  const tags  = ED.fields.map(f => f.placeholder.replace(/[{}]/g, '')).filter(Boolean);
+  const tagOpts = tags.map(t => `<option value="${t}">{{${t}}}</option>`).join('');
+  const container = document.getElementById('fieldMappings');
+  container.innerHTML = CS.fieldMappings.map((m, i) => `
+    <div class="field-map-row">
+      <select class="form-select map-col-select" onchange="CS.fieldMappings[${i}].col=this.value">
+        <option value="">Sheet column…</option>${opts}
+        ${m.col ? `<option value="${m.col}" selected>${m.col}</option>` : ''}
+      </select>
+      <svg class="field-map-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <select class="form-select map-col-select" onchange="CS.fieldMappings[${i}].ph=this.value">
+        <option value="">Template tag…</option>${tagOpts}
+        ${m.ph ? `<option value="${m.ph}" selected>{{${m.ph}}}</option>` : ''}
+      </select>
+      <button class="field-map-remove" onclick="removeMapping(${i})" title="Remove">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+function removeMapping(i) {
+  CS.fieldMappings.splice(i, 1);
+  renderMappingRows();
+  if (!CS.fieldMappings.length) document.getElementById('noMappingsMsg').style.display = 'flex';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   STEP 4 — PREVIEW
+════════════════════════════════════════════════════════════════ */
+function buildPreview() {
+  const name  = document.getElementById('nameCol').value;
+  const email = document.getElementById('emailCol').value;
+  const count = CS.rows.length;
+  const camp  = document.getElementById('campaignName').value;
+
+  document.getElementById('participantBadge').textContent = `${count} participants`;
+  document.getElementById('genCountLabel').textContent    = `(${count})`;
+
+  const items = [
+    { k: 'Campaign', v: camp },
+    { k: 'Participants', v: `${count}` },
+    { k: 'Name column', v: name },
+    { k: 'Email column', v: email },
+    { k: 'Template fields', v: `${ED.fields.length} fields` },
+    { k: 'Canvas size', v: `${ED.w}×${ED.h}px` },
+    { k: 'Write links back', v: document.getElementById('writeBackToggle').classList.contains('on') ? 'Yes' : 'No' },
+    { k: 'Sheet ID', v: document.getElementById('sheetId')?.value?.slice(0,12) + '…' || 'CSV file' },
+  ];
+  document.getElementById('summaryGrid').innerHTML = items.map(i =>
+    `<div class="summary-item"><div class="summary-key">${i.k}</div><div class="summary-val">${i.v}</div></div>`
+  ).join('');
+
+  const cols = [name, email, ...CS.fieldMappings.filter(m => m.col).map(m => m.col)];
+  const rows = CS.rows.slice(0, 12);
+  document.getElementById('previewTableWrap').innerHTML = `
+    <div class="data-table-wrap">
+      <table>
+        <thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+        <tbody>${rows.map(r => `<tr>${cols.map(c => `<td>${r[c]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+    </div>
+    ${count > 12 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${count-12} more rows</div>` : ''}
+  `;
+
+  const allMaps = [{ col: name, ph: 'name' }, { col: email, ph: 'email' }, ...CS.fieldMappings.filter(m => m.col && m.ph)];
+  document.getElementById('mappingsReview').innerHTML = allMaps.map(m => `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--glass);border-radius:8px">
+      <span style="font-size:14px;color:var(--text);font-weight:500">${m.col}</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <code style="background:var(--purple-dim);color:var(--purple-2);padding:2px 9px;border-radius:5px;font-size:12.5px;font-family:var(--font-mono)">{{${m.ph}}}</code>
+    </div>`).join('');
+
+  document.getElementById('jobSummary').innerHTML = items.slice(0, 4).map(i =>
+    `<div class="summary-item"><div class="summary-key">${i.k}</div><div class="summary-val">${i.v}</div></div>`
+  ).join('');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   STEP 5 — GENERATE
+════════════════════════════════════════════════════════════════ */
+async function startGeneration() {
+  goStep(5, true);
+  const total = CS.rows.length;
+  document.getElementById('genCounter').textContent = `0 / ${total}`;
+  log('info', 'Preparing certificate generation job…');
+
+  const payload = {
+    campaignName:  document.getElementById('campaignName').value,
+    template:      { width: ED.w, height: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64, fields: ED.fields },
+    participants:  CS.rows,
+    nameCol:       document.getElementById('nameCol').value,
+    emailCol:      document.getElementById('emailCol').value,
+    fieldMappings: CS.fieldMappings.filter(m => m.col && m.ph),
+    sheetId:       document.getElementById('sheetId')?.value || null,
+    writeBack:     document.getElementById('writeBackToggle').classList.contains('on'),
+  };
 
   try {
-    const res = await apiFetch('/api/certificates/generate', {
-      method: 'POST',
-      body: JSON.stringify({
-        campaignName: document.getElementById('campaignName').value,
-        template,
-        participants:  certState.parsedRows,
-        nameCol,
-        emailCol,
-        sheetId:   certState.sheetId || null,
-        writeBack: document.getElementById('writeBackToggle')?.checked || false,
-      }),
+    const res = await apiFetch('/api/certificates/generate', { method: 'POST', body: JSON.stringify(payload) });
+    CS.results = res.results || [];
+    CS.results.forEach((r, i) => {
+      setTimeout(() => {
+        const done = i + 1;
+        const pct = Math.round(done / total * 100);
+        document.getElementById('genCounter').textContent = `${done} / ${total}`;
+        document.getElementById('genBar').style.width = pct + '%';
+        document.getElementById('genPct').textContent  = pct + '%';
+        document.getElementById('genStatus').textContent = `Processing… ${pct}% complete`;
+        r.status === 'success' ? log('ok', `Generated: ${r.name}`) : log('err', `Failed: ${r.name} — ${r.error}`);
+        if (done === total) setTimeout(() => showResults(), 600);
+      }, i * 80);
     });
-
-    certState.results = res.results;
-
-    // ✅ Bug 4 fix — backend returns 'success' not 'done'
-    const success = res.results.filter(r => r.status === 'success').length;
-    const failed  = res.results.filter(r => r.status === 'failed').length;
-
-    document.getElementById('genCounter').textContent = `${res.total} / ${res.total}`;
-    document.getElementById('genProgressFill').style.width = '100%';
-    document.getElementById('genStatus').textContent = 'Complete!';
-    addLog('ok', `Done — ${success} success, ${failed} failed`);
-
-    document.getElementById('resDoneCount').textContent  = success;
-    document.getElementById('resFailCount').textContent  = failed;
-    document.getElementById('resTotalCount').textContent = res.total;
-
-    const folderLinkEl = document.getElementById('resFolderLink');
-    if (folderLinkEl) {
-      folderLinkEl.href         = res.folderLink;
-      folderLinkEl.style.display = '';
-      folderLinkEl.textContent  = `Open Drive Folder →`;
-    }
-
-    // ✅ Bug 3 fix — correct function name
-    renderResultRows(res.results);
-    goToStep(5, true);
-    toast(`${success} certificates generated! 🎉`, 'success', 5000);
-
   } catch (e) {
-    addLog('err', 'Generation failed: ' + e.message);
-    toast('Generation failed: ' + e.message, 'error');
-    goToStep(3, true);
+    log('err', 'Generation failed: ' + e.message);
+    toast('Failed: ' + e.message, 'error');
   }
 }
 
-function addLog(type, msg) {
-  const log   = document.getElementById('genLog');
-  if (!log) return;
-  const ts    = new Date().toLocaleTimeString('en-IN', { hour12: false });
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
-  entry.innerHTML = `<span class="log-ts">${ts}</span> <span class="log-${type}">${msg}</span>`;
-  log.appendChild(entry);
-  log.scrollTop = log.scrollHeight;
+function log(type, msg) {
+  const win = document.getElementById('genLog');
+  const ts  = new Date().toLocaleTimeString('en-IN', { hour12: false });
+  const el  = document.createElement('div');
+  el.className = 'log-entry';
+  el.innerHTML = `<span class="log-ts">${ts}</span><span class="log-${type}">${msg}</span>`;
+  win.appendChild(el);
+  win.scrollTop = win.scrollHeight;
 }
 
-/* ── Results (Step 5) ────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   STEP 6 — RESULTS
+════════════════════════════════════════════════════════════════ */
+function showResults() {
+  goStep(6, true);
+  const ok  = CS.results.filter(r => r.status === 'success').length;
+  const bad = CS.results.filter(r => r.status !== 'success').length;
+  document.getElementById('resTotal').textContent   = CS.results.length;
+  document.getElementById('resSuccess').textContent = ok;
+  document.getElementById('resFailed').textContent  = bad;
+  document.getElementById('resultTitle').textContent = bad === 0 ? 'All certificates generated!' : `${ok} generated, ${bad} failed`;
+  document.getElementById('resultSub').textContent   = `${ok} PDFs saved to your Google Drive.`;
+  if (bad > 0) {
+    document.getElementById('completionRing').style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)';
+    document.getElementById('completionRing').style.boxShadow  = '0 0 40px rgba(245,158,11,0.3)';
+  }
+  renderResultRows(CS.results);
+  toast(`${ok} certificates ready!`, 'success', 5000);
+}
+
 function renderResultRows(results) {
-  const container = document.getElementById('resultRows');
-  if (!container) return;
-
-  const total   = results.length;
-  // ✅ Bug 4 fix — check 'success' not 'done'
-  const success = results.filter(r => r.status === 'success').length;
-  const failed  = results.filter(r => r.status === 'failed').length;
-
-  const titleEl    = document.getElementById('resultTitle');
-  const subtitleEl = document.getElementById('resultSubtitle');
-  const totalEl    = document.getElementById('resTotal');
-  const successEl  = document.getElementById('resSuccess');
-  const failedEl   = document.getElementById('resFailed');
-
-  if (titleEl)    titleEl.textContent    = failed === 0 ? 'All certificates generated ✅' : `${success} generated, ${failed} failed`;
-  if (subtitleEl) subtitleEl.textContent = failed === 0 ? `${success} PDF certificates saved to your Drive.` : 'Check the table below for error details.';
-  if (totalEl)    totalEl.textContent    = total;
-  if (successEl)  successEl.textContent  = success;
-  if (failedEl)   failedEl.textContent   = failed;
-
-  container.innerHTML = results.map(r => `
-    <div class="result-row" data-name="${r.name}" data-email="${r.email || ''}">
-      <div class="result-name">${r.name}</div>
-      <div class="result-email">${r.email || '—'}</div>
-      <div class="result-link">
+  const el = document.getElementById('resultRows');
+  el.innerHTML = results.map(r => `
+    <div class="result-grid" data-n="${r.name}" data-e="${r.email||''}">
+      <div style="font-weight:600;color:var(--text);font-size:14.5px">${r.name}</div>
+      <div style="color:var(--text-2);font-size:14px">${r.email||'—'}</div>
+      <div style="min-width:0">
         ${r.status === 'success'
-          ? `<a href="${r.link}" target="_blank" style="color:var(--cyan);font-size:12px;">View PDF →</a>`
-          : `<span style="color:var(--red);font-size:12px;">${r.error || 'Failed'}</span>`
-        }
+          ? `<a href="${r.link}" target="_blank" style="color:var(--cyan);font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.link}</a>`
+          : `<span style="color:var(--red);font-size:13px">${r.error||'Failed'}</span>`}
       </div>
-      <div class="result-actions">
+      <div style="display:flex;gap:6px;justify-content:flex-end">
         ${r.status === 'success' ? `
           <button class="icon-btn" onclick="copyToClipboard('${r.link}','Link')" title="Copy link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
-          <a href="${r.link}" target="_blank" class="icon-btn" title="Open">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-          </a>
-        ` : `<span class="badge badge-red">Failed</span>`}
+          <a href="${r.link}" target="_blank" class="icon-btn" title="Open PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>` : `<span class="badge badge-red">Failed</span>`}
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function filterResults() {
   const q = document.getElementById('resultSearch').value.toLowerCase();
-  document.querySelectorAll('#resultRows .result-row').forEach(row => {
-    const name  = (row.dataset.name  || '').toLowerCase();
-    const email = (row.dataset.email || '').toLowerCase();
-    row.style.display = (!q || name.includes(q) || email.includes(q)) ? '' : 'none';
+  document.querySelectorAll('#resultRows .result-grid').forEach(row => {
+    const match = !q || (row.dataset.n||'').toLowerCase().includes(q) || (row.dataset.e||'').toLowerCase().includes(q);
+    row.style.display = match ? '' : 'none';
   });
 }
 
 function downloadResults() {
-  downloadCSV(certState.results.map(r => ({
-    Name:               r.name,
-    Email:              r.email || '',
-    Status:             r.status,
-    'Certificate Link': r.link  || '',
-    Error:              r.error || '',
-  })), `certiflow-results-${Date.now()}.csv`);
+  downloadCSV(CS.results.map(r => ({ Name: r.name, Email: r.email||'', Status: r.status, 'Certificate Link': r.link||'', Error: r.error||'' })), `certiflow-certs-${Date.now()}.csv`);
 }
 
-/* ── New Campaign ────────────────────────────────────────────────── */
-function newCampaign() {
-  confirm('Start a new campaign? Your current results will be cleared.', () => {
-    certState.parsedRows   = [];
-    certState.results      = [];
-    certState.fieldMappings = [];
-    certState.sheetId      = null;
-
-    document.getElementById('campaignName').value         = '';
-    document.getElementById('sheetId').value              = '';
-    document.getElementById('sheetPreviewWrap').style.display = 'none';
-    document.getElementById('fieldMappings').innerHTML    = '';
-    document.getElementById('noMappings').style.display   = 'flex';
-    // ✅ Bug 2 fix — removed templateId/folderId references
-    goToStep(1, true);
-  });
+function startNew() {
+  if (!window.confirm('Start a new campaign? Current results will be cleared.')) return;
+  CS.rows = []; CS.results = []; CS.fieldMappings = [];
+  document.getElementById('campaignName').value = '';
+  const sid = document.getElementById('sheetId'); if (sid) sid.value = '';
+  document.getElementById('sheetResult').style.display = 'none';
+  ED.fields = []; ED.selId = null;
+  redraw();
+  goStep(1, true);
 }

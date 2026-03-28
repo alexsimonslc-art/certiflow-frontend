@@ -5,109 +5,212 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Certificate Generator — CertiFlow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="dashboard.css"/>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    .tool-body { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
-    .step-section { display: none; }
-    .step-section.active { display: block; animation: fadeInUp 0.25s ease both; }
+    /* ── Page-specific ── */
+    .tool-cols { display: grid; grid-template-columns: 1fr 300px; gap: 22px; }
+    .step-panel { display: none; animation: fadeInUp 0.3s var(--ease) both; }
+    .step-panel.active { display: block; }
 
-    .result-row {
+    /* Editor canvas styles */
+    .editor-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr 1.6fr 100px;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
-      font-size: 12.5px;
-      transition: background 0.15s;
-    }
-    .result-row:hover { background: rgba(255,255,255,0.02); }
-    .result-row.header-row {
-      font-size: 11px; font-weight: 600; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.5px;
-      background: var(--surface-2);
-    }
-    .result-row.header-row { border-radius: var(--radius) var(--radius) 0 0; }
-    .result-name { font-weight: 600; color: var(--text); }
-    .result-email { color: var(--text-2); }
-    .result-link a {
-      color: var(--cyan); font-size: 12px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      display: block; max-width: 100%;
-    }
-    .result-actions { display: flex; gap: 6px; justify-content: flex-end; }
-    .icon-btn {
-      width: 28px; height: 28px; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--surface-2); border: 1px solid var(--border);
-      color: var(--text-2); transition: var(--transition); cursor: pointer;
-    }
-    .icon-btn:hover { color: var(--cyan); border-color: rgba(0,212,255,0.25); background: var(--cyan-dim); }
-    .icon-btn svg { width: 13px; height: 13px; }
-
-    .data-table { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .data-row {
-      display: flex; align-items: center; gap: 0;
-      border-bottom: 1px solid var(--border); font-size: 12.5px;
-    }
-    .data-row:last-child { border-bottom: none; }
-    .data-row.header { background: var(--surface-2); font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; }
-    .data-cell { padding: 9px 12px; flex: 1; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-    .data-cell:first-child { color: var(--text); }
-
-    .source-tabs { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; }
-    .source-tab {
-      flex: 1; padding: 9px; text-align: center;
-      font-size: 13px; font-weight: 500; color: var(--text-2);
-      background: var(--surface); transition: var(--transition); cursor: pointer;
-      border-right: 1px solid var(--border);
-    }
-    .source-tab:last-child { border-right: none; }
-    .source-tab.active { background: var(--cyan-dim); color: var(--cyan); }
-
-    .upload-zone {
-      border: 2px dashed var(--border-2);
+      grid-template-columns: 1fr 268px;
+      gap: 0;
+      border: 1px solid var(--glass-border);
       border-radius: var(--radius-lg);
-      padding: 36px 24px;
+      overflow: hidden;
+      background: var(--surface);
+      height: 580px;
+    }
+    .editor-main {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--glass-border);
+    }
+    .editor-top-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.2);
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .editor-top-bar .bar-sep { width: 1px; height: 20px; background: var(--glass-border); margin: 0 4px; }
+    .editor-canvas-zone {
+      flex: 1;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: repeating-conic-gradient(rgba(255,255,255,0.018) 0% 25%, transparent 0% 50%) 0 0 / 20px 20px;
+    }
+    .canvas-container {
+      position: relative;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+      border-radius: 2px;
+      cursor: default;
+    }
+    #certCanvas { display: block; }
+    #fieldOverlay { position: absolute; inset: 0; }
+    .text-field-handle {
+      position: absolute;
+      cursor: move;
+      pointer-events: all;
+      user-select: none;
+      border: 2px solid transparent;
+      border-radius: 3px;
+      padding: 2px 6px;
+      white-space: nowrap;
+      transition: border-color 0.15s;
+    }
+    .text-field-handle:hover { border-color: rgba(0,212,255,0.5); }
+    .text-field-handle.selected { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.1); }
+    .field-del {
+      display: none;
+      position: absolute; top: -10px; right: -10px;
+      width: 20px; height: 20px;
+      background: var(--red); border-radius: 50%;
+      font-size: 13px; line-height: 20px; text-align: center;
+      color: #fff; cursor: pointer; z-index: 20;
+    }
+    .text-field-handle.selected .field-del { display: block; }
+
+    /* Editor right panel */
+    .editor-right {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .editor-right-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--glass-border);
+      flex-shrink: 0;
+    }
+    .er-tab {
+      flex: 1; padding: 12px;
       text-align: center;
+      font-size: 13px; font-weight: 600;
+      color: var(--text-3);
       cursor: pointer;
+      border-bottom: 2px solid transparent;
       transition: var(--transition);
     }
-    .upload-zone:hover, .upload-zone.drag-over {
-      border-color: rgba(0,212,255,0.4);
-      background: var(--cyan-dim);
+    .er-tab:hover { color: var(--text-2); }
+    .er-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+    .editor-right-body {
+      flex: 1; overflow-y: auto; padding: 16px;
     }
-    .upload-zone svg { width: 32px; height: 32px; color: var(--text-3); margin-bottom: 12px; }
-    .upload-zone h4 { font-size: 14px; color: var(--text); margin-bottom: 4px; }
-    .upload-zone p { font-size: 12.5px; color: var(--text-2); }
-    #csvFileInput { display: none; }
+    .editor-right-body::-webkit-scrollbar { width: 4px; }
+    .editor-right-body::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; }
 
-    .summary-list { display: flex; flex-direction: column; gap: 10px; }
-    .summary-item { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-    .summary-key { color: var(--text-2); }
-    .summary-val { color: var(--text); font-weight: 500; max-width: 200px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .er-panel { display: none; }
+    .er-panel.active { display: flex; flex-direction: column; gap: 14px; }
 
-    .right-panel { display: flex; flex-direction: column; gap: 16px; }
+    /* Field list */
+    .field-chip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 9px;
+      cursor: pointer; border: 1px solid transparent;
+      transition: var(--transition); background: var(--glass);
+    }
+    .field-chip:hover { border-color: var(--glass-border-2); }
+    .field-chip.selected { border-color: rgba(0,212,255,0.3); background: var(--cyan-dim); }
+    .field-chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .field-chip-label { font-size: 13.5px; font-weight: 500; color: var(--text); flex: 1; }
+    .field-chip-tag { font-size: 11px; color: var(--text-3); font-family: var(--font-mono); }
 
-    .completion-hero { text-align: center; padding: 28px; }
-    .completion-icon {
-      width: 64px; height: 64px;
-      background: var(--green-dim);
-      border-radius: 50%;
+    .prop-section-title {
+      font-size: 11px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .prop-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .prop-mini-grid .form-input { padding: 8px 10px; font-size: 13px; }
+
+    .align-row { display: flex; gap: 6px; }
+    .align-btn {
+      flex: 1; padding: 8px;
+      border-radius: 7px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      color: var(--text-3);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
+      cursor: pointer; transition: var(--transition);
     }
-    .completion-icon svg { width: 28px; height: 28px; color: var(--green); }
-    .completion-hero h2 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .completion-hero p { font-size: 13px; color: var(--text-2); }
+    .align-btn:hover { color: var(--text); }
+    .align-btn.active { background: var(--cyan-dim); color: var(--cyan); border-color: rgba(0,212,255,0.3); }
+    .align-btn svg { width: 15px; height: 15px; }
 
-    .mini-stat { display: flex; flex-direction: column; align-items: center; padding: 14px; flex: 1; }
-    .mini-stat-num { font-size: 24px; font-weight: 700; color: var(--text); }
-    .mini-stat-label { font-size: 11.5px; color: var(--text-2); margin-top: 2px; }
+    .add-field-modal {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .add-field-modal.open { display: flex; }
+    .add-field-box {
+      background: #0d1728;
+      border: 1px solid var(--glass-border-2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      width: 460px;
+      max-width: 92vw;
+    }
 
-    @media (max-width: 1100px) { .tool-body { grid-template-columns: 1fr; } }
-    @media (max-width: 768px) { .result-row { grid-template-columns: 1fr 1fr; } .result-link, .result-actions { grid-column: span 2; } }
+    /* Source picker */
+    .source-picker { display: flex; gap: 10px; margin-bottom: 20px; }
+    .source-opt {
+      flex: 1; padding: 14px 16px;
+      border: 1px solid var(--glass-border); border-radius: var(--radius);
+      cursor: pointer; text-align: center; transition: var(--transition);
+      background: var(--glass);
+    }
+    .source-opt:hover { border-color: var(--glass-border-2); }
+    .source-opt.active { border-color: rgba(0,212,255,0.4); background: var(--cyan-dim); }
+    .source-opt svg { width: 22px; height: 22px; color: var(--text-3); margin-bottom: 6px; display: block; margin-left: auto; margin-right: auto; }
+    .source-opt.active svg { color: var(--cyan); }
+    .source-opt span { font-size: 13px; font-weight: 600; color: var(--text-2); display: block; }
+    .source-opt.active span { color: var(--cyan); }
+
+    /* Result table layout */
+    .result-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr 1.5fr 80px;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--glass-border);
+      transition: background 0.15s;
+    }
+    .result-grid:hover { background: rgba(255,255,255,0.02); }
+    .result-grid.header {
+      font-size: 11.5px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    /* progress area */
+    .gen-counter {
+      font-family: var(--font-display);
+      font-size: 56px; font-weight: 700;
+      letter-spacing: -2px; color: var(--text);
+      line-height: 1; margin-bottom: 8px;
+    }
+
+    @media (max-width: 1100px) { .tool-cols { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .editor-layout { grid-template-columns: 1fr; height: auto; } .editor-right { height: 340px; } }
+    @media (max-width: 700px) { .result-grid { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
@@ -118,7 +221,7 @@
     <header class="top-header">
       <div class="page-breadcrumb">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--text-3)"><polyline points="9 18 15 12 9 6"/></svg>
         <span>Certificate Generator</span>
       </div>
       <div class="header-actions">
@@ -129,391 +232,528 @@
     </header>
 
     <main class="page-content fade-in">
-      <div style="margin-bottom:24px;">
+
+      <!-- Page Header -->
+      <div style="margin-bottom:28px">
         <h1 class="page-title">Certificate Generator</h1>
-        <p class="page-subtitle">Generate personalized PDF certificates from a Google Slides template and participant data.</p>
+        <p class="page-subtitle">Design your certificate template visually, connect participant data, and generate PDFs — all in one place.</p>
       </div>
 
-      <!-- Stepper -->
+      <!-- ═══ STEPPER ═══ -->
       <div class="stepper" id="stepper">
-        <div class="step-node active" id="sn1">
-          <div class="step-circle">1</div>
-          <div class="step-text">Connect</div>
-        </div>
-        <div class="step-line" id="sl1"></div>
-        <div class="step-node" id="sn2">
-          <div class="step-circle">2</div>
-          <div class="step-text">Configure</div>
-        </div>
-        <div class="step-line" id="sl2"></div>
-        <div class="step-node" id="sn3">
-          <div class="step-circle">3</div>
-          <div class="step-text">Preview</div>
-        </div>
-        <div class="step-line" id="sl3"></div>
-        <div class="step-node" id="sn4">
-          <div class="step-circle">4</div>
-          <div class="step-text">Generate</div>
-        </div>
-        <div class="step-line" id="sl4"></div>
-        <div class="step-node" id="sn5">
-          <div class="step-circle">5</div>
-          <div class="step-text">Results</div>
-        </div>
+        <!-- Step nodes injected by JS -->
       </div>
 
-      <!-- ── STEP 1: CONNECT ── -->
-      <div class="step-section active" id="step1">
-        <div class="tool-body">
-          <div style="display:flex; flex-direction:column; gap:16px;">
+      <!-- ═══ STEP 1: DATA SOURCE ═══ -->
+      <div class="step-panel active" id="sp1">
+        <div class="tool-cols">
+          <div style="display:flex;flex-direction:column;gap:20px">
 
-            <!-- Campaign Name -->
+            <!-- Campaign name -->
             <div class="card">
-              <div class="card-title" style="margin-bottom:16px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Campaign Details
+              <div class="card-header" style="margin-bottom:0">
+                <div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Campaign Details
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Campaign Name <span class="req">*</span></label>
-                <input type="text" id="campaignName" class="form-input" placeholder="e.g. Annual Day 2025 — Certificate Dispatch" />
+              <div style="margin-top:20px">
+                <div class="form-group">
+                  <label class="form-label">Campaign Name <span class="req">*</span></label>
+                  <input type="text" id="campaignName" class="form-input" placeholder="e.g. Annual Day 2025 — Certificate Dispatch" style="font-size:16px; padding:14px 16px;"/>
+                </div>
               </div>
             </div>
 
             <!-- Data Source -->
             <div class="card">
-              <div class="card-title" style="margin-bottom:16px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                Participant Data Source
-              </div>
-
-              <div class="source-tabs">
-                <div class="source-tab active" id="tabSheets" onclick="switchSource('sheets')">Google Sheets</div>
-                <div class="source-tab" id="tabCSV" onclick="switchSource('csv')">Upload CSV / Excel</div>
-              </div>
-
-              <!-- Google Sheets option -->
-              <div id="sourceSheets">
-                <div class="form-group" style="margin-bottom:12px;">
-                  <label class="form-label">Google Sheet ID <span class="req">*</span></label>
-                  <div style="display:flex; gap:8px;">
-                    <input type="text" id="sheetId" class="form-input" placeholder="Paste the Sheets ID from the URL" style="flex:1"/>
-                    <button class="btn btn-primary" onclick="loadSheet()">Load Sheet</button>
+              <div class="card-header" style="margin-bottom:0">
+                <div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    Participant Data Source
                   </div>
-                  <span class="form-hint">From the Sheet URL: docs.google.com/spreadsheets/d/<strong>THIS_PART</strong>/edit</span>
-                </div>
-                <div id="sheetPreviewWrap" style="display:none;">
-                  <div class="notice notice-green" style="margin-bottom:10px;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span id="sheetLoadMsg">Sheet loaded successfully</span>
-                  </div>
-                  <div id="sheetPreviewTable"></div>
+                  <div class="card-desc">Connect your participant list to get started</div>
                 </div>
               </div>
 
-              <!-- CSV/Excel upload option -->
-              <div id="sourceCSV" style="display:none;">
-                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvFileInput').click()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  <h4>Click to upload or drag and drop</h4>
-                  <p>Supports .csv, .xlsx, .xls files</p>
-                  <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" onchange="handleFileUpload(event)"/>
+              <div style="margin-top:20px">
+                <div class="source-picker">
+                  <div class="source-opt active" id="srcSheetsOpt" onclick="switchSrc('sheets')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    <span>Google Sheets</span>
+                  </div>
+                  <div class="source-opt" id="srcFileOpt" onclick="switchSrc('file')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload CSV / Excel</span>
+                  </div>
                 </div>
-                <div id="csvPreviewWrap" style="display:none;margin-top:12px;"></div>
+
+                <!-- Google Sheets panel -->
+                <div id="srcSheets">
+                  <div class="form-group" style="margin-bottom:14px">
+                    <label class="form-label">Google Sheet ID <span class="req">*</span></label>
+                    <div style="display:flex;gap:10px">
+                      <input type="text" id="sheetId" class="form-input" placeholder="Paste the Sheet ID from the URL" style="flex:1;font-size:15px"/>
+                      <button class="btn btn-primary" id="loadSheetBtn" onclick="loadSheet()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        Load Sheet
+                      </button>
+                    </div>
+                    <span class="form-hint">From your Sheets URL: docs.google.com/spreadsheets/d/<strong style="color:var(--cyan)">SHEET_ID_HERE</strong>/edit</span>
+                  </div>
+                  <div id="sheetResult" style="display:none"></div>
+                </div>
+
+                <!-- File upload panel -->
+                <div id="srcFile" style="display:none">
+                  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvInput').click()">
+                    <div class="upload-zone-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <h4>Click to upload or drag & drop</h4>
+                    <p>Supports <strong>.csv</strong>, <strong>.xlsx</strong>, <strong>.xls</strong></p>
+                    <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFile(event)"/>
+                  </div>
+                  <div id="fileResult" style="display:none;margin-top:14px"></div>
+                </div>
               </div>
             </div>
 
-            <!-- Google Slides Template -->
-            <div class="form-section">
-              <div class="section-label">
-                <span class="section-icon">🎨</span>
-                Certificate Template
-              </div>
-              <div id="templateStatus" class="info-box" style="display:none; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:14px 16px; font-size:0.88rem; color:#6ee7b7;">
-                ✅ Template loaded from Certificate Designer
-              </div>
-              <div id="noTemplateWarning" class="info-box warning">
-                <span>⚠️</span>
-                <div>No template designed yet. <a href="cert-editor.html" style="color:#00d4ff; text-decoration:underline">Go to Template Editor →</a></div>
-              </div>
-            </div>
-
-            <div style="display:flex; justify-content:flex-end; gap:10px;">
-              <button class="btn btn-primary btn-lg" onclick="goToStep(2)">
-                Continue to Configure
+            <!-- Navigation -->
+            <div style="display:flex;justify-content:flex-end">
+              <button class="btn btn-primary btn-xl" onclick="goStep(2)">
+                Continue to Template Design
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </button>
             </div>
           </div>
 
-          <!-- Right panel tips -->
-          <div class="right-panel">
-            <div class="card">
-              <div class="card-title" style="margin-bottom:12px;">
+          <!-- Right tip panel -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:14px">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                How to find IDs
+                How to find your Sheet ID
               </div>
-              <div style="display:flex;flex-direction:column;gap:12px;font-size:12.5px;color:var(--text-2);">
-                <div>
-                  <strong style="color:var(--text);display:block;margin-bottom:3px;">Google Sheet ID</strong>
-                  Open your Sheet. Copy the long string between <code style="background:var(--surface-2);padding:1px 4px;border-radius:3px;">/d/</code> and <code style="background:var(--surface-2);padding:1px 4px;border-radius:3px;">/edit</code> in the URL.
-                </div>
-                <div class="divider" style="margin:4px 0;"></div>
-                <div>
-                  <strong style="color:var(--text);display:block;margin-bottom:3px;">Slides Template ID</strong>
-                  Open your certificate template in Slides. Copy the same <code style="background:var(--surface-2);padding:1px 4px;border-radius:3px;">/d/</code> portion.
-                </div>
-                <div class="divider" style="margin:4px 0;"></div>
-                <div>
-                  <strong style="color:var(--text);display:block;margin-bottom:3px;">Drive Folder ID</strong>
-                  Open the destination folder in Drive. Copy the part after <code style="background:var(--surface-2);padding:1px 4px;border-radius:3px;">/folders/</code>.
+              <div style="font-size:13.5px;color:var(--text-2);line-height:1.65;display:flex;flex-direction:column;gap:12px">
+                <div>Open your Google Sheet and look at the URL. The Sheet ID is the long string between <code style="background:var(--glass);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:12px">/d/</code> and <code style="background:var(--glass);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:12px">/edit</code>.</div>
+                <div style="background:var(--glass);border-radius:8px;padding:12px;font-family:var(--font-mono);font-size:11.5px;color:var(--text-3);line-height:1.8;word-break:break-all">
+                  docs.google.com/spreadsheets/d/<span style="color:var(--cyan);background:rgba(0,212,255,0.08);padding:0 3px;border-radius:3px">1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms</span>/edit
                 </div>
               </div>
             </div>
-            <div class="card">
-              <div class="card-title" style="margin-bottom:12px;">
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:14px">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Privacy Notice
+                Your data stays private
               </div>
-              <p style="font-size:12px;color:var(--text-2);line-height:1.6;">Your files never pass through our servers. CertiFlow uses your authorized Google OAuth token to call the APIs directly on your behalf. PDFs are saved to your own Drive.</p>
+              <p style="font-size:13.5px;color:var(--text-2);line-height:1.65">CertiFlow reads your Sheet using your own Google OAuth token. No data passes through our servers — everything runs via Google's secure APIs.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ── STEP 2: CONFIGURE ── -->
-      <div class="step-section" id="step2">
-        <div class="tool-body">
-          <div style="display:flex; flex-direction:column; gap:16px;">
+      <!-- ═══ STEP 2: TEMPLATE DESIGNER ═══ -->
+      <div class="step-panel" id="sp2">
+        <div style="display:flex;flex-direction:column;gap:20px">
 
-            <!-- Required column mapping -->
-            <div class="card">
-              <div class="card-title" style="margin-bottom:16px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-                Required Column Mapping
+          <div class="notice notice-cyan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span><strong>Visual Certificate Editor</strong> — Upload a background image or use a solid color. Click "+ Add Field" to place dynamic text fields (like participant name, course, date). Drag fields to position them. Select a field to style it on the right.</span>
+          </div>
+
+          <!-- Editor -->
+          <div class="editor-layout">
+            <!-- LEFT: Canvas -->
+            <div class="editor-main">
+              <!-- Top toolbar -->
+              <div class="editor-top-bar">
+                <label class="btn btn-secondary btn-sm" style="cursor:pointer">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  Upload Background
+                  <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBackground(event)"/>
+                </label>
+
+                <div class="bar-sep"></div>
+
+                <label style="font-size:12.5px;color:var(--text-2)">BG Color</label>
+                <input type="color" id="bgColor" value="#ffffff" onchange="changeBgColor()" style="width:32px;height:28px;border:1px solid var(--glass-border-2);border-radius:6px;cursor:pointer;padding:2px;background:var(--glass)"/>
+
+                <button class="btn btn-ghost btn-sm" onclick="clearBackground()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  Clear BG
+                </button>
+
+                <div class="bar-sep"></div>
+
+                <select id="canvasSize" class="form-select btn-sm" style="width:160px;padding:7px 30px 7px 10px" onchange="changeCanvasSize()">
+                  <option value="1122,794">A4 Landscape (1122×794)</option>
+                  <option value="794,1122">A4 Portrait (794×1122)</option>
+                  <option value="1280,720">HD 16:9 (1280×720)</option>
+                  <option value="1000,700">Custom Wide (1000×700)</option>
+                </select>
+
+                <div style="margin-left:auto;display:flex;gap:8px">
+                  <button class="btn btn-outline btn-sm" onclick="clearAll()">Clear All</button>
+                  <button class="btn btn-primary btn-sm" onclick="openAddFieldModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Field
+                  </button>
+                </div>
               </div>
-              <p style="font-size:12.5px;color:var(--text-2);margin-bottom:16px;">Map your Sheet columns to the standard fields used by the system.</p>
-              <div class="form-grid form-grid-2">
+
+              <!-- Canvas area -->
+              <div class="editor-canvas-zone" id="canvasWrap">
+                <div class="canvas-container" id="canvasContainer">
+                  <canvas id="certCanvas"></canvas>
+                  <div id="fieldOverlay"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Properties -->
+            <div class="editor-right">
+              <div class="editor-right-tabs">
+                <div class="er-tab active" id="erTab_fields" onclick="switchErTab('fields')">Fields</div>
+                <div class="er-tab" id="erTab_props" onclick="switchErTab('props')">Properties</div>
+              </div>
+              <div class="editor-right-body">
+                <!-- Fields list panel -->
+                <div class="er-panel active" id="erPanel_fields">
+                  <div style="font-size:12px;color:var(--text-3);margin-bottom:10px">Click a field to select and edit its properties.</div>
+                  <div id="fieldList">
+                    <div class="empty-state" style="padding:32px 12px">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                      <h3 style="font-size:14px">No fields yet</h3>
+                      <p>Click <strong>"+ Add Field"</strong> in the toolbar to place a dynamic text field.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Properties panel -->
+                <div class="er-panel" id="erPanel_props">
+                  <div id="noFieldMsg" style="padding:20px 0;text-align:center;color:var(--text-3);font-size:13.5px">Select a field on the canvas to edit its properties.</div>
+                  <div id="fieldProps" style="display:none;flex-direction:column;gap:14px">
+
+                    <div class="form-group">
+                      <label class="form-label">Placeholder Tag</label>
+                      <input type="text" id="propPlaceholder" class="form-input" onchange="updateFieldProp('placeholder',this.value)" style="font-family:var(--font-mono);font-size:13px"/>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Preview Text</label>
+                      <input type="text" id="propPreview" class="form-input" placeholder="Text shown while editing" onchange="updateFieldProp('previewText',this.value)"/>
+                    </div>
+
+                    <div class="divider" style="margin:4px 0"></div>
+                    <div class="prop-section-title">Typography</div>
+
+                    <div class="form-group">
+                      <label class="form-label">Font Family</label>
+                      <select id="propFont" class="form-select" onchange="updateFieldProp('fontFamily',this.value)">
+                        <option>Helvetica</option>
+                        <option>Helvetica Bold</option>
+                        <option>Times New Roman</option>
+                        <option>Times Bold</option>
+                        <option>Courier</option>
+                        <option>Georgia</option>
+                        <option>Palatino</option>
+                      </select>
+                    </div>
+
+                    <div class="prop-mini-grid">
+                      <div class="form-group">
+                        <label class="form-label">Size (px)</label>
+                        <input type="number" id="propSize" class="form-input" min="8" max="200" onchange="updateFieldProp('fontSize',+this.value)" oninput="updateFieldProp('fontSize',+this.value)"/>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Color</label>
+                        <div style="display:flex;gap:8px;align-items:center">
+                          <input type="color" id="propColor" onchange="updateFieldProp('color',this.value)" style="width:38px;height:38px;border:1px solid var(--glass-border-2);border-radius:8px;cursor:pointer;padding:3px;background:var(--glass);flex-shrink:0"/>
+                          <span id="propColorHex" style="font-size:12px;color:var(--text-2);font-family:var(--font-mono)">#000000</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Alignment</label>
+                      <div class="align-row">
+                        <button class="align-btn active" id="alignLeft" onclick="setAlign('left')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="15" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                        </button>
+                        <button class="align-btn" id="alignCenter" onclick="setAlign('center')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="18" y1="14" x2="6" y2="14"/><line x1="19" y1="18" x2="5" y2="18"/></svg>
+                        </button>
+                        <button class="align-btn" id="alignRight" onclick="setAlign('right')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="divider" style="margin:4px 0"></div>
+                    <div class="prop-section-title">Position & Size</div>
+
+                    <div class="prop-mini-grid">
+                      <div class="form-group">
+                        <label class="form-label">X (%)</label>
+                        <input type="number" id="propX" class="form-input" step="0.5" min="0" max="100" onchange="updateFieldFromProp()"/>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Y (%)</label>
+                        <input type="number" id="propY" class="form-input" step="0.5" min="0" max="100" onchange="updateFieldFromProp()"/>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Width (%)</label>
+                      <input type="number" id="propWidth" class="form-input" step="1" min="10" max="100" onchange="updateFieldProp('width',+this.value)"/>
+                    </div>
+
+                    <button class="btn btn-danger btn-full btn-sm" onclick="deleteSelectedField()" style="margin-top:4px">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      Delete This Field
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div style="display:flex;justify-content:space-between;gap:12px">
+            <button class="btn btn-secondary btn-lg" onclick="goStep(1)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Back
+            </button>
+            <button class="btn btn-primary btn-xl" onclick="goStep(3)">
+              Continue to Field Mapping
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 3: FIELD MAPPING ═══ -->
+      <div class="step-panel" id="sp3">
+        <div class="tool-cols">
+          <div style="display:flex;flex-direction:column;gap:20px">
+
+            <!-- Required -->
+            <div class="card">
+              <div class="card-header" style="margin-bottom:0">
+                <div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                    Required Column Mapping
+                  </div>
+                  <div class="card-desc">Map your sheet columns to standard fields</div>
+                </div>
+              </div>
+              <div style="margin-top:22px" class="form-grid form-grid-2">
                 <div class="form-group">
                   <label class="form-label">Name Column <span class="req">*</span></label>
-                  <select id="nameCol" class="form-select"><option value="">Select column...</option></select>
+                  <select id="nameCol" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"><option value="">Select column…</option></select>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Email Column <span class="req">*</span></label>
-                  <select id="emailCol" class="form-select"><option value="">Select column...</option></select>
+                  <select id="emailCol" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"><option value="">Select column…</option></select>
                 </div>
               </div>
             </div>
 
             <!-- Custom field mappings -->
             <div class="card">
-              <div class="card-header">
+              <div class="card-header" style="margin-bottom:0">
                 <div>
                   <div class="card-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                     Custom Field Mappings
                   </div>
-                  <div class="card-desc">Map additional Sheet columns to template placeholders (e.g. Course, Date, Score)</div>
+                  <div class="card-desc">Map additional sheet columns to template placeholders like <code style="background:var(--glass);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:12px">{{course}}</code>, <code style="background:var(--glass);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:12px">{{date}}</code></div>
                 </div>
-                <button class="btn btn-outline btn-sm" onclick="addFieldMapping()">
+                <button class="btn btn-outline" onclick="addMapping()" style="flex-shrink:0">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   Add Field
                 </button>
               </div>
-              <div id="fieldMappings" style="display:flex;flex-direction:column;gap:8px;">
-                <!-- Populated by JS -->
-              </div>
-              <div id="noMappings" class="notice notice-cyan" style="margin-top:8px;">
+              <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px" id="fieldMappings"></div>
+              <div id="noMappingsMsg" class="notice notice-cyan" style="margin-top:14px">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span>Add fields above to use more columns in your certificate — e.g. Course Name maps to <code style="background:rgba(0,212,255,0.15);padding:1px 5px;border-radius:3px;">{{course}}</code></span>
+                <span>Template fields detected from your design: <span id="detectedTagsList" style="font-family:var(--font-mono);font-size:12px;color:var(--cyan)">loading…</span>. Add mappings above to replace them with real data.</span>
               </div>
             </div>
 
-            <!-- Write-back option -->
+            <!-- Write-back -->
             <div class="card">
-              <div class="card-title" style="margin-bottom:14px;">
+              <div class="card-title" style="margin-bottom:16px">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-                Sheet Write-Back
+                Write Certificate Links to Sheet
               </div>
-              <div class="toggle-row">
+              <div class="toggle-row" style="margin-bottom:12px">
                 <div class="toggle-info">
-                  <strong>Save certificate links back to Sheet</strong>
-                  <span>Adds a "Certificate Link" column in your Sheet with each PDF link</span>
+                  <strong>Auto-write links back to Google Sheet</strong>
+                  <span>Adds a "Certificate Link" column with each generated PDF's Drive URL</span>
                 </div>
                 <div class="toggle on" id="writeBackToggle" onclick="this.classList.toggle('on')"></div>
               </div>
-              <div style="margin-top:12px;">
-                <div class="form-group">
-                  <label class="form-label">Column name <span class="opt">(optional)</span></label>
-                  <div class="picker-field">
-                  <div class="picker-selected" id="sheetSelected">
-                    <span class="picker-icon">📊</span>
-                    <span id="sheetName">No sheet selected</span>
-                  </div>
-                  <button class="btn-secondary" onclick="pickSheet()">Browse Drive →</button>
-                </div>
-                </div>
+              <div class="form-group">
+                <label class="form-label">Column Header Name</label>
+                <input type="text" id="certLinkColName" class="form-input" value="Certificate Link" placeholder="Certificate Link"/>
               </div>
             </div>
 
-            <div style="display:flex; justify-content:space-between; gap:10px;">
-              <button class="btn btn-secondary" onclick="goToStep(1)">
+            <div style="display:flex;justify-content:space-between;gap:12px">
+              <button class="btn btn-secondary btn-lg" onclick="goStep(2)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                 Back
               </button>
-              <button class="btn btn-primary btn-lg" onclick="goToStep(3)">
-                Preview Participants
+              <button class="btn btn-primary btn-xl" onclick="goStep(4)">
+                Preview & Confirm
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </button>
             </div>
           </div>
 
-          <!-- Right panel: mapping guide -->
-          <div class="right-panel">
-            <div class="card">
-              <div class="card-title" style="margin-bottom:12px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                How placeholders work
-              </div>
-              <div style="font-size:12.5px;color:var(--text-2);line-height:1.65;">
-                <p style="margin-bottom:10px;">In your Google Slides template, add placeholder text exactly like this:</p>
-                <div style="background:#030608;border-radius:8px;padding:12px;font-family:monospace;font-size:12px;color:#64748b;line-height:1.8;">
-                  <span style="color:#10b981;">{{name}}</span> — participant name<br/>
-                  <span style="color:#00d4ff;">{{course}}</span> — course name<br/>
-                  <span style="color:#a78bfa;">{{date}}</span> — any date field<br/>
-                  <span style="color:#f59e0b;">{{score}}</span> — custom field
-                </div>
-                <p style="margin-top:10px;">CertiFlow will replace each placeholder with the matching cell value for every participant.</p>
-              </div>
+          <!-- Right hint panel -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:14px">Your Sheet Columns</div>
+              <div id="colsListHint" style="font-size:13.5px;color:var(--text-2)">Columns will appear here after loading your Sheet.</div>
             </div>
-            <div class="card">
-              <div class="card-title" style="margin-bottom:12px;">Your Sheet Columns</div>
-              <div id="colPreview" style="font-size:12.5px;color:var(--text-2);">Load your Sheet first to see columns here.</div>
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:12px">Placeholder Reference</div>
+              <div style="background:rgba(2,4,8,0.6);border-radius:8px;padding:14px;font-family:var(--font-mono);font-size:12.5px;color:var(--text-3);line-height:2">
+                <div><span style="color:#10b981">{{name}}</span> → Participant Name</div>
+                <div><span style="color:#00d4ff">{{course}}</span> → Course Name</div>
+                <div><span style="color:#a78bfa">{{date}}</span> → Any Date Column</div>
+                <div><span style="color:#f59e0b">{{score}}</span> → Score / Grade</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ── STEP 3: PREVIEW ── -->
-      <div class="step-section" id="step3">
-        <div class="tool-body">
-          <div style="display:flex;flex-direction:column;gap:16px;">
+      <!-- ═══ STEP 4: PREVIEW & CONFIRM ═══ -->
+      <div class="step-panel" id="sp4">
+        <div class="tool-cols">
+          <div style="display:flex;flex-direction:column;gap:20px">
 
-            <!-- Summary card -->
             <div class="card">
-              <div class="card-title" style="margin-bottom:16px;">
+              <div class="card-title" style="margin-bottom:20px">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 Generation Summary
               </div>
-              <div class="summary-list" id="summaryList"></div>
+              <div class="summary-grid" id="summaryGrid"></div>
             </div>
 
-            <!-- Participant preview table -->
-            <div class="card" style="padding:0;overflow:hidden;">
-              <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+            <!-- Participant table -->
+            <div class="card" style="padding:0;overflow:hidden">
+              <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center">
                 <div class="card-title">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                  Participants Preview
+                  Participant Preview
                 </div>
-                <span class="badge badge-cyan" id="participantCount">0 participants</span>
+                <span class="badge badge-cyan" id="participantBadge">0 participants</span>
               </div>
-              <div id="previewTable" style="overflow-x:auto;"></div>
+              <div id="previewTableWrap" style="overflow-x:auto"></div>
             </div>
 
-            <div style="display:flex; justify-content:space-between; gap:10px;">
-              <button class="btn btn-secondary" onclick="goToStep(2)">
+            <div style="display:flex;justify-content:space-between;gap:12px">
+              <button class="btn btn-secondary btn-lg" onclick="goStep(3)">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                 Back
               </button>
-              <button class="btn btn-primary btn-lg" onclick="startGeneration()">
+              <button class="btn btn-primary btn-xl" onclick="startGeneration()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                Start Generating <span id="confirmCount"></span>
+                Generate <span id="genCountLabel"></span> Certificates
               </button>
             </div>
           </div>
 
-          <div class="right-panel">
-            <div class="card">
-              <div class="card-title" style="margin-bottom:12px;">Field Mappings Preview</div>
-              <div id="mappingsPreview" style="font-size:12.5px;color:var(--text-2);display:flex;flex-direction:column;gap:8px;"></div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:14px">Field Mappings</div>
+              <div id="mappingsReview" style="display:flex;flex-direction:column;gap:8px;font-size:13.5px"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ── STEP 4: GENERATING ── -->
-      <div class="step-section" id="step4">
-        <div class="tool-body">
-          <div style="display:flex;flex-direction:column;gap:16px;">
+      <!-- ═══ STEP 5: GENERATING ═══ -->
+      <div class="step-panel" id="sp5">
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:22px">
+          <div style="display:flex;flex-direction:column;gap:20px">
             <div class="card">
-              <div class="card-title" style="margin-bottom:20px;">
-                <span style="width:8px;height:8px;background:var(--cyan);border-radius:50%;display:inline-block;animation:pulse-dot 1.2s ease infinite;"></span>
-                Processing Certificates
+              <div style="text-align:center;padding:32px 0 24px">
+                <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px">
+                  <span class="live-dot"></span>
+                  <span style="font-size:16px;font-weight:600;color:var(--text)">Processing Certificates</span>
+                </div>
+                <div class="gen-counter" id="genCounter">0 / 0</div>
+                <div style="font-size:15px;color:var(--text-2)" id="genStatus">Initialising…</div>
               </div>
-
-              <div style="text-align:center;margin-bottom:24px;">
-                <div style="font-size:40px;font-weight:700;color:var(--text);letter-spacing:-1px;" id="genCounter">0 / 0</div>
-                <div style="font-size:13px;color:var(--text-2);margin-top:4px;" id="genStatus">Starting up...</div>
-              </div>
-
-              <div class="progress-wrap">
-                <div class="progress-bar" style="height:10px;">
-                  <div class="progress-fill" id="genProgressFill" style="width:0%;"></div>
+              <div style="margin-bottom:22px">
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:8px">
+                  <span>Progress</span>
+                  <span id="genPct">0%</span>
+                </div>
+                <div class="progress-track" style="height:12px">
+                  <div class="progress-fill" id="genBar" style="width:0%"></div>
                 </div>
               </div>
-
-              <div class="divider-label" style="margin:20px 0 12px;">Activity Log</div>
-              <div class="log-window" id="genLog"></div>
+              <div style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">Activity Log</div>
+              <div class="log-window" id="genLog" style="height:240px"></div>
             </div>
           </div>
 
-          <div class="right-panel">
-            <div class="card">
-              <div class="card-title" style="margin-bottom:12px;">Processing Details</div>
-              <div class="summary-list" id="processSummary"></div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:14px">Job Details</div>
+              <div class="summary-grid" id="jobSummary"></div>
             </div>
             <div class="notice notice-gold">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>Do not close this tab while generating. Large batches may take several minutes.</span>
+              <span>Keep this tab open while generating. Large batches of 100+ certificates may take several minutes.</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ── STEP 5: RESULTS ── -->
-      <div class="step-section" id="step5">
-        <div style="display:flex;flex-direction:column;gap:16px;">
+      <!-- ═══ STEP 6: RESULTS ═══ -->
+      <div class="step-panel" id="sp6">
+        <div style="display:flex;flex-direction:column;gap:22px">
 
-          <!-- Completion hero -->
-          <div class="card">
+          <!-- Completion card -->
+          <div class="card" style="padding:0;overflow:hidden">
             <div class="completion-hero">
-              <div class="completion-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <div class="completion-ring" id="completionRing">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
-              <h2 id="resultTitle">Generation Complete</h2>
-              <p id="resultSubtitle">All certificates have been generated and saved to your Drive.</p>
+              <h2 id="resultTitle">Certificates Generated</h2>
+              <p id="resultSub">All PDFs saved to your Google Drive folder.</p>
             </div>
-            <div style="display:flex;border-top:1px solid var(--border);">
+            <div class="mini-stats-row">
               <div class="mini-stat">
-                <div class="mini-stat-num" id="resTotal" style="color:var(--text);">0</div>
+                <div class="mini-stat-num" id="resTotal">0</div>
                 <div class="mini-stat-label">Total</div>
               </div>
-              <div style="width:1px;background:var(--border);"></div>
               <div class="mini-stat">
-                <div class="mini-stat-num" id="resSuccess" style="color:var(--green);">0</div>
+                <div class="mini-stat-num" id="resSuccess" style="color:var(--green)">0</div>
                 <div class="mini-stat-label">Generated</div>
               </div>
-              <div style="width:1px;background:var(--border);"></div>
               <div class="mini-stat">
-                <div class="mini-stat-num" id="resFailed" style="color:var(--red);">0</div>
+                <div class="mini-stat-num" id="resFailed" style="color:var(--red)">0</div>
                 <div class="mini-stat-label">Failed</div>
               </div>
             </div>
-            <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:center;">
-              <button class="btn btn-secondary" onclick="downloadResults()">
+            <div style="padding:18px 24px;border-top:1px solid var(--glass-border);display:flex;gap:12px;justify-content:center">
+              <button class="btn btn-secondary btn-lg" onclick="downloadResults()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download Results CSV
+                Export Results CSV
               </button>
-              <button class="btn btn-outline" onclick="newCampaign()">
+              <button class="btn btn-primary btn-lg" onclick="startNew()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 New Campaign
               </button>
@@ -521,22 +761,24 @@
           </div>
 
           <!-- Results table -->
-          <div class="card" style="padding:0;overflow:hidden;">
-            <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-              <div class="card-title">Certificate Links</div>
-              <input type="text" class="form-input" placeholder="Search by name or email..." id="resultSearch" oninput="filterResults()" style="width:220px;"/>
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+              <div class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Certificate Links
+              </div>
+              <input type="text" id="resultSearch" class="form-input" placeholder="Search by name or email…" oninput="filterResults()" style="width:240px"/>
             </div>
-            <div style="padding:0 0 8px;">
-              <div class="result-row header-row">
+            <div>
+              <div class="result-grid header">
                 <div>Name</div>
                 <div>Email</div>
                 <div>Certificate Link</div>
-                <div style="text-align:right;">Actions</div>
+                <div style="text-align:right">Actions</div>
               </div>
               <div id="resultRows"></div>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -544,9 +786,52 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Add Field Modal -->
+<div class="add-field-modal" id="addFieldModal">
+  <div class="add-field-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700">Add Text Field</h3>
+      <button onclick="closeAddFieldModal()" style="width:32px;height:32px;border-radius:8px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="form-group">
+        <label class="form-label">Field Type / Placeholder</label>
+        <select id="newFieldPh" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="document.getElementById('customPh').style.display=this.value==='custom'?'flex':'none'">
+          <option value="{{name}}">{{name}} — Participant Name</option>
+          <option value="{{course}}">{{course}} — Course / Event Name</option>
+          <option value="{{date}}">{{date}} — Date</option>
+          <option value="{{score}}">{{score}} — Score / Grade</option>
+          <option value="{{org}}">{{org}} — Organisation</option>
+          <option value="{{email}}">{{email}} — Email Address</option>
+          <option value="custom">Custom placeholder…</option>
+        </select>
+      </div>
+      <div id="customPh" class="form-group" style="display:none">
+        <label class="form-label">Custom Placeholder Tag</label>
+        <input type="text" id="customPhInput" class="form-input" placeholder="e.g. venue" style="font-family:var(--font-mono)"/>
+        <span class="form-hint">Enter without braces — we'll wrap it in {{ }}</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preview Text <span class="opt">(shown while editing)</span></label>
+        <input type="text" id="newFieldPreview" class="form-input" placeholder="e.g. John Smith"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Font Size (px)</label>
+        <input type="number" id="newFieldSize" class="form-input" value="36" min="8" max="200"/>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-secondary btn-full" onclick="closeAddFieldModal()">Cancel</button>
+        <button class="btn btn-primary btn-full btn-lg" onclick="addField()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add to Canvas
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="dashboard.js"></script>
 <script src="cert-tool.js"></script>
 </body>
