@@ -1,308 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign In — CertiFlow</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="login.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="login.css"/>
 </head>
 <body class="login-body">
 
-  <!-- Background -->
-  <div class="login-bg">
-    <div class="login-mesh"></div>
-    <div class="login-grid"></div>
-    <div class="login-orb login-orb-1"></div>
-    <div class="login-orb login-orb-2"></div>
-  </div>
+<!-- Background -->
+<div class="login-bg">
+  <div class="login-mesh"></div>
+  <div class="login-grid"></div>
+  <div class="login-orb login-orb-1"></div>
+  <div class="login-orb login-orb-2"></div>
+</div>
 
-  <!-- Header -->
-  <a href="index.html" class="login-back">
-    <i data-lucide="arrow-left"></i>
-    Back to Home
-  </a>
+<!-- Back to Home -->
+<a href="index.html" class="login-back">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+  Back to Home
+</a>
 
-  <!-- Main Login Container -->
-  <div class="login-wrapper">
-    <div class="login-panel" id="loginPanel">
+<div class="login-wrapper">
 
-      <!-- Logo -->
-      <div class="login-logo">
-        <div class="logo-icon"><i data-lucide="zap"></i></div>
-        <span class="logo-text">CertiFlow</span>
-      </div>
+  <!-- ── LEFT PANEL ── -->
+  <div class="login-panel">
 
-      <!-- ─── STEP 1: MAIN LOGIN ─── -->
-      <div class="login-step active" id="step1">
-        <h1 class="login-title">Welcome Back</h1>
-        <p class="login-subtitle">Sign in to access your tools and campaigns.</p>
-
-        <!-- Google Sign In -->
-        <button class="google-btn" onclick="handleGoogleLogin()">
-          <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-          </svg>
-          Continue with Google
-        </button>
-
-        <div class="login-divider">
-          <span>or choose your account type below</span>
-        </div>
-
-        <!-- Account Type Selection -->
-        <div class="account-type-label">I am signing in as a</div>
-        <div class="type-grid">
-          <button class="type-card active" id="typePersonal" onclick="selectType('personal')">
-            <div class="type-icon"><i data-lucide="user"></i></div>
-            <span class="type-name">Personal</span>
-            <span class="type-desc">Individual use, freelancers, personal events</span>
-            <div class="type-check"><i data-lucide="check"></i></div>
-          </button>
-          <button class="type-card" id="typeOrg" onclick="selectType('organization')">
-            <div class="type-icon"><i data-lucide="building-2"></i></div>
-            <span class="type-name">Organization</span>
-            <span class="type-desc">Colleges, NGOs, companies, institutions</span>
-            <div class="type-check"><i data-lucide="check"></i></div>
-          </button>
-        </div>
-
-        <button class="btn-primary btn-full login-continue" id="continueBtn" onclick="continueLogin()">
-          Continue
-          <i data-lucide="arrow-right"></i>
-        </button>
-
-        <p class="login-terms">
-          By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-          CertiFlow requests only necessary Google API permissions.
-        </p>
-      </div>
-
-      <!-- ─── STEP 2: ORGANIZATION TYPE ─── -->
-      <div class="login-step" id="step2">
-        <button class="step-back" onclick="goBack(1)">
-          <i data-lucide="arrow-left"></i> Back
-        </button>
-        <h2 class="login-title">Organization Type</h2>
-        <p class="login-subtitle">Help us tailor CertiFlow to your organization's needs.</p>
-
-        <div class="org-grid">
-          <button class="org-card" onclick="selectOrg('university')">
-            <div class="org-icon"><i data-lucide="graduation-cap"></i></div>
-            <span class="org-name">University</span>
-          </button>
-          <button class="org-card" onclick="selectOrg('college')">
-            <div class="org-icon"><i data-lucide="school"></i></div>
-            <span class="org-name">College</span>
-          </button>
-          <button class="org-card" onclick="selectOrg('ngo')">
-            <div class="org-icon"><i data-lucide="heart-handshake"></i></div>
-            <span class="org-name">NGO</span>
-          </button>
-          <button class="org-card" onclick="selectOrg('company')">
-            <div class="org-icon"><i data-lucide="briefcase"></i></div>
-            <span class="org-name">Company</span>
-          </button>
-          <button class="org-card" onclick="selectOrg('startup')">
-            <div class="org-icon"><i data-lucide="rocket"></i></div>
-            <span class="org-name">Startup</span>
-          </button>
-          <button class="org-card" onclick="selectOrg('other')">
-            <div class="org-icon"><i data-lucide="more-horizontal"></i></div>
-            <span class="org-name">Other</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- ─── STEP 3: ORGANIZATION DETAILS ─── -->
-      <div class="login-step" id="step3">
-        <button class="step-back" onclick="goBack(2)">
-          <i data-lucide="arrow-left"></i> Back
-        </button>
-        <h2 class="login-title">Tell Us About Your <span class="gradient-text" id="orgTypeLabel">Organization</span></h2>
-        <p class="login-subtitle">This helps us configure the right settings and limits for your account.</p>
-
-        <div class="org-form">
-          <div class="form-group">
-            <label>Organization Name <span class="required">*</span></label>
-            <div class="input-wrap">
-              <i data-lucide="building-2"></i>
-              <input type="text" id="orgName" placeholder="e.g. National Institute of Technology" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Official Website <span class="optional">(optional)</span></label>
-            <div class="input-wrap">
-              <i data-lucide="globe"></i>
-              <input type="url" id="orgWebsite" placeholder="https://yourorganization.edu" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Estimated Participants Per Campaign <span class="required">*</span></label>
-            <div class="select-wrap">
-              <i data-lucide="users"></i>
-              <select id="orgSize">
-                <option value="">Select a range</option>
-                <option value="1-50">1 – 50 participants</option>
-                <option value="51-200">51 – 200 participants</option>
-                <option value="201-500">201 – 500 participants</option>
-                <option value="500+">500+ participants</option>
-              </select>
-              <i data-lucide="chevron-down" class="select-chevron"></i>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Primary Use Case</label>
-            <div class="use-case-checks">
-              <label class="check-opt">
-                <input type="checkbox" value="certificates" /> E-Certificates
-              </label>
-              <label class="check-opt">
-                <input type="checkbox" value="bulk-mail" /> Bulk Announcements
-              </label>
-              <label class="check-opt">
-                <input type="checkbox" value="events" /> Event Management
-              </label>
-              <label class="check-opt">
-                <input type="checkbox" value="training" /> Training Completion
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn-primary btn-full" onclick="completeOrgSetup()">
-          <i data-lucide="chrome"></i>
-          Connect Google Account
-        </button>
-        <p class="login-terms" style="margin-top:16px;">We'll request Drive, Sheets, Slides, and Gmail permissions from your Google Account.</p>
-      </div>
-
-      <!-- ─── STEP 4: GOOGLE PERMISSIONS EXPLAINED ─── -->
-      <div class="login-step" id="step4">
-        <button class="step-back" id="step4Back" onclick="goBackFromPermissions()">
-          <i data-lucide="arrow-left"></i> Back
-        </button>
-        <h2 class="login-title">Permissions We Need</h2>
-        <p class="login-subtitle">CertiFlow requests these Google permissions. You can revoke them any time from your Google Account settings.</p>
-
-        <div class="permissions-list">
-          <div class="permission-item">
-            <div class="perm-icon perm-gmail"><i data-lucide="mail"></i></div>
-            <div class="perm-content">
-              <strong>Gmail — Send emails only</strong>
-              <span>CertiFlow can send emails on your behalf but cannot read your inbox.</span>
-            </div>
-            <div class="perm-badge perm-required">Required</div>
-          </div>
-          <div class="permission-item">
-            <div class="perm-icon perm-drive"><i data-lucide="hard-drive"></i></div>
-            <div class="perm-content">
-              <strong>Google Drive — Read &amp; Write</strong>
-              <span>To read your Slides templates and create/save certificate PDFs in your Drive.</span>
-            </div>
-            <div class="perm-badge perm-required">Required</div>
-          </div>
-          <div class="permission-item">
-            <div class="perm-icon perm-sheets"><i data-lucide="file-spreadsheet"></i></div>
-            <div class="perm-content">
-              <strong>Google Sheets — Read &amp; Write</strong>
-              <span>To read participant names/emails and write generated certificate links back.</span>
-            </div>
-            <div class="perm-badge perm-required">Required</div>
-          </div>
-          <div class="permission-item">
-            <div class="perm-icon perm-slides"><i data-lucide="presentation"></i></div>
-            <div class="perm-content">
-              <strong>Google Slides — Read only</strong>
-              <span>To read your certificate template and substitute participant names.</span>
-            </div>
-            <div class="perm-badge perm-required">Required</div>
-          </div>
-          <div class="permission-item">
-            <div class="perm-icon perm-profile"><i data-lucide="user-circle"></i></div>
-            <div class="perm-content">
-              <strong>Profile — Name &amp; Email</strong>
-              <span>Your name and email are used to personalize your CertiFlow dashboard.</span>
-            </div>
-            <div class="perm-badge perm-minimal">Minimal</div>
-          </div>
-        </div>
-
-        <button class="google-btn google-btn-full" onclick="triggerGoogleOAuth()">
-          <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-          </svg>
-          Authorize with Google
-        </button>
-
-        <div class="security-note">
-          <i data-lucide="shield-check"></i>
-          <span>Your credentials are never stored on CertiFlow servers. All operations run via Google's secure OAuth 2.0 flow.</span>
-        </div>
-      </div>
-
+    <!-- Logo -->
+    <div class="login-logo">
+      <div class="logo-icon">⚡</div>
+      <span class="logo-text">CertiFlow</span>
     </div>
 
-    <!-- Side Panel (decorative — desktop only) -->
-    <div class="login-side" aria-hidden="true">
-      <div class="side-content">
-        <div class="side-badge">
-          <i data-lucide="cpu"></i>
-          Live Campaign
+    <!-- STEP 1: Choose account type -->
+    <div class="login-step active" id="step1">
+      <h2 class="login-title">Welcome Back</h2>
+      <p class="login-subtitle">Sign in to access your tools and campaigns.</p>
+
+      <p class="account-type-label">I am signing in as a</p>
+      <div class="type-grid">
+        <div class="type-card active" id="typePersonal" onclick="selectType('personal')">
+          <div class="type-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="type-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <span class="type-name">Personal</span>
+          <span class="type-desc">Individual use, freelancers, personal events</span>
         </div>
-        <h3>Annual Day 2025 <br/> Certificate Dispatch</h3>
-        <div class="side-progress">
-          <div class="progress-row">
-            <span>Generating PDFs</span>
-            <span class="prog-num">247 / 247</span>
+        <div class="type-card" id="typeOrg" onclick="selectType('org')">
+          <div class="type-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
-        </div>
-        <div class="side-progress">
-          <div class="progress-row">
-            <span>Sending Emails</span>
-            <span class="prog-num">243 / 247</span>
+          <div class="type-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:98%"></div></div>
-        </div>
-        <div class="side-stats">
-          <div class="side-stat">
-            <span class="side-stat-num">247</span>
-            <span class="side-stat-label">Certificates</span>
-          </div>
-          <div class="side-stat">
-            <span class="side-stat-num">4m 12s</span>
-            <span class="side-stat-label">Time Taken</span>
-          </div>
-          <div class="side-stat">
-            <span class="side-stat-num">0</span>
-            <span class="side-stat-label">Errors</span>
-          </div>
-        </div>
-        <div class="side-testimonial">
-          <p>"What used to take me 4 hours of App Script debugging now takes 4 minutes."</p>
-          <div class="side-author">
-            <div class="author-avatar">SK</div>
-            <div>
-              <strong>Suresh Kumar</strong>
-              <span>Event Coordinator, NIT Trichy</span>
-            </div>
-          </div>
+          <span class="type-name">Organization</span>
+          <span class="type-desc">Colleges, NGOs, companies, institutions</span>
         </div>
       </div>
+
+      <button class="btn-primary login-continue" onclick="goStep2()">
+        Continue
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+
+      <p class="login-terms">
+        By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+      </p>
+    </div>
+
+    <!-- STEP 2: Org details (only shown for Organization) -->
+    <div class="login-step" id="step2">
+      <button class="step-back" onclick="goStep(1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <h2 class="login-title">About Your Organization</h2>
+      <p class="login-subtitle">Help us tailor CertiFlow for your team.</p>
+
+      <p class="account-type-label" style="text-align:left; margin-bottom:10px;">Organization type</p>
+      <div class="org-grid">
+        <div class="org-card active" onclick="selectOrg(this,'college')">
+          <div class="org-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <span class="org-name">College / University</span>
+        </div>
+        <div class="org-card" onclick="selectOrg(this,'ngo')">
+          <div class="org-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="org-name">NGO / Non-profit</span>
+        </div>
+        <div class="org-card" onclick="selectOrg(this,'startup')">
+          <div class="org-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <span class="org-name">Startup / Company</span>
+        </div>
+        <div class="org-card" onclick="selectOrg(this,'govt')">
+          <div class="org-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="10" width="18" height="11"/><path d="M3 10l9-7 9 7"/></svg>
+          </div>
+          <span class="org-name">Government Body</span>
+        </div>
+        <div class="org-card" onclick="selectOrg(this,'events')">
+          <div class="org-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <span class="org-name">Event Organizer</span>
+        </div>
+        <div class="org-card" onclick="selectOrg(this,'other')">
+          <div class="org-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <span class="org-name">Other</span>
+        </div>
+      </div>
+
+      <button class="btn-primary login-continue" onclick="goStep(3)">
+        Continue
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+
+    <!-- STEP 3: Permissions + Authorize -->
+    <div class="login-step" id="step3">
+      <button class="step-back" onclick="goStep(1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <h2 class="login-title">Permissions Required</h2>
+      <p class="login-subtitle">CertiFlow needs these Google permissions. You can revoke them anytime.</p>
+
+      <div class="perm-grid">
+        <div class="perm-card">
+          <div class="perm-icon perm-gmail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="perm-text">
+            <strong>Gmail</strong>
+            <span>Send emails</span>
+          </div>
+          <span class="perm-badge perm-required">Required</span>
+        </div>
+        <div class="perm-card">
+          <div class="perm-icon perm-drive">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 20H2l5.5-9.5L14 20"/><path d="M14 20l-4-7 5.5-9.5"/><path d="M8.5 10.5L2 20"/></svg>
+          </div>
+          <div class="perm-text">
+            <strong>Drive</strong>
+            <span>Save PDFs</span>
+          </div>
+          <span class="perm-badge perm-required">Required</span>
+        </div>
+        <div class="perm-card">
+          <div class="perm-icon perm-sheets">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          </div>
+          <div class="perm-text">
+            <strong>Sheets</strong>
+            <span>Read data</span>
+          </div>
+          <span class="perm-badge perm-required">Required</span>
+        </div>
+        <div class="perm-card">
+          <div class="perm-icon perm-slides">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          </div>
+          <div class="perm-text">
+            <strong>Slides</strong>
+            <span>Read templates</span>
+          </div>
+          <span class="perm-badge perm-minimal">Minimal</span>
+        </div>
+        <div class="perm-card" style="grid-column: span 2;">
+          <div class="perm-icon perm-profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="perm-text">
+            <strong>Profile</strong>
+            <span>Your name &amp; email for account setup only</span>
+          </div>
+          <span class="perm-badge perm-minimal">Read-only</span>
+        </div>
+      </div>
+
+      <div class="security-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Your files never pass through our servers. All operations run via Google APIs directly on your account.</span>
+      </div>
+
+      <button class="google-btn login-continue" onclick="authorizeWithGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Authorize with Google
+      </button>
+
+      <p class="login-terms">You can revoke access anytime from your <a href="https://myaccount.google.com/permissions" target="_blank">Google Account settings</a>.</p>
+    </div>
+
+  </div>
+
+  <!-- ── RIGHT PANEL: Animated Gradient Design ── -->
+  <div class="login-side">
+    <div class="side-pattern">
+      <div class="sp-orb sp-orb-1"></div>
+      <div class="sp-orb sp-orb-2"></div>
+      <div class="sp-orb sp-orb-3"></div>
+      <div class="sp-grid"></div>
+      <div class="sp-rings">
+        <div class="sp-ring sp-ring-1"></div>
+        <div class="sp-ring sp-ring-2"></div>
+        <div class="sp-ring sp-ring-3"></div>
+      </div>
+    </div>
+
+    <!-- Center branding -->
+    <div class="side-brand-wrap">
+      <div class="side-logo">⚡ CertiFlow</div>
+      <p class="side-tagline">Automate certificates &amp; bulk emails with your Google Workspace</p>
+    </div>
+
+    <!-- Floating feature cards -->
+    <div class="float-card fc-1">
+      <span class="fc-icon">📧</span>
+      <span>Bulk Email</span>
+    </div>
+    <div class="float-card fc-2">
+      <span class="fc-icon">🎓</span>
+      <span>Certificates</span>
+    </div>
+    <div class="float-card fc-3">
+      <span class="fc-icon">📊</span>
+      <span>Sheets Import</span>
+    </div>
+    <div class="float-card fc-4">
+      <span class="fc-icon">☁️</span>
+      <span>Drive Upload</span>
+    </div>
+    <div class="float-card fc-5">
+      <span class="fc-icon">⚡</span>
+      <span>Zero Code</span>
     </div>
   </div>
 
-  <script src="app.js"></script>
+</div>
+
+<script>
+  let selectedType = 'personal';
+
+  function selectType(type) {
+    selectedType = type;
+    document.getElementById('typePersonal').classList.toggle('active', type === 'personal');
+    document.getElementById('typeOrg').classList.toggle('active',      type === 'org');
+  }
+
+  function goStep2() {
+    if (selectedType === 'org') {
+      goStep(2);
+    } else {
+      goStep(3);
+    }
+  }
+
+  function goStep(n) {
+    document.querySelectorAll('.login-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+  }
+
+  function selectOrg(el, type) {
+    document.querySelectorAll('.org-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function authorizeWithGoogle() {
+    const API = 'https://certiflow-backend-73xk.onrender.com';
+    const type = selectedType;
+    window.location.href = `${API}/auth/google?accountType=${type}`;
+  }
+</script>
 </body>
 </html>
