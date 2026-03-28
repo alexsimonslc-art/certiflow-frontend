@@ -645,6 +645,9 @@ function showResults() {
     document.getElementById('completionRing').style.boxShadow  = '0 0 40px rgba(245,158,11,0.3)';
   }
   renderResultRows(CS.results);
+  
+// After results are received in generateCertificates()
+saveCampaign('cert', CS.campaignName || 'Certificate Run', results.length, results.filter(r=>r.status==='success').length, folderLink);
   toast(`${ok} certificates ready!`, 'success', 5000);
 }
 
