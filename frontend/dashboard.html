@@ -365,126 +365,95 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="dashboard.js"></script>
 <script>
-// ── Inject Sidebar ──────────────────────────────────────────────
-document.getElementById('sidebarMount').outerHTML = renderSidebar('dashboard.html');
+  // ── STEP 1: Capture token from URL + auth guard (MUST be first)
+  requireAuth();
 
-// ── Greeting ───────────────────────────────────────────────────
-const user = getUser();
-if (user) {
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const first = (user.name || 'there').split(' ')[0];
-  document.getElementById('welcomeTitle').textContent = `${greeting}, ${first} 👋`;
-  document.getElementById('welcomeSubtitle').textContent =
-    `Welcome back to your workspace. Here's what's happening.`;
-}
+  // ── STEP 2: Inject sidebar then init (MUST be in this order)
+  document.getElementById('sidebarMount').outerHTML = renderSidebar('dashboard.html');
+  initSidebar();
 
-// ── Load Stats: localStorage first, then API for live quota ────
-function renderStats(data) {
-  const safe = (n) => n >= 0 ? fmtNum(n) : '0';
-
-  document.getElementById('totalCerts').textContent     = safe(data.totalCerts);
-  document.getElementById('totalMails').textContent     = safe(data.totalMails);
-  document.getElementById('totalCampaigns').textContent = safe(data.totalCampaigns);
-  document.getElementById('successRate').textContent    =
-    data.totalCampaigns > 0 ? data.successRate + '%' : '—';
-
-  // Usage bars (monthly)
-  const certPct = data.monthlyEmailLimit
-    ? Math.min(100, (data.monthMails / data.monthlyEmailLimit) * 100)
-    : 0;
-
-  document.getElementById('certUsage').textContent = data.monthCerts + ' certs this month';
-  document.getElementById('mailUsage').textContent =
-    data.monthMails + ' / ' + (data.monthlyEmailLimit || 500);
-  document.getElementById('certBar').style.width = Math.min(100, data.monthCerts / 10) + '%';
-  document.getElementById('mailBar').style.width = certPct + '%';
-
-  // Show change badges if data exists
-  if (data.totalCampaigns > 0) {
-    ['certChange','mailChange','campChange'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = '';
-    });
-    const rateEl = document.getElementById('rateChange');
-    if (rateEl) { rateEl.textContent = data.successRate + '%'; rateEl.style.display = ''; }
+  // ── STEP 3: Greeting
+  const user = getUser();
+  if (user) {
+    const hour     = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const first    = (user.name || 'there').split(' ')[0];
+    document.getElementById('welcomeTitle').textContent    = `${greeting}, ${first} 👋`;
+    document.getElementById('welcomeSubtitle').textContent = `Welcome back. Here's what's happening.`;
   }
-}
 
-async function loadStats() {
-  // Step 1: immediately show local data
-  const local = getLocalStats();
-  renderStats({ ...local, monthlyEmailLimit: 500 });
+  // ── STEP 4: Stats
+  function renderStats(data) {
+    const safe = n => (n >= 0 ? fmtNum(n) : '0');
+    document.getElementById('totalCerts').textContent     = safe(data.totalCerts);
+    document.getElementById('totalMails').textContent     = safe(data.totalMails);
+    document.getElementById('totalCampaigns').textContent = safe(data.totalCampaigns);
+    document.getElementById('successRate').textContent    = data.totalCampaigns > 0 ? data.successRate + '%' : '—';
 
-  // Step 2: try to get live quota from API and merge
-  try {
-    const data = await apiFetch('/api/quota');
-    if (data) {
-      renderStats({
+    const limit   = data.monthlyEmailLimit || 500;
+    const mailPct = Math.min(100, (data.monthMails / limit) * 100);
+    document.getElementById('certUsage').textContent = data.monthCerts + ' this month';
+    document.getElementById('mailUsage').textContent = data.monthMails + ' / ' + limit;
+    document.getElementById('certBar').style.width   = Math.min(100, data.monthCerts / 10) + '%';
+    document.getElementById('mailBar').style.width   = mailPct + '%';
+
+    if (data.totalCampaigns > 0) {
+      ['certChange','mailChange','campChange'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = '';
+      });
+      const rateEl = document.getElementById('rateChange');
+      if (rateEl) { rateEl.textContent = data.successRate + '%'; rateEl.style.display = ''; }
+    }
+  }
+
+  async function loadStats() {
+    const local = getLocalStats();
+    renderStats({ ...local, monthlyEmailLimit: 500 });
+    try {
+      // ✅ silent:true — a 401 here will NOT log you out
+      const data = await apiFetch('/api/quota', { silent: true });
+      if (data) renderStats({
         ...local,
         monthlyEmailLimit: data.dailyLimit || 500,
         monthMails: data.sentToday || local.monthMails,
       });
-    }
-  } catch {
-    // API unavailable — local data already shown, that's fine
+    } catch { /* API unavailable — local data shown */ }
   }
-}
+  loadStats();
 
-loadStats();
+  // ── STEP 5: Campaigns table
+  function renderCampaignsTable() {
+    const campaigns = JSON.parse(localStorage.getItem('cf_campaigns') || '[]')
+      .sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,5);
+    const el = document.getElementById('campaignsTable');
+    if (!campaigns.length) return;
+    const typeColor = { cert:'cyan', mail:'purple', combined:'green' };
+    el.innerHTML = `
+      <table class="campaign-table">
+        <thead><tr>
+          <th>Campaign</th><th>Type</th><th>Date</th><th>Total</th><th>Success</th>
+        </tr></thead>
+        <tbody>
+          ${campaigns.map(c => {
+            const col = typeColor[c.type] || 'cyan';
+            const pct = c.total > 0 ? Math.round((c.success||0)/c.total*100) : 0;
+            const dt  = new Date(c.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'});
+            return `<tr>
+              <td style="color:var(--text);font-weight:600;">${c.name||'Untitled'}</td>
+              <td><span class="badge badge-${col}" style="font-size:11px;">${c.type}</span></td>
+              <td>${dt}</td><td>${c.total||0}</td>
+              <td><span style="color:${pct===100?'var(--green)':pct>50?'var(--gold)':'var(--red)'};font-weight:600;">
+                ${c.success||0} <span style="color:var(--text-3);font-size:11px;">(${pct}%)</span>
+              </span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  }
+  renderCampaignsTable();
 
-// ── Recent Campaigns Table ─────────────────────────────────────
-function renderCampaignsTable() {
-  const campaigns = JSON.parse(localStorage.getItem('cf_campaigns') || '[]')
-    .sort((a,b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 5);
-
-  const el = document.getElementById('campaignsTable');
-  if (!campaigns.length) return; // keep empty state
-
-  const typeIcon = {
-    cert:     { color: 'cyan',   icon: '🏅' },
-    mail:     { color: 'purple', icon: '📧' },
-    combined: { color: 'green',  icon: '⚡' },
-  };
-
-  el.innerHTML = `
-    <table class="campaign-table">
-      <thead>
-        <tr>
-          <th>Campaign</th>
-          <th>Type</th>
-          <th>Date</th>
-          <th>Total</th>
-          <th>Success</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${campaigns.map(c => {
-          const t   = typeIcon[c.type] || typeIcon.mail;
-          const pct = c.total > 0 ? Math.round((c.success||0)/c.total*100) : 0;
-          const dt  = new Date(c.date).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'2-digit' });
-          return `<tr>
-            <td style="color:var(--text);font-weight:600;">${t.icon} ${c.name || 'Untitled'}</td>
-            <td><span class="badge badge-${t.color}" style="font-size:11px;">${c.type}</span></td>
-            <td>${dt}</td>
-            <td>${c.total || 0}</td>
-            <td>
-              <span style="color:${pct===100?'var(--green)':pct>50?'var(--gold)':'var(--red)'};font-weight:600;">
-                ${c.success||0} <span style="color:var(--text-3);font-weight:400;font-size:11.5px;">(${pct}%)</span>
-              </span>
-            </td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-renderCampaignsTable();
-
-// ── Init icons ─────────────────────────────────────────────────
-lucide.createIcons();
+  lucide.createIcons();
 </script>
 </body>
 </html>
