@@ -136,6 +136,27 @@
       </div>
     </header>
 
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <!-- Click name/avatar → Settings -->
+        <div class="user-row-info" id="sidebarUserInfo" title="Account Settings">
+          <div class="user-avatar" id="sidebarAvatar">U</div>
+          <div class="user-info">
+            <div class="user-name" id="sidebarUserName">Loading…</div>
+            <div class="user-plan" id="sidebarUserPlan">Personal</div>
+          </div>
+        </div>
+        <!-- Click icon → logout confirmation -->
+        <button class="logout-btn" id="sidebarLogoutBtn" title="Sign out" aria-label="Sign out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
     <main class="page-content fade-in">
 
       <!-- Welcome -->
