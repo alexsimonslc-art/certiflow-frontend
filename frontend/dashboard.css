@@ -1026,3 +1026,517 @@ ul, ol { list-style: none; }
   .stats-row { grid-template-columns: 1fr 1fr; }
   .summary-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Account Dropdown ─────────────────────────────────────────── */
+.sidebar-footer { position: relative; }
+
+.account-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 12px; right: 12px;
+  background: #0d1728;
+  border: 1px solid var(--glass-border-2);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  box-shadow: 0 -16px 48px rgba(0,0,0,0.5);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 100;
+  animation: dropUp 0.2s var(--ease) both;
+}
+.account-dropdown.open { display: flex; }
+@keyframes dropUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.acct-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13.5px; font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer; text-decoration: none;
+  background: none; border: none;
+  font-family: var(--font); width: 100%; text-align: left;
+  transition: var(--transition);
+}
+.acct-item svg, .acct-item i { width: 15px; height: 15px; flex-shrink: 0; }
+.acct-item:hover { background: var(--glass); color: var(--text); }
+
+.acct-divider {
+  height: 1px; background: var(--glass-border);
+  margin: 4px 0;
+}
+.acct-logout { color: var(--red) !important; }
+.acct-logout:hover { background: var(--red-dim) !important; }
+
+/* ── Quota widget live ────────────────────────────────────────── */
+.quota-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.quota-label { font-size: 13px; color: var(--text-2); }
+.quota-count { font-size: 13px; font-weight: 600; color: var(--text); }
+.quota-count span { color: var(--text-3); font-weight: 400; }
+
+/* ================================================================
+   CertiFlow — dashboard-patch.css
+   Drop this <link> AFTER dashboard.css to fix text contrast
+   and apply combined-tool improvements everywhere.
+================================================================ */
+
+/* ── Global text contrast fixes ────────────────────────────────── */
+:root {
+  --text:           #f0f6ff !important;   /* was #e8f0fd — slightly brighter */
+  --text-2:         #a8bdd4 !important;   /* was #7a90b0 — much more readable */
+  --text-3:         #5a7490 !important;   /* was #3d5270 — bumped up */
+}
+
+/* Ensure body text is never invisible */
+body { color: var(--text); }
+
+/* ── Card titles — always high contrast ────────────────────────── */
+.card-title  { color: var(--text) !important; }
+.page-title  { color: var(--text) !important; }
+.page-subtitle { color: var(--text-2) !important; }
+
+/* ── Form labels ─────────────────────────────────────────────────  */
+.form-label { color: var(--text-2) !important; }
+
+/* ── Nav items ──────────────────────────────────────────────────── */
+.nav-item  { color: var(--text-2) !important; }
+.nav-item.active { color: var(--cyan) !important; }
+.nav-item:hover  { color: var(--text) !important; }
+
+/* ── Sidebar user name ──────────────────────────────────────────── */
+.user-info .user-name { color: var(--text) !important; }
+.user-info .user-plan { color: var(--text-3) !important; }
+
+/* ── Stat cards ─────────────────────────────────────────────────── */
+.stat-num   { color: var(--text) !important; }
+.stat-label { color: var(--text-2) !important; }
+
+/* ── Table cells ────────────────────────────────────────────────── */
+table tbody td { color: var(--text-2) !important; }
+table tbody td:first-child { color: var(--text) !important; }
+table thead th { color: var(--text-3) !important; }
+
+/* ── Badges — readable on dark surfaces ────────────────────────── */
+.badge-cyan   { color: #67e8f9 !important; }
+.badge-green  { color: #6ee7b7 !important; }
+.badge-gold   { color: #fcd34d !important; }
+.badge-red    { color: #fca5a5 !important; }
+.badge-purple { color: #c4b5fd !important; }
+.badge-gray   { color: var(--text-2) !important; }
+
+/* ── Notice / alert text ────────────────────────────────────────── */
+.notice-cyan  { color: #a5f3fc !important; }
+.notice-gold  { color: #fde68a !important; }
+.notice-green { color: #bbf7d0 !important; }
+.notice-red   { color: #fecaca !important; }
+
+/* ── Summary items ──────────────────────────────────────────────── */
+.summary-key { color: var(--text-2) !important; }
+.summary-val { color: var(--text)   !important; }
+
+/* ── Log window ─────────────────────────────────────────────────── */
+.log-ok   { color: #34d399 !important; }
+.log-err  { color: #fb7185 !important; }
+.log-info { color: #67e8f9 !important; }
+.log-warn { color: #fcd34d !important; }
+
+/* ── Toggle info ────────────────────────────────────────────────── */
+.toggle-info strong { color: var(--text) !important; }
+.toggle-info span   { color: var(--text-2) !important; }
+
+/* ── Progress track ─────────────────────────────────────────────── */
+.progress-track { background: rgba(255,255,255,0.06) !important; }
+
+/* ── Button ghost ───────────────────────────────────────────────── */
+.btn-ghost { color: var(--text-2) !important; }
+.btn-ghost:hover { color: var(--text) !important; }
+.btn-secondary { color: var(--text-2) !important; }
+.btn-secondary:hover { color: var(--text) !important; }
+.btn-outline { color: var(--text-2) !important; }
+
+/* ── Form hints ──────────────────────────────────────────────────── */
+.form-hint { color: var(--text-3) !important; }
+
+/* ── Data table ─────────────────────────────────────────────────── */
+.data-table-wrap tbody td { color: var(--text-2) !important; font-size: 14px !important; }
+.data-table-wrap thead th { color: var(--text-3) !important; }
+
+/* ── Page breadcrumb ─────────────────────────────────────────────── */
+.page-breadcrumb      { color: var(--text-2) !important; }
+.page-breadcrumb span { color: var(--text)   !important; }
+
+/* ── Stepper text ───────────────────────────────────────────────── */
+.step-title     { color: var(--text-2) !important; font-size: 13.5px !important; }
+.step-num-label { color: var(--text-3) !important; }
+.step-node.active .step-title { color: var(--text) !important; }
+.step-node.done  .step-title  { color: var(--text-2) !important; }
+
+/* ── Empty state ────────────────────────────────────────────────── */
+.empty-state h3 { color: var(--text-2) !important; font-size: 16px !important; }
+.empty-state p  { color: var(--text-3) !important; font-size: 14px !important; }
+
+/* ── Combined pipeline specifics ────────────────────────────────── */
+.pipe-label { color: var(--text-2) !important; font-size: 12.5px !important; font-weight: 600 !important; }
+.pipe-sub   { color: var(--text-3) !important; }
+.pipe-stage.active-stage .pipe-label { color: var(--text) !important; }
+
+.review-key { color: var(--text-2) !important; font-size: 14px !important; }
+.review-val { color: var(--text) !important;   font-size: 14px !important; }
+
+.src-opt .opt-desc  { color: var(--text-2) !important; }
+.src-opt .opt-title { color: var(--text)   !important; }
+
+.ep-tab { color: var(--text-3) !important; font-size: 13.5px !important; }
+.ep-tab.active { color: var(--cyan) !important; }
+.ep-tab:hover  { color: var(--text-2) !important; }
+
+.fc-label { color: var(--text) !important; font-size: 13.5px !important; }
+.fc-tag   { color: var(--text-3) !important; }
+
+.rmc-label { color: var(--text-2) !important; font-size: 13.5px !important; }
+
+/* ── Settings page ──────────────────────────────────────────────── */
+.quota-row      { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--text-2); margin-bottom: 6px; }
+.quota-label    { color: var(--text-2); }
+.quota-count    { color: var(--text); font-weight: 600; }
+
+/* ── Campaigns page ─────────────────────────────────────────────── */
+#campaignList > div { color: var(--text-2) !important; }
+
+/* ── Global font size lift ──────────────────────────────────────── */
+body { font-size: 14.5px; }
+.card-desc { font-size: 13.5px !important; color: var(--text-2) !important; }
+
+/* ── Input text always visible ──────────────────────────────────── */
+.form-input, .form-select, .form-textarea {
+  color: var(--text) !important;
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-3) !important; }
+
+/* ── Header btn icon ────────────────────────────────────────────── */
+.header-btn { color: var(--text-2) !important; }
+.header-btn:hover { color: var(--text) !important; }
+
+/* ================================================================
+   CertiFlow — Dashboard Visual Patch  (v2.1)
+   dashboard-patch.css  |  Overrides & enhancements for all pages
+   ================================================================ */
+
+/* ── Brighter Text ──────────────────────────────────────────────── */
+:root {
+  --text:    #eef4ff;        /* was #e8f0fd — slightly brighter */
+  --text-2:  #98b0cc;        /* was #7a90b0 — noticeably brighter */
+  --text-3:  #5a7394;        /* was #3d5270 — brighter */
+}
+
+/* ── Rich Background with Pattern ──────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 10% 5%,  rgba(0, 212, 255, 0.13) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 65% at 90% 85%,  rgba(124, 58, 237, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 45% at 50% 50%,  rgba(16, 185, 129, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 40% at 80% 15%,  rgba(0, 212, 255, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle dot-grid pattern overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* ── True Glassmorphism Cards ───────────────────────────────────── */
+.card,
+.stat-card,
+.tool-launch-card,
+.stepper,
+.toggle-row,
+.summary-item,
+.field-map-row,
+.upload-zone,
+.data-table-wrap {
+  background: rgba(255, 255, 255, 0.035) !important;
+  backdrop-filter: blur(28px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(1.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.06) inset,
+    0 8px 32px rgba(0,0,0,0.25) !important;
+}
+
+.card:hover,
+.stat-card:hover,
+.tool-launch-card:hover {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.055) !important;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.08) inset,
+    0 16px 48px rgba(0,0,0,0.35) !important;
+  transform: translateY(-2px);
+}
+
+/* Glossy sheen on cards */
+.card::before,
+.stat-card::before,
+.tool-launch-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.05) 0%,
+    rgba(255,255,255,0.01) 50%,
+    transparent 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Sidebar Glass ──────────────────────────────────────────────── */
+.sidebar {
+  background: rgba(4, 8, 18, 0.82) !important;
+  backdrop-filter: blur(32px) saturate(1.5) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(1.5) !important;
+  border-right: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* ── Sidebar Collapse Button ────────────────────────────────────── */
+.sidebar-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 0.22s ease;
+  position: absolute;
+  right: -14px;
+  top: 46px;
+  z-index: 60;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+.sidebar-collapse-btn:hover {
+  background: rgba(0,212,255,0.12);
+  border-color: rgba(0,212,255,0.3);
+  color: var(--cyan);
+}
+.sidebar-collapse-btn svg {
+  width: 13px; height: 13px;
+  transition: transform 0.22s ease;
+}
+
+/* ── Collapsed Sidebar ──────────────────────────────────────────── */
+:root { --sidebar-collapsed-w: 70px; }
+
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed-w) !important;
+  overflow: visible;
+}
+
+.sidebar.collapsed .logo-name { display: none; }
+.sidebar.collapsed .nav-section-label { opacity: 0; height: 0; overflow: hidden; padding: 0; margin: 0; }
+.sidebar.collapsed .nav-label { display: none; }
+.sidebar.collapsed .user-info { display: none; }
+.sidebar.collapsed .sidebar-logout-btn { display: none; }
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 11px;
+}
+.sidebar.collapsed .nav-item i,
+.sidebar.collapsed .nav-item svg {
+  margin: 0;
+}
+.sidebar.collapsed .user-row {
+  justify-content: center;
+  padding: 10px;
+}
+.sidebar.collapsed .sidebar-logo {
+  justify-content: center;
+  padding: 0 12px;
+}
+
+/* Tooltip on collapsed nav items */
+.sidebar.collapsed .nav-item {
+  position: relative;
+}
+.sidebar.collapsed .nav-item::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%; transform: translateY(-50%);
+  background: rgba(8,16,32,0.96);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+  transform: translateY(-50%) translateX(-6px);
+  z-index: 100;
+}
+.sidebar.collapsed .nav-item:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* ── Main area adjusts with collapsed sidebar ───────────────────── */
+.main-area.sidebar-collapsed {
+  margin-left: var(--sidebar-collapsed-w) !important;
+  transition: margin-left 0.28s cubic-bezier(0.16,1,0.3,1);
+}
+.main-area {
+  transition: margin-left 0.28s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ── Mobile open override ───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .sidebar.mobile-open { transform: translateX(0) !important; }
+  .sidebar.collapsed { width: 248px !important; }
+  .sidebar.collapsed .logo-name,
+  .sidebar.collapsed .nav-label,
+  .sidebar.collapsed .nav-section-label,
+  .sidebar.collapsed .user-info { display: block !important; }
+  .sidebar.collapsed .nav-item { justify-content: flex-start !important; padding: 10px 12px !important; }
+}
+
+/* ── Sidebar Footer & User Row Fix ──────────────────────────────── */
+.user-row {
+  text-decoration: none;
+  color: inherit;
+  display: flex !important;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+.user-row:hover { background: rgba(255,255,255,0.05) !important; }
+
+/* ── Red Logout Button ──────────────────────────────────────────── */
+.sidebar-logout-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  background: rgba(244, 63, 94, 0.08);
+  color: #f43f5e;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+.sidebar-logout-btn:hover {
+  background: rgba(244, 63, 94, 0.18);
+  border-color: rgba(244, 63, 94, 0.5);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.3);
+  transform: scale(1.05);
+}
+.sidebar-logout-btn svg { width: 14px; height: 14px; }
+
+/* ── Header Glass ───────────────────────────────────────────────── */
+.top-header {
+  background: rgba(3, 7, 15, 0.75) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+/* ── Stat Change Badge ──────────────────────────────────────────── */
+.stat-change {
+  font-size: 12px; font-weight: 600;
+  padding: 3px 9px; border-radius: 99px;
+}
+.stat-change.up {
+  background: rgba(16,185,129,0.12);
+  color: #10b981;
+  border: 1px solid rgba(16,185,129,0.2);
+}
+
+/* ── Account dropdown (keep clean) ─────────────────────────────── */
+.account-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 12px; right: 12px;
+  background: rgba(6,12,24,0.97);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 6px;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 -16px 48px rgba(0,0,0,0.5);
+  z-index: 100;
+}
+.account-dropdown.open { display: flex; }
+.acct-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 9px;
+  font-size: 13.5px; color: var(--text-2);
+  text-decoration: none; cursor: pointer;
+  transition: all 0.15s;
+  border: none; background: none; font-family: inherit;
+  width: 100%; text-align: left;
+}
+.acct-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+.acct-item i, .acct-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+.acct-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 4px 0; }
+.acct-logout { color: #f43f5e !important; }
+.acct-logout:hover { background: rgba(244,63,94,0.1) !important; }
+
+/* ── Page Breadcrumb ────────────────────────────────────────────── */
+.page-breadcrumb { color: var(--text-2); }
+.page-breadcrumb span { color: var(--text) !important; font-weight: 600; }
+
+/* ── Campaign table text ────────────────────────────────────────── */
+.campaign-table td { color: var(--text-2) !important; }
+.campaign-table td:first-child { color: var(--text) !important; }
+
+/* ── Form labels and hints brighter ────────────────────────────── */
+.form-label { color: var(--text-2); }
+.form-hint  { color: var(--text-3); }
+.form-input::placeholder { color: var(--text-3); }
+
+/* ── Nav section labels brighter ───────────────────────────────── */
+.nav-section-label { color: var(--text-3); }
+.nav-item { color: var(--text-2) !important; }
+.nav-item:hover { color: var(--text) !important; }
+.nav-item.active { color: var(--cyan) !important; }
+
+/* ── Stat label ─────────────────────────────────────────────────── */
+.stat-label { color: var(--text-2) !important; }
+.card-desc { color: var(--text-2) !important; }
+.limit-label { color: var(--text-2) !important; }
+
+/* ── Responsive sidebar for patch ──────────────────────────────── */
+@media (max-width: 900px) {
+  .sidebar-collapse-btn { display: none; }
+}
