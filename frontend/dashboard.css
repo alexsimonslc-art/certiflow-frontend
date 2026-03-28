@@ -1645,3 +1645,50 @@ body::after {
   border-color: var(--border-2);
   color: var(--text);
 }
+
+/* ── Workspace row with hamburger ────────────────────────── */
+.nav-section-with-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px 6px;
+  margin-bottom: 2px;
+}
+
+.nav-section-with-toggle .section-text {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.sidebar-toggle-btn {
+  flex-shrink: 0;
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex !important;   /* always visible */
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.sidebar-toggle-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--border-2);
+  color: var(--text);
+}
+
+/* ── Collapsed state ─────────────────────────────────────── */
+.sidebar.collapsed .section-text { display: none; }
+
+.sidebar.collapsed .nav-section-with-toggle {
+  justify-content: center;  /* centre the ☰ when text hidden */
+  padding: 8px 0 6px;
+}
+
+/* Hide collapse arrow if it still exists anywhere */
+.sidebar-collapse-btn { display: none !important; }
