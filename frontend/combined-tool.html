@@ -3,16 +3,25 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Combined Pipeline — Honourix</title>
+  <title>Combined Pipeline — CertiFlow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;700&family=Cinzel:wght@400;600&family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&family=EB+Garamond:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=Raleway:wght@400;600&family=Crimson+Text:wght@400;600&family=Oswald:wght@400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="dashboard.css"/>
+
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"/>
+
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 
   <style>
-    /* ── TEXT COLOR OVERRIDES — higher contrast everywhere ── */
     :root {
       --text:   #f0f6ff;
       --text-2: #a8bdd4;
@@ -27,64 +36,12 @@
     .step-panel { display: none; }
     .step-panel.active { display: block; animation: fadeInUp 0.3s var(--ease,cubic-bezier(.16,1,.3,1)) both; }
 
-    /* ── Pipeline Flow Banner ── */
-    .pipeline-banner {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      background: var(--surface);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-    .pipe-stage {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 18px 14px;
-      position: relative;
-      border-right: 1px solid var(--glass-border);
-      transition: background 0.2s;
-    }
-    .pipe-stage:last-child { border-right: none; }
-    .pipe-stage.active-stage { background: rgba(0,212,255,0.06); }
-    .pipe-stage.done-stage { background: rgba(16,185,129,0.04); }
-    .pipe-icon {
-      width: 44px; height: 44px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      border: 1px solid var(--glass-border);
-      background: var(--glass);
-    }
-    .pipe-icon svg { width: 20px; height: 20px; }
-    .pipe-icon.cert { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.2); color: var(--cyan); }
-    .pipe-icon.mail { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); color: #a78bfa; }
-    .pipe-icon.done { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.2); color: var(--green); }
-    .pipe-icon.active { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.2); color: var(--gold); }
-    .pipe-label { font-size: 12px; font-weight: 600; color: var(--text-2); text-align: center; line-height: 1.3; }
-    .pipe-sub { font-size: 11px; color: var(--text-3); text-align: center; }
-    .pipe-arrow {
-      font-size: 14px; color: var(--text-3); padding: 0 2px; flex-shrink: 0;
-      display: flex; align-items: center;
-    }
-
     /* ── Source Picker ── */
     .src-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .src-opt {
-      padding: 18px 16px; border: 1.5px solid var(--glass-border);
-      border-radius: var(--radius-lg); cursor: pointer;
-      background: var(--glass); transition: all 0.2s;
-      text-align: center;
-    }
+    .src-opt { padding: 18px 16px; border: 1.5px solid var(--glass-border); border-radius: var(--radius-lg); cursor: pointer; background: var(--glass); transition: all 0.2s; text-align: center; }
     .src-opt:hover { border-color: var(--glass-border-2); background: rgba(255,255,255,0.04); }
     .src-opt.active { border-color: rgba(0,212,255,0.45); background: rgba(0,212,255,0.08); }
-    .src-opt-icon {
-      width: 42px; height: 42px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 12px; border: 1px solid var(--glass-border);
-    }
+    .src-opt-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 1px solid var(--glass-border); }
     .src-opt-icon svg { width: 20px; height: 20px; }
     .src-opt .opt-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
     .src-opt .opt-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.4; }
@@ -92,275 +49,229 @@
     .src-opt.active .opt-title { color: var(--cyan); }
 
     /* ── Canvas Editor (Step 2) ── */
-    .editor-shell {
-      display: grid;
-      grid-template-columns: 1fr 264px;
-      gap: 0;
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      height: 560px;
-      background: var(--surface);
-    }
-    .editor-canvas-col {
-      display: flex; flex-direction: column; border-right: 1px solid var(--glass-border);
-    }
-    .editor-toolbar {
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-      padding: 10px 14px; background: rgba(0,0,0,0.25);
-      border-bottom: 1px solid var(--glass-border); flex-shrink: 0;
-    }
+    .editor-shell { display: grid; grid-template-columns: 1fr 280px; gap: 0; border: 1px solid var(--glass-border); border-radius: var(--radius-lg); overflow: hidden; height: 580px; background: var(--surface); }
+    .editor-canvas-col { display: flex; flex-direction: column; border-right: 1px solid var(--glass-border); }
+    .editor-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; background: rgba(0,0,0,0.25); border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
     .editor-toolbar .tb-sep { width: 1px; height: 18px; background: var(--glass-border); margin: 0 4px; flex-shrink: 0; }
-    .canvas-zone {
-      flex: 1; overflow: auto; display: flex;
-      align-items: center; justify-content: center;
-      padding: 20px;
-      background: repeating-conic-gradient(rgba(255,255,255,0.016) 0% 25%, transparent 0% 50%) 0 0 / 18px 18px;
-    }
-    .c-container {
-      position: relative;
-      box-shadow: 0 12px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
-      border-radius: 3px; overflow: hidden;
-    }
+    .canvas-zone { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 20px; background: repeating-conic-gradient(rgba(255,255,255,0.016) 0% 25%, transparent 0% 50%) 0 0 / 18px 18px; }
+    .c-container { position: relative; box-shadow: 0 12px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
     #certCanvas { display: block; }
     #fieldOverlay { position: absolute; inset: 0; }
-    .tf-handle {
-      position: absolute; cursor: move; pointer-events: all;
-      user-select: none; border: 2px solid transparent;
-      border-radius: 3px; padding: 1px 5px; white-space: nowrap;
-      transition: border-color 0.12s;
-    }
+    .tf-handle { position: absolute; cursor: move; pointer-events: all; user-select: none; border: 2px solid transparent; border-radius: 3px; padding: 1px 5px; white-space: nowrap; transition: border-color 0.12s; }
     .tf-handle:hover { border-color: rgba(0,212,255,0.6); }
     .tf-handle.sel { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.12); }
-    .tf-del {
-      display: none; position: absolute; top: -10px; right: -10px;
-      width: 20px; height: 20px; background: #f43f5e; border-radius: 50%;
-      font-size: 13px; line-height: 20px; text-align: center;
-      color: #fff; cursor: pointer; z-index: 10;
-    }
+    .tf-del { display: none; position: absolute; top: -10px; right: -10px; width: 20px; height: 20px; background: #f43f5e; border-radius: 50%; font-size: 13px; line-height: 20px; text-align: center; color: #fff; cursor: pointer; z-index: 10; }
     .tf-handle.sel .tf-del { display: block; }
 
-    /* Editor right col */
-    .editor-props-col { display: flex; flex-direction: column; overflow: hidden; }
+    /* Editor right col — enhanced props */
+    .editor-props-col { display: flex; flex-direction: column; overflow: hidden; background: rgba(0,0,0,0.12); }
     .ep-tabs { display: flex; border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
-    .ep-tab {
-      flex: 1; padding: 11px; text-align: center; font-size: 13px;
-      font-weight: 600; color: var(--text-3); cursor: pointer;
-      border-bottom: 2px solid transparent; transition: all 0.2s;
-    }
+    .ep-tab { flex: 1; padding: 11px; text-align: center; font-size: 13px; font-weight: 600; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
     .ep-tab:hover { color: var(--text-2); }
     .ep-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); background: rgba(0,212,255,0.04); }
-    .ep-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+    .ep-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
     .ep-body::-webkit-scrollbar { width: 4px; }
     .ep-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
     .ep-panel { display: none; flex-direction: column; gap: 10px; }
     .ep-panel.active { display: flex; }
-    .ep-section-hd { font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-3); margin-top: 4px; }
+    .ep-section-hd { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); margin-top: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--glass-border); }
 
-    .field-chip {
-      display: flex; align-items: center; gap: 9px; padding: 9px 11px;
-      border-radius: 9px; cursor: pointer; border: 1px solid transparent;
-      transition: all 0.15s; background: var(--glass);
-    }
+    /* Field chips */
+    .field-chip { display: flex; align-items: center; gap: 9px; padding: 9px 11px; border-radius: 9px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; background: var(--glass); }
     .field-chip:hover { border-color: var(--glass-border); }
     .field-chip.sel { border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.08); }
     .fc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .fc-label { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
-    .fc-tag { font-size: 10.5px; color: var(--text-3); font-family: var(--font-mono,'monospace'); }
+    .fc-label { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fc-tag { font-size: 10.5px; color: var(--text-3); font-family: monospace; flex-shrink: 0; }
 
+    /* Props form elements */
     .prop-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .prop-mini .form-input { padding: 8px 10px; font-size: 13px; }
     .align-row { display: flex; gap: 5px; }
-    .al-btn {
-      flex: 1; padding: 7px; border-radius: 7px;
-      background: var(--glass); border: 1px solid var(--glass-border);
-      color: var(--text-3); cursor: pointer; transition: all 0.15s;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .al-btn { flex: 1; padding: 7px; border-radius: 7px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-3); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
     .al-btn:hover { color: var(--text-2); }
     .al-btn.active { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.3); }
     .al-btn svg { width: 15px; height: 15px; }
 
+    /* Font preview strip */
+    .font-preview-strip { padding: 8px 10px; border-radius: 8px; background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.1); font-size: 17px; color: var(--text); text-align: center; margin-top: 4px; transition: all 0.2s; min-height: 36px; line-height: 1.3; }
+
+    /* Range with value display */
+    .range-row { display: flex; flex-direction: column; gap: 4px; }
+    .range-header { display: flex; justify-content: space-between; align-items: center; }
+    .range-val { font-size: 12px; font-weight: 700; color: var(--cyan); background: rgba(0,212,255,0.1); padding: 1px 6px; border-radius: 4px; }
+    .ep-range { width: 100%; accent-color: var(--cyan); }
+
     /* Add-field modal */
-    .af-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.75); backdrop-filter: blur(14px);
-      z-index: 300; align-items: center; justify-content: center;
-    }
+    .af-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(14px); z-index: 300; align-items: center; justify-content: center; }
     .af-overlay.open { display: flex; }
-    .af-box {
-      background: #0a1625; border: 1px solid var(--glass-border-2);
-      border-radius: 22px; padding: 32px; width: 460px; max-width: 92vw;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-    }
+    .af-box { background: #0a1625; border: 1px solid var(--glass-border-2); border-radius: 22px; padding: 32px; width: 460px; max-width: 92vw; box-shadow: 0 32px 80px rgba(0,0,0,0.6); }
     .af-box h3 { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 24px; }
 
-    /* ── Upload zone ── */
-    .upload-zone {
-      border: 2px dashed rgba(255,255,255,0.12); border-radius: 14px;
-      padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s;
-    }
+    /* Upload zone */
+    .upload-zone { border: 2px dashed rgba(255,255,255,0.12); border-radius: 14px; padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s; }
     .upload-zone:hover, .upload-zone.dz-over { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.04); }
     .uz-icon { width: 52px; height: 52px; border-radius: 14px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
     .uz-icon svg { width: 22px; height: 22px; color: var(--cyan); }
     .upload-zone h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
     .upload-zone p { font-size: 13px; color: var(--text-2); }
 
-    /* ── Field mapping rows ── */
-    .fm-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 12px 14px; background: var(--glass);
-      border: 1px solid var(--glass-border); border-radius: 11px;
-    }
+    /* Field mapping rows */
+    .fm-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 11px; }
     .fm-row .form-select, .fm-row .form-input { flex: 1; min-width: 0; }
     .fm-arrow { color: var(--text-3); flex-shrink: 0; }
-    .fm-del {
-      width: 32px; height: 32px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text-3); cursor: pointer; flex-shrink: 0; transition: all 0.15s;
-      background: transparent;
-    }
+    .fm-del { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-3); cursor: pointer; flex-shrink: 0; transition: all 0.15s; background: transparent; border: none; }
     .fm-del:hover { color: #f43f5e; background: rgba(244,63,94,0.1); }
     .fm-del svg { width: 14px; height: 14px; }
 
-    /* ── Email editor ── */
-    .email-editor-wrap { border: 1px solid var(--glass-border); border-radius: 14px; overflow: hidden; }
-    .email-toolbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 11px 16px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--glass-border);
-      gap: 12px; flex-wrap: wrap;
-    }
-    .e-tabs { display: flex; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 9px; padding: 3px; gap: 2px; }
-    .e-tab { padding: 6px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: all 0.18s; white-space: nowrap; }
-    .e-tab.active { background: linear-gradient(135deg,#00d4ff,#7c3aed); color: #fff; font-weight: 600; }
-    .merge-tag-row { display: flex; flex-wrap: wrap; gap: 7px; padding: 10px 16px; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.1); }
-    .mtag {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 10px; border-radius: 6px;
-      background: rgba(124,58,237,0.12); color: #c4b5fd;
-      border: 1px solid rgba(124,58,237,0.2);
-      font-size: 12.5px; font-weight: 500; cursor: pointer;
-      transition: all 0.15s; font-family: 'JetBrains Mono',monospace;
-    }
-    .mtag:hover { background: rgba(124,58,237,0.22); transform: scale(1.04); }
-    .mtag-label { font-size: 11px; font-weight: 600; color: var(--text-3); align-self: center; }
+    /* ═══ 3-MODE EMAIL EDITOR (from mail-tool) ═══ */
+    .me-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(28px); border: 1px solid rgba(255,255,255,0.09); border-radius: var(--radius-lg,14px); overflow: hidden; }
+    .me-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); flex-wrap: wrap; gap: 12px; }
+    .me-tab-bar { display: flex; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 3px; gap: 2px; }
+    .me-tab { padding: 7px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: all 0.2s; white-space: nowrap; border: none; background: none; font-family: var(--font); }
+    .me-tab:hover { color: var(--text); }
+    .me-tab.active { background: linear-gradient(135deg,#00d4ff,#7c3aed); color: #fff; font-weight: 600; box-shadow: 0 2px 12px rgba(0,212,255,0.25); }
 
-    /* Email preview */
-    .eprev-wrap { background: #f0f4f8; border-radius: 0 0 12px 12px; overflow: hidden; }
-    .eprev-head { background: #dde5ef; padding: 12px 18px; border-bottom: 1px solid rgba(0,0,0,0.08); }
-    .eprev-head div { font-size: 13px; color: #3d5a72; margin-bottom: 4px; }
-    .eprev-head div:last-child { margin-bottom: 0; }
-    .eprev-body { padding: 24px; color: #1a2a3a; font-size: 14px; line-height: 1.7; min-height: 130px; max-height: 320px; overflow-y: auto; }
+    /* Template Picker */
+    .me-tpl-row { display: flex; gap: 14px; padding: 18px 22px; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .me-tpl-row::-webkit-scrollbar { height: 4px; }
+    .me-tpl-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    .me-tpl-card { flex-shrink: 0; width: 148px; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.03); }
+    .me-tpl-card:hover { border-color: rgba(0,212,255,0.4); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .me-tpl-thumb { height: 80px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; }
+    .me-tpl-info { padding: 10px 12px; }
+    .me-tpl-name { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+    .me-tpl-btn { display: block; width: 100%; padding: 6px; border-radius: 6px; background: linear-gradient(135deg,#00d4ff,#7c3aed); color: #fff; font-size: 12px; font-weight: 600; text-align: center; border: none; cursor: pointer; font-family: var(--font); }
+
+    /* Merge Tags Row */
+    .me-tags-row { display: flex; align-items: center; gap: 10px; padding: 11px 22px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-wrap: wrap; background: rgba(255,255,255,0.01); }
+    .me-tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; background: rgba(124,58,237,0.12); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.2); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'JetBrains Mono',monospace; white-space: nowrap; }
+    .me-tag:hover { background: rgba(124,58,237,0.22); transform: scale(1.04); }
+
+    /* Visual Builder */
+    .me-visual-layout { display: grid; grid-template-columns: 160px 1fr 260px; height: 560px; }
+    .me-palette { border-right: 1px solid rgba(255,255,255,0.07); padding: 14px 10px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; background: rgba(255,255,255,0.01); }
+    .me-palette::-webkit-scrollbar { width: 3px; }
+    .me-palette::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .me-palette-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); padding: 4px 8px 8px; }
+    .me-palette-btn { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 9px; border: 1px solid transparent; background: rgba(255,255,255,0.04); cursor: pointer; transition: all 0.18s; color: var(--text-2); font-size: 13px; font-weight: 500; font-family: var(--font); width: 100%; text-align: left; }
+    .me-palette-btn:hover { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.2); color: var(--cyan); }
+    .me-palette-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* Canvas */
+    .me-canvas-wrap { overflow-y: auto; background: rgba(0,0,0,0.2); padding: 20px; display: flex; flex-direction: column; align-items: center; }
+    .me-canvas-wrap::-webkit-scrollbar { width: 5px; }
+    .me-canvas-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    .me-canvas-inner { width: 100%; max-width: 560px; min-height: 100%; }
+    .me-empty-canvas { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; color: var(--text-3); text-align: center; padding: 40px; }
+    .me-empty-canvas svg { width: 40px; height: 40px; opacity: 0.3; }
+
+    /* Block wraps */
+    .me-block-wrap { position: relative; cursor: pointer; transition: outline 0.15s; outline: 2px solid transparent; outline-offset: 0px; width: 100%; }
+    .me-block-wrap:hover { outline-color: rgba(0,212,255,0.3); }
+    .me-block-wrap.selected { outline-color: var(--cyan); outline-style: solid; }
+    .me-block-controls { position: absolute; top: 4px; right: 4px; display: flex; gap: 4px; z-index: 10; opacity: 0; transition: opacity 0.15s; }
+    .me-block-wrap:hover .me-block-controls,
+    .me-block-wrap.selected .me-block-controls { opacity: 1; }
+
+    /* ── BUG FIX: ctrl buttons — dark bg + cyan text so icons stay visible on hover ── */
+    .me-ctrl-btn { width: 26px; height: 26px; border-radius: 6px; border: none; background: rgba(4,8,15,0.9); color: var(--text-2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; font-family: var(--font); transition: all 0.15s; box-shadow: 0 1px 6px rgba(0,0,0,0.5); }
+    .me-ctrl-btn:hover { color: var(--cyan); background: rgba(4,8,15,0.95); border: 1px solid rgba(0,212,255,0.35); }
+    .me-ctrl-btn.del:hover { color: #f43f5e; background: rgba(4,8,15,0.95); border: 1px solid rgba(244,63,94,0.35); }
+    .me-ctrl-btn svg { width: 12px; height: 12px; }
+
+    .me-block-inner { pointer-events: none; }
+
+    /* Properties Panel */
+    .me-props { border-left: 1px solid rgba(255,255,255,0.07); overflow-y: auto; background: rgba(255,255,255,0.01); }
+    .me-props::-webkit-scrollbar { width: 3px; }
+    .me-props::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+    .me-props-header { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 13px; font-weight: 700; color: var(--text-3); letter-spacing: 0.4px; text-transform: uppercase; }
+    .me-props-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
+    .me-props-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; gap: 8px; color: var(--text-3); font-size: 13px; text-align: center; padding: 20px; }
+    .me-props-empty svg { width: 32px; height: 32px; opacity: 0.25; }
+    .me-field { display: flex; flex-direction: column; gap: 5px; }
+    .me-field-label { font-size: 11.5px; font-weight: 600; color: var(--text-3); letter-spacing: 0.2px; text-transform: uppercase; }
+    .me-input { width: 100%; padding: 8px 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-size: 13.5px; font-family: var(--font); outline: none; transition: border-color 0.15s; }
+    .me-input:focus { border-color: rgba(0,212,255,0.4); }
+    .me-textarea { width: 100%; padding: 9px 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-size: 13px; font-family: var(--font); outline: none; resize: vertical; min-height: 80px; line-height: 1.55; transition: border-color 0.15s; }
+    .me-textarea:focus { border-color: rgba(0,212,255,0.4); }
+    .me-color-row { display: flex; gap: 8px; align-items: center; }
+    .me-color-swatch { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); overflow: hidden; flex-shrink: 0; cursor: pointer; }
+    .me-color-swatch input[type="color"] { width: 48px; height: 48px; margin: -7px; cursor: pointer; border: none; background: none; }
+    .me-range { width: 100%; accent-color: var(--cyan); }
+    .me-align-btns { display: flex; gap: 4px; }
+    .me-align-btn { flex: 1; padding: 7px; border-radius: 7px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: var(--text-3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+    .me-align-btn:hover { color: var(--text); }
+    .me-align-btn.active { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.25); }
+    .me-align-btn svg { width: 13px; height: 13px; }
+
+    /* Code Editor */
+    .me-code-wrap { height: 560px; position: relative; }
+    .CodeMirror { height: 100% !important; font-family: 'JetBrains Mono','Fira Code',monospace !important; font-size: 13.5px !important; line-height: 1.7 !important; }
+    .CodeMirror.cm-s-dracula { background: #0a1020 !important; }
+    .CodeMirror-scroll { padding-bottom: 24px; }
+    .me-code-actions { position: absolute; top: 10px; right: 14px; z-index: 10; display: flex; gap: 6px; }
+
+    /* Preview */
+    .me-preview-wrap { height: 560px; display: flex; flex-direction: column; }
+    .me-preview-toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); }
+    .me-device-btn { padding: 6px 14px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: var(--text-2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+    .me-device-btn.active { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.25); }
+    .me-preview-frame-wrap { flex: 1; overflow: auto; background: rgba(0,0,0,0.25); display: flex; justify-content: center; padding: 20px; }
+    .me-preview-frame-wrap.mobile { align-items: flex-start; }
+    #mePreviewFrame { border: none; border-radius: 8px; background: #fff; box-shadow: 0 8px 40px rgba(0,0,0,0.5); transition: width 0.3s ease; }
 
     /* ── Review panel ── */
     .review-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
-    .review-stat {
-      text-align: center; padding: 22px 16px;
-      background: var(--glass); border: 1px solid var(--glass-border);
-      border-radius: 14px;
-    }
+    .review-stat { text-align: center; padding: 22px 16px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 14px; }
     .review-stat-num { font-family: 'Syne',sans-serif; font-size: 36px; font-weight: 800; line-height: 1; color: var(--text); margin-bottom: 6px; }
     .review-stat-label { font-size: 13px; color: var(--text-2); }
-
-    .review-detail-row {
-      display: flex; align-items: center; justify-content: space-between; gap: 20px;
-      padding: 13px 16px; border-bottom: 1px solid var(--glass-border); font-size: 14px;
-    }
+    .review-detail-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 13px 16px; border-bottom: 1px solid var(--glass-border); font-size: 14px; }
     .review-detail-row:last-child { border-bottom: none; }
     .review-key { color: var(--text-2); font-weight: 500; white-space: nowrap; flex-shrink: 0; }
     .review-val { color: var(--text); font-weight: 600; text-align: right; word-break: break-all; max-width: 60%; }
     .review-val.mono { font-family: 'JetBrains Mono',monospace; font-size: 12.5px; }
 
     /* ── Running state ── */
-    .pipeline-running {
-      display: flex; flex-direction: column; align-items: center;
-      text-align: center; padding: 36px 24px 28px;
-    }
-    .run-ring {
-      position: relative; width: 110px; height: 110px; margin-bottom: 24px;
-    }
+    .pipeline-running { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 36px 24px 28px; }
+    .run-ring { position: relative; width: 110px; height: 110px; margin-bottom: 24px; }
     .run-ring svg { width: 110px; height: 110px; transform: rotate(-90deg); }
     .run-ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
     .run-ring-fg { fill: none; stroke: url(#ringGrad); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 314; stroke-dashoffset: 314; transition: stroke-dashoffset 0.5s ease; }
-    .run-ring-text {
-      position: absolute; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-    }
-    .run-pct { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; color: var(--text); line-height: 1; }
-    .run-done-label { font-size: 11px; color: var(--text-3); margin-top: 2px; }
-    .run-title { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .run-status { font-size: 15px; color: var(--text-2); margin-bottom: 24px; min-height: 22px; }
-    .run-progress-row { width: 100%; max-width: 520px; margin-bottom: 8px; }
-    .run-counts { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); margin-bottom: 6px; }
-    .run-counts strong { color: var(--text); }
-
-    /* ── Live log ── */
-    .live-log {
-      background: rgba(2,5,10,0.85);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px; padding: 14px;
-      font-family: 'JetBrains Mono',monospace; font-size: 12.5px;
-      color: #4a6080; height: 200px; overflow-y: auto;
-      text-align: left; display: flex; flex-direction: column; gap: 5px;
-    }
+    .run-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    .run-pct { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; color: var(--text); }
+    .run-done-label { font-size: 12px; color: var(--text-3); }
+    .run-title { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .run-status { font-size: 14px; color: var(--text-2); margin-bottom: 20px; }
+    .run-progress-row { width: 100%; max-width: 440px; }
+    .run-counts { display: flex; justify-content: center; gap: 28px; margin-bottom: 14px; font-size: 14px; color: var(--text-2); }
+    .live-log { background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border); border-radius: 10px; padding: 14px 16px; height: 180px; overflow-y: auto; font-family: 'JetBrains Mono',monospace; font-size: 12.5px; }
     .live-log::-webkit-scrollbar { width: 4px; }
     .live-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-    .ll-row { display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
-    .ll-ts { color: #2d4060; flex-shrink: 0; font-size: 11px; margin-top: 1px; }
-    .ll-ok   { color: #10b981; }
+    .ll-row { display: flex; gap: 10px; margin-bottom: 4px; }
+    .ll-ts { color: var(--text-3); flex-shrink: 0; }
+    .ll-info { color: var(--text-2); }
+    .ll-cert { color: var(--cyan); }
+    .ll-mail { color: #a78bfa; }
     .ll-err  { color: #f43f5e; }
-    .ll-info { color: #00d4ff; }
-    .ll-warn { color: #f59e0b; }
-    .ll-cert { color: #a78bfa; }
-    .ll-mail { color: #34d399; }
-
-    /* ── Results table ── */
-    .results-table { width: 100%; border-collapse: collapse; }
-    .results-table thead th {
-      padding: 12px 16px; background: rgba(255,255,255,0.03);
-      font-size: 11.5px; font-weight: 700; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.6px; text-align: left; white-space: nowrap;
-    }
-    .results-table tbody tr { border-top: 1px solid var(--glass-border); transition: background 0.12s; }
-    .results-table tbody tr:hover { background: rgba(255,255,255,0.02); }
-    .results-table tbody td { padding: 13px 16px; font-size: 14px; color: var(--text-2); }
-    .results-table tbody td:first-child { font-weight: 600; color: var(--text); }
-
-    /* ── Completion ── */
-    .done-ring {
-      width: 80px; height: 80px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px; animation: popIn 0.5s cubic-bezier(.16,1,.3,1) both;
-    }
-    .done-ring svg { width: 34px; height: 34px; color: #fff; }
-    @keyframes popIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      60% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
+    .done-ring { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+    .done-ring svg { width: 36px; height: 36px; }
     .result-mini-row { display: flex; border-top: 1px solid var(--glass-border); }
-    .result-mini-cell { flex: 1; padding: 18px; text-align: center; border-right: 1px solid var(--glass-border); }
-    .result-mini-cell:last-child { border-right: none; }
-    .rmc-num { font-family: 'Syne',sans-serif; font-size: 30px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .result-mini-cell { flex: 1; text-align: center; padding: 20px; }
+    .result-mini-cell + .result-mini-cell { border-left: 1px solid var(--glass-border); }
+    .rmc-num { font-family: 'Syne',sans-serif; font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
     .rmc-label { font-size: 13px; color: var(--text-2); }
+    .results-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .results-table th { padding: 13px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-3); text-align: left; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.15); }
+    .results-table td { padding: 13px 16px; border-bottom: 1px solid var(--glass-border); color: var(--text); vertical-align: middle; }
+    .results-table tr:last-child td { border-bottom: none; }
+    .results-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .icon-btn { width: 30px; height: 30px; border-radius: 7px; background: var(--glass); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-2); transition: all 0.15s; }
+    .icon-btn:hover { color: var(--cyan); border-color: rgba(0,212,255,0.3); }
+    .icon-btn svg { width: 13px; height: 13px; }
 
-    .icon-btn {
-      width: 32px; height: 32px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--glass); border: 1px solid var(--glass-border);
-      color: var(--text-2); cursor: pointer; transition: all 0.15s;
-    }
-    .icon-btn:hover { color: var(--cyan); border-color: rgba(0,212,255,0.25); background: rgba(0,212,255,0.08); }
-    .icon-btn svg { width: 14px; height: 14px; }
-
-    /* ── Cols ── */
-    .two-cols { display: grid; grid-template-columns: 1fr 300px; gap: 22px; }
-    .three-col-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
-
-    @media (max-width:1100px) { .two-cols { grid-template-columns: 1fr; } .editor-shell { grid-template-columns: 1fr; height: auto; } .editor-props-col { height: 340px; } }
-    @media (max-width: 800px) { .pipeline-banner { display: none; } .review-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 600px) { .review-grid { grid-template-columns: 1fr; } .src-picker { grid-template-columns: 1fr; } }
+    @media (max-width:960px) { .me-visual-layout { grid-template-columns: 140px 1fr; } .me-props { display: none; } }
   </style>
 </head>
 <body>
@@ -374,9 +285,6 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><polyline points="9 18 15 12 9 6"/></svg>
         <span>Combined Pipeline</span>
       </div>
-      <div class="header-actions">
-        
-      </div>
     </header>
 
     <main class="page-content fade-in">
@@ -387,51 +295,8 @@
         <p class="page-subtitle">Design a certificate template, connect participant data, and send personalised emails — all in a single automated workflow.</p>
       </div>
 
-      <!-- Pipeline Flow Banner -->
-      <div class="pipeline-banner">
-        <div class="pipe-stage" id="ps1">
-          <div class="pipe-icon active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-          </div>
-          <div class="pipe-label">Participant Data</div>
-          <div class="pipe-sub">Sheet or CSV</div>
-        </div>
-        <div class="pipe-arrow">›</div>
-        <div class="pipe-stage" id="ps2">
-          <div class="pipe-icon cert">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
-          <div class="pipe-label">Certificate Design</div>
-          <div class="pipe-sub">Visual editor</div>
-        </div>
-        <div class="pipe-arrow">›</div>
-        <div class="pipe-stage" id="ps3">
-          <div class="pipe-icon cert">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
-          </div>
-          <div class="pipe-label">Field Mapping</div>
-          <div class="pipe-sub">Column → Tag</div>
-        </div>
-        <div class="pipe-arrow">›</div>
-        <div class="pipe-stage" id="ps4">
-          <div class="pipe-icon mail">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <div class="pipe-label">Email Template</div>
-          <div class="pipe-sub">HTML with merge tags</div>
-        </div>
-        <div class="pipe-arrow">›</div>
-        <div class="pipe-stage" id="ps5">
-          <div class="pipe-icon done">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="pipe-label">Launch & Report</div>
-          <div class="pipe-sub">Auto-generate + send</div>
-        </div>
-      </div>
-
-      <!-- Stepper -->
-      <div class="stepper" id="stepper" style="margin-bottom:28px"></div>
+      <!-- Single Stepper (no duplicate banner) -->
+      <div class="stepper" id="stepper" style="margin-bottom:32px"></div>
 
       <!-- ═══════════════════════════════════════════ -->
       <!-- STEP 1 — DATA & CAMPAIGN                   -->
@@ -456,25 +321,19 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
                 Participant Data Source
               </div>
-
               <div class="src-picker">
                 <div class="src-opt active" id="srcSheetsBtn" onclick="switchDataSrc('sheets')">
-                  <div class="src-opt-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                  </div>
+                  <div class="src-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg></div>
                   <div class="opt-title">Google Sheets</div>
                   <div class="opt-desc">Connect directly with your Sheet ID</div>
                 </div>
                 <div class="src-opt" id="srcFileBtn" onclick="switchDataSrc('file')">
-                  <div class="src-opt-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  </div>
+                  <div class="src-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
                   <div class="opt-title">Upload File</div>
                   <div class="opt-desc">CSV or Excel from your computer</div>
                 </div>
               </div>
 
-              <!-- Sheets panel -->
               <div id="panelSheets">
                 <div class="form-group" style="margin-bottom:14px">
                   <label class="form-label">Google Sheet ID <span style="color:#f43f5e">*</span></label>
@@ -485,16 +344,15 @@
                       Load
                     </button>
                   </div>
-                  <span class="form-hint" style="color:var(--text-3)">From URL: docs.google.com/spreadsheets/d/<strong style="color:var(--cyan)">THIS_ID</strong>/edit</span>
+                  <span class="form-hint">From URL: docs.google.com/spreadsheets/d/<strong style="color:var(--cyan)">THIS_ID</strong>/edit</span>
                 </div>
                 <div id="sheetLoadedMsg" style="display:none"></div>
               </div>
 
-              <!-- File panel -->
               <div id="panelFile" style="display:none">
                 <div class="upload-zone" id="cpUploadZone" onclick="document.getElementById('cpFileInput').click()">
                   <div class="uz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-                  <h4>Click or drag & drop</h4>
+                  <h4>Click or drag &amp; drop</h4>
                   <p>Supports <strong>.csv</strong>, <strong>.xlsx</strong>, <strong>.xls</strong></p>
                   <input type="file" id="cpFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileUpload(event)"/>
                 </div>
@@ -510,7 +368,6 @@
             </div>
           </div>
 
-          <!-- Tips -->
           <div style="display:flex;flex-direction:column;gap:16px">
             <div class="card card-sm">
               <div class="card-title" style="margin-bottom:14px;font-size:14px">
@@ -521,15 +378,12 @@
                 <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">1</span><span>Load participant data from your Sheet or a file</span></div>
                 <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">2</span><span>Design your certificate visually with text fields</span></div>
                 <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">3</span><span>Map sheet columns to certificate placeholders</span></div>
-                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">4</span><span>Write your HTML email template</span></div>
-                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(16,185,129,0.15);color:var(--green);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">5</span><span>Launch — PDFs are saved to Drive, emails sent from Gmail</span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">4</span><span>Design a beautiful HTML email template</span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(16,185,129,0.15);color:var(--green);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">5</span><span>Launch — PDFs saved to Drive, emails sent from Gmail</span></div>
               </div>
             </div>
             <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:12px;font-size:14px">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Privacy Notice
-              </div>
+              <div class="card-title" style="margin-bottom:12px;font-size:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Privacy Notice</div>
               <p style="font-size:13px;color:var(--text-2);line-height:1.65">Everything runs through your Google OAuth token. No participant data, emails, or certificates ever pass through our servers.</p>
             </div>
           </div>
@@ -541,10 +395,9 @@
       <!-- ═══════════════════════════════════════════ -->
       <div class="step-panel" id="sp2">
         <div style="display:flex;flex-direction:column;gap:20px">
-
           <div class="notice" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--text-2)">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span><strong style="color:var(--text)">Visual Certificate Editor</strong> — Upload a background image or pick a colour. Click <strong style="color:var(--cyan)">"+ Add Field"</strong> to place a dynamic text block. Drag fields to position. Select a field to change font, size, colour, and alignment on the right panel.</span>
+            <span><strong style="color:var(--text)">Visual Certificate Editor</strong> — Upload a background or pick a colour. Click <strong style="color:var(--cyan)">"+ Add Field"</strong> to place a dynamic text block. Drag to position. Select a field to change font, size, colour, letter spacing, and alignment.</span>
           </div>
 
           <div class="editor-shell">
@@ -563,7 +416,7 @@
                 </label>
                 <button class="btn btn-ghost btn-sm" onclick="clearBG()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                  Clear
+                  Clear BG
                 </button>
                 <div class="tb-sep"></div>
                 <select id="canvasSize" class="form-select btn-sm" style="width:155px;padding:7px 28px 7px 10px;font-size:13px" onchange="changeSize()">
@@ -588,71 +441,92 @@
               </div>
             </div>
 
-            <!-- Properties side -->
+            <!-- Properties side — enhanced with 10+ fonts + letter spacing -->
             <div class="editor-props-col">
               <div class="ep-tabs">
                 <div class="ep-tab active" id="epTab_fields" onclick="switchEPTab('fields')">Fields</div>
                 <div class="ep-tab" id="epTab_props" onclick="switchEPTab('props')">Properties</div>
               </div>
               <div class="ep-body">
+                <!-- Fields tab -->
                 <div class="ep-panel active" id="epPanel_fields">
-                  <div style="font-size:12.5px;color:var(--text-3)">Click a field on the canvas to select it, or use this list.</div>
+                  <div style="font-size:12.5px;color:var(--text-3)">Click a field on canvas to select it, or use this list.</div>
                   <div id="fieldChipList">
-                    <div style="text-align:center;padding:28px 12px;color:var(--text-3);font-size:13px">
-                      No fields yet.<br/>
-                      <span style="color:var(--cyan)">Click "+ Add Field"</span> to start.
-                    </div>
+                    <div style="text-align:center;padding:28px 12px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span> to start.</div>
                   </div>
                 </div>
+
+                <!-- Props tab -->
                 <div class="ep-panel" id="epPanel_props">
                   <div id="propsEmpty" style="padding:16px 0;text-align:center;font-size:13.5px;color:var(--text-3)">Select a field to edit its properties.</div>
                   <div id="propsForm" style="display:none;flex-direction:column;gap:10px">
+
+                    <div class="ep-section-hd">Field Info</div>
                     <div class="form-group">
-                      <label class="form-label" style="font-size:12px">Placeholder Tag</label>
-                      <input type="text" id="pPh" class="form-input" onchange="setFP('placeholder',this.value)" style="font-family:monospace;font-size:13px;padding:8px 11px"/>
+                      <label class="form-label" style="font-size:11px">Placeholder</label>
+                      <input type="text" id="pPh" class="form-input" style="font-size:12px;padding:7px 9px;font-family:monospace" readonly/>
                     </div>
                     <div class="form-group">
-                      <label class="form-label" style="font-size:12px">Preview Text</label>
-                      <input type="text" id="pPrev" class="form-input" onchange="setFP('previewText',this.value)" style="font-size:13.5px;padding:8px 11px"/>
+                      <label class="form-label" style="font-size:11px">Preview Text</label>
+                      <input type="text" id="pPrev" class="form-input" style="font-size:12px;padding:7px 9px" oninput="setFP('previewText',this.value)"/>
                     </div>
-                    <div class="tb-sep" style="width:100%;height:1px;margin:2px 0"></div>
+
                     <div class="ep-section-hd">Typography</div>
                     <div class="form-group">
-                      <label class="form-label" style="font-size:12px">Font</label>
-                      <select id="pFont" class="form-select" onchange="setFP('fontFamily',this.value)" style="padding:8px 30px 8px 11px;font-size:13.5px">
-                        <option>Helvetica</option><option>Helvetica Bold</option>
-                        <option>Times New Roman</option><option>Times Bold</option>
-                        <option>Courier</option><option>Georgia</option>
+                      <label class="form-label" style="font-size:11px">Font Family</label>
+                      <select id="pFont" class="form-select" style="font-size:13px;padding:7px 28px 7px 9px" onchange="setFPFont(this.value)">
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Helvetica Bold">Helvetica Bold</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Times Bold">Times New Roman Bold</option>
+                        <option value="Courier">Courier</option>
+                        <option value="Playfair Display">Playfair Display</option>
+                        <option value="Cinzel">Cinzel</option>
+                        <option value="Montserrat">Montserrat</option>
+                        <option value="Open Sans">Open Sans</option>
+                        <option value="EB Garamond">EB Garamond</option>
+                        <option value="Cormorant Garamond">Cormorant Garamond</option>
+                        <option value="Raleway">Raleway</option>
+                        <option value="Crimson Text">Crimson Text</option>
+                        <option value="Oswald">Oswald</option>
+                        <option value="Dancing Script">Dancing Script</option>
                       </select>
                     </div>
-                    <div class="prop-mini">
-                      <div class="form-group">
-                        <label class="form-label" style="font-size:12px">Size (px)</label>
-                        <input type="number" id="pSize" class="form-input" min="8" max="200" onchange="setFP('fontSize',+this.value)" oninput="setFP('fontSize',+this.value)"/>
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label" style="font-size:12px">Colour</label>
-                        <div style="display:flex;gap:7px;align-items:center">
-                          <input type="color" id="pColor" onchange="setFP('color',this.value)" style="width:38px;height:36px;border:1px solid var(--glass-border-2);border-radius:8px;padding:3px;background:var(--glass);cursor:pointer;flex-shrink:0"/>
-                          <span id="pColorHex" style="font-size:11.5px;color:var(--text-2);font-family:monospace">#000000</span>
-                        </div>
-                      </div>
-                    </div>
+                    <!-- Font preview -->
+                    <div class="font-preview-strip" id="fontPreviewSample">Aa — Sample Preview</div>
+
                     <div class="form-group">
-                      <label class="form-label" style="font-size:12px">Alignment</label>
-                      <div class="align-row">
-                        <button class="al-btn active" id="alL" onclick="setAlign('left')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="15" y1="14" x2="3" y2="14"/></svg></button>
-                        <button class="al-btn" id="alC" onclick="setAlign('center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="18" y1="14" x2="6" y2="14"/></svg></button>
-                        <button class="al-btn" id="alR" onclick="setAlign('right')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/></svg></button>
+                      <div class="range-header"><label class="form-label" style="font-size:11px">Font Size</label><span class="range-val" id="pSizeVal">36px</span></div>
+                      <input type="range" id="pSize" class="ep-range" min="8" max="160" value="36" oninput="document.getElementById('pSizeVal').textContent=this.value+'px';setFP('fontSize',+this.value)"/>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="range-header"><label class="form-label" style="font-size:11px">Letter Spacing</label><span class="range-val" id="pSpacingVal">0px</span></div>
+                      <input type="range" id="pSpacing" class="ep-range" min="0" max="30" step="0.5" value="0" oninput="document.getElementById('pSpacingVal').textContent=this.value+'px';setFP('letterSpacing',+this.value)"/>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" style="font-size:11px">Text Colour</label>
+                      <div style="display:flex;align-items:center;gap:8px">
+                        <input type="color" id="pColor" value="#000000" onchange="setFP('color',this.value);document.getElementById('pColorHex').textContent=this.value" style="width:32px;height:32px;border:1px solid var(--glass-border);border-radius:7px;padding:2px;background:var(--glass);cursor:pointer"/>
+                        <span id="pColorHex" style="font-family:monospace;font-size:12px;color:var(--text-3)">#000000</span>
                       </div>
                     </div>
-                    <div class="tb-sep" style="width:100%;height:1px;margin:2px 0"></div>
-                    <div class="ep-section-hd">Position</div>
-                    <div class="prop-mini">
-                      <div class="form-group"><label class="form-label" style="font-size:12px">X (%)</label><input type="number" id="pX" class="form-input" step="0.5" onchange="setFPXY()"/></div>
-                      <div class="form-group"><label class="form-label" style="font-size:12px">Y (%)</label><input type="number" id="pY" class="form-input" step="0.5" onchange="setFPXY()"/></div>
+
+                    <div class="ep-section-hd">Alignment</div>
+                    <div class="align-row">
+                      <button class="al-btn active" id="alL" onclick="setAlign('left')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/></svg></button>
+                      <button class="al-btn" id="alC" onclick="setAlign('center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/></svg></button>
+                      <button class="al-btn" id="alR" onclick="setAlign('right')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/></svg></button>
                     </div>
-                    <div class="form-group"><label class="form-label" style="font-size:12px">Width (%)</label><input type="number" id="pW" class="form-input" min="10" max="100" onchange="setFP('width',+this.value)"/></div>
+
+                    <div class="ep-section-hd">Position &amp; Size</div>
+                    <div class="prop-mini">
+                      <div class="form-group"><label class="form-label" style="font-size:11px">X (%)</label><input type="number" id="pX" class="form-input" step="0.5" onchange="setFPXY()"/></div>
+                      <div class="form-group"><label class="form-label" style="font-size:11px">Y (%)</label><input type="number" id="pY" class="form-input" step="0.5" onchange="setFPXY()"/></div>
+                    </div>
+                    <div class="form-group"><label class="form-label" style="font-size:11px">Width (%)</label><input type="number" id="pW" class="form-input" min="10" max="100" onchange="setFP('width',+this.value)"/></div>
+
                     <button class="btn btn-danger btn-full btn-sm" onclick="deleteSelField()" style="margin-top:4px">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                       Delete Field
@@ -661,7 +535,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div><!-- /editor-shell -->
 
           <div style="display:flex;justify-content:space-between;gap:12px">
             <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(1)">
@@ -686,10 +560,7 @@
             <div class="card">
               <div class="three-col-header">
                 <div>
-                  <div class="card-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
-                    Required Columns
-                  </div>
+                  <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg> Required Columns</div>
                   <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Map the Name and Email columns from your sheet.</div>
                 </div>
               </div>
@@ -708,10 +579,7 @@
             <div class="card">
               <div class="three-col-header">
                 <div>
-                  <div class="card-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    Custom Field Mappings
-                  </div>
+                  <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Custom Field Mappings</div>
                   <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Map additional columns to template placeholders like <code style="background:var(--glass);padding:1px 6px;border-radius:4px;font-size:12px;font-family:monospace">{{course}}</code></div>
                 </div>
                 <button class="btn btn-outline btn-sm" onclick="addFMapping()" style="flex-shrink:0">
@@ -727,10 +595,7 @@
             </div>
 
             <div class="card">
-              <div class="card-title" style="margin-bottom:16px">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-                Write Links Back to Sheet
-              </div>
+              <div class="card-title" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg> Write Links Back to Sheet</div>
               <div class="toggle-row" style="margin-bottom:12px">
                 <div class="toggle-info">
                   <strong>Auto-save certificate links to your Sheet</strong>
@@ -740,7 +605,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Column Header Name</label>
-                <input type="text" id="certColName" class="form-input" value="Certificate Link" placeholder="Certificate Link"/>
+                <input type="text" id="certColName" class="form-input" value="Certificate Link"/>
               </div>
             </div>
 
@@ -759,9 +624,7 @@
           <div style="display:flex;flex-direction:column;gap:16px">
             <div class="card card-sm">
               <div class="card-title" style="margin-bottom:14px;font-size:14px">Your Sheet Columns</div>
-              <div id="colList" style="font-size:13.5px;color:var(--text-2);display:flex;flex-direction:column;gap:5px">
-                <span style="color:var(--text-3)">Load your sheet first.</span>
-              </div>
+              <div id="colList" style="font-size:13.5px;color:var(--text-2);display:flex;flex-direction:column;gap:5px"><span style="color:var(--text-3)">Load your sheet first.</span></div>
             </div>
             <div class="card card-sm">
               <div class="card-title" style="margin-bottom:12px;font-size:14px">Placeholder Guide</div>
@@ -778,53 +641,144 @@
       </div>
 
       <!-- ═══════════════════════════════════════════ -->
-      <!-- STEP 4 — EMAIL TEMPLATE                    -->
+      <!-- STEP 4 — EMAIL TEMPLATE (3-mode editor)    -->
       <!-- ═══════════════════════════════════════════ -->
       <div class="step-panel" id="sp4">
         <div style="display:flex;flex-direction:column;gap:20px">
 
+          <!-- Subject -->
           <div class="card">
-            <div class="card-title" style="margin-bottom:20px">
+            <div class="card-title" style="margin-bottom:18px">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
-              Email Subject
+              Email Subject Line
             </div>
             <div class="form-group">
-              <input type="text" id="emailSubject" class="form-input" placeholder="Your certificate is ready, {{name}}!" oninput="refreshEmailPreview()" style="font-size:16px;padding:14px 16px"/>
-              <span class="form-hint" style="color:var(--text-3)">Use merge tags to personalise each subject line</span>
+              <label class="form-label">Subject <span style="color:#f43f5e">*</span></label>
+              <input type="text" id="emailSubject" class="form-input" placeholder="e.g. Your certificate is ready, {{name}}!" style="font-size:16px;padding:14px 16px"/>
+              <span class="form-hint">Use merge tags like <code style="font-family:monospace;background:var(--glass);padding:1px 6px;border-radius:4px">{{name}}</code> to personalise each subject.</span>
             </div>
           </div>
 
-          <div class="email-editor-wrap">
-            <div class="email-toolbar">
+          <!-- ── 3-Mode Editor Card ── -->
+          <div class="me-card" id="meCard">
+
+            <!-- Header with tab switcher -->
+            <div class="me-head">
               <div>
-                <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text)">HTML Email Body</div>
-                <div style="font-size:12.5px;color:var(--text-2);margin-top:2px">Click a merge tag to insert it at the cursor position</div>
+                <div class="card-title" style="margin:0">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                  Email Template Designer
+                </div>
+                <div style="font-size:12.5px;color:var(--text-3);margin-top:3px">Build visually, edit code, preview — all in sync</div>
               </div>
-              <div style="display:flex;gap:10px;align-items:center">
-                <button class="btn btn-secondary btn-sm" onclick="loadEmailSample()">Load Sample</button>
-                <div class="e-tabs">
-                  <div class="e-tab active" id="etabHTML" onclick="setETab('html')">HTML</div>
-                  <div class="e-tab" id="etabPrev" onclick="setETab('prev')">Preview</div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <button class="btn btn-secondary btn-sm" onclick="meShowTemplatePicker()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                  Templates
+                </button>
+                <div class="me-tab-bar">
+                  <button class="me-tab active" id="meTabVisual" onclick="meSwitchTab('visual')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                    Visual
+                  </button>
+                  <button class="me-tab" id="meTabCode" onclick="meSwitchTab('code')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    Code
+                  </button>
+                  <button class="me-tab" id="meTabPreview" onclick="meSwitchTab('preview')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Preview
+                  </button>
                 </div>
               </div>
             </div>
-            <div class="merge-tag-row">
-              <span class="mtag-label">INSERT:</span>
-              <div id="emailMergeTags" style="display:flex;flex-wrap:wrap;gap:7px"></div>
+
+            <!-- Template Picker (collapsible) -->
+            <div id="meTplPickerWrap" style="display:none;border-bottom:1px solid rgba(255,255,255,0.07)">
+              <div style="padding:12px 22px 0;display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.8px">Choose a starting template</span>
+                <button class="btn btn-ghost btn-sm" onclick="meHideTemplatePicker()" style="font-size:12px">✕ Close</button>
+              </div>
+              <div class="me-tpl-row" id="meTplRow"></div>
             </div>
-            <div id="emailHTMLPane">
-              <textarea id="emailTemplate" class="form-textarea" placeholder="Write your HTML email here…" oninput="refreshEmailPreview()" style="border:none;border-radius:0;min-height:300px;font-size:13.5px;resize:vertical;padding:18px 20px"></textarea>
+
+            <!-- Merge Tags -->
+            <div class="me-tags-row">
+              <span style="font-size:11.5px;font-weight:700;color:var(--text-3);white-space:nowrap">INSERT TAG:</span>
+              <div id="meMergeTags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+              <span style="font-size:11.5px;color:var(--text-3);margin-left:auto;white-space:nowrap">ℹ Tags auto-replaced per recipient</span>
             </div>
-            <div id="emailPrevPane" style="display:none">
-              <div class="eprev-wrap">
-                <div class="eprev-head">
-                  <div><strong>To:</strong> <span id="eprvTo">First Recipient</span></div>
-                  <div><strong>Subject:</strong> <span id="eprvSubject">—</span></div>
+
+            <!-- Visual tab -->
+            <div id="meVisual" class="me-visual-layout">
+              <div class="me-palette">
+                <div class="me-palette-title">Add Block</div>
+                <button class="me-palette-btn" onclick="meAddBlock('logo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/></svg>Logo / Banner</button>
+                <button class="me-palette-btn" onclick="meAddBlock('header')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h8"/></svg>Heading</button>
+                <button class="me-palette-btn" onclick="meAddBlock('text')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>Text</button>
+                <button class="me-palette-btn" onclick="meAddBlock('button')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="8" rx="4"/></svg>Button</button>
+                <button class="me-palette-btn" onclick="meAddBlock('image')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
+                <button class="me-palette-btn" onclick="meAddBlock('divider')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>Divider</button>
+                <button class="me-palette-btn" onclick="meAddBlock('spacer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>Spacer</button>
+                <button class="me-palette-btn" onclick="meAddBlock('footer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M4 12h16M4 7h16"/></svg>Footer</button>
+              </div>
+
+              <div class="me-canvas-wrap" id="meCanvasWrap">
+                <div class="me-canvas-inner" id="meCanvas">
+                  <div class="me-empty-canvas" id="meEmptyCanvas">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+                    <div style="font-size:14px;font-weight:600">Start building your email</div>
+                    <div style="font-size:12.5px">Click a block type on the left, or choose a template above</div>
+                  </div>
                 </div>
-                <div class="eprev-body" id="eprvBody">Preview will appear here.</div>
+              </div>
+
+              <div class="me-props" id="mePropsPanel">
+                <div class="me-props-header">Properties</div>
+                <div id="mePropsBody">
+                  <div class="me-props-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <div>Click any block to<br/>edit its properties</div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+
+            <!-- Code tab -->
+            <div id="meCode" style="display:none;position:relative">
+              <div class="me-code-actions">
+                <button class="btn btn-secondary btn-sm" onclick="meSyncVisualFromCode()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  Sync to Output
+                </button>
+              </div>
+              <div class="me-code-wrap" id="meCmWrap"></div>
+            </div>
+
+            <!-- Preview tab -->
+            <div id="mePreview" style="display:none">
+              <div class="me-preview-wrap">
+                <div class="me-preview-toolbar">
+                  <button class="me-device-btn active" id="meBtnDesktop" onclick="meSetDevice('desktop')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                    Desktop
+                  </button>
+                  <button class="me-device-btn" id="meBtnMobile" onclick="meSetDevice('mobile')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    Mobile
+                  </button>
+                  <div style="margin-left:auto;font-size:12.5px;color:var(--text-3)">Showing live preview with first recipient's data</div>
+                </div>
+                <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
+                  <iframe id="mePreviewFrame" style="width:100%;height:480px" sandbox="allow-same-origin"></iframe>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /me-card -->
+
+          <!-- Hidden textarea — source of truth for the pipeline -->
+          <textarea id="emailTemplate" style="display:none"></textarea>
 
           <div style="display:flex;justify-content:space-between;gap:12px">
             <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(3)">
@@ -832,7 +786,7 @@
               Back
             </button>
             <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(5)">
-              Review & Launch
+              Review &amp; Launch
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
           </div>
@@ -844,35 +798,22 @@
       <!-- ═══════════════════════════════════════════ -->
       <div class="step-panel" id="sp5">
         <div style="display:flex;flex-direction:column;gap:22px">
-
           <div class="review-grid">
-            <div class="review-stat">
-              <div class="review-stat-num" id="rvParticipants">0</div>
-              <div class="review-stat-label">Participants</div>
-            </div>
-            <div class="review-stat" style="border-color:rgba(0,212,255,0.15);background:rgba(0,212,255,0.04)">
-              <div class="review-stat-num" id="rvCerts" style="background:linear-gradient(135deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div>
-              <div class="review-stat-label">Certificates to Generate</div>
-            </div>
-            <div class="review-stat" style="border-color:rgba(124,58,237,0.15);background:rgba(124,58,237,0.04)">
-              <div class="review-stat-num" id="rvEmails" style="background:linear-gradient(135deg,#7c3aed,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div>
-              <div class="review-stat-label">Emails to Send</div>
-            </div>
+            <div class="review-stat"><div class="review-stat-num" id="rvParticipants">0</div><div class="review-stat-label">Participants</div></div>
+            <div class="review-stat" style="border-color:rgba(0,212,255,0.15);background:rgba(0,212,255,0.04)"><div class="review-stat-num" id="rvCerts" style="background:linear-gradient(135deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div><div class="review-stat-label">Certificates to Generate</div></div>
+            <div class="review-stat" style="border-color:rgba(124,58,237,0.15);background:rgba(124,58,237,0.04)"><div class="review-stat-num" id="rvEmails" style="background:linear-gradient(135deg,#7c3aed,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div><div class="review-stat-label">Emails to Send</div></div>
           </div>
 
           <div class="card" style="padding:0;overflow:hidden">
             <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border)">
-              <div class="card-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Configuration Summary
-              </div>
+              <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Configuration Summary</div>
             </div>
             <div id="reviewDetailsEl"></div>
           </div>
 
           <div class="notice" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:16px;display:flex;gap:12px;font-size:14px;color:#fde68a">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <div><strong style="color:#fbbf24">This will:</strong> Generate individual PDFs for each participant and save them to your Google Drive, then send personalised emails from your Gmail. This process cannot be reversed.</div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            <div><strong style="color:#fbbf24">This will:</strong> Generate individual PDFs for each participant saved to your Google Drive, then send personalised emails from your Gmail. Cannot be reversed.</div>
           </div>
 
           <div style="display:flex;justify-content:space-between;gap:12px">
@@ -880,7 +821,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
               Back
             </button>
-            <button class="btn" id="launchBtn" onclick="launchPipeline()" style="padding:16px 40px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 28px rgba(245,158,11,0.3);border-radius:12px;display:inline-flex;align-items:center;gap:9px;transition:all 0.2s;border:none;cursor:pointer">
+            <button class="btn" id="launchBtn" onclick="launchPipeline()" style="padding:16px 40px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 28px rgba(245,158,11,0.3);border-radius:12px;display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               Launch Pipeline
             </button>
@@ -898,7 +839,6 @@
           <div style="display:grid;grid-template-columns:1fr 320px;gap:22px">
             <div class="card">
               <div class="pipeline-running">
-                <!-- SVG ring progress -->
                 <div class="run-ring">
                   <svg viewBox="0 0 110 110">
                     <defs>
@@ -934,7 +874,7 @@
             <div style="display:flex;flex-direction:column;gap:16px">
               <div class="card card-sm">
                 <div class="card-title" style="margin-bottom:14px;font-size:14px">Job Info</div>
-                <div id="runJobInfo" style="display:flex;flex-direction:column;gap:8px;font-size:13.5px"></div>
+                <div id="runJobInfo" style="display:flex;flex-direction:column;gap:8px"></div>
               </div>
               <div class="notice" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:14px 16px;display:flex;gap:10px;font-size:13.5px;color:#fde68a">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
@@ -952,8 +892,8 @@
                 <div class="done-ring" id="doneRing" style="background:linear-gradient(135deg,#10b981,#00d4ff);box-shadow:0 0 48px rgba(16,185,129,0.35)">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h2 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px" id="doneTitle">Pipeline Complete</h2>
-                <p style="font-size:15px;color:var(--text-2)" id="doneSub">Certificates generated and emails dispatched.</p>
+                <h2 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px" id="doneTitle">Pipeline Complete!</h2>
+                <p style="font-size:15px;color:var(--text-2)" id="doneSub">Certificates in your Drive · Emails dispatched from Gmail.</p>
               </div>
               <div class="result-mini-row">
                 <div class="result-mini-cell"><div class="rmc-num" id="dCerts" style="color:var(--cyan)">0</div><div class="rmc-label">Certs Generated</div></div>
@@ -963,7 +903,7 @@
               <div style="padding:18px 24px;border-top:1px solid var(--glass-border);display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
                 <button class="btn btn-secondary" style="padding:12px 22px" onclick="downloadFullReport()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Export Full Report CSV
+                  Export CSV Report
                 </button>
                 <a href="dashboard.html" class="btn btn-ghost" style="padding:12px 22px">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -976,7 +916,6 @@
               </div>
             </div>
 
-            <!-- Results table -->
             <div class="card" style="padding:0;overflow:hidden">
               <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
                 <div class="card-title">
@@ -987,15 +926,7 @@
               </div>
               <div style="overflow-x:auto">
                 <table class="results-table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Certificate</th>
-                      <th>Email Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
+                  <thead><tr><th>Name</th><th>Email</th><th>Certificate</th><th>Status</th><th>Actions</th></tr></thead>
                   <tbody id="resultTbody"></tbody>
                 </table>
               </div>
@@ -1003,8 +934,7 @@
           </div>
         </div>
 
-      </div>
-      <!-- END STEPS -->
+      </div><!-- /sp6 -->
 
     </main>
   </div>

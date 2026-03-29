@@ -82,13 +82,6 @@ function updateStepper() {
       : String(n);
     if (conn) conn.className = `step-connector ${n <= CP.step ? 'done' : ''}`;
   });
-  // Update pipeline banner stages
-  [1,2,3,4,5].forEach(n => {
-    const stage = document.getElementById(`ps${n}`);
-    if (!stage) return;
-    stage.classList.toggle('active-stage', n === CP.step);
-    stage.classList.toggle('done-stage', n < CP.step);
-  });
 }
 
 /* ── Navigation ─────────────────────────────────────────────── */
@@ -100,7 +93,7 @@ function goStep(n, force = false) {
   document.getElementById(`sp${n}`).classList.add('active');
   if (n === 2) setTimeout(resizeCanvas, 80);
   if (n === 3) buildStep3();
-  if (n === 4) buildEmailMergeTags();
+  if (n === 4) { buildEmailMergeTags(); cpMeOnStepEnter(); }
   if (n === 5) buildReview();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -119,7 +112,8 @@ function validateStep(n) {
   }
   if (n === 4) {
     if (!document.getElementById('emailSubject').value.trim()) { toast('Enter an email subject', 'error'); return false; }
-    if (!document.getElementById('emailTemplate').value.trim()) { toast('Write an email template', 'error'); return false; }
+    meSyncTextarea();
+    if (!document.getElementById('emailTemplate').value.trim()) { toast('Design your email template first', 'error'); return false; }
   }
   return true;
 }
@@ -227,11 +221,13 @@ function renderFieldHandles() {
     const y  = (f.y / 100) * _canvas.height;
     const w  = (f.width / 100) * _canvas.width;
     const fs = f.fontSize * ED.scale;
-    const bold = (f.fontFamily || '').toLowerCase().includes('bold');
+    const ls = ((f.letterSpacing || 0) * ED.scale).toFixed(2);
+    const cssFont   = getFontCSS(f.fontFamily || 'Helvetica');
+    const cssWeight = getFontWeight(f.fontFamily || 'Helvetica');
 
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
-    el.style.cssText = `left:${x}px;top:${y}px;font-size:${fs}px;font-family:${f.fontFamily||'Helvetica'},sans-serif;color:${f.color||'#000'};font-weight:${bold?700:400};text-align:${f.align||'left'};width:${w}px;line-height:1.2;`;
+    el.style.cssText = `left:${x}px;top:${y}px;font-size:${fs}px;font-family:${cssFont};color:${f.color||'#000'};font-weight:${cssWeight};text-align:${f.align||'left'};width:${w}px;line-height:1.2;letter-spacing:${ls}px;`;
     el.textContent = f.previewText || f.placeholder;
 
     const del = document.createElement('div');
@@ -300,15 +296,20 @@ function selectField(id) {
   document.getElementById('propsForm').style.display  = 'flex';
   document.getElementById('pPh').value   = f.placeholder;
   document.getElementById('pPrev').value = f.previewText || '';
-  document.getElementById('pFont').value = f.fontFamily;
+  document.getElementById('pFont').value = f.fontFamily || 'Helvetica';
   document.getElementById('pSize').value = f.fontSize;
+  document.getElementById('pSizeVal').textContent = f.fontSize + 'px';
   document.getElementById('pColor').value = f.color;
   document.getElementById('pColorHex').textContent = f.color;
   document.getElementById('pX').value = f.x.toFixed(1);
   document.getElementById('pY').value = f.y.toFixed(1);
   document.getElementById('pW').value = f.width;
+  const ls = f.letterSpacing || 0;
+  document.getElementById('pSpacing').value = ls;
+  document.getElementById('pSpacingVal').textContent = ls + 'px';
   ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('active'));
   document.getElementById(f.align === 'center' ? 'alC' : f.align === 'right' ? 'alR' : 'alL').classList.add('active');
+  updateFontPreviewSample(f.fontFamily || 'Helvetica');
   renderFieldHandles();
 }
 
@@ -330,6 +331,19 @@ function setFP(key, val) {
   f[key] = val;
   if (key === 'color') document.getElementById('pColorHex').textContent = val;
   renderFieldHandles();
+}
+
+function updateFontPreviewSample(fontName) {
+  const sample = document.getElementById('fontPreviewSample');
+  if (!sample) return;
+  sample.style.fontFamily = getFontCSS(fontName);
+  sample.style.fontWeight = getFontWeight(fontName);
+  sample.textContent = fontName + ' — Aa';
+}
+
+function setFPFont(fontName) {
+  setFP('fontFamily', fontName);
+  updateFontPreviewSample(fontName);
 }
 
 function setFPXY() {
