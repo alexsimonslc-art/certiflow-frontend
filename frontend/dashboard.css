@@ -1,5 +1,5 @@
 /* ================================================================
-   CertiFlow v2 — Premium Design System
+   Honourix v2 — Premium Design System
    dashboard.css  |  Shared across all dashboard pages
    ================================================================ */
 
@@ -1084,7 +1084,7 @@ ul, ol { list-style: none; }
 .quota-count span { color: var(--text-3); font-weight: 400; }
 
 /* ================================================================
-   CertiFlow — dashboard-patch.css
+   Honourix — dashboard-patch.css
    Drop this <link> AFTER dashboard.css to fix text contrast
    and apply combined-tool improvements everywhere.
 ================================================================ */
@@ -1227,7 +1227,7 @@ body { font-size: 14.5px; }
 .header-btn:hover { color: var(--text) !important; }
 
 /* ================================================================
-   CertiFlow — Dashboard Visual Patch  (v2.1)
+   Honourix — Dashboard Visual Patch  (v2.1)
    dashboard-patch.css  |  Overrides & enhancements for all pages
    ================================================================ */
 

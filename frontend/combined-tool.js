@@ -1,5 +1,5 @@
 /* ================================================================
-   CertiFlow — Combined Pipeline
+   Honourix — Combined Pipeline
    combined-tool.js
 ================================================================ */
 
@@ -551,7 +551,7 @@ function loadEmailSample() {
 <body style="margin:0;padding:0;background:#f0f4f8;font-family:Arial,sans-serif">
   <div style="max-width:580px;margin:40px auto">
     <div style="background:linear-gradient(135deg,#04080f,#0d1728);padding:36px;border-radius:16px 16px 0 0;text-align:center">
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(0,212,255,0.7);text-transform:uppercase;margin-bottom:8px">CertiFlow</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(0,212,255,0.7);text-transform:uppercase;margin-bottom:8px">Honourix</div>
       <h1 style="color:#f0f6ff;font-size:22px;font-weight:800;margin:0;letter-spacing:-0.5px">Your Certificate is Ready</h1>
     </div>
     <div style="background:#ffffff;padding:36px;border-radius:0 0 16px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.08)">
@@ -565,7 +565,7 @@ function loadEmailSample() {
         </a>
       </div>
       <p style="color:#94a3b8;font-size:12.5px;margin-top:28px;padding-top:20px;border-top:1px solid #e2e8f0;text-align:center;line-height:1.6">
-        This email was sent via CertiFlow — Automated Certificate & Email Platform.
+        This email was sent via Honourix — Automated Certificate & Email Platform.
       </p>
     </div>
   </div>
@@ -815,7 +815,7 @@ function downloadFullReport() {
     Name: r.name, Email: r.email||'',
     'Cert Status': r.certStatus, 'Email Status': r.mailStatus,
     'Certificate Link': r.certLink||'', Error: r.error||'',
-  })), `certiflow-pipeline-${Date.now()}.csv`);
+  })), `Honourix-pipeline-${Date.now()}.csv`);
 }
 
 /* ── Save campaign to history ─────────────────────────────────── */

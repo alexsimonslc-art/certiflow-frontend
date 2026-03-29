@@ -1,5 +1,5 @@
 /* ================================================================
-   CertiFlow — Certificate Template Editor
+   Honourix — Certificate Template Editor
    frontend/cert-editor.js
    ================================================================ */
 
@@ -301,12 +301,12 @@ function saveTemplate() {
     fields:           editorState.fields.map(f => ({ ...f })),
     savedAt:          new Date().toISOString(),
   };
-  localStorage.setItem('certiflow_template', JSON.stringify(template));
+  localStorage.setItem('Honourix_template', JSON.stringify(template));
   toast('Template saved! ✅', 'success');
 }
 
 function loadSavedTemplate() {
-  const raw = localStorage.getItem('certiflow_template');
+  const raw = localStorage.getItem('Honourix_template');
   if (!raw) return;
   try {
     const t = JSON.parse(raw);

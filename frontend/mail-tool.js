@@ -1,6 +1,6 @@
 // @ts-nocheck
 /* ================================================================
-   CertiFlow v2 — Bulk Mail Sender
+   Honourix v2 — Bulk Mail Sender
    mail-tool.js
    ================================================================ */
 
@@ -263,7 +263,7 @@ function mLoadSample() {
 '<body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif">\n' +
 '  <div style="max-width:580px;margin:40px auto">\n' +
 '    <div style="background:linear-gradient(135deg,#050a15,#0d1728);padding:36px 40px;border-radius:16px 16px 0 0;text-align:center">\n' +
-'      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(0,212,255,0.7);text-transform:uppercase;margin-bottom:10px">CertiFlow</div>\n' +
+'      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(0,212,255,0.7);text-transform:uppercase;margin-bottom:10px">Honourix</div>\n' +
 '      <h1 style="color:#e8f0fd;font-size:24px;font-weight:700;margin:0;letter-spacing:-0.5px">Your Certificate is Ready</h1>\n' +
 '    </div>\n' +
 '    <div style="background:#ffffff;padding:40px;border-radius:0 0 16px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.08)">\n' +
@@ -272,7 +272,7 @@ function mLoadSample() {
 '      <div style="text-align:center;margin:32px 0">\n' +
 '        <a href="{{cert_link}}" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#00d4ff,#7c3aed);color:#ffffff;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px">Download Certificate</a>\n' +
 '      </div>\n' +
-'      <p style="color:#94a3b8;font-size:13px;margin-top:32px;padding-top:24px;border-top:1px solid #e2e8f0;text-align:center;line-height:1.6">This email was sent via CertiFlow.<br/>If you have questions, contact the organiser directly.</p>\n' +
+'      <p style="color:#94a3b8;font-size:13px;margin-top:32px;padding-top:24px;border-top:1px solid #e2e8f0;text-align:center;line-height:1.6">This email was sent via Honourix.<br/>If you have questions, contact the organiser directly.</p>\n' +
 '    </div>\n' +
 '  </div>\n' +
 '</body>\n' +
@@ -421,12 +421,13 @@ function mShowReport() {
   ).join('');
 
   toast(sent + ' emails delivered', 'success', 5000);
+  saveCampaign('mail', document.getElementById('mCampName').value, MS.results.length, sent, null);
 }
 
 function mDownloadReport() {
   downloadCSV(
     MS.results.map(r => ({ Name: r.name || '', Email: r.email, Status: r.status, Error: r.error || '' })),
-    'certiflow-mail-report-' + Date.now() + '.csv'
+    'Honourix-mail-report-' + Date.now() + '.csv'
   );
 }
 

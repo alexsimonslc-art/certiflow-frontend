@@ -1,5 +1,5 @@
 /* ================================================================
-   CertiFlow v2 — Certificate Generator
+   Honourix v2 — Certificate Generator
    cert-tool.js
    ================================================================ */
 
@@ -683,7 +683,7 @@ function filterResults() {
 }
 
 function downloadResults() {
-  downloadCSV(CS.results.map(r => ({ Name: r.name, Email: r.email||'', Status: r.status, 'Certificate Link': r.link||'', Error: r.error||'' })), `certiflow-certs-${Date.now()}.csv`);
+  downloadCSV(CS.results.map(r => ({ Name: r.name, Email: r.email||'', Status: r.status, 'Certificate Link': r.link||'', Error: r.error||'' })), `Honourix-certs-${Date.now()}.csv`);
 }
 
 function startNew() {

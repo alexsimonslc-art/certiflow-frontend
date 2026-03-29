@@ -1,12 +1,12 @@
 // @ts-nocheck
 /* ================================================================
-   CertiFlow — Shared Dashboard JS (v2.2 — Clean)
+   Honourix — Shared Dashboard JS (v2.2 — Clean)
 ================================================================ */
 
-const API = 'https://certiflow-backend-73xk.onrender.com';
+const API = 'https://Honourix-backend-73xk.onrender.com';
 
 /* ── Auth ─────────────────────────────────────────────────────── */
-function getToken() { return localStorage.getItem('certiflow_token'); }
+function getToken() { return localStorage.getItem('Honourix_token'); }
 
 function getUser() {
   const token = getToken();
@@ -14,7 +14,7 @@ function getUser() {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     if (payload.exp && payload.exp * 1000 < Date.now()) {
-      localStorage.removeItem('certiflow_token');
+      localStorage.removeItem('Honourix_token');
       return null;
     }
     return payload;
@@ -25,7 +25,7 @@ function requireAuth() {
   const params   = new URLSearchParams(window.location.search);
   const urlToken = params.get('token');
   if (urlToken) {
-    localStorage.setItem('certiflow_token', urlToken);
+    localStorage.setItem('Honourix_token', urlToken);
     window.history.replaceState({}, '', window.location.pathname);
   }
   const user = getUser();
@@ -34,7 +34,7 @@ function requireAuth() {
 }
 
 function logout() {
-  localStorage.removeItem('certiflow_token');
+  localStorage.removeItem('Honourix_token');
   window.location.href = '/index.html';
 }
 
@@ -53,7 +53,7 @@ async function apiFetch(path, options = {}) {
 
     // Only force-logout on 401 if it's a critical/required call
     if (res.status === 401 && !options.silent) {
-      localStorage.removeItem('certiflow_token');
+      localStorage.removeItem('Honourix_token');
       window.location.href = '/login.html';
       return null;
     }
@@ -204,7 +204,7 @@ function initSidebar() {
       e.preventDefault();
       e.stopPropagation();
       showConfirm(
-        'Sign out of CertiFlow?',
+        'Sign out of Honourix?',
         'You will be returned to the home page. Campaign history is preserved locally.',
         logout
       );
