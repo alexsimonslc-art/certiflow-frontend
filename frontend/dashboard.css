@@ -132,7 +132,7 @@ ul, ol { list-style: none; }
 .logo-mark svg { width: 17px; height: 17px; color: #fff; }
 .logo-name {
   font-family: var(--font-display);
-  font-size: 20px; font-weight: 700; color: var(--text);
+  font-size: 23px; font-weight: 700; color: var(--text);
 }
 .logo-name span { color: var(--cyan); }
 
