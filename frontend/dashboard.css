@@ -1292,6 +1292,8 @@ body::after {
   box-shadow:
     0 1px 0 rgba(255,255,255,0.08) inset,
     0 16px 48px rgba(0,0,0,0.35) !important;
+      backdrop-filter: none !important;           /* ← ADD THIS */
+  -webkit-backdrop-filter: none !important;
 }
 
 /* Glossy sheen on cards */
@@ -1459,7 +1461,7 @@ body::after {
   background: rgba(244, 63, 94, 0.18);
   border-color: rgba(244, 63, 94, 0.5);
   box-shadow: 0 0 12px rgba(244, 63, 94, 0.3);
-  transform: scale(1.05);
+  
 }
 .sidebar-logout-btn svg { width: 14px; height: 14px; }
 
