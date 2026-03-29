@@ -74,7 +74,7 @@ async function apiFetch(path, options = {}) {
 
 /* ── Local Stats ─────────────────────────────────────────────── */
 function getLocalStats() {
-  const campaigns    = JSON.parse(localStorage.getItem('cf_campaigns') || '[]');
+  const campaigns    = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
   const totalCerts   = campaigns.filter(c => c.type==='cert'||c.type==='combined').reduce((s,c)=>s+(c.success||0),0);
   const totalMails   = campaigns.filter(c => c.type==='mail'||c.type==='combined').reduce((s,c)=>s+(c.success||0),0);
   const totalSuccess = campaigns.reduce((s,c)=>s+(c.success||0),0);
@@ -221,13 +221,13 @@ function initSidebar() {
   if (!sidebar) return;
   sidebar.classList.toggle('collapsed', collapsed);
   if (mainArea) mainArea.classList.toggle('sidebar-collapsed', collapsed);
-  localStorage.setItem('cf_sidebar_collapsed', collapsed ? '1' : '0');
+  localStorage.setItem('hx_sidebar_collapsed', collapsed ? '1' : '0');
   // ✅ Do NOT touch collapseBtn innerHTML — icon stays as ☰ always
   }
 
 
   // Restore saved state
-  setSidebarCollapsed(localStorage.getItem('cf_sidebar_collapsed') === '1');
+  setSidebarCollapsed(localStorage.getItem('hx_sidebar_collapsed') === '1');
 
   // ✅ Wire up the hamburger button click
   if (collapseBtn) {

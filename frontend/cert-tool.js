@@ -433,11 +433,11 @@ function clearAll() {
 
 /* ── Save / Load Template ────────────────────────────────────────── */
 function saveTemplate() {
-  localStorage.setItem('cf_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64,  fields: ED.fields }));
+  localStorage.setItem('hx_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64,  fields: ED.fields }));
 }
 
 function loadSavedTemplate() {
-  const raw = localStorage.getItem('cf_template');
+  const raw = localStorage.getItem('hx_template');
   if (!raw) return;
   try {
     const t = JSON.parse(raw);

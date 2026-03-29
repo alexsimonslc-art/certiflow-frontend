@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadCampaigns() {
-  allCampaigns = JSON.parse(localStorage.getItem('cf_campaigns') || '[]');
+  allCampaigns = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
   renderStats();
   renderCampaigns();
 }
@@ -179,7 +179,7 @@ function exportCampaigns() {
 
 function confirmClearAll() {
   if (window.confirm('Clear all campaign history? This cannot be undone.')) {
-    localStorage.removeItem('cf_campaigns');
+    localStorage.removeItem('hx_campaigns');
     allCampaigns = [];
     renderStats();
     renderCampaigns();

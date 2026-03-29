@@ -222,7 +222,7 @@ function handleGoogleLogin() {
 
 function triggerGoogleOAuth() {
   sessionStorage.setItem('Honourix_account_type', state.accountType);
-  window.location.href = `https://Honourix-backend-73xk.onrender.com/auth/google?type=${state.accountType}`;
+  window.location.href = `https://Certiflow-backend-73xk.onrender.com/auth/google?type=${state.accountType}`;
 }
 
 function showOAuthLoader() {

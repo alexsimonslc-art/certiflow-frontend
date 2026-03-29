@@ -263,7 +263,7 @@ async function loadSettingsQuota() {
 function refreshQuota() { loadSettingsQuota(); toast('Quota refreshed', 'success', 2000); }
 
 function loadPrefs() {
-  const prefs = JSON.parse(localStorage.getItem('cf_prefs') || '{"writeback":true,"emailConf":true,"stagger":true,"saveTemplate":true}');
+  const prefs = JSON.parse(localStorage.getItem('hx_prefs') || '{"writeback":true,"emailConf":true,"stagger":true,"saveTemplate":true}');
   Object.keys(prefs).forEach(k => {
     const el = document.getElementById('toggle' + k.charAt(0).toUpperCase() + k.slice(1));
     if (el) el.classList.toggle('on', prefs[k]);
@@ -272,18 +272,18 @@ function loadPrefs() {
 
 function togglePref(key, el) {
   el.classList.toggle('on');
-  const prefs = JSON.parse(localStorage.getItem('cf_prefs') || '{}');
+  const prefs = JSON.parse(localStorage.getItem('hx_prefs') || '{}');
   prefs[key] = el.classList.contains('on');
-  localStorage.setItem('cf_prefs', JSON.stringify(prefs));
+  localStorage.setItem('hx_prefs', JSON.stringify(prefs));
   toast('Preference saved', 'success', 1500);
 }
 
 function clearTemplate() {
-  localStorage.removeItem('cf_template');
+  localStorage.removeItem('hx_template');
   toast('Saved template cleared', 'success');
 }
 function clearCampaigns() {
-  localStorage.removeItem('cf_campaigns');
+  localStorage.removeItem('hx_campaigns');
   toast('Campaign history cleared', 'success');
 }
 </script>

@@ -391,11 +391,11 @@ function clearCanvas() {
 }
 
 function saveTemplate() {
-  localStorage.setItem('cf_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, bgBase64: ED.bgBase64, fields: ED.fields }));
+  localStorage.setItem('hx_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, bgBase64: ED.bgBase64, fields: ED.fields }));
 }
 
 function loadSavedTemplate() {
-  const raw = localStorage.getItem('cf_template');
+  const raw = localStorage.getItem('hx_template');
   if (!raw) return;
   try {
     const t = JSON.parse(raw);
@@ -820,10 +820,10 @@ function downloadFullReport() {
 
 /* ── Save campaign to history ─────────────────────────────────── */
 function saveCampaignRecord(record) {
-  const history = JSON.parse(localStorage.getItem('cf_campaigns') || '[]');
+  const history = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
   history.unshift(record);
   if (history.length > 100) history.pop();
-  localStorage.setItem('cf_campaigns', JSON.stringify(history));
+  localStorage.setItem('hx_campaigns', JSON.stringify(history));
 }
 
 function resetAll() {
