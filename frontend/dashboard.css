@@ -409,7 +409,6 @@ ul, ol { list-style: none; }
   box-shadow: 0 4px 24px rgba(0,212,255,0.2);
 }
 .btn-primary:hover {
-  transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(0,212,255,0.35);
 }
 .btn-primary:active { transform: translateY(0); }
@@ -724,7 +723,9 @@ ul, ol { list-style: none; }
   padding: 22px 24px;
   transition: var(--transition);
 }
-.stat-card:hover { border-color: var(--glass-border-2); transform: translateY(-2px); }
+.stat-card:hover {
+  border-color: var(--glass-border-2);
+}
 .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .stat-icon {
   width: 40px; height: 40px; border-radius: 10px;
@@ -1291,7 +1292,6 @@ body::after {
   box-shadow:
     0 1px 0 rgba(255,255,255,0.08) inset,
     0 16px 48px rgba(0,0,0,0.35) !important;
-  transform: translateY(-2px);
 }
 
 /* Glossy sheen on cards */
