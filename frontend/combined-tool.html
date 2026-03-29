@@ -5,273 +5,393 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Combined Pipeline — CertiFlow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;700&family=Cinzel:wght@400;600&family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&family=EB+Garamond:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=Raleway:wght@400;600&family=Crimson+Text:wght@400;600&family=Oswald:wght@400;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Dancing+Script:wght@400;600;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;600;700&family=Montserrat:wght@300;400;600;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="dashboard.css"/>
-
-  <!-- CodeMirror -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css"/>
-
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 
   <style>
+    /* ─── Global colour fixes ──────────────────────────────────── */
     :root {
-      --text:   #f0f6ff;
-      --text-2: #a8bdd4;
-      --text-3: #5a7490;
-      --bg:     #04080f;
-      --surface: rgba(12, 22, 40, 0.75);
-      --glass-border: rgba(255,255,255,0.09);
+      --text:           #f0f6ff;
+      --text-2:         #a8bdd4;
+      --text-3:         #5a7490;
+      --bg:             #04080f;
+      --surface:        rgba(12,22,40,0.80);
+      --glass:          rgba(255,255,255,0.04);
+      --glass-border:   rgba(255,255,255,0.09);
       --glass-border-2: rgba(255,255,255,0.15);
+      --cyan:           #00d4ff;
+      --cyan-dim:       rgba(0,212,255,0.10);
+      --cyan-glow:      rgba(0,212,255,0.22);
+      --purple:         #7c3aed;
+      --purple-dim:     rgba(124,58,237,0.12);
+      --green:          #10b981;
+      --green-dim:      rgba(16,185,129,0.12);
+      --gold:           #f59e0b;
+      --gold-dim:       rgba(245,158,11,0.12);
+      --red:            #f43f5e;
+      --red-dim:        rgba(244,63,94,0.12);
+      --font:           'Plus Jakarta Sans', sans-serif;
+      --font-display:   'Syne', sans-serif;
+      --font-mono:      'JetBrains Mono', monospace;
+      --radius:         12px;
+      --radius-sm:      8px;
+      --radius-lg:      18px;
+      --ease:           cubic-bezier(0.16,1,0.3,1);
+      --transition:     all 0.22s var(--ease);
+    }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14.5px; -webkit-font-smoothing: antialiased; }
+
+    /* ─── Step panels ─────────────────────────────────────────── */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: fadeInUp 0.3s var(--ease) both; }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ─── Two-column layout ───────────────────────────────────── */
+    .two-cols { display: grid; grid-template-columns: 1fr 300px; gap: 22px; align-items: start; }
+    @media(max-width:1100px){ .two-cols { grid-template-columns:1fr; } }
+
+    /* ─── Source picker ───────────────────────────────────────── */
+    .src-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .src-opt { padding:18px; border:1.5px solid var(--glass-border); border-radius:14px; cursor:pointer; background:var(--glass); transition:var(--transition); text-align:center; }
+    .src-opt:hover { border-color:var(--glass-border-2); }
+    .src-opt.active { border-color:rgba(0,212,255,0.45); background:rgba(0,212,255,0.08); }
+    .src-opt-icon { width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:1px solid var(--glass-border); }
+    .src-opt-icon svg { width:20px;height:20px;color:var(--text-2); }
+    .src-opt.active .src-opt-icon { background:rgba(0,212,255,0.12);border-color:rgba(0,212,255,0.2); }
+    .src-opt.active .src-opt-icon svg { color:var(--cyan); }
+    .src-opt-title { font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px; }
+    .src-opt-desc { font-size:13px;color:var(--text-2);line-height:1.4; }
+    .src-opt.active .src-opt-title { color:var(--cyan); }
+
+    /* ─── Upload zone ─────────────────────────────────────────── */
+    .upload-zone { border:2px dashed rgba(255,255,255,0.12);border-radius:14px;padding:40px 24px;text-align:center;cursor:pointer;transition:var(--transition); }
+    .upload-zone:hover,.upload-zone.dz-over { border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.04); }
+    .uz-icon { width:52px;height:52px;border-radius:14px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 14px; }
+    .uz-icon svg { width:22px;height:22px;color:var(--cyan); }
+    .upload-zone h4 { font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px; }
+    .upload-zone p { font-size:13px;color:var(--text-2); }
+
+    /* ─── CERTIFICATE EDITOR SHELL ────────────────────────────── */
+    .cert-editor-wrap {
+      display: grid;
+      grid-template-columns: 1fr 296px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--surface);
+      /* NO fixed height — let it grow */
+    }
+    @media(max-width:1000px){ .cert-editor-wrap { grid-template-columns:1fr; } }
+
+    /* Left: canvas column */
+    .cert-canvas-col {
+      display: flex;
+      flex-direction: column;
+      min-height: 560px;
+      border-right: 1px solid var(--glass-border);
+    }
+    .cert-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.30);
+      border-bottom: 1px solid var(--glass-border);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .cert-toolbar .tb-sep { width:1px;height:18px;background:var(--glass-border);margin:0 4px;flex-shrink:0; }
+    .canvas-scroll-zone {
+      flex: 1;
+      overflow: auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px;
+      background: repeating-conic-gradient(rgba(255,255,255,0.018) 0% 25%,transparent 0% 50%) 0 0/18px 18px;
+      min-height: 480px;
     }
 
-    /* ── Layout ── */
-    .step-panel { display: none; }
-    .step-panel.active { display: block; animation: fadeInUp 0.3s var(--ease,cubic-bezier(.16,1,.3,1)) both; }
+    /* THE CANVAS CONTAINER — critical positioning context */
+    .cert-canvas-container {
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: 0 12px 60px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.06);
+      border-radius: 3px;
+      /* Do NOT set overflow:hidden — that clips the overlay handles */
+    }
+    #certCanvas {
+      display: block;
+      /* canvas bg is drawn programmatically */
+    }
+    /* The overlay sits on top of the canvas, exact same size */
+    #fieldOverlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; /* overlay itself is passthrough */
+      z-index: 2;
+    }
 
-    /* ── Source Picker ── */
-    .src-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .src-opt { padding: 18px 16px; border: 1.5px solid var(--glass-border); border-radius: var(--radius-lg); cursor: pointer; background: var(--glass); transition: all 0.2s; text-align: center; }
-    .src-opt:hover { border-color: var(--glass-border-2); background: rgba(255,255,255,0.04); }
-    .src-opt.active { border-color: rgba(0,212,255,0.45); background: rgba(0,212,255,0.08); }
-    .src-opt-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 1px solid var(--glass-border); }
-    .src-opt-icon svg { width: 20px; height: 20px; }
-    .src-opt .opt-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .src-opt .opt-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.4; }
-    .src-opt.active .src-opt-icon { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.2); color: var(--cyan); }
-    .src-opt.active .opt-title { color: var(--cyan); }
-
-    /* ── Canvas Editor (Step 2) ── */
-    .editor-shell { display: grid; grid-template-columns: 1fr 280px; gap: 0; border: 1px solid var(--glass-border); border-radius: var(--radius-lg); overflow: hidden; height: 580px; background: var(--surface); }
-    .editor-canvas-col { display: flex; flex-direction: column; border-right: 1px solid var(--glass-border); }
-    .editor-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; background: rgba(0,0,0,0.25); border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
-    .editor-toolbar .tb-sep { width: 1px; height: 18px; background: var(--glass-border); margin: 0 4px; flex-shrink: 0; }
-    .canvas-zone { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 20px; background: repeating-conic-gradient(rgba(255,255,255,0.016) 0% 25%, transparent 0% 50%) 0 0 / 18px 18px; }
-    .c-container { position: relative; box-shadow: 0 12px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
-    #certCanvas { display: block; }
-    #fieldOverlay { position: absolute; inset: 0; }
-    .tf-handle { position: absolute; cursor: move; pointer-events: all; user-select: none; border: 2px solid transparent; border-radius: 3px; padding: 1px 5px; white-space: nowrap; transition: border-color 0.12s; }
-    .tf-handle:hover { border-color: rgba(0,212,255,0.6); }
-    .tf-handle.sel { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.12); }
-    .tf-del { display: none; position: absolute; top: -10px; right: -10px; width: 20px; height: 20px; background: #f43f5e; border-radius: 50%; font-size: 13px; line-height: 20px; text-align: center; color: #fff; cursor: pointer; z-index: 10; }
+    /* Individual field handles */
+    .tf-handle {
+      position: absolute;
+      cursor: move;
+      pointer-events: all; /* each handle IS clickable */
+      user-select: none;
+      border: 2px dashed transparent;
+      border-radius: 4px;
+      padding: 2px 6px;
+      white-space: pre;
+      line-height: 1.2;
+      box-sizing: border-box;
+    }
+    .tf-handle:hover { border-color: rgba(0,212,255,0.55); }
+    .tf-handle.sel {
+      border-color: var(--cyan);
+      border-style: solid;
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.15);
+    }
+    /* Delete button on selected handle */
+    .tf-del {
+      display: none;
+      position: absolute;
+      top: -11px; right: -11px;
+      width: 22px; height: 22px;
+      background: var(--red);
+      border-radius: 50%;
+      font-size: 14px;
+      line-height: 22px;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      z-index: 5;
+      pointer-events: all;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
     .tf-handle.sel .tf-del { display: block; }
 
-    /* Editor right col — enhanced props */
-    .editor-props-col { display: flex; flex-direction: column; overflow: hidden; background: rgba(0,0,0,0.12); }
-    .ep-tabs { display: flex; border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
-    .ep-tab { flex: 1; padding: 11px; text-align: center; font-size: 13px; font-weight: 600; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
-    .ep-tab:hover { color: var(--text-2); }
-    .ep-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); background: rgba(0,212,255,0.04); }
-    .ep-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
-    .ep-body::-webkit-scrollbar { width: 4px; }
-    .ep-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-    .ep-panel { display: none; flex-direction: column; gap: 10px; }
-    .ep-panel.active { display: flex; }
-    .ep-section-hd { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); margin-top: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--glass-border); }
+    /* Right: properties column */
+    .cert-props-col {
+      display: flex;
+      flex-direction: column;
+      background: rgba(0,0,0,0.15);
+      min-height: 560px;
+    }
+    .ep-tabs { display:flex; border-bottom:1px solid var(--glass-border); flex-shrink:0; }
+    .ep-tab { flex:1;padding:12px;text-align:center;font-size:13px;font-weight:600;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;transition:var(--transition); }
+    .ep-tab:hover { color:var(--text-2); }
+    .ep-tab.active { color:var(--cyan);border-bottom-color:var(--cyan);background:rgba(0,212,255,0.04); }
+    .ep-body { flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:0; scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent; }
+    .ep-body::-webkit-scrollbar { width:4px; }
+    .ep-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:4px; }
+    .ep-panel { display:none;flex-direction:column;gap:10px; }
+    .ep-panel.active { display:flex; }
+    .ep-sec { font-size:10.5px;font-weight:700;letter-spacing:0.9px;text-transform:uppercase;color:var(--text-3);margin:12px 0 6px;padding-bottom:5px;border-bottom:1px solid var(--glass-border); }
+    .ep-sec:first-child { margin-top:0; }
 
-    /* Field chips */
-    .field-chip { display: flex; align-items: center; gap: 9px; padding: 9px 11px; border-radius: 9px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; background: var(--glass); }
-    .field-chip:hover { border-color: var(--glass-border); }
-    .field-chip.sel { border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.08); }
-    .fc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .fc-label { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .fc-tag { font-size: 10.5px; color: var(--text-3); font-family: monospace; flex-shrink: 0; }
+    /* field chip list */
+    .fc-chip { display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;cursor:pointer;border:1px solid transparent;background:rgba(255,255,255,0.04);transition:var(--transition);margin-bottom:5px; }
+    .fc-chip:hover { border-color:var(--glass-border); }
+    .fc-chip.sel { border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08); }
+    .fc-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+    .fc-name { font-size:13px;font-weight:600;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    .fc-ph { font-size:11px;color:var(--text-3);font-family:var(--font-mono);flex-shrink:0; }
 
-    /* Props form elements */
-    .prop-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .prop-mini .form-input { padding: 8px 10px; font-size: 13px; }
-    .align-row { display: flex; gap: 5px; }
-    .al-btn { flex: 1; padding: 7px; border-radius: 7px; background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-3); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-    .al-btn:hover { color: var(--text-2); }
-    .al-btn.active { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.3); }
-    .al-btn svg { width: 15px; height: 15px; }
+    /* property form elements */
+    .pr-row { display:flex;flex-direction:column;gap:5px;margin-bottom:8px; }
+    .pr-label { font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px; }
+    .pr-input { width:100%;padding:8px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;color:var(--text);font-size:13px;font-family:var(--font);transition:var(--transition);outline:none; }
+    .pr-input:focus { border-color:rgba(0,212,255,0.4);box-shadow:0 0 0 3px rgba(0,212,255,0.08); }
+    .pr-input::placeholder { color:var(--text-3); }
+    .pr-select { width:100%;padding:8px 30px 8px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;color:var(--text);font-size:13px;font-family:var(--font);transition:var(--transition);outline:none;appearance:none;cursor:pointer;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a6080' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 10px center; }
+    .pr-select:focus { border-color:rgba(0,212,255,0.4);box-shadow:0 0 0 3px rgba(0,212,255,0.08); }
+    .pr-select option { background:#0d1728;color:var(--text); }
+    .pr-2col { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+    .pr-3col { display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px; }
 
-    /* Font preview strip */
-    .font-preview-strip { padding: 8px 10px; border-radius: 8px; background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.1); font-size: 17px; color: var(--text); text-align: center; margin-top: 4px; transition: all 0.2s; min-height: 36px; line-height: 1.3; }
+    /* Bold / Italic toggle buttons */
+    .style-btns { display:flex;gap:5px; }
+    .style-btn { padding:7px 12px;border-radius:7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);color:var(--text-2);font-size:13px;font-weight:700;cursor:pointer;transition:var(--transition);font-family:var(--font); }
+    .style-btn:hover { color:var(--text); }
+    .style-btn.on { background:rgba(0,212,255,0.12);color:var(--cyan);border-color:rgba(0,212,255,0.3); }
+    .style-btn.italic { font-style:italic; }
 
-    /* Range with value display */
-    .range-row { display: flex; flex-direction: column; gap: 4px; }
-    .range-header { display: flex; justify-content: space-between; align-items: center; }
-    .range-val { font-size: 12px; font-weight: 700; color: var(--cyan); background: rgba(0,212,255,0.1); padding: 1px 6px; border-radius: 4px; }
-    .ep-range { width: 100%; accent-color: var(--cyan); }
+    /* Align buttons */
+    .align-row { display:flex;gap:5px; }
+    .al-btn { flex:1;padding:7px;border-radius:7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition); }
+    .al-btn:hover { color:var(--text-2); }
+    .al-btn.on { background:rgba(0,212,255,0.12);color:var(--cyan);border-color:rgba(0,212,255,0.3); }
+    .al-btn svg { width:15px;height:15px; }
 
-    /* Add-field modal */
-    .af-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(14px); z-index: 300; align-items: center; justify-content: center; }
-    .af-overlay.open { display: flex; }
-    .af-box { background: #0a1625; border: 1px solid var(--glass-border-2); border-radius: 22px; padding: 32px; width: 460px; max-width: 92vw; box-shadow: 0 32px 80px rgba(0,0,0,0.6); }
-    .af-box h3 { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 24px; }
+    /* Range slider */
+    .range-row { display:flex;flex-direction:column;gap:4px; }
+    .range-hdr { display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text-3); }
+    .range-val { font-weight:700;color:var(--cyan);font-size:11px;background:rgba(0,212,255,0.1);padding:1px 6px;border-radius:4px; }
+    .pr-range { width:100%;accent-color:var(--cyan);cursor:pointer; }
 
-    /* Upload zone */
-    .upload-zone { border: 2px dashed rgba(255,255,255,0.12); border-radius: 14px; padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s; }
-    .upload-zone:hover, .upload-zone.dz-over { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.04); }
-    .uz-icon { width: 52px; height: 52px; border-radius: 14px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-    .uz-icon svg { width: 22px; height: 22px; color: var(--cyan); }
-    .upload-zone h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
-    .upload-zone p { font-size: 13px; color: var(--text-2); }
+    /* Font preview */
+    .font-preview { padding:9px 12px;border-radius:8px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.10);font-size:16px;color:var(--text);text-align:center;margin-top:4px;min-height:36px;line-height:1.3;transition:all 0.25s; }
 
-    /* Field mapping rows */
-    .fm-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 11px; }
-    .fm-row .form-select, .fm-row .form-input { flex: 1; min-width: 0; }
-    .fm-arrow { color: var(--text-3); flex-shrink: 0; }
-    .fm-del { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-3); cursor: pointer; flex-shrink: 0; transition: all 0.15s; background: transparent; border: none; }
-    .fm-del:hover { color: #f43f5e; background: rgba(244,63,94,0.1); }
-    .fm-del svg { width: 14px; height: 14px; }
+    /* Add field modal */
+    .af-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(14px);z-index:400;align-items:center;justify-content:center; }
+    .af-overlay.open { display:flex; }
+    .af-box { background:#080f1e;border:1px solid var(--glass-border-2);border-radius:22px;padding:32px;width:480px;max-width:92vw;box-shadow:0 40px 100px rgba(0,0,0,0.7); }
+    .af-title { font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);margin-bottom:24px;display:flex;align-items:center;justify-content:space-between; }
+    .af-close-btn { width:32px;height:32px;border-radius:8px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer; }
+    .af-close-btn svg { width:14px;height:14px; }
 
-    /* ═══ 3-MODE EMAIL EDITOR (from mail-tool) ═══ */
-    .me-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(28px); border: 1px solid rgba(255,255,255,0.09); border-radius: var(--radius-lg,14px); overflow: hidden; }
-    .me-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); flex-wrap: wrap; gap: 12px; }
-    .me-tab-bar { display: flex; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 3px; gap: 2px; }
-    .me-tab { padding: 7px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: all 0.2s; white-space: nowrap; border: none; background: none; font-family: var(--font); }
-    .me-tab:hover { color: var(--text); }
-    .me-tab.active { background: linear-gradient(135deg,#00d4ff,#7c3aed); color: #fff; font-weight: 600; box-shadow: 0 2px 12px rgba(0,212,255,0.25); }
+    /* ─── FIELD MAPPING ───────────────────────────────────────── */
+    .fm-row { display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:11px; }
+    .fm-arrow { color:var(--text-3);flex-shrink:0; }
+    .fm-del { width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-3);cursor:pointer;flex-shrink:0;transition:var(--transition);background:transparent;border:none; }
+    .fm-del:hover { color:var(--red);background:var(--red-dim); }
+    .fm-del svg { width:14px;height:14px; }
 
-    /* Template Picker */
-    .me-tpl-row { display: flex; gap: 14px; padding: 18px 22px; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.07); }
-    .me-tpl-row::-webkit-scrollbar { height: 4px; }
-    .me-tpl-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-    .me-tpl-card { flex-shrink: 0; width: 148px; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.03); }
-    .me-tpl-card:hover { border-color: rgba(0,212,255,0.4); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-    .me-tpl-thumb { height: 80px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; }
-    .me-tpl-info { padding: 10px 12px; }
-    .me-tpl-name { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
-    .me-tpl-btn { display: block; width: 100%; padding: 6px; border-radius: 6px; background: linear-gradient(135deg,#00d4ff,#7c3aed); color: #fff; font-size: 12px; font-weight: 600; text-align: center; border: none; cursor: pointer; font-family: var(--font); }
+    /* ─── EMAIL EDITOR ────────────────────────────────────────── */
+    .email-editor-shell {
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .email-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.20);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .email-topbar-left h3 { font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px; }
+    .email-topbar-left p  { font-size:12.5px;color:var(--text-2); }
+    .e-tab-bar { display:flex;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:3px;gap:2px; }
+    .e-tab { padding:7px 20px;border-radius:7px;font-size:13.5px;font-weight:500;color:var(--text-2);cursor:pointer;transition:var(--transition);border:none;background:none;font-family:var(--font);white-space:nowrap; }
+    .e-tab:hover { color:var(--text); }
+    .e-tab.active { background:linear-gradient(135deg,#00d4ff,#7c3aed);color:#fff;font-weight:600;box-shadow:0 2px 12px rgba(0,212,255,0.25); }
 
-    /* Merge Tags Row */
-    .me-tags-row { display: flex; align-items: center; gap: 10px; padding: 11px 22px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-wrap: wrap; background: rgba(255,255,255,0.01); }
-    .me-tag { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; background: rgba(124,58,237,0.12); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.2); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'JetBrains Mono',monospace; white-space: nowrap; }
-    .me-tag:hover { background: rgba(124,58,237,0.22); transform: scale(1.04); }
+    /* merge tag row */
+    .email-tags-row { display:flex;align-items:center;gap:8px;padding:11px 20px;border-bottom:1px solid var(--glass-border);flex-wrap:wrap;background:rgba(0,0,0,0.10); }
+    .email-tag-label { font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.7px;flex-shrink:0; }
+    .email-tag { display:inline-flex;align-items:center;padding:4px 10px;border-radius:6px;background:rgba(124,58,237,0.12);color:#c4b5fd;border:1px solid rgba(124,58,237,0.2);font-size:12px;font-weight:600;cursor:pointer;transition:var(--transition);font-family:var(--font-mono);white-space:nowrap; }
+    .email-tag:hover { background:rgba(124,58,237,0.22);transform:scale(1.04); }
 
-    /* Visual Builder */
-    .me-visual-layout { display: grid; grid-template-columns: 160px 1fr 260px; height: 560px; }
-    .me-palette { border-right: 1px solid rgba(255,255,255,0.07); padding: 14px 10px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; background: rgba(255,255,255,0.01); }
-    .me-palette::-webkit-scrollbar { width: 3px; }
-    .me-palette::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-    .me-palette-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); padding: 4px 8px 8px; }
-    .me-palette-btn { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 9px; border: 1px solid transparent; background: rgba(255,255,255,0.04); cursor: pointer; transition: all 0.18s; color: var(--text-2); font-size: 13px; font-weight: 500; font-family: var(--font); width: 100%; text-align: left; }
-    .me-palette-btn:hover { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.2); color: var(--cyan); }
-    .me-palette-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    /* Editor panes */
+    .email-pane { display:none; }
+    .email-pane.active { display:block; }
 
-    /* Canvas */
-    .me-canvas-wrap { overflow-y: auto; background: rgba(0,0,0,0.2); padding: 20px; display: flex; flex-direction: column; align-items: center; }
-    .me-canvas-wrap::-webkit-scrollbar { width: 5px; }
-    .me-canvas-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-    .me-canvas-inner { width: 100%; max-width: 560px; min-height: 100%; }
-    .me-empty-canvas { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; color: var(--text-3); text-align: center; padding: 40px; }
-    .me-empty-canvas svg { width: 40px; height: 40px; opacity: 0.3; }
+    /* HTML textarea */
+    .email-html-pane textarea {
+      width:100%;
+      min-height:340px;
+      padding:18px 20px;
+      background:rgba(2,5,12,0.75);
+      border:none;
+      color:#a8d8f0;
+      font-family:var(--font-mono);
+      font-size:13px;
+      line-height:1.75;
+      resize:vertical;
+      outline:none;
+      display:block;
+    }
+    .email-html-pane textarea::placeholder { color:rgba(90,116,144,0.6); }
 
-    /* Block wraps */
-    .me-block-wrap { position: relative; cursor: pointer; transition: outline 0.15s; outline: 2px solid transparent; outline-offset: 0px; width: 100%; }
-    .me-block-wrap:hover { outline-color: rgba(0,212,255,0.3); }
-    .me-block-wrap.selected { outline-color: var(--cyan); outline-style: solid; }
-    .me-block-controls { position: absolute; top: 4px; right: 4px; display: flex; gap: 4px; z-index: 10; opacity: 0; transition: opacity 0.15s; }
-    .me-block-wrap:hover .me-block-controls,
-    .me-block-wrap.selected .me-block-controls { opacity: 1; }
+    /* Preview pane */
+    .email-preview-pane { padding:20px; }
+    .eprev-frame { background:#f8fafc;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 24px rgba(0,0,0,0.3); }
+    .eprev-head { background:#e8edf3;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.08);font-size:13px;color:#3d5a72; }
+    .eprev-head div { margin-bottom:4px; }
+    .eprev-head div:last-child { margin-bottom:0; }
+    .eprev-head strong { color:#1a2a3a; }
+    .eprev-body { padding:22px;color:#1e293b;font-size:14px;line-height:1.7;min-height:140px;max-height:400px;overflow-y:auto; }
 
-    /* ── BUG FIX: ctrl buttons — dark bg + cyan text so icons stay visible on hover ── */
-    .me-ctrl-btn { width: 26px; height: 26px; border-radius: 6px; border: none; background: rgba(4,8,15,0.9); color: var(--text-2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; font-family: var(--font); transition: all 0.15s; box-shadow: 0 1px 6px rgba(0,0,0,0.5); }
-    .me-ctrl-btn:hover { color: var(--cyan); background: rgba(4,8,15,0.95); border: 1px solid rgba(0,212,255,0.35); }
-    .me-ctrl-btn.del:hover { color: #f43f5e; background: rgba(4,8,15,0.95); border: 1px solid rgba(244,63,94,0.35); }
-    .me-ctrl-btn svg { width: 12px; height: 12px; }
+    /* Template picker pane */
+    .email-tpl-pane { padding:20px; }
+    .tpl-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px; }
+    .tpl-card { border:1px solid var(--glass-border);border-radius:12px;overflow:hidden;cursor:pointer;transition:var(--transition);background:rgba(255,255,255,0.03); }
+    .tpl-card:hover { border-color:rgba(0,212,255,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+    .tpl-thumb { height:90px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800; }
+    .tpl-info { padding:10px 12px;border-top:1px solid var(--glass-border); }
+    .tpl-name { font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:8px; }
+    .tpl-use { display:block;width:100%;padding:6px;border-radius:6px;background:linear-gradient(135deg,#00d4ff,#7c3aed);color:#fff;font-size:12px;font-weight:600;text-align:center;border:none;cursor:pointer;font-family:var(--font); }
 
-    .me-block-inner { pointer-events: none; }
+    /* ─── REVIEW PANEL ────────────────────────────────────────── */
+    .review-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px; }
+    .rv-stat { text-align:center;padding:22px 16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:14px; }
+    .rv-num { font-family:var(--font-display);font-size:40px;font-weight:800;line-height:1;color:var(--text);margin-bottom:6px; }
+    .rv-label { font-size:13px;color:var(--text-2); }
+    .rv-row { display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:13px 16px;border-bottom:1px solid var(--glass-border);font-size:14px; }
+    .rv-row:last-child { border-bottom:none; }
+    .rv-key { color:var(--text-2);font-weight:500;flex-shrink:0;white-space:nowrap; }
+    .rv-val { color:var(--text);font-weight:600;text-align:right;word-break:break-all;max-width:60%; }
 
-    /* Properties Panel */
-    .me-props { border-left: 1px solid rgba(255,255,255,0.07); overflow-y: auto; background: rgba(255,255,255,0.01); }
-    .me-props::-webkit-scrollbar { width: 3px; }
-    .me-props::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
-    .me-props-header { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 13px; font-weight: 700; color: var(--text-3); letter-spacing: 0.4px; text-transform: uppercase; }
-    .me-props-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
-    .me-props-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; gap: 8px; color: var(--text-3); font-size: 13px; text-align: center; padding: 20px; }
-    .me-props-empty svg { width: 32px; height: 32px; opacity: 0.25; }
-    .me-field { display: flex; flex-direction: column; gap: 5px; }
-    .me-field-label { font-size: 11.5px; font-weight: 600; color: var(--text-3); letter-spacing: 0.2px; text-transform: uppercase; }
-    .me-input { width: 100%; padding: 8px 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-size: 13.5px; font-family: var(--font); outline: none; transition: border-color 0.15s; }
-    .me-input:focus { border-color: rgba(0,212,255,0.4); }
-    .me-textarea { width: 100%; padding: 9px 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-size: 13px; font-family: var(--font); outline: none; resize: vertical; min-height: 80px; line-height: 1.55; transition: border-color 0.15s; }
-    .me-textarea:focus { border-color: rgba(0,212,255,0.4); }
-    .me-color-row { display: flex; gap: 8px; align-items: center; }
-    .me-color-swatch { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); overflow: hidden; flex-shrink: 0; cursor: pointer; }
-    .me-color-swatch input[type="color"] { width: 48px; height: 48px; margin: -7px; cursor: pointer; border: none; background: none; }
-    .me-range { width: 100%; accent-color: var(--cyan); }
-    .me-align-btns { display: flex; gap: 4px; }
-    .me-align-btn { flex: 1; padding: 7px; border-radius: 7px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: var(--text-3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-family: var(--font); }
-    .me-align-btn:hover { color: var(--text); }
-    .me-align-btn.active { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.25); }
-    .me-align-btn svg { width: 13px; height: 13px; }
+    /* ─── RUNNING + RESULTS ───────────────────────────────────── */
+    .run-layout { display:grid;grid-template-columns:1fr 320px;gap:22px; }
+    @media(max-width:900px){ .run-layout { grid-template-columns:1fr; } }
+    .run-hero { text-align:center;padding:32px 24px 24px; }
+    .run-ring-wrap { position:relative;width:120px;height:120px;margin:0 auto 22px; }
+    .run-ring-wrap svg { width:120px;height:120px;transform:rotate(-90deg); }
+    .rr-bg { fill:none;stroke:rgba(255,255,255,0.06);stroke-width:9; }
+    .rr-fg { fill:none;stroke:url(#rGrad);stroke-width:9;stroke-linecap:round;stroke-dasharray:345;stroke-dashoffset:345;transition:stroke-dashoffset 0.5s ease; }
+    .run-ring-inner { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center; }
+    .run-pct { font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text); }
+    .run-frac { font-size:12px;color:var(--text-3);margin-top:2px; }
+    .run-title { font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px; }
+    .run-status { font-size:14px;color:var(--text-2);margin-bottom:20px;min-height:20px; }
+    .run-mini-counts { display:flex;justify-content:center;gap:28px;margin-bottom:14px; }
+    .run-mini-count { text-align:center; }
+    .run-mini-num { font-family:var(--font-display);font-size:22px;font-weight:700; }
+    .run-mini-label { font-size:12px;color:var(--text-2); }
 
-    /* Code Editor */
-    .me-code-wrap { height: 560px; position: relative; }
-    .CodeMirror { height: 100% !important; font-family: 'JetBrains Mono','Fira Code',monospace !important; font-size: 13.5px !important; line-height: 1.7 !important; }
-    .CodeMirror.cm-s-dracula { background: #0a1020 !important; }
-    .CodeMirror-scroll { padding-bottom: 24px; }
-    .me-code-actions { position: absolute; top: 10px; right: 14px; z-index: 10; display: flex; gap: 6px; }
+    .live-log { background:rgba(0,0,0,0.4);border:1px solid var(--glass-border);border-radius:10px;padding:12px 14px;height:190px;overflow-y:auto;font-family:var(--font-mono);font-size:12px;display:flex;flex-direction:column;gap:4px;scrollbar-width:thin; }
+    .live-log::-webkit-scrollbar { width:4px; }
+    .live-log::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:4px; }
+    .ll-row { display:flex;gap:9px;align-items:flex-start;line-height:1.45; }
+    .ll-ts { color:var(--text-3);flex-shrink:0;font-size:10.5px;margin-top:2px; }
+    .ll-info { color:var(--text-2); }
+    .ll-cert { color:var(--cyan); }
+    .ll-mail { color:#a78bfa; }
+    .ll-ok   { color:#34d399; }
+    .ll-err  { color:#fb7185; }
+    .ll-warn { color:#fcd34d; }
 
-    /* Preview */
-    .me-preview-wrap { height: 560px; display: flex; flex-direction: column; }
-    .me-preview-toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); }
-    .me-device-btn { padding: 6px 14px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); color: var(--text-2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: var(--font); }
-    .me-device-btn.active { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.25); }
-    .me-preview-frame-wrap { flex: 1; overflow: auto; background: rgba(0,0,0,0.25); display: flex; justify-content: center; padding: 20px; }
-    .me-preview-frame-wrap.mobile { align-items: flex-start; }
-    #mePreviewFrame { border: none; border-radius: 8px; background: #fff; box-shadow: 0 8px 40px rgba(0,0,0,0.5); transition: width 0.3s ease; }
+    /* Done state */
+    .done-ring { width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:popIn 0.5s var(--ease) both; }
+    .done-ring svg { width:36px;height:36px;color:#fff; }
+    @keyframes popIn { 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+    .done-mini-row { display:flex;border-top:1px solid var(--glass-border); }
+    .done-cell { flex:1;padding:20px;text-align:center; }
+    .done-cell+.done-cell { border-left:1px solid var(--glass-border); }
+    .done-num { font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1;margin-bottom:4px; }
+    .done-label { font-size:13px;color:var(--text-2); }
 
-    /* ── Review panel ── */
-    .review-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
-    .review-stat { text-align: center; padding: 22px 16px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 14px; }
-    .review-stat-num { font-family: 'Syne',sans-serif; font-size: 36px; font-weight: 800; line-height: 1; color: var(--text); margin-bottom: 6px; }
-    .review-stat-label { font-size: 13px; color: var(--text-2); }
-    .review-detail-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 13px 16px; border-bottom: 1px solid var(--glass-border); font-size: 14px; }
-    .review-detail-row:last-child { border-bottom: none; }
-    .review-key { color: var(--text-2); font-weight: 500; white-space: nowrap; flex-shrink: 0; }
-    .review-val { color: var(--text); font-weight: 600; text-align: right; word-break: break-all; max-width: 60%; }
-    .review-val.mono { font-family: 'JetBrains Mono',monospace; font-size: 12.5px; }
+    /* Results table */
+    .rt { width:100%;border-collapse:collapse;font-size:13.5px; }
+    .rt th { padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-3);text-align:left;border-bottom:1px solid var(--glass-border);background:rgba(0,0,0,0.15); }
+    .rt td { padding:12px 16px;border-bottom:1px solid var(--glass-border);color:var(--text);vertical-align:middle; }
+    .rt tr:last-child td { border-bottom:none; }
+    .rt tr:hover td { background:rgba(255,255,255,0.02); }
+    .ic-btn { width:30px;height:30px;border-radius:7px;background:var(--glass);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-2);transition:var(--transition); }
+    .ic-btn:hover { color:var(--cyan);border-color:rgba(0,212,255,0.3); }
+    .ic-btn svg { width:13px;height:13px; }
 
-    /* ── Running state ── */
-    .pipeline-running { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 36px 24px 28px; }
-    .run-ring { position: relative; width: 110px; height: 110px; margin-bottom: 24px; }
-    .run-ring svg { width: 110px; height: 110px; transform: rotate(-90deg); }
-    .run-ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
-    .run-ring-fg { fill: none; stroke: url(#ringGrad); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 314; stroke-dashoffset: 314; transition: stroke-dashoffset 0.5s ease; }
-    .run-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
-    .run-pct { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; color: var(--text); }
-    .run-done-label { font-size: 12px; color: var(--text-3); }
-    .run-title { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .run-status { font-size: 14px; color: var(--text-2); margin-bottom: 20px; }
-    .run-progress-row { width: 100%; max-width: 440px; }
-    .run-counts { display: flex; justify-content: center; gap: 28px; margin-bottom: 14px; font-size: 14px; color: var(--text-2); }
-    .live-log { background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border); border-radius: 10px; padding: 14px 16px; height: 180px; overflow-y: auto; font-family: 'JetBrains Mono',monospace; font-size: 12.5px; }
-    .live-log::-webkit-scrollbar { width: 4px; }
-    .live-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-    .ll-row { display: flex; gap: 10px; margin-bottom: 4px; }
-    .ll-ts { color: var(--text-3); flex-shrink: 0; }
-    .ll-info { color: var(--text-2); }
-    .ll-cert { color: var(--cyan); }
-    .ll-mail { color: #a78bfa; }
-    .ll-err  { color: #f43f5e; }
-    .done-ring { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
-    .done-ring svg { width: 36px; height: 36px; }
-    .result-mini-row { display: flex; border-top: 1px solid var(--glass-border); }
-    .result-mini-cell { flex: 1; text-align: center; padding: 20px; }
-    .result-mini-cell + .result-mini-cell { border-left: 1px solid var(--glass-border); }
-    .rmc-num { font-family: 'Syne',sans-serif; font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
-    .rmc-label { font-size: 13px; color: var(--text-2); }
-    .results-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-    .results-table th { padding: 13px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-3); text-align: left; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.15); }
-    .results-table td { padding: 13px 16px; border-bottom: 1px solid var(--glass-border); color: var(--text); vertical-align: middle; }
-    .results-table tr:last-child td { border-bottom: none; }
-    .results-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .icon-btn { width: 30px; height: 30px; border-radius: 7px; background: var(--glass); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-2); transition: all 0.15s; }
-    .icon-btn:hover { color: var(--cyan); border-color: rgba(0,212,255,0.3); }
-    .icon-btn svg { width: 13px; height: 13px; }
-
-    @media (max-width:960px) { .me-visual-layout { grid-template-columns: 140px 1fr; } .me-props { display: none; } }
+    /* misc helpers */
+    .notice-info { background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.15);border-radius:11px;padding:13px 16px;display:flex;gap:11px;font-size:13.5px;color:var(--text-2);line-height:1.55;align-items:flex-start; }
+    .notice-info svg { width:16px;height:16px;color:var(--cyan);flex-shrink:0;margin-top:2px; }
+    .notice-warn { background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:11px;padding:13px 16px;display:flex;gap:11px;font-size:13.5px;color:#fde68a;line-height:1.55;align-items:flex-start; }
+    .notice-warn svg { color:var(--gold);flex-shrink:0;margin-top:2px;width:16px;height:16px; }
+    .data-ok { background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text); }
+    .data-ok svg { color:var(--green);flex-shrink:0; }
+    .col-pill { display:inline-flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--glass-border);font-size:14px;color:var(--text);font-weight:500; }
+    .col-dot { width:7px;height:7px;background:var(--cyan);border-radius:50%;flex-shrink:0; }
   </style>
 </head>
 <body>
@@ -282,25 +402,27 @@
     <header class="top-header">
       <div class="page-breadcrumb">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><polyline points="9 18 15 12 9 6"/></svg>
         <span>Combined Pipeline</span>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" id="sidebarToggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
       </div>
     </header>
 
     <main class="page-content fade-in">
 
-      <!-- Page header -->
       <div style="margin-bottom:28px">
         <h1 class="page-title">Combined Pipeline</h1>
-        <p class="page-subtitle">Design a certificate template, connect participant data, and send personalised emails — all in a single automated workflow.</p>
+        <p class="page-subtitle">Design a certificate, connect participants, build an email — run the full workflow in one shot.</p>
       </div>
 
-      <!-- Single Stepper (no duplicate banner) -->
+      <!-- Stepper -->
       <div class="stepper" id="stepper" style="margin-bottom:32px"></div>
 
-      <!-- ═══════════════════════════════════════════ -->
-      <!-- STEP 1 — DATA & CAMPAIGN                   -->
-      <!-- ═══════════════════════════════════════════ -->
+      <!-- ════════════════════════════ STEP 1 ════════════════════════════ -->
       <div class="step-panel active" id="sp1">
         <div class="two-cols">
           <div style="display:flex;flex-direction:column;gap:20px">
@@ -311,7 +433,7 @@
                 Campaign Details
               </div>
               <div class="form-group">
-                <label class="form-label">Campaign Name <span style="color:#f43f5e">*</span></label>
+                <label class="form-label">Campaign Name <span style="color:var(--red)">*</span></label>
                 <input type="text" id="cpName" class="form-input" placeholder="e.g. React Bootcamp March 2025 — Certificate + Email" style="font-size:16px;padding:14px 16px"/>
               </div>
             </div>
@@ -324,19 +446,19 @@
               <div class="src-picker">
                 <div class="src-opt active" id="srcSheetsBtn" onclick="switchDataSrc('sheets')">
                   <div class="src-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg></div>
-                  <div class="opt-title">Google Sheets</div>
-                  <div class="opt-desc">Connect directly with your Sheet ID</div>
+                  <div class="src-opt-title">Google Sheets</div>
+                  <div class="src-opt-desc">Connect with your Sheet ID</div>
                 </div>
                 <div class="src-opt" id="srcFileBtn" onclick="switchDataSrc('file')">
                   <div class="src-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-                  <div class="opt-title">Upload File</div>
-                  <div class="opt-desc">CSV or Excel from your computer</div>
+                  <div class="src-opt-title">Upload File</div>
+                  <div class="src-opt-desc">CSV or Excel</div>
                 </div>
               </div>
 
               <div id="panelSheets">
-                <div class="form-group" style="margin-bottom:14px">
-                  <label class="form-label">Google Sheet ID <span style="color:#f43f5e">*</span></label>
+                <div class="form-group" style="margin-bottom:10px">
+                  <label class="form-label">Google Sheet ID <span style="color:var(--red)">*</span></label>
                   <div style="display:flex;gap:10px">
                     <input type="text" id="sheetId" class="form-input" placeholder="Paste Sheet ID from URL" style="flex:1;font-size:15px"/>
                     <button class="btn btn-primary" id="loadSheetBtn" onclick="loadSheetData()">
@@ -344,7 +466,7 @@
                       Load
                     </button>
                   </div>
-                  <span class="form-hint">From URL: docs.google.com/spreadsheets/d/<strong style="color:var(--cyan)">THIS_ID</strong>/edit</span>
+                  <span class="form-hint" style="color:var(--text-3)">docs.google.com/spreadsheets/d/<strong style="color:var(--cyan)">THIS_ID</strong>/edit</span>
                 </div>
                 <div id="sheetLoadedMsg" style="display:none"></div>
               </div>
@@ -361,65 +483,65 @@
             </div>
 
             <div style="display:flex;justify-content:flex-end">
-              <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(2)">
+              <button class="btn btn-primary" style="padding:14px 32px;font-size:16px" onclick="goStep(2)">
                 Continue to Certificate Design
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </button>
             </div>
           </div>
 
+          <!-- Right tips -->
           <div style="display:flex;flex-direction:column;gap:16px">
             <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:14px;font-size:14px">
+              <div class="card-title" style="margin-bottom:14px">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 How the pipeline works
               </div>
               <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--text-2)">
-                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">1</span><span>Load participant data from your Sheet or a file</span></div>
-                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">2</span><span>Design your certificate visually with text fields</span></div>
-                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">3</span><span>Map sheet columns to certificate placeholders</span></div>
-                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">4</span><span>Design a beautiful HTML email template</span></div>
-                <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:rgba(16,185,129,0.15);color:var(--green);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">5</span><span>Launch — PDFs saved to Drive, emails sent from Gmail</span></div>
+                <div style="display:flex;gap:10px"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</span><span>Load participant data from Sheet or file</span></div>
+                <div style="display:flex;gap:10px"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</span><span>Design certificate visually — drag text fields</span></div>
+                <div style="display:flex;gap:10px"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</span><span>Map sheet columns to template placeholders</span></div>
+                <div style="display:flex;gap:10px"><span style="background:rgba(0,212,255,0.15);color:var(--cyan);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">4</span><span>Build a beautiful HTML email template</span></div>
+                <div style="display:flex;gap:10px"><span style="background:rgba(16,185,129,0.15);color:var(--green);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">5</span><span>Launch — PDFs to Drive, emails from Gmail</span></div>
               </div>
             </div>
             <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:12px;font-size:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Privacy Notice</div>
-              <p style="font-size:13px;color:var(--text-2);line-height:1.65">Everything runs through your Google OAuth token. No participant data, emails, or certificates ever pass through our servers.</p>
+              <div class="card-title" style="margin-bottom:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Privacy</div>
+              <p style="font-size:13.5px;color:var(--text-2);line-height:1.65">Everything runs through your Google OAuth token. No participant data, emails, or certificates ever touch our servers.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════ -->
-      <!-- STEP 2 — CERTIFICATE TEMPLATE DESIGNER     -->
-      <!-- ═══════════════════════════════════════════ -->
+      <!-- ════════════════════════════ STEP 2 — CERTIFICATE EDITOR ════════════════════════════ -->
       <div class="step-panel" id="sp2">
         <div style="display:flex;flex-direction:column;gap:20px">
-          <div class="notice" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--text-2)">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span><strong style="color:var(--text)">Visual Certificate Editor</strong> — Upload a background or pick a colour. Click <strong style="color:var(--cyan)">"+ Add Field"</strong> to place a dynamic text block. Drag to position. Select a field to change font, size, colour, letter spacing, and alignment.</span>
+
+          <div class="notice-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span><strong style="color:var(--text)">Visual Certificate Editor</strong> — Upload a background image or pick a colour. Click <strong style="color:var(--cyan)">"+ Add Field"</strong> to place a dynamic text block on the canvas. Drag fields to position them. Click a field to select it and style it in the right panel.</span>
           </div>
 
-          <div class="editor-shell">
-            <!-- Canvas side -->
-            <div class="editor-canvas-col">
-              <div class="editor-toolbar">
-                <label class="btn btn-secondary btn-sm" style="cursor:pointer;padding:7px 13px">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <div class="cert-editor-wrap">
+            <!-- Left: Canvas -->
+            <div class="cert-canvas-col">
+              <div class="cert-toolbar">
+                <label class="btn btn-secondary btn-sm" style="cursor:pointer">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                   Background
                   <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBG(event)"/>
                 </label>
                 <div class="tb-sep"></div>
-                <label style="font-size:12.5px;color:var(--text-2);display:flex;align-items:center;gap:6px">
+                <label style="font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:6px">
                   Colour
                   <input type="color" id="bgColor" value="#ffffff" onchange="changeBGColor()" style="width:28px;height:28px;border:1px solid var(--glass-border);border-radius:6px;padding:2px;background:var(--glass);cursor:pointer"/>
                 </label>
                 <button class="btn btn-ghost btn-sm" onclick="clearBG()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
                   Clear BG
                 </button>
                 <div class="tb-sep"></div>
-                <select id="canvasSize" class="form-select btn-sm" style="width:155px;padding:7px 28px 7px 10px;font-size:13px" onchange="changeSize()">
+                <select id="canvasSize" onchange="changeSize()" style="padding:6px 28px 6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;color:var(--text);font-size:13px;font-family:var(--font);cursor:pointer;outline:none;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a6080' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 8px center;width:155px">
                   <option value="1122,794">A4 Landscape</option>
                   <option value="794,1122">A4 Portrait</option>
                   <option value="1280,720">HD 16:9</option>
@@ -433,116 +555,154 @@
                   </button>
                 </div>
               </div>
-              <div class="canvas-zone" id="canvasZone">
-                <div class="c-container" id="cContainer">
+
+              <div class="canvas-scroll-zone" id="canvasZone">
+                <div class="cert-canvas-container" id="cContainer">
                   <canvas id="certCanvas"></canvas>
                   <div id="fieldOverlay"></div>
                 </div>
               </div>
             </div>
 
-            <!-- Properties side — enhanced with 10+ fonts + letter spacing -->
-            <div class="editor-props-col">
+            <!-- Right: Properties -->
+            <div class="cert-props-col">
               <div class="ep-tabs">
                 <div class="ep-tab active" id="epTab_fields" onclick="switchEPTab('fields')">Fields</div>
                 <div class="ep-tab" id="epTab_props" onclick="switchEPTab('props')">Properties</div>
               </div>
               <div class="ep-body">
-                <!-- Fields tab -->
+
+                <!-- Fields list -->
                 <div class="ep-panel active" id="epPanel_fields">
-                  <div style="font-size:12.5px;color:var(--text-3)">Click a field on canvas to select it, or use this list.</div>
-                  <div id="fieldChipList">
-                    <div style="text-align:center;padding:28px 12px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span> to start.</div>
-                  </div>
+                  <div style="font-size:12px;color:var(--text-3);padding:2px 0 8px">Click a field on the canvas, or use this list.</div>
+                  <div id="fieldChipList"></div>
+                  <button class="btn btn-outline btn-full btn-sm" style="margin-top:8px" onclick="openAFModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add New Field
+                  </button>
                 </div>
 
-                <!-- Props tab -->
+                <!-- Properties -->
                 <div class="ep-panel" id="epPanel_props">
-                  <div id="propsEmpty" style="padding:16px 0;text-align:center;font-size:13.5px;color:var(--text-3)">Select a field to edit its properties.</div>
-                  <div id="propsForm" style="display:none;flex-direction:column;gap:10px">
+                  <div id="propsEmpty" style="padding:20px 0;text-align:center;font-size:13px;color:var(--text-3)">Select a field on the canvas to edit its properties.</div>
+                  <div id="propsForm" style="display:none;flex-direction:column;gap:0">
 
-                    <div class="ep-section-hd">Field Info</div>
-                    <div class="form-group">
-                      <label class="form-label" style="font-size:11px">Placeholder</label>
-                      <input type="text" id="pPh" class="form-input" style="font-size:12px;padding:7px 9px;font-family:monospace" readonly/>
+                    <div class="ep-sec">Content</div>
+                    <div class="pr-row">
+                      <div class="pr-label">Placeholder Tag</div>
+                      <input type="text" id="pPh" class="pr-input" onchange="setFP('placeholder',this.value)" style="font-family:var(--font-mono);font-size:12.5px"/>
                     </div>
-                    <div class="form-group">
-                      <label class="form-label" style="font-size:11px">Preview Text</label>
-                      <input type="text" id="pPrev" class="form-input" style="font-size:12px;padding:7px 9px" oninput="setFP('previewText',this.value)"/>
+                    <div class="pr-row">
+                      <div class="pr-label">Preview Text</div>
+                      <input type="text" id="pPrev" class="pr-input" onchange="setFP('previewText',this.value)"/>
                     </div>
 
-                    <div class="ep-section-hd">Typography</div>
-                    <div class="form-group">
-                      <label class="form-label" style="font-size:11px">Font Family</label>
-                      <select id="pFont" class="form-select" style="font-size:13px;padding:7px 28px 7px 9px" onchange="setFPFont(this.value)">
-                        <option value="Helvetica">Helvetica</option>
-                        <option value="Helvetica Bold">Helvetica Bold</option>
-                        <option value="Times New Roman">Times New Roman</option>
-                        <option value="Times Bold">Times New Roman Bold</option>
-                        <option value="Courier">Courier</option>
-                        <option value="Playfair Display">Playfair Display</option>
-                        <option value="Cinzel">Cinzel</option>
-                        <option value="Montserrat">Montserrat</option>
-                        <option value="Open Sans">Open Sans</option>
-                        <option value="EB Garamond">EB Garamond</option>
-                        <option value="Cormorant Garamond">Cormorant Garamond</option>
-                        <option value="Raleway">Raleway</option>
-                        <option value="Crimson Text">Crimson Text</option>
-                        <option value="Oswald">Oswald</option>
-                        <option value="Dancing Script">Dancing Script</option>
+                    <div class="ep-sec">Typography</div>
+                    <div class="pr-row">
+                      <div class="pr-label">Font Family</div>
+                      <select id="pFont" class="pr-select" onchange="setFPFont(this.value)">
+                        <optgroup label="Sans Serif">
+                          <option value="Helvetica">Helvetica</option>
+                          <option value="Montserrat">Montserrat</option>
+                          <option value="Raleway">Raleway</option>
+                          <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+                        </optgroup>
+                        <optgroup label="Serif">
+                          <option value="Times New Roman">Times New Roman</option>
+                          <option value="EB Garamond">EB Garamond</option>
+                          <option value="Playfair Display">Playfair Display</option>
+                          <option value="Cormorant Garamond">Cormorant Garamond</option>
+                        </optgroup>
+                        <optgroup label="Calligraphy / Display">
+                          <option value="Dancing Script">Dancing Script</option>
+                          <option value="Cinzel">Cinzel</option>
+                        </optgroup>
+                        <optgroup label="Monospace">
+                          <option value="Courier New">Courier New</option>
+                          <option value="JetBrains Mono">JetBrains Mono</option>
+                        </optgroup>
                       </select>
                     </div>
                     <!-- Font preview -->
-                    <div class="font-preview-strip" id="fontPreviewSample">Aa — Sample Preview</div>
+                    <div id="fontPreviewSample" class="font-preview">Aa — Sample Text</div>
 
-                    <div class="form-group">
-                      <div class="range-header"><label class="form-label" style="font-size:11px">Font Size</label><span class="range-val" id="pSizeVal">36px</span></div>
-                      <input type="range" id="pSize" class="ep-range" min="8" max="160" value="36" oninput="document.getElementById('pSizeVal').textContent=this.value+'px';setFP('fontSize',+this.value)"/>
-                    </div>
-
-                    <div class="form-group">
-                      <div class="range-header"><label class="form-label" style="font-size:11px">Letter Spacing</label><span class="range-val" id="pSpacingVal">0px</span></div>
-                      <input type="range" id="pSpacing" class="ep-range" min="0" max="30" step="0.5" value="0" oninput="document.getElementById('pSpacingVal').textContent=this.value+'px';setFP('letterSpacing',+this.value)"/>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label" style="font-size:11px">Text Colour</label>
-                      <div style="display:flex;align-items:center;gap:8px">
-                        <input type="color" id="pColor" value="#000000" onchange="setFP('color',this.value);document.getElementById('pColorHex').textContent=this.value" style="width:32px;height:32px;border:1px solid var(--glass-border);border-radius:7px;padding:2px;background:var(--glass);cursor:pointer"/>
-                        <span id="pColorHex" style="font-family:monospace;font-size:12px;color:var(--text-3)">#000000</span>
+                    <!-- Style toggles: Bold + Italic -->
+                    <div class="pr-row" style="margin-top:10px">
+                      <div class="pr-label">Style</div>
+                      <div class="style-btns">
+                        <button class="style-btn" id="boldBtn" onclick="toggleBold()">B</button>
+                        <button class="style-btn italic" id="italicBtn" onclick="toggleItalic()">I</button>
                       </div>
                     </div>
 
-                    <div class="ep-section-hd">Alignment</div>
+                    <!-- Font size -->
+                    <div class="pr-row">
+                      <div class="range-row">
+                        <div class="range-hdr">
+                          <span class="pr-label">Font Size</span>
+                          <span class="range-val" id="pSizeVal">36px</span>
+                        </div>
+                        <input type="range" id="pSize" class="pr-range" min="8" max="160" step="1" value="36" oninput="document.getElementById('pSizeVal').textContent=this.value+'px';setFP('fontSize',+this.value)"/>
+                      </div>
+                    </div>
+
+                    <!-- Letter spacing -->
+                    <div class="pr-row">
+                      <div class="range-row">
+                        <div class="range-hdr">
+                          <span class="pr-label">Letter Spacing</span>
+                          <span class="range-val" id="pSpacingVal">0px</span>
+                        </div>
+                        <input type="range" id="pSpacing" class="pr-range" min="-5" max="30" step="0.5" value="0" oninput="document.getElementById('pSpacingVal').textContent=this.value+'px';setFP('letterSpacing',+this.value)"/>
+                      </div>
+                    </div>
+
+                    <!-- Colour -->
+                    <div class="pr-row">
+                      <div class="pr-label">Text Colour</div>
+                      <div style="display:flex;align-items:center;gap:8px">
+                        <input type="color" id="pColor" value="#000000" onchange="setFP('color',this.value);document.getElementById('pColorHex').textContent=this.value" style="width:34px;height:34px;border:1px solid var(--glass-border);border-radius:8px;padding:3px;background:var(--glass);cursor:pointer"/>
+                        <span id="pColorHex" style="font-family:var(--font-mono);font-size:12px;color:var(--text-2)">#000000</span>
+                      </div>
+                    </div>
+
+                    <div class="ep-sec">Alignment</div>
                     <div class="align-row">
-                      <button class="al-btn active" id="alL" onclick="setAlign('left')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/></svg></button>
-                      <button class="al-btn" id="alC" onclick="setAlign('center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/></svg></button>
-                      <button class="al-btn" id="alR" onclick="setAlign('right')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/></svg></button>
+                      <button class="al-btn on" id="alL" onclick="setAlign('left')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/></svg>
+                      </button>
+                      <button class="al-btn" id="alC" onclick="setAlign('center')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/></svg>
+                      </button>
+                      <button class="al-btn" id="alR" onclick="setAlign('right')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/></svg>
+                      </button>
                     </div>
 
-                    <div class="ep-section-hd">Position &amp; Size</div>
-                    <div class="prop-mini">
-                      <div class="form-group"><label class="form-label" style="font-size:11px">X (%)</label><input type="number" id="pX" class="form-input" step="0.5" onchange="setFPXY()"/></div>
-                      <div class="form-group"><label class="form-label" style="font-size:11px">Y (%)</label><input type="number" id="pY" class="form-input" step="0.5" onchange="setFPXY()"/></div>
+                    <div class="ep-sec">Position &amp; Size</div>
+                    <div class="pr-2col">
+                      <div class="pr-row"><div class="pr-label">X (%)</div><input type="number" id="pX" class="pr-input" step="0.5" onchange="setFPXY()"/></div>
+                      <div class="pr-row"><div class="pr-label">Y (%)</div><input type="number" id="pY" class="pr-input" step="0.5" onchange="setFPXY()"/></div>
                     </div>
-                    <div class="form-group"><label class="form-label" style="font-size:11px">Width (%)</label><input type="number" id="pW" class="form-input" min="10" max="100" onchange="setFP('width',+this.value)"/></div>
+                    <div class="pr-row"><div class="pr-label">Width (%)</div><input type="number" id="pW" class="pr-input" min="10" max="100" onchange="setFP('width',+this.value)"/></div>
 
-                    <button class="btn btn-danger btn-full btn-sm" onclick="deleteSelField()" style="margin-top:4px">
+                    <button class="btn btn-danger btn-full btn-sm" onclick="deleteSelField()" style="margin-top:14px">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                       Delete Field
                     </button>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div><!-- /editor-shell -->
+
+              </div><!-- /ep-body -->
+            </div><!-- /cert-props-col -->
+          </div><!-- /cert-editor-wrap -->
 
           <div style="display:flex;justify-content:space-between;gap:12px">
             <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(1)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
               Back
             </button>
-            <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(3)">
+            <button class="btn btn-primary" style="padding:14px 32px;font-size:16px" onclick="goStep(3)">
               Continue to Field Mapping
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
@@ -550,63 +710,53 @@
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════ -->
-      <!-- STEP 3 — FIELD MAPPING                     -->
-      <!-- ═══════════════════════════════════════════ -->
+      <!-- ════════════════════════════ STEP 3 — FIELD MAPPING ════════════════════════════ -->
       <div class="step-panel" id="sp3">
         <div class="two-cols">
           <div style="display:flex;flex-direction:column;gap:20px">
 
             <div class="card">
-              <div class="three-col-header">
-                <div>
-                  <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg> Required Columns</div>
-                  <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Map the Name and Email columns from your sheet.</div>
-                </div>
+              <div class="card-header" style="margin-bottom:0">
+                <div><div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg> Required Columns</div>
+                <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Map Name and Email columns from your sheet.</div></div>
               </div>
-              <div class="form-grid form-grid-2">
+              <div class="form-grid form-grid-2" style="margin-top:20px">
                 <div class="form-group">
-                  <label class="form-label">Name Column <span style="color:#f43f5e">*</span></label>
+                  <label class="form-label">Name Column <span style="color:var(--red)">*</span></label>
                   <select id="mapName" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"><option value="">Select column…</option></select>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Email Column <span style="color:#f43f5e">*</span></label>
+                  <label class="form-label">Email Column <span style="color:var(--red)">*</span></label>
                   <select id="mapEmail" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"><option value="">Select column…</option></select>
                 </div>
               </div>
             </div>
 
             <div class="card">
-              <div class="three-col-header">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px">
                 <div>
-                  <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Custom Field Mappings</div>
-                  <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Map additional columns to template placeholders like <code style="background:var(--glass);padding:1px 6px;border-radius:4px;font-size:12px;font-family:monospace">{{course}}</code></div>
+                  <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Custom Mappings</div>
+                  <div style="font-size:13.5px;color:var(--text-2);margin-top:4px">Map extra columns to placeholders like <code style="background:var(--glass);padding:1px 6px;border-radius:4px;font-size:12px;font-family:var(--font-mono)">{{course}}</code></div>
                 </div>
                 <button class="btn btn-outline btn-sm" onclick="addFMapping()" style="flex-shrink:0">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  Add
+                  Add Field
                 </button>
               </div>
-              <div id="customMappings" style="display:flex;flex-direction:column;gap:10px;margin-top:8px"></div>
-              <div id="noMappingsNote" class="notice" style="background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.13);border-radius:10px;padding:12px 14px;display:flex;gap:10px;font-size:13.5px;color:var(--text-2);margin-top:12px">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                Template fields detected: <span id="detectedFields" style="color:var(--cyan);font-family:monospace;font-size:12.5px">loading…</span>
+              <div id="customMappings" style="display:flex;flex-direction:column;gap:10px"></div>
+              <div id="noMappingsNote" class="notice-info" style="margin-top:12px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Template fields from your design: <span id="detectedFields" style="color:var(--cyan);font-family:var(--font-mono);font-size:12.5px">none yet</span></span>
               </div>
             </div>
 
             <div class="card">
-              <div class="card-title" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg> Write Links Back to Sheet</div>
+              <div class="card-title" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg> Sheet Write-Back</div>
               <div class="toggle-row" style="margin-bottom:12px">
-                <div class="toggle-info">
-                  <strong>Auto-save certificate links to your Sheet</strong>
-                  <span style="color:var(--text-2)">Adds a column with each participant's PDF URL</span>
-                </div>
+                <div class="toggle-info"><strong>Save certificate links to Sheet</strong><span>Adds a column with each PDF URL</span></div>
                 <div class="toggle on" id="writeBackToggle" onclick="this.classList.toggle('on')"></div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Column Header Name</label>
-                <input type="text" id="certColName" class="form-input" value="Certificate Link"/>
-              </div>
+              <div class="form-group"><label class="form-label">Column header name</label><input type="text" id="certColName" class="form-input" value="Certificate Link"/></div>
             </div>
 
             <div style="display:flex;justify-content:space-between;gap:12px">
@@ -614,7 +764,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                 Back
               </button>
-              <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(4)">
+              <button class="btn btn-primary" style="padding:14px 32px;font-size:16px" onclick="goStep(4)">
                 Continue to Email Template
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </button>
@@ -623,169 +773,87 @@
 
           <div style="display:flex;flex-direction:column;gap:16px">
             <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:14px;font-size:14px">Your Sheet Columns</div>
-              <div id="colList" style="font-size:13.5px;color:var(--text-2);display:flex;flex-direction:column;gap:5px"><span style="color:var(--text-3)">Load your sheet first.</span></div>
+              <div class="card-title" style="margin-bottom:14px">Sheet Columns</div>
+              <div id="colList" style="display:flex;flex-direction:column;gap:2px;font-size:13.5px"><span style="color:var(--text-3)">Load your sheet first.</span></div>
             </div>
             <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:12px;font-size:14px">Placeholder Guide</div>
-              <div style="background:rgba(2,5,10,0.6);border-radius:9px;padding:13px;font-family:monospace;font-size:12px;color:var(--text-3);line-height:2">
+              <div class="card-title" style="margin-bottom:12px">Placeholder Guide</div>
+              <div style="background:rgba(2,5,10,0.6);border-radius:9px;padding:12px;font-family:var(--font-mono);font-size:12px;color:var(--text-3);line-height:2">
                 <div><span style="color:#10b981">{{name}}</span> → Participant name</div>
                 <div><span style="color:#00d4ff">{{course}}</span> → Course/event</div>
                 <div><span style="color:#a78bfa">{{date}}</span> → Any date column</div>
                 <div><span style="color:#f59e0b">{{score}}</span> → Score/grade</div>
-                <div><span style="color:#f472b6">{{cert_link}}</span> → PDF link in email</div>
+                <div><span style="color:#f472b6">{{cert_link}}</span> → PDF URL in email</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════ -->
-      <!-- STEP 4 — EMAIL TEMPLATE (3-mode editor)    -->
-      <!-- ═══════════════════════════════════════════ -->
+      <!-- ════════════════════════════ STEP 4 — EMAIL TEMPLATE ════════════════════════════ -->
       <div class="step-panel" id="sp4">
         <div style="display:flex;flex-direction:column;gap:20px">
 
-          <!-- Subject -->
           <div class="card">
-            <div class="card-title" style="margin-bottom:18px">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
-              Email Subject Line
-            </div>
+            <div class="card-title" style="margin-bottom:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg> Email Subject</div>
             <div class="form-group">
-              <label class="form-label">Subject <span style="color:#f43f5e">*</span></label>
-              <input type="text" id="emailSubject" class="form-input" placeholder="e.g. Your certificate is ready, {{name}}!" style="font-size:16px;padding:14px 16px"/>
-              <span class="form-hint">Use merge tags like <code style="font-family:monospace;background:var(--glass);padding:1px 6px;border-radius:4px">{{name}}</code> to personalise each subject.</span>
+              <input type="text" id="emailSubject" class="form-input" placeholder="Your certificate is ready, {{name}}!" oninput="refreshPreview()" style="font-size:16px;padding:14px 16px"/>
+              <span class="form-hint" style="color:var(--text-3)">Use merge tags to personalise each subject</span>
             </div>
           </div>
 
-          <!-- ── 3-Mode Editor Card ── -->
-          <div class="me-card" id="meCard">
-
-            <!-- Header with tab switcher -->
-            <div class="me-head">
-              <div>
-                <div class="card-title" style="margin:0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                  Email Template Designer
-                </div>
-                <div style="font-size:12.5px;color:var(--text-3);margin-top:3px">Build visually, edit code, preview — all in sync</div>
+          <div class="email-editor-shell">
+            <!-- Topbar -->
+            <div class="email-topbar">
+              <div class="email-topbar-left">
+                <h3>Email Template</h3>
+                <p>Build your HTML email. Click merge tags to insert them.</p>
               </div>
-              <div style="display:flex;align-items:center;gap:10px">
-                <button class="btn btn-secondary btn-sm" onclick="meShowTemplatePicker()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-                  Templates
-                </button>
-                <div class="me-tab-bar">
-                  <button class="me-tab active" id="meTabVisual" onclick="meSwitchTab('visual')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                    Visual
-                  </button>
-                  <button class="me-tab" id="meTabCode" onclick="meSwitchTab('code')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                    Code
-                  </button>
-                  <button class="me-tab" id="meTabPreview" onclick="meSwitchTab('preview')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    Preview
-                  </button>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <button class="btn btn-secondary btn-sm" onclick="loadEmailSample()">Load Sample</button>
+                <div class="e-tab-bar">
+                  <button class="e-tab active" id="etHTML" onclick="setETab('html')">HTML Code</button>
+                  <button class="e-tab" id="etPreview" onclick="setETab('preview')">Live Preview</button>
+                  <button class="e-tab" id="etTemplates" onclick="setETab('templates')">Templates</button>
                 </div>
               </div>
             </div>
 
-            <!-- Template Picker (collapsible) -->
-            <div id="meTplPickerWrap" style="display:none;border-bottom:1px solid rgba(255,255,255,0.07)">
-              <div style="padding:12px 22px 0;display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.8px">Choose a starting template</span>
-                <button class="btn btn-ghost btn-sm" onclick="meHideTemplatePicker()" style="font-size:12px">✕ Close</button>
-              </div>
-              <div class="me-tpl-row" id="meTplRow"></div>
+            <!-- Merge tags row -->
+            <div class="email-tags-row">
+              <span class="email-tag-label">Insert:</span>
+              <div id="emailMergeTags" style="display:flex;flex-wrap:wrap;gap:7px"></div>
             </div>
 
-            <!-- Merge Tags -->
-            <div class="me-tags-row">
-              <span style="font-size:11.5px;font-weight:700;color:var(--text-3);white-space:nowrap">INSERT TAG:</span>
-              <div id="meMergeTags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-              <span style="font-size:11.5px;color:var(--text-3);margin-left:auto;white-space:nowrap">ℹ Tags auto-replaced per recipient</span>
+            <!-- HTML pane -->
+            <div class="email-pane email-html-pane active" id="ep_html">
+              <textarea id="emailTemplate" placeholder="Write your HTML email here…" oninput="refreshPreview()"></textarea>
             </div>
 
-            <!-- Visual tab -->
-            <div id="meVisual" class="me-visual-layout">
-              <div class="me-palette">
-                <div class="me-palette-title">Add Block</div>
-                <button class="me-palette-btn" onclick="meAddBlock('logo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/></svg>Logo / Banner</button>
-                <button class="me-palette-btn" onclick="meAddBlock('header')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h8"/></svg>Heading</button>
-                <button class="me-palette-btn" onclick="meAddBlock('text')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>Text</button>
-                <button class="me-palette-btn" onclick="meAddBlock('button')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="8" rx="4"/></svg>Button</button>
-                <button class="me-palette-btn" onclick="meAddBlock('image')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
-                <button class="me-palette-btn" onclick="meAddBlock('divider')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>Divider</button>
-                <button class="me-palette-btn" onclick="meAddBlock('spacer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>Spacer</button>
-                <button class="me-palette-btn" onclick="meAddBlock('footer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M4 12h16M4 7h16"/></svg>Footer</button>
-              </div>
-
-              <div class="me-canvas-wrap" id="meCanvasWrap">
-                <div class="me-canvas-inner" id="meCanvas">
-                  <div class="me-empty-canvas" id="meEmptyCanvas">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
-                    <div style="font-size:14px;font-weight:600">Start building your email</div>
-                    <div style="font-size:12.5px">Click a block type on the left, or choose a template above</div>
-                  </div>
+            <!-- Preview pane -->
+            <div class="email-pane email-preview-pane" id="ep_preview">
+              <div class="eprev-frame">
+                <div class="eprev-head">
+                  <div><strong>From:</strong> <span id="eprvFrom">your@gmail.com</span></div>
+                  <div><strong>To:</strong> <span id="eprvTo">—</span></div>
+                  <div><strong>Subject:</strong> <span id="eprvSubject">—</span></div>
                 </div>
-              </div>
-
-              <div class="me-props" id="mePropsPanel">
-                <div class="me-props-header">Properties</div>
-                <div id="mePropsBody">
-                  <div class="me-props-empty">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <div>Click any block to<br/>edit its properties</div>
-                  </div>
-                </div>
+                <div class="eprev-body" id="eprvBody">Preview will appear here once you write a template.</div>
               </div>
             </div>
 
-            <!-- Code tab -->
-            <div id="meCode" style="display:none;position:relative">
-              <div class="me-code-actions">
-                <button class="btn btn-secondary btn-sm" onclick="meSyncVisualFromCode()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                  Sync to Output
-                </button>
-              </div>
-              <div class="me-code-wrap" id="meCmWrap"></div>
+            <!-- Templates pane -->
+            <div class="email-pane email-tpl-pane" id="ep_templates">
+              <div class="tpl-grid" id="emailTplGrid"></div>
             </div>
-
-            <!-- Preview tab -->
-            <div id="mePreview" style="display:none">
-              <div class="me-preview-wrap">
-                <div class="me-preview-toolbar">
-                  <button class="me-device-btn active" id="meBtnDesktop" onclick="meSetDevice('desktop')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                    Desktop
-                  </button>
-                  <button class="me-device-btn" id="meBtnMobile" onclick="meSetDevice('mobile')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                    Mobile
-                  </button>
-                  <div style="margin-left:auto;font-size:12.5px;color:var(--text-3)">Showing live preview with first recipient's data</div>
-                </div>
-                <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
-                  <iframe id="mePreviewFrame" style="width:100%;height:480px" sandbox="allow-same-origin"></iframe>
-                </div>
-              </div>
-            </div>
-
-          </div><!-- /me-card -->
-
-          <!-- Hidden textarea — source of truth for the pipeline -->
-          <textarea id="emailTemplate" style="display:none"></textarea>
+          </div>
 
           <div style="display:flex;justify-content:space-between;gap:12px">
             <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(3)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
               Back
             </button>
-            <button class="btn btn-primary" style="padding:14px 32px;font-size:15.5px" onclick="goStep(5)">
+            <button class="btn btn-primary" style="padding:14px 32px;font-size:16px" onclick="goStep(5)">
               Review &amp; Launch
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
@@ -793,27 +861,26 @@
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════ -->
-      <!-- STEP 5 — REVIEW & CONFIRM                  -->
-      <!-- ═══════════════════════════════════════════ -->
+      <!-- ════════════════════════════ STEP 5 — REVIEW ════════════════════════════ -->
       <div class="step-panel" id="sp5">
         <div style="display:flex;flex-direction:column;gap:22px">
-          <div class="review-grid">
-            <div class="review-stat"><div class="review-stat-num" id="rvParticipants">0</div><div class="review-stat-label">Participants</div></div>
-            <div class="review-stat" style="border-color:rgba(0,212,255,0.15);background:rgba(0,212,255,0.04)"><div class="review-stat-num" id="rvCerts" style="background:linear-gradient(135deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div><div class="review-stat-label">Certificates to Generate</div></div>
-            <div class="review-stat" style="border-color:rgba(124,58,237,0.15);background:rgba(124,58,237,0.04)"><div class="review-stat-num" id="rvEmails" style="background:linear-gradient(135deg,#7c3aed,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div><div class="review-stat-label">Emails to Send</div></div>
+
+          <div class="review-stats">
+            <div class="rv-stat"><div class="rv-num" id="rvCount">0</div><div class="rv-label">Participants</div></div>
+            <div class="rv-stat" style="border-color:rgba(0,212,255,0.18);background:rgba(0,212,255,0.04)"><div class="rv-num" id="rvCerts" style="background:linear-gradient(135deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div><div class="rv-label">Certificates</div></div>
+            <div class="rv-stat" style="border-color:rgba(124,58,237,0.18);background:rgba(124,58,237,0.04)"><div class="rv-num" id="rvEmails" style="background:linear-gradient(135deg,#7c3aed,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0</div><div class="rv-label">Emails</div></div>
           </div>
 
           <div class="card" style="padding:0;overflow:hidden">
             <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border)">
               <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Configuration Summary</div>
             </div>
-            <div id="reviewDetailsEl"></div>
+            <div id="reviewDetails"></div>
           </div>
 
-          <div class="notice" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:16px;display:flex;gap:12px;font-size:14px;color:#fde68a">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-            <div><strong style="color:#fbbf24">This will:</strong> Generate individual PDFs for each participant saved to your Google Drive, then send personalised emails from your Gmail. Cannot be reversed.</div>
+          <div class="notice-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div><strong style="color:#fbbf24">This will:</strong> Generate individual PDFs for every participant and save them to your Google Drive, then send personalised emails from your Gmail. This cannot be reversed.</div>
           </div>
 
           <div style="display:flex;justify-content:space-between;gap:12px">
@@ -821,48 +888,46 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
               Back
             </button>
-            <button class="btn" id="launchBtn" onclick="launchPipeline()" style="padding:16px 40px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 28px rgba(245,158,11,0.3);border-radius:12px;display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <button id="launchBtn" onclick="launchPipeline()" style="padding:16px 40px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 28px rgba(245,158,11,0.3);border-radius:12px;display:inline-flex;align-items:center;gap:9px;transition:all 0.2s;border:none;cursor:pointer;font-family:var(--font)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               Launch Pipeline
             </button>
           </div>
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════ -->
-      <!-- STEP 6 — RUNNING / RESULTS                 -->
-      <!-- ═══════════════════════════════════════════ -->
+      <!-- ════════════════════════════ STEP 6 — RUN + RESULTS ════════════════════════════ -->
       <div class="step-panel" id="sp6">
 
-        <!-- RUNNING STATE -->
+        <!-- Running -->
         <div id="runningState">
-          <div style="display:grid;grid-template-columns:1fr 320px;gap:22px">
+          <div class="run-layout">
             <div class="card">
-              <div class="pipeline-running">
-                <div class="run-ring">
-                  <svg viewBox="0 0 110 110">
+              <div class="run-hero">
+                <div class="run-ring-wrap">
+                  <svg viewBox="0 0 120 120">
                     <defs>
-                      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stop-color="#00d4ff"/>
                         <stop offset="100%" stop-color="#7c3aed"/>
                       </linearGradient>
                     </defs>
-                    <circle class="run-ring-bg" cx="55" cy="55" r="50"/>
-                    <circle class="run-ring-fg" id="ringCircle" cx="55" cy="55" r="50"/>
+                    <circle class="rr-bg" cx="60" cy="60" r="55"/>
+                    <circle class="rr-fg" id="ringCircle" cx="60" cy="60" r="55"/>
                   </svg>
-                  <div class="run-ring-text">
+                  <div class="run-ring-inner">
                     <div class="run-pct" id="runPct">0%</div>
-                    <div class="run-done-label" id="runFraction">0 / 0</div>
+                    <div class="run-frac" id="runFrac">0 / 0</div>
                   </div>
                 </div>
                 <div class="run-title">Pipeline Running…</div>
                 <div class="run-status" id="runStatus">Preparing…</div>
-                <div class="run-progress-row">
-                  <div class="run-counts">
-                    <span><strong style="color:var(--cyan)" id="runCertsDone">0</strong> certificates</span>
-                    <span><strong style="color:#a78bfa" id="runMailsDone">0</strong> emails</span>
-                    <span><strong style="color:#f43f5e" id="runFailed">0</strong> failed</span>
-                  </div>
+                <div class="run-mini-counts">
+                  <div class="run-mini-count"><div class="run-mini-num" id="runCerts" style="color:var(--cyan)">0</div><div class="run-mini-label">Certificates</div></div>
+                  <div class="run-mini-count"><div class="run-mini-num" id="runMails" style="color:#a78bfa">0</div><div class="run-mini-label">Emails</div></div>
+                  <div class="run-mini-count"><div class="run-mini-num" id="runFailed" style="color:var(--red)">0</div><div class="run-mini-label">Failed</div></div>
+                </div>
+                <div style="width:100%;max-width:440px">
                   <div class="progress-track" style="height:10px"><div class="progress-fill" id="runBar" style="width:0%"></div></div>
                 </div>
               </div>
@@ -871,39 +936,40 @@
                 <div class="live-log" id="liveLog"></div>
               </div>
             </div>
+
             <div style="display:flex;flex-direction:column;gap:16px">
               <div class="card card-sm">
-                <div class="card-title" style="margin-bottom:14px;font-size:14px">Job Info</div>
-                <div id="runJobInfo" style="display:flex;flex-direction:column;gap:8px"></div>
+                <div class="card-title" style="margin-bottom:14px">Job Info</div>
+                <div id="jobInfo" style="display:flex;flex-direction:column;gap:8px;font-size:13.5px"></div>
               </div>
-              <div class="notice" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:14px 16px;display:flex;gap:10px;font-size:13.5px;color:#fde68a">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+              <div class="notice-warn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
                 Keep this tab open. Large batches may take several minutes.
               </div>
             </div>
           </div>
         </div>
 
-        <!-- DONE STATE -->
+        <!-- Done -->
         <div id="doneState" style="display:none">
           <div style="display:flex;flex-direction:column;gap:22px">
             <div class="card" style="padding:0;overflow:hidden">
               <div style="text-align:center;padding:44px 28px 28px">
                 <div class="done-ring" id="doneRing" style="background:linear-gradient(135deg,#10b981,#00d4ff);box-shadow:0 0 48px rgba(16,185,129,0.35)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h2 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px" id="doneTitle">Pipeline Complete!</h2>
-                <p style="font-size:15px;color:var(--text-2)" id="doneSub">Certificates in your Drive · Emails dispatched from Gmail.</p>
+                <h2 style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px" id="doneTitle">Pipeline Complete!</h2>
+                <p style="font-size:15px;color:var(--text-2)" id="doneSub">Certificates in your Drive · Emails sent from Gmail</p>
               </div>
-              <div class="result-mini-row">
-                <div class="result-mini-cell"><div class="rmc-num" id="dCerts" style="color:var(--cyan)">0</div><div class="rmc-label">Certs Generated</div></div>
-                <div class="result-mini-cell"><div class="rmc-num" id="dEmails" style="color:#a78bfa">0</div><div class="rmc-label">Emails Sent</div></div>
-                <div class="result-mini-cell"><div class="rmc-num" id="dFailed" style="color:#f43f5e">0</div><div class="rmc-label">Failed</div></div>
+              <div class="done-mini-row">
+                <div class="done-cell"><div class="done-num" id="dCerts" style="color:var(--cyan)">0</div><div class="done-label">Certs Generated</div></div>
+                <div class="done-cell"><div class="done-num" id="dEmails" style="color:#a78bfa">0</div><div class="done-label">Emails Sent</div></div>
+                <div class="done-cell"><div class="done-num" id="dFailed" style="color:var(--red)">0</div><div class="done-label">Failed</div></div>
               </div>
               <div style="padding:18px 24px;border-top:1px solid var(--glass-border);display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-                <button class="btn btn-secondary" style="padding:12px 22px" onclick="downloadFullReport()">
+                <button class="btn btn-secondary" style="padding:12px 22px" onclick="downloadReport()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Export CSV Report
+                  Export Report CSV
                 </button>
                 <a href="dashboard.html" class="btn btn-ghost" style="padding:12px 22px">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -918,14 +984,11 @@
 
             <div class="card" style="padding:0;overflow:hidden">
               <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-                <div class="card-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  Delivery Report
-                </div>
-                <input type="text" id="resultSearch" class="form-input" placeholder="Search name or email…" oninput="filterResultTable()" style="width:230px"/>
+                <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Delivery Report</div>
+                <input type="text" id="resultSearch" class="form-input" placeholder="Search name or email…" oninput="filterRT()" style="width:230px"/>
               </div>
               <div style="overflow-x:auto">
-                <table class="results-table">
+                <table class="rt">
                   <thead><tr><th>Name</th><th>Email</th><th>Certificate</th><th>Status</th><th>Actions</th></tr></thead>
                   <tbody id="resultTbody"></tbody>
                 </table>
@@ -940,40 +1003,38 @@
   </div>
 </div>
 
-<!-- Add Field Modal -->
+<!-- ════════ ADD FIELD MODAL ════════ -->
 <div class="af-overlay" id="afOverlay">
   <div class="af-box">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-      <h3>Add Text Field</h3>
-      <button onclick="closeAFModal()" style="width:32px;height:32px;border-radius:8px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+    <div class="af-title">
+      Add Text Field
+      <button class="af-close-btn" onclick="closeAFModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div style="display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;flex-direction:column;gap:16px">
       <div class="form-group">
-        <label class="form-label">Field Type / Placeholder</label>
+        <label class="form-label">Field Placeholder</label>
         <select id="afPh" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="document.getElementById('afCustomRow').style.display=this.value==='custom'?'flex':'none'">
           <option value="{{name}}">{{name}} — Participant Name</option>
-          <option value="{{course}}">{{course}} — Course / Event</option>
+          <option value="{{course}}">{{course}} — Course / Event Name</option>
           <option value="{{date}}">{{date}} — Date</option>
           <option value="{{score}}">{{score}} — Score / Grade</option>
           <option value="{{org}}">{{org}} — Organisation</option>
-          <option value="{{email}}">{{email}} — Email</option>
+          <option value="{{email}}">{{email}} — Email Address</option>
           <option value="custom">Custom placeholder…</option>
         </select>
       </div>
       <div id="afCustomRow" class="form-group" style="display:none">
         <label class="form-label">Custom placeholder (without braces)</label>
-        <input type="text" id="afCustom" class="form-input" placeholder="e.g. venue" style="font-family:monospace"/>
+        <input type="text" id="afCustom" class="form-input" placeholder="e.g. venue" style="font-family:var(--font-mono)"/>
       </div>
-      <div class="form-grid form-grid-2">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="form-group">
           <label class="form-label">Preview Text</label>
           <input type="text" id="afPreview" class="form-input" placeholder="e.g. John Smith"/>
         </div>
         <div class="form-group">
           <label class="form-label">Font Size (px)</label>
-          <input type="number" id="afSize" class="form-input" value="36" min="8" max="200"/>
+          <input type="number" id="afSize" class="form-input" value="48" min="8" max="200"/>
         </div>
       </div>
       <div style="display:flex;gap:10px">
