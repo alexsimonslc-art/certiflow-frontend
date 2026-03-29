@@ -3,7 +3,7 @@
    Honourix — Shared Dashboard JS (v2.2 — Clean)
 ================================================================ */
 
-const API = 'https://Honourix-backend-73xk.onrender.com';
+const API = 'https://certiflow-backend-73xk.onrender.com';
 
 /* ── Auth ─────────────────────────────────────────────────────── */
 function getToken() { return localStorage.getItem('Honourix_token'); }
