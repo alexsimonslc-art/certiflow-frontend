@@ -1108,7 +1108,7 @@ function mSwitchSrc(mode) {
 
 // ── Manual Entry helpers ─────────────────────────────────────
 let mManualCols = ['Name', 'Email'];
-let mManualCols = ['Name', 'Email'];
+
 document.addEventListener('DOMContentLoaded', () => { if(document.getElementById('mManualHeaderRow')) mManualRenderHeader(); });
 function mManualRenderHeader() {
   const tr = document.getElementById('mManualHeaderRow');
