@@ -249,7 +249,7 @@ function renderHandles() {
     const el = document.createElement('div');
     el.className = 'text-field-handle' + (f.id === ED.selId ? ' selected' : '');
     el.id = 'hdl_' + f.id;
-    el.style.cssText = `left:${x}px;top:${y}px;font-size:${fs}px;font-family:${f.fontFamily||'Helvetica'},sans-serif;color:${f.color||'#000'};font-weight:${bold?700:400};text-align:${f.align||'left'};width:${w}px;line-height:1.2;`;
+    el.style.cssText = `left:${x}px;top:${y}px;font-size:${fs}px;font-family:${getFontCSS(f.fontFamily || 'Helvetica')};color:${f.color||'#000'};font-weight:${bold?700:400};text-align:${f.align||'left'};width:${w}px;line-height:1.2;`;
     el.textContent = f.previewText || f.placeholder;
 
     const del = document.createElement('div');
@@ -588,6 +588,7 @@ async function startGeneration() {
     backgroundBase64: ED.bgBase64,   // ← only rename the KEY, not the value
     bgColor: ED.bgColor,
     fields: ED.fields,
+    fontUrls: getUsedFontUrls(),
     },
     participants:  CS.rows,
     nameCol:       document.getElementById('nameCol').value,
