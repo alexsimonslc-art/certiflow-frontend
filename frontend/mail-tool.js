@@ -1157,6 +1157,12 @@ function mManualApplyData() {
   MS.headers = [...mManualCols];
   MS.rows    = valid.map(r => ({ ...r }));
   mPopulateDropdowns();
+  // Force-set selects immediately — don't rely on regex match alone
+  const nameEl  = document.getElementById('mNameCol');
+  const emailEl = document.getElementById('mEmailCol');
+  if (nameEl  && MS.headers.includes('Name'))  nameEl.value  = 'Name';
+  if (emailEl && MS.headers.includes('Email')) emailEl.value = 'Email';
+  document.getElementById('mColCard').style.display = 'block';
   const msg = document.getElementById('mManualLoadedMsg');
   if (msg) {
     msg.style.display = 'block';
