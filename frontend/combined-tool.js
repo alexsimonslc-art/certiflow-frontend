@@ -333,6 +333,23 @@ const FONT_MAP = {
 };
 function getFontCSS(name)    { return (FONT_MAP[name] || FONT_MAP['Helvetica']).css; }
 function getFontWeight(name) { return (FONT_MAP[name] || FONT_MAP['Helvetica']).weight; }
+// Add this helper to combined-tool.js
+const FONT_URLS = {
+  'Montserrat':         'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap',
+  'Raleway':            'https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap',
+  'Plus Jakarta Sans':  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap',
+  'EB Garamond':        'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+  'Playfair Display':   'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+  'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
+  'Dancing Script':     'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap',
+  'Cinzel':             'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
+  'JetBrains Mono':     'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+};
+
+function getUsedFontUrls() {
+  const used = [...new Set(ED.fields.map(f => f.fontFamily).filter(Boolean))];
+  return used.filter(f => FONT_URLS[f]).map(f => FONT_URLS[f]);
+}
 
 function openAFModal()  { document.getElementById('afOverlay').classList.add('open'); }
 function closeAFModal() { document.getElementById('afOverlay').classList.remove('open'); }
@@ -650,7 +667,7 @@ function personalise(tmpl, row, mappings) {
   let out = tmpl;
   out = out.replace(/\{\{name\}\}/gi, row[mappings.name] || '');
   out = out.replace(/\{\{email\}\}/gi, row[mappings.email] || '');
-  out = out.replace(/\{\{cert_link\}\}/gi, 'https://example.com/cert.pdf');
+  
   Object.entries(mappings).forEach(([ph, col]) => { out = out.replace(new RegExp(`\\{\\{${ph}\\}\\}`, 'gi'), row[col] || ''); });
   return out;
 }
@@ -702,7 +719,7 @@ async function launchPipeline() {
     try {
       const participant = { ...row }; Object.entries(mappings).forEach(([ph, col]) => { participant[ph] = row[col] || ''; });
       const certRes = await apiFetch('/api/certificates/generate', { method:'POST', body:JSON.stringify({
-        campaignName:campName, template:{ width:ED.w, height:ED.h, bgColor:ED.bgColor, backgroundBase64:ED.bgBase64||null, fields:ED.fields },
+        campaignName:campName, template:{ width:ED.w, height:ED.h, bgColor:ED.bgColor, backgroundBase64:ED.bgBase64||null, fields:ED.fields, fontUrls:getUsedFontUrls() },
         participants:[participant], nameCol:mappings.name, emailCol:mappings.email, sheetId:writeBack?CP.sheetId:null, writeBack, rowOffset:i,
       })});
       const r0 = certRes?.results?.[0];
