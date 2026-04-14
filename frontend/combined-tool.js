@@ -399,6 +399,7 @@ function selectField(id) {
   document.getElementById('italicBtn').classList.toggle('on', !!f.italic);
   ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on'));
   document.getElementById(f.align === 'center' ? 'alC' : f.align === 'right' ? 'alR' : 'alL').classList.add('on');
+  loadFontIfNeeded(f.fontFamily || 'Helvetica');
   updateFontPreview(f.fontFamily || 'Helvetica', f.bold, f.italic);
   renderHandles();
 }
@@ -418,7 +419,25 @@ function deleteField(id) {
 }
 function deleteSelField() { if (ED.selId) deleteField(ED.selId); }
 function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; renderHandles(); }
-function setFPFont(name) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.fontFamily = name; updateFontPreview(name, f.bold, f.italic); renderHandles(); }
+function setFPFont(name) {
+  const f = ED.fields.find(f => f.id === ED.selId);
+  if (!f) return;
+  f.fontFamily = name;
+  loadFontIfNeeded(name);
+  updateFontPreview(name, f.bold, f.italic);
+  renderHandles();
+}
+
+function loadFontIfNeeded(name) {
+  if (!FONT_URLS[name]) return; // system font, no load needed
+  const id = 'gfont_' + name.replace(/\s+/g, '_');
+  if (document.getElementById(id)) return; // already loaded
+  const link = document.createElement('link');
+  link.id   = id;
+  link.rel  = 'stylesheet';
+  link.href = FONT_URLS[name];
+  document.head.appendChild(link);
+}
 function toggleBold() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold = !f.bold; document.getElementById('boldBtn').classList.toggle('on', f.bold); renderHandles(); }
 function toggleItalic() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.italic = !f.italic; document.getElementById('italicBtn').classList.toggle('on', f.italic); renderHandles(); }
 function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value) || f.x; f.y = parseFloat(document.getElementById('pY').value) || f.y; renderHandles(); }
