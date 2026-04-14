@@ -1182,6 +1182,7 @@ function mManualApplyData() {
   MS.headers = [...mManualCols];
   MS.rows    = data;
 
+  mPopulateDropdowns();
   // Show confirmation
   const msg = document.getElementById('mManualLoadedMsg');
   msg.style.display = 'block';
