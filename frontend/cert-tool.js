@@ -346,7 +346,12 @@ function addField() {
     column: '',
     x: 10, y: 35 + ED.fields.length * 14,
     width: 80, fontSize: size,
-    fontFamily: 'Helvetica', color: '#1a1a1a', align: 'center',
+    fontFamily: 'Helvetica',
+    color: '#1a1a1a',
+    align: 'center',
+    bold: false,
+    italic: false,
+    letterSpacing: 0,
     bold: false, italic: false, letterSpacing: 0,
   };
   ED.fields.push(field);
