@@ -25,6 +25,28 @@ const ED = {
   selId: null,
   scale: 1,
 };
+function getFontCSS(name) {
+  // FONT_CSS_MAP is declared in dashboard.js — reuse it
+  if (typeof FONT_CSS_MAP !== 'undefined' && FONT_CSS_MAP[name]) {
+    return FONT_CSS_MAP[name];
+  }
+  return `'${name}', Helvetica, sans-serif`;
+}
+
+const FONT_URLS = {
+  'Helvetica': null, 'Helvetica Bold': null,
+  'Times New Roman': null, 'Times Bold': null,
+  'Courier': null, 'Georgia': null, 'Palatino': null,
+};
+
+function getUsedFontUrls() {
+  const urls = {};
+  ED.fields.forEach(f => {
+    const name = f.fontFamily || 'Helvetica';
+    if (FONT_URLS[name]) urls[name] = FONT_URLS[name];
+  });
+  return urls;
+}
 
 const STEPS = [
   { label: 'Data Source' },
@@ -262,6 +284,20 @@ function renderHandles() {
     fieldOverlay.appendChild(el);
   });
   renderFieldList();
+}
+
+const FONT_CSS_MAP = {
+  'Helvetica':       "'Helvetica Neue', Helvetica, Arial, sans-serif",
+  'Helvetica Bold':  "'Helvetica Neue', Helvetica, Arial, sans-serif",
+  'Times New Roman': "'Times New Roman', Times, serif",
+  'Times Bold':      "'Times New Roman', Times, serif",
+  'Courier':         "'Courier New', Courier, monospace",
+  'Georgia':         "Georgia, 'Times New Roman', serif",
+  'Palatino':        "Palatino, 'Palatino Linotype', serif",
+};
+
+function getFontCSS(name) {
+  return FONT_CSS_MAP[name] || `'${name}', Helvetica, sans-serif`;
 }
 
 /* ── Drag ─────────────────────────────────────────────────────── */
@@ -648,7 +684,8 @@ function showResults() {
   renderResultRows(CS.results);
   
 // After results are received in generateCertificates()
-saveCampaign('cert', CS.campaignName || 'Certificate Run', results.length, results.filter(r=>r.status==='success').length, folderLink);
+saveCampaign('cert', document.getElementById('campaignName').value, 
+             CS.results.length, CS.results.filter(r=>r.status==='success').length, '');
   toast(`${ok} certificates ready!`, 'success', 5000);
 }
 
