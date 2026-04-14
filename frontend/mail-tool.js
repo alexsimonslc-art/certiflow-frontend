@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   mBuildStepper();
   meBuildTemplatePicker();
   lucide.createIcons();
-
+if (document.getElementById('mManualHeaderRow')) mManualRenderHeader();
   // Drag-drop on upload zone
   const zone = document.getElementById('mUploadZone');
   if (zone) {
@@ -58,15 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ══════════════════════════════════════════════════════════════
    STEPPER
 ══════════════════════════════════════════════════════════════ */
-function mSwitchSrc(type) {
-  MS.srcType = type;
-  document.getElementById('mSrcSheetsOpt').classList.toggle('active', type === 'sheets');
-  document.getElementById('mSrcFileOpt').classList.toggle('active', type === 'file');
-  document.getElementById('mSrcManualOpt').classList.toggle('active', type === 'manual');
-  document.getElementById('mSrcSheets').style.display  = type === 'sheets' ? '' : 'none';
-  document.getElementById('mSrcFile').style.display    = type === 'file'   ? '' : 'none';
-  document.getElementById('mSrcManual').style.display  = type === 'manual' ? '' : 'none';
-}
 
 function mBuildStepper() {
   const el = document.getElementById('stepper');
@@ -1175,8 +1166,10 @@ function mManualApplyData() {
   const data = rows.map(row => {
     const inputs = row.querySelectorAll('input');
     const obj = {};
-    mManualCols.forEach((col, ci) => { obj[col] = inputs[ci] ? inputs[ci].value.trim() : ''; });
-    return obj;
+    mManualCols.forEach(col => {
+    const inp = row.querySelector(`input[data-col="${col}"]`);
+    obj[col] = inp ? inp.value.trim() : '';
+    });
   }).filter(r => Object.values(r).some(v => v));
 
   if (!data.length) { alert('Add at least one row with data.'); return; }
@@ -1197,6 +1190,6 @@ function mManualApplyData() {
 
   // Update column mapping dropdowns
 
-
+  if (typeof meBuildMergeTagsRow === 'function') meBuildMergeTagsRow();
   // Update merge tags if function exists
 }
