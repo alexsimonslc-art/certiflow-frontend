@@ -352,7 +352,6 @@ function addField() {
     bold: false,
     italic: false,
     letterSpacing: 0,
-    bold: false, italic: false, letterSpacing: 0,
   };
   ED.fields.push(field);
   closeAddFieldModal();
@@ -463,13 +462,8 @@ function uploadBackground(e) {
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
-};
-  reader.onload = ev => {
-    const img = new Image();
-    img.onload = () => { ED.bgImg = img; ED.bgBase64 = ev.target.result; redraw(); toast('Background uploaded', 'success', 2000); };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
+}
+
 
 function changeBgColor() { ED.bgColor = document.getElementById('bgColor').value; if (!ED.bgImg) redraw(); }
 function clearBackground() { ED.bgImg = null; ED.bgBase64 = null; document.getElementById('bgUpload').value = ''; redraw(); toast('Background removed', 'info', 2000); }
