@@ -1729,3 +1729,45 @@ body::after {
 .sidebar.collapsed .nav-section-with-toggle .sidebar-toggle-btn svg {
   stroke: #c8d8f0 !important;
 }
+
+/* ── cert-tool: Fix native select dropdown backgrounds ─────────── */
+
+/* Props panel font selector */
+.pr-select {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 13px;
+  color: var(--text) !important;
+  width: 100%;
+  cursor: pointer;
+}
+.pr-select option,
+.pr-select optgroup {
+  background: #0d1728 !important;
+  color: #e8f0fd !important;
+  font-size: 13px;
+}
+
+/* Canvas size / dimension selector in toolbar */
+.canvas-size-select {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  color: var(--text) !important;
+  cursor: pointer;
+}
+.canvas-size-select option {
+  background: #0d1728 !important;
+  color: #e8f0fd !important;
+}
+
+/* Nuclear fallback — cover ALL selects on the page */
+select option,
+select optgroup {
+  background-color: #0d1728 !important;
+  color: #e8f0fd !important;
+}
