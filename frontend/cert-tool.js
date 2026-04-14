@@ -445,14 +445,26 @@ function renderFieldList() {
 function uploadBackground(e) {
   const file = e.target.files[0];
   if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    toast('Please upload a valid image file', 'error');
+    return;
+  }
   const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => { ED.bgImg = img; ED.bgBase64 = ev.target.result; redraw(); toast('Background uploaded', 'success', 2000); };
+    img.onerror = () => toast('Invalid image file — try a different file', 'error');
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+};
   reader.onload = ev => {
     const img = new Image();
     img.onload = () => { ED.bgImg = img; ED.bgBase64 = ev.target.result; redraw(); toast('Background uploaded', 'success', 2000); };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
-}
+
 function changeBgColor() { ED.bgColor = document.getElementById('bgColor').value; if (!ED.bgImg) redraw(); }
 function clearBackground() { ED.bgImg = null; ED.bgBase64 = null; document.getElementById('bgUpload').value = ''; redraw(); toast('Background removed', 'info', 2000); }
 function changeCanvasSize() {
@@ -684,8 +696,15 @@ function showResults() {
   renderResultRows(CS.results);
   
 // After results are received in generateCertificates()
-saveCampaign('cert', document.getElementById('campaignName').value, 
-             CS.results.length, CS.results.filter(r=>r.status==='success').length, '');
+if (typeof saveCampaign === 'function') {
+  saveCampaign(
+    'cert',
+    document.getElementById('campaignName').value || 'Certificate Run',
+    CS.results.length,
+    CS.results.filter(r => r.status === 'success').length,
+    ''
+  );
+}
   toast(`${ok} certificates ready!`, 'success', 5000);
 }
 
