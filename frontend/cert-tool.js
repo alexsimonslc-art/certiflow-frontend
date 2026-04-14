@@ -33,11 +33,7 @@ function getFontCSS(name) {
   return `'${name}', Helvetica, sans-serif`;
 }
 
-const FONT_URLS = {
-  'Helvetica': null, 'Helvetica Bold': null,
-  'Times New Roman': null, 'Times Bold': null,
-  'Courier': null, 'Georgia': null, 'Palatino': null,
-};
+
 
 function getUsedFontUrls() {
   const urls = {};
@@ -226,22 +222,27 @@ function initCanvas() {
   canvas       = document.getElementById('certCanvas');
   ctx          = canvas.getContext('2d');
   fieldOverlay = document.getElementById('fieldOverlay');
+  ED.ready     = true;
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
 }
-
 function resizeCanvas() {
-  const wrap = document.getElementById('canvasWrap');
-  if (!wrap) return;
-  const maxW = wrap.clientWidth  - 48;
-  const maxH = wrap.clientHeight - 48;
-  ED.scale = Math.min(maxW / ED.w, maxH / ED.h, 1);
+  const zone = document.getElementById('canvasWrap');
+  if (!zone) return;
+  const zw = zone.clientWidth;
+  const zh = zone.clientHeight;
+  if (zw < 10) { setTimeout(resizeCanvas, 50); return; }
+  ED.scale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
   const cw = Math.round(ED.w * ED.scale);
   const ch = Math.round(ED.h * ED.scale);
-  const container = document.getElementById('canvasContainer');
-  if (container) { container.style.width = cw + 'px'; container.style.height = ch + 'px'; }
+  const cont = document.getElementById('canvasContainer');
+  if (cont) {
+    cont.style.width  = cw + 'px';
+    cont.style.height = ch + 'px';
+  }
   canvas.width  = cw;
   canvas.height = ch;
+  ED.ready = true;
   redraw();
 }
 
@@ -262,42 +263,66 @@ function renderHandles() {
   if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
   ED.fields.forEach(f => {
-    const x = (f.x / 100) * canvas.width;
-    const y = (f.y / 100) * canvas.height;
-    const w = (f.width / 100) * canvas.width;
-    const fs = f.fontSize * ED.scale;
-    const bold = (f.fontFamily || '').toLowerCase().includes('bold');
-
+    const cw = canvas.width, ch = canvas.height;
+    const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
+    const fs = Math.max(6, f.fontSize * ED.scale);
+    const ls = ((f.letterSpacing || 0) * ED.scale).toFixed(2);
+    const ff = getFontCSS(f.fontFamily || 'Helvetica');
+    const fw = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
+    const fi = f.italic ? 'italic' : 'normal';
     const el = document.createElement('div');
-    el.className = 'text-field-handle' + (f.id === ED.selId ? ' selected' : '');
-    el.id = 'hdl_' + f.id;
-    el.style.cssText = `left:${x}px;top:${y}px;font-size:${fs}px;font-family:${getFontCSS(f.fontFamily || 'Helvetica')};color:${f.color||'#000'};font-weight:${bold?700:400};text-align:${f.align||'left'};width:${w}px;line-height:1.2;`;
+    el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
+    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;font-size:${fs}px;font-family:${ff};font-weight:${fw};font-style:${fi};color:${f.color||'#111'};text-align:${f.align||'left'};letter-spacing:${ls}px;line-height:1.2;`;
     el.textContent = f.previewText || f.placeholder;
-
     const del = document.createElement('div');
-    del.className = 'field-del';
-    del.innerHTML = '×';
-    del.onclick = e => { e.stopPropagation(); deleteField(f.id); };
+    del.className = 'tf-del'; del.textContent = '×';
+    del.addEventListener('click', e => { e.stopPropagation(); deleteField(f.id); });
     el.appendChild(del);
-
-    el.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startDrag(e, f, el); });
+    el.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f, el); });
     fieldOverlay.appendChild(el);
   });
-  renderFieldList();
+  renderChipList();
 }
 
-const FONT_CSS_MAP = {
-  'Helvetica':       "'Helvetica Neue', Helvetica, Arial, sans-serif",
-  'Helvetica Bold':  "'Helvetica Neue', Helvetica, Arial, sans-serif",
-  'Times New Roman': "'Times New Roman', Times, serif",
-  'Times Bold':      "'Times New Roman', Times, serif",
-  'Courier':         "'Courier New', Courier, monospace",
-  'Georgia':         "Georgia, 'Times New Roman', serif",
-  'Palatino':        "Palatino, 'Palatino Linotype', serif",
+const FONT_MAP = {
+  'Helvetica':          { css: 'Helvetica, Arial, sans-serif', weight: 400 },
+  'Montserrat':         { css: "'Montserrat', sans-serif", weight: 400 },
+  'Raleway':            { css: "'Raleway', sans-serif", weight: 400 },
+  'Plus Jakarta Sans':  { css: "'Plus Jakarta Sans', sans-serif", weight: 400 },
+  'Times New Roman':    { css: "'Times New Roman', serif", weight: 400 },
+  'EB Garamond':        { css: "'EB Garamond', serif", weight: 400 },
+  'Playfair Display':   { css: "'Playfair Display', serif", weight: 400 },
+  'Cormorant Garamond': { css: "'Cormorant Garamond', serif", weight: 400 },
+  'Dancing Script':     { css: "'Dancing Script', cursive", weight: 400 },
+  'Cinzel':             { css: "'Cinzel', serif", weight: 400 },
+  'Courier New':        { css: "'Courier New', monospace", weight: 400 },
+  'JetBrains Mono':     { css: "'JetBrains Mono', monospace", weight: 400 },
 };
+function getFontCSS(name)    { return (FONT_MAP[name] || FONT_MAP['Helvetica']).css; }
+function getFontWeight(name) { return (FONT_MAP[name] || FONT_MAP['Helvetica']).weight; }
 
-function getFontCSS(name) {
-  return FONT_CSS_MAP[name] || `'${name}', Helvetica, sans-serif`;
+const FONT_URLS = {
+  'Montserrat':         'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap',
+  'Raleway':            'https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap',
+  'Plus Jakarta Sans':  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap',
+  'EB Garamond':        'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+  'Playfair Display':   'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+  'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
+  'Dancing Script':     'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap',
+  'Cinzel':             'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
+  'JetBrains Mono':     'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+};
+function getUsedFontUrls() {
+  const used = [...new Set(ED.fields.map(f => f.fontFamily).filter(Boolean))];
+  return used.filter(f => FONT_URLS[f]).map(f => FONT_URLS[f]);
+}
+function loadFontIfNeeded(name) {
+  if (!FONT_URLS[name]) return;
+  const id = 'gfont_' + name.replace(/\s+/g, '_');
+  if (document.getElementById(id)) return;
+  const link = document.createElement('link');
+  link.id = id; link.rel = 'stylesheet'; link.href = FONT_URLS[name];
+  document.head.appendChild(link);
 }
 
 /* ── Drag ─────────────────────────────────────────────────────── */
@@ -321,13 +346,10 @@ function startDrag(e, field, el) {
 }
 
 /* ── Add Field ─────────────────────────────────────────────────── */
-function openAddFieldModal() {
-  document.getElementById('addFieldModal').classList.add('open');
-}
-function closeAddFieldModal() {
-  document.getElementById('addFieldModal').classList.remove('open');
-}
-
+function openAFModal()  { document.getElementById('afOverlay').classList.add('open'); }
+function closeAFModal() { document.getElementById('afOverlay').classList.remove('open'); }
+function openAddFieldModal()  { openAFModal(); }
+function closeAddFieldModal() { closeAFModal(); }
 function addField() {
   let ph = document.getElementById('newFieldPh').value;
   if (ph === 'custom') {
@@ -353,99 +375,74 @@ function addField() {
     italic: false,
     letterSpacing: 0,
   };
-  ED.fields.push(field);
-  closeAddFieldModal();
-  selectField(field.id);
+    ED.fields.push(field);
+  closeAFModal();
+  if (!canvas.width) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      resizeCanvas();
+      selectField(field.id);
+    }));
+  } else {
+    selectField(field.id);
+  }
   toast(`Added ${ph} field`, 'success', 2000);
 }
 
 /* ── Select / Delete Field ──────────────────────────────────────── */
 function selectField(id) {
   ED.selId = id;
-  const f = ED.fields.find(f => f.id === id);
-  if (!f) return;
-
-  switchErTab('props');
-  document.getElementById('noFieldMsg').style.display  = 'none';
-  document.getElementById('fieldProps').style.display  = 'flex';
-
-  document.getElementById('propPlaceholder').value = f.placeholder;
-  document.getElementById('propPreview').value     = f.previewText || '';
-  document.getElementById('propFont').value        = f.fontFamily;
-  document.getElementById('propSize').value        = f.fontSize;
-  document.getElementById('propColor').value       = f.color;
-  document.getElementById('propColorHex').textContent = f.color;
-  document.getElementById('propX').value           = f.x.toFixed(1);
-  document.getElementById('propY').value           = f.y.toFixed(1);
-  document.getElementById('propWidth').value       = f.width;
-
-  ['alignLeft','alignCenter','alignRight'].forEach(b => document.getElementById(b).classList.remove('active'));
-  const btn = f.align === 'center' ? 'alignCenter' : f.align === 'right' ? 'alignRight' : 'alignLeft';
-  document.getElementById(btn).classList.add('active');
+  const f = ED.fields.find(f => f.id === id); if (!f) return;
+  switchEPTab('props');
+  document.getElementById('propsEmpty').style.display = 'none';
+  document.getElementById('propsForm').style.display  = 'flex';
+  document.getElementById('pPh').value    = f.placeholder;
+  document.getElementById('pPrev').value  = f.previewText || '';
+  document.getElementById('pFont').value  = f.fontFamily || 'Helvetica';
+  document.getElementById('pSize').value  = f.fontSize;
+  document.getElementById('pSizeVal').textContent = f.fontSize + 'px';
+  document.getElementById('pColor').value = f.color || '#111111';
+  document.getElementById('pColorHex').textContent = f.color || '#111111';
+  document.getElementById('pX').value     = f.x.toFixed(1);
+  document.getElementById('pY').value     = f.y.toFixed(1);
+  document.getElementById('pW').value     = f.width;
+  document.getElementById('pSpacing').value = f.letterSpacing || 0;
+  document.getElementById('pSpacingVal').textContent = (f.letterSpacing || 0) + 'px';
+  document.getElementById('boldBtn').classList.toggle('on', !!f.bold);
+  document.getElementById('italicBtn').classList.toggle('on', !!f.italic);
+  ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on'));
+  document.getElementById(f.align === 'center' ? 'alC' : f.align === 'right' ? 'alR' : 'alL').classList.add('on');
+  loadFontIfNeeded(f.fontFamily || 'Helvetica');
+  updateFontPreview(f.fontFamily || 'Helvetica', f.bold, f.italic);
   renderHandles();
+}
+
+function updateFontPreview(name, bold, italic) {
+  const el = document.getElementById('fontPreviewSample'); if (!el) return;
+  el.style.fontFamily = getFontCSS(name);
+  el.style.fontWeight = bold ? 700 : getFontWeight(name);
+  el.style.fontStyle  = italic ? 'italic' : 'normal';
+  el.textContent      = name + ' — Aa 123';
 }
 
 function deleteField(id) {
   ED.fields = ED.fields.filter(f => f.id !== id);
-  if (ED.selId === id) {
-    ED.selId = null;
-    const nm = document.getElementById('noFieldMsg');
-    const fp = document.getElementById('fieldProps');
-    if (nm) nm.style.display = '';
-    if (fp) fp.style.display = 'none';
-  }
+  if (ED.selId === id) { ED.selId = null; document.getElementById('propsEmpty').style.display = ''; document.getElementById('propsForm').style.display = 'none'; }
   renderHandles();
 }
-
 function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
-
-function updateFieldProp(key, val) {
-  const f = ED.fields.find(f => f.id === ED.selId);
-  if (!f) return;
-  f[key] = val;
-  if (key === 'color') document.getElementById('propColorHex').textContent = val;
-  renderHandles();
+function deleteSelField()      { if (ED.selId) deleteField(ED.selId); }
+function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; renderHandles(); }
+function setFPFont(name) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.fontFamily = name; loadFontIfNeeded(name); updateFontPreview(name, f.bold, f.italic); renderHandles(); }
+function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value)||f.x; f.y = parseFloat(document.getElementById('pY').value)||f.y; renderHandles(); }
+function setAlign(a) { setFP('align', a); ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a==='center'?'alC':a==='right'?'alR':'alL').classList.add('on'); }
+function toggleBold()   { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold   = !f.bold;   document.getElementById('boldBtn').classList.toggle('on', f.bold);   renderHandles(); }
+function toggleItalic() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.italic = !f.italic; document.getElementById('italicBtn').classList.toggle('on', f.italic); renderHandles(); }
+function switchEPTab(tab) { ['fields','props'].forEach(t => { document.getElementById(`epTab_${t}`).className = 'ep-tab'+(t===tab?' active':''); document.getElementById(`epPanel_${t}`).className = 'ep-panel'+(t===tab?' active':''); }); }
+function renderChipList() {
+  const el = document.getElementById('fieldChipList'); if (!el) return;
+  if (!ED.fields.length) { el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span></div>`; return; }
+  el.innerHTML = ED.fields.map(f => `<div class="fc-chip ${f.id===ED.selId?'sel':''}" onclick="selectField('${f.id}')"><div class="fc-dot" style="background:${f.color}"></div><span class="fc-name">${f.previewText||f.placeholder}</span><span class="fc-ph">${f.placeholder}</span></div>`).join('');
 }
-
-function updateFieldFromProp() {
-  const f = ED.fields.find(f => f.id === ED.selId);
-  if (!f) return;
-  f.x = parseFloat(document.getElementById('propX').value) || f.x;
-  f.y = parseFloat(document.getElementById('propY').value) || f.y;
-  renderHandles();
-}
-
-function setAlign(align) {
-  updateFieldProp('align', align);
-  ['alignLeft','alignCenter','alignRight'].forEach(b => document.getElementById(b).classList.remove('active'));
-  const btn = align === 'center' ? 'alignCenter' : align === 'right' ? 'alignRight' : 'alignLeft';
-  document.getElementById(btn).classList.add('active');
-}
-
-/* ── Right Panel Tab ─────────────────────────────────────────────── */
-function switchErTab(tab) {
-  ['fields','props'].forEach(t => {
-    document.getElementById(`erTab_${t}`).className   = 'er-tab' + (t === tab ? ' active' : '');
-    document.getElementById(`erPanel_${t}`).className = 'er-panel' + (t === tab ? ' active' : '');
-  });
-}
-
-/* ── Field List in "Fields" tab ─────────────────────────────────── */
-function renderFieldList() {
-  const list = document.getElementById('fieldList');
-  if (!list) return;
-  if (!ED.fields.length) {
-    list.innerHTML = `<div class="empty-state" style="padding:32px 12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><h3>No fields yet</h3><p>Click "+ Add Field" to start.</p></div>`;
-    return;
-  }
-  list.innerHTML = ED.fields.map(f => `
-    <div class="field-chip ${f.id === ED.selId ? 'selected' : ''}" onclick="selectField('${f.id}')">
-      <div class="field-chip-dot" style="background:${f.color}"></div>
-      <span class="field-chip-label">${f.previewText || f.placeholder}</span>
-      <span class="field-chip-tag">${f.placeholder}</span>
-    </div>`).join('');
-}
-
 /* ── Background ──────────────────────────────────────────────────── */
 function uploadBackground(e) {
   const file = e.target.files[0];

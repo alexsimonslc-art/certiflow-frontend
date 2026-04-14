@@ -356,163 +356,121 @@
       </div>
 
       <!-- ═══ STEP 2: TEMPLATE DESIGNER ═══ -->
-      <div class="step-panel" id="sp2">
+            <div class="step-panel" id="sp2">
         <div style="display:flex;flex-direction:column;gap:20px">
 
-          <div class="notice notice-cyan">
+          <div class="notice-info">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span><strong>Visual Certificate Editor</strong> — Upload a background image or use a solid color. Click "+ Add Field" to place dynamic text fields (like participant name, course, date). Drag fields to position them. Select a field to style it on the right.</span>
+            <span><strong style="color:var(--text)">Visual Certificate Editor</strong> — Upload a background image or pick a colour. Click <strong style="color:var(--cyan)">"+ Add Field"</strong> to place a dynamic text block on the canvas. Drag fields to position them. Click a field to select it and style it in the right panel.</span>
           </div>
 
-          <!-- Editor -->
-          <div class="editor-layout">
-            <!-- LEFT: Canvas -->
-            <div class="editor-main">
-              <!-- Top toolbar -->
-              <div class="editor-top-bar">
+          <div class="cert-editor-wrap">
+            <div class="cert-canvas-col">
+              <div class="cert-toolbar">
                 <label class="btn btn-secondary btn-sm" style="cursor:pointer">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                  Upload Background
-                  <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBackground(event)"/>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  Background
+                  <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBG(event)"/>
                 </label>
-
-                <div class="bar-sep"></div>
-
-                <label style="font-size:12.5px;color:var(--text-2)">BG Color</label>
-                <input type="color" id="bgColor" value="#ffffff" onchange="changeBgColor()" style="width:32px;height:28px;border:1px solid var(--glass-border-2);border-radius:6px;cursor:pointer;padding:2px;background:var(--glass)"/>
-
-                <button class="btn btn-ghost btn-sm" onclick="clearBackground()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <div class="tb-sep"></div>
+                <label style="font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:6px">
+                  Colour
+                  <input type="color" id="bgColor" value="#ffffff" onchange="changeBGColor()" style="width:28px;height:28px;border:1px solid var(--glass-border);border-radius:6px;padding:2px;background:var(--glass);cursor:pointer"/>
+                </label>
+                <button class="btn btn-ghost btn-sm" onclick="clearBG()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
                   Clear BG
                 </button>
-
-                <div class="bar-sep"></div>
-
-                <select id="canvasSize" class="form-select btn-sm" style="width:160px;padding:7px 30px 7px 10px" onchange="changeCanvasSize()">
-                  <option value="1122,794">A4 Landscape (1122×794)</option>
-                  <option value="794,1122">A4 Portrait (794×1122)</option>
-                  <option value="1280,720">HD 16:9 (1280×720)</option>
-                  <option value="1000,700">Custom Wide (1000×700)</option>
+                <div class="tb-sep"></div>
+                <select id="canvasSize" class="canvas-size-select" onchange="changeSize()">
+                  <option value="1122,794">A4 Landscape</option>
+                  <option value="794,1122">A4 Portrait</option>
+                  <option value="1280,720">HD 16:9</option>
+                  <option value="1000,700">Wide 1000×700</option>
                 </select>
-
                 <div style="margin-left:auto;display:flex;gap:8px">
-                  <button class="btn btn-outline btn-sm" onclick="clearAll()">Clear All</button>
-                  <button class="btn btn-primary btn-sm" onclick="openAddFieldModal()">
+                  <button class="btn btn-ghost btn-sm" onclick="clearAll()">Clear All</button>
+                  <button class="btn btn-primary btn-sm" onclick="openAFModal()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Add Field
                   </button>
                 </div>
               </div>
 
-              <!-- Canvas area -->
-              <div class="editor-canvas-zone" id="canvasWrap">
-                <div class="canvas-container" id="canvasContainer">
+              <div class="canvas-scroll-zone" id="canvasWrap">
+                <div class="cert-canvas-container" id="canvasContainer">
                   <canvas id="certCanvas"></canvas>
                   <div id="fieldOverlay"></div>
                 </div>
               </div>
             </div>
 
-            <!-- RIGHT: Properties -->
-            <div class="editor-right">
-              <div class="editor-right-tabs">
-                <div class="er-tab active" id="erTab_fields" onclick="switchErTab('fields')">Fields</div>
-                <div class="er-tab" id="erTab_props" onclick="switchErTab('props')">Properties</div>
+            <div class="cert-props-col">
+              <div class="ep-tabs">
+                <div class="ep-tab active" id="epTab_fields" onclick="switchEPTab('fields')">Fields</div>
+                <div class="ep-tab" id="epTab_props" onclick="switchEPTab('props')">Properties</div>
               </div>
-              <div class="editor-right-body">
-                <!-- Fields list panel -->
-                <div class="er-panel active" id="erPanel_fields">
-                  <div style="font-size:12px;color:var(--text-3);margin-bottom:10px">Click a field to select and edit its properties.</div>
-                  <div id="fieldList">
-                    <div class="empty-state" style="padding:32px 12px">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                      <h3 style="font-size:14px">No fields yet</h3>
-                      <p>Click <strong>"+ Add Field"</strong> in the toolbar to place a dynamic text field.</p>
-                    </div>
-                  </div>
+              <div class="ep-body">
+                <div class="ep-panel active" id="epPanel_fields">
+                  <div style="font-size:12px;color:var(--text-3);padding:2px 0 8px">Click a field on the canvas, or use this list.</div>
+                  <div id="fieldChipList"></div>
+                  <button class="btn btn-outline btn-full btn-sm" style="margin-top:8px" onclick="openAFModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add New Field
+                  </button>
                 </div>
 
-                <!-- Properties panel -->
-                <div class="er-panel" id="erPanel_props">
-                  <div id="noFieldMsg" style="padding:20px 0;text-align:center;color:var(--text-3);font-size:13.5px">Select a field on the canvas to edit its properties.</div>
-                  <div id="fieldProps" style="display:none;flex-direction:column;gap:14px">
-
-                    <div class="form-group">
-                      <label class="form-label">Placeholder Tag</label>
-                      <input type="text" id="propPlaceholder" class="form-input" onchange="updateFieldProp('placeholder',this.value)" style="font-family:var(--font-mono);font-size:13px"/>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Preview Text</label>
-                      <input type="text" id="propPreview" class="form-input" placeholder="Text shown while editing" onchange="updateFieldProp('previewText',this.value)"/>
-                    </div>
-
-                    <div class="divider" style="margin:4px 0"></div>
-                    <div class="prop-section-title">Typography</div>
-
-                    <div class="form-group">
-                      <label class="form-label">Font Family</label>
-                      <select id="propFont" class="form-select" onchange="updateFieldProp('fontFamily',this.value)">
-                        <option>Helvetica</option>
-                        <option>Helvetica Bold</option>
-                        <option>Times New Roman</option>
-                        <option>Times Bold</option>
-                        <option>Courier</option>
-                        <option>Georgia</option>
-                        <option>Palatino</option>
+                <div class="ep-panel" id="epPanel_props">
+                  <div id="propsEmpty" style="padding:20px 0;text-align:center;font-size:13px;color:var(--text-3)">Select a field on the canvas to edit its properties.</div>
+                  <div id="propsForm" style="display:none;flex-direction:column;gap:0">
+                    <div class="ep-sec">Content</div>
+                    <div class="pr-row"><div class="pr-label">Placeholder Tag</div><input type="text" id="pPh" class="pr-input" onchange="setFP('placeholder',this.value)" style="font-family:var(--font-mono);font-size:12.5px"/></div>
+                    <div class="pr-row"><div class="pr-label">Preview Text</div><input type="text" id="pPrev" class="pr-input" onchange="setFP('previewText',this.value)"/></div>
+                    <div class="ep-sec">Typography</div>
+                    <div class="pr-row">
+                      <div class="pr-label">Font Family</div>
+                      <select id="pFont" class="pr-select" onchange="setFPFont(this.value)">
+                        <optgroup label="Sans Serif">
+                          <option value="Helvetica">Helvetica</option>
+                          <option value="Montserrat">Montserrat</option>
+                          <option value="Raleway">Raleway</option>
+                          <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+                        </optgroup>
+                        <optgroup label="Serif">
+                          <option value="Times New Roman">Times New Roman</option>
+                          <option value="EB Garamond">EB Garamond</option>
+                          <option value="Playfair Display">Playfair Display</option>
+                          <option value="Cormorant Garamond">Cormorant Garamond</option>
+                        </optgroup>
+                        <optgroup label="Calligraphy / Display">
+                          <option value="Dancing Script">Dancing Script</option>
+                          <option value="Cinzel">Cinzel</option>
+                        </optgroup>
+                        <optgroup label="Monospace">
+                          <option value="Courier New">Courier New</option>
+                          <option value="JetBrains Mono">JetBrains Mono</option>
+                        </optgroup>
                       </select>
                     </div>
-
-                    <div class="prop-mini-grid">
-                      <div class="form-group">
-                        <label class="form-label">Size (px)</label>
-                        <input type="number" id="propSize" class="form-input" min="8" max="200" onchange="updateFieldProp('fontSize',+this.value)" oninput="updateFieldProp('fontSize',+this.value)"/>
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label">Color</label>
-                        <div style="display:flex;gap:8px;align-items:center">
-                          <input type="color" id="propColor" onchange="updateFieldProp('color',this.value)" style="width:38px;height:38px;border:1px solid var(--glass-border-2);border-radius:8px;cursor:pointer;padding:3px;background:var(--glass);flex-shrink:0"/>
-                          <span id="propColorHex" style="font-size:12px;color:var(--text-2);font-family:var(--font-mono)">#000000</span>
-                        </div>
-                      </div>
+                    <div id="fontPreviewSample" class="font-preview">Aa — Sample Text</div>
+                    <div class="pr-row" style="margin-top:10px"><div class="pr-label">Style</div><div class="style-btns"><button class="style-btn" id="boldBtn" onclick="toggleBold()">B</button><button class="style-btn italic" id="italicBtn" onclick="toggleItalic()">I</button></div></div>
+                    <div class="pr-row"><div class="range-row"><div class="range-hdr"><span class="pr-label">Font Size</span><span class="range-val" id="pSizeVal">36px</span></div><input type="range" id="pSize" class="pr-range" min="8" max="160" step="1" value="36" oninput="document.getElementById('pSizeVal').textContent=this.value+'px';setFP('fontSize',+this.value)"/></div></div>
+                    <div class="pr-row"><div class="range-row"><div class="range-hdr"><span class="pr-label">Letter Spacing</span><span class="range-val" id="pSpacingVal">0px</span></div><input type="range" id="pSpacing" class="pr-range" min="-5" max="30" step="0.5" value="0" oninput="document.getElementById('pSpacingVal').textContent=this.value+'px';setFP('letterSpacing',+this.value)"/></div></div>
+                    <div class="pr-row"><div class="pr-label">Text Colour</div><div style="display:flex;align-items:center;gap:8px"><input type="color" id="pColor" value="#000000" onchange="setFP('color',this.value);document.getElementById('pColorHex').textContent=this.value" style="width:34px;height:34px;border:1px solid var(--glass-border);border-radius:8px;padding:3px;background:var(--glass);cursor:pointer"/><span id="pColorHex" style="font-family:var(--font-mono);font-size:12px;color:var(--text-2)">#000000</span></div></div>
+                    <div class="ep-sec">Alignment</div>
+                    <div class="align-row">
+                      <button class="al-btn on" id="alL" onclick="setAlign('left')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/></svg></button>
+                      <button class="al-btn" id="alC" onclick="setAlign('center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/></svg></button>
+                      <button class="al-btn" id="alR" onclick="setAlign('right')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/></svg></button>
                     </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Alignment</label>
-                      <div class="align-row">
-                        <button class="align-btn active" id="alignLeft" onclick="setAlign('left')">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="15" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-                        </button>
-                        <button class="align-btn" id="alignCenter" onclick="setAlign('center')">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="18" y1="14" x2="6" y2="14"/><line x1="19" y1="18" x2="5" y2="18"/></svg>
-                        </button>
-                        <button class="align-btn" id="alignRight" onclick="setAlign('right')">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
-                        </button>
-                      </div>
+                    <div class="pr-2col">
+                      <div class="pr-row"><div class="pr-label">X (%)</div><input type="number" id="pX" class="pr-input" step="0.5" onchange="setFPXY()"/></div>
+                      <div class="pr-row"><div class="pr-label">Y (%)</div><input type="number" id="pY" class="pr-input" step="0.5" onchange="setFPXY()"/></div>
                     </div>
-
-                    <div class="divider" style="margin:4px 0"></div>
-                    <div class="prop-section-title">Position & Size</div>
-
-                    <div class="prop-mini-grid">
-                      <div class="form-group">
-                        <label class="form-label">X (%)</label>
-                        <input type="number" id="propX" class="form-input" step="0.5" min="0" max="100" onchange="updateFieldFromProp()"/>
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label">Y (%)</label>
-                        <input type="number" id="propY" class="form-input" step="0.5" min="0" max="100" onchange="updateFieldFromProp()"/>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Width (%)</label>
-                      <input type="number" id="propWidth" class="form-input" step="1" min="10" max="100" onchange="updateFieldProp('width',+this.value)"/>
-                    </div>
-
-                    <button class="btn btn-danger btn-full btn-sm" onclick="deleteSelectedField()" style="margin-top:4px">
+                    <div class="pr-row"><div class="pr-label">Width (%)</div><input type="number" id="pW" class="pr-input" min="10" max="100" onchange="setFP('width',+this.value)"/></div>
+                    <button class="btn btn-danger btn-full btn-sm" onclick="deleteSelField()" style="margin-top:14px">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                      Delete This Field
+                      Delete Field
                     </button>
                   </div>
                 </div>
@@ -520,19 +478,13 @@
             </div>
           </div>
 
-          <!-- Navigation -->
           <div style="display:flex;justify-content:space-between;gap:12px">
-            <button class="btn btn-secondary btn-lg" onclick="goStep(1)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-              Back
-            </button>
-            <button class="btn btn-primary btn-xl" onclick="goStep(3)">
-              Continue to Field Mapping
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </button>
+            <button class="btn btn-secondary" style="padding:12px 24px" onclick="goStep(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Back</button>
+            <button class="btn btn-primary" style="padding:14px 32px;font-size:16px" onclick="goStep(3)">Continue to Field Mapping <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
           </div>
         </div>
       </div>
+
 
       <!-- ═══ STEP 3: FIELD MAPPING ═══ -->
       <div class="step-panel" id="sp3">
