@@ -1179,8 +1179,8 @@ function mManualApplyData() {
 
   // Feed into the same variable mail-tool.js uses for recipient data
   // Replace `mRecipients` with your actual variable (e.g. mRows, recipientData, etc.)
-  mRecipients = data;
-  mAllColumns = mManualCols;
+  MS.headers = [...mManualCols];
+  MS.rows    = data;
 
   // Show confirmation
   const msg = document.getElementById('mManualLoadedMsg');
@@ -1191,15 +1191,7 @@ function mManualApplyData() {
   </div>`;
 
   // Update column mapping dropdowns
-  ['mNameCol','mEmailCol'].forEach(id => {
-    const sel = document.getElementById(id);
-    if (!sel) return;
-    sel.innerHTML = '<option value="">Select…</option>';
-    mManualCols.forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
-  });
-  const colCard = document.getElementById('mColCard');
-  if (colCard) colCard.style.display = 'block';
+
 
   // Update merge tags if function exists
-  if (typeof mBuildMergeTags === 'function') mBuildMergeTags(mManualCols);
 }

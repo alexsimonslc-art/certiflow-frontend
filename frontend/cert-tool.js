@@ -873,9 +873,8 @@ function manualApply() {
 
   // ── Feed into cert-tool's data variables ──
   // These are the same variables loadSheet() and handleFile() populate.
-  window.gRows = data;
-  window.allCols = manualCols;
-
+CS.rows    = data;
+CS.headers = manualCols;
   // Populate Name / Email column dropdowns in Step 3
   ['nameCol', 'emailCol'].forEach(id => {
     const sel = document.getElementById(id);

@@ -13,7 +13,22 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     /* ── Page-specific ── */
-
+/* Source picker active state — match combined-tool */
+.source-opt.active {
+  border-color: var(--cyan) !important;
+  background: rgba(0, 212, 255, 0.06) !important;
+}
+.source-opt.active span {
+  color: var(--cyan);
+  font-weight: 700;
+}
+.source-opt.active svg {
+  color: var(--cyan);
+}
+.source-opt.active .source-opt-icon {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.3);
+}
   /* ── Manual Entry ── */
 .manual-entry-table { width:100%; border-collapse:collapse; }
 .manual-entry-table th {
