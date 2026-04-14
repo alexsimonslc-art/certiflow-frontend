@@ -137,8 +137,9 @@ function switchSrc(type) {
   CS.srcType = type;
   document.getElementById('srcSheets').style.display = type === 'sheets' ? 'block' : 'none';
   document.getElementById('srcFile').style.display   = type === 'file'   ? 'block' : 'none';
-  document.getElementById('srcSheetsOpt').className  = 'source-opt' + (type === 'sheets' ? ' active' : '');
-  document.getElementById('srcFileOpt').className    = 'source-opt' + (type === 'file'   ? ' active' : '');
+  
+ document.getElementById('srcSheetsOpt').className  = 'src-opt' + (type === 'sheets' ? ' active' : '');
+  document.getElementById('srcFileOpt').className    = 'src-opt' + (type === 'file'   ? ' active' : '');
 }
 
 async function loadSheet() {
@@ -873,8 +874,9 @@ function manualApply() {
 
   // ── Feed into cert-tool's data variables ──
   // These are the same variables loadSheet() and handleFile() populate.
-CS.rows    = data;
-CS.headers = manualCols;
+  window.gRows = data;
+  window.allCols = manualCols;
+
   // Populate Name / Email column dropdowns in Step 3
   ['nameCol', 'emailCol'].forEach(id => {
     const sel = document.getElementById(id);
