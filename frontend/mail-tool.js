@@ -122,13 +122,6 @@ function mValidate(n) {
 /* ══════════════════════════════════════════════════════════════
    DATA SOURCE — Step 1
 ══════════════════════════════════════════════════════════════ */
-function mSwitchSrc(type) {
-  MS.srcType = type;
-  document.getElementById('mSrcSheets').style.display = type === 'sheets' ? 'block' : 'none';
-  document.getElementById('mSrcFile').style.display   = type === 'file'   ? 'block' : 'none';
-  document.getElementById('mSrcSheetsOpt').className  = 'source-opt' + (type === 'sheets' ? ' active' : '');
-  document.getElementById('mSrcFileOpt').className    = 'source-opt' + (type === 'file'   ? ' active' : '');
-}
 
 async function mLoadSheet() {
   const id  = document.getElementById('mSheetId').value.trim();
@@ -1105,7 +1098,8 @@ function mSwitchSrc(mode) {
 
 // ── Manual Entry helpers ─────────────────────────────────────
 let mManualCols = ['Name', 'Email'];
-
+let mManualCols = ['Name', 'Email'];
+document.addEventListener('DOMContentLoaded', () => { if(document.getElementById('mManualHeaderRow')) mManualRenderHeader(); });
 function mManualRenderHeader() {
   const tr = document.getElementById('mManualHeaderRow');
   tr.innerHTML = '<th style="width:36px">#</th>';
