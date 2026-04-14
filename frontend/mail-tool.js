@@ -11,7 +11,7 @@ const MS = {
   headers: [], rows: [], results: [],
   prevIdx: 0,
 };
-
+const mManualCols = ['Name', 'Email', 'Course', 'Date', 'Score', 'Org', 'CertificateLink'];
 const MSTEPS = [
   { label: 'Recipients' },
   { label: 'Email Template' },
@@ -119,7 +119,11 @@ function mValidate(n) {
   }
   return true;
 }
-
+function mSwitchSrc(type) {
+  MS.srcType = type;
+  document.querySelectorAll('.src-tab').forEach(t => t.classList.toggle('active', t.dataset.src === type));
+  document.querySelectorAll('.src-panel').forEach(p => p.style.display = p.id === 'mSrc_' + type ? 'block' : 'none');
+}
 /* ══════════════════════════════════════════════════════════════
    DATA SOURCE — Step 1
 ══════════════════════════════════════════════════════════════ */
@@ -1102,29 +1106,23 @@ let mManualCols = ['Name', 'Email'];
 
 document.addEventListener('DOMContentLoaded', () => { if(document.getElementById('mManualHeaderRow')) mManualRenderHeader(); });
 function mManualRenderHeader() {
-  const tr = document.getElementById('mManualHeaderRow');
-  tr.innerHTML = '<th style="width:36px">#</th>';
-  mManualCols.forEach((col, ci) => {
-    const th = document.createElement('th');
-    th.innerHTML = `<div class="manual-col-header">
-      <span>${col}</span>
-      ${ci >= 2 ? `<button class="manual-col-del" onclick="mManualDeleteCol(${ci})" title="Remove column">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>` : ''}
-    </div>`;
-    tr.appendChild(th);
-  });
-  tr.innerHTML += '<th style="width:36px"></th>';
-  mManualRenderRows();
+  const row = document.getElementById('mManualHeaderRow');
+  if (!row) return;
+  row.innerHTML = mManualCols.map(c =>
+    `<th>${c}</th>`
+  ).join('') + '<th></th>';
 }
 
-function mManualRenderRows() {
+function mManualAddRow() {
   const tbody = document.getElementById('mManualBody');
-  const existing = Array.from(tbody.querySelectorAll('tr')).map(row =>
-    Array.from(row.querySelectorAll('input')).map(inp => inp.value)
-  );
-  tbody.innerHTML = '';
-  existing.forEach(vals => mManualAddRow(vals));
+  if (!tbody) return;
+  const idx = tbody.querySelectorAll('tr').length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = mManualCols.map(c =>
+    `<td><input class="mini-input" data-col="${c}" placeholder="${c}"/></td>`
+  ).join('') + `<td><button onclick="this.closest('tr').remove()" class="icon-btn del"><i data-lucide="trash-2"></i></button></td>`;
+  tbody.appendChild(tr);
+  lucide.createIcons();
 }
 
 function mManualAddRow(vals = []) {
@@ -1132,8 +1130,9 @@ function mManualAddRow(vals = []) {
   const ri = tbody.children.length;
   const tr = document.createElement('tr');
   let cells = `<td style="text-align:center;font-size:12px;color:var(--text-3);width:36px">${ri + 1}</td>`;
-  mManualCols.forEach((col, ci) => {
-    cells += `<td><input type="text" placeholder="${col}" value="${vals[ci] || ''}" /></td>`;
+  mManualCols.forEach(col => {
+    const inp = row.querySelector(`input[data-col="${col}"]`);
+    obj[col] = inp ? inp.value.trim() : '';
   });
   cells += `<td><button class="manual-row-del" onclick="this.closest('tr').remove();mManualReindex()" title="Remove row">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1189,7 +1188,7 @@ function mManualApplyData() {
   </div>`;
 
   // Update column mapping dropdowns
-
+  mPopulateDropdowns();
   if (typeof meBuildMergeTagsRow === 'function') meBuildMergeTagsRow();
   // Update merge tags if function exists
 }
