@@ -1077,7 +1077,7 @@ function saveCampaign(type, name, total, success, folderLink) {
 }
 
 // ── Patch mSwitchSrc to support manual ──────────────────────
-const _origMSwitchSrc = typeof mSwitchSrc === 'function' ? mSwitchSrc : null;
+
 function mSwitchSrc(mode) {
   document.getElementById('mSrcSheets').style.display  = 'none';
   document.getElementById('mSrcFile').style.display    = 'none';
@@ -1102,9 +1102,6 @@ function mSwitchSrc(mode) {
 }
 
 // ── Manual Entry helpers ─────────────────────────────────────
-let mManualCols = ['Name', 'Email'];
-
-document.addEventListener('DOMContentLoaded', () => { if(document.getElementById('mManualHeaderRow')) mManualRenderHeader(); });
 function mManualRenderHeader() {
   const row = document.getElementById('mManualHeaderRow');
   if (!row) return;
