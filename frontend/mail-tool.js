@@ -58,6 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ══════════════════════════════════════════════════════════════
    STEPPER
 ══════════════════════════════════════════════════════════════ */
+function mSwitchSrc(type) {
+  MS.srcType = type;
+  document.getElementById('mSrcSheetsOpt').classList.toggle('active', type === 'sheets');
+  document.getElementById('mSrcFileOpt').classList.toggle('active', type === 'file');
+  document.getElementById('mSrcManualOpt').classList.toggle('active', type === 'manual');
+  document.getElementById('mSrcSheets').style.display  = type === 'sheets' ? '' : 'none';
+  document.getElementById('mSrcFile').style.display    = type === 'file'   ? '' : 'none';
+  document.getElementById('mSrcManual').style.display  = type === 'manual' ? '' : 'none';
+}
+
 function mBuildStepper() {
   const el = document.getElementById('stepper');
   el.innerHTML = MSTEPS.map((s, i) => {
