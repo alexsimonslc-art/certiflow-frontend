@@ -347,6 +347,7 @@ function addField() {
     x: 10, y: 35 + ED.fields.length * 14,
     width: 80, fontSize: size,
     fontFamily: 'Helvetica', color: '#1a1a1a', align: 'center',
+    bold: false, italic: false, letterSpacing: 0,
   };
   ED.fields.push(field);
   closeAddFieldModal();
@@ -491,7 +492,7 @@ function loadSavedTemplate() {
     const t = JSON.parse(raw);
     ED.w = t.w || 1122; ED.h = t.h || 794;
     ED.bgColor = t.bgColor || '#ffffff';
-    ED.fields  = t.fields  || [];
+    ED.fields  = (t.fields || []).map(f => ({ bold: false, italic: false, letterSpacing: 0, ...f }));
     if (t.bgBase64) { const img = new Image(); img.onload = () => { ED.bgImg = img; redraw(); }; img.src = t.bgBase64; ED.bgBase64 = t.bgBase64; }
     resizeCanvas();
     if (t.fields?.length) toast('Previous template restored', 'info', 2500);
