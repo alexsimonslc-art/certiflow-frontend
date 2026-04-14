@@ -750,3 +750,157 @@ function startNew() {
   redraw();
   goStep(1, true);
 }
+
+/* ══════════════════════════════════════════════
+   PATCH: extend switchSrc to handle 'manual'
+   ══════════════════════════════════════════════ */
+const _origSwitchSrc = window.switchSrc;
+window.switchSrc = function(mode) {
+  // hide all three panels
+  ['srcSheets','srcFile','srcManual'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // deactivate all three buttons
+  ['srcSheetsOpt','srcFileOpt','srcManualOpt'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+
+  if (mode === 'sheets') {
+    document.getElementById('srcSheets').style.display = 'block';
+    document.getElementById('srcSheetsOpt').classList.add('active');
+  } else if (mode === 'file') {
+    document.getElementById('srcFile').style.display = 'block';
+    document.getElementById('srcFileOpt').classList.add('active');
+  } else if (mode === 'manual') {
+    document.getElementById('srcManual').style.display = 'block';
+    document.getElementById('srcManualOpt').classList.add('active');
+    if (document.getElementById('manualBody').children.length === 0) {
+      manualAddRow(); manualAddRow(); // start with 2 empty rows
+    }
+  }
+};
+
+/* ══════════════════════════════════════════════
+   MANUAL ENTRY — state & helpers
+   ══════════════════════════════════════════════ */
+let manualCols = ['Name', 'Email'];
+
+function manualRebuildHeader() {
+  const tr = document.getElementById('manualHeaderRow');
+  const thStyle = 'padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border)';
+  tr.innerHTML = `<th style="${thStyle};width:36px">#</th>`;
+  manualCols.forEach((col, ci) => {
+    const th = document.createElement('th');
+    th.setAttribute('style', thStyle);
+    th.innerHTML = `<div style="display:flex;align-items:center;gap:6px">
+      <span>${col}</span>
+      ${ci >= 2 ? `<button onclick="manualDeleteCol(${ci})" title="Remove column"
+        style="width:16px;height:16px;border-radius:4px;background:none;border:none;color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>` : ''}
+    </div>`;
+    tr.appendChild(th);
+  });
+  tr.innerHTML += `<th style="${thStyle};width:36px"></th>`;
+  _manualRefreshRows();
+}
+
+function _manualRefreshRows() {
+  const tbody = document.getElementById('manualBody');
+  const saved = Array.from(tbody.querySelectorAll('tr')).map(row =>
+    Array.from(row.querySelectorAll('input')).map(i => i.value)
+  );
+  tbody.innerHTML = '';
+  saved.forEach(vals => manualAddRow(vals));
+}
+
+function manualAddRow(vals = []) {
+  const tbody = document.getElementById('manualBody');
+  const idx = tbody.children.length;
+  const tr = document.createElement('tr');
+  let html = `<td style="padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.04);text-align:center;font-size:12px;color:var(--text-3);width:36px">${idx + 1}</td>`;
+  manualCols.forEach((col, ci) => {
+    html += `<td style="padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.04)">
+      <input type="text" placeholder="${col}" value="${vals[ci] || ''}"
+        style="width:100%;padding:8px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:7px;color:var(--text);font-size:13.5px;font-family:var(--font);outline:none;transition:border-color 0.15s"
+        onfocus="this.style.borderColor='rgba(0,212,255,0.4)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.08)'" />
+    </td>`;
+  });
+  html += `<td style="padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.04);width:36px">
+    <button onclick="this.closest('tr').remove();_manualReindex()" title="Remove row"
+      style="width:28px;height:28px;border-radius:6px;background:none;border:none;color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s"
+      onmouseenter="this.style.color='#f43f5e';this.style.background='rgba(244,63,94,0.1)'"
+      onmouseleave="this.style.color='var(--text-3)';this.style.background='none'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </td>`;
+  tr.innerHTML = html;
+  tbody.appendChild(tr);
+}
+
+function _manualReindex() {
+  document.querySelectorAll('#manualBody tr').forEach((tr, i) => {
+    tr.cells[0].textContent = i + 1;
+  });
+}
+
+function manualAddColumn() {
+  const name = prompt('New column name (e.g. Course, Date):');
+  if (!name || !name.trim()) return;
+  manualCols.push(name.trim());
+  manualRebuildHeader();
+}
+
+function manualDeleteCol(ci) {
+  if (!confirm(`Remove column "${manualCols[ci]}"?`)) return;
+  manualCols.splice(ci, 1);
+  manualRebuildHeader();
+}
+
+function manualApply() {
+  const rows = Array.from(document.querySelectorAll('#manualBody tr'));
+  const data = rows.map(row => {
+    const inputs = row.querySelectorAll('input');
+    const obj = {};
+    manualCols.forEach((col, ci) => { obj[col] = inputs[ci] ? inputs[ci].value.trim() : ''; });
+    return obj;
+  }).filter(r => Object.values(r).some(v => v));
+
+  if (!data.length) { alert('Please add at least one row with data.'); return; }
+
+  // ── Feed into cert-tool's data variables ──
+  // These are the same variables loadSheet() and handleFile() populate.
+  window.gRows = data;
+  window.allCols = manualCols;
+
+  // Populate Name / Email column dropdowns in Step 3
+  ['nameCol', 'emailCol'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">Select column…</option>';
+    manualCols.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      if (c === prev) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+
+  // Update column hint panel in Step 3
+  const hint = document.getElementById('colsListHint');
+  if (hint) hint.innerHTML = manualCols.map(c =>
+    `<span style="display:inline-block;background:var(--glass);border:1px solid var(--glass-border);border-radius:6px;padding:3px 9px;font-size:12.5px;margin:3px 4px 3px 0;font-family:var(--font-mono)">${c}</span>`
+  ).join('');
+
+  // Show success message
+  const msg = document.getElementById('manualAppliedMsg');
+  msg.style.display = 'block';
+  msg.innerHTML = `<div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:#10b981;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+    <span><strong style="color:#10b981">${data.length} participant${data.length !== 1 ? 's' : ''}</strong> ready — columns: ${manualCols.map(c => `<code style="font-family:var(--font-mono);font-size:12px;background:var(--glass);padding:1px 5px;border-radius:4px">${c}</code>`).join(', ')}</span>
+  </div>`;
+}

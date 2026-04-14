@@ -13,6 +13,64 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     /* ── Page-specific ── */
+
+  /* ── Manual Entry ── */
+.manual-entry-table { width:100%; border-collapse:collapse; }
+.manual-entry-table th {
+  padding:10px 12px;
+  font-size:12px; font-weight:700; color:var(--text-3);
+  text-transform:uppercase; letter-spacing:0.5px;
+  text-align:left;
+  background:rgba(255,255,255,0.02);
+  border-bottom:1px solid var(--glass-border);
+}
+.manual-entry-table td {
+  padding:6px 8px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.manual-entry-table input {
+  width:100%;
+  padding:8px 10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:7px;
+  color:var(--text);
+  font-size:13.5px;
+  font-family:var(--font);
+  outline:none;
+  transition:border-color 0.15s;
+}
+.manual-entry-table input:focus { border-color:rgba(0,212,255,0.4); }
+.manual-entry-table input::placeholder { color:var(--text-3); }
+.manual-row-del {
+  width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;border:none;
+  color:var(--text-3);cursor:pointer;transition:var(--transition);
+}
+.manual-row-del:hover { color:var(--red);background:var(--red-dim); }
+.manual-row-del svg { width:13px;height:13px; }
+.manual-col-header { display:flex;align-items:center;gap:6px; }
+.manual-col-del {
+  width:18px;height:18px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;border:none;
+  color:var(--text-3);cursor:pointer;transition:var(--transition);
+  padding:0;
+}
+.manual-col-del:hover { color:var(--red); }
+.manual-col-del svg { width:11px;height:11px; }
+
+/* ── Source picker 3-column for manual option ── */
+.source-picker { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 12px; }
+.src-opt-icon { width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:1px solid var(--glass-border); }
+.src-opt-icon svg { width:20px;height:20px;color:var(--text-2); }
+.source-opt.active .src-opt-icon { background:rgba(0,212,255,0.12);border-color:rgba(0,212,255,0.2); }
+.source-opt.active .src-opt-icon svg { color:var(--cyan); }
+.src-opt-title { font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px; }
+.src-opt-desc { font-size:13px;color:var(--text-2);line-height:1.4; }
+.source-opt.active .src-opt-title { color:var(--cyan); }
+
     .tool-cols { display: grid; grid-template-columns: 1fr 300px; gap: 22px; }
     .step-panel { display: none; animation: fadeInUp 0.3s var(--ease) both; }
     .step-panel.active { display: block; }
@@ -303,18 +361,38 @@
               </div>
 
               <div style="margin-top:20px">
-                <div class="source-picker">
-                  <div class="source-opt active" id="srcSheetsOpt" onclick="switchSrc('sheets')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                    <span>Google Sheets</span>
+                <!-- Source Picker — 3 options -->
+                <div class="source-picker" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+
+                  <!-- Google Sheets -->
+                  <div class="source-opt active" id="srcSheetsOpt" onclick="switchSrc('sheets')" style="text-align:center;padding:18px 12px">
+                    <div style="width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:1px solid var(--glass-border);background:var(--glass)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--text-2)"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    </div>
+                    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Google Sheets</div>
+                    <div style="font-size:12.5px;color:var(--text-2);line-height:1.4">Connect with Sheet ID</div>
                   </div>
-                  <div class="source-opt" id="srcFileOpt" onclick="switchSrc('file')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>Upload CSV / Excel</span>
+
+                  <!-- Upload File -->
+                  <div class="source-opt" id="srcFileOpt" onclick="switchSrc('file')" style="text-align:center;padding:18px 12px">
+                    <div style="width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:1px solid var(--glass-border);background:var(--glass)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--text-2)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Upload File</div>
+                    <div style="font-size:12.5px;color:var(--text-2);line-height:1.4">CSV or Excel</div>
+                  </div>
+
+                  <!-- Manual Entry -->
+                  <div class="source-opt" id="srcManualOpt" onclick="switchSrc('manual')" style="text-align:center;padding:18px 12px">
+                    <div style="width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:1px solid var(--glass-border);background:var(--glass)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;color:var(--text-2)"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </div>
+                    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Manual Entry</div>
+                    <div style="font-size:12.5px;color:var(--text-2);line-height:1.4">Type data directly</div>
                   </div>
                 </div>
 
-                <!-- Google Sheets panel -->
+                <!-- ── Google Sheets panel ── -->
                 <div id="srcSheets">
                   <div class="form-group" style="margin-bottom:14px">
                     <label class="form-label">Google Sheet ID <span class="req">*</span></label>
@@ -330,18 +408,58 @@
                   <div id="sheetResult" style="display:none"></div>
                 </div>
 
-                <!-- File upload panel -->
+                <!-- ── File Upload panel ── -->
                 <div id="srcFile" style="display:none">
                   <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvInput').click()">
                     <div class="upload-zone-icon">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     </div>
-                    <h4>Click to upload or drag & drop</h4>
+                    <h4>Click to upload or drag &amp; drop</h4>
                     <p>Supports <strong>.csv</strong>, <strong>.xlsx</strong>, <strong>.xls</strong></p>
                     <input type="file" id="csvInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFile(event)"/>
                   </div>
                   <div id="fileResult" style="display:none;margin-top:14px"></div>
                 </div>
+
+                <!-- ── Manual Entry panel ── -->
+                <div id="srcManual" style="display:none">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                    <span style="font-size:13px;color:var(--text-2)">
+                      Add participants manually. Default columns: <strong style="color:var(--text)">Name</strong> and <strong style="color:var(--text)">Email</strong>.
+                    </span>
+                    <button class="btn btn-outline btn-sm" onclick="manualAddColumn()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      Add Column
+                    </button>
+                  </div>
+                  <div style="overflow-x:auto;border:1px solid var(--glass-border);border-radius:10px;margin-bottom:12px">
+                    <table style="width:100%;border-collapse:collapse">
+                      <thead>
+                        <tr id="manualHeaderRow">
+                          <th style="padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border);width:36px">#</th>
+                          <th style="padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border)">Name</th>
+                          <th style="padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border)">Email</th>
+                          <th style="padding:10px 12px;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border);width:36px"></th>
+                        </tr>
+                      </thead>
+                      <tbody id="manualBody">
+                        <!-- rows injected by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                  <div style="display:flex;gap:10px;margin-bottom:14px">
+                    <button class="btn btn-secondary btn-sm" onclick="manualAddRow()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      Add Row
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="manualApply()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
+                      Apply Data
+                    </button>
+                  </div>
+                  <div id="manualAppliedMsg" style="display:none"></div>
+                </div>
+
               </div>
             </div>
 

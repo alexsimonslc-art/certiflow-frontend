@@ -1077,3 +1077,129 @@ function saveCampaign(type, name, total, success, folderLink) {
     localStorage.setItem('cf_campaigns', JSON.stringify(campaigns));
   } catch(e) { /* non-critical */ }
 }
+
+// ── Patch mSwitchSrc to support manual ──────────────────────
+const _origMSwitchSrc = typeof mSwitchSrc === 'function' ? mSwitchSrc : null;
+function mSwitchSrc(mode) {
+  document.getElementById('mSrcSheets').style.display  = 'none';
+  document.getElementById('mSrcFile').style.display    = 'none';
+  document.getElementById('mSrcManual').style.display  = 'none';
+  document.getElementById('mSrcSheetsOpt').classList.remove('active');
+  document.getElementById('mSrcFileOpt').classList.remove('active');
+  document.getElementById('mSrcManualOpt').classList.remove('active');
+
+  if (mode === 'sheets') {
+    document.getElementById('mSrcSheets').style.display = 'block';
+    document.getElementById('mSrcSheetsOpt').classList.add('active');
+  } else if (mode === 'file') {
+    document.getElementById('mSrcFile').style.display = 'block';
+    document.getElementById('mSrcFileOpt').classList.add('active');
+  } else if (mode === 'manual') {
+    document.getElementById('mSrcManual').style.display = 'block';
+    document.getElementById('mSrcManualOpt').classList.add('active');
+    if (document.getElementById('mManualBody').children.length === 0) {
+      mManualAddRow(); mManualAddRow();
+    }
+  }
+}
+
+// ── Manual Entry helpers ─────────────────────────────────────
+let mManualCols = ['Name', 'Email'];
+
+function mManualRenderHeader() {
+  const tr = document.getElementById('mManualHeaderRow');
+  tr.innerHTML = '<th style="width:36px">#</th>';
+  mManualCols.forEach((col, ci) => {
+    const th = document.createElement('th');
+    th.innerHTML = `<div class="manual-col-header">
+      <span>${col}</span>
+      ${ci >= 2 ? `<button class="manual-col-del" onclick="mManualDeleteCol(${ci})" title="Remove column">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>` : ''}
+    </div>`;
+    tr.appendChild(th);
+  });
+  tr.innerHTML += '<th style="width:36px"></th>';
+  mManualRenderRows();
+}
+
+function mManualRenderRows() {
+  const tbody = document.getElementById('mManualBody');
+  const existing = Array.from(tbody.querySelectorAll('tr')).map(row =>
+    Array.from(row.querySelectorAll('input')).map(inp => inp.value)
+  );
+  tbody.innerHTML = '';
+  existing.forEach(vals => mManualAddRow(vals));
+}
+
+function mManualAddRow(vals = []) {
+  const tbody = document.getElementById('mManualBody');
+  const ri = tbody.children.length;
+  const tr = document.createElement('tr');
+  let cells = `<td style="text-align:center;font-size:12px;color:var(--text-3);width:36px">${ri + 1}</td>`;
+  mManualCols.forEach((col, ci) => {
+    cells += `<td><input type="text" placeholder="${col}" value="${vals[ci] || ''}" /></td>`;
+  });
+  cells += `<td><button class="manual-row-del" onclick="this.closest('tr').remove();mManualReindex()" title="Remove row">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button></td>`;
+  tr.innerHTML = cells;
+  tbody.appendChild(tr);
+}
+
+function mManualReindex() {
+  document.querySelectorAll('#mManualBody tr').forEach((tr, i) => {
+    tr.cells[0].textContent = i + 1;
+  });
+}
+
+function mManualAddColumn() {
+  const name = prompt('Column name (e.g. Course, Company):');
+  if (!name || !name.trim()) return;
+  mManualCols.push(name.trim());
+  mManualRenderHeader();
+}
+
+function mManualDeleteCol(ci) {
+  if (!confirm(`Remove column "${mManualCols[ci]}"?`)) return;
+  mManualCols.splice(ci, 1);
+  mManualRenderHeader();
+}
+
+function mManualApplyData() {
+  const rows = Array.from(document.querySelectorAll('#mManualBody tr'));
+  const data = rows.map(row => {
+    const inputs = row.querySelectorAll('input');
+    const obj = {};
+    mManualCols.forEach((col, ci) => { obj[col] = inputs[ci] ? inputs[ci].value.trim() : ''; });
+    return obj;
+  }).filter(r => Object.values(r).some(v => v));
+
+  if (!data.length) { alert('Add at least one row with data.'); return; }
+
+  // Feed into the same variable mail-tool.js uses for recipient data
+  // Replace `mRecipients` with your actual variable (e.g. mRows, recipientData, etc.)
+  mRecipients = data;
+  mAllColumns = mManualCols;
+
+  // Show confirmation
+  const msg = document.getElementById('mManualLoadedMsg');
+  msg.style.display = 'block';
+  msg.innerHTML = `<div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;color:#10b981;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+    <strong style="color:#10b981">${data.length} recipients</strong>&nbsp;ready — ${mManualCols.join(', ')}
+  </div>`;
+
+  // Update column mapping dropdowns
+  ['mNameCol','mEmailCol'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">Select…</option>';
+    mManualCols.forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
+  });
+  const colCard = document.getElementById('mColCard');
+  if (colCard) colCard.style.display = 'block';
+
+  // Update merge tags if function exists
+  if (typeof mBuildMergeTags === 'function') mBuildMergeTags(mManualCols);
+}
