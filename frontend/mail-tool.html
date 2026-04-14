@@ -359,17 +359,9 @@
               <!-- ── Manual Entry Panel ── -->
               <div id="mSrcManual" style="display:none;margin-top:16px">
                 <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:10px">
-                  <button class="btn btn-secondary btn-sm" onclick="mManualAddRow()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    Add Row
-                  </button>
-                  <button class="btn btn-secondary btn-sm" onclick="mManualAddColumn()">
+                  <button class="btn btn-outline btn-sm" onclick="mManualAddColumn()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     Add Column
-                  </button>
-                  <button class="btn btn-primary btn-sm" onclick="mManualApplyData()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
-                    Apply Data
                   </button>
                 </div>
                 <div style="overflow-x:auto">
@@ -378,7 +370,17 @@
                     <tbody id="mManualBody"></tbody>
                   </table>
                 </div>
-                <div id="mManualLoadedMsg" style="display:none;margin-top:12px"></div>
+                <div style="display:flex;gap:10px;margin-top:12px">
+                  <button class="btn btn-secondary btn-sm" onclick="mManualAddRow()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Row
+                  </button>
+                  <button class="btn btn-primary btn-sm" onclick="mManualApplyData()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
+                    Apply Data
+                  </button>
+                </div>
+                <div id="mManualLoadedMsg" style="display:none;margin-top:8px"></div>
               </div>
 
               
