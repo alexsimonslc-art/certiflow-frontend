@@ -99,7 +99,8 @@ function renderSidebar(activePage) {
     { page: 'dashboard.html', icon: 'layout-dashboard', label: 'Overview', section: null },
     { page: 'cert-tool.html',     icon: 'file-badge',        label: 'Certificates',      section: 'Tools' },
     { page: 'mail-tool.html',     icon: 'mail',              label: 'Bulk Mail',         section: null },
-    { page: 'combined-tool.html', icon: 'zap', label: 'Combined Pipeline', section: null },
+    { page: 'combined-tool.html', icon: 'zap',        label: 'Combined Pipeline', section: null },
+    { page: 'mini-site.html',     icon: 'layout-template', label: 'Mini Sites',   section: null },
     { page: 'campaigns.html',     icon: 'folder-open',       label: 'Campaigns',         section: 'Manage' },
     { page: 'settings.html',      icon: 'settings',          label: 'Settings',          section: null },
   ];

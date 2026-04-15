@@ -13,7 +13,7 @@
     /* ── Dashboard-specific ─────────────────────────────────────── */
     .tool-card-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 16px;
       margin-bottom: 28px;
     }
@@ -238,6 +238,24 @@
             </div>
             <div class="tool-card-footer" style="color:var(--green);">
               <span>Open tool</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </a>
+
+          <a href="mini-site.html" class="tool-launch-card" style="position:relative;overflow:hidden">
+            <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 90% 20%,rgba(245,158,11,0.06),transparent);pointer-events:none"></div>
+            <div class="tool-card-header">
+              <div class="tool-card-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <span class="badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)">New</span>
+            </div>
+            <div>
+              <div class="tool-card-title">Mini Sites</div>
+              <div class="tool-card-desc">Build a beautiful event page in minutes. Collect registrations, share a link, go live instantly.</div>
+            </div>
+            <div class="tool-card-footer" style="color:#f59e0b;">
+              <span>Open builder</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </div>
           </a>
