@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Dynamic meta — updated by JS after config loads -->
+  <title>Loading… — Honourix</title>
+  <meta name="description" content="" />
+  <meta property="og:title" content="" />
+  <meta property="og:description" content="" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <!-- Syne always loaded — used for headings in every block -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <!-- site.css — standalone, no dashboard deps -->
+  <link rel="stylesheet" href="site.css" />
+</head>
+
+<body>
+
+  <!-- ════════════════════════════════════════════════════════════
+     LOADING SCREEN
+════════════════════════════════════════════════════════════════ -->
+  <div class="ms-loading-screen" id="loadingScreen">
+    <div class="ms-loading-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+      </svg>
+    </div>
+    <div class="ms-loading-bar-wrap">
+      <div class="ms-loading-bar"></div>
+    </div>
+    <div class="ms-loading-text">Loading event page…</div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+     TOP BAR  (sticky — shown after content loads)
+════════════════════════════════════════════════════════════════ -->
+  <header class="ms-topbar" id="msTopbar" style="display:none">
+    <a class="ms-topbar-brand" href="https://honourix.app" target="_blank" rel="noopener">
+      <div class="ms-topbar-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      </div>
+      <span class="ms-topbar-name">Honou<span>rix</span></span>
+    </a>
+    <div class="ms-topbar-right">
+      <div class="ms-topbar-reg-badge open" id="regBadge">
+        <span class="reg-dot"></span>
+        <span id="regBadgeLabel">Registrations Open</span>
+      </div>
+      <button class="ms-topbar-share-btn" onclick="msShareSite()" id="shareBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3" />
+          <circle cx="6" cy="12" r="3" />
+          <circle cx="18" cy="19" r="3" />
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+        </svg>
+        Share
+      </button>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════════
+     CONTENT  (filled by JS)
+════════════════════════════════════════════════════════════════ -->
+  <main id="ms-content"></main>
+
+  <!-- ════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════════ -->
+  <footer class="ms-footer" id="msFooter" style="display:none">
+    <span>Built with</span>
+    <svg viewBox="0 0 24 24" fill="#f43f5e" style="width:13px;height:13px">
+      <path
+        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+    <span>on</span>
+    <a href="https://honourix.app" target="_blank" rel="noopener">Honourix</a>
+    <div class="ms-footer-dot"></div>
+    <a href="https://honourix.app" target="_blank" rel="noopener">Create your own event page →</a>
+  </footer>
+
+  <!-- ════════════════════════════════════════════════════════════
+     404 / ERROR STATE
+════════════════════════════════════════════════════════════════ -->
+  <div class="ms-error-page" id="errorPage">
+    <div class="ms-error-orbs">
+      <div class="ms-error-orb ms-error-orb-1"></div>
+      <div class="ms-error-orb ms-error-orb-2"></div>
+    </div>
+    <div class="ms-error-code" id="errorCode">404</div>
+    <div class="ms-error-title" id="errorTitle">Page not found</div>
+    <div class="ms-error-sub" id="errorSub">This event page doesn't exist or hasn't been published yet.</div>
+    <a href="https://honourix.app" class="ms-error-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+      Go to Honourix
+    </a>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+     SCROLL-TO-TOP
+════════════════════════════════════════════════════════════════ -->
+  <button id="ms-scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  </button>
+
+  <!-- Share toast -->
+  <div id="ms-share-toast">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+    Link copied!
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+     SCRIPTS — mini-site-blocks.js must load BEFORE inline script
+════════════════════════════════════════════════════════════════ -->
+  <script src="mini-site-blocks.js"></script>
+
+  <script>
+    /* ════════════════════════════════════════════════════════════════
+       CONFIGURATION
+    ════════════════════════════════════════════════════════════════ */
+    const MS_API_BASE = 'https://certiflow-backend-73xk.onrender.com';
+
+    /* ── Extract slug from URL ──────────────────────────────────── */
+    function getSlug() {
+      // Path format: /s/SLUG  (production via server routing)
+      const pathMatch = window.location.pathname.match(/\/s\/([^/?#]+)/);
+      if (pathMatch) return pathMatch[1];
+      // Query format: ?s=SLUG  (static hosting fallback)
+      return new URLSearchParams(window.location.search).get('s') || '';
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       THEME APPLICATION
+       Injects CSS variables from site config onto :root
+    ════════════════════════════════════════════════════════════════ */
+    function applyTheme(config) {
+      const accent = config.accentColor || '#00d4ff';
+      const font = config.fontFamily || 'Plus Jakarta Sans';
+      const isDark = config.theme !== 'light';
+
+      // Parse accent → rgb
+      const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(accent);
+      const rgb = r ? `${parseInt(r[1], 16)},${parseInt(r[2], 16)},${parseInt(r[3], 16)}` : '0,212,255';
+
+      const root = document.documentElement;
+      root.style.setProperty('--ms-accent', accent);
+      root.style.setProperty('--ms-accent-rgb', rgb);
+      root.style.setProperty('--ms-bg', isDark ? '#0a0f1e' : '#ffffff');
+      root.style.setProperty('--ms-text', isDark ? '#eef4ff' : '#1e293b');
+      root.style.setProperty('--ms-font', `'${font}'`);
+
+      // Body background
+      document.body.style.background = isDark ? '#0a0f1e' : '#ffffff';
+      document.body.style.color = isDark ? '#eef4ff' : '#1e293b';
+
+      // Expose for mini-site-form.js
+      window.__MS_ACCENT = accent;
+      window.__MS_ACCENT_RGB = rgb;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       FONT LOADING
+    ════════════════════════════════════════════════════════════════ */
+    function loadFont(name) {
+      if (!name || name === 'Syne' || name === 'Plus Jakarta Sans') return; // already loaded
+      const urls = {
+        'Montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap',
+        'Raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap',
+        'Playfair Display': 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+        'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
+        'Dancing Script': 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap',
+        'Cinzel': 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+        'EB Garamond': 'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+        'JetBrains Mono': 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+        'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap',
+      };
+      const url = urls[name];
+      if (!url || document.querySelector(`link[data-msfont="${name}"]`)) return;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = url;
+      link.dataset.msfont = name;
+      document.head.appendChild(link);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       META TAGS
+    ════════════════════════════════════════════════════════════════ */
+    function setMeta(cfg, blocks) {
+      const name = cfg.name || 'Event';
+      // Find tagline from first cover block
+      const cover = blocks.find(b => b.type === 'cover');
+      const tagline = cover?.props?.tagline || '';
+      const coverImg = cover?.props?.coverImage || '';
+
+      document.title = `${name} — Honourix`;
+      const setTag = (sel, val) => {
+        const el = document.querySelector(sel);
+        if (el) el.setAttribute(el.tagName === 'META' ? 'content' : 'href', val);
+      };
+
+      setTag('meta[name="description"]', tagline || `Register for ${name}`);
+      setTag('meta[property="og:title"]', name);
+      setTag('meta[property="og:description"]', tagline || `Register for ${name}`);
+      setTag('meta[property="og:url"]', window.location.href);
+      if (coverImg) setTag('meta[property="og:image"]', coverImg);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       RENDER BLOCKS
+    ════════════════════════════════════════════════════════════════ */
+    function renderSite(siteData) {
+      const config = {
+        ...siteData.config,
+        name: siteData.name,
+        siteId: siteData.id,
+        slug: siteData.slug,
+        registrationOpen: siteData.registrationOpen,
+      };
+      const blocks = config.blocks || [];
+
+      // Expose for form.js
+      window.__MS_SITE_ID = siteData.id;
+      window.__MS_SLUG = siteData.slug;
+      window.__MS_SHARE_URL = window.location.href;
+      window.__MS_SUCCESS_MSG = '';
+
+      const content = document.getElementById('ms-content');
+      if (!blocks.length) {
+        content.innerHTML = `
+    <div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:14px">
+      <div style="width:56px;height:56px;border-radius:14px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ms-accent,#00d4ff)" stroke-width="1.5" style="width:24px;height:24px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+      </div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--ms-text,#eef4ff)">Site is coming soon</h2>
+      <p style="font-size:14.5px;color:rgba(255,255,255,0.4);max-width:360px;line-height:1.6">The organiser is still setting up this event page. Check back soon!</p>
+    </div>`;
+      } else {
+        content.innerHTML = blocks.map(b => renderMSBlock(b, config)).join('');
+      }
+
+      // Update form data-ms-site attribute
+      document.querySelectorAll('[data-ms-form]').forEach(f => {
+        f.dataset.msSite = siteData.id;
+      });
+
+      content.classList.add('visible');
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       TOPBAR + FOOTER WIRING
+    ════════════════════════════════════════════════════════════════ */
+    function showChrome(siteData) {
+      const topbar = document.getElementById('msTopbar');
+      const footer = document.getElementById('msFooter');
+      const badge = document.getElementById('regBadge');
+      const label = document.getElementById('regBadgeLabel');
+
+      if (siteData.registrationOpen !== false) {
+        badge.className = 'ms-topbar-reg-badge open';
+        label.textContent = 'Registrations Open';
+      } else {
+        badge.className = 'ms-topbar-reg-badge closed';
+        label.textContent = 'Registrations Closed';
+      }
+
+      topbar.style.display = 'flex';
+      footer.style.display = 'flex';
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       SHOW ERROR / 404
+    ════════════════════════════════════════════════════════════════ */
+    function showError(code, title, sub) {
+      document.getElementById('errorCode').textContent = code || '404';
+      document.getElementById('errorTitle').textContent = title || 'Page not found';
+      document.getElementById('errorSub').textContent = sub || 'This event page doesn\'t exist.';
+      document.getElementById('errorPage').classList.add('visible');
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       SHARE
+    ════════════════════════════════════════════════════════════════ */
+    function msShareSite() {
+      const url = window.location.href;
+      if (navigator.share) {
+        navigator.share({ title: document.title, url }).catch(() => { });
+        return;
+      }
+      navigator.clipboard.writeText(url).then(() => {
+        const toast = document.getElementById('ms-share-toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      }).catch(() => {
+        // Fallback: prompt
+        prompt('Copy this link:', url);
+      });
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       SCROLL-TO-TOP
+    ════════════════════════════════════════════════════════════════ */
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('ms-scroll-top');
+      if (btn) btn.classList.toggle('visible', window.scrollY > 300);
+    }, { passive: true });
+
+    /* ════════════════════════════════════════════════════════════════
+       SKELETON LOADER
+    ════════════════════════════════════════════════════════════════ */
+    function showSkeleton() {
+      const content = document.getElementById('ms-content');
+      content.innerHTML = `
+<div class="ms-skeleton visible">
+  <div class="ms-skel-cover"></div>
+  <div class="ms-skel-section">
+    <div class="ms-skel-line h-big w-40"></div>
+    <div class="ms-skel-line w-80"></div>
+    <div class="ms-skel-line w-60"></div>
+    <div class="ms-skel-line h-sm w-80" style="margin-top:4px"></div>
+  </div>
+  <div class="ms-skel-section" style="border-top:1px solid rgba(255,255,255,0.04)">
+    <div class="ms-skel-line h-big w-40"></div>
+    <div class="ms-skel-line w-60"></div>
+    <div class="ms-skel-line w-80"></div>
+    <div class="ms-skel-line w-40"></div>
+  </div>
+</div>`;
+      content.style.display = 'block';
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       MAIN — BOOT
+    ════════════════════════════════════════════════════════════════ */
+    async function boot() {
+      const slug = getSlug();
+
+      if (!slug) {
+        document.getElementById('loadingScreen').classList.add('hidden');
+        showError('Oops', 'No site specified', 'Add ?s=your-slug to the URL to view an event page.');
+        return;
+      }
+
+      // Show skeleton while fetching
+      showSkeleton();
+
+      // Hide main loading screen after skeleton shows
+      setTimeout(() => {
+        document.getElementById('loadingScreen').classList.add('hidden');
+      }, 600);
+
+      try {
+        const res = await fetch(`${MS_API_BASE}/api/minisite/config/${encodeURIComponent(slug)}`);
+
+        if (res.status === 404) {
+          document.getElementById('ms-content').innerHTML = '';
+          showError('404', 'Event not found', `No published event page found at honourix.app/s/${slug}`);
+          document.getElementById('loadingScreen').classList.add('hidden');
+          return;
+        }
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error || `HTTP ${res.status}`);
+        }
+
+        const siteData = await res.json();
+
+        // Apply theme + load font
+        applyTheme(siteData.config || {});
+        loadFont(siteData.config?.fontFamily);
+
+        // Update meta tags
+        setMeta(siteData.config || { name: siteData.name }, siteData.config?.blocks || []);
+
+        // Render page content
+        renderSite(siteData);
+        showChrome(siteData);
+
+      } catch (err) {
+        console.error('[site.html] Boot failed:', err.message);
+        document.getElementById('ms-content').innerHTML = '';
+        document.getElementById('loadingScreen').classList.add('hidden');
+        showError(
+          '500',
+          'Something went wrong',
+          'We couldn\'t load this event page. Please try again in a moment.'
+        );
+      }
+    }
+
+    // Kick off
+    document.addEventListener('DOMContentLoaded', boot);
+  </script>
+
+  <!-- mini-site-form.js — handles form submit → Google Sheets -->
+  <script src="mini-site-form.js"></script>
+
+</body>
+
+</html>
