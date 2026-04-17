@@ -1,1247 +1,1133 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Site Editor — Honourix</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="mini-site-editor.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="mini-site-editor.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="mini-site-state.js"></script>
+  <script src="mini-site-blocks.js"></script>
 </head>
+
 <body>
 
-<div class="mse-layout">
+  <div class="mse-layout">
 
-  <!-- ═══════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════
        TOP BAR
   ═══════════════════════════════════════════════════════ -->
-  <header class="mse-topbar">
+    <header class="mse-topbar">
 
-    <!-- Left -->
-    <div class="mse-topbar-left">
-      <a href="mini-site.html" class="mse-back-btn" id="backBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Sites
-      </a>
-      <div class="mse-topbar-divider"></div>
-      <div class="mse-logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <!-- Left -->
+      <div class="mse-topbar-left">
+        <a href="mini-site.html" class="mse-back-btn" id="backBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          Sites
+        </a>
+        <div class="mse-topbar-divider"></div>
+        <div class="mse-logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>
+        </div>
       </div>
-    </div>
 
-    <!-- Center -->
-    <div class="mse-topbar-center">
-      <input
-        type="text" id="siteNameInput"
-        class="mse-site-name-input"
-        placeholder="Site Name"
-        oninput="onNameInput(this.value)"
-        onblur="onNameBlur(this.value)"
-      />
-      <div class="mse-save-status" id="saveStatus">
-        <div class="mse-save-status-dot"></div>
-        <span id="saveStatusText">Draft</span>
+      <!-- Center -->
+      <div class="mse-topbar-center">
+        <input type="text" id="siteNameInput" class="mse-site-name-input" placeholder="Site Name"
+          oninput="onNameInput(this.value)" onblur="onNameBlur(this.value)" />
+        <div class="mse-save-status" id="saveStatus">
+          <div class="mse-save-status-dot"></div>
+          <span id="saveStatusText">Draft</span>
+        </div>
       </div>
-    </div>
 
-    <!-- Right -->
-    <div class="mse-topbar-right">
-      <button class="mse-icon-btn" id="undoBtn" title="Undo (Ctrl+Z)" onclick="doUndo()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
-      </button>
-      <button class="mse-icon-btn" id="redoBtn" title="Redo (Ctrl+Shift+Z)" onclick="doRedo()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>
-      </button>
-
-      <div class="mse-topbar-divider" style="margin:0 2px"></div>
-
-      <div class="mse-preview-toggle">
-        <button class="mse-preview-btn active" id="btnDesktop" onclick="setPreviewMode('desktop')" title="Desktop preview">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          Desktop
+      <!-- Right -->
+      <div class="mse-topbar-right">
+        <button class="mse-icon-btn" id="undoBtn" title="Undo (Ctrl+Z)" onclick="doUndo()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 14 4 9 9 4" />
+            <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
+          </svg>
         </button>
-        <button class="mse-preview-btn" id="btnMobile" onclick="setPreviewMode('mobile')" title="Mobile preview">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-          Mobile
+        <button class="mse-icon-btn" id="redoBtn" title="Redo (Ctrl+Shift+Z)" onclick="doRedo()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 14 20 9 15 4" />
+            <path d="M4 20v-7a4 4 0 0 1 4-4h12" />
+          </svg>
+        </button>
+
+        <div class="mse-topbar-divider" style="margin:0 2px"></div>
+
+        <div class="mse-preview-toggle">
+          <button class="mse-preview-btn active" id="btnDesktop" onclick="setPreviewMode('desktop')"
+            title="Desktop preview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            Desktop
+          </button>
+          <button class="mse-preview-btn" id="btnMobile" onclick="setPreviewMode('mobile')" title="Mobile preview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="2" />
+              <line x1="12" y1="18" x2="12.01" y2="18" />
+            </svg>
+            Mobile
+          </button>
+        </div>
+
+        <div class="mse-topbar-divider" style="margin:0 2px"></div>
+
+        <button class="mse-save-btn" onclick="doSave()" title="Save (Ctrl+S)">Save</button>
+        <button class="mse-publish-btn" onclick="openPublish()" id="publishBtn">
+          <span id="publishBtnLabel">Publish</span>
         </button>
       </div>
 
-      <div class="mse-topbar-divider" style="margin:0 2px"></div>
+    </header>
 
-      <button class="mse-save-btn" onclick="doSave()" title="Save (Ctrl+S)">Save</button>
-      <button class="mse-publish-btn" onclick="openPublish()" id="publishBtn">
-        <span id="publishBtnLabel">Publish</span>
-      </button>
-    </div>
-
-  </header>
-
-  <!-- ═══════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════
        LEFT PANEL — Block Palette + Layers
   ═══════════════════════════════════════════════════════ -->
-  <aside class="mse-left">
+    <aside class="mse-left">
 
-    <div class="mse-panel-tabs">
-      <button class="mse-panel-tab active" id="tabBlocks" onclick="switchLeftTab('blocks')">Blocks</button>
-      <button class="mse-panel-tab"         id="tabLayers" onclick="switchLeftTab('layers')">Layers</button>
-    </div>
+      <div class="mse-panel-tabs">
+        <button class="mse-panel-tab active" id="tabBlocks" onclick="switchLeftTab('blocks')">Blocks</button>
+        <button class="mse-panel-tab" id="tabLayers" onclick="switchLeftTab('layers')">Layers</button>
+      </div>
 
-    <!-- Blocks tab -->
-    <div class="mse-panel-body" id="blocksTabBody">
+      <!-- Blocks tab -->
+      <div class="mse-panel-body" id="blocksTabBody">
 
-      <div class="mse-cat-label" style="color:#00d4ff">Structure</div>
-      <button class="mse-block-btn" onclick="addBlock('cover')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Cover / Hero</div><div class="mse-block-btn-desc">Background image + logo</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('about')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">About</div><div class="mse-block-btn-desc">Event description</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('announcements')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Announcements</div><div class="mse-block-btn-desc">Pinned updates</div></div>
-      </button>
+        <div class="mse-cat-label" style="color:#00d4ff">Structure</div>
+        <button class="mse-block-btn" onclick="addBlock('cover')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Cover / Hero</div>
+            <div class="mse-block-btn-desc">Background image + logo</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('about')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">About</div>
+            <div class="mse-block-btn-desc">Event description</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('announcements')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Announcements</div>
+            <div class="mse-block-btn-desc">Pinned updates</div>
+          </div>
+        </button>
 
-      <div class="mse-cat-label" style="color:#f59e0b">Event Info</div>
-      <button class="mse-block-btn" onclick="addBlock('datetime')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Date & Venue</div><div class="mse-block-btn-desc">Date, time, location</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('speakers')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Speakers / Team</div><div class="mse-block-btn-desc">People cards</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('faq')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">FAQ</div><div class="mse-block-btn-desc">Questions & answers</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('sponsors')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Sponsors</div><div class="mse-block-btn-desc">Partner logos by tier</div></div>
-      </button>
+        <div class="mse-cat-label" style="color:#f59e0b">Event Info</div>
+        <button class="mse-block-btn" onclick="addBlock('datetime')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Date & Venue</div>
+            <div class="mse-block-btn-desc">Date, time, location</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('speakers')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Speakers / Team</div>
+            <div class="mse-block-btn-desc">People cards</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('faq')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">FAQ</div>
+            <div class="mse-block-btn-desc">Questions & answers</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('sponsors')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="6" />
+              <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Sponsors</div>
+            <div class="mse-block-btn-desc">Partner logos by tier</div>
+          </div>
+        </button>
 
-      <div class="mse-cat-label" style="color:#a78bfa">Engagement</div>
-      <button class="mse-block-btn" onclick="addBlock('form')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Registration Form</div><div class="mse-block-btn-desc">→ Google Sheets</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('documents')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Document Links</div><div class="mse-block-btn-desc">Rule books, brochures</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('video')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Video</div><div class="mse-block-btn-desc">YouTube / Drive (max 2)</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('socials')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Social Links</div><div class="mse-block-btn-desc">Follow us icons</div></div>
-      </button>
+        <div class="mse-cat-label" style="color:#a78bfa">Engagement</div>
+        <button class="mse-block-btn" onclick="addBlock('form')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Registration Form</div>
+            <div class="mse-block-btn-desc">→ Google Sheets</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('documents')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Document Links</div>
+            <div class="mse-block-btn-desc">Rule books, brochures</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('video')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polygon points="10 8 16 12 10 16 10 8" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Video</div>
+            <div class="mse-block-btn-desc">YouTube / Drive (max 2)</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('socials')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3" />
+              <circle cx="6" cy="12" r="3" />
+              <circle cx="18" cy="19" r="3" />
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Social Links</div>
+            <div class="mse-block-btn-desc">Follow us icons</div>
+          </div>
+        </button>
 
-      <div class="mse-cat-label" style="color:#5a7394">Layout</div>
-      <button class="mse-block-btn" onclick="addBlock('divider')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Divider</div><div class="mse-block-btn-desc">Section separator</div></div>
-      </button>
-      <button class="mse-block-btn" onclick="addBlock('spacer')">
-        <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg></div>
-        <div class="mse-block-btn-info"><div class="mse-block-btn-label">Spacer</div><div class="mse-block-btn-desc">Empty vertical space</div></div>
-      </button>
+        <div class="mse-cat-label" style="color:#5a7394">Layout</div>
+        <button class="mse-block-btn" onclick="addBlock('divider')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Divider</div>
+            <div class="mse-block-btn-desc">Section separator</div>
+          </div>
+        </button>
+        <button class="mse-block-btn" onclick="addBlock('spacer')">
+          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" />
+            </svg></div>
+          <div class="mse-block-btn-info">
+            <div class="mse-block-btn-label">Spacer</div>
+            <div class="mse-block-btn-desc">Empty vertical space</div>
+          </div>
+        </button>
 
-    </div>
+      </div>
 
-    <!-- Layers tab -->
-    <div class="mse-panel-body" id="layersTabBody" style="display:none">
-      <div id="layersList"></div>
-    </div>
+      <!-- Layers tab -->
+      <div class="mse-panel-body" id="layersTabBody" style="display:none">
+        <div id="layersList"></div>
+      </div>
 
-  </aside>
+    </aside>
 
-  <!-- ═══════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════
        CANVAS AREA
   ═══════════════════════════════════════════════════════ -->
-  <main class="mse-canvas-area" id="canvasArea" onclick="canvasAreaClick(event)">
+    <main class="mse-canvas-area" id="canvasArea" onclick="canvasAreaClick(event)">
 
-    <div class="mse-canvas-wrap" id="canvasWrap">
-      <!-- Browser chrome -->
-      <div class="mse-browser-chrome">
-        <div class="mse-chrome-dots">
-          <div class="mse-chrome-dot"></div>
-          <div class="mse-chrome-dot"></div>
-          <div class="mse-chrome-dot"></div>
-        </div>
-        <div class="mse-chrome-url" id="chromeUrl">honourix.app/s/</div>
-      </div>
-      <!-- Page frame -->
-      <div class="mse-canvas-frame" id="canvasFrame">
-        <!-- Blocks render here -->
-        <div id="canvasBody"></div>
-        <!-- Empty state (shown when no blocks) -->
-        <div class="mse-canvas-empty" id="canvasEmpty">
-          <div class="mse-canvas-empty-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <div class="mse-canvas-wrap" id="canvasWrap">
+        <!-- Browser chrome -->
+        <div class="mse-browser-chrome">
+          <div class="mse-chrome-dots">
+            <div class="mse-chrome-dot"></div>
+            <div class="mse-chrome-dot"></div>
+            <div class="mse-chrome-dot"></div>
           </div>
-          <h3>Start building your site</h3>
-          <p>Click any block from the left panel to add it to your site</p>
+          <div class="mse-chrome-url" id="chromeUrl">honourix.app/s/</div>
+        </div>
+        <!-- Page frame -->
+        <div class="mse-canvas-frame" id="canvasFrame">
+          <!-- Blocks render here -->
+          <div id="canvasBody"></div>
+          <!-- Empty state (shown when no blocks) -->
+          <div class="mse-canvas-empty" id="canvasEmpty">
+            <div class="mse-canvas-empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <h3>Start building your site</h3>
+            <p>Click any block from the left panel to add it to your site</p>
+          </div>
         </div>
       </div>
-    </div>
 
-  </main>
+    </main>
 
-  <!-- ═══════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════
        RIGHT PANEL — Properties
   ═══════════════════════════════════════════════════════ -->
-  <aside class="mse-right">
+    <aside class="mse-right">
 
-    <div class="mse-right-tabs">
-      <div class="mse-right-tab active" id="rtabBlock" onclick="switchRightTab('block')">Block</div>
-      <div class="mse-right-tab"        id="rtabSite"  onclick="switchRightTab('site')">Site Settings</div>
-    </div>
-
-    <!-- Block props tab -->
-    <div class="mse-right-body" id="rightBlockBody">
-      <div class="mse-right-empty" id="rightBlockEmpty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
-        <p>Click any block on the canvas to edit its properties</p>
+      <div class="mse-right-tabs">
+        <div class="mse-right-tab active" id="rtabBlock" onclick="switchRightTab('block')">Block</div>
+        <div class="mse-right-tab" id="rtabSite" onclick="switchRightTab('site')">Site Settings</div>
       </div>
-      <div id="rightBlockProps" style="display:none"></div>
-    </div>
 
-    <!-- Site settings tab -->
-    <div class="mse-right-body" id="rightSiteBody" style="display:none">
-      <div class="mse-props-section">
-        <div class="mse-props-sec-label">Appearance</div>
-
-        <div class="mse-prop-row">
-          <div class="mse-prop-label">Theme</div>
-          <select class="mse-prop-select" id="siteTheme" onchange="MSState.updateConfig({theme:this.value});refreshCanvas()">
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-          </select>
+      <!-- Block props tab -->
+      <div class="mse-right-body" id="rightBlockBody">
+        <div class="mse-right-empty" id="rightBlockEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M8 12h8M12 8v8" />
+          </svg>
+          <p>Click any block on the canvas to edit its properties</p>
         </div>
+        <div id="rightBlockProps" style="display:none"></div>
+      </div>
 
-        <div class="mse-prop-row">
-          <div class="mse-prop-label">Accent Colour</div>
-          <div class="mse-color-row">
-            <div class="mse-color-swatch" id="accentSwatch">
-              <input type="color" id="accentColorInput" oninput="onAccentChange(this.value)"/>
+      <!-- Site settings tab -->
+      <div class="mse-right-body" id="rightSiteBody" style="display:none">
+        <div class="mse-props-section">
+          <div class="mse-props-sec-label">Appearance</div>
+
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Theme</div>
+            <select class="mse-prop-select" id="siteTheme"
+              onchange="MSState.updateConfig({theme:this.value});refreshCanvas()">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </div>
+
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Accent Colour</div>
+            <div class="mse-color-row">
+              <div class="mse-color-swatch" id="accentSwatch">
+                <input type="color" id="accentColorInput" oninput="onAccentChange(this.value)" />
+              </div>
+              <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7" placeholder="#00d4ff"
+                oninput="onAccentHexInput(this.value)" style="flex:1" />
             </div>
-            <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7"
-              placeholder="#00d4ff" oninput="onAccentHexInput(this.value)" style="flex:1"/>
+          </div>
+
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Font Family</div>
+            <select class="mse-prop-select" id="siteFontFamily"
+              onchange="MSState.updateConfig({fontFamily:this.value});refreshCanvas()">
+              <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+              <option value="Syne">Syne</option>
+              <option value="Montserrat">Montserrat</option>
+              <option value="Raleway">Raleway</option>
+              <option value="Playfair Display">Playfair Display</option>
+              <option value="Cormorant Garamond">Cormorant Garamond</option>
+              <option value="Dancing Script">Dancing Script</option>
+              <option value="Cinzel">Cinzel</option>
+              <option value="EB Garamond">EB Garamond</option>
+              <option value="JetBrains Mono">JetBrains Mono</option>
+            </select>
+          </div>
+
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Default Logo Shape</div>
+            <div class="mse-shape-row">
+              <button class="mse-shape-btn" id="shapeCircle" onclick="setLogoShape('circle')">
+                <div class="mse-shape-preview circle"></div>
+                Circle
+              </button>
+              <button class="mse-shape-btn" id="shapeRounded" onclick="setLogoShape('rounded')">
+                <div class="mse-shape-preview rounded"></div>
+                Rounded
+              </button>
+              <button class="mse-shape-btn" id="shapeSquare" onclick="setLogoShape('square')">
+                <div class="mse-shape-preview square"></div>
+                Square
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="mse-prop-row">
-          <div class="mse-prop-label">Font Family</div>
-          <select class="mse-prop-select" id="siteFontFamily" onchange="MSState.updateConfig({fontFamily:this.value});refreshCanvas()">
-            <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
-            <option value="Syne">Syne</option>
-            <option value="Montserrat">Montserrat</option>
-            <option value="Raleway">Raleway</option>
-            <option value="Playfair Display">Playfair Display</option>
-            <option value="Cormorant Garamond">Cormorant Garamond</option>
-            <option value="Dancing Script">Dancing Script</option>
-            <option value="Cinzel">Cinzel</option>
-            <option value="EB Garamond">EB Garamond</option>
-            <option value="JetBrains Mono">JetBrains Mono</option>
-          </select>
+        <div class="mse-props-section" style="padding-top:14px">
+          <div class="mse-props-sec-label">Registration</div>
+          <div class="mse-toggle-row">
+            <span>Registrations Open</span>
+            <div class="mse-toggle" id="regToggle" onclick="toggleRegistration()"></div>
+          </div>
+          <div class="mse-prop-hint" style="margin-bottom:14px">When off, the form shows a "Registration closed" message
+            to visitors</div>
         </div>
 
-        <div class="mse-prop-row">
-          <div class="mse-prop-label">Default Logo Shape</div>
-          <div class="mse-shape-row">
-            <button class="mse-shape-btn" id="shapeCircle" onclick="setLogoShape('circle')">
-              <div class="mse-shape-preview circle"></div>
-              Circle
-            </button>
-            <button class="mse-shape-btn" id="shapeRounded" onclick="setLogoShape('rounded')">
-              <div class="mse-shape-preview rounded"></div>
-              Rounded
-            </button>
-            <button class="mse-shape-btn" id="shapeSquare" onclick="setLogoShape('square')">
-              <div class="mse-shape-preview square"></div>
-              Square
-            </button>
+        <div class="mse-props-section" style="padding-top:14px;padding-bottom:14px">
+          <div class="mse-props-sec-label">Site Info</div>
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Site URL Slug</div>
+            <input type="text" class="mse-prop-input" id="siteSlugInput" placeholder="my-event-2026"
+              oninput="onSlugInput(this.value)" />
+            <div class="mse-prop-hint" id="slugHint">honourix.app/s/<span id="slugPreview">—</span></div>
           </div>
         </div>
       </div>
 
-      <div class="mse-props-section" style="padding-top:14px">
-        <div class="mse-props-sec-label">Registration</div>
-        <div class="mse-toggle-row">
-          <span>Registrations Open</span>
-          <div class="mse-toggle" id="regToggle" onclick="toggleRegistration()"></div>
-        </div>
-        <div class="mse-prop-hint" style="margin-bottom:14px">When off, the form shows a "Registration closed" message to visitors</div>
-      </div>
+    </aside>
 
-      <div class="mse-props-section" style="padding-top:14px;padding-bottom:14px">
-        <div class="mse-props-sec-label">Site Info</div>
-        <div class="mse-prop-row">
-          <div class="mse-prop-label">Site URL Slug</div>
-          <input type="text" class="mse-prop-input" id="siteSlugInput"
-            placeholder="my-event-2026"
-            oninput="onSlugInput(this.value)"/>
-          <div class="mse-prop-hint" id="slugHint">honourix.app/s/<span id="slugPreview">—</span></div>
-        </div>
-      </div>
-    </div>
+  </div>
 
-  </aside>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════
+  <!-- ═══════════════════════════════════════════════════════
      PUBLISH OVERLAY
 ═══════════════════════════════════════════════════════ -->
-<div class="mse-publish-overlay" id="publishOverlay">
-  <div class="mse-publish-panel">
-    <div class="mse-publish-header">
-      <div>
-        <div class="mse-publish-title" id="publishPanelTitle">Publish Site</div>
-        <div style="font-size:13px;color:var(--text-3);margin-top:3px">Your site will be live at the URL below</div>
-      </div>
-      <button class="mse-publish-close" onclick="closePublish()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="mse-publish-body">
-      <div class="mse-pub-url-box">
-        <div class="mse-pub-url" id="publishUrlDisplay">honourix.app/s/</div>
-        <button class="mse-pub-copy-btn" onclick="copyPublishUrl()">Copy</button>
-      </div>
-      <div class="mse-toggle-row" style="padding:12px 0">
+  <div class="mse-publish-overlay" id="publishOverlay">
+    <div class="mse-publish-panel">
+      <div class="mse-publish-header">
         <div>
-          <div style="font-size:13.5px;font-weight:600;color:var(--text)">Registrations Open</div>
-          <div style="font-size:12px;color:var(--text-3);margin-top:2px">Visitors can submit the registration form</div>
+          <div class="mse-publish-title" id="publishPanelTitle">Publish Site</div>
+          <div style="font-size:13px;color:var(--text-3);margin-top:3px">Your site will be live at the URL below</div>
         </div>
-        <div class="mse-toggle" id="publishRegToggle" onclick="toggleRegFromPublish()"></div>
+        <button class="mse-publish-close" onclick="closePublish()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
-      <div style="padding:12px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.12);border-radius:9px;font-size:13px;color:var(--text-2);line-height:1.55">
-        <strong style="color:var(--cyan)">What happens when you publish:</strong><br/>
-        Your site config is saved and the public URL becomes active. Visitor registrations go directly to your Google Sheet.
+      <div class="mse-publish-body">
+        <div class="mse-pub-url-box">
+          <div class="mse-pub-url" id="publishUrlDisplay">honourix.app/s/</div>
+          <button class="mse-pub-copy-btn" onclick="copyPublishUrl()">Copy</button>
+        </div>
+        <div class="mse-toggle-row" style="padding:12px 0">
+          <div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--text)">Registrations Open</div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:2px">Visitors can submit the registration form
+            </div>
+          </div>
+          <div class="mse-toggle" id="publishRegToggle" onclick="toggleRegFromPublish()"></div>
+        </div>
+        <div
+          style="padding:12px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.12);border-radius:9px;font-size:13px;color:var(--text-2);line-height:1.55">
+          <strong style="color:var(--cyan)">What happens when you publish:</strong><br />
+          Your site config is saved and the public URL becomes active. Visitor registrations go directly to your Google
+          Sheet.
+        </div>
       </div>
-    </div>
-    <div class="mse-publish-footer">
-      <button class="mse-btn mse-btn-secondary" onclick="closePublish()">Cancel</button>
-      <button class="mse-btn mse-btn-primary" onclick="doPublish()" id="publishConfirmBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
-        <span id="publishConfirmLabel">Publish Now</span>
-      </button>
+      <div class="mse-publish-footer">
+        <button class="mse-btn mse-btn-secondary" onclick="closePublish()">Cancel</button>
+        <button class="mse-btn mse-btn-primary" onclick="doPublish()" id="publishConfirmBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 3l14 9-14 9V3z" />
+          </svg>
+          <span id="publishConfirmLabel">Publish Now</span>
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Toast -->
-<div id="mse-toast"></div>
+  <!-- Toast -->
+  <div id="mse-toast"></div>
 
-<!-- ═══════════════════════════════════════════════════════
+  <!-- ═══════════════════════════════════════════════════════
      SCRIPTS
 ═══════════════════════════════════════════════════════ -->
-<script>
-/* ════════════════════════════════════════════════════════════════
-   INIT
-════════════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  if (!MSState.init()) return;
-  populateSiteSettings();
-  refreshCanvas();
-  renderLayers();
-  updateUndoRedo();
-  updateSaveStatus('saved');
-  lucide.createIcons();
-
-  MSState.onChange(type => {
-    if (type !== 'select') {
+  <script>
+    /* ════════════════════════════════════════════════════════════════
+       INIT
+    ════════════════════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!MSState.init()) return;
+      populateSiteSettings();
       refreshCanvas();
+      renderLayers();
       updateUndoRedo();
-      if (type !== 'update') renderLayers();
-      markDirty();
-    } else {
-      refreshBlockSelection();
-      updateRightPanel();
-    }
-    if (type === 'config') populateSiteSettings();
-    renderLayers();
-  });
+      updateSaveStatus('saved');
+      lucide.createIcons();
 
-  // Auto-save every 30s
-  setInterval(() => { if (MSState.dirty) doSave(); }, 30000);
-});
+      MSState.onChange(type => {
+        if (type !== 'select') {
+          refreshCanvas();
+          updateUndoRedo();
+          if (type !== 'update') renderLayers();
+          markDirty();
+        } else {
+          refreshBlockSelection();
+          updateRightPanel();
+        }
+        if (type === 'config') populateSiteSettings();
+        renderLayers();
+      });
 
-/* ════════════════════════════════════════════════════════════════
-   CANVAS RENDERING
-════════════════════════════════════════════════════════════════ */
-function refreshCanvas() {
-  const frame  = document.getElementById('canvasFrame');
-  const body   = document.getElementById('canvasBody');
-  const empty  = document.getElementById('canvasEmpty');
-  const isDark = MSState.config.theme === 'dark';
-
-  frame.className = `mse-canvas-frame theme-${MSState.config.theme}`;
-  document.getElementById('chromeUrl').textContent = `honourix.app/s/${MSState.config.slug || '—'}`;
-
-  if (!MSState.blocks.length) {
-    body.innerHTML = '';
-    empty.style.display = 'flex';
-    return;
-  }
-  empty.style.display = 'none';
-  body.innerHTML = MSState.blocks.map(b => renderBlockCanvas(b, isDark)).join('');
-
-  // Wire block click + control events
-  document.querySelectorAll('.mse-block-wrap').forEach(wrap => {
-    const id = wrap.dataset.id;
-    wrap.querySelector('.mse-block-inner')?.addEventListener('click', e => {
-      e.stopPropagation(); MSState.selectBlock(id); updateRightPanel();
+      // Auto-save every 30s
+      setInterval(() => { if (MSState.dirty) doSave(); }, 30000);
     });
-  });
 
-  refreshBlockSelection();
-  lucide.createIcons();
-}
+    /* ════════════════════════════════════════════════════════════════
+       CANVAS RENDERING
+    ════════════════════════════════════════════════════════════════ */
+    function refreshCanvas() {
+      const frame = document.getElementById('canvasFrame');
+      const body = document.getElementById('canvasBody');
+      const empty = document.getElementById('canvasEmpty');
+      const isDark = MSState.config.theme === 'dark';
 
-function refreshBlockSelection() {
-  document.querySelectorAll('.mse-block-wrap').forEach(w => {
-    w.classList.toggle('selected', w.dataset.id === MSState.selectedId);
-  });
-}
+      frame.className = `mse-canvas-frame theme-${MSState.config.theme}`;
+      document.getElementById('chromeUrl').textContent = `honourix.app/s/${MSState.config.slug || '—'}`;
 
-/* ── Block canvas renderer ─────────────────────────────────── */
-function renderBlockCanvas(block, isDark) {
-  const def    = BLOCK_REG[block.type];
-  const accent = MSState.config.accentColor || '#00d4ff';
-  const idx    = MSState.blocks.findIndex(b => b.id === block.id);
-  const total  = MSState.blocks.length;
-  const catColor = BLOCK_CATS[def.cat]?.color || '#fff';
-  const p      = block.props;
-  const textColor = isDark ? '#fff' : '#1e293b';
-  const subColor  = isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)';
-  const borderCol = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+      if (!MSState.blocks.length) {
+        body.innerHTML = '';
+        empty.style.display = 'flex';
+        return;
+      }
+      empty.style.display = 'none';
+      body.innerHTML = MSState.blocks.map(b => renderBlockCanvas(b)).join('');
 
-  const controls = `
+      // Wire block click + control events
+      document.querySelectorAll('.mse-block-wrap').forEach(wrap => {
+        const id = wrap.dataset.id;
+        wrap.querySelector('.mse-block-inner')?.addEventListener('click', e => {
+          e.stopPropagation(); MSState.selectBlock(id); updateRightPanel();
+        });
+      });
+
+      refreshBlockSelection();
+      lucide.createIcons();
+    }
+
+    function refreshBlockSelection() {
+      document.querySelectorAll('.mse-block-wrap').forEach(w => {
+        w.classList.toggle('selected', w.dataset.id === MSState.selectedId);
+      });
+    }
+
+    /* ── Block canvas renderer — delegates to mini-site-blocks.js ── */
+    function renderBlockCanvas(block) {
+      const def = BLOCK_REG[block.type];
+      const idx = MSState.blocks.findIndex(b => b.id === block.id);
+      const total = MSState.blocks.length;
+      const catColor = BLOCK_CATS[def.cat]?.color || '#fff';
+
+      const controls = `
     <div class="mse-block-type-chip" style="color:${catColor}">${def.label}</div>
     <div class="mse-block-controls">
-      ${idx > 0 ? `<button class="mse-blk-ctrl" title="Move up" onclick="event.stopPropagation();blockMoveUp('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>` : ''}
-      ${idx < total-1 ? `<button class="mse-blk-ctrl" title="Move down" onclick="event.stopPropagation();blockMoveDown('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>` : ''}
+      ${idx > 0 ? `<button class="mse-blk-ctrl" title="Move up"   onclick="event.stopPropagation();blockMoveUp('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>` : ''}
+      ${idx < total - 1 ? `<button class="mse-blk-ctrl" title="Move down" onclick="event.stopPropagation();blockMoveDown('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>` : ''}
       <button class="mse-blk-ctrl" title="Duplicate" onclick="event.stopPropagation();blockDuplicate('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
       <button class="mse-blk-ctrl del" title="Delete" onclick="event.stopPropagation();blockDelete('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
     </div>`;
 
-  let inner = '';
-
-  switch (block.type) {
-
-    case 'cover': {
-      const overlay = p.coverOverlay === 'dark' ? 'rgba(0,0,0,0.55)' : p.coverOverlay === 'blur' ? 'rgba(0,0,0,0.3)' : 'transparent';
-      const shape   = p.logoShape || MSState.config.logoShape || 'circle';
-      inner = `
-        <div class="cbp-cover" style="background:${p.bgColor||'#0a0f1e'}">
-          ${p.coverImage ? `<div class="cbp-cover-img" style="background-image:url(${p.coverImage})"></div>` : ''}
-          <div class="cbp-cover-overlay" style="background:${overlay}"></div>
-          ${p.showLogo ? `
-          <div class="cbp-logo-wrap">
-            <div class="cbp-logo-holder ${shape}">
-              ${p.logoImage ? `<img class="cbp-logo-img" src="${p.logoImage}" alt="logo"/>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="6"/></svg>`}
-            </div>
-          </div>` : ''}
-          <div class="cbp-cover-title" style="color:#fff">${p.siteName || MSState.config.name || 'Site Name'}</div>
-          ${p.tagline ? `<div class="cbp-cover-tagline">${p.tagline}</div>` : ''}
-          ${!p.siteName && !p.tagline ? `<div class="cbp-cover-tagline">Add a tagline in the properties panel →</div>` : ''}
-        </div>`;
-      break;
-    }
-
-    case 'about': {
-      const bg = p.bgColor || (isDark ? '#0d1525' : '#fff');
-      inner = `
-        <div class="cbp-section" style="background:${bg};text-align:${p.alignment||'left'}">
-          <div class="cbp-section-title" style="color:${textColor}">${p.title}</div>
-          <div class="cbp-body-text" style="color:${subColor}">${(p.content||'').replace(/\n/g,'<br/>')}</div>
-        </div>`;
-      break;
-    }
-
-    case 'announcements': {
-      const bg = p.bgColor || (isDark ? '#0a0f1e' : '#f8fafc');
-      const items = p.items?.slice(0,3) || [];
-      inner = `
-        <div class="cbp-section" style="background:${bg}">
-          <div class="cbp-section-title" style="color:${textColor}">${p.title}</div>
-          ${items.length ? items.map(it => `
-            <div class="cbp-ann-item" style="border-color:rgba(${hexToRgb(accent)},0.2);background:rgba(${hexToRgb(accent)},0.06)">
-              <div class="cbp-ann-dot" style="background:${accent}"></div>
-              <div class="cbp-ann-text" style="color:${textColor}">${it.text}</div>
-            </div>`).join('') :
-            `<div style="color:${subColor};font-size:13px;padding:8px 0">No announcements yet. Add items in the properties panel →</div>`
-          }
-        </div>`;
-      break;
-    }
-
-    case 'datetime': {
-      const bg = p.bgColor || (isDark ? '#0d1525' : '#fff');
-      inner = `
-        <div class="cbp-section" style="background:${bg}">
-          <div class="cbp-dt-grid">
-            <div class="cbp-dt-card" style="border-color:${borderCol};background:${isDark?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.03)'}">
-              <div class="cbp-dt-icon" style="background:rgba(${hexToRgb(accent)},0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-              <div class="cbp-dt-value" style="color:${textColor}">${p.date || 'Date'}</div>
-              <div class="cbp-dt-label" style="color:${subColor}">${p.date ? '' : 'Not set'}</div>
-            </div>
-            <div class="cbp-dt-card" style="border-color:${borderCol};background:${isDark?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.03)'}">
-              <div class="cbp-dt-icon" style="background:rgba(${hexToRgb(accent)},0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-              <div class="cbp-dt-value" style="color:${textColor}">${p.time || 'Time'}</div>
-              <div class="cbp-dt-label" style="color:${subColor}">${p.timezone||'IST'}</div>
-            </div>
-            <div class="cbp-dt-card" style="border-color:${borderCol};background:${isDark?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.03)'}">
-              <div class="cbp-dt-icon" style="background:rgba(${hexToRgb(accent)},0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-              <div class="cbp-dt-value" style="color:${textColor};font-size:12px">${p.venueName || (p.venueType==='online' ? 'Online' : 'Venue')}</div>
-              <div class="cbp-dt-label" style="color:${subColor}">${p.venueType==='online'?'Online event':'In-person'}</div>
-            </div>
-          </div>
-        </div>`;
-      break;
-    }
-
-    case 'speakers': {
-      const bg = p.bgColor || (isDark ? '#0a0f1e' : '#f8fafc');
-      const items = p.items?.slice(0,3) || [];
-      inner = `
-        <div class="cbp-section" style="background:${bg}">
-          <div class="cbp-section-title" style="color:${textColor}">${p.title}</div>
-          <div class="cbp-speakers-grid">
-            ${items.length ? items.map(sp => `
-              <div class="cbp-speaker-card" style="border-color:${borderCol};background:${isDark?'rgba(255,255,255,0.03)':'rgba(0,0,0,0.02)'}">
-                <div class="cbp-speaker-avatar">${sp.photo?`<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"/>`:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>`}</div>
-                <div class="cbp-speaker-name" style="color:${textColor}">${sp.name||'Speaker'}</div>
-                <div class="cbp-speaker-role" style="color:${subColor}">${sp.role||'Role'}</div>
-              </div>`).join('') :
-              [1,2,3].map(() => `
-                <div class="cbp-speaker-card" style="border-color:${borderCol};background:${isDark?'rgba(255,255,255,0.03)':'rgba(0,0,0,0.02)'}">
-                  <div class="cbp-speaker-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></div>
-                  <div style="height:10px;background:${isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)'};border-radius:4px;margin-bottom:5px"></div>
-                  <div style="height:8px;width:60%;background:${isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)'};border-radius:3px;margin:0 auto"></div>
-                </div>`).join('')
-            }
-          </div>
-        </div>`;
-      break;
-    }
-
-    case 'faq': {
-      const bg = p.bgColor || (isDark ? '#0d1525' : '#fff');
-      const items = p.items?.slice(0,3) || [];
-      inner = `
-        <div class="cbp-section" style="background:${bg}">
-          <div class="cbp-section-title" style="color:${textColor}">${p.title}</div>
-          ${items.map(q => `
-            <div class="cbp-faq-item" style="border-bottom-color:${borderCol}">
-              <div class="cbp-faq-q" style="color:${textColor}">${q.question}</div>
-              <div class="cbp-faq-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="6 9 12 15 18 9"/></svg></div>
-            </div>`).join('')}
-        </div>`;
-      break;
-    }
-
-    case 'sponsors': {
-      const bg = p.bgColor || (isDark ? '#0a0f1e' : '#f8fafc');
-      inner = `
-        <div class="cbp-section" style="background:${bg}">
-          <div class="cbp-section-title" style="color:${textColor}">${p.title}</div>
-          ${(p.tiers||[]).map(tier => `
-            <div class="cbp-sponsor-tier">
-              <div class="cbp-tier-label" style="color:${subColor}">${tier.name}</div>
-              <div class="cbp-sponsor-row">
-                ${tier.items?.length ? tier.items.map(s => `<div class="cbp-sponsor-slot" style="border-color:${borderCol}"><img src="${s.logo}" style="max-width:70px;max-height:30px;object-fit:contain" alt="${s.name}"/></div>`).join('') :
-                  `<div class="cbp-sponsor-slot" style="border-color:${borderCol};color:${subColor}">+ Add</div>`}
-              </div>
-            </div>`).join('')}
-        </div>`;
-      break;
-    }
-
-    case 'form': {
-      const bg = p.bgColor || (isDark ? '#0d1525' : '#fff');
-      const btnBg = p.buttonColor || accent;
-      inner = `
-        <div class="cbp-section" style="background:${bg}">
-          <div class="cbp-section-title" style="color:${textColor}">${p.title}</div>
-          ${p.subtitle ? `<div class="cbp-body-text" style="color:${subColor};margin-bottom:16px">${p.subtitle}</div>` : ''}
-          <div class="cbp-form">
-            ${(p.fields||[]).slice(0,4).map(f => `
-              <div class="cbp-field">
-                <div class="cbp-field-label" style="color:${subColor}">${f.label}${f.required?'<span style="color:#f43f5e"> *</span>':''}</div>
-                <div class="cbp-field-input" style="border-color:${borderCol};background:${isDark?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.03)'}"></div>
-              </div>`).join('')}
-            <div class="cbp-submit-btn" style="background:${btnBg}">${p.buttonText||'Submit'}</div>
-          </div>
-        </div>`;
-      break;
-    }
-
-    case 'documents': {
-      const bg = p.bgColor || (isDark ? '#0a0f1e' : '#f8fafc');
-      const items = p.items||[];
-      inner = `
-        <div class="cbp-section" style="background:${bg}">
-          <div class="cbp-section-title" style="color:${textColor}">${p.title}</div>
-          ${items.length ? items.map(doc => `
-            <div class="cbp-doc-item" style="border-color:${borderCol};background:${isDark?'rgba(255,255,255,0.03)':'rgba(0,0,0,0.02)'}">
-              <div class="cbp-doc-icon" style="background:rgba(${hexToRgb(accent)},0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-              <div class="cbp-doc-label" style="color:${textColor}">${doc.label||'Document'}</div>
-              <div class="cbp-doc-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-            </div>`).join('') :
-            `<div class="cbp-doc-item cbp-doc-add" style="border-color:${borderCol}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;opacity:0.3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              <span>Add documents in properties →</span>
-            </div>`
-          }
-        </div>`;
-      break;
-    }
-
-    case 'video': {
-      const bg = p.bgColor || (isDark ? '#0d1525' : '#fff');
-      const items = p.items||[];
-      inner = `
-        <div class="cbp-section" style="background:${bg}">
-          ${p.title ? `<div class="cbp-section-title" style="color:${textColor}">${p.title}</div>` : ''}
-          ${items.length ? items.slice(0,2).map(v => `
-            <div class="cbp-video-item">
-              ${v.thumbnail ? `<img class="cbp-video-thumb" src="${v.thumbnail}" alt="thumb"/>` : `<div class="cbp-video-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>${v.title||'Video'}</span></div>`}
-              <div class="cbp-video-play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-            </div>`).join('') :
-            `<div class="cbp-video-item"><div class="cbp-video-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Paste a YouTube or Drive link →</span></div></div>`
-          }
-        </div>`;
-      break;
-    }
-
-    case 'socials': {
-      const bg = p.bgColor || (isDark ? '#0a0f1e' : '#f8fafc');
-      const links = p.links||[];
-      const socialSvgs = {
-        instagram: '<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>',
-        twitter:   '<path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>',
-        linkedin:  '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
-        youtube:   '<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>',
-        github:    '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>',
-      };
-      inner = `
-        <div class="cbp-section" style="background:${bg};text-align:center">
-          <div class="cbp-section-title" style="color:${textColor};text-align:center">${p.title}</div>
-          <div class="cbp-socials-row" style="justify-content:center">
-            ${links.length ? links.map(l => `
-              <div class="cbp-social-btn" style="border-color:${borderCol};background:${isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.04)'}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="${textColor}" stroke-width="1.8" style="width:18px;height:18px">${socialSvgs[l.platform]||'<circle cx="12" cy="12" r="10"/>'}</svg>
-              </div>`).join('') :
-              `<div class="cbp-social-btn cbp-social-add" style="border-color:${borderCol}">+</div>`}
-          </div>
-        </div>`;
-      break;
-    }
-
-    case 'divider': {
-      const bg = p.bgColor || 'transparent';
-      inner = `
-        <div class="cbp-divider-wrap" style="background:${bg}">
-          <div class="cbp-divider-line" style="height:${p.thickness||1}px;opacity:${(p.opacity||30)/100};background:${isDark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.15)'}"></div>
-        </div>`;
-      break;
-    }
-
-    case 'spacer': {
-      const h = p.height || 48;
-      inner = `
-        <div class="cbp-spacer-wrap" style="height:${h}px">
-          <span class="cbp-spacer-label">${h}px</span>
-        </div>`;
-      break;
-    }
-
-    default:
-      inner = `<div style="padding:24px;text-align:center;color:rgba(255,255,255,0.3);font-size:13px">${def.label}</div>`;
-  }
-
-  return `<div class="mse-block-wrap" data-id="${block.id}">
+      const inner = renderMSBlock(block, MSState.config);
+      return `<div class="mse-block-wrap" data-id="${block.id}">
     ${controls}
     <div class="mse-block-inner">${inner}</div>
   </div>`;
-}
+    }
 
-/* ── Hex to RGB helper ─── */
-function hexToRgb(hex) {
-  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : '0,212,255';
-}
+    /* ── Hex to RGB helper ─── */
+    function hexToRgb(hex) {
+      const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return r ? `${parseInt(r[1], 16)},${parseInt(r[2], 16)},${parseInt(r[3], 16)}` : '0,212,255';
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   BLOCK CONTROLS
-════════════════════════════════════════════════════════════════ */
-function addBlock(type) {
-  MSState.addBlock(type, MSState.selectedId);
-  switchLeftTab('layers');
-  updateRightPanel();
-  // Scroll to bottom of canvas
-  const area = document.getElementById('canvasArea');
-  setTimeout(() => area.scrollTo({ top: area.scrollHeight, behavior:'smooth' }), 80);
-  mseToast(`${BLOCK_REG[type].label} added`, 'success');
-}
-function blockMoveUp(id)    { MSState.moveBlock(id, -1); }
-function blockMoveDown(id)  { MSState.moveBlock(id, +1); }
-function blockDuplicate(id) { MSState.duplicateBlock(id); updateRightPanel(); }
-function blockDelete(id) {
-  MSState.removeBlock(id);
-  updateRightPanel();
-  mseToast('Block removed', 'info');
-}
+    /* ════════════════════════════════════════════════════════════════
+       BLOCK CONTROLS
+    ════════════════════════════════════════════════════════════════ */
+    function addBlock(type) {
+      MSState.addBlock(type, MSState.selectedId);
+      switchLeftTab('layers');
+      updateRightPanel();
+      // Scroll to bottom of canvas
+      const area = document.getElementById('canvasArea');
+      setTimeout(() => area.scrollTo({ top: area.scrollHeight, behavior: 'smooth' }), 80);
+      mseToast(`${BLOCK_REG[type].label} added`, 'success');
+    }
+    function blockMoveUp(id) { MSState.moveBlock(id, -1); }
+    function blockMoveDown(id) { MSState.moveBlock(id, +1); }
+    function blockDuplicate(id) { MSState.duplicateBlock(id); updateRightPanel(); }
+    function blockDelete(id) {
+      MSState.removeBlock(id);
+      updateRightPanel();
+      mseToast('Block removed', 'info');
+    }
 
-function canvasAreaClick(e) {
-  if (e.target === document.getElementById('canvasArea') ||
-      e.target === document.getElementById('canvasWrap')) {
-    MSState.deselectAll();
-    updateRightPanel();
-  }
-}
+    function canvasAreaClick(e) {
+      if (e.target === document.getElementById('canvasArea') ||
+        e.target === document.getElementById('canvasWrap')) {
+        MSState.deselectAll();
+        updateRightPanel();
+      }
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   LAYERS PANEL
-════════════════════════════════════════════════════════════════ */
-function renderLayers() {
-  const el = document.getElementById('layersList');
-  if (!MSState.blocks.length) {
-    el.innerHTML = `<div class="mse-layers-empty">
+    /* ════════════════════════════════════════════════════════════════
+       LAYERS PANEL
+    ════════════════════════════════════════════════════════════════ */
+    function renderLayers() {
+      const el = document.getElementById('layersList');
+      if (!MSState.blocks.length) {
+        el.innerHTML = `<div class="mse-layers-empty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
       <p>No blocks yet.<br/>Add blocks from the Blocks tab.</p>
     </div>`;
-    return;
-  }
-  el.innerHTML = MSState.blocks.map(b => {
-    const def  = BLOCK_REG[b.type];
-    const col  = BLOCK_CATS[def.cat]?.color || '#fff';
-    const isSel = b.id === MSState.selectedId;
-    return `<div class="mse-layer-item ${isSel?'selected':''}" onclick="MSState.selectBlock('${b.id}');switchRightTab('block');updateRightPanel()">
+        return;
+      }
+      el.innerHTML = MSState.blocks.map(b => {
+        const def = BLOCK_REG[b.type];
+        const col = BLOCK_CATS[def.cat]?.color || '#fff';
+        const isSel = b.id === MSState.selectedId;
+        return `<div class="mse-layer-item ${isSel ? 'selected' : ''}" onclick="MSState.selectBlock('${b.id}');switchRightTab('block');updateRightPanel()">
       <div class="mse-layer-dot" style="background:${col}"></div>
       <div class="mse-layer-label">${def.label}</div>
       <div class="mse-layer-type">${b.type}</div>
     </div>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   RIGHT PANEL
-════════════════════════════════════════════════════════════════ */
-function updateRightPanel() {
-  const block = MSState.getSelected();
-  const emptyEl = document.getElementById('rightBlockEmpty');
-  const propsEl = document.getElementById('rightBlockProps');
-  if (!block) {
-    emptyEl.style.display = 'flex';
-    propsEl.style.display = 'none';
-    return;
-  }
-  emptyEl.style.display = 'none';
-  propsEl.style.display = 'block';
-  propsEl.innerHTML = renderBlockProps(block);
-  lucide.createIcons();
-  refreshBlockSelection();
-  renderLayers();
-}
+    /* ════════════════════════════════════════════════════════════════
+       RIGHT PANEL
+    ════════════════════════════════════════════════════════════════ */
+    function updateRightPanel() {
+      const block = MSState.getSelected();
+      const emptyEl = document.getElementById('rightBlockEmpty');
+      const propsEl = document.getElementById('rightBlockProps');
+      if (!block) {
+        emptyEl.style.display = 'flex';
+        propsEl.style.display = 'none';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      propsEl.style.display = 'block';
+      propsEl.innerHTML = renderBlockProps(block);
+      lucide.createIcons();
+      refreshBlockSelection();
+      renderLayers();
+    }
 
-function renderBlockProps(block) {
-  const p = block.props;
-  const accent = MSState.config.accentColor || '#00d4ff';
+    function renderBlockProps(block) {
+      const p = block.props;
+      const accent = MSState.config.accentColor || '#00d4ff';
 
-  // Common bgColor control for all blocks
-  const bgRow = `
+      // Common bgColor control for all blocks
+      const bgRow = `
     <div class="mse-prop-row">
       <div class="mse-prop-label">Section Background</div>
       <div class="mse-color-row">
-        <div class="mse-color-swatch" style="background:${p.bgColor||'transparent'}">
-          <input type="color" value="${p.bgColor||'#0a0f1e'}"
+        <div class="mse-color-swatch" style="background:${p.bgColor || 'transparent'}">
+          <input type="color" value="${p.bgColor || '#0a0f1e'}"
             oninput="MSState.updateBlock('${block.id}',{bgColor:this.value});refreshCanvas()"/>
         </div>
-        <input type="text" class="mse-prop-input" value="${p.bgColor||''}" placeholder="Default"
+        <input type="text" class="mse-prop-input" value="${p.bgColor || ''}" placeholder="Default"
           oninput="MSState.updateBlock('${block.id}',{bgColor:this.value});refreshCanvas()" style="flex:1"/>
         <button style="padding:0 8px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px"
           onclick="MSState.updateBlock('${block.id}',{bgColor:''});refreshCanvas()">Clear</button>
       </div>
     </div>`;
 
-  switch (block.type) {
+      switch (block.type) {
 
-    case 'cover': return `
+        case 'cover': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#00d4ff">Cover / Hero</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Site Name</div>
-          <input class="mse-prop-input" type="text" value="${p.siteName||''}" placeholder="Your event name"
+          <input class="mse-prop-input" type="text" value="${p.siteName || ''}" placeholder="Your event name"
             oninput="MSState.updateBlock('${block.id}',{siteName:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Tagline</div>
-          <input class="mse-prop-input" type="text" value="${p.tagline||''}" placeholder="A short tagline"
+          <input class="mse-prop-input" type="text" value="${p.tagline || ''}" placeholder="A short tagline"
             oninput="MSState.updateBlock('${block.id}',{tagline:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Cover Image URL</div>
-          <input class="mse-prop-input" type="url" value="${p.coverImage||''}" placeholder="https://… or Drive link"
+          <input class="mse-prop-input" type="url" value="${p.coverImage || ''}" placeholder="https://… or Drive link"
             oninput="MSState.updateBlock('${block.id}',{coverImage:this.value});refreshCanvas()"/>
           <div class="mse-prop-hint">Paste a public image URL or Google Drive image link</div></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Cover Overlay</div>
           <select class="mse-prop-select" onchange="MSState.updateBlock('${block.id}',{coverOverlay:this.value});refreshCanvas()">
-            <option value="dark" ${p.coverOverlay==='dark'?'selected':''}>Dark</option>
-            <option value="blur" ${p.coverOverlay==='blur'?'selected':''}>Blur</option>
-            <option value="none" ${p.coverOverlay==='none'?'selected':''}>None</option>
+            <option value="dark" ${p.coverOverlay === 'dark' ? 'selected' : ''}>Dark</option>
+            <option value="blur" ${p.coverOverlay === 'blur' ? 'selected' : ''}>Blur</option>
+            <option value="none" ${p.coverOverlay === 'none' ? 'selected' : ''}>None</option>
           </select></div>
         <div class="mse-toggle-row"><span>Show Logo</span>
-          <div class="mse-toggle ${p.showLogo?'on':''}" onclick="MSState.updateBlock('${block.id}',{showLogo:!${p.showLogo}});refreshCanvas()"></div></div>
+          <div class="mse-toggle ${p.showLogo ? 'on' : ''}" onclick="MSState.updateBlock('${block.id}',{showLogo:!${p.showLogo}});refreshCanvas()"></div></div>
         ${p.showLogo ? `
         <div class="mse-prop-row"><div class="mse-prop-label">Logo Image URL</div>
-          <input class="mse-prop-input" type="url" value="${p.logoImage||''}" placeholder="https://… or Drive link"
+          <input class="mse-prop-input" type="url" value="${p.logoImage || ''}" placeholder="https://… or Drive link"
             oninput="MSState.updateBlock('${block.id}',{logoImage:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Logo Shape</div>
           <div class="mse-shape-row">
-            ${['circle','rounded','square'].map(s=>`<button class="mse-shape-btn ${p.logoShape===s?'on':''}" onclick="MSState.updateBlock('${block.id}',{logoShape:'${s}'});refreshCanvas()"><div class="mse-shape-preview ${s}"></div>${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
+            ${['circle', 'rounded', 'square'].map(s => `<button class="mse-shape-btn ${p.logoShape === s ? 'on' : ''}" onclick="MSState.updateBlock('${block.id}',{logoShape:'${s}'});refreshCanvas()"><div class="mse-shape-preview ${s}"></div>${s.charAt(0).toUpperCase() + s.slice(1)}</button>`).join('')}
           </div></div>` : ''}
         ${bgRow}
       </div>`;
 
-    case 'about': return `
+        case 'about': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#00d4ff">About</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
-          <input class="mse-prop-input" value="${p.title||''}"
+          <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Content</div>
           <textarea class="mse-prop-textarea"
-            oninput="MSState.updateBlock('${block.id}',{content:this.value});refreshCanvas()">${p.content||''}</textarea></div>
+            oninput="MSState.updateBlock('${block.id}',{content:this.value});refreshCanvas()">${p.content || ''}</textarea></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Alignment</div>
           <div class="mse-align-row">
-            ${['left','center','right'].map(a=>`<button class="mse-align-btn ${p.alignment===a?'on':''}" onclick="MSState.updateBlock('${block.id}',{alignment:'${a}'});refreshCanvas()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">${a==='left'?'<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>':a==='center'?'<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>':'<line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/>'}</svg></button>`).join('')}
+            ${['left', 'center', 'right'].map(a => `<button class="mse-align-btn ${p.alignment === a ? 'on' : ''}" onclick="MSState.updateBlock('${block.id}',{alignment:'${a}'});refreshCanvas()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">${a === 'left' ? '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : a === 'center' ? '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : '<line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/>'}</svg></button>`).join('')}
           </div></div>
         ${bgRow}
       </div>`;
 
-    case 'datetime': return `
+        case 'datetime': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#f59e0b">Date & Venue</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Event Date</div>
-          <input class="mse-prop-input" type="text" value="${p.date||''}" placeholder="e.g. 15 March 2026"
+          <input class="mse-prop-input" type="text" value="${p.date || ''}" placeholder="e.g. 15 March 2026"
             oninput="MSState.updateBlock('${block.id}',{date:this.value});refreshCanvas()"/></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div class="mse-prop-row"><div class="mse-prop-label">Start Time</div>
-            <input class="mse-prop-input" type="text" value="${p.time||''}" placeholder="10:00 AM"
+            <input class="mse-prop-input" type="text" value="${p.time || ''}" placeholder="10:00 AM"
               oninput="MSState.updateBlock('${block.id}',{time:this.value});refreshCanvas()"/></div>
           <div class="mse-prop-row"><div class="mse-prop-label">End Time</div>
-            <input class="mse-prop-input" type="text" value="${p.endTime||''}" placeholder="5:00 PM"
+            <input class="mse-prop-input" type="text" value="${p.endTime || ''}" placeholder="5:00 PM"
               oninput="MSState.updateBlock('${block.id}',{endTime:this.value});refreshCanvas()"/></div>
         </div>
         <div class="mse-prop-row"><div class="mse-prop-label">Timezone</div>
           <select class="mse-prop-select" onchange="MSState.updateBlock('${block.id}',{timezone:this.value});refreshCanvas()">
-            ${['IST','UTC','EST','PST','GMT','CST'].map(tz=>`<option value="${tz}" ${p.timezone===tz?'selected':''}>${tz}</option>`).join('')}
+            ${['IST', 'UTC', 'EST', 'PST', 'GMT', 'CST'].map(tz => `<option value="${tz}" ${p.timezone === tz ? 'selected' : ''}>${tz}</option>`).join('')}
           </select></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Venue Type</div>
           <select class="mse-prop-select" onchange="MSState.updateBlock('${block.id}',{venueType:this.value});refreshCanvas()">
-            <option value="in-person" ${p.venueType==='in-person'?'selected':''}>In-Person</option>
-            <option value="online"    ${p.venueType==='online'?'selected':''}>Online</option>
-            <option value="hybrid"    ${p.venueType==='hybrid'?'selected':''}>Hybrid</option>
+            <option value="in-person" ${p.venueType === 'in-person' ? 'selected' : ''}>In-Person</option>
+            <option value="online"    ${p.venueType === 'online' ? 'selected' : ''}>Online</option>
+            <option value="hybrid"    ${p.venueType === 'hybrid' ? 'selected' : ''}>Hybrid</option>
           </select></div>
         ${p.venueType !== 'online' ? `
         <div class="mse-prop-row"><div class="mse-prop-label">Venue Name</div>
-          <input class="mse-prop-input" value="${p.venueName||''}" placeholder="e.g. Main Auditorium"
+          <input class="mse-prop-input" value="${p.venueName || ''}" placeholder="e.g. Main Auditorium"
             oninput="MSState.updateBlock('${block.id}',{venueName:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Address</div>
-          <input class="mse-prop-input" value="${p.venueAddress||''}" placeholder="City, State"
+          <input class="mse-prop-input" value="${p.venueAddress || ''}" placeholder="City, State"
             oninput="MSState.updateBlock('${block.id}',{venueAddress:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Google Maps Link</div>
-          <input class="mse-prop-input" type="url" value="${p.mapLink||''}" placeholder="https://maps.google.com/…"
+          <input class="mse-prop-input" type="url" value="${p.mapLink || ''}" placeholder="https://maps.google.com/…"
             oninput="MSState.updateBlock('${block.id}',{mapLink:this.value})"/></div>` : `
         <div class="mse-prop-row"><div class="mse-prop-label">Meeting Link</div>
-          <input class="mse-prop-input" type="url" value="${p.onlineLink||''}" placeholder="https://meet.google.com/…"
+          <input class="mse-prop-input" type="url" value="${p.onlineLink || ''}" placeholder="https://meet.google.com/…"
             oninput="MSState.updateBlock('${block.id}',{onlineLink:this.value})"/></div>`}
         ${bgRow}
       </div>`;
 
-    case 'announcements': return `
+        case 'announcements': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#00d4ff">Announcements</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
-          <input class="mse-prop-input" value="${p.title||''}"
+          <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Announcement items — full editor in Batch 3</div>
         ${bgRow}
       </div>`;
 
-    case 'speakers': return `
+        case 'speakers': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#f59e0b">Speakers / Team</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
-          <input class="mse-prop-input" value="${p.title||''}"
+          <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Layout</div>
           <select class="mse-prop-select" onchange="MSState.updateBlock('${block.id}',{layout:this.value});refreshCanvas()">
-            <option value="grid" ${p.layout==='grid'?'selected':''}>Grid</option>
-            <option value="list" ${p.layout==='list'?'selected':''}>List</option>
+            <option value="grid" ${p.layout === 'grid' ? 'selected' : ''}>Grid</option>
+            <option value="list" ${p.layout === 'list' ? 'selected' : ''}>List</option>
           </select></div>
         <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Speaker cards — full editor in Batch 3</div>
         ${bgRow}
       </div>`;
 
-    case 'faq': return `
+        case 'faq': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#f59e0b">FAQ</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
-          <input class="mse-prop-input" value="${p.title||''}"
+          <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">FAQ items — full editor in Batch 3</div>
         ${bgRow}
       </div>`;
 
-    case 'sponsors': return `
+        case 'sponsors': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#f59e0b">Sponsors</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
-          <input class="mse-prop-input" value="${p.title||''}"
+          <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Sponsor tiers & logos — full editor in Batch 3</div>
         ${bgRow}
       </div>`;
 
-    case 'form': return `
+        case 'form': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#a78bfa">Registration Form</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Form Title</div>
-          <input class="mse-prop-input" value="${p.title||''}"
+          <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Subtitle</div>
-          <input class="mse-prop-input" value="${p.subtitle||''}" placeholder="Optional description"
+          <input class="mse-prop-input" value="${p.subtitle || ''}" placeholder="Optional description"
             oninput="MSState.updateBlock('${block.id}',{subtitle:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Button Text</div>
-          <input class="mse-prop-input" value="${p.buttonText||'Submit Registration'}"
+          <input class="mse-prop-input" value="${p.buttonText || 'Submit Registration'}"
             oninput="MSState.updateBlock('${block.id}',{buttonText:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Google Sheet ID</div>
-          <input class="mse-prop-input" type="text" value="${p.sheetId||''}" placeholder="Sheet ID from Drive URL"
+          <input class="mse-prop-input" type="text" value="${p.sheetId || ''}" placeholder="Sheet ID from Drive URL"
             oninput="MSState.updateBlock('${block.id}',{sheetId:this.value})"/>
           <div class="mse-prop-hint">Responses will append to your Google Sheet. Full form field editor in Batch 5.</div></div>
         ${bgRow}
       </div>`;
 
-    case 'documents': return `
+        case 'documents': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#a78bfa">Document Links</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
-          <input class="mse-prop-input" value="${p.title||''}"
+          <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Document upload/link editor — full implementation in Batch 4</div>
         ${bgRow}
       </div>`;
 
-    case 'video': return `
+        case 'video': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#a78bfa">Video</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
-          <input class="mse-prop-input" value="${p.title||''}" placeholder="Optional title"
+          <input class="mse-prop-input" value="${p.title || ''}" placeholder="Optional title"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">YouTube / Drive video editor (max 2) — full implementation in Batch 4</div>
         ${bgRow}
       </div>`;
 
-    case 'socials': return `
+        case 'socials': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label" style="color:#a78bfa">Social Links</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
-          <input class="mse-prop-input" value="${p.title||''}"
+          <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
         <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Social platform editor — full implementation in Batch 4</div>
         ${bgRow}
       </div>`;
 
-    case 'divider': return `
+        case 'divider': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label">Divider</div>
         <div class="mse-prop-row"><div class="mse-prop-label">Style</div>
           <select class="mse-prop-select" onchange="MSState.updateBlock('${block.id}',{style:this.value});refreshCanvas()">
-            <option value="line" ${p.style==='line'?'selected':''}>Line</option>
-            <option value="dots" ${p.style==='dots'?'selected':''}>Dots</option>
+            <option value="line" ${p.style === 'line' ? 'selected' : ''}>Line</option>
+            <option value="dots" ${p.style === 'dots' ? 'selected' : ''}>Dots</option>
           </select></div>
         <div class="mse-prop-row"><div class="mse-range-row">
-          <div class="mse-range-header"><span class="mse-prop-label">Opacity</span><span class="mse-range-val" id="divOpacVal">${p.opacity||30}%</span></div>
-          <input type="range" class="mse-prop-range" min="5" max="100" step="5" value="${p.opacity||30}"
+          <div class="mse-range-header"><span class="mse-prop-label">Opacity</span><span class="mse-range-val" id="divOpacVal">${p.opacity || 30}%</span></div>
+          <input type="range" class="mse-prop-range" min="5" max="100" step="5" value="${p.opacity || 30}"
             oninput="document.getElementById('divOpacVal').textContent=this.value+'%';MSState.updateBlock('${block.id}',{opacity:+this.value});refreshCanvas()"/>
         </div></div>
         <div class="mse-prop-row"><div class="mse-range-row">
-          <div class="mse-range-header"><span class="mse-prop-label">Thickness</span><span class="mse-range-val" id="divThickVal">${p.thickness||1}px</span></div>
-          <input type="range" class="mse-prop-range" min="1" max="8" step="1" value="${p.thickness||1}"
+          <div class="mse-range-header"><span class="mse-prop-label">Thickness</span><span class="mse-range-val" id="divThickVal">${p.thickness || 1}px</span></div>
+          <input type="range" class="mse-prop-range" min="1" max="8" step="1" value="${p.thickness || 1}"
             oninput="document.getElementById('divThickVal').textContent=this.value+'px';MSState.updateBlock('${block.id}',{thickness:+this.value});refreshCanvas()"/>
         </div></div>
         ${bgRow}
       </div>`;
 
-    case 'spacer': return `
+        case 'spacer': return `
       <div class="mse-props-section">
         <div class="mse-props-sec-label">Spacer</div>
         <div class="mse-prop-row"><div class="mse-range-row">
-          <div class="mse-range-header"><span class="mse-prop-label">Height</span><span class="mse-range-val" id="spacerHVal">${p.height||48}px</span></div>
-          <input type="range" class="mse-prop-range" min="8" max="200" step="4" value="${p.height||48}"
+          <div class="mse-range-header"><span class="mse-prop-label">Height</span><span class="mse-range-val" id="spacerHVal">${p.height || 48}px</span></div>
+          <input type="range" class="mse-prop-range" min="8" max="200" step="4" value="${p.height || 48}"
             oninput="document.getElementById('spacerHVal').textContent=this.value+'px';MSState.updateBlock('${block.id}',{height:+this.value});refreshCanvas()"/>
         </div></div>
         ${bgRow}
       </div>`;
 
-    default: return `<div class="mse-right-empty"><p>Properties for ${BLOCK_REG[block.type]?.label} coming in Batch 3</p></div>`;
-  }
-}
+        default: return `<div class="mse-right-empty"><p>Properties for ${BLOCK_REG[block.type]?.label} coming in Batch 3</p></div>`;
+      }
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   TAB SWITCHING
-════════════════════════════════════════════════════════════════ */
-function switchLeftTab(tab) {
-  document.getElementById('tabBlocks').classList.toggle('active', tab === 'blocks');
-  document.getElementById('tabLayers').classList.toggle('active', tab === 'layers');
-  document.getElementById('blocksTabBody').style.display = tab === 'blocks' ? 'block' : 'none';
-  document.getElementById('layersTabBody').style.display = tab === 'layers' ? 'block' : 'none';
-  if (tab === 'layers') renderLayers();
-}
+    /* ════════════════════════════════════════════════════════════════
+       TAB SWITCHING
+    ════════════════════════════════════════════════════════════════ */
+    function switchLeftTab(tab) {
+      document.getElementById('tabBlocks').classList.toggle('active', tab === 'blocks');
+      document.getElementById('tabLayers').classList.toggle('active', tab === 'layers');
+      document.getElementById('blocksTabBody').style.display = tab === 'blocks' ? 'block' : 'none';
+      document.getElementById('layersTabBody').style.display = tab === 'layers' ? 'block' : 'none';
+      if (tab === 'layers') renderLayers();
+    }
 
-function switchRightTab(tab) {
-  document.getElementById('rtabBlock').classList.toggle('active', tab === 'block');
-  document.getElementById('rtabSite').classList.toggle('active', tab === 'site');
-  document.getElementById('rightBlockBody').style.display = tab === 'block' ? 'block' : 'none';
-  document.getElementById('rightSiteBody').style.display  = tab === 'site'  ? 'block' : 'none';
-}
+    function switchRightTab(tab) {
+      document.getElementById('rtabBlock').classList.toggle('active', tab === 'block');
+      document.getElementById('rtabSite').classList.toggle('active', tab === 'site');
+      document.getElementById('rightBlockBody').style.display = tab === 'block' ? 'block' : 'none';
+      document.getElementById('rightSiteBody').style.display = tab === 'site' ? 'block' : 'none';
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   SITE SETTINGS
-════════════════════════════════════════════════════════════════ */
-function populateSiteSettings() {
-  const c = MSState.config;
-  const nameInput  = document.getElementById('siteNameInput');
-  if (nameInput && document.activeElement !== nameInput) nameInput.value = c.name;
+    /* ════════════════════════════════════════════════════════════════
+       SITE SETTINGS
+    ════════════════════════════════════════════════════════════════ */
+    function populateSiteSettings() {
+      const c = MSState.config;
+      const nameInput = document.getElementById('siteNameInput');
+      if (nameInput && document.activeElement !== nameInput) nameInput.value = c.name;
 
-  const slugInput = document.getElementById('siteSlugInput');
-  if (slugInput && document.activeElement !== slugInput) slugInput.value = c.slug;
-  document.getElementById('slugPreview').textContent = c.slug || '—';
+      const slugInput = document.getElementById('siteSlugInput');
+      if (slugInput && document.activeElement !== slugInput) slugInput.value = c.slug;
+      document.getElementById('slugPreview').textContent = c.slug || '—';
 
-  const themeEl = document.getElementById('siteTheme');
-  if (themeEl) themeEl.value = c.theme;
+      const themeEl = document.getElementById('siteTheme');
+      if (themeEl) themeEl.value = c.theme;
 
-  const accentIn = document.getElementById('accentColorInput');
-  const accentHx = document.getElementById('accentColorHex');
-  const swatch   = document.getElementById('accentSwatch');
-  if (accentIn) { accentIn.value = c.accentColor; }
-  if (accentHx && document.activeElement !== accentHx) accentHx.value = c.accentColor;
-  if (swatch)   swatch.style.background = c.accentColor;
+      const accentIn = document.getElementById('accentColorInput');
+      const accentHx = document.getElementById('accentColorHex');
+      const swatch = document.getElementById('accentSwatch');
+      if (accentIn) { accentIn.value = c.accentColor; }
+      if (accentHx && document.activeElement !== accentHx) accentHx.value = c.accentColor;
+      if (swatch) swatch.style.background = c.accentColor;
 
-  const fontEl = document.getElementById('siteFontFamily');
-  if (fontEl) fontEl.value = c.fontFamily;
+      const fontEl = document.getElementById('siteFontFamily');
+      if (fontEl) fontEl.value = c.fontFamily;
 
-  ['shapeCircle','shapeRounded','shapeSquare'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('on', el.id === 'shape' + cap(c.logoShape));
-  });
+      ['shapeCircle', 'shapeRounded', 'shapeSquare'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('on', el.id === 'shape' + cap(c.logoShape));
+      });
 
-  const regEl = document.getElementById('regToggle');
-  if (regEl) regEl.classList.toggle('on', !!c.registrationOpen);
+      const regEl = document.getElementById('regToggle');
+      if (regEl) regEl.classList.toggle('on', !!c.registrationOpen);
 
-  const pubReg = document.getElementById('publishRegToggle');
-  if (pubReg) pubReg.classList.toggle('on', !!c.registrationOpen);
+      const pubReg = document.getElementById('publishRegToggle');
+      if (pubReg) pubReg.classList.toggle('on', !!c.registrationOpen);
 
-  // Update status display
-  const ss    = document.getElementById('saveStatus');
-  const ssT   = document.getElementById('saveStatusText');
-  const pubLbl = document.getElementById('publishBtnLabel');
-  if (c.status === 'published') {
-    ss?.classList.add('live'); ssT && (ssT.textContent = 'Live');
-    pubLbl && (pubLbl.textContent = 'Update');
-  }
-}
+      // Update status display
+      const ss = document.getElementById('saveStatus');
+      const ssT = document.getElementById('saveStatusText');
+      const pubLbl = document.getElementById('publishBtnLabel');
+      if (c.status === 'published') {
+        ss?.classList.add('live'); ssT && (ssT.textContent = 'Live');
+        pubLbl && (pubLbl.textContent = 'Update');
+      }
+    }
 
-function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+    function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
-function onNameInput(val) {
-  MSState.config.name = val;
-  MSState.dirty = true;
-}
-function onNameBlur(val) {
-  if (!val.trim()) { document.getElementById('siteNameInput').value = MSState.config.name; return; }
-  MSState.updateConfig({ name: val });
-}
+    function onNameInput(val) {
+      MSState.config.name = val;
+      MSState.dirty = true;
+    }
+    function onNameBlur(val) {
+      if (!val.trim()) { document.getElementById('siteNameInput').value = MSState.config.name; return; }
+      MSState.updateConfig({ name: val });
+    }
 
-function onAccentChange(val) {
-  document.getElementById('accentColorHex').value = val;
-  document.getElementById('accentSwatch').style.background = val;
-  MSState.updateConfig({ accentColor: val });
-  refreshCanvas();
-}
-function onAccentHexInput(val) {
-  if (/^#[0-9a-f]{6}$/i.test(val)) {
-    document.getElementById('accentColorInput').value = val;
-    document.getElementById('accentSwatch').style.background = val;
-    MSState.updateConfig({ accentColor: val });
-    refreshCanvas();
-  }
-}
+    function onAccentChange(val) {
+      document.getElementById('accentColorHex').value = val;
+      document.getElementById('accentSwatch').style.background = val;
+      MSState.updateConfig({ accentColor: val });
+      refreshCanvas();
+    }
+    function onAccentHexInput(val) {
+      if (/^#[0-9a-f]{6}$/i.test(val)) {
+        document.getElementById('accentColorInput').value = val;
+        document.getElementById('accentSwatch').style.background = val;
+        MSState.updateConfig({ accentColor: val });
+        refreshCanvas();
+      }
+    }
 
-function setLogoShape(shape) {
-  MSState.updateConfig({ logoShape: shape });
-  ['shapeCircle','shapeRounded','shapeSquare'].forEach(id => {
-    document.getElementById(id)?.classList.toggle('on', id === 'shape' + cap(shape));
-  });
-  refreshCanvas();
-}
+    function setLogoShape(shape) {
+      MSState.updateConfig({ logoShape: shape });
+      ['shapeCircle', 'shapeRounded', 'shapeSquare'].forEach(id => {
+        document.getElementById(id)?.classList.toggle('on', id === 'shape' + cap(shape));
+      });
+      refreshCanvas();
+    }
 
-function toggleRegistration() {
-  MSState.updateConfig({ registrationOpen: !MSState.config.registrationOpen });
-  document.getElementById('regToggle')?.classList.toggle('on', MSState.config.registrationOpen);
-  document.getElementById('publishRegToggle')?.classList.toggle('on', MSState.config.registrationOpen);
-}
-function toggleRegFromPublish() { toggleRegistration(); }
+    function toggleRegistration() {
+      MSState.updateConfig({ registrationOpen: !MSState.config.registrationOpen });
+      document.getElementById('regToggle')?.classList.toggle('on', MSState.config.registrationOpen);
+      document.getElementById('publishRegToggle')?.classList.toggle('on', MSState.config.registrationOpen);
+    }
+    function toggleRegFromPublish() { toggleRegistration(); }
 
-function onSlugInput(val) {
-  const clean = val.toLowerCase().replace(/[^a-z0-9-]/g,'');
-  document.getElementById('siteSlugInput').value = clean;
-  document.getElementById('slugPreview').textContent = clean || '—';
-  document.getElementById('chromeUrl').textContent   = `honourix.app/s/${clean||'—'}`;
-  document.getElementById('publishUrlDisplay').textContent = `honourix.app/s/${clean||'—'}`;
-  MSState.updateConfig({ slug: clean });
-}
+    function onSlugInput(val) {
+      const clean = val.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      document.getElementById('siteSlugInput').value = clean;
+      document.getElementById('slugPreview').textContent = clean || '—';
+      document.getElementById('chromeUrl').textContent = `honourix.app/s/${clean || '—'}`;
+      document.getElementById('publishUrlDisplay').textContent = `honourix.app/s/${clean || '—'}`;
+      MSState.updateConfig({ slug: clean });
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   PREVIEW MODE
-════════════════════════════════════════════════════════════════ */
-function setPreviewMode(mode) {
-  document.getElementById('btnDesktop').classList.toggle('active', mode === 'desktop');
-  document.getElementById('btnMobile').classList.toggle('active', mode === 'mobile');
-  document.getElementById('canvasWrap').classList.toggle('mobile', mode === 'mobile');
-  MSState.previewMode = mode;
-}
+    /* ════════════════════════════════════════════════════════════════
+       PREVIEW MODE
+    ════════════════════════════════════════════════════════════════ */
+    function setPreviewMode(mode) {
+      document.getElementById('btnDesktop').classList.toggle('active', mode === 'desktop');
+      document.getElementById('btnMobile').classList.toggle('active', mode === 'mobile');
+      document.getElementById('canvasWrap').classList.toggle('mobile', mode === 'mobile');
+      MSState.previewMode = mode;
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   SAVE / UNDO / REDO
-════════════════════════════════════════════════════════════════ */
-function doSave() {
-  const ok = MSState.save();
-  updateSaveStatus(ok ? 'saved' : 'error');
-  if (ok) mseToast('Saved', 'success');
-}
+    /* ════════════════════════════════════════════════════════════════
+       SAVE / UNDO / REDO
+    ════════════════════════════════════════════════════════════════ */
+    function doSave() {
+      const ok = MSState.save();
+      updateSaveStatus(ok ? 'saved' : 'error');
+      if (ok) mseToast('Saved', 'success');
+    }
 
-function doUndo() {
-  if (!MSState.canUndo()) return;
-  MSState.undo();
-  updateRightPanel();
-  updateUndoRedo();
-}
-function doRedo() {
-  if (!MSState.canRedo()) return;
-  MSState.redo();
-  updateRightPanel();
-  updateUndoRedo();
-}
+    function doUndo() {
+      if (!MSState.canUndo()) return;
+      MSState.undo();
+      updateRightPanel();
+      updateUndoRedo();
+    }
+    function doRedo() {
+      if (!MSState.canRedo()) return;
+      MSState.redo();
+      updateRightPanel();
+      updateUndoRedo();
+    }
 
-function updateUndoRedo() {
-  document.getElementById('undoBtn').disabled = !MSState.canUndo();
-  document.getElementById('redoBtn').disabled = !MSState.canRedo();
-}
+    function updateUndoRedo() {
+      document.getElementById('undoBtn').disabled = !MSState.canUndo();
+      document.getElementById('redoBtn').disabled = !MSState.canRedo();
+    }
 
-function markDirty() {
-  if (MSState.config.status !== 'published') updateSaveStatus('dirty');
-}
+    function markDirty() {
+      if (MSState.config.status !== 'published') updateSaveStatus('dirty');
+    }
 
-function updateSaveStatus(state) {
-  const el  = document.getElementById('saveStatus');
-  const txt = document.getElementById('saveStatusText');
-  if (!el || !txt) return;
-  el.className = 'mse-save-status';
-  if (state === 'dirty') { el.classList.add('dirty'); txt.textContent = 'Unsaved'; }
-  else if (state === 'saved') {
-    el.classList.add('saved'); txt.textContent = 'Saved';
-    setTimeout(() => {
-      el.classList.remove('saved');
-      txt.textContent = MSState.config.status === 'published' ? 'Live' : 'Draft';
-    }, 2500);
-  }
-}
+    function updateSaveStatus(state) {
+      const el = document.getElementById('saveStatus');
+      const txt = document.getElementById('saveStatusText');
+      if (!el || !txt) return;
+      el.className = 'mse-save-status';
+      if (state === 'dirty') { el.classList.add('dirty'); txt.textContent = 'Unsaved'; }
+      else if (state === 'saved') {
+        el.classList.add('saved'); txt.textContent = 'Saved';
+        setTimeout(() => {
+          el.classList.remove('saved');
+          txt.textContent = MSState.config.status === 'published' ? 'Live' : 'Draft';
+        }, 2500);
+      }
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   PUBLISH
-════════════════════════════════════════════════════════════════ */
-function openPublish() {
-  document.getElementById('publishUrlDisplay').textContent = `honourix.app/s/${MSState.config.slug||'—'}`;
-  document.getElementById('publishRegToggle')?.classList.toggle('on', MSState.config.registrationOpen);
-  const lbl = document.getElementById('publishConfirmLabel');
-  if (lbl) lbl.textContent = MSState.config.status === 'published' ? 'Update Site' : 'Publish Now';
-  document.getElementById('publishOverlay').classList.add('open');
-}
-function closePublish() { document.getElementById('publishOverlay').classList.remove('open'); }
+    /* ════════════════════════════════════════════════════════════════
+       PUBLISH
+    ════════════════════════════════════════════════════════════════ */
+    function openPublish() {
+      document.getElementById('publishUrlDisplay').textContent = `honourix.app/s/${MSState.config.slug || '—'}`;
+      document.getElementById('publishRegToggle')?.classList.toggle('on', MSState.config.registrationOpen);
+      const lbl = document.getElementById('publishConfirmLabel');
+      if (lbl) lbl.textContent = MSState.config.status === 'published' ? 'Update Site' : 'Publish Now';
+      document.getElementById('publishOverlay').classList.add('open');
+    }
+    function closePublish() { document.getElementById('publishOverlay').classList.remove('open'); }
 
-function doPublish() {
-  if (!MSState.config.slug || MSState.config.slug.length < 3) {
-    mseToast('Set a valid URL slug first (Site Settings → Site Info)', 'error'); return;
-  }
-  MSState.updateConfig({ status: 'published' });
-  MSState.save();
-  document.getElementById('publishPanelTitle').textContent = 'Site Published!';
-  document.getElementById('publishConfirmBtn').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Published`;
-  document.getElementById('publishBtnLabel').textContent = 'Update';
-  updateSaveStatus('saved');
-  document.getElementById('saveStatusText').textContent = 'Live';
-  document.getElementById('saveStatus').classList.add('live');
-  mseToast('Site published! 🎉', 'success', 4000);
-  setTimeout(closePublish, 2000);
-}
+    function doPublish() {
+      if (!MSState.config.slug || MSState.config.slug.length < 3) {
+        mseToast('Set a valid URL slug first (Site Settings → Site Info)', 'error'); return;
+      }
+      MSState.updateConfig({ status: 'published' });
+      MSState.save();
+      document.getElementById('publishPanelTitle').textContent = 'Site Published!';
+      document.getElementById('publishConfirmBtn').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Published`;
+      document.getElementById('publishBtnLabel').textContent = 'Update';
+      updateSaveStatus('saved');
+      document.getElementById('saveStatusText').textContent = 'Live';
+      document.getElementById('saveStatus').classList.add('live');
+      mseToast('Site published! 🎉', 'success', 4000);
+      setTimeout(closePublish, 2000);
+    }
 
-function copyPublishUrl() {
-  const url = `https://honourix.app/s/${MSState.config.slug}`;
-  navigator.clipboard.writeText(url).then(() => mseToast('URL copied!', 'success', 1800));
-}
+    function copyPublishUrl() {
+      const url = `https://honourix.app/s/${MSState.config.slug}`;
+      navigator.clipboard.writeText(url).then(() => mseToast('URL copied!', 'success', 1800));
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   KEYBOARD SHORTCUTS
-════════════════════════════════════════════════════════════════ */
-document.addEventListener('keydown', e => {
-  const tag = document.activeElement?.tagName?.toLowerCase();
-  const inField = ['input','textarea','select'].includes(tag);
-  if (inField) return;
+    /* ════════════════════════════════════════════════════════════════
+       KEYBOARD SHORTCUTS
+    ════════════════════════════════════════════════════════════════ */
+    document.addEventListener('keydown', e => {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      const inField = ['input', 'textarea', 'select'].includes(tag);
+      if (inField) return;
 
-  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); doUndo(); }
-  if ((e.ctrlKey || e.metaKey) && e.key === 'z' &&  e.shiftKey) { e.preventDefault(); doRedo(); }
-  if ((e.ctrlKey || e.metaKey) && e.key === 'y')                 { e.preventDefault(); doRedo(); }
-  if ((e.ctrlKey || e.metaKey) && e.key === 's')                 { e.preventDefault(); doSave(); }
-  if (e.key === 'Escape') { MSState.deselectAll(); updateRightPanel(); refreshBlockSelection(); closePublish(); }
-  if (e.key === 'Delete' || e.key === 'Backspace') {
-    if (MSState.selectedId) { blockDelete(MSState.selectedId); }
-  }
-});
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); doUndo(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey) { e.preventDefault(); doRedo(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); doRedo(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); doSave(); }
+      if (e.key === 'Escape') { MSState.deselectAll(); updateRightPanel(); refreshBlockSelection(); closePublish(); }
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (MSState.selectedId) { blockDelete(MSState.selectedId); }
+      }
+    });
 
-/* Warn before leaving with unsaved changes */
-window.addEventListener('beforeunload', e => {
-  if (MSState.dirty) { e.preventDefault(); e.returnValue = ''; }
-});
+    /* Warn before leaving with unsaved changes */
+    window.addEventListener('beforeunload', e => {
+      if (MSState.dirty) { e.preventDefault(); e.returnValue = ''; }
+    });
 
-/* Close publish overlay on outside click */
-document.getElementById('publishOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('publishOverlay')) closePublish();
-});
+    /* Close publish overlay on outside click */
+    document.getElementById('publishOverlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('publishOverlay')) closePublish();
+    });
 
-/* ════════════════════════════════════════════════════════════════
-   TOAST
-════════════════════════════════════════════════════════════════ */
-function mseToast(msg, type = 'info', duration = 3000) {
-  const el = document.getElementById('mse-toast');
-  const colors = {
-    success: { bg:'rgba(16,185,129,0.12)', border:'rgba(16,185,129,0.3)', icon:'#10b981', sym:'✓' },
-    error:   { bg:'rgba(244,63,94,0.12)',  border:'rgba(244,63,94,0.3)',  icon:'#f43f5e', sym:'✕' },
-    info:    { bg:'rgba(0,212,255,0.10)',  border:'rgba(0,212,255,0.25)', icon:'#00d4ff', sym:'ℹ' },
-    warn:    { bg:'rgba(245,158,11,0.12)', border:'rgba(245,158,11,0.3)', icon:'#f59e0b', sym:'⚠' },
-  };
-  const c = colors[type] || colors.info;
-  el.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;background:${c.bg};border:1px solid ${c.border};backdrop-filter:blur(20px);color:#dde6f5;font-size:13.5px;font-weight:500;padding:11px 18px;border-radius:11px;display:flex;align-items:center;gap:9px;box-shadow:0 8px 32px rgba(0,0,0,0.4);font-family:var(--font);max-width:300px;animation:toastIn 0.25s ease;`;
-  el.className = 'show';
-  el.innerHTML = `<span style="color:${c.icon};font-size:15px;flex-shrink:0">${c.sym}</span><span>${msg}</span>`;
-  clearTimeout(el._t);
-  el._t = setTimeout(() => { el.className = ''; el.style.display = 'none'; }, duration);
-}
-</script>
+    /* ════════════════════════════════════════════════════════════════
+       TOAST
+    ════════════════════════════════════════════════════════════════ */
+    function mseToast(msg, type = 'info', duration = 3000) {
+      const el = document.getElementById('mse-toast');
+      const colors = {
+        success: { bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.3)', icon: '#10b981', sym: '✓' },
+        error: { bg: 'rgba(244,63,94,0.12)', border: 'rgba(244,63,94,0.3)', icon: '#f43f5e', sym: '✕' },
+        info: { bg: 'rgba(0,212,255,0.10)', border: 'rgba(0,212,255,0.25)', icon: '#00d4ff', sym: 'ℹ' },
+        warn: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: '#f59e0b', sym: '⚠' },
+      };
+      const c = colors[type] || colors.info;
+      el.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;background:${c.bg};border:1px solid ${c.border};backdrop-filter:blur(20px);color:#dde6f5;font-size:13.5px;font-weight:500;padding:11px 18px;border-radius:11px;display:flex;align-items:center;gap:9px;box-shadow:0 8px 32px rgba(0,0,0,0.4);font-family:var(--font);max-width:300px;animation:toastIn 0.25s ease;`;
+      el.className = 'show';
+      el.innerHTML = `<span style="color:${c.icon};font-size:15px;flex-shrink:0">${c.sym}</span><span>${msg}</span>`;
+      clearTimeout(el._t);
+      el._t = setTimeout(() => { el.className = ''; el.style.display = 'none'; }, duration);
+    }
+  </script>
+  <script src="mini-site-canvas.js"></script>
+  <script src="mini-site-special.js"></script>
+  <script src="mini-site-theme.js"></script>
 </body>
+
 </html>
