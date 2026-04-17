@@ -9,10 +9,12 @@
    Called from inline oninput/onclick attrs in the props panels.
 ═══════════════════════════════════════════════════════════════ */
 
-/** Update a primitive prop on a block. */
+/** Update a primitive prop on a block.
+ *  NOTE: MSState.updateBlock triggers onChange → refreshCanvas automatically.
+ *  We do NOT call refreshCanvas() here to avoid double-render on every keystroke. */
 function msc_set(blockId, key, value) {
   MSState.updateBlock(blockId, { [key]: value });
-  refreshCanvas();
+  // canvas refresh is handled by MSState.onChange('update') → refreshCanvas()
 }
 
 /** Update a nested item inside a block's array prop. */
@@ -23,7 +25,7 @@ function msc_setItem(blockId, arrayKey, idx, key, value) {
   if (!arr[idx]) return;
   arr[idx][key] = value;
   MSState.updateBlock(blockId, { [arrayKey]: arr });
-  refreshCanvas();
+  // canvas refresh via onChange
 }
 
 /** Remove an item from a block array prop. */
@@ -32,8 +34,7 @@ function msc_removeItem(blockId, arrayKey, idx) {
   if (!block) return;
   const arr = (block.props[arrayKey] || []).filter((_, i) => i !== idx);
   MSState.updateBlock(blockId, { [arrayKey]: arr });
-  updateRightPanel();
-  refreshCanvas();
+  updateRightPanel();   // rebuild props panel — onChange handles canvas
 }
 
 /** Move an item up or down inside an array prop. */
@@ -45,8 +46,7 @@ function msc_moveItem(blockId, arrayKey, idx, dir) {
   if (n < 0 || n >= arr.length) return;
   [arr[idx], arr[n]] = [arr[n], arr[idx]];
   MSState.updateBlock(blockId, { [arrayKey]: arr });
-  updateRightPanel();
-  refreshCanvas();
+  updateRightPanel();   // onChange handles canvas
 }
 
 /** Add a new item to a block array prop. */
@@ -56,8 +56,7 @@ function msc_addItem(blockId, arrayKey, newItem) {
   const arr = JSON.parse(JSON.stringify(block.props[arrayKey] || []));
   arr.push(newItem);
   MSState.updateBlock(blockId, { [arrayKey]: arr });
-  updateRightPanel();
-  refreshCanvas();
+  updateRightPanel();   // onChange handles canvas
 }
 
 /** Helper: tiny unique id. */
@@ -645,7 +644,7 @@ function msc_setTierName(blockId, tierIdx, value) {
   if (!tiers[tierIdx]) return;
   tiers[tierIdx].name = value;
   MSState.updateBlock(blockId, { tiers });
-  refreshCanvas();
+  // onChange handles canvas refresh
 }
 
 function msc_removeTier(blockId, tierIdx) {
@@ -654,7 +653,6 @@ function msc_removeTier(blockId, tierIdx) {
   const tiers = (block.props.tiers || []).filter((_, i) => i !== tierIdx);
   MSState.updateBlock(blockId, { tiers });
   updateRightPanel();
-  refreshCanvas();
 }
 
 function msc_addTier(blockId) {
@@ -664,7 +662,6 @@ function msc_addTier(blockId) {
   tiers.push({ id: 't' + msc_uid(), name: 'Sponsor Tier', items: [] });
   MSState.updateBlock(blockId, { tiers });
   updateRightPanel();
-  refreshCanvas();
 }
 
 function msc_addSponsorItem(blockId, tierIdx) {
@@ -676,7 +673,6 @@ function msc_addSponsorItem(blockId, tierIdx) {
   tiers[tierIdx].items.push({ id: 's' + msc_uid(), name: '', logo: '', url: '' });
   MSState.updateBlock(blockId, { tiers });
   updateRightPanel();
-  refreshCanvas();
 }
 
 function msc_setSponsorItem(blockId, tierIdx, itemIdx, key, value) {
@@ -686,7 +682,7 @@ function msc_setSponsorItem(blockId, tierIdx, itemIdx, key, value) {
   if (!tiers[tierIdx]?.items?.[itemIdx]) return;
   tiers[tierIdx].items[itemIdx][key] = value;
   MSState.updateBlock(blockId, { tiers });
-  refreshCanvas();
+  // onChange handles canvas
 }
 
 function msc_removeSponsorItem(blockId, tierIdx, itemIdx) {
@@ -696,7 +692,6 @@ function msc_removeSponsorItem(blockId, tierIdx, itemIdx) {
   tiers[tierIdx].items = tiers[tierIdx].items.filter((_, i) => i !== itemIdx);
   MSState.updateBlock(blockId, { tiers });
   updateRightPanel();
-  refreshCanvas();
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -716,11 +711,10 @@ function msc_onVideoUrl(blockId, idx, url) {
     }
   }
   MSState.updateBlock(blockId, { items });
-  updateRightPanel();
-  refreshCanvas();
+  updateRightPanel();   // onChange handles canvas
 }
 
-/* ══════════════════════════════════git add .═════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
    CONFIRM: mini-site-canvas.js fully loaded
 ═══════════════════════════════════════════════════════════════ */
 console.log('[Honourix] mini-site-canvas.js loaded — renderBlockProps overridden ✓');
