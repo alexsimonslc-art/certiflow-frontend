@@ -280,6 +280,71 @@ const MSState = {
     this._notify('update');
   },
 
+  /**
+   * updateBlockField — surgically updates a single field inside block.props.fields[].
+   * Unlike updateBlock which shallow-merges at the props root level,
+   * this targets a specific field object by its id.
+   * Notifies 'field-update' so onChange can refresh BOTH canvas AND right panel
+   * (needed so toggles like "Required" reflect the new state immediately).
+   */
+  updateBlockField(blockId, fieldId, partialFieldProps) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    const field = block.props.fields?.find(f => f.id === fieldId);
+    if (!field) return;
+    Object.assign(field, partialFieldProps);
+    this.dirty = true;
+    this._notify('field-update'); // distinct type → editor rebuilds right panel
+  },
+
+  /**
+   * publish() — saves to localStorage then POSTs to backend.
+   * Returns { success, slug, publicUrl } from server.
+   * Throws on network/server error so editor can show a toast.
+   */
+  async publish() {
+    // 1. Persist to localStorage with live status
+    this.config.status = 'published';
+    this.save();
+
+    // 2. POST to backend
+    const payload = {
+      siteId:           this.siteId,
+      slug:             this.config.slug,
+      name:             this.config.name,
+      status:           'published',
+      registrationOpen: this.config.registrationOpen !== false,
+      config: {
+        theme:            this.config.theme,
+        accentColor:      this.config.accentColor,
+        fontFamily:       this.config.fontFamily,
+        logoShape:        this.config.logoShape,
+        registrationOpen: this.config.registrationOpen !== false,
+        blocks:           this.blocks.map(b => JSON.parse(JSON.stringify(b))),
+      },
+    };
+
+    const token = localStorage.getItem('hx_token') || '';
+    const res = await fetch(
+      'https://certiflow-backend-73xk.onrender.com/api/minisite/publish',
+      {
+        method:  'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `Server error ${res.status}`);
+    }
+
+    return await res.json(); // { success, slug, publicUrl }
+  },
+
   updateConfig(partial) {
     Object.assign(this.config, partial);
     this.dirty = true;
