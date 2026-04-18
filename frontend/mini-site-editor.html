@@ -470,6 +470,21 @@
     ════════════════════════════════════════════════════════════════ */
     document.addEventListener('DOMContentLoaded', () => {
       if (!MSState.init()) return;
+
+      // ── Migration shim: old fields[] → new sections[] ──────────────
+      MSState.blocks.forEach(b => {
+        if (b.type === 'form' && b.props.fields && !b.props.sections) {
+          b.props.sections = [{
+            id: 'sec_1', title: 'Section 1', description: '',
+            fields: b.props.fields.map(f => ({ description: '', ...f })),
+            routing: { type: 'auto', conditionFieldId: null, rules: [], defaultGoTo: 'next' },
+          }];
+          delete b.props.fields;
+          MSState.dirty = true;
+        }
+      });
+      if (MSState.dirty) MSState.save();
+      // ────────────────────────────────────────────────────────────────
       populateSiteSettings();
       refreshCanvas();
       renderLayers();
@@ -563,11 +578,9 @@
       <button class="mse-blk-ctrl del" title="Delete" onclick="event.stopPropagation();blockDelete('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
     </div>`;
 
-      // Use production renderer — accurate real-time preview with fonts, alignment, all props
-      const inner = renderMSBlock(block, MSState.config);
+      let inner = '';
 
-      // (old CBP switch removed — renderMSBlock from mini-site-blocks.js handles everything)
-      if (false) switch (block.type) {
+      switch (block.type) {
 
         case 'cover': {
           const overlay = p.coverOverlay === 'dark' ? 'rgba(0,0,0,0.55)' : p.coverOverlay === 'blur' ? 'rgba(0,0,0,0.3)' : 'transparent';
@@ -628,7 +641,7 @@
             </div>
             <div class="cbp-dt-card" style="border-color:${borderCol};background:${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'}">
               <div class="cbp-dt-icon" style="background:rgba(${hexToRgb(accent)},0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-              <div class="cbp-dt-value" style="color:${textColor}">${p.time ? (p.endTime ? `${p.time} – ${p.endTime}` : p.time) : 'Time'}</div>
+              <div class="cbp-dt-value" style="color:${textColor}">${p.time || 'Time'}</div>
               <div class="cbp-dt-label" style="color:${subColor}">${p.timezone || 'IST'}</div>
             </div>
             <div class="cbp-dt-card" style="border-color:${borderCol};background:${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'}">
@@ -798,8 +811,7 @@
         }
 
         default:
-          // unreachable — kept only for IDE reference
-          break;
+          inner = `<div style="padding:24px;text-align:center;color:rgba(255,255,255,0.3);font-size:13px">${def.label}</div>`;
       }
 
       return `<div class="mse-block-wrap" data-id="${block.id}">

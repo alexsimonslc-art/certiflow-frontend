@@ -78,7 +78,7 @@ const BLOCK_REG = {
       title: 'Our Sponsors',
       tiers: [
         { id: 't1', name: 'Title Sponsor', items: [] },
-        { id: 't2', name: 'Co-Sponsor',    items: [] },
+        { id: 't2', name: 'Co-Sponsor', items: [] },
       ],
       bgColor: '',
     }),
@@ -86,18 +86,29 @@ const BLOCK_REG = {
 
   form: {
     label: 'Registration Form', icon: 'clipboard-list', cat: 'engagement',
-    desc: 'Customizable form linked to Google Sheets',
+    desc: 'Multi-section form linked to Google Sheets',
     defaults: () => ({
       title: 'Register Now',
       subtitle: 'Fill in your details to secure your spot.',
       buttonText: 'Submit Registration',
       buttonColor: '',
-      fields: [
-        { id: 'f1', type: 'text',  label: 'Full Name',     required: true,  placeholder: 'Enter your full name' },
-        { id: 'f2', type: 'email', label: 'Email Address', required: true,  placeholder: 'you@example.com' },
-        { id: 'f3', type: 'tel',   label: 'Phone Number',  required: false, placeholder: '+91 XXXXX XXXXX' },
+      sheetId: '',
+      bgColor: '',
+      showProgressBar: true,
+      successMessage: '',
+      sections: [
+        {
+          id: 'sec_1',
+          title: 'Section 1',
+          description: '',
+          fields: [
+            { id: 'f1', type: 'text', label: 'Full Name', required: true, placeholder: 'Enter your full name', description: '' },
+            { id: 'f2', type: 'email', label: 'Email Address', required: true, placeholder: 'you@example.com', description: '' },
+            { id: 'f3', type: 'tel', label: 'Phone Number', required: false, placeholder: '+91 XXXXX XXXXX', description: '' },
+          ],
+          routing: { type: 'auto', conditionFieldId: null, rules: [], defaultGoTo: 'next' },
+        }
       ],
-      sheetId: '', bgColor: '',
     }),
   },
 
@@ -145,46 +156,46 @@ const BLOCK_REG = {
 
 /* ── Category metadata ─────────────────────────────────────── */
 const BLOCK_CATS = {
-  structure:  { label: 'Structure',  color: '#00d4ff' },
-  event:      { label: 'Event Info', color: '#f59e0b' },
+  structure: { label: 'Structure', color: '#00d4ff' },
+  event: { label: 'Event Info', color: '#f59e0b' },
   engagement: { label: 'Engagement', color: '#a78bfa' },
-  layout:     { label: 'Layout',     color: '#5a7394' },
+  layout: { label: 'Layout', color: '#5a7394' },
 };
 
 /* ═══════════════════════════════════════════════════════════════
    MSSTATE — Central state manager
 ═══════════════════════════════════════════════════════════════ */
 const MSState = {
-  siteId:     null,
-  config:     {},
-  blocks:     [],
+  siteId: null,
+  config: {},
+  blocks: [],
   selectedId: null,
-  history:    [],
-  histIdx:    -1,
-  MAX_HIST:   50,
-  dirty:      false,
-  _cb:        null,
+  history: [],
+  histIdx: -1,
+  MAX_HIST: 50,
+  dirty: false,
+  _cb: null,
 
   /* ── Boot from URL ?id= ─── */
   init() {
     const params = new URLSearchParams(window.location.search);
-    this.siteId  = params.get('id');
+    this.siteId = params.get('id');
     if (!this.siteId) { window.location.href = 'mini-site.html'; return false; }
 
     const sites = JSON.parse(localStorage.getItem('hx_minisites') || '[]');
-    const site  = sites.find(s => s.id === this.siteId);
-    if (!site)  { window.location.href = 'mini-site.html'; return false; }
+    const site = sites.find(s => s.id === this.siteId);
+    if (!site) { window.location.href = 'mini-site.html'; return false; }
 
     this.config = {
-      name:             site.name             || 'Untitled Site',
-      slug:             site.slug             || '',
-      template:         site.template         || 'blank',
-      theme:            site.config?.theme            || 'dark',
-      accentColor:      site.config?.accentColor      || '#00d4ff',
-      fontFamily:       site.config?.fontFamily       || 'Plus Jakarta Sans',
-      logoShape:        site.config?.logoShape        || 'circle',
+      name: site.name || 'Untitled Site',
+      slug: site.slug || '',
+      template: site.template || 'blank',
+      theme: site.config?.theme || 'dark',
+      accentColor: site.config?.accentColor || '#00d4ff',
+      fontFamily: site.config?.fontFamily || 'Plus Jakarta Sans',
+      logoShape: site.config?.logoShape || 'circle',
       registrationOpen: site.config?.registrationOpen !== false,
-      status:           site.status           || 'draft',
+      status: site.status || 'draft',
     };
     this.blocks = (site.config?.blocks || []).map(b => JSON.parse(JSON.stringify(b)));
     this.histIdx = -1;
@@ -196,19 +207,19 @@ const MSState = {
   /* ── Persist to localStorage ─── */
   save() {
     const sites = JSON.parse(localStorage.getItem('hx_minisites') || '[]');
-    const idx   = sites.findIndex(s => s.id === this.siteId);
+    const idx = sites.findIndex(s => s.id === this.siteId);
     if (idx < 0) return false;
     sites[idx] = {
       ...sites[idx],
-      name:      this.config.name,
-      slug:      this.config.slug,
-      status:    this.config.status,
+      name: this.config.name,
+      slug: this.config.slug,
+      status: this.config.status,
       updatedAt: new Date().toISOString(),
       config: {
-        theme:            this.config.theme,
-        accentColor:      this.config.accentColor,
-        fontFamily:       this.config.fontFamily,
-        logoShape:        this.config.logoShape,
+        theme: this.config.theme,
+        accentColor: this.config.accentColor,
+        fontFamily: this.config.fontFamily,
+        logoShape: this.config.logoShape,
         registrationOpen: this.config.registrationOpen,
         blocks: this.blocks.map(b => JSON.parse(JSON.stringify(b))),
       },
@@ -223,7 +234,7 @@ const MSState = {
     const def = BLOCK_REG[type];
     if (!def) return null;
     const block = {
-      id:    'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      id: 'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
       type,
       props: def.defaults(),
     };
@@ -263,8 +274,8 @@ const MSState = {
   duplicateBlock(id) {
     const idx = this.blocks.findIndex(b => b.id === id);
     if (idx < 0) return null;
-    const copy    = JSON.parse(JSON.stringify(this.blocks[idx]));
-    copy.id       = 'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    const copy = JSON.parse(JSON.stringify(this.blocks[idx]));
+    copy.id = 'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
     this.blocks.splice(idx + 1, 0, copy);
     this.selectedId = copy.id;
     this._pushHistory();
@@ -277,6 +288,94 @@ const MSState = {
     if (!block) return;
     Object.assign(block.props, partialProps);
     this.dirty = true;
+    this._notify('update');
+  },
+
+  /* ── Form-specific deep update methods ── */
+
+  updateFormField(blockId, sectionId, fieldId, partialProps) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    const section = block.props.sections?.find(s => s.id === sectionId);
+    if (!section) return;
+    const field = section.fields?.find(f => f.id === fieldId);
+    if (!field) return;
+    Object.assign(field, partialProps);
+    this.dirty = true;
+    this._notify('update');
+  },
+
+  addFormField(blockId, sectionId, fieldType) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return null;
+    const section = block.props.sections?.find(s => s.id === sectionId);
+    if (!section) return null;
+    const uid = Date.now() + '_' + Math.random().toString(36).slice(2, 5);
+    const field = {
+      id: `f_${uid}`,
+      type: fieldType,
+      label: fieldType === 'section-text' ? 'Instructions' : fieldType === 'divider' ? '' : 'New Question',
+      required: false,
+      placeholder: '',
+      description: '',
+      ...((['radio', 'checkbox-group', 'dropdown', 'ranking'].includes(fieldType)) ? { options: ['Option 1', 'Option 2'] } : {}),
+      ...(fieldType === 'checkbox' ? { options: ['Option 1', 'Option 2'] } : {}),
+      ...(fieldType === 'linear-scale' ? { min: 1, max: 5, minLabel: '', maxLabel: '' } : {}),
+      ...(fieldType === 'image-choice' ? { options: [{ label: 'Option 1', imageUrl: '' }] } : {}),
+      ...(fieldType === 'file' ? { accept: '.pdf,.jpg,.png', maxSizeMB: 5 } : {}),
+      ...(fieldType === 'section-text' ? { heading: 'Instructions', body: '' } : {}),
+      ...(fieldType === 'textarea' ? { rows: 4 } : {}),
+      ...(fieldType === 'rating' ? {} : {}),
+    };
+    section.fields.push(field);
+    this._pushHistory();
+    this._notify('update');
+    return field;
+  },
+
+  addFormSection(blockId) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return null;
+    const sections = block.props.sections || [];
+    const section = {
+      id: `sec_${Date.now()}`,
+      title: `Section ${sections.length + 1}`,
+      description: '',
+      fields: [],
+      routing: { type: 'auto', conditionFieldId: null, rules: [], defaultGoTo: 'next' },
+    };
+    sections.push(section);
+    block.props.sections = sections;
+    this._pushHistory();
+    this._notify('update');
+    return section;
+  },
+
+  updateSectionRouting(blockId, sectionId, routingPartial) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    const section = block.props.sections?.find(s => s.id === sectionId);
+    if (!section) return;
+    Object.assign(section.routing, routingPartial);
+    this.dirty = true;
+    this._notify('update');
+  },
+
+  removeFormField(blockId, sectionId, fieldId) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    const section = block.props.sections?.find(s => s.id === sectionId);
+    if (!section) return;
+    section.fields = section.fields.filter(f => f.id !== fieldId);
+    this._pushHistory();
+    this._notify('update');
+  },
+
+  removeFormSection(blockId, sectionId) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    block.props.sections = (block.props.sections || []).filter(s => s.id !== sectionId);
+    this._pushHistory();
     this._notify('update');
   },
 
@@ -309,18 +408,18 @@ const MSState = {
 
     // 2. POST to backend
     const payload = {
-      siteId:           this.siteId,
-      slug:             this.config.slug,
-      name:             this.config.name,
-      status:           'published',
+      siteId: this.siteId,
+      slug: this.config.slug,
+      name: this.config.name,
+      status: 'published',
       registrationOpen: this.config.registrationOpen !== false,
       config: {
-        theme:            this.config.theme,
-        accentColor:      this.config.accentColor,
-        fontFamily:       this.config.fontFamily,
-        logoShape:        this.config.logoShape,
+        theme: this.config.theme,
+        accentColor: this.config.accentColor,
+        fontFamily: this.config.fontFamily,
+        logoShape: this.config.logoShape,
         registrationOpen: this.config.registrationOpen !== false,
-        blocks:           this.blocks.map(b => JSON.parse(JSON.stringify(b))),
+        blocks: this.blocks.map(b => JSON.parse(JSON.stringify(b))),
       },
     };
 
@@ -328,7 +427,7 @@ const MSState = {
     const res = await fetch(
       'https://certiflow-backend-73xk.onrender.com/api/minisite/publish',
       {
-        method:  'POST',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -392,12 +491,12 @@ const MSState = {
 
   _applySnapshot() {
     try {
-      const snap   = JSON.parse(this.history[this.histIdx]);
-      this.config  = snap.config;
-      this.blocks  = snap.blocks;
-      this.dirty   = true;
+      const snap = JSON.parse(this.history[this.histIdx]);
+      this.config = snap.config;
+      this.blocks = snap.blocks;
+      this.dirty = true;
       this._notify('history');
-    } catch {}
+    } catch { }
   },
 
   canUndo() { return this.histIdx > 0; },
