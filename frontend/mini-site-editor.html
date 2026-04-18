@@ -304,9 +304,7 @@
     <!-- ═══════════════════════════════════════════════════════
        RIGHT PANEL — Properties
   ═══════════════════════════════════════════════════════ -->
-    <!-- Drag handle: occupies grid-area "rhandle" (5px column) -->
-    <div id="mse-resize-handle"></div>
-    <aside class="mse-right" id="mseRight">
+    <aside class="mse-right">
 
       <div class="mse-right-tabs">
         <div class="mse-right-tab active" id="rtabBlock" onclick="switchRightTab('block')">Block</div>
@@ -332,8 +330,8 @@
 
           <div class="mse-prop-row">
             <div class="mse-prop-label">Theme</div>
-            <div class="mse-theme-grid" id="siteThemeBoxes">
-              <button class="mse-theme-box mse-theme-dark" data-value="dark" onclick="setThemeBox('dark')">
+            <div class="mse-theme-grid">
+              <button class="mse-theme-box" data-value="dark" onclick="setThemeBox('dark')">
                 <div class="mse-theme-preview">
                   <div class="mtp-topbar"></div>
                   <div class="mtp-left"></div>
@@ -345,7 +343,7 @@
                 </div>
                 <span>Dark</span>
               </button>
-              <button class="mse-theme-box mse-theme-light" data-value="light" onclick="setThemeBox('light')">
+              <button class="mse-theme-box" data-value="light" onclick="setThemeBox('light')">
                 <div class="mse-theme-preview light">
                   <div class="mtp-topbar light"></div>
                   <div class="mtp-left light"></div>
@@ -358,88 +356,84 @@
                 <span>Light</span>
               </button>
             </div>
+          </div>
 
-            <div class="mse-prop-row">
-              <div class="mse-prop-label">Accent Colour</div>
-              <div class="mse-color-row">
-                <div class="mse-color-swatch" id="accentSwatch">
-                  <input type="color" id="accentColorInput" oninput="onAccentChange(this.value)" />
-                </div>
-                <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7" placeholder="#00d4ff"
-                  oninput="onAccentHexInput(this.value)" style="flex:1" />
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Accent Colour</div>
+            <div class="mse-color-row">
+              <div class="mse-color-swatch" id="accentSwatch">
+                <input type="color" id="accentColorInput" oninput="onAccentChange(this.value)" />
               </div>
-            </div>
-
-            <div class="mse-prop-row">
-              <div class="mse-prop-label">Font Family</div>
-              <div class="mse-font-grid" id="siteFontBoxes">
-                <button class="mse-font-pill tint-cyan" data-font="Plus Jakarta Sans"
-                  onclick="setFontBox('Plus Jakarta Sans')" style="font-family:Plus Jakarta Sans,sans-serif">Plus
-                  Jakarta Sans</button>
-                <button class="mse-font-pill tint-purple" data-font="Syne" onclick="setFontBox('Syne')"
-                  style="font-family:Syne,sans-serif;font-weight:700">Syne</button>
-                <button class="mse-font-pill tint-blue" data-font="Montserrat" onclick="setFontBox('Montserrat')"
-                  style="font-family:Montserrat,sans-serif">Montserrat</button>
-                <button class="mse-font-pill tint-teal" data-font="Raleway" onclick="setFontBox('Raleway')"
-                  style="font-family:Raleway,sans-serif">Raleway</button>
-                <button class="mse-font-pill tint-gold" data-font="Playfair Display"
-                  onclick="setFontBox('Playfair Display')" style="font-family:Playfair Display,serif">Playfair
-                  Display</button>
-                <button class="mse-font-pill tint-rose" data-font="Cormorant Garamond"
-                  onclick="setFontBox('Cormorant Garamond')" style="font-family:Cormorant Garamond,serif">Cormorant
-                  Garamond</button>
-                <button class="mse-font-pill tint-pink" data-font="Dancing Script"
-                  onclick="setFontBox('Dancing Script')" style="font-family:Dancing Script,cursive">Dancing
-                  Script</button>
-                <button class="mse-font-pill tint-amber" data-font="Cinzel" onclick="setFontBox('Cinzel')"
-                  style="font-family:Cinzel,serif">Cinzel</button>
-                <button class="mse-font-pill tint-orange" data-font="EB Garamond" onclick="setFontBox('EB Garamond')"
-                  style="font-family:EB Garamond,serif">EB Garamond</button>
-                <button class="mse-font-pill tint-green" data-font="JetBrains Mono"
-                  onclick="setFontBox('JetBrains Mono')" style="font-family:JetBrains Mono,monospace">JetBrains
-                  Mono</button>
-              </div>
-
-              <div class="mse-prop-row">
-                <div class="mse-prop-label">Default Logo Shape</div>
-                <div class="mse-shape-row">
-                  <button class="mse-shape-btn" id="shapeCircle" onclick="setLogoShape('circle')">
-                    <div class="mse-shape-preview circle"></div>
-                    Circle
-                  </button>
-                  <button class="mse-shape-btn" id="shapeRounded" onclick="setLogoShape('rounded')">
-                    <div class="mse-shape-preview rounded"></div>
-                    Rounded
-                  </button>
-                  <button class="mse-shape-btn" id="shapeSquare" onclick="setLogoShape('square')">
-                    <div class="mse-shape-preview square"></div>
-                    Square
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="mse-props-section" style="padding-top:14px">
-              <div class="mse-props-sec-label">Registration</div>
-              <div class="mse-toggle-row">
-                <span>Registrations Open</span>
-                <div class="mse-toggle" id="regToggle" onclick="toggleRegistration()"></div>
-              </div>
-              <div class="mse-prop-hint" style="margin-bottom:14px">When off, the form shows a "Registration closed"
-                message
-                to visitors</div>
-            </div>
-
-            <div class="mse-props-section" style="padding-top:14px;padding-bottom:14px">
-              <div class="mse-props-sec-label">Site Info</div>
-              <div class="mse-prop-row">
-                <div class="mse-prop-label">Site URL Slug</div>
-                <input type="text" class="mse-prop-input" id="siteSlugInput" placeholder="my-event-2026"
-                  oninput="onSlugInput(this.value)" />
-                <div class="mse-prop-hint" id="slugHint">Loading…<span id="slugPreview">—</span></div>
-              </div>
+              <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7" placeholder="#00d4ff"
+                oninput="onAccentHexInput(this.value)" style="flex:1" />
             </div>
           </div>
+
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Font Family</div>
+            <div class="mse-font-grid">
+              <button class="mse-font-pill" data-font="Plus Jakarta Sans" onclick="setFontBox('Plus Jakarta Sans')"
+                style="font-family:Plus Jakarta Sans,sans-serif">Plus Jakarta Sans</button>
+              <button class="mse-font-pill" data-font="Syne" onclick="setFontBox('Syne')"
+                style="font-family:Syne,sans-serif;font-weight:700">Syne</button>
+              <button class="mse-font-pill" data-font="Montserrat" onclick="setFontBox('Montserrat')"
+                style="font-family:Montserrat,sans-serif">Montserrat</button>
+              <button class="mse-font-pill" data-font="Raleway" onclick="setFontBox('Raleway')"
+                style="font-family:Raleway,sans-serif">Raleway</button>
+              <button class="mse-font-pill" data-font="Playfair Display" onclick="setFontBox('Playfair Display')"
+                style="font-family:Playfair Display,serif">Playfair Display</button>
+              <button class="mse-font-pill" data-font="Cormorant Garamond" onclick="setFontBox('Cormorant Garamond')"
+                style="font-family:Cormorant Garamond,serif">Cormorant Garamond</button>
+              <button class="mse-font-pill" data-font="Dancing Script" onclick="setFontBox('Dancing Script')"
+                style="font-family:Dancing Script,cursive">Dancing Script</button>
+              <button class="mse-font-pill" data-font="Cinzel" onclick="setFontBox('Cinzel')"
+                style="font-family:Cinzel,serif">Cinzel</button>
+              <button class="mse-font-pill" data-font="EB Garamond" onclick="setFontBox('EB Garamond')"
+                style="font-family:EB Garamond,serif">EB Garamond</button>
+              <button class="mse-font-pill" data-font="JetBrains Mono" onclick="setFontBox('JetBrains Mono')"
+                style="font-family:JetBrains Mono,monospace">JetBrains Mono</button>
+            </div>
+          </div>
+
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Default Logo Shape</div>
+            <div class="mse-shape-row">
+              <button class="mse-shape-btn" id="shapeCircle" onclick="setLogoShape('circle')">
+                <div class="mse-shape-preview circle"></div>
+                Circle
+              </button>
+              <button class="mse-shape-btn" id="shapeRounded" onclick="setLogoShape('rounded')">
+                <div class="mse-shape-preview rounded"></div>
+                Rounded
+              </button>
+              <button class="mse-shape-btn" id="shapeSquare" onclick="setLogoShape('square')">
+                <div class="mse-shape-preview square"></div>
+                Square
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mse-props-section" style="padding-top:14px">
+          <div class="mse-props-sec-label">Registration</div>
+          <div class="mse-toggle-row">
+            <span>Registrations Open</span>
+            <div class="mse-toggle" id="regToggle" onclick="toggleRegistration()"></div>
+          </div>
+          <div class="mse-prop-hint" style="margin-bottom:14px">When off, the form shows a "Registration closed" message
+            to visitors</div>
+        </div>
+
+        <div class="mse-props-section" style="padding-top:14px;padding-bottom:14px">
+          <div class="mse-props-sec-label">Site Info</div>
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Site URL Slug</div>
+            <input type="text" class="mse-prop-input" id="siteSlugInput" placeholder="my-event-2026"
+              oninput="onSlugInput(this.value)" />
+            <div class="mse-prop-hint" id="slugHint">Loading…<span id="slugPreview">—</span></div>
+          </div>
+        </div>
+      </div>
 
     </aside>
 
@@ -1193,10 +1187,7 @@
       if (slugInput && document.activeElement !== slugInput) slugInput.value = c.slug;
       document.getElementById('slugPreview').textContent = c.slug || '—';
 
-      // Theme boxes
       document.querySelectorAll('.mse-theme-box').forEach(b => b.classList.toggle('on', b.dataset.value === c.theme));
-      // Font pills
-      document.querySelectorAll('.mse-font-pill').forEach(p => p.classList.toggle('on', p.dataset.font === c.fontFamily));
 
       const accentIn = document.getElementById('accentColorInput');
       const accentHx = document.getElementById('accentColorHex');
@@ -1205,7 +1196,7 @@
       if (accentHx && document.activeElement !== accentHx) accentHx.value = c.accentColor;
       if (swatch) swatch.style.background = c.accentColor;
 
-
+      document.querySelectorAll('.mse-font-pill').forEach(p => p.classList.toggle('on', p.dataset.font === c.fontFamily));
 
       ['shapeCircle', 'shapeRounded', 'shapeSquare'].forEach(id => {
         const el = document.getElementById(id);
@@ -1400,7 +1391,6 @@
       }
     }
 
-    /* ── Theme & Font box selectors ──────────────────────────────── */
     function setThemeBox(val) {
       MSState.updateConfig({ theme: val });
       refreshCanvas();
@@ -1447,62 +1437,6 @@
       if (e.target === document.getElementById('publishOverlay')) closePublish();
     });
 
-    /* ── Resizable right panel ─────────────────────────────────
-       The layout is CSS Grid — width is controlled by --right-panel-w
-       on :root, NOT by panel.style.width. We mutate the CSS variable.
-    ────────────────────────────────────────────────────────── */
-    (function () {
-      const MIN_W = 260, MAX_W = 640;
-      const handle = document.getElementById('mse-resize-handle');
-      if (!handle) return;
-
-      function setW(w) {
-        w = Math.min(MAX_W, Math.max(MIN_W, Math.round(w)));
-        document.documentElement.style.setProperty('--right-panel-w', w + 'px');
-        return w;
-      }
-
-      // Restore previously saved width
-      const saved = parseInt(localStorage.getItem('hx_right_panel_w') || '0');
-      if (saved >= MIN_W && saved <= MAX_W) setW(saved);
-
-      handle.addEventListener('mousedown', e => {
-        e.preventDefault();
-        handle.classList.add('dragging');
-        window._msResizing = true;
-
-        const startX = e.clientX;
-        // Read the current value of the CSS variable (not offsetWidth)
-        const curW = parseInt(
-          getComputedStyle(document.documentElement)
-            .getPropertyValue('--right-panel-w').trim()
-        ) || 272;
-
-        function onMove(ev) {
-          // Mouse moves LEFT  (+delta) → panel grows
-          // Mouse moves RIGHT (-delta) → panel shrinks
-          setW(curW + (startX - ev.clientX));
-        }
-        function onUp() {
-          window._msResizing = false;
-          handle.classList.remove('dragging');
-          const finalW = parseInt(
-            getComputedStyle(document.documentElement)
-              .getPropertyValue('--right-panel-w')
-          ) || 272;
-          localStorage.setItem('hx_right_panel_w', finalW);
-          document.removeEventListener('mousemove', onMove);
-          document.removeEventListener('mouseup', onUp);
-          document.body.style.userSelect = '';
-          document.body.style.cursor = '';
-        }
-        document.body.style.userSelect = 'none';
-        document.body.style.cursor = 'col-resize';
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onUp);
-      });
-    })();
-
     /* ════════════════════════════════════════════════════════════════
        TOAST
     ════════════════════════════════════════════════════════════════ */
@@ -1530,91 +1464,18 @@
   <script src="mini-site-special.js"></script>
   <script src="mini-site-theme.js"></script>
 
-  <!-- ═ Theme & Font glass hover — injected last for cascade priority ═ -->
-  <style id="glass-hover-styles">
-    /* ── Base state: faint glass surface ───────────────────────── */
-    .mse-theme-box,
-    .mse-font-pill {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1.5px solid rgba(255, 255, 255, 0.13);
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
-    }
-
-    /* ── Diagonal gloss sheen on every box ─────────────────────── */
-    .mse-theme-box::before,
-    .mse-font-pill::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg,
-          rgba(255, 255, 255, 0.07) 0%,
-          rgba(255, 255, 255, 0.02) 40%,
-          transparent 70%);
-      border-radius: inherit;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    /* Text/content above the sheen */
-    .mse-theme-box>*,
-    .mse-font-pill>* {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ── HOVER: glass lifts, border brightens, gloss appears ───── */
-    .mse-theme-box:hover,
-    .mse-font-pill:hover {
-      background: rgba(255, 255, 255, 0.13);
-      border-color: rgba(255, 255, 255, 0.35);
-      box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.18) inset,
-        0 8px 32px rgba(0, 0, 0, 0.30);
-      color: var(--text);
-    }
-
-    .mse-theme-box:hover::before,
-    .mse-font-pill:hover::before {
-      opacity: 1;
-    }
-
-    /* ── SELECTED: cyan tint to show active state ───────────────── */
-    .mse-theme-box.on,
-    .mse-font-pill.on {
-      background: rgba(0, 212, 255, 0.10);
-      border-color: rgba(0, 212, 255, 0.60);
-      box-shadow:
-        0 1px 0 rgba(0, 212, 255, 0.18) inset,
-        0 0 20px rgba(0, 212, 255, 0.10);
-      color: #67e8f9;
-    }
-
-    .mse-theme-box.on::before,
-    .mse-font-pill.on::before {
-      background: linear-gradient(135deg,
-          rgba(0, 212, 255, 0.12) 0%,
-          rgba(0, 212, 255, 0.03) 45%,
-          transparent 100%);
-      opacity: 1;
-    }
-
-    /* ── SELECTED HOVER: stays selected, just slightly brighter ── */
-    .mse-theme-box.on:hover,
-    .mse-font-pill.on:hover {
-      background: rgba(0, 212, 255, 0.15);
-      border-color: rgba(0, 212, 255, 0.80);
-    }
-
-    /* ── Theme grid layout ─────────────────────────────────────── */
+  <!-- ═══ Theme/Font Glass Hover ═══ -->
+  <style>
     .mse-theme-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
+    }
+
+    .mse-font-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
     }
 
     .mse-theme-box {
@@ -1628,9 +1489,40 @@
       font-weight: 600;
       font-family: var(--font);
       color: var(--text-2);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
-    /* Mini editor preview inside box */
+    .mse-font-pill {
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-2);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .mse-theme-box.on,
+    .mse-font-pill.on {
+      background: rgba(0, 212, 255, 0.12) !important;
+      border-color: rgba(0, 212, 255, 0.65) !important;
+      box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.22) !important;
+      color: #67e8f9 !important;
+    }
+
+    /* Mini editor mockup inside theme box */
     .mse-theme-preview {
       width: 100%;
       height: 46px;
@@ -1640,12 +1532,10 @@
       position: relative;
       overflow: hidden;
       flex-shrink: 0;
-      z-index: 1;
     }
 
     .mse-theme-preview.light {
       background: #f0f4ff;
-      border-color: rgba(0, 0, 0, 0.10);
     }
 
     .mtp-topbar {
@@ -1654,13 +1544,11 @@
       left: 0;
       right: 0;
       height: 7px;
-      background: rgba(255, 255, 255, 0.08);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.09);
     }
 
     .mtp-topbar.light {
       background: #dde8f8;
-      border-color: rgba(0, 0, 0, 0.07);
     }
 
     .mtp-left {
@@ -1669,13 +1557,12 @@
       left: 0;
       bottom: 0;
       width: 22%;
-      background: rgba(255, 255, 255, 0.05);
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.06);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .mtp-left.light {
       background: #e4eef9;
-      border-color: rgba(0, 0, 0, 0.07);
     }
 
     .mtp-body {
@@ -1692,7 +1579,7 @@
     .mtp-block {
       height: 6px;
       border-radius: 2px;
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.15);
     }
 
     .mtp-block.short {
@@ -1700,28 +1587,45 @@
     }
 
     .mtp-block.light {
-      background: rgba(0, 0, 0, 0.12);
-    }
-
-    /* ── Font pill grid layout ──────────────────────────────────── */
-    .mse-font-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-    }
-
-    .mse-font-pill {
-      padding: 9px 10px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      font-weight: 500;
-      color: var(--text-2);
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      background: rgba(0, 0, 0, 0.13);
     }
   </style>
+
+  <script>
+    /* Glass hover — JS inline styles, bypasses all CSS cascade issues */
+    (function () {
+      var ON_BG = 'linear-gradient(135deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.10) 55%, rgba(255,255,255,0.05) 100%)';
+      var ON_BORDER = 'rgba(255,255,255,0.52)';
+      var ON_SHADOW = 'inset 0 1px 0 rgba(255,255,255,0.32), 0 6px 24px rgba(0,0,0,0.38)';
+
+      function wireHover(el) {
+        el.addEventListener('mouseenter', function () {
+          if (this.classList.contains('on')) return;
+          this.style.background = ON_BG;
+          this.style.borderColor = ON_BORDER;
+          this.style.boxShadow = ON_SHADOW;
+          this.style.color = '#eef4ff';
+        });
+        el.addEventListener('mouseleave', function () {
+          if (this.classList.contains('on')) return;
+          this.style.background = '';
+          this.style.borderColor = '';
+          this.style.boxShadow = '';
+          this.style.color = '';
+        });
+      }
+
+      function init() {
+        document.querySelectorAll('.mse-theme-box, .mse-font-pill').forEach(wireHover);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
 </body>
 
 </html>
