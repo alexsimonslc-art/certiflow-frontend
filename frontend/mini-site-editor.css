@@ -467,6 +467,7 @@ textarea {
   background: rgba(0, 212, 255, 0.55);
 }
 
+
 /* Category label */
 .mse-cat-label {
   font-size: 10.5px;
@@ -642,8 +643,8 @@ textarea {
 .mse-canvas-area {
   grid-area: canvas;
   overscroll-behavior: contain;
-  background: #0a1220;  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background: #0a1220;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.055) 1px, transparent 1px);  background-size: 22px 22px;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -760,9 +761,7 @@ textarea {
   transition: max-width 0.3s var(--ease);
 }
 
-.mse-canvas-wrap.mobile {
-  max-width: 390px;
-}
+
 
 /* Empty canvas state */
 .mse-canvas-empty {
