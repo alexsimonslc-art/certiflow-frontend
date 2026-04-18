@@ -162,6 +162,7 @@ function mst_applyFontPair(id) {
   }
   MSState.updateConfig({
     fontFamily: pair.body,
+    fontHeading: pair.display,
     activeFontPair: id,
   });
   refreshCanvas();

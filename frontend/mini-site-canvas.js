@@ -190,11 +190,21 @@ function renderBlockProps(block) {
   <div class="mse-prop-row">
     <div class="mse-prop-label">Logo Shape</div>
     <div class="mse-shape-row">
-      ${['circle', 'rounded', 'square'].map(s => `<button class="mse-shape-btn ${p.logoShape === s ? 'on' : ''}"
+      ${['circle', 'rounded', 'square', 'rectangle'].map(s => `<button class="mse-shape-btn ${p.logoShape === s ? 'on' : ''}"
         onclick="msc_set('${bid}','logoShape','${s}');updateRightPanel()">
         <div class="mse-shape-preview ${s}"></div>${s[0].toUpperCase() + s.slice(1)}</button>`).join('')}
     </div>
   </div>` : ''}
+  <div class="mse-prop-row">
+    <div class="mse-range-row">
+      <div class="mse-range-header">
+        <span class="mse-prop-label">Logo Size</span>
+        <span class="mse-range-val" id="logoSzV_${bid}">${p.logoSize || 88}px</span>
+      </div>
+      <input type="range" class="mse-prop-range" min="40" max="180" step="4" value="${p.logoSize || 88}"
+        oninput="document.getElementById('logoSzV_${bid}').textContent=this.value+'px';msc_set('${bid}','logoSize',+this.value)"/>
+    </div>
+  </div>
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
@@ -236,7 +246,7 @@ function renderBlockProps(block) {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
         <span style="font-size:11.5px;color:var(--text-3)">Pinned</span>
         <div class="mse-toggle ${item.pinned ? 'on' : ''}" style="width:32px;height:18px"
-          onclick="msc_setItem('${bid}','items',${i},'pinned',${!item.pinned})"></div>
+          onclick="msc_setItem('${bid}','items',${i},'pinned',${!item.pinned});updateRightPanel()"></div>
       </div>
     `)).join('')}
     ${msc_addBtn('Add Announcement', `msc_addItem('${bid}','items',{id:'a${msc_uid()}',text:'New announcement',date:'',pinned:false})`)}
@@ -318,12 +328,23 @@ function renderBlockProps(block) {
       <option value="list" ${p.layout === 'list' ? 'selected' : ''}>List</option>
     </select>
   </div>
+  <div class="mse-prop-row">
+    <div class="mse-prop-label">Card Alignment</div>
+    <div class="mse-align-row">
+      ${['left', 'center'].map(a => `<button class="mse-align-btn ${(p.alignment || 'center') === a ? 'on' : ''}"
+        onclick="msc_set('${bid}','alignment','${a}');updateRightPanel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+          ${a === 'left' ? '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>'}
+        </svg></button>`).join('')}
+    </div>
+  </div>
   <div class="mse-prop-row" style="margin-top:4px">
     <div class="mse-prop-label" style="margin-bottom:8px">People (${items.length})</div>
     ${items.map((sp, i) => msc_itemCard(bid, 'items', i, items.length, sp.name || `Person ${i + 1}`, `
       ${msc_miniField('Name', sp.name, `msc_setItem('${bid}','items',${i},'name',this.value)`, 'text', 'Full name')}
       ${msc_miniField('Role', sp.role, `msc_setItem('${bid}','items',${i},'role',this.value)`, 'text', 'e.g. Keynote Speaker')}
-      ${msc_miniField('Photo URL', sp.photo, `msc_setItem('${bid}','items',${i},'photo',this.value)`, 'url', 'https://…')}
+      ${msc_miniField('Photo URL', sp.photo, `msc_setItem('${bid}','items',${i},'photo',this.value);updateRightPanel()`, 'url', 'https://…')}
+    ${sp.photo ? `<div style="margin-bottom:8px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1)"><img src="${sp.photo}" style="width:100%;max-height:80px;object-fit:cover;display:block" onerror="this.style.display='none'"/></div>` : ''}
       ${msc_miniTextarea('Short Bio', sp.bio, `msc_setItem('${bid}','items',${i},'bio',this.value)`, 'Brief biography…')}
     `)).join('')}
     ${msc_addBtn('Add Person', `msc_addItem('${bid}','items',{id:'sp${msc_uid()}',name:'',role:'',photo:'',bio:''})`)}
@@ -382,6 +403,21 @@ function renderBlockProps(block) {
 <div class="mse-props-section">
   <div class="mse-props-sec-label" style="color:#f59e0b">Sponsors</div>
   ${msc_titleRow(bid, p.title, 'Our Sponsors')}
+  <div class="mse-prop-row">
+    <div class="mse-prop-label">Logo Alignment</div>
+    <div class="mse-align-row">
+      ${['left', 'center', 'right'].map(a => `<button class="mse-align-btn ${(p.alignment || 'center') === a ? 'on' : ''}"
+        onclick="msc_set('${bid}','alignment','${a}');updateRightPanel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+          ${a === 'left' ? '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : a === 'center' ? '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : '<line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/>'}
+        </svg></button>`).join('')}
+    </div>
+  </div>
+  <div class="mse-toggle-row">
+    <span>Horizontal layout (side by side)</span>
+    <div class="mse-toggle ${p.horizontal !== false ? 'on' : ''}"
+      onclick="msc_set('${bid}','horizontal',${p.horizontal === false});updateRightPanel()"></div>
+  </div>
   <div class="mse-prop-row" style="margin-top:4px">
     <div class="mse-prop-label" style="margin-bottom:8px">Tiers (${tiers.length})</div>
     ${tiersHtml}
@@ -400,6 +436,16 @@ function renderBlockProps(block) {
   <div class="mse-props-sec-label" style="color:#a78bfa">Registration Form</div>
   ${msc_titleRow(bid, p.title, 'Register Now')}
   <div class="mse-prop-row">
+    <div class="mse-prop-label">Alignment</div>
+    <div class="mse-align-row">
+      ${['left', 'center'].map(a => `<button class="mse-align-btn ${(p.alignment || 'left') === a ? 'on' : ''}"
+        onclick="msc_set('${bid}','alignment','${a}');updateRightPanel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+          ${a === 'left' ? '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>'}
+        </svg></button>`).join('')}
+    </div>
+  </div>
+  <div class="mse-prop-row">
     <div class="mse-prop-label">Subtitle</div>
     <input class="mse-prop-input" value="${(p.subtitle || '').replace(/"/g, '&quot;')}" placeholder="Optional description"
       oninput="msc_set('${bid}','subtitle',this.value)"/>
@@ -410,7 +456,12 @@ function renderBlockProps(block) {
       oninput="msc_set('${bid}','buttonText',this.value)"/>
   </div>
   <div class="mse-prop-row">
-    <div class="mse-prop-label">Button Colour</div>
+    <div class="mse-prop-label">Success Message</div>
+    <textarea class="mse-prop-textarea" placeholder="Thank you! Your registration has been received."
+      style="min-height:60px"
+      oninput="msc_set('${bid}','successMessage',this.value)">${(p.successMessage || '').replace(/</g, '&lt;')}</textarea>
+    <div class="mse-prop-hint">Shown to visitors after they submit the form</div>
+  </div>
     <div class="mse-color-row">
       <div class="mse-color-swatch" style="background:${p.buttonColor || MSState.config.accentColor || '#00d4ff'}">
         <input type="color" value="${p.buttonColor || MSState.config.accentColor || '#00d4ff'}"
@@ -438,7 +489,7 @@ function renderBlockProps(block) {
       <div style="margin-bottom:8px">
         <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Field Type</div>
         <select class="mse-prop-select" style="font-size:12.5px"
-          onchange="MSState.updateBlockField('${bid}','${f.id}',{type:this.value})">
+          onchange="MSState.updateBlockField('${bid}','${f.id}',{type:this.value});updateRightPanel()">
           ${FIELD_TYPES.map(t => `<option value="${t}" ${f.type === t ? 'selected' : ''}>${t}</option>`).join('')}
         </select>
       </div>

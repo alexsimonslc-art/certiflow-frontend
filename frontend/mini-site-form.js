@@ -357,7 +357,7 @@ input:focus, select:focus, textarea:focus {
     const btnConfig = {
       accent,
       label: btn?.textContent?.trim() || 'Submit Registration',
-      successMessage: window.__MS_SUCCESS_MSG || '',
+      successMessage: form.dataset.msSuccessMsg || window.__MS_SUCCESS_MSG || '',
       shareUrl: window.__MS_SHARE_URL || '',
     };
 

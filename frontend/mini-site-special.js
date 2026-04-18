@@ -164,7 +164,7 @@ function msd_renderFontPickerGrid(activeFontName) {
 /** Called when user clicks a font in the picker grid. */
 function msd_selectFont(name) {
   msd_loadFont(name);
-  MSState.updateConfig({ fontFamily: name });
+  MSState.updateConfig({ fontFamily: name, fontHeading: name });
   const sel = document.getElementById('siteFontFamily');
   if (sel) sel.value = name;
   refreshCanvas();

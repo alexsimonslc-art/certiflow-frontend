@@ -20,7 +20,7 @@ function msb_theme(cfg) {
     ar, ag, ab,
     accentRgb: `${ar},${ag},${ab}`,
     font,
-    fontDisplay: 'Syne',
+    fontDisplay: cfg.fontHeading || cfg.fontFamily || 'Syne',
     // Text
     text: isDark ? '#eef4ff' : '#1e293b',
     sub: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)',
@@ -90,7 +90,9 @@ function msb_socialIcon(platform, color, size = 20) {
 function msb_cover(block, cfg) {
   const p = block.props, t = msb_theme(cfg);
   const shape = p.logoShape || cfg.logoShape || 'circle';
-  const radius = shape === 'circle' ? '50%' : shape === 'rounded' ? '22px' : '8px';
+  const radius = shape === 'circle' ? '50%' : shape === 'rounded' ? '22px' : shape === 'rectangle' ? '10px' : '4px';
+  const logoW = p.logoSize || 88;
+  const logoH = shape === 'rectangle' ? Math.round(logoW * 0.5) : logoW;
   const overlayMap = {
     dark: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.65) 100%)',
     blur: 'rgba(10,15,30,0.5)',
@@ -111,9 +113,9 @@ function msb_cover(block, cfg) {
 
   ${p.showLogo !== false ? `
   <div style="position:relative;z-index:3;margin-bottom:18px">
-    <div style="width:88px;height:88px;border-radius:${radius};background:${p.logoImage ? 'transparent' : 'rgba(255,255,255,0.12)'};border:2.5px solid rgba(255,255,255,0.28);display:flex;align-items:center;justify-content:center;overflow:hidden;backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 0 4px rgba(255,255,255,0.06)">
+    <div style="width:${logoW}px;height:${logoH}px;border-radius:${radius};background:${p.logoImage ? 'transparent' : 'rgba(255,255,255,0.12)'};border:2.5px solid rgba(255,255,255,0.28);display:flex;align-items:center;justify-content:center;overflow:hidden;backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 0 4px rgba(255,255,255,0.06)">
       ${p.logoImage
-        ? `<img src="${p.logoImage}" style="width:100%;height:100%;object-fit:cover" alt="logo"/>`
+        ? `<img src="${p.logoImage}" style="width:100%;height:100%;object-fit:contain" alt="logo"/>`
         : `<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" style="width:34px;height:34px"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>`}
     </div>
   </div>` : '<div style="height:28px;position:relative;z-index:3"></div>'}
@@ -194,7 +196,7 @@ function msb_datetime(block, cfg) {
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  <div style="display:flex;flex-wrap:wrap;gap:14px">
+  <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:${p.alignment === 'left' ? 'flex-start' : 'center'}">
     ${card(calSvg, p.date || '—', 'Date')}
     ${card(clkSvg, timeStr, 'Time')}
     ${card(isOnline ? linkSvg : locSvg, venueVal, isOnline ? 'Online' : (p.venueAddress || 'Venue'), venueLink)}
@@ -280,7 +282,7 @@ function msb_sponsors(block, cfg) {
   ${tiers.map((tier, ti) => `
   <div style="margin-bottom:28px">
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${t.muted};margin-bottom:12px">${tier.name}</div>
-    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:${p.alignment === 'left' ? 'flex-start' : p.alignment === 'right' ? 'flex-end' : 'center'};flex-direction:${p.horizontal === false ? 'column' : 'row'}">
       ${tier.items?.length ? tier.items.map(s => `
         <div style="height:${tierSizes[ti] || '48px'};padding:10px 16px;border-radius:10px;background:${t.bgCard};border:1px solid ${t.border};display:inline-flex;align-items:center;justify-content:center">
           ${s.logo ? `<img src="${s.logo}" style="height:${tierSizes[ti] ? parseInt(tierSizes[ti]) - 20 + 'px' : '28px'};max-width:120px;object-fit:contain" alt="${s.name || ''}"/>` : `<span style="font-size:13px;font-weight:600;color:${t.sub}">${s.name || 'Sponsor'}</span>`}
@@ -309,8 +311,25 @@ function msb_form(block, cfg) {
     const inputStyle = `width:100%;padding:11px 14px;background:${t.bgInput};border:1.5px solid ${t.border};border-radius:9px;color:${t.text};font-size:14px;font-family:'${t.font}',sans-serif;outline:none;box-sizing:border-box;transition:border-color 0.15s`;
     switch (f.type) {
       case 'textarea': return `<textarea name="${f.id}" placeholder="${f.placeholder || ''}" rows="3" style="${inputStyle};resize:vertical;line-height:1.55" ${f.required ? 'required' : ''}></textarea>`;
-      case 'select': return `<select name="${f.id}" style="${inputStyle};appearance:none;cursor:pointer" ${f.required ? 'required' : ''}>${(f.options || []).map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
-      case 'checkbox': return `<label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" name="${f.id}" style="width:16px;height:16px;accent-color:${t.accent}" ${f.required ? 'required' : ''}/><span style="font-size:14px;color:${t.sub}">${f.label}</span></label>`;
+      case 'select': return `
+<div style="display:flex;flex-direction:column;gap:8px">
+  ${(f.options || []).map((o, oi) => `
+  <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput};transition:border-color 0.15s">
+    <span style="width:18px;height:18px;border-radius:50%;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg}">
+      <span style="width:8px;height:8px;border-radius:50%;background:${t.accent};opacity:0;transition:opacity 0.15s" class="ms-radio-dot-${f.id}"></span>
+    </span>
+    <input type="radio" name="${f.id}" value="${o}" style="display:none" ${f.required && oi === 0 ? 'required' : ''} onchange="this.closest('[data-ms-form]')?.querySelectorAll('.ms-radio-dot-${f.id}').forEach(d=>d.style.opacity='0');this.closest('label').querySelector('.ms-radio-dot-${f.id}').style.opacity='1';this.closest('label').style.borderColor='${t.accent}'"/>
+    <span style="font-size:14px;color:${t.sub}">${o}</span>
+  </label>`).join('')}
+</div>`;
+      case 'checkbox': return `
+<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput}">
+  <span style="width:18px;height:18px;border-radius:5px;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg};transition:all 0.15s">
+    <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="3" style="width:11px;height:11px;opacity:0" class="ms-chk-${f.id}"></svg>
+  </span>
+  <input type="checkbox" name="${f.id}" style="display:none" ${f.required ? 'required' : ''} onchange="const ic=this.closest('label');const dot=ic.querySelector('.ms-chk-${f.id}');dot.style.opacity=this.checked?'1':'0';ic.style.borderColor=this.checked?'${t.accent}':'';ic.querySelector('span').style.background=this.checked?'rgba(${t.accentRgb},0.15)':''"/>
+  <span style="font-size:14px;color:${t.sub}">${f.label}</span>
+</label>`;
       default: return `<input type="${f.type || 'text'}" name="${f.id}" placeholder="${f.placeholder || ''}" style="${inputStyle}" ${f.required ? 'required' : ''}/>`;
     }
   };
@@ -320,7 +339,7 @@ function msb_form(block, cfg) {
   ${msb_title(p.title || 'Register Now', t)}
   ${p.subtitle ? `<p style="margin:-8px 0 20px;font-size:14.5px;color:${t.sub};line-height:1.6">${p.subtitle}</p>` : ''}
   ${isOpen ? `
-  <form data-ms-form="${p.sheetId || ''}" style="max-width:520px;display:flex;flex-direction:column;gap:16px" onsubmit="return false">
+  <form data-ms-form="${p.sheetId || ''}" style="max-width:520px;display:flex;flex-direction:column;gap:16px;${p.alignment === 'center' ? 'margin:0 auto;text-align:center' : ''};" data-ms-success-msg="${(p.successMessage || '').replace(/"/g, '&quot;')}" style="max-width:520px;display:flex;flex-direction:column;gap:16px;${p.alignment === 'center' ? 'margin:0 auto;text-align:center' : ''};" data-ms-success-msg="${(p.successMessage || '').replace(/"/g, '&quot;')}" style="max-width:520px;display:flex;flex-direction:column;gap:16px" onsubmit="return false">
     ${fields.map(f => `
     <div style="display:flex;flex-direction:column;gap:6px">
       ${f.type !== 'checkbox' ? `<label style="font-size:12.5px;font-weight:600;color:${t.sub};text-transform:uppercase;letter-spacing:0.5px">${f.label || ''}${f.required ? '<span style="color:#f43f5e;margin-left:3px">*</span>' : ''}</label>` : ''}
