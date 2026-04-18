@@ -555,11 +555,19 @@ function mst_wireCardHovers() {
       this.style.boxShadow = HSHAD;
       this.style.transform = 'translateY(-1px)';
     });
-    btn.addEventListener('mouseleave', function () {
+    btn.addEventListener('mouseleave', function() {
       this.style.background = origBg;
-      this.style.borderColor = origBord;
-      this.style.boxShadow = origShad;
-      this.style.transform = '';
+      if (origBord) {
+        this.style.borderColor = origBord;
+      } else {
+        this.style.removeProperty('border-color');
+      }
+      if (origShad) {
+        this.style.boxShadow = origShad;
+      } else {
+        this.style.removeProperty('box-shadow');
+      }
+      this.style.removeProperty('transform');
     });
   });
 }
