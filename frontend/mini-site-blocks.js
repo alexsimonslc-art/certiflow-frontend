@@ -288,7 +288,7 @@ function msb_speakers(block, cfg) {
     }
   }
 
-  function startAuto(){timer=setInterval(function(){goTo(cur+1);},3500);}
+  function startAuto(){timer=setInterval(function(){goTo(cur+1);},5500);}
   function stopAuto(){clearInterval(timer);}
 
   function applyMode(){
