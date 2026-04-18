@@ -635,16 +635,7 @@ textarea {
   height: 12px;
 }
 /* Phone preview shell — scales down on shorter screens so full phone is visible */
-#mse-phone-shell {
-  transform: scale(1);
-  transition: transform 0.2s ease;
-}
-@media (max-height: 780px) {
-  #mse-phone-shell { transform: scale(0.88); }
-}
-@media (max-height: 680px) {
-  #mse-phone-shell { transform: scale(0.78); }
-}
+
 /* ═══════════════════════════════════════════════════════════════
    CANVAS AREA
 ═══════════════════════════════════════════════════════════════ */

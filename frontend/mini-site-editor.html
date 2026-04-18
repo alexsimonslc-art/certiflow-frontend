@@ -300,25 +300,35 @@
       </div>
 
       <!-- Mobile iframe preview — shown when mobile mode is active -->
-      <div id="mse-mobile-wrap" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 0 40px;width:100%;min-height:100%">
-        <!-- Phone shell scales to fit screen without changing iframe viewport -->
-        <div id="mse-phone-shell" style="transform-origin:top center;flex-shrink:0">
-          <div style="background:linear-gradient(160deg,#1e2d3d,#111a26);border-radius:44px;padding:12px;box-shadow:0 20px 60px rgba(0,0,0,0.75),inset 0 1px 0 rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.07)">
-            <div style="background:#000;border-radius:34px;overflow:hidden;width:390px">
-              <!-- Status bar / notch -->
-              <div style="height:30px;background:#050505;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                <div style="width:80px;height:5px;background:#1a1a1a;border-radius:99px"></div>
+      <div id="mse-mobile-wrap" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 0 32px;width:100%">
+        <!-- Shell wrapper: zoom auto-applied by scaleMobilePhone() -->
+        <div id="mse-phone-shell" style="transform-origin:top center;flex-shrink:0;display:inline-block">
+          <!-- Outer phone body -->
+          <div style="background:linear-gradient(170deg,#1c2533 0%,#0e161f 100%);border-radius:52px;padding:13px;box-shadow:0 28px 80px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.06),inset 0 1px 0 rgba(255,255,255,0.08)">
+            <!-- Side buttons (visual only) -->
+            <div style="position:absolute;left:-4px;top:130px;width:4px;height:36px;background:#1a2535;border-radius:3px 0 0 3px"></div>
+            <div style="position:absolute;left:-4px;top:180px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px"></div>
+            <div style="position:absolute;left:-4px;top:256px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px"></div>
+            <div style="position:absolute;right:-4px;top:170px;width:4px;height:84px;background:#1a2535;border-radius:0 3px 3px 0"></div>
+            <!-- Screen -->
+            <div style="background:#000;border-radius:42px;overflow:hidden;width:430px;position:relative">
+              <!-- Dynamic island -->
+              <div style="height:48px;background:#050505;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0">
+                <div style="width:120px;height:32px;background:#000;border-radius:99px;border:1px solid #111;display:flex;align-items:center;justify-content:center;gap:6px">
+                  <div style="width:10px;height:10px;border-radius:50%;background:#111"></div>
+                  <div style="width:6px;height:6px;border-radius:50%;background:#1a1a1a"></div>
+                </div>
               </div>
-              <!-- The iframe — viewport is exactly 390px wide -->
-              <iframe id="mse-mobile-frame" style="width:390px;height:clamp(460px,calc(100vh - 310px),700px);border:none;display:block" scrolling="yes"></iframe>
-              <!-- Home bar -->
-              <div style="height:22px;background:#050505;display:flex;align-items:center;justify-content:center">
-                <div style="width:100px;height:4px;background:#1a1a1a;border-radius:99px"></div>
+              <!-- iframe — true 430px mobile viewport, no scroll visible -->
+              <iframe id="mse-mobile-frame" style="width:430px;height:932px;border:none;display:block;overflow:hidden" scrolling="no"></iframe>
+              <!-- Home indicator -->
+              <div style="height:28px;background:#050505;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <div style="width:120px;height:5px;background:#1c1c1e;border-radius:99px"></div>
               </div>
             </div>
           </div>
         </div>
-        <div style="margin-top:12px;font-size:11.5px;color:rgba(255,255,255,0.25);font-family:var(--font);letter-spacing:0.3px">390px viewport · iPhone 14</div>
+        <div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--font);letter-spacing:0.4px">430 × 932 · iPhone 14 Pro Max</div>
       </div>
     </main>
 
@@ -1347,6 +1357,7 @@
         canvasWrap.style.zoom = '';
         mobileWrap.style.display = 'flex';
         refreshMobilePreview();
+        setTimeout(scaleMobilePhone, 50);
       } else {
         canvasWrap.style.display = '';
         canvasWrap.style.zoom = '0.82';
@@ -1384,6 +1395,28 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
 </head><body>${blocksHtml}</body></html>`;
     }
 
+    // ADD after refreshMobilePreview function:
+
+    function scaleMobilePhone() {
+      const shell = document.getElementById('mse-phone-shell');
+      const canvas = document.getElementById('canvasArea');
+      if (!shell || !canvas) return;
+      // Reset zoom to measure natural size
+      shell.style.zoom = '1';
+      const availH = canvas.clientHeight - 80; // 40px top + 40px bottom margin
+      const availW = canvas.clientWidth - 48;  // side margin
+      const shellH = shell.offsetHeight;
+      const shellW = shell.offsetWidth;
+      const scaleH = availH / shellH;
+      const scaleW = availW / shellW;
+      const scale = Math.min(1, scaleH, scaleW);
+      shell.style.zoom = scale.toString();
+    }
+
+    // Rescale phone on window resize
+    window.addEventListener('resize', () => {
+      if (MSState.previewMode === 'mobile') scaleMobilePhone();
+    });
     /* ════════════════════════════════════════════════════════════════
        SAVE / UNDO / REDO
     ════════════════════════════════════════════════════════════════ */
