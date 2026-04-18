@@ -455,26 +455,28 @@ function renderBlockProps(block) {
 
     /* ─── FORM ──────────────────────────────────────────────── */
     case 'form': {
-      const fields = p.fields || [];
-      const FIELD_TYPES = ['text', 'email', 'tel', 'number', 'date', 'textarea', 'select', 'checkbox', 'file'];
+      // ── Migration: old flat fields[] → sections[] ──────────────
+      if (p.fields && !p.sections) {
+        p.sections = [{
+          id: 'sec_1', title: 'Section 1', description: '',
+          fields: p.fields.map(f => ({ description: '', ...f })),
+          routing: { type: 'auto', conditionFieldId: null, rules: [], defaultGoTo: 'next' },
+        }];
+        delete p.fields;
+        MSState.updateBlock(bid, { sections: p.sections });
+        const blk = MSState.getBlock(bid); if (blk) delete blk.props.fields;
+      }
+      const sections = p.sections || [];
       return `
 <div class="mse-props-section">
   <div class="mse-props-sec-label" style="color:#a78bfa">Registration Form</div>
+
+  <!-- Form settings -->
   ${msc_titleRow(bid, p.title, 'Register Now')}
   <div class="mse-prop-row">
-    <div class="mse-prop-label">Alignment</div>
-    <div class="mse-align-row">
-      ${['left', 'center'].map(a => `<button class="mse-align-btn ${(p.alignment || 'left') === a ? 'on' : ''}"
-        onclick="msc_set('${bid}','alignment','${a}');updateRightPanel()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
-          ${a === 'left' ? '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>'}
-        </svg></button>`).join('')}
-    </div>
-  </div>
-  <div class="mse-prop-row">
     <div class="mse-prop-label">Subtitle</div>
-    <input class="mse-prop-input" value="${(p.subtitle || '').replace(/"/g, '&quot;')}" placeholder="Optional description"
-      oninput="msc_set('${bid}','subtitle',this.value)"/>
+    <input class="mse-prop-input" value="${(p.subtitle || '').replace(/"/g, '&quot;')}"
+      placeholder="Optional description" oninput="msc_set('${bid}','subtitle',this.value)"/>
   </div>
   <div class="mse-prop-row">
     <div class="mse-prop-label">Button Text</div>
@@ -482,12 +484,7 @@ function renderBlockProps(block) {
       oninput="msc_set('${bid}','buttonText',this.value)"/>
   </div>
   <div class="mse-prop-row">
-    <div class="mse-prop-label">Success Message</div>
-    <textarea class="mse-prop-textarea" placeholder="Thank you! Your registration has been received."
-      style="min-height:60px"
-      oninput="msc_set('${bid}','successMessage',this.value)">${(p.successMessage || '').replace(/</g, '&lt;')}</textarea>
-    <div class="mse-prop-hint">Shown to visitors after they submit the form</div>
-  </div>
+    <div class="mse-prop-label">Button Colour</div>
     <div class="mse-color-row">
       <div class="mse-color-swatch" style="background:${p.buttonColor || MSState.config.accentColor || '#00d4ff'}">
         <input type="color" value="${p.buttonColor || MSState.config.accentColor || '#00d4ff'}"
@@ -498,51 +495,53 @@ function renderBlockProps(block) {
     </div>
   </div>
   <div class="mse-prop-row">
-    <div class="mse-prop-label">Google Sheet ID</div>
-    <input class="mse-prop-input" value="${p.sheetId || ''}" placeholder="Sheet ID from Drive URL"
+    <div class="mse-prop-label">Success Message</div>
+    <textarea class="mse-prop-textarea" placeholder="We'll be in touch soon!"
+      style="min-height:56px" oninput="msc_set('${bid}','successMessage',this.value)">${(p.successMessage || '').replace(/</g, '&lt;')}</textarea>
+    <div class="mse-prop-hint">Shown to the visitor after they submit</div>
+  </div>
+  <div class="mse-prop-row">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div class="mse-prop-label" style="margin-bottom:2px">Show Progress Bar</div>
+        <div class="mse-prop-hint" style="margin:0">Section X of Y indicator</div>
+      </div>
+      <div class="mse-toggle ${p.showProgressBar !== false ? 'on' : ''}" style="width:32px;height:18px;flex-shrink:0"
+        onclick="msc_set('${bid}','showProgressBar',${p.showProgressBar === false});updateRightPanel()"></div>
+    </div>
+  </div>
+  <div class="mse-prop-row">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="mse-prop-label">Alignment</div>
+      <div class="mse-align-row">
+        ${['left', 'center'].map(a => `<button class="mse-align-btn ${(p.alignment || 'left') === a ? 'on' : ''}"
+          onclick="msc_set('${bid}','alignment','${a}');updateRightPanel()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+            ${a === 'left' ? '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>'}
+          </svg></button>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="mse-prop-row">
+    <div class="mse-prop-label">Google Sheet <span style="font-size:10px;color:var(--green);font-weight:600;margin-left:6px">AUTO-CREATED ON PUBLISH</span></div>
+    <input class="mse-prop-input" value="${p.sheetId || ''}" placeholder="Leave blank — auto-created on Publish"
       oninput="msc_set('${bid}','sheetId',this.value)"/>
-    <div class="mse-prop-hint">Responses go directly to your Google Sheet. Find the ID in the URL: …/d/<strong style="color:var(--cyan)">SHEET_ID</strong>/edit</div>
+    <div class="mse-prop-hint">A Sheet is created automatically when you publish. Or paste an existing Sheet ID here.</div>
   </div>
-  <div class="mse-prop-row" style="margin-top:8px">
-    <div class="mse-prop-label" style="margin-bottom:8px">Form Fields (${fields.length})</div>
-    ${fields.map((f, i) => msc_itemCard(bid, 'fields', i, fields.length, f.label || `Field ${i + 1}`, `
-      <div style="margin-bottom:8px">
-        <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Label</div>
-        <input type="text" class="mse-prop-input" value="${(f.label || '').replace(/"/g, '&quot;')}"
-          placeholder="Field label" style="font-size:12.5px;padding:7px 9px"
-          oninput="msc_setItem('${bid}','fields',${i},'label',this.value)"/>
-      </div>
-      <div style="margin-bottom:8px">
-        <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Field Type</div>
-        <select class="mse-prop-select" style="font-size:12.5px"
-          onchange="MSState.updateBlockField('${bid}','${f.id}',{type:this.value});updateRightPanel()">
-          ${FIELD_TYPES.map(t => `<option value="${t}" ${f.type === t ? 'selected' : ''}>${t}</option>`).join('')}
-        </select>
-      </div>
-      <div style="margin-bottom:8px">
-        <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Placeholder</div>
-        <input type="text" class="mse-prop-input" value="${(f.placeholder || '').replace(/"/g, '&quot;')}"
-          placeholder="Hint text…" style="font-size:12.5px;padding:7px 9px"
-          oninput="msc_setItem('${bid}','fields',${i},'placeholder',this.value)"/>
-      </div>
-      ${(f.type === 'select' || f.type === 'checkbox') ? `
-      <div style="margin-bottom:8px">
-        <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Options (comma-separated)</div>
-        <input type="text" class="mse-prop-input" value="${(f.options || []).join(',').replace(/"/g, '&quot;')}"
-          placeholder="Option A, Option B, Option C" style="font-size:12.5px;padding:7px 9px"
-          oninput="MSState.updateBlockField('${bid}','${f.id}',{options:this.value.split(',').map(s=>s.trim()).filter(Boolean)});updateRightPanel()"/>
-        <div style="font-size:10px;color:var(--text-3);margin-top:3px">${f.type === 'checkbox' ? 'Visitors can select multiple options' : 'Visitors can select one option'}</div>
-      </div>` : ''}
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
-        <span style="font-size:11.5px;color:var(--text-3)">Required</span>
-        <!-- Uses updateBlockField (not msc_setItem) so 'field-update' notify fires
-             and onChange rebuilds the right panel → toggle reflects new state instantly -->
-        <div class="mse-toggle ${f.required ? 'on' : ''}" style="width:32px;height:18px"
-          onclick="MSState.updateBlockField('${bid}','${f.id}',{required:${!f.required}})"></div>
-      </div>
-    `)).join('')}
-    ${msc_addBtn('Add Field', `msc_addItem('${bid}','fields',{id:'f${msc_uid()}',type:'text',label:'New Field',required:false,placeholder:''})`)}
+
+  <!-- Sections -->
+  <div class="mse-prop-row" style="margin-top:4px">
+    <div class="mse-prop-label" style="margin-bottom:10px">
+      Sections &nbsp;<span style="font-weight:400;color:var(--text-3)">(${sections.length})</span>
+    </div>
+    ${sections.map((sec, si) => mscf_sectionCard(bid, sec, si, sections.length)).join('')}
+    <button class="mse-add-item-btn" style="margin-top:4px"
+      onclick="MSState.addFormSection('${bid}');updateRightPanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Section
+    </button>
   </div>
+
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -814,7 +813,415 @@ function msc_onVideoUrl(blockId, idx, url) {
   updateRightPanel();   // onChange handles canvas
 }
 
+
 /* ═══════════════════════════════════════════════════════════════
    CONFIRM: mini-site-canvas.js fully loaded
 ═══════════════════════════════════════════════════════════════ */
 console.log('[Honourix] mini-site-canvas.js loaded — renderBlockProps overridden ✓');
+
+/* ═══════════════════════════════════════════════════════════════
+   FORM BLOCK EDITOR HELPERS  (mscf_*)
+   Used exclusively by the case 'form' prop panel.
+═══════════════════════════════════════════════════════════════ */
+
+/* Field type metadata — groups + labels */
+const MSCF_FIELD_TYPES = [
+  {
+    group: 'Text Inputs', types: [
+      { t: 'text', icon: 'T', label: 'Short Text' },
+      { t: 'textarea', icon: '¶', label: 'Long Text' },
+      { t: 'email', icon: '@', label: 'Email' },
+      { t: 'tel', icon: '#', label: 'Phone' },
+      { t: 'number', icon: '12', label: 'Number' },
+      { t: 'url', icon: '⎈', label: 'URL' },
+      { t: 'date', icon: '📅', label: 'Date' },
+      { t: 'time', icon: '⏱', label: 'Time' },
+    ]
+  },
+  {
+    group: 'Choice', types: [
+      { t: 'radio', icon: '◉', label: 'Multiple Choice' },
+      { t: 'checkbox-group', icon: '☑', label: 'Checkboxes' },
+      { t: 'dropdown', icon: '▾', label: 'Dropdown' },
+      { t: 'linear-scale', icon: '━', label: 'Linear Scale' },
+      { t: 'rating', icon: '★', label: 'Star Rating' },
+      { t: 'ranking', icon: '↕', label: 'Ranking' },
+      { t: 'image-choice', icon: '🖼', label: 'Image Choice' },
+    ]
+  },
+  {
+    group: 'Media / Upload', types: [
+      { t: 'file', icon: '📎', label: 'File Upload' },
+    ]
+  },
+  {
+    group: 'Special', types: [
+      { t: 'section-text', icon: 'ℹ', label: 'Instruction Text' },
+      { t: 'divider', icon: '─', label: 'Divider' },
+    ]
+  },
+];
+
+function mscf_typeBadge(type) {
+  const colors = {
+    text: '#60a5fa', textarea: '#60a5fa', email: '#a78bfa', tel: '#a78bfa',
+    number: '#34d399', url: '#34d399', date: '#f59e0b', time: '#f59e0b',
+    'datetime-local': '#f59e0b',
+    radio: '#f472b6', 'checkbox-group': '#f472b6', dropdown: '#f472b6',
+    'linear-scale': '#00d4ff', rating: '#fbbf24', ranking: '#fb923c',
+    'image-choice': '#c084fc', file: '#94a3b8',
+    'section-text': '#4ade80', divider: '#64748b',
+  };
+  const names = {
+    text: 'Text', textarea: 'Textarea', email: 'Email', tel: 'Phone',
+    number: 'Number', url: 'URL', date: 'Date', time: 'Time',
+    'datetime-local': 'Date+Time', radio: 'Choice', 'checkbox-group': 'Checkboxes',
+    dropdown: 'Dropdown', 'linear-scale': 'Scale', rating: 'Rating',
+    ranking: 'Ranking', 'image-choice': 'Img Choice', file: 'File',
+    'section-text': 'Text Block', divider: 'Divider', select: 'Dropdown',
+    checkbox: 'Checkboxes',
+  };
+  const c = colors[type] || '#94a3b8';
+  return `<span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:${c}22;color:${c};flex-shrink:0">${names[type] || type}</span>`;
+}
+
+/* Type picker overlay (injected inline beneath the "Add Field" button) */
+function mscf_showTypePicker(bid, secId) {
+  const existing = document.getElementById(`mscf-picker-${secId}`);
+  if (existing) { existing.remove(); return; }
+  const btn = document.querySelector(`[data-add-field-btn="${secId}"]`);
+  if (!btn) return;
+  const div = document.createElement('div');
+  div.id = `mscf-picker-${secId}`;
+  div.style.cssText = 'background:#0d1424;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px;margin-top:8px;position:relative;z-index:10';
+  div.innerHTML = MSCF_FIELD_TYPES.map(group => `
+    <div style="margin-bottom:10px">
+      <div style="font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">${group.group}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+        ${group.types.map(ft => `
+        <button onclick="MSState.addFormField('${bid}','${secId}','${ft.t}');updateRightPanel()"
+          style="display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.03);color:var(--text-2);font-size:12px;cursor:pointer;font-family:var(--font);text-align:left;transition:background 0.1s"
+          onmouseenter="this.style.background='rgba(255,255,255,0.08)'" onmouseleave="this.style.background='rgba(255,255,255,0.03)'">
+          <span style="font-size:13px;flex-shrink:0">${ft.icon}</span>
+          <span>${ft.label}</span>
+        </button>`).join('')}
+      </div>
+    </div>`).join('');
+  btn.insertAdjacentElement('afterend', div);
+}
+
+/* Section-level card (wraps fields + routing) */
+function mscf_sectionCard(bid, sec, si, total) {
+  const fields = sec.fields || [];
+  const canDel = total > 1;
+  return `
+<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.09);border-radius:11px;margin-bottom:10px;overflow:hidden">
+
+  <!-- Section header -->
+  <div style="display:flex;align-items:center;gap:6px;padding:9px 10px;background:rgba(124,58,237,0.08);border-bottom:1px solid rgba(255,255,255,0.06)">
+    <span style="font-size:11px;font-weight:700;color:#a78bfa;flex-shrink:0">${si + 1}</span>
+    <input class="mse-prop-input" value="${(sec.title || '').replace(/"/g, '&quot;')}"
+      placeholder="Section title"
+      style="flex:1;font-size:12.5px;padding:4px 8px;background:transparent;border-color:transparent"
+      oninput="mscf_updateSection('${bid}','${sec.id}','title',this.value)"/>
+    ${si > 0 ? `<button class="mse-icon-btn" title="Move up" onclick="mscf_moveSection('${bid}',${si},-1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg></button>` : ''}
+    ${si < total - 1 ? `<button class="mse-icon-btn" title="Move down" onclick="mscf_moveSection('${bid}',${si},+1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="6 9 12 15 18 9"/></svg></button>` : ''}
+    ${canDel ? `<button class="mse-icon-btn" title="Delete section" style="color:var(--red)"
+      onclick="if(confirm('Delete this section and all its fields?'))MSState.removeFormSection('${bid}','${sec.id}');updateRightPanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
+  </div>
+
+  <!-- Section body -->
+  <div style="padding:10px">
+    <!-- Description -->
+    <div style="margin-bottom:10px">
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Description (optional)</div>
+      <textarea class="mse-prop-textarea" placeholder="Instructions shown above fields…"
+        style="min-height:44px;font-size:12px"
+        oninput="mscf_updateSection('${bid}','${sec.id}','description',this.value)">${(sec.description || '').replace(/</g, '&lt;')}</textarea>
+    </div>
+
+    <!-- Fields list -->
+    <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">
+      Fields (${fields.length})
+    </div>
+    ${fields.length ? fields.map((f, fi) => mscf_fieldCard(bid, sec.id, f, fi, fields.length)).join('') : `
+    <div style="text-align:center;padding:14px 0;font-size:12px;color:var(--text-3)">No fields yet — add one below</div>`}
+
+    <!-- Add field -->
+    <button class="mse-add-item-btn" style="width:100%;margin-top:6px"
+      data-add-field-btn="${sec.id}"
+      onclick="mscf_showTypePicker('${bid}','${sec.id}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Field
+    </button>
+
+    <!-- Section routing -->
+    ${mscf_routingPanel(bid, sec, si, total)}
+  </div>
+</div>`;
+}
+
+/* Individual field row with expand-on-click details */
+function mscf_fieldCard(bid, secId, f, fi, total) {
+  const hasOptions = ['radio', 'checkbox-group', 'dropdown', 'ranking', 'image-choice', 'checkbox', 'select'].includes(f.type);
+  const isSpecial = f.type === 'section-text' || f.type === 'divider';
+  return `
+<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;margin-bottom:6px;overflow:hidden">
+
+  <!-- Field row: label + type badge + required + move/del -->
+  <div style="display:flex;align-items:center;gap:6px;padding:7px 8px">
+    <div style="display:flex;flex-direction:column;gap:1px;flex-shrink:0;cursor:ns-resize;opacity:0.35">
+      <div style="width:12px;height:1.5px;background:currentColor;border-radius:2px"></div>
+      <div style="width:12px;height:1.5px;background:currentColor;border-radius:2px"></div>
+      <div style="width:12px;height:1.5px;background:currentColor;border-radius:2px"></div>
+    </div>
+    ${mscf_typeBadge(f.type)}
+    ${isSpecial
+      ? `<span style="flex:1;font-size:12px;color:var(--text-3);font-style:italic">${f.type === 'divider' ? '— divider —' : (f.heading || 'Instruction text')}</span>`
+      : `<input class="mse-prop-input" value="${(f.label || '').replace(/"/g, '&quot;')}"
+          placeholder="Question label" style="flex:1;font-size:12.5px;padding:4px 7px;background:transparent;border-color:transparent"
+          oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{label:this.value})"/>`}
+    ${!isSpecial ? `<div class="mse-toggle ${f.required ? 'on' : ''}" title="${f.required ? 'Required' : 'Optional'}" style="width:28px;height:16px;flex-shrink:0"
+      onclick="MSState.updateFormField('${bid}','${secId}','${f.id}',{required:${!f.required}});updateRightPanel()"></div>` : ''}
+    ${fi > 0 ? `<button class="mse-icon-btn" onclick="mscf_moveField('${bid}','${secId}',${fi},-1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><polyline points="18 15 12 9 6 15"/></svg></button>` : ''}
+    ${fi < total - 1 ? `<button class="mse-icon-btn" onclick="mscf_moveField('${bid}','${secId}',${fi},+1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><polyline points="6 9 12 15 18 9"/></svg></button>` : ''}
+    <button class="mse-icon-btn" style="color:var(--red)"
+      onclick="MSState.removeFormField('${bid}','${secId}','${f.id}');updateRightPanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <button class="mse-icon-btn" title="Expand"
+      onclick="const d=this.closest('[data-field-card]').querySelector('[data-field-detail]');d.style.display=d.style.display==='none'?'block':'none'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><polyline points="6 9 12 15 18 9"/></svg></button>
+  </div>
+
+  <!-- Expanded details (hidden by default) -->
+  <div data-field-detail style="display:none;padding:8px 10px;border-top:1px solid rgba(255,255,255,0.06)">
+    ${isSpecial ? mscf_specialFieldProps(bid, secId, f) : mscf_fieldProps(bid, secId, f, hasOptions)}
+  </div>
+
+</div>`;
+}
+
+function mscf_fieldProps(bid, secId, f, hasOptions) {
+  return `
+  ${f.type !== 'rating' ? `
+  <div style="margin-bottom:8px">
+    <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Placeholder</div>
+    <input class="mse-prop-input" value="${(f.placeholder || '').replace(/"/g, '&quot;')}"
+      placeholder="Hint text inside the input" style="font-size:12px;padding:6px 8px"
+      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{placeholder:this.value})"/>
+  </div>` : ''}
+  <div style="margin-bottom:8px">
+    <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Helper Text</div>
+    <input class="mse-prop-input" value="${(f.description || '').replace(/"/g, '&quot;')}"
+      placeholder="Optional note shown below the label" style="font-size:12px;padding:6px 8px"
+      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{description:this.value})"/>
+  </div>
+  ${hasOptions ? `
+  <div style="margin-bottom:8px">
+    <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Options (one per line)</div>
+    <textarea class="mse-prop-textarea" style="min-height:72px;font-size:12px;font-family:var(--font-mono)"
+      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{options:this.value.split('\\n').map(s=>s.trim()).filter(Boolean)})">${((f.options || []).map(o => typeof o === 'object' ? o.label : o)).join('\n').replace(/</g, '&lt;')}</textarea>
+  </div>` : ''}
+  ${f.type === 'linear-scale' ? `
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+    <div>
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Min</div>
+      <input type="number" class="mse-prop-input" value="${f.min || 1}" style="font-size:12px;padding:6px 8px"
+        oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{min:+this.value})"/>
+    </div>
+    <div>
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Max</div>
+      <input type="number" class="mse-prop-input" value="${f.max || 5}" style="font-size:12px;padding:6px 8px"
+        oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{max:+this.value})"/>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+    <div>
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Min Label</div>
+      <input class="mse-prop-input" value="${(f.minLabel || '').replace(/"/g, '&quot;')}" placeholder="e.g. Not at all"
+        style="font-size:12px;padding:6px 8px"
+        oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{minLabel:this.value})"/>
+    </div>
+    <div>
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Max Label</div>
+      <input class="mse-prop-input" value="${(f.maxLabel || '').replace(/"/g, '&quot;')}" placeholder="e.g. Absolutely"
+        style="font-size:12px;padding:6px 8px"
+        oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{maxLabel:this.value})"/>
+    </div>
+  </div>` : ''}
+  ${f.type === 'file' ? `
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+    <div>
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Accepted Types</div>
+      <input class="mse-prop-input" value="${(f.accept || '.pdf,.jpg,.png').replace(/"/g, '&quot;')}" placeholder=".pdf,.jpg,.png"
+        style="font-size:12px;padding:6px 8px"
+        oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{accept:this.value})"/>
+    </div>
+    <div>
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Max Size (MB)</div>
+      <input type="number" class="mse-prop-input" value="${f.maxSizeMB || 5}" style="font-size:12px;padding:6px 8px"
+        oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{maxSizeMB:+this.value})"/>
+    </div>
+  </div>` : ''}
+  ${f.type === 'number' ? `
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+    <div>
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Min Value</div>
+      <input type="number" class="mse-prop-input" value="${f.min || ''}" placeholder="None"
+        style="font-size:12px;padding:6px 8px"
+        oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{min:this.value?+this.value:undefined})"/>
+    </div>
+    <div>
+      <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Max Value</div>
+      <input type="number" class="mse-prop-input" value="${f.max || ''}" placeholder="None"
+        style="font-size:12px;padding:6px 8px"
+        oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{max:this.value?+this.value:undefined})"/>
+    </div>
+  </div>` : ''}
+  `;
+}
+
+function mscf_specialFieldProps(bid, secId, f) {
+  if (f.type === 'divider') return `<div style="font-size:12px;color:var(--text-3);text-align:center;padding:6px 0">Visual divider — no properties</div>`;
+  return `
+  <div style="margin-bottom:8px">
+    <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Heading</div>
+    <input class="mse-prop-input" value="${(f.heading || '').replace(/"/g, '&quot;')}"
+      placeholder="Optional heading text" style="font-size:12px;padding:6px 8px"
+      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{heading:this.value})"/>
+  </div>
+  <div>
+    <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Body</div>
+    <textarea class="mse-prop-textarea" style="min-height:72px;font-size:12px"
+      placeholder="Instruction or note text shown to visitors…"
+      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{body:this.value})">${(f.body || '').replace(/</g, '&lt;')}</textarea>
+  </div>`;
+}
+
+/* Routing / Logic panel per section */
+function mscf_routingPanel(bid, sec, si, total) {
+  const r = sec.routing || {};
+  const routingType = r.type || 'auto';
+  const condFields = (sec.fields || []).filter(f => ['radio', 'dropdown', 'checkbox-group', 'select'].includes(f.type));
+  const condField = condFields.find(f => f.id === r.conditionFieldId);
+
+  return `
+<div style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px">
+  <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Section Logic</div>
+
+  <!-- Routing type selector -->
+  <div style="display:flex;gap:4px;margin-bottom:${routingType === 'conditional' ? '10px' : '0'}">
+    ${[
+      { v: 'auto', label: 'Auto Next' },
+      { v: 'conditional', label: 'Conditional', disabled: condFields.length === 0 },
+      { v: 'submit', label: 'Go to Submit' },
+    ].map(opt => `
+    <button onclick="MSState.updateSectionRouting('${bid}','${sec.id}',{type:'${opt.v}'});updateRightPanel()"
+      ${opt.disabled ? 'disabled title="Add a radio/dropdown field first"' : ''}
+      style="flex:1;padding:5px 4px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);
+             border:1px solid ${routingType === opt.v ? 'rgba(124,58,237,0.5)' : 'rgba(255,255,255,0.08)'};
+             background:${routingType === opt.v ? 'rgba(124,58,237,0.18)' : 'transparent'};
+             color:${routingType === opt.v ? '#a78bfa' : 'var(--text-3)'};
+             ${opt.disabled ? 'opacity:0.4;' : ''}">
+      ${opt.label}
+    </button>`).join('')}
+  </div>
+
+  ${routingType === 'conditional' ? `
+  <!-- Condition field picker -->
+  <div style="margin-bottom:8px">
+    <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Based on answer to</div>
+    <select class="mse-prop-select" style="font-size:12px"
+      onchange="MSState.updateSectionRouting('${bid}','${sec.id}',{conditionFieldId:this.value,rules:[]});updateRightPanel()">
+      <option value="">-- pick a field --</option>
+      ${condFields.map(f => `<option value="${f.id}" ${r.conditionFieldId === f.id ? 'selected' : ''}>${f.label || f.id}</option>`).join('')}
+    </select>
+  </div>
+
+  ${condField ? `
+  <!-- Rules: value → goto section -->
+  <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">If answer is…</div>
+  ${(condField.options || []).map((opt, oi) => {
+      const optLabel = typeof opt === 'object' ? opt.label : opt;
+      const rule = (r.rules || []).find(rule => rule.value === optLabel) || {};
+      const allSections = MSState.getBlock(bid)?.props?.sections || [];
+      return `
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+    <div style="flex:1;font-size:12px;color:var(--text-2);padding:5px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${optLabel}</div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0;color:var(--text-3)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    <select class="mse-prop-select" style="font-size:11.5px;flex:1"
+      onchange="mscf_setRule('${bid}','${sec.id}','${optLabel}',this.value)">
+      <option value="next" ${(rule.goTo || 'next') === 'next' ? 'selected' : ''}>Next Section</option>
+      <option value="submit" ${rule.goTo === 'submit' ? 'selected' : ''}>Submit Form</option>
+      ${allSections.filter((s, i) => s.id !== sec.id).map(s => `<option value="${s.id}" ${rule.goTo === s.id ? 'selected' : ''}>${s.title || 'Section ' + (allSections.indexOf(s) + 1)}</option>`).join('')}
+    </select>
+  </div>`;
+    }).join('')}
+
+  <!-- Default -->
+  <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.05)">
+    <div style="flex:1;font-size:12px;color:var(--text-3)">Default (no match)</div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0;color:var(--text-3)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    <select class="mse-prop-select" style="font-size:11.5px;flex:1"
+      onchange="MSState.updateSectionRouting('${bid}','${sec.id}',{defaultGoTo:this.value})">
+      <option value="next" ${(r.defaultGoTo || 'next') === 'next' ? 'selected' : ''}>Next Section</option>
+      <option value="submit" ${r.defaultGoTo === 'submit' ? 'selected' : ''}>Submit Form</option>
+      ${(MSState.getBlock(bid)?.props?.sections || []).filter(s => s.id !== sec.id).map(s => `<option value="${s.id}" ${r.defaultGoTo === s.id ? 'selected' : ''}>${s.title || 'Section'}</option>`).join('')}
+    </select>
+  </div>` : ''}` : ''}
+
+</div>`;
+}
+
+/* ── Mutation helpers called from event handlers ── */
+
+function mscf_updateSection(bid, secId, key, value) {
+  const block = MSState.getBlock(bid);
+  if (!block) return;
+  const sec = block.props.sections?.find(s => s.id === secId);
+  if (!sec) return;
+  sec[key] = value;
+  MSState.dirty = true;
+  MSState._notify('update');
+}
+
+function mscf_moveSection(bid, idx, dir) {
+  const block = MSState.getBlock(bid);
+  if (!block) return;
+  const arr = block.props.sections;
+  const n = idx + dir;
+  if (n < 0 || n >= arr.length) return;
+  [arr[idx], arr[n]] = [arr[n], arr[idx]];
+  MSState.updateBlock(bid, { sections: arr });
+  updateRightPanel();
+}
+
+function mscf_moveField(bid, secId, fi, dir) {
+  const block = MSState.getBlock(bid);
+  if (!block) return;
+  const sec = block.props.sections?.find(s => s.id === secId);
+  if (!sec) return;
+  const arr = sec.fields;
+  const n = fi + dir;
+  if (n < 0 || n >= arr.length) return;
+  [arr[fi], arr[n]] = [arr[n], arr[fi]];
+  MSState.updateBlock(bid, { sections: block.props.sections });
+  updateRightPanel();
+}
+
+function mscf_setRule(bid, secId, optValue, goTo) {
+  const block = MSState.getBlock(bid);
+  if (!block) return;
+  const sec = block.props.sections?.find(s => s.id === secId);
+  if (!sec) return;
+  const rules = JSON.parse(JSON.stringify(sec.routing?.rules || []));
+  const idx = rules.findIndex(r => r.value === optValue);
+  if (idx >= 0) rules[idx].goTo = goTo;
+  else rules.push({ value: optValue, goTo });
+  MSState.updateSectionRouting(bid, secId, { rules });
+}

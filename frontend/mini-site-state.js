@@ -86,18 +86,29 @@ const BLOCK_REG = {
 
   form: {
     label: 'Registration Form', icon: 'clipboard-list', cat: 'engagement',
-    desc: 'Customizable form linked to Google Sheets',
+    desc: 'Multi-section form linked to Google Sheets',
     defaults: () => ({
       title: 'Register Now',
       subtitle: 'Fill in your details to secure your spot.',
       buttonText: 'Submit Registration',
       buttonColor: '',
-      fields: [
-        { id: 'f1', type: 'text', label: 'Full Name', required: true, placeholder: 'Enter your full name' },
-        { id: 'f2', type: 'email', label: 'Email Address', required: true, placeholder: 'you@example.com' },
-        { id: 'f3', type: 'tel', label: 'Phone Number', required: false, placeholder: '+91 XXXXX XXXXX' },
+      sheetId: '',
+      bgColor: '',
+      showProgressBar: true,
+      successMessage: '',
+      sections: [
+        {
+          id: 'sec_1',
+          title: 'Section 1',
+          description: '',
+          fields: [
+            { id: 'f1', type: 'text',  label: 'Full Name',     required: true,  placeholder: 'Enter your full name', description: '' },
+            { id: 'f2', type: 'email', label: 'Email Address', required: true,  placeholder: 'you@example.com',      description: '' },
+            { id: 'f3', type: 'tel',   label: 'Phone Number',  required: false, placeholder: '+91 XXXXX XXXXX',      description: '' },
+          ],
+          routing: { type: 'auto', conditionFieldId: null, rules: [], defaultGoTo: 'next' },
+        }
       ],
-      sheetId: '', bgColor: '',
     }),
   },
 
@@ -277,6 +288,89 @@ const MSState = {
     if (!block) return;
     Object.assign(block.props, partialProps);
     this.dirty = true;
+    this._notify('update');
+  },
+
+  /* ── Form-specific deep update helpers ── */
+
+  updateFormField(blockId, sectionId, fieldId, partialProps) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    const sec = block.props.sections?.find(s => s.id === sectionId);
+    if (!sec) return;
+    const field = sec.fields?.find(f => f.id === fieldId);
+    if (!field) return;
+    Object.assign(field, partialProps);
+    this.dirty = true;
+    this._notify('field-update');
+  },
+
+  addFormField(blockId, sectionId, fieldType) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return null;
+    const sec = block.props.sections?.find(s => s.id === sectionId);
+    if (!sec) return null;
+    const uid = Date.now() + '_' + Math.random().toString(36).slice(2, 5);
+    const field = {
+      id: `f_${uid}`, type: fieldType,
+      label: fieldType === 'section-text' ? 'Instructions' : fieldType === 'divider' ? '' : 'New Question',
+      required: false, placeholder: '', description: '',
+      ...((['radio','checkbox-group','dropdown','ranking','checkbox','select'].includes(fieldType)) ? { options: ['Option 1', 'Option 2'] } : {}),
+      ...(fieldType === 'linear-scale' ? { min: 1, max: 5, minLabel: '', maxLabel: '' } : {}),
+      ...(fieldType === 'image-choice' ? { options: [{ label: 'Option 1', imageUrl: '' }] } : {}),
+      ...(fieldType === 'file'         ? { accept: '.pdf,.jpg,.png', maxSizeMB: 5 } : {}),
+      ...(fieldType === 'section-text' ? { heading: 'Instructions', body: '' } : {}),
+      ...(fieldType === 'textarea'     ? { rows: 4 } : {}),
+    };
+    sec.fields.push(field);
+    this._pushHistory();
+    this._notify('update');
+    return field;
+  },
+
+  addFormSection(blockId) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return null;
+    const sections = block.props.sections || [];
+    const sec = {
+      id: `sec_${Date.now()}`,
+      title: `Section ${sections.length + 1}`,
+      description: '',
+      fields: [],
+      routing: { type: 'auto', conditionFieldId: null, rules: [], defaultGoTo: 'next' },
+    };
+    sections.push(sec);
+    block.props.sections = sections;
+    this._pushHistory();
+    this._notify('update');
+    return sec;
+  },
+
+  updateSectionRouting(blockId, sectionId, routingPartial) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    const sec = block.props.sections?.find(s => s.id === sectionId);
+    if (!sec) return;
+    Object.assign(sec.routing, routingPartial);
+    this.dirty = true;
+    this._notify('update');
+  },
+
+  removeFormField(blockId, sectionId, fieldId) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    const sec = block.props.sections?.find(s => s.id === sectionId);
+    if (!sec) return;
+    sec.fields = sec.fields.filter(f => f.id !== fieldId);
+    this._pushHistory();
+    this._notify('update');
+  },
+
+  removeFormSection(blockId, sectionId) {
+    const block = this.blocks.find(b => b.id === blockId);
+    if (!block) return;
+    block.props.sections = (block.props.sections || []).filter(s => s.id !== sectionId);
+    this._pushHistory();
     this._notify('update');
   },
 

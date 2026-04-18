@@ -308,6 +308,129 @@ function msb_sponsors(block, cfg) {
 </div>`, bg);
 }
 
+/* ─────────────────────────────────────────────────────────────
+   msb_fieldHtml — renders one field's input HTML
+───────────────────────────────────────────────────────────── */
+function msb_fieldHtml(f, t) {
+  const base = `width:100%;padding:11px 14px;background:${t.bgInput};border:1.5px solid ${t.border};border-radius:9px;color:${t.text};font-size:14px;font-family:'${t.font}',sans-serif;outline:none;box-sizing:border-box;transition:border-color 0.15s`;
+
+  switch (f.type) {
+    case 'text': case 'email': case 'tel': case 'url':
+    case 'number': case 'date': case 'time': case 'datetime-local':
+      return `<input type="${f.type}" name="${f.id}" placeholder="${f.placeholder||''}" style="${base}" ${f.required?'required':''}/>`;
+
+    case 'textarea':
+      return `<textarea name="${f.id}" placeholder="${f.placeholder||''}" rows="${f.rows||4}" style="${base};resize:vertical;line-height:1.55" ${f.required?'required':''}></textarea>`;
+
+    case 'radio':
+      return `<div style="display:flex;flex-direction:column;gap:8px">
+        ${(f.options||[]).map(o=>`
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput};transition:border-color 0.15s">
+          <input type="radio" name="${f.id}" value="${o}" style="display:none" ${f.required?'required':''}
+            onchange="this.closest('[data-field-id]').querySelectorAll('label').forEach(l=>{l.style.borderColor='';l.querySelector('span.msb-radio-dot').style.opacity='0'});this.closest('label').style.borderColor='${t.accent}';this.closest('label').querySelector('span.msb-radio-dot').style.opacity='1'"/>
+          <span style="width:18px;height:18px;border-radius:50%;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg}">
+            <span class="msb-radio-dot" style="width:8px;height:8px;border-radius:50%;background:${t.accent};opacity:0;transition:opacity 0.15s"></span>
+          </span>
+          <span style="font-size:14px;color:${t.sub}">${o}</span>
+        </label>`).join('')}
+      </div>`;
+
+    case 'checkbox-group': case 'checkbox':
+      return `<div style="display:flex;flex-direction:column;gap:8px">
+        ${(f.options||[]).map((o,oi)=>`
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput};transition:border-color 0.15s">
+          <span style="width:18px;height:18px;border-radius:5px;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg};transition:all 0.15s" id="msb-cb-${f.id}-${oi}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="3" style="width:11px;height:11px;opacity:0;transition:opacity 0.15s" id="msb-ci-${f.id}-${oi}"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <input type="checkbox" name="${f.id}" value="${o}" style="display:none"
+            onchange="const b=document.getElementById('msb-cb-${f.id}-${oi}'),i=document.getElementById('msb-ci-${f.id}-${oi}');if(this.checked){b.style.background='rgba(${t.accentRgb},0.15)';b.style.borderColor='${t.accent}';i.style.opacity='1';this.closest('label').style.borderColor='${t.accent}'}else{b.style.background='';b.style.borderColor='';i.style.opacity='0';this.closest('label').style.borderColor=''}"/>
+          <span style="font-size:14px;color:${t.sub}">${o}</span>
+        </label>`).join('')}
+      </div>`;
+
+    case 'dropdown': case 'select':
+      return `<div style="position:relative">
+        <select name="${f.id}" style="${base};appearance:none;cursor:pointer;padding-right:36px" ${f.required?'required':''}>
+          <option value="">-- Select an option --</option>
+          ${(f.options||[]).map(o=>`<option value="${o}">${o}</option>`).join('')}
+        </select>
+        <div style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="${t.muted}" stroke-width="2" style="width:14px;height:14px"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>`;
+
+    case 'linear-scale': {
+      const mn=f.min||1, mx=f.max||5;
+      const nums=Array.from({length:mx-mn+1},(_,i)=>mn+i);
+      return `<div>
+        <div class="msf-scale-row" data-name="${f.id}" data-color="${t.accent}" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+          ${nums.map(n=>`<button type="button" class="msf-scale-btn" data-val="${n}"
+            style="min-width:38px;height:38px;border-radius:8px;border:1.5px solid ${t.border2};cursor:pointer;font-size:14px;font-weight:600;background:transparent;color:${t.sub};font-family:'${t.font}',sans-serif">${n}</button>`).join('')}
+        </div>
+        <input type="hidden" name="${f.id}"/>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:${t.muted}">
+          <span>${f.minLabel||''}</span><span>${f.maxLabel||''}</span>
+        </div>
+      </div>`;
+    }
+
+    case 'rating':
+      return `<div class="msf-rating" data-name="${f.id}" style="display:flex;gap:6px;align-items:center">
+        ${[1,2,3,4,5].map(n=>`<span class="msf-rating-star" data-val="${n}" role="button" style="font-size:28px;cursor:pointer;color:rgba(255,255,255,0.2);transition:color 0.15s;user-select:none">★</span>`).join('')}
+        <input type="hidden" name="${f.id}"/>
+      </div>`;
+
+    case 'ranking':
+      return `<div class="msf-ranking-list" data-name="${f.id}" style="display:flex;flex-direction:column;gap:6px">
+        ${(f.options||[]).map((o,i)=>`
+        <div class="msf-rank-item" data-value="${o}" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput}">
+          <span style="font-size:13px;font-weight:700;color:${t.muted};min-width:20px">${i+1}.</span>
+          <span style="flex:1;font-size:14px;color:${t.sub}">${o}</span>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <button type="button" class="msf-rank-up" style="padding:2px 6px;border-radius:4px;border:1px solid ${t.border};background:transparent;color:${t.muted};cursor:pointer">↑</button>
+            <button type="button" class="msf-rank-down" style="padding:2px 6px;border-radius:4px;border:1px solid ${t.border};background:transparent;color:${t.muted};cursor:pointer">↓</button>
+          </div>
+        </div>`).join('')}
+        <input type="hidden" name="${f.id}"/>
+      </div>`;
+
+    case 'image-choice':
+      return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
+        ${(f.options||[]).map(o=>`
+        <label style="cursor:pointer;border-radius:10px;overflow:hidden;border:2px solid ${t.border2};transition:border-color 0.15s;display:block">
+          <input type="radio" name="${f.id}" value="${o.label||o}" style="display:none" ${f.required?'required':''}
+            onchange="this.closest('[data-field-id]').querySelectorAll('label').forEach(l=>l.style.borderColor='');this.closest('label').style.borderColor='${t.accent}'"/>
+          ${(o.imageUrl||o.image)?`<img src="${o.imageUrl||o.image}" style="width:100%;height:90px;object-fit:cover;display:block"/>`:`<div style="height:90px;background:${t.bgCard};display:flex;align-items:center;justify-content:center;font-size:12px;color:${t.muted}">No image</div>`}
+          <div style="padding:8px;font-size:13px;font-weight:500;color:${t.sub};text-align:center">${o.label||o}</div>
+        </label>`).join('')}
+      </div>`;
+
+    case 'file':
+      return `<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px 16px;border-radius:9px;border:1.5px dashed ${t.border2};background:${t.bgInput};transition:border-color 0.15s" onmouseenter="this.style.borderColor='${t.accent}'" onmouseleave="this.style.borderColor=''">
+        <div style="width:38px;height:38px;border-radius:9px;background:rgba(${t.accentRgb},0.10);border:1px solid rgba(${t.accentRgb},0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="2" style="width:18px;height:18px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:${t.text}">Click to choose file</div>
+          <div style="font-size:12px;color:${t.muted}" id="msb-fl-${f.id}">${f.accept?`Accepted: ${f.accept}`:'Any file'} · Max ${f.maxSizeMB||5}MB</div>
+        </div>
+        <input type="file" name="${f.id}" style="display:none" ${f.accept?`accept="${f.accept}"`:''} ${f.required?'required':''}
+          onchange="document.getElementById('msb-fl-${f.id}').textContent=this.files[0]?this.files[0].name+' ('+Math.round(this.files[0].size/1024)+'KB)':'No file chosen';this.closest('label').style.borderColor='${t.accent}'"/>
+      </label>`;
+
+    case 'section-text':
+      return `<div style="padding:14px 18px;border-radius:10px;background:rgba(${t.accentRgb},0.06);border:1px solid rgba(${t.accentRgb},0.15)">
+        ${f.heading?`<div style="font-size:15px;font-weight:700;color:${t.text};margin-bottom:6px">${f.heading}</div>`:''}
+        ${f.body?`<div style="font-size:14px;color:${t.sub};line-height:1.65;white-space:pre-wrap">${f.body}</div>`:''}
+      </div>`;
+
+    case 'divider':
+      return `<div style="height:1px;background:${t.border};border-radius:1px;margin:8px 0"></div>`;
+
+    default:
+      return `<input type="text" name="${f.id}" placeholder="${f.placeholder||''}" style="${base}" ${f.required?'required':''}/>`;
+  }
+}
 /* ═══════════════════════════════════════════════════════════════
    BLOCK 8 — REGISTRATION FORM
 ═══════════════════════════════════════════════════════════════ */
@@ -317,67 +440,70 @@ function msb_form(block, cfg) {
   const btnBg = p.buttonColor || t.accent;
   const [br, bg_, bb] = msb_hexRgb(btnBg);
   const isOpen = cfg.registrationOpen !== false;
-  const fields = p.fields || [];
 
-  const fieldHtml = (f) => {
-    const inputStyle = `width:100%;padding:11px 14px;background:${t.bgInput};border:1.5px solid ${t.border};border-radius:9px;color:${t.text};font-size:14px;font-family:'${t.font}',sans-serif;outline:none;box-sizing:border-box;transition:border-color 0.15s`;
-    switch (f.type) {
-      case 'textarea': return `<textarea name="${f.id}" placeholder="${f.placeholder || ''}" rows="3" style="${inputStyle};resize:vertical;line-height:1.55" ${f.required ? 'required' : ''}></textarea>`;
-      case 'select': return `
-<div style="display:flex;flex-direction:column;gap:8px">
-  ${(f.options || []).map((o, oi) => `
-  <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput};transition:border-color 0.15s">
-    <span style="width:18px;height:18px;border-radius:50%;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg}">
-      <span style="width:8px;height:8px;border-radius:50%;background:${t.accent};opacity:0;transition:opacity 0.15s" class="ms-radio-dot-${f.id}"></span>
-    </span>
-    <input type="radio" name="${f.id}" value="${o}" style="display:none" ${f.required && oi === 0 ? 'required' : ''} onchange="this.closest('[data-ms-form]')?.querySelectorAll('.ms-radio-dot-${f.id}').forEach(d=>d.style.opacity='0');this.closest('label').querySelector('.ms-radio-dot-${f.id}').style.opacity='1';this.closest('label').style.borderColor='${t.accent}'"/>
-    <span style="font-size:14px;color:${t.sub}">${o}</span>
-  </label>`).join('')}
-</div>`;
-      case 'checkbox': return `
-<div style="display:flex;flex-direction:column;gap:8px">
-  ${(f.options && f.options.length ? f.options : ['Yes']).map((o, oi) => `
-  <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput};transition:border-color 0.15s">
-    <span style="width:18px;height:18px;border-radius:5px;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg};transition:all 0.15s" id="ms-chk-box-${f.id}-${oi}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="3" style="width:11px;height:11px;opacity:0;transition:opacity 0.15s" id="ms-chk-ico-${f.id}-${oi}"><polyline points="20 6 9 17 4 12"/></svg>
-    </span>
-    <input type="checkbox" name="${f.id}" value="${o}" style="display:none" onchange="const b=document.getElementById('ms-chk-box-${f.id}-${oi}');const i=document.getElementById('ms-chk-ico-${f.id}-${oi}');if(this.checked){b.style.background='rgba(${t.accentRgb},0.15)';b.style.borderColor='${t.accent}';i.style.opacity='1';this.closest('label').style.borderColor='${t.accent}'}else{b.style.background='';b.style.borderColor='';i.style.opacity='0';this.closest('label').style.borderColor=''}"/>
-    <span style="font-size:14px;color:${t.sub}">${o}</span>
-  </label>`).join('')}
-</div>`;
-      case 'file': return `
-<div>
-  <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px 16px;border-radius:9px;border:1.5px dashed ${t.border2};background:${t.bgInput};transition:border-color 0.15s" onmouseenter="this.style.borderColor='${t.accent}'" onmouseleave="this.style.borderColor=''">
-    <div style="width:38px;height:38px;border-radius:9px;background:rgba(${t.accentRgb},0.10);border:1px solid rgba(${t.accentRgb},0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-      <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="2" style="width:18px;height:18px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-    </div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:14px;font-weight:600;color:${t.text}">Click to choose file</div>
-      <div style="font-size:12px;color:${t.muted}" id="ms-file-label-${f.id}">${f.placeholder || 'No file chosen'}</div>
-    </div>
-    <input type="file" name="${f.id}" style="display:none" ${f.required ? 'required' : ''}
-      onchange="document.getElementById('ms-file-label-${f.id}').textContent=this.files[0]?this.files[0].name+' ('+Math.round(this.files[0].size/1024)+'KB)':'No file chosen';this.closest('label').style.borderColor='${t.accent}'"/>
-  </label>
-  <div style="font-size:11px;color:${t.muted};margin-top:4px">Max recommended size: 5MB</div>
-</div>`;
-      default: return `<input type="${f.type || 'text'}" name="${f.id}" placeholder="${f.placeholder || ''}" style="${inputStyle}" ${f.required ? 'required' : ''}/>`;
-    }
-  };
+  // Normalize old flat fields[] → single section
+  let sections = p.sections;
+  if (!sections && p.fields) {
+    sections = [{ id:'sec_1', title:'', description:'', fields:p.fields,
+      routing:{ type:'auto', conditionFieldId:null, rules:[], defaultGoTo:'next' } }];
+  }
+  sections = sections || [];
+  const isSingle   = sections.length <= 1;
+  const totalSects = sections.length;
+  const sectionsJson = JSON.stringify(sections).replace(/\\/g,'\\\\').replace(/'/g,'\\u0027');
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Register Now', t, p.alignment)}
-  ${p.subtitle ? `<p style="margin:-8px 0 20px;font-size:14.5px;color:${t.sub};line-height:1.6">${p.subtitle}</p>` : ''}
+  ${msb_title(p.title||'Register Now', t, p.alignment)}
+  ${p.subtitle?`<p style="margin:-8px 0 20px;font-size:14.5px;color:${t.sub};line-height:1.6">${p.subtitle}</p>`:''}
+
   ${isOpen ? `
-  <form data-ms-form="${p.sheetId || ''}" data-ms-success-msg="${(p.successMessage || '').replace(/"/g, '&quot;')}" style="max-width:520px;display:flex;flex-direction:column;gap:16px;${p.alignment === 'center' ? 'margin:0 auto;text-align:center' : p.alignment === 'right' ? 'margin-left:auto' : ''};" onsubmit="return false">
-    ${fields.map(f => `
-    <div style="display:flex;flex-direction:column;gap:6px">
-      <label style="font-size:12.5px;font-weight:600;color:${t.sub};text-transform:uppercase;letter-spacing:0.5px">${f.label || ''}${f.required ? '<span style="color:#f43f5e;margin-left:3px">*</span>' : ''}</label>
-      ${fieldHtml(f)}
-    </div>`).join('')}
-    <button type="submit" style="margin-top:8px;padding:14px 28px;background:${btnBg};color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:'${t.font}',sans-serif;box-shadow:0 4px 24px rgba(${br},${bg_},${bb},0.3);transition:transform 0.15s,box-shadow 0.15s">${p.buttonText || 'Submit Registration'}</button>
+  <form data-ms-form="${p.sheetId||''}" data-ms-sections='${sectionsJson}'
+    data-ms-button-text="${(p.buttonText||'Submit Registration').replace(/"/g,'&quot;')}"
+    data-ms-success-msg="${(p.successMessage||'').replace(/"/g,'&quot;')}"
+    style="max-width:560px;${p.alignment==='center'?'margin:0 auto':''}" onsubmit="return false">
+
+    ${p.showProgressBar!==false && !isSingle ? `
+    <div class="ms-form-progress" style="margin-bottom:24px;display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span class="ms-form-section-label" style="font-size:13px;font-weight:600;color:${t.sub}">Section 1</span>
+        <span class="ms-form-progress-text" style="font-size:12px;color:${t.muted}">1 of ${totalSects}</span>
+      </div>
+      <div style="height:4px;background:${t.border};border-radius:99px;overflow:hidden">
+        <div class="ms-form-progress-fill" style="height:100%;background:${t.accent};border-radius:99px;width:${Math.round(100/Math.max(totalSects,1))}%;transition:width 0.35s ease"></div>
+      </div>
+    </div>` : ''}
+
+    <div class="ms-form-sections">
+      ${sections.map((sec,si) => `
+      <div class="ms-form-section" data-section-id="${sec.id}" data-section-idx="${si}" style="display:block">
+        ${(!isSingle && sec.title)?`<h3 style="margin:0 0 8px;font-size:17px;font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif">${sec.title}</h3>`:''}
+        ${sec.description?`<p style="margin:0 0 16px;font-size:13.5px;color:${t.sub};line-height:1.6">${sec.description}</p>`:''}
+        <div class="ms-form-fields" style="display:flex;flex-direction:column;gap:16px">
+          ${(sec.fields||[]).map(f => {
+            if (f.type==='divider'||f.type==='section-text') return `<div data-field-id="${f.id}">${msb_fieldHtml(f,t)}</div>`;
+            return `<div data-field-id="${f.id}" style="display:flex;flex-direction:column;gap:6px">
+              <label style="font-size:12.5px;font-weight:600;color:${t.sub};text-transform:uppercase;letter-spacing:0.5px">
+                ${f.label||''} ${f.required?'<span style="color:#f43f5e;margin-left:3px">*</span>':''}
+              </label>
+              ${f.description?`<p style="margin:0 0 6px;font-size:12.5px;color:${t.muted};line-height:1.5">${f.description}</p>`:''}
+              ${msb_fieldHtml(f,t)}
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="ms-form-section-nav" style="display:flex;align-items:center;gap:12px;margin-top:24px">
+          ${si>0?`<button type="button" class="ms-form-btn-back"
+            style="padding:10px 20px;border-radius:9px;border:1.5px solid ${t.border2};background:transparent;color:${t.text};font-size:14px;font-weight:600;cursor:pointer;font-family:'${t.font}',sans-serif;display:none">← Back</button>`:''}
+          <button type="button" class="ms-form-btn-next"
+            style="flex:1;padding:14px 28px;background:${btnBg};color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:'${t.font}',sans-serif;box-shadow:0 4px 24px rgba(${br},${bg_},${bb},0.3);transition:transform 0.15s,box-shadow 0.15s">
+            ${si===totalSects-1 ? (p.buttonText||'Submit Registration') : 'Next →'}
+          </button>
+        </div>
+      </div>`).join('')}
+    </div>
+
   </form>` :
-      `<div style="padding:24px;border-radius:12px;background:rgba(244,63,94,0.07);border:1px solid rgba(244,63,94,0.2);text-align:center">
+  `<div style="padding:24px;border-radius:12px;background:rgba(244,63,94,0.07);border:1px solid rgba(244,63,94,0.2);text-align:center">
     <div style="font-size:22px;margin-bottom:10px">🚫</div>
     <div style="font-size:15px;font-weight:600;color:#f43f5e;margin-bottom:6px">Registrations Closed</div>
     <div style="font-size:13.5px;color:${t.sub}">Registration for this event is currently closed.</div>
