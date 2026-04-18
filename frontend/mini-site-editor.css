@@ -2335,9 +2335,71 @@ body[style*="col-resize"] * {
 
 
 
+
+
 /* ═══════════════════════════════════════════════════════════════
-   THEME SELECTOR BOXES
+   THEME SELECTOR BOXES  +  FONT PILLS
+   — Same glass card effect as the dashboard tool cards —
 ═══════════════════════════════════════════════════════════════ */
+
+/* ── Shared glass card base ─────────────────────────────────── */
+
+.mse-theme-box,
+.mse-font-pill {
+  /* Frosted glass base — identical to dashboard .card */
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1.5px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 6px 24px rgba(0, 0, 0, 0.22);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, color 0.22s ease;
+  /* NO transform — no lift */
+}
+
+/* Diagonal gloss sheen — the ::before that makes it feel glass */
+.mse-theme-box::before,
+.mse-font-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.015) 45%,
+      transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.22s ease;
+}
+
+/* Hover — glass lifts, border brightens, shine intensifies */
+.mse-theme-box:hover,
+.mse-font-pill:hover {
+  background: rgba(255, 255, 255, 0.065);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 12px 40px rgba(0, 0, 0, 0.32);
+  color: var(--text);
+}
+
+/* On hover the gloss sheen becomes more prominent */
+.mse-theme-box:hover::before,
+.mse-font-pill:hover::before {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.03) 45%,
+      transparent 100%);
+}
+
+/* ── THEME BOXES ─────────────────────────────────────────────── */
 
 .mse-theme-grid {
   display: grid;
@@ -2352,70 +2414,37 @@ body[style*="col-resize"] * {
   gap: 9px;
   padding: 12px 8px 10px;
   border-radius: 10px;
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.06);
-  cursor: pointer;
   font-size: 12px;
   font-weight: 600;
   font-family: var(--font);
   color: var(--text-2);
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-  /* NO transform — no lift */
 }
 
-/* ── DARK theme box ── */
-.mse-theme-dark {
-  background: linear-gradient(145deg, rgba(2, 8, 24, 0.90) 0%, rgba(6, 16, 40, 0.75) 100%);
-  border-color: rgba(0, 140, 200, 0.28);
+/* Content inside must sit above the ::before overlay */
+.mse-theme-box>*,
+.mse-font-pill>* {
+  position: relative;
+  z-index: 1;
 }
 
-.mse-theme-dark:hover {
-  background: linear-gradient(145deg,
-      rgba(0, 80, 160, 0.40) 0%,
-      rgba(0, 40, 100, 0.55) 50%,
-      rgba(0, 8, 32, 0.85) 100%);
-  border-color: rgba(0, 212, 255, 0.65);
-  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.20), 0 0 22px rgba(0, 212, 255, 0.15);
-  color: #a8e8ff;
-}
-
-.mse-theme-dark.on {
-  background: linear-gradient(145deg,
-      rgba(0, 100, 200, 0.48) 0%,
-      rgba(0, 50, 120, 0.62) 50%,
-      rgba(0, 10, 40, 0.90) 100%);
-  border-color: rgba(0, 212, 255, 0.80);
-  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.28), 0 0 28px rgba(0, 212, 255, 0.20);
+/* Selected state — cyan accent, stronger glass */
+.mse-theme-box.on {
+  background: rgba(0, 212, 255, 0.08);
+  border-color: rgba(0, 212, 255, 0.55);
+  box-shadow:
+    0 1px 0 rgba(0, 212, 255, 0.15) inset,
+    0 0 24px rgba(0, 212, 255, 0.10);
   color: var(--cyan);
 }
 
-/* ── LIGHT theme box ── */
-.mse-theme-light {
-  background: linear-gradient(145deg, rgba(200, 220, 255, 0.10) 0%, rgba(180, 210, 255, 0.06) 100%);
-  border-color: rgba(180, 210, 255, 0.22);
+.mse-theme-box.on::before {
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.10) 0%,
+      rgba(0, 212, 255, 0.03) 45%,
+      transparent 100%);
 }
 
-.mse-theme-light:hover {
-  background: linear-gradient(145deg,
-      rgba(255, 255, 255, 0.24) 0%,
-      rgba(210, 230, 255, 0.18) 50%,
-      rgba(180, 210, 255, 0.12) 100%);
-  border-color: rgba(200, 230, 255, 0.72);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 22px rgba(180, 220, 255, 0.15);
-  color: #dff0ff;
-}
-
-.mse-theme-light.on {
-  background: linear-gradient(145deg,
-      rgba(255, 255, 255, 0.30) 0%,
-      rgba(210, 232, 255, 0.22) 50%,
-      rgba(180, 215, 255, 0.16) 100%);
-  border-color: rgba(200, 230, 255, 0.88);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 28px rgba(180, 220, 255, 0.18);
-  color: #e8f4ff;
-}
-
-/* ── Mini editor mockup inside theme box ── */
+/* Mini editor mockup */
 .mse-theme-preview {
   width: 100%;
   height: 46px;
@@ -2425,6 +2454,7 @@ body[style*="col-resize"] * {
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
+  z-index: 1;
 }
 
 .mse-theme-preview.light {
@@ -2444,7 +2474,7 @@ body[style*="col-resize"] * {
 
 .mtp-topbar.light {
   background: #dde8f8;
-  border-color: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.07);
 }
 
 .mtp-left {
@@ -2487,9 +2517,7 @@ body[style*="col-resize"] * {
   background: rgba(0, 0, 0, 0.12);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   FONT FAMILY PILLS  — class-based tints (no attribute selectors)
-═══════════════════════════════════════════════════════════════ */
+/* ── FONT PILLS ──────────────────────────────────────────────── */
 
 .mse-font-grid {
   display: grid;
@@ -2497,13 +2525,9 @@ body[style*="col-resize"] * {
   gap: 6px;
 }
 
-/* Base pill — neutral glass */
 .mse-font-pill {
   padding: 9px 10px;
   border-radius: 8px;
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.06);
-  cursor: pointer;
   font-size: 12.5px;
   font-weight: 500;
   color: var(--text-2);
@@ -2511,156 +2535,21 @@ body[style*="col-resize"] * {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* NO transform */
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
 }
 
-/* ── Tint: CYAN — Plus Jakarta Sans ── */
-.mse-font-pill.tint-cyan:hover {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.22) 0%, rgba(0, 180, 255, 0.12) 100%);
-  border-color: rgba(0, 212, 255, 0.60);
-  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.18);
-  color: #a8eeff;
+/* Selected font pill — cyan accent */
+.mse-font-pill.on {
+  background: rgba(0, 212, 255, 0.08);
+  border-color: rgba(0, 212, 255, 0.55);
+  box-shadow:
+    0 1px 0 rgba(0, 212, 255, 0.15) inset,
+    0 0 18px rgba(0, 212, 255, 0.08);
+  color: var(--cyan);
 }
 
-.mse-font-pill.tint-cyan.on {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.28) 0%, rgba(0, 180, 255, 0.16) 100%);
-  border-color: rgba(0, 212, 255, 0.80);
-  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.24), 0 0 14px rgba(0, 212, 255, 0.14);
-  color: #67e8f9;
-}
-
-/* ── Tint: PURPLE — Syne ── */
-.mse-font-pill.tint-purple:hover {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.26) 0%, rgba(124, 58, 237, 0.14) 100%);
-  border-color: rgba(167, 139, 250, 0.65);
-  box-shadow: inset 0 1px 0 rgba(139, 92, 246, 0.20);
-  color: #d8b4fe;
-}
-
-.mse-font-pill.tint-purple.on {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.32) 0%, rgba(124, 58, 237, 0.18) 100%);
-  border-color: rgba(167, 139, 250, 0.85);
-  box-shadow: inset 0 1px 0 rgba(139, 92, 246, 0.28), 0 0 14px rgba(124, 58, 237, 0.16);
-  color: #c4b5fd;
-}
-
-/* ── Tint: BLUE — Montserrat ── */
-.mse-font-pill.tint-blue:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.24) 0%, rgba(37, 99, 235, 0.13) 100%);
-  border-color: rgba(96, 165, 250, 0.62);
-  box-shadow: inset 0 1px 0 rgba(59, 130, 246, 0.18);
-  color: #bfdbfe;
-}
-
-.mse-font-pill.tint-blue.on {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.30) 0%, rgba(37, 99, 235, 0.17) 100%);
-  border-color: rgba(96, 165, 250, 0.82);
-  box-shadow: inset 0 1px 0 rgba(59, 130, 246, 0.25), 0 0 14px rgba(59, 130, 246, 0.14);
-  color: #93c5fd;
-}
-
-/* ── Tint: TEAL — Raleway ── */
-.mse-font-pill.tint-teal:hover {
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.24) 0%, rgba(13, 148, 136, 0.13) 100%);
-  border-color: rgba(45, 212, 191, 0.62);
-  box-shadow: inset 0 1px 0 rgba(20, 184, 166, 0.18);
-  color: #99f6e4;
-}
-
-.mse-font-pill.tint-teal.on {
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.30) 0%, rgba(13, 148, 136, 0.17) 100%);
-  border-color: rgba(45, 212, 191, 0.82);
-  box-shadow: inset 0 1px 0 rgba(20, 184, 166, 0.25), 0 0 14px rgba(20, 184, 166, 0.14);
-  color: #5eead4;
-}
-
-/* ── Tint: GOLD — Playfair Display ── */
-.mse-font-pill.tint-gold:hover {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.24) 0%, rgba(217, 119, 6, 0.13) 100%);
-  border-color: rgba(251, 191, 36, 0.62);
-  box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.18);
-  color: #fde68a;
-}
-
-.mse-font-pill.tint-gold.on {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.30) 0%, rgba(217, 119, 6, 0.17) 100%);
-  border-color: rgba(251, 191, 36, 0.82);
-  box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.25), 0 0 14px rgba(245, 158, 11, 0.14);
-  color: #fcd34d;
-}
-
-/* ── Tint: ROSE — Cormorant Garamond ── */
-.mse-font-pill.tint-rose:hover {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.22) 0%, rgba(225, 29, 72, 0.12) 100%);
-  border-color: rgba(251, 113, 133, 0.60);
-  box-shadow: inset 0 1px 0 rgba(244, 63, 94, 0.16);
-  color: #fecdd3;
-}
-
-.mse-font-pill.tint-rose.on {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.28) 0%, rgba(225, 29, 72, 0.16) 100%);
-  border-color: rgba(251, 113, 133, 0.80);
-  box-shadow: inset 0 1px 0 rgba(244, 63, 94, 0.22), 0 0 14px rgba(244, 63, 94, 0.14);
-  color: #fda4af;
-}
-
-/* ── Tint: PINK — Dancing Script ── */
-.mse-font-pill.tint-pink:hover {
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.22) 0%, rgba(219, 39, 119, 0.12) 100%);
-  border-color: rgba(244, 114, 182, 0.60);
-  box-shadow: inset 0 1px 0 rgba(236, 72, 153, 0.16);
-  color: #fbcfe8;
-}
-
-.mse-font-pill.tint-pink.on {
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.28) 0%, rgba(219, 39, 119, 0.16) 100%);
-  border-color: rgba(244, 114, 182, 0.80);
-  box-shadow: inset 0 1px 0 rgba(236, 72, 153, 0.22), 0 0 14px rgba(236, 72, 153, 0.14);
-  color: #f9a8d4;
-}
-
-/* ── Tint: AMBER — Cinzel ── */
-.mse-font-pill.tint-amber:hover {
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.22) 0%, rgba(234, 88, 12, 0.12) 100%);
-  border-color: rgba(253, 186, 116, 0.60);
-  box-shadow: inset 0 1px 0 rgba(251, 146, 60, 0.16);
-  color: #fed7aa;
-}
-
-.mse-font-pill.tint-amber.on {
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.28) 0%, rgba(234, 88, 12, 0.16) 100%);
-  border-color: rgba(253, 186, 116, 0.80);
-  box-shadow: inset 0 1px 0 rgba(251, 146, 60, 0.22), 0 0 14px rgba(251, 146, 60, 0.14);
-  color: #fdba74;
-}
-
-/* ── Tint: ORANGE — EB Garamond ── */
-.mse-font-pill.tint-orange:hover {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.22) 0%, rgba(234, 88, 12, 0.12) 100%);
-  border-color: rgba(251, 146, 60, 0.60);
-  box-shadow: inset 0 1px 0 rgba(249, 115, 22, 0.16);
-  color: #fed7aa;
-}
-
-.mse-font-pill.tint-orange.on {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.28) 0%, rgba(234, 88, 12, 0.16) 100%);
-  border-color: rgba(251, 146, 60, 0.80);
-  box-shadow: inset 0 1px 0 rgba(249, 115, 22, 0.22), 0 0 14px rgba(249, 115, 22, 0.14);
-  color: #fb923c;
-}
-
-/* ── Tint: GREEN — JetBrains Mono ── */
-.mse-font-pill.tint-green:hover {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.12) 100%);
-  border-color: rgba(52, 211, 153, 0.60);
-  box-shadow: inset 0 1px 0 rgba(16, 185, 129, 0.16);
-  color: #a7f3d0;
-}
-
-.mse-font-pill.tint-green.on {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.28) 0%, rgba(5, 150, 105, 0.16) 100%);
-  border-color: rgba(52, 211, 153, 0.80);
-  box-shadow: inset 0 1px 0 rgba(16, 185, 129, 0.22), 0 0 14px rgba(16, 185, 129, 0.14);
-  color: #6ee7b7;
+.mse-font-pill.on::before {
+  background: linear-gradient(135deg,
+      rgba(0, 212, 255, 0.10) 0%,
+      rgba(0, 212, 255, 0.02) 45%,
+      transparent 100%);
 }
