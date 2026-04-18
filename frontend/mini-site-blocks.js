@@ -49,7 +49,16 @@ function msb_wrap(content, bg, extraStyle) {
 }
 
 /** Section title with accent left-bar */
-function msb_title(text, t) {
+function msb_title(text, t, align) {
+  const a = align || 'left';
+  if (a === 'center') return `<div style="text-align:center;margin-bottom:20px">
+    <h2 style="margin:0 0 8px;font-size:clamp(18px,3vw,24px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
+    <div style="width:40px;height:3px;background:${t.accent};border-radius:99px;margin:0 auto"></div>
+  </div>`;
+  if (a === 'right') return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-direction:row-reverse">
+    <div style="width:3px;height:28px;background:${t.accent};border-radius:99px;flex-shrink:0"></div>
+    <h2 style="margin:0;flex:1;text-align:right;font-size:clamp(18px,3vw,24px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
+  </div>`;
   return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
     <div style="width:3px;height:28px;background:${t.accent};border-radius:99px;flex-shrink:0"></div>
     <h2 style="margin:0;font-size:clamp(18px,3vw,24px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
@@ -104,7 +113,7 @@ function msb_cover(block, cfg) {
     : (t.isDark ? 'linear-gradient(160deg,#0d1f3c 0%,#04080f 100%)' : 'linear-gradient(160deg,#e0e7ff,#c7d2fe)');
 
   return `
-<div style="position:relative;min-height:300px;background:${p.bgColor || (t.isDark ? '#04080f' : '#1e293b')};display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 24px 52px;overflow:hidden;font-family:'${t.font}',sans-serif;box-sizing:border-box">
+<div style="position:relative;min-height:300px;background:${p.bgColor || (t.isDark ? '#04080f' : '#1e293b')};display:flex;flex-direction:column;align-items:${p.alignment === 'left' ? 'flex-start' : p.alignment === 'right' ? 'flex-end' : 'center'};justify-content:flex-end;padding:0 clamp(24px,6vw,64px) 52px;overflow:hidden;font-family:'${t.font}',sans-serif;box-sizing:border-box">
   ${p.coverImage
       ? `<div style="position:absolute;inset:0;background:url('${p.coverImage}') center/cover no-repeat"></div>`
       : `<div style="position:absolute;inset:0;background:${bgBase}"></div>`}
@@ -120,7 +129,7 @@ function msb_cover(block, cfg) {
     </div>
   </div>` : '<div style="height:28px;position:relative;z-index:3"></div>'}
 
-  <div style="position:relative;z-index:3;text-align:${p.alignment||'center'};max-width:540px;${p.alignment==='left'?'margin-right:auto;padding-left:8px':p.alignment==='right'?'margin-left:auto;padding-right:8px':''}">
+  <div style="position:relative;z-index:3;text-align:${p.alignment || 'center'};max-width:540px;width:100%">
     ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:clamp(24px,5vw,40px);font-weight:800;color:#ffffff;line-height:1.1;letter-spacing:-0.8px;font-family:'${t.fontDisplay}','${t.font}',sans-serif;text-shadow:0 2px 16px rgba(0,0,0,0.4)">${p.siteName || cfg.name}</h1>` : ''}
     ${p.tagline ? `<p style="margin:0;font-size:clamp(13px,2.2vw,16px);color:rgba(255,255,255,0.68);font-weight:400;line-height:1.6;letter-spacing:0.1px">${p.tagline}</p>` : ''}
   </div>
@@ -360,10 +369,10 @@ function msb_form(block, cfg) {
   ${msb_title(p.title || 'Register Now', t, p.alignment)}
   ${p.subtitle ? `<p style="margin:-8px 0 20px;font-size:14.5px;color:${t.sub};line-height:1.6">${p.subtitle}</p>` : ''}
   ${isOpen ? `
-  <form data-ms-form="${p.sheetId||''}" data-ms-success-msg="${(p.successMessage||'').replace(/"/g,'&quot;')}" style="max-width:520px;display:flex;flex-direction:column;gap:16px;${p.alignment==='center'?'margin:0 auto;text-align:center':p.alignment==='right'?'margin-left:auto':''};" onsubmit="return false">
+  <form data-ms-form="${p.sheetId || ''}" data-ms-success-msg="${(p.successMessage || '').replace(/"/g, '&quot;')}" style="max-width:520px;display:flex;flex-direction:column;gap:16px;${p.alignment === 'center' ? 'margin:0 auto;text-align:center' : p.alignment === 'right' ? 'margin-left:auto' : ''};" onsubmit="return false">
     ${fields.map(f => `
     <div style="display:flex;flex-direction:column;gap:6px">
-      ${f.type !== 'checkbox' ? `<label style="font-size:12.5px;font-weight:600;color:${t.sub};text-transform:uppercase;letter-spacing:0.5px">${f.label || ''}${f.required ? '<span style="color:#f43f5e;margin-left:3px">*</span>' : ''}</label>` : ''}
+      <label style="font-size:12.5px;font-weight:600;color:${t.sub};text-transform:uppercase;letter-spacing:0.5px">${f.label || ''}${f.required ? '<span style="color:#f43f5e;margin-left:3px">*</span>' : ''}</label>
       ${fieldHtml(f)}
     </div>`).join('')}
     <button type="submit" style="margin-top:8px;padding:14px 28px;background:${btnBg};color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:'${t.font}',sans-serif;box-shadow:0 4px 24px rgba(${br},${bg_},${bb},0.3);transition:transform 0.15s,box-shadow 0.15s">${p.buttonText || 'Submit Registration'}</button>

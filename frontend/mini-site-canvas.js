@@ -510,7 +510,7 @@ function renderBlockProps(block) {
         <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Label</div>
         <input type="text" class="mse-prop-input" value="${(f.label || '').replace(/"/g, '&quot;')}"
           placeholder="Field label" style="font-size:12.5px;padding:7px 9px"
-          oninput="MSState.updateBlockField('${bid}','${f.id}',{label:this.value})"/>
+          oninput="msc_setItem('${bid}','fields',${i},'label',this.value)"/>
       </div>
       <div style="margin-bottom:8px">
         <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Field Type</div>
@@ -523,7 +523,7 @@ function renderBlockProps(block) {
         <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Placeholder</div>
         <input type="text" class="mse-prop-input" value="${(f.placeholder || '').replace(/"/g, '&quot;')}"
           placeholder="Hint text…" style="font-size:12.5px;padding:7px 9px"
-          oninput="MSState.updateBlockField('${bid}','${f.id}',{placeholder:this.value})"/>
+          oninput="msc_setItem('${bid}','fields',${i},'placeholder',this.value)"/>
       </div>
       ${(f.type === 'select' || f.type === 'checkbox') ? `
       <div style="margin-bottom:8px">
