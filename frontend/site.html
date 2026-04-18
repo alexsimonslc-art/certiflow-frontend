@@ -252,6 +252,10 @@
     </div>`;
       } else {
         content.innerHTML = blocks.map(b => renderMSBlock(b, config)).join('');
+        // Re-fire SVG onload handlers — innerHTML silently strips <script> but SVG onload survives
+        content.querySelectorAll('svg[onload]').forEach(svg => {
+          try { new Function(svg.getAttribute('onload'))(); } catch(e) { console.warn('carousel init error', e); }
+        });
       }
 
       // Update form data-ms-site attribute

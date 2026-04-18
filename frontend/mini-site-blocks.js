@@ -263,13 +263,13 @@ function msb_speakers(block, cfg) {
   ${dots}
 </div>
 <style>#spkTrack_${uid}::-webkit-scrollbar{display:none}</style>
-<script>
+<svg style="display:none" onload="
 (function(){
   var track=document.getElementById('spkTrack_${uid}');
   if(!track)return;
   var cards=track.querySelectorAll('.spk-card-${uid}');
   var n=cards.length;
-  if(n<2)return;
+  if(n&lt;2)return;
   var cur=0,timer;
   function goTo(i){
     cur=((i%n)+n)%n;
@@ -278,9 +278,9 @@ function msb_speakers(block, cfg) {
   }
   window['spkGoTo_${uid}']=goTo;
   function updateDots(){
-    for(var i=0;i<n;i++){
+    for(var i=0;i&lt;n;i++){
       var d=document.getElementById('spkDot_${uid}_'+i);
-      if(!d)continue;
+      if(!d)return;
       d.style.width=i===cur?'20px':'6px';
       d.style.background=i===cur?'${t.accent}':'rgba(255,255,255,0.2)';
     }
@@ -293,12 +293,12 @@ function msb_speakers(block, cfg) {
   track.addEventListener('touchend',function(){setTimeout(start,4000);},{passive:true});
   track.addEventListener('scroll',function(){
     var best=0,min=Infinity;
-    for(var i=0;i<n;i++){var d=Math.abs(cards[i].offsetLeft-track.scrollLeft);if(d<min){min=d;best=i;}}
+    for(var i=0;i&lt;n;i++){var d=Math.abs(cards[i].offsetLeft-track.scrollLeft);if(d&lt;min){min=d;best=i;}}
     if(best!==cur){cur=best;updateDots();}
   },{passive:true});
   start();
 })();
-</script>`;
+"></svg>`;
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
