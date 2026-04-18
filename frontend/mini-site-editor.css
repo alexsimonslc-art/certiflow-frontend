@@ -2333,6 +2333,8 @@ body[style*="col-resize"] * {
 }
 
 
+
+
 /* ═══════════════════════════════════════════════════════════════
    THEME SELECTOR BOXES
 ═══════════════════════════════════════════════════════════════ */
@@ -2350,72 +2352,83 @@ body[style*="col-resize"] * {
   gap: 9px;
   padding: 12px 8px 10px;
   border-radius: 10px;
-  border: 1.5px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
   font-family: var(--font);
   color: var(--text-2);
-  transition: background 0.22s var(--ease), border-color 0.22s var(--ease), color 0.22s var(--ease), box-shadow 0.22s var(--ease);
-  /* NO transform — user explicitly requested no lift */
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  /* NO transform — no lift */
 }
 
-/* Dark theme box — deep navy glass */
+/* ── DARK theme box ── */
 .mse-theme-dark {
-  background: linear-gradient(145deg, rgba(0, 6, 22, 0.82) 0%, rgba(4, 14, 36, 0.65) 100%);
-  border-color: rgba(0, 180, 230, 0.22);
+  background: linear-gradient(145deg, rgba(2, 8, 24, 0.90) 0%, rgba(6, 16, 40, 0.75) 100%);
+  border-color: rgba(0, 140, 200, 0.28);
 }
 
 .mse-theme-dark:hover {
-  background: linear-gradient(145deg, rgba(0, 50, 120, 0.35) 0%, rgba(0, 20, 70, 0.55) 50%, rgba(0, 0, 28, 0.75) 100%);
-  border-color: rgba(0, 212, 255, 0.50);
-  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.12), 0 0 18px rgba(0, 212, 255, 0.10);
-  color: var(--text);
+  background: linear-gradient(145deg,
+      rgba(0, 80, 160, 0.40) 0%,
+      rgba(0, 40, 100, 0.55) 50%,
+      rgba(0, 8, 32, 0.85) 100%);
+  border-color: rgba(0, 212, 255, 0.65);
+  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.20), 0 0 22px rgba(0, 212, 255, 0.15);
+  color: #a8e8ff;
 }
 
 .mse-theme-dark.on {
-  background: linear-gradient(145deg, rgba(0, 60, 140, 0.45) 0%, rgba(0, 30, 90, 0.60) 50%, rgba(0, 5, 30, 0.85) 100%);
-  border-color: rgba(0, 212, 255, 0.65);
-  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.18), 0 0 20px rgba(0, 212, 255, 0.14);
+  background: linear-gradient(145deg,
+      rgba(0, 100, 200, 0.48) 0%,
+      rgba(0, 50, 120, 0.62) 50%,
+      rgba(0, 10, 40, 0.90) 100%);
+  border-color: rgba(0, 212, 255, 0.80);
+  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.28), 0 0 28px rgba(0, 212, 255, 0.20);
   color: var(--cyan);
 }
 
-/* Light theme box — pearl silver glass */
+/* ── LIGHT theme box ── */
 .mse-theme-light {
-  background: linear-gradient(145deg, rgba(220, 235, 255, 0.10) 0%, rgba(180, 210, 255, 0.06) 100%);
-  border-color: rgba(200, 220, 255, 0.20);
+  background: linear-gradient(145deg, rgba(200, 220, 255, 0.10) 0%, rgba(180, 210, 255, 0.06) 100%);
+  border-color: rgba(180, 210, 255, 0.22);
 }
 
 .mse-theme-light:hover {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.18) 0%, rgba(200, 220, 255, 0.12) 50%, rgba(180, 210, 255, 0.08) 100%);
-  border-color: rgba(200, 230, 255, 0.55);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0 18px rgba(180, 220, 255, 0.10);
-  color: var(--text);
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(210, 230, 255, 0.18) 50%,
+      rgba(180, 210, 255, 0.12) 100%);
+  border-color: rgba(200, 230, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 22px rgba(180, 220, 255, 0.15);
+  color: #dff0ff;
 }
 
 .mse-theme-light.on {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.22) 0%, rgba(200, 228, 255, 0.16) 50%, rgba(180, 210, 255, 0.10) 100%);
-  border-color: rgba(200, 230, 255, 0.70);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 20px rgba(180, 220, 255, 0.14);
-  color: #d0eaff;
+  background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(210, 232, 255, 0.22) 50%,
+      rgba(180, 215, 255, 0.16) 100%);
+  border-color: rgba(200, 230, 255, 0.88);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 28px rgba(180, 220, 255, 0.18);
+  color: #e8f4ff;
 }
 
-/* Mini editor preview inside the theme box */
+/* ── Mini editor mockup inside theme box ── */
 .mse-theme-preview {
   width: 100%;
-  height: 48px;
+  height: 46px;
   border-radius: 6px;
   background: #04080f;
   border: 1px solid rgba(255, 255, 255, 0.10);
   position: relative;
   overflow: hidden;
-  display: flex;
   flex-shrink: 0;
 }
 
 .mse-theme-preview.light {
-  background: #f0f5ff;
+  background: #f0f4ff;
   border-color: rgba(0, 0, 0, 0.10);
 }
 
@@ -2430,7 +2443,7 @@ body[style*="col-resize"] * {
 }
 
 .mtp-topbar.light {
-  background: #e2eaf8;
+  background: #dde8f8;
   border-color: rgba(0, 0, 0, 0.08);
 }
 
@@ -2445,7 +2458,7 @@ body[style*="col-resize"] * {
 }
 
 .mtp-left.light {
-  background: #e8f0fb;
+  background: #e4eef9;
   border-color: rgba(0, 0, 0, 0.07);
 }
 
@@ -2463,7 +2476,7 @@ body[style*="col-resize"] * {
 .mtp-block {
   height: 6px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .mtp-block.short {
@@ -2475,7 +2488,7 @@ body[style*="col-resize"] * {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   FONT FAMILY PILL GRID
+   FONT FAMILY PILLS  — class-based tints (no attribute selectors)
 ═══════════════════════════════════════════════════════════════ */
 
 .mse-font-grid {
@@ -2484,11 +2497,12 @@ body[style*="col-resize"] * {
   gap: 6px;
 }
 
+/* Base pill — neutral glass */
 .mse-font-pill {
-  padding: 8px 10px;
+  padding: 9px 10px;
   border-radius: 8px;
-  border: 1.5px solid rgba(255, 255, 255, 0.13);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
   cursor: pointer;
   font-size: 12.5px;
   font-weight: 500;
@@ -2498,157 +2512,155 @@ body[style*="col-resize"] * {
   overflow: hidden;
   text-overflow: ellipsis;
   /* NO transform */
-  transition: background 0.22s var(--ease), border-color 0.22s var(--ease), color 0.22s var(--ease), box-shadow 0.22s var(--ease);
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
 }
 
-/* Unique glass tint per tint group ─────── */
-
-/* cyan — Plus Jakarta Sans */
-.mse-font-pill[data-tint="cyan"]:hover {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.16) 0%, rgba(0, 180, 255, 0.08) 100%);
-  border-color: rgba(0, 212, 255, 0.45);
-  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.14);
-  color: var(--text);
-}
-
-.mse-font-pill[data-tint="cyan"].on {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.20) 0%, rgba(0, 180, 255, 0.10) 100%);
+/* ── Tint: CYAN — Plus Jakarta Sans ── */
+.mse-font-pill.tint-cyan:hover {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.22) 0%, rgba(0, 180, 255, 0.12) 100%);
   border-color: rgba(0, 212, 255, 0.60);
-  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.20), 0 0 14px rgba(0, 212, 255, 0.10);
+  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.18);
+  color: #a8eeff;
+}
+
+.mse-font-pill.tint-cyan.on {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.28) 0%, rgba(0, 180, 255, 0.16) 100%);
+  border-color: rgba(0, 212, 255, 0.80);
+  box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.24), 0 0 14px rgba(0, 212, 255, 0.14);
   color: #67e8f9;
 }
 
-/* purple — Syne */
-.mse-font-pill[data-tint="purple"]:hover {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.20) 0%, rgba(124, 58, 237, 0.10) 100%);
-  border-color: rgba(139, 92, 246, 0.50);
-  box-shadow: inset 0 1px 0 rgba(139, 92, 246, 0.14);
-  color: var(--text);
+/* ── Tint: PURPLE — Syne ── */
+.mse-font-pill.tint-purple:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.26) 0%, rgba(124, 58, 237, 0.14) 100%);
+  border-color: rgba(167, 139, 250, 0.65);
+  box-shadow: inset 0 1px 0 rgba(139, 92, 246, 0.20);
+  color: #d8b4fe;
 }
 
-.mse-font-pill[data-tint="purple"].on {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(124, 58, 237, 0.14) 100%);
-  border-color: rgba(139, 92, 246, 0.65);
-  box-shadow: inset 0 1px 0 rgba(139, 92, 246, 0.20), 0 0 14px rgba(139, 92, 246, 0.12);
+.mse-font-pill.tint-purple.on {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.32) 0%, rgba(124, 58, 237, 0.18) 100%);
+  border-color: rgba(167, 139, 250, 0.85);
+  box-shadow: inset 0 1px 0 rgba(139, 92, 246, 0.28), 0 0 14px rgba(124, 58, 237, 0.16);
   color: #c4b5fd;
 }
 
-/* blue — Montserrat */
-.mse-font-pill[data-tint="blue"]:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.10) 100%);
-  border-color: rgba(96, 165, 250, 0.48);
-  box-shadow: inset 0 1px 0 rgba(59, 130, 246, 0.14);
-  color: var(--text);
+/* ── Tint: BLUE — Montserrat ── */
+.mse-font-pill.tint-blue:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.24) 0%, rgba(37, 99, 235, 0.13) 100%);
+  border-color: rgba(96, 165, 250, 0.62);
+  box-shadow: inset 0 1px 0 rgba(59, 130, 246, 0.18);
+  color: #bfdbfe;
 }
 
-.mse-font-pill[data-tint="blue"].on {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.22) 0%, rgba(37, 99, 235, 0.13) 100%);
-  border-color: rgba(96, 165, 250, 0.65);
-  box-shadow: inset 0 1px 0 rgba(59, 130, 246, 0.20), 0 0 14px rgba(59, 130, 246, 0.10);
+.mse-font-pill.tint-blue.on {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.30) 0%, rgba(37, 99, 235, 0.17) 100%);
+  border-color: rgba(96, 165, 250, 0.82);
+  box-shadow: inset 0 1px 0 rgba(59, 130, 246, 0.25), 0 0 14px rgba(59, 130, 246, 0.14);
   color: #93c5fd;
 }
 
-/* teal — Raleway */
-.mse-font-pill[data-tint="teal"]:hover {
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.18) 0%, rgba(13, 148, 136, 0.10) 100%);
-  border-color: rgba(45, 212, 191, 0.48);
-  box-shadow: inset 0 1px 0 rgba(20, 184, 166, 0.14);
-  color: var(--text);
+/* ── Tint: TEAL — Raleway ── */
+.mse-font-pill.tint-teal:hover {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.24) 0%, rgba(13, 148, 136, 0.13) 100%);
+  border-color: rgba(45, 212, 191, 0.62);
+  box-shadow: inset 0 1px 0 rgba(20, 184, 166, 0.18);
+  color: #99f6e4;
 }
 
-.mse-font-pill[data-tint="teal"].on {
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.22) 0%, rgba(13, 148, 136, 0.13) 100%);
-  border-color: rgba(45, 212, 191, 0.65);
-  box-shadow: inset 0 1px 0 rgba(20, 184, 166, 0.20), 0 0 14px rgba(20, 184, 166, 0.10);
+.mse-font-pill.tint-teal.on {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.30) 0%, rgba(13, 148, 136, 0.17) 100%);
+  border-color: rgba(45, 212, 191, 0.82);
+  box-shadow: inset 0 1px 0 rgba(20, 184, 166, 0.25), 0 0 14px rgba(20, 184, 166, 0.14);
   color: #5eead4;
 }
 
-/* gold — Playfair Display */
-.mse-font-pill[data-tint="gold"]:hover {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.10) 100%);
-  border-color: rgba(251, 191, 36, 0.48);
-  box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.14);
-  color: var(--text);
+/* ── Tint: GOLD — Playfair Display ── */
+.mse-font-pill.tint-gold:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.24) 0%, rgba(217, 119, 6, 0.13) 100%);
+  border-color: rgba(251, 191, 36, 0.62);
+  box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.18);
+  color: #fde68a;
 }
 
-.mse-font-pill[data-tint="gold"].on {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(217, 119, 6, 0.13) 100%);
-  border-color: rgba(251, 191, 36, 0.65);
-  box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.20), 0 0 14px rgba(245, 158, 11, 0.10);
+.mse-font-pill.tint-gold.on {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.30) 0%, rgba(217, 119, 6, 0.17) 100%);
+  border-color: rgba(251, 191, 36, 0.82);
+  box-shadow: inset 0 1px 0 rgba(245, 158, 11, 0.25), 0 0 14px rgba(245, 158, 11, 0.14);
   color: #fcd34d;
 }
 
-/* rose — Cormorant Garamond */
-.mse-font-pill[data-tint="rose"]:hover {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.16) 0%, rgba(225, 29, 72, 0.09) 100%);
-  border-color: rgba(251, 113, 133, 0.48);
-  box-shadow: inset 0 1px 0 rgba(244, 63, 94, 0.12);
-  color: var(--text);
+/* ── Tint: ROSE — Cormorant Garamond ── */
+.mse-font-pill.tint-rose:hover {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.22) 0%, rgba(225, 29, 72, 0.12) 100%);
+  border-color: rgba(251, 113, 133, 0.60);
+  box-shadow: inset 0 1px 0 rgba(244, 63, 94, 0.16);
+  color: #fecdd3;
 }
 
-.mse-font-pill[data-tint="rose"].on {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.20) 0%, rgba(225, 29, 72, 0.12) 100%);
-  border-color: rgba(251, 113, 133, 0.65);
-  box-shadow: inset 0 1px 0 rgba(244, 63, 94, 0.18), 0 0 14px rgba(244, 63, 94, 0.10);
+.mse-font-pill.tint-rose.on {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.28) 0%, rgba(225, 29, 72, 0.16) 100%);
+  border-color: rgba(251, 113, 133, 0.80);
+  box-shadow: inset 0 1px 0 rgba(244, 63, 94, 0.22), 0 0 14px rgba(244, 63, 94, 0.14);
   color: #fda4af;
 }
 
-/* pink — Dancing Script */
-.mse-font-pill[data-tint="pink"]:hover {
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.16) 0%, rgba(219, 39, 119, 0.09) 100%);
-  border-color: rgba(244, 114, 182, 0.48);
-  box-shadow: inset 0 1px 0 rgba(236, 72, 153, 0.12);
-  color: var(--text);
+/* ── Tint: PINK — Dancing Script ── */
+.mse-font-pill.tint-pink:hover {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.22) 0%, rgba(219, 39, 119, 0.12) 100%);
+  border-color: rgba(244, 114, 182, 0.60);
+  box-shadow: inset 0 1px 0 rgba(236, 72, 153, 0.16);
+  color: #fbcfe8;
 }
 
-.mse-font-pill[data-tint="pink"].on {
-  background: linear-gradient(135deg, rgba(236, 72, 153, 0.20) 0%, rgba(219, 39, 119, 0.12) 100%);
-  border-color: rgba(244, 114, 182, 0.65);
-  box-shadow: inset 0 1px 0 rgba(236, 72, 153, 0.18), 0 0 14px rgba(236, 72, 153, 0.10);
+.mse-font-pill.tint-pink.on {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.28) 0%, rgba(219, 39, 119, 0.16) 100%);
+  border-color: rgba(244, 114, 182, 0.80);
+  box-shadow: inset 0 1px 0 rgba(236, 72, 153, 0.22), 0 0 14px rgba(236, 72, 153, 0.14);
   color: #f9a8d4;
 }
 
-/* amber — Cinzel */
-.mse-font-pill[data-tint="amber"]:hover {
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.16) 0%, rgba(234, 88, 12, 0.09) 100%);
-  border-color: rgba(253, 186, 116, 0.48);
-  box-shadow: inset 0 1px 0 rgba(251, 146, 60, 0.12);
-  color: var(--text);
+/* ── Tint: AMBER — Cinzel ── */
+.mse-font-pill.tint-amber:hover {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.22) 0%, rgba(234, 88, 12, 0.12) 100%);
+  border-color: rgba(253, 186, 116, 0.60);
+  box-shadow: inset 0 1px 0 rgba(251, 146, 60, 0.16);
+  color: #fed7aa;
 }
 
-.mse-font-pill[data-tint="amber"].on {
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.20) 0%, rgba(234, 88, 12, 0.12) 100%);
-  border-color: rgba(253, 186, 116, 0.65);
-  box-shadow: inset 0 1px 0 rgba(251, 146, 60, 0.18), 0 0 14px rgba(251, 146, 60, 0.10);
+.mse-font-pill.tint-amber.on {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.28) 0%, rgba(234, 88, 12, 0.16) 100%);
+  border-color: rgba(253, 186, 116, 0.80);
+  box-shadow: inset 0 1px 0 rgba(251, 146, 60, 0.22), 0 0 14px rgba(251, 146, 60, 0.14);
   color: #fdba74;
 }
 
-/* orange — EB Garamond */
-.mse-font-pill[data-tint="orange"]:hover {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.16) 0%, rgba(234, 88, 12, 0.09) 100%);
-  border-color: rgba(251, 146, 60, 0.48);
-  box-shadow: inset 0 1px 0 rgba(249, 115, 22, 0.12);
-  color: var(--text);
+/* ── Tint: ORANGE — EB Garamond ── */
+.mse-font-pill.tint-orange:hover {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.22) 0%, rgba(234, 88, 12, 0.12) 100%);
+  border-color: rgba(251, 146, 60, 0.60);
+  box-shadow: inset 0 1px 0 rgba(249, 115, 22, 0.16);
+  color: #fed7aa;
 }
 
-.mse-font-pill[data-tint="orange"].on {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.20) 0%, rgba(234, 88, 12, 0.12) 100%);
-  border-color: rgba(251, 146, 60, 0.65);
-  box-shadow: inset 0 1px 0 rgba(249, 115, 22, 0.18), 0 0 14px rgba(249, 115, 22, 0.10);
+.mse-font-pill.tint-orange.on {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.28) 0%, rgba(234, 88, 12, 0.16) 100%);
+  border-color: rgba(251, 146, 60, 0.80);
+  box-shadow: inset 0 1px 0 rgba(249, 115, 22, 0.22), 0 0 14px rgba(249, 115, 22, 0.14);
   color: #fb923c;
 }
 
-/* green — JetBrains Mono */
-.mse-font-pill[data-tint="green"]:hover {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(5, 150, 105, 0.09) 100%);
-  border-color: rgba(52, 211, 153, 0.48);
-  box-shadow: inset 0 1px 0 rgba(16, 185, 129, 0.12);
-  color: var(--text);
+/* ── Tint: GREEN — JetBrains Mono ── */
+.mse-font-pill.tint-green:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.12) 100%);
+  border-color: rgba(52, 211, 153, 0.60);
+  box-shadow: inset 0 1px 0 rgba(16, 185, 129, 0.16);
+  color: #a7f3d0;
 }
 
-.mse-font-pill[data-tint="green"].on {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.20) 0%, rgba(5, 150, 105, 0.12) 100%);
-  border-color: rgba(52, 211, 153, 0.65);
-  box-shadow: inset 0 1px 0 rgba(16, 185, 129, 0.18), 0 0 14px rgba(16, 185, 129, 0.10);
+.mse-font-pill.tint-green.on {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.28) 0%, rgba(5, 150, 105, 0.16) 100%);
+  border-color: rgba(52, 211, 153, 0.80);
+  box-shadow: inset 0 1px 0 rgba(16, 185, 129, 0.22), 0 0 14px rgba(16, 185, 129, 0.14);
   color: #6ee7b7;
 }
