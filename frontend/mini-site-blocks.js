@@ -220,40 +220,96 @@ function msb_speakers(block, cfg) {
   const p = block.props, t = msb_theme(cfg);
   const bg = p.bgColor || t.bgAlt;
   const items = p.items || [];
+  const uid = block.id || ('sp' + Math.random().toString(36).slice(2,7));
   const isList = p.layout === 'list';
+
+  const gridCard = (sp) => `
+<div class="spk-card-${uid}" style="flex-shrink:0;width:210px;border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column;scroll-snap-align:start">
+  <div style="width:100%;height:240px;overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
+    ${sp.photo
+      ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
+    <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,${t.bgCard})"></div>
+  </div>
+  <div style="padding:14px 16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px">
+    <div style="font-size:16px;font-weight:700;color:${t.text};line-height:1.25">${sp.name || 'Speaker'}</div>
+    ${sp.role ? `<div style="font-size:12.5px;font-weight:500;color:${t.accent}">${sp.role}</div>` : ''}
+    ${sp.bio ? `<div style="font-size:12px;color:${t.sub};margin-top:6px;line-height:1.55">${sp.bio}</div>` : ''}
+  </div>
+</div>`;
+
+  const listCard = (sp) => `
+<div style="display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:12px;background:${t.bgCard};border:1px solid ${t.border}">
+  <div style="width:52px;height:52px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba('+t.accentRgb+',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;flex-shrink:0">
+    ${sp.photo ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover" alt="${sp.name || ''}"/>` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${t.accent}">${(sp.name||'?')[0]}</div>`}
+  </div>
+  <div>
+    <div style="font-size:15px;font-weight:700;color:${t.text}">${sp.name || 'Speaker'}</div>
+    ${sp.role ? `<div style="font-size:13px;color:${t.muted};margin-top:2px">${sp.role}</div>` : ''}
+    ${sp.bio ? `<div style="font-size:12.5px;color:${t.sub};margin-top:6px;line-height:1.5">${sp.bio}</div>` : ''}
+  </div>
+</div>`;
+
+  const dots = items.length > 1 ? `
+<div style="display:flex;justify-content:center;gap:6px;margin-top:16px">
+  ${items.map((_,i) => `<div id="spkDot_${uid}_${i}" style="width:${i===0?'20px':'6px'};height:6px;border-radius:99px;background:${i===0?t.accent:'rgba(255,255,255,0.2)'};transition:all 0.3s ease;cursor:pointer" onclick="spkGoTo_${uid}(${i})"></div>`).join('')}
+</div>` : '';
+
+  const carousel = `
+<div style="position:relative">
+  <div id="spkTrack_${uid}" style="display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 4px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none">
+    ${items.map(sp => gridCard(sp)).join('')}
+  </div>
+  ${dots}
+</div>
+<style>#spkTrack_${uid}::-webkit-scrollbar{display:none}</style>
+<script>
+(function(){
+  var track=document.getElementById('spkTrack_${uid}');
+  if(!track)return;
+  var cards=track.querySelectorAll('.spk-card-${uid}');
+  var n=cards.length;
+  if(n<2)return;
+  var cur=0,timer;
+  function goTo(i){
+    cur=((i%n)+n)%n;
+    track.scrollTo({left:cards[cur].offsetLeft,behavior:'smooth'});
+    updateDots();
+  }
+  window['spkGoTo_${uid}']=goTo;
+  function updateDots(){
+    for(var i=0;i<n;i++){
+      var d=document.getElementById('spkDot_${uid}_'+i);
+      if(!d)continue;
+      d.style.width=i===cur?'20px':'6px';
+      d.style.background=i===cur?'${t.accent}':'rgba(255,255,255,0.2)';
+    }
+  }
+  function start(){timer=setInterval(function(){goTo(cur+1);},3500);}
+  function stop(){clearInterval(timer);}
+  track.addEventListener('mouseenter',stop);
+  track.addEventListener('mouseleave',start);
+  track.addEventListener('touchstart',stop,{passive:true});
+  track.addEventListener('touchend',function(){setTimeout(start,4000);},{passive:true});
+  track.addEventListener('scroll',function(){
+    var best=0,min=Infinity;
+    for(var i=0;i<n;i++){var d=Math.abs(cards[i].offsetLeft-track.scrollLeft);if(d<min){min=d;best=i;}}
+    if(best!==cur){cur=best;updateDots();}
+  },{passive:true});
+  start();
+})();
+</script>`;
+
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Speakers', t, p.alignment)}
-  <div style="display:${isList ? 'flex flex-direction:column' : 'grid'};${isList ? 'gap:14px' : 'display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,185px));gap:12px;justify-content:center'}">
-    ${items.length ? items.map(sp => isList ? `
-    <div style="display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:12px;background:${t.bgCard};border:1px solid ${t.border}">
-      <div style="width:52px;height:52px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba(' + t.accentRgb + ',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;flex-shrink:0">
-        ${sp.photo ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover" alt="${sp.name || ''}"/>` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${t.accent}">${(sp.name || '?')[0]}</div>`}
-      </div>
-      <div>
-        <div style="font-size:15px;font-weight:700;color:${t.text}">${sp.name || 'Speaker'}</div>
-        ${sp.role ? `<div style="font-size:13px;color:${t.muted};margin-top:2px">${sp.role}</div>` : ''}
-        ${sp.bio ? `<div style="font-size:12.5px;color:${t.sub};margin-top:6px;line-height:1.5">${sp.bio}</div>` : ''}
-      </div>
-    </div>` : `
-   <div style="width:100%;border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column">
-      <div style="width:100%;height:clamp(120px,24vw,230px);overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
-        ${sp.photo
-    ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
-    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
-        <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,${t.bgCard})"></div>
-      </div>
-      <div style="padding:14px 16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px">
-        <div style="font-size:16px;font-weight:700;color:${t.text};line-height:1.25">${sp.name || 'Speaker'}</div>
-        ${sp.role ? `<div style="font-size:12.5px;font-weight:500;color:${t.accent}">${sp.role}</div>` : ''}
-        ${sp.bio ? `<div style="font-size:12px;color:${t.sub};margin-top:6px;line-height:1.55">${sp.bio}</div>` : ''}
-      </div>
-    </div>`).join('') :
-      `<div style="color:${t.muted};font-size:14px;padding:8px 0">Add speakers in the properties panel.</div>`}
-  </div>
+  ${msb_title(p.title || 'Speakers', t, p.alignment || 'center')}
+  ${items.length
+    ? (isList
+        ? `<div style="display:flex;flex-direction:column;gap:14px">${items.map(listCard).join('')}</div>`
+        : carousel)
+    : `<div style="color:${t.muted};font-size:14px;padding:8px 0">Add speakers in the properties panel.</div>`}
 </div>`, bg);
 }
-
 /* ═══════════════════════════════════════════════════════════════
    BLOCK 6 — FAQ
 ═══════════════════════════════════════════════════════════════ */
