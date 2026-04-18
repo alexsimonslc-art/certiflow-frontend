@@ -181,10 +181,8 @@ function mst_renderPaletteGrid() {
     const isActive = pal.id === active ||
       (!active && pal.accent === MSState.config.accentColor && pal.theme === MSState.config.theme);
     return `
-<button class="mst-palette-card ${isActive ? 'active' : ''}"
-  onclick="mst_applyPalette('${pal.id}')"
-  style="--card-border:${isActive ? 'rgba(0,212,255,0.5)' : 'rgba(255,255,255,0.07)'};
-         --card-bg:${isActive ? 'rgba(0,212,255,0.07)' : 'rgba(255,255,255,0.03)'}"
+<button onclick="mst_applyPalette('${pal.id}')"
+  style="padding:10px;border-radius:10px;border:1.5px solid ${isActive ? 'rgba(0,212,255,0.5)' : 'rgba(255,255,255,0.07)'};background:${isActive ? 'rgba(0,212,255,0.07)' : 'rgba(255,255,255,0.03)'};cursor:pointer;text-align:left;transition:all 0.18s">
   <div style="display:flex;gap:3px;margin-bottom:7px">
     ${pal.preview.map((c, i) => `<div style="flex:${i === 0 ? 2 : i === 1 ? 1.5 : 1};height:22px;border-radius:${i === 0 ? '5px 0 0 5px' : i === 2 ? '0 5px 5px 0' : '0'};background:${c}"></div>`).join('')}
   </div>
