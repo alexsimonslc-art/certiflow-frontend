@@ -321,20 +321,20 @@ function msb_fieldHtml(f, t) {
     /* ── Simple inputs ── */
     case 'text': case 'email': case 'tel': case 'url':
     case 'number': case 'date': case 'time': case 'datetime-local':
-      return `<input type="${f.type}" name="${f.id}" placeholder="${f.placeholder || ''}" style="${base}" ${f.required ? 'required' : ''}/>`;
+      return `<input type="${f.type}" name="${f.id}" placeholder="${f.placeholder||''}" style="${base}" ${f.required?'required':''}/>`;
 
     case 'textarea':
-      return `<textarea name="${f.id}" placeholder="${f.placeholder || ''}" rows="${f.rows || 4}" style="${base};resize:vertical;line-height:1.55" ${f.required ? 'required' : ''}></textarea>`;
+      return `<textarea name="${f.id}" placeholder="${f.placeholder||''}" rows="${f.rows||4}" style="${base};resize:vertical;line-height:1.55" ${f.required?'required':''}></textarea>`;
 
     /* ── Radio (single choice) ── */
     case 'radio':
       return `<div style="display:flex;flex-direction:column;gap:8px">
-        ${(f.options || []).map(o => `
+        ${(f.options||[]).map(o=>`
         <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput};transition:border-color 0.15s">
           <span style="width:18px;height:18px;border-radius:50%;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg}">
             <span style="width:8px;height:8px;border-radius:50%;background:${t.accent};opacity:0;transition:opacity 0.15s"></span>
           </span>
-          <input type="radio" name="${f.id}" value="${o}" style="display:none" ${f.required ? 'required' : ''}
+          <input type="radio" name="${f.id}" value="${o}" style="display:none" ${f.required?'required':''}
             onchange="this.closest('[data-field-id]').querySelectorAll('label').forEach(l=>{l.style.borderColor='';l.querySelector('span span').style.opacity='0'});this.closest('label').style.borderColor='${t.accent}';this.closest('label').querySelector('span span').style.opacity='1'"/>
           <span style="font-size:14px;color:${t.sub}">${o}</span>
         </label>`).join('')}
@@ -343,7 +343,7 @@ function msb_fieldHtml(f, t) {
     /* ── Checkbox group (multi choice) ── */
     case 'checkbox-group': case 'checkbox':
       return `<div style="display:flex;flex-direction:column;gap:8px">
-        ${(f.options || []).map((o, oi) => `
+        ${(f.options||[]).map((o,oi)=>`
         <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput};transition:border-color 0.15s">
           <span style="width:18px;height:18px;border-radius:5px;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg};transition:all 0.15s" id="msb-cb-${f.id}-${oi}">
             <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="3" style="width:11px;height:11px;opacity:0;transition:opacity 0.15s" id="msb-ci-${f.id}-${oi}"><polyline points="20 6 9 17 4 12"/></svg>
@@ -357,9 +357,9 @@ function msb_fieldHtml(f, t) {
     /* ── Dropdown ── */
     case 'dropdown': case 'select':
       return `<div style="position:relative">
-        <select name="${f.id}" style="${base};appearance:none;cursor:pointer;padding-right:36px" ${f.required ? 'required' : ''}>
+        <select name="${f.id}" style="${base};appearance:none;cursor:pointer;padding-right:36px" ${f.required?'required':''}>
           <option value="">-- Select an option --</option>
-          ${(f.options || []).map(o => `<option value="${o}">${o}</option>`).join('')}
+          ${(f.options||[]).map(o=>`<option value="${o}">${o}</option>`).join('')}
         </select>
         <div style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="${t.muted}" stroke-width="2" style="width:14px;height:14px"><polyline points="6 9 12 15 18 9"/></svg>
@@ -368,17 +368,17 @@ function msb_fieldHtml(f, t) {
 
     /* ── Linear scale ── */
     case 'linear-scale': {
-      const mn = f.min || 1, mx = f.max || 5;
-      const nums = Array.from({ length: mx - mn + 1 }, (_, i) => mn + i);
+      const mn = f.min||1, mx = f.max||5;
+      const nums = Array.from({length: mx-mn+1}, (_,i) => mn+i);
       return `<div>
         <div class="msf-scale-row" data-name="${f.id}" data-color="${t.accent}" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-          ${nums.map(n => `<button type="button" class="msf-scale-btn" data-val="${n}"
+          ${nums.map(n=>`<button type="button" class="msf-scale-btn" data-val="${n}"
             style="min-width:38px;height:38px;border-radius:8px;border:1.5px solid ${t.border2};cursor:pointer;font-size:14px;font-weight:600;background:transparent;color:${t.sub};font-family:'${t.font}',sans-serif">${n}</button>`).join('')}
         </div>
         <input type="hidden" name="${f.id}"/>
         <div style="display:flex;justify-content:space-between;font-size:12px;color:${t.muted}">
-          <span>${f.minLabel || ''}</span>
-          <span>${f.maxLabel || ''}</span>
+          <span>${f.minLabel||''}</span>
+          <span>${f.maxLabel||''}</span>
         </div>
       </div>`;
     }
@@ -386,16 +386,16 @@ function msb_fieldHtml(f, t) {
     /* ── Rating (stars) ── */
     case 'rating':
       return `<div class="msf-rating" data-name="${f.id}" style="display:flex;gap:6px;align-items:center">
-        ${[1, 2, 3, 4, 5].map(n => `<span class="msf-rating-star" data-val="${n}" role="button" aria-label="${n} star${n > 1 ? 's' : ''}" style="font-size:28px;cursor:pointer;color:rgba(255,255,255,0.2);transition:color 0.15s;user-select:none">★</span>`).join('')}
+        ${[1,2,3,4,5].map(n=>`<span class="msf-rating-star" data-val="${n}" role="button" aria-label="${n} star${n>1?'s':''}" style="font-size:28px;cursor:pointer;color:rgba(255,255,255,0.2);transition:color 0.15s;user-select:none">★</span>`).join('')}
         <input type="hidden" name="${f.id}"/>
       </div>`;
 
     /* ── Ranking ── */
     case 'ranking':
       return `<div class="msf-ranking-list" data-name="${f.id}" style="display:flex;flex-direction:column;gap:6px">
-        ${(f.options || []).map((o, i) => `
+        ${(f.options||[]).map((o,i)=>`
         <div class="msf-rank-item" data-value="${o}" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput}">
-          <span style="font-size:13px;font-weight:700;color:${t.muted};min-width:20px">${i + 1}.</span>
+          <span style="font-size:13px;font-weight:700;color:${t.muted};min-width:20px">${i+1}.</span>
           <span style="flex:1;font-size:14px;color:${t.sub}">${o}</span>
           <div style="display:flex;flex-direction:column;gap:2px">
             <button type="button" class="msf-rank-up" style="padding:2px 6px;border-radius:4px;border:1px solid ${t.border};background:transparent;color:${t.muted};cursor:pointer;line-height:1">↑</button>
@@ -408,12 +408,12 @@ function msb_fieldHtml(f, t) {
     /* ── Image choice ── */
     case 'image-choice':
       return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
-        ${(f.options || []).map(o => `
+        ${(f.options||[]).map(o=>`
         <label style="cursor:pointer;border-radius:10px;overflow:hidden;border:2px solid ${t.border2};transition:border-color 0.15s;display:block">
-          <input type="radio" name="${f.id}" value="${o.label || o}" style="display:none" ${f.required ? 'required' : ''}
+          <input type="radio" name="${f.id}" value="${o.label||o}" style="display:none" ${f.required?'required':''}
             onchange="this.closest('[data-field-id]').querySelectorAll('label').forEach(l=>l.style.borderColor='');this.closest('label').style.borderColor='${t.accent}'"/>
-          ${(o.imageUrl || o.image) ? `<img src="${o.imageUrl || o.image}" style="width:100%;height:90px;object-fit:cover;display:block"/>` : `<div style="height:90px;background:${t.bgCard};display:flex;align-items:center;justify-content:center;font-size:12px;color:${t.muted}">No image</div>`}
-          <div style="padding:8px;font-size:13px;font-weight:500;color:${t.sub};text-align:center">${o.label || o}</div>
+          ${(o.imageUrl||o.image) ? `<img src="${o.imageUrl||o.image}" style="width:100%;height:90px;object-fit:cover;display:block"/>` : `<div style="height:90px;background:${t.bgCard};display:flex;align-items:center;justify-content:center;font-size:12px;color:${t.muted}">No image</div>`}
+          <div style="padding:8px;font-size:13px;font-weight:500;color:${t.sub};text-align:center">${o.label||o}</div>
         </label>`).join('')}
       </div>`;
 
@@ -427,10 +427,10 @@ function msb_fieldHtml(f, t) {
           <div>
             <div style="font-size:14px;font-weight:600;color:${t.text}">Click to choose file</div>
             <div style="font-size:12px;color:${t.muted}" id="msb-fl-${f.id}">
-              ${f.accept ? `Accepted: ${f.accept}` : 'Any file'} · Max ${f.maxSizeMB || 5}MB
+              ${f.accept ? `Accepted: ${f.accept}` : 'Any file'} · Max ${f.maxSizeMB||5}MB
             </div>
           </div>
-          <input type="file" name="${f.id}" style="display:none" ${f.accept ? `accept="${f.accept}"` : ''} ${f.required ? 'required' : ''}
+          <input type="file" name="${f.id}" style="display:none" ${f.accept?`accept="${f.accept}"`:''} ${f.required?'required':''}
             onchange="document.getElementById('msb-fl-${f.id}').textContent=this.files[0]?this.files[0].name+' ('+Math.round(this.files[0].size/1024)+'KB)':'No file chosen';this.closest('label').style.borderColor='${t.accent}'"/>
         </label>
       </div>`;
@@ -447,7 +447,7 @@ function msb_fieldHtml(f, t) {
       return `<div style="height:1px;background:${t.border};border-radius:1px;margin:8px 0"></div>`;
 
     default:
-      return `<input type="text" name="${f.id}" placeholder="${f.placeholder || ''}" style="${base}" ${f.required ? 'required' : ''}/>`;
+      return `<input type="text" name="${f.id}" placeholder="${f.placeholder||''}" style="${base}" ${f.required?'required':''}/>`;
   }
 }
 
@@ -456,9 +456,9 @@ function msb_fieldHtml(f, t) {
    Handles both new sections[] and old fields[] format.
 ───────────────────────────────────────────────────────────── */
 function msb_form(block, cfg) {
-  const p = block.props;
-  const t = msb_theme(cfg);
-  const bg = p.bgColor || t.bgAlt;
+  const p   = block.props;
+  const t   = msb_theme(cfg);
+  const bg  = p.bgColor || t.bgAlt;
   const btnBg = p.buttonColor || t.accent;
   const [br, bg_, bb] = msb_hexRgb(btnBg);
   const isOpen = cfg.registrationOpen !== false;
@@ -473,7 +473,7 @@ function msb_form(block, cfg) {
     }];
   }
   sections = sections || [];
-  const isSingle = sections.length <= 1;
+  const isSingle   = sections.length <= 1;
   const totalSects = sections.length;
 
   // Encode sections for form.js consumption (single-quoted attr, JSON uses double-quotes = safe)
@@ -486,11 +486,11 @@ function msb_form(block, cfg) {
 
   ${isOpen ? `
   <form
-    data-ms-form="${p.sheetId || ''}"
+    data-ms-form="${p.sheetId||''}"
     data-ms-sections='${sectionsJson}'
-    data-ms-button-text="${(p.buttonText || 'Submit Registration').replace(/"/g, '&quot;')}"
-    data-ms-success-msg="${(p.successMessage || '').replace(/"/g, '&quot;')}"
-    style="max-width:560px;${p.alignment === 'center' ? 'margin:0 auto' : ''}"
+    data-ms-button-text="${(p.buttonText||'Submit Registration').replace(/"/g,'&quot;')}"
+    data-ms-success-msg="${(p.successMessage||'').replace(/"/g,'&quot;')}"
+    style="max-width:560px;${p.alignment==='center'?'margin:0 auto':''}"
     onsubmit="return false">
 
     <!-- Progress bar (shown by form.js for multi-section) -->
@@ -501,7 +501,7 @@ function msb_form(block, cfg) {
         <span class="ms-form-progress-text" style="font-size:12px;color:${t.muted}">1 of ${totalSects}</span>
       </div>
       <div style="height:4px;background:${t.border};border-radius:99px;overflow:hidden">
-        <div class="ms-form-progress-fill" style="height:100%;background:${t.accent};border-radius:99px;width:${Math.round(100 / Math.max(totalSects, 1))}%;transition:width 0.35s ease"></div>
+        <div class="ms-form-progress-fill" style="height:100%;background:${t.accent};border-radius:99px;width:${Math.round(100/Math.max(totalSects,1))}%;transition:width 0.35s ease"></div>
       </div>
     </div>` : ''}
 
@@ -514,19 +514,19 @@ function msb_form(block, cfg) {
         ${sec.description ? `<p style="margin:0 0 16px;font-size:13.5px;color:${t.sub};line-height:1.6">${sec.description}</p>` : ''}
 
         <div class="ms-form-fields" style="display:flex;flex-direction:column;gap:16px">
-          ${(sec.fields || []).map(f => {
-    if (f.type === 'divider') return `<div data-field-id="${f.id}">${msb_fieldHtml(f, t)}</div>`;
-    if (f.type === 'section-text') return `<div data-field-id="${f.id}">${msb_fieldHtml(f, t)}</div>`;
-    return `
+          ${(sec.fields||[]).map(f => {
+            if (f.type === 'divider') return `<div data-field-id="${f.id}">${msb_fieldHtml(f, t)}</div>`;
+            if (f.type === 'section-text') return `<div data-field-id="${f.id}">${msb_fieldHtml(f, t)}</div>`;
+            return `
           <div data-field-id="${f.id}" style="display:flex;flex-direction:column;gap:6px">
             <label style="font-size:12.5px;font-weight:600;color:${t.sub};text-transform:uppercase;letter-spacing:0.5px">
-              ${f.label || ''}
+              ${f.label||''}
               ${f.required ? '<span style="color:#f43f5e;margin-left:3px">*</span>' : ''}
             </label>
             ${f.description ? `<p style="margin:0 0 6px;font-size:12.5px;color:${t.muted};line-height:1.5">${f.description}</p>` : ''}
             ${msb_fieldHtml(f, t)}
           </div>`;
-  }).join('')}
+          }).join('')}
         </div>
 
         <!-- Section navigation -->
@@ -535,7 +535,7 @@ function msb_form(block, cfg) {
             style="padding:10px 20px;border-radius:9px;border:1.5px solid ${t.border2};background:transparent;color:${t.text};font-size:14px;font-weight:600;cursor:pointer;font-family:'${t.font}',sans-serif;display:none">← Back</button>` : ''}
           <button type="button" class="ms-form-btn-next"
             style="flex:1;padding:14px 28px;background:${btnBg};color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:'${t.font}',sans-serif;box-shadow:0 4px 24px rgba(${br},${bg_},${bb},0.3);transition:transform 0.15s,box-shadow 0.15s">
-            ${si === totalSects - 1 ? (p.buttonText || 'Submit Registration') : 'Next →'}
+            ${si === totalSects - 1 ? (p.buttonText||'Submit Registration') : 'Next →'}
           </button>
         </div>
 
@@ -543,7 +543,7 @@ function msb_form(block, cfg) {
     </div>
 
   </form>` :
-      `<div style="padding:24px;border-radius:12px;background:rgba(244,63,94,0.07);border:1px solid rgba(244,63,94,0.2);text-align:center">
+  `<div style="padding:24px;border-radius:12px;background:rgba(244,63,94,0.07);border:1px solid rgba(244,63,94,0.2);text-align:center">
     <div style="font-size:22px;margin-bottom:10px">🚫</div>
     <div style="font-size:15px;font-weight:600;color:#f43f5e;margin-bottom:6px">Registrations Closed</div>
     <div style="font-size:13.5px;color:${t.sub}">Registration for this event is currently closed.</div>

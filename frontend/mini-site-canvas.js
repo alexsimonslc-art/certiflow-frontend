@@ -424,29 +424,29 @@ function renderBlockProps(block) {
   ${msc_titleRow(bid, p.title, 'Register Now')}
   <div class="mse-prop-row">
     <div class="mse-prop-label">Subtitle</div>
-    <input class="mse-prop-input" value="${(p.subtitle || '').replace(/"/g, '&quot;')}"
+    <input class="mse-prop-input" value="${(p.subtitle||'').replace(/"/g,'&quot;')}"
       placeholder="Optional description" oninput="msc_set('${bid}','subtitle',this.value)"/>
   </div>
   <div class="mse-prop-row">
     <div class="mse-prop-label">Button Text</div>
-    <input class="mse-prop-input" value="${(p.buttonText || 'Submit Registration').replace(/"/g, '&quot;')}"
+    <input class="mse-prop-input" value="${(p.buttonText||'Submit Registration').replace(/"/g,'&quot;')}"
       oninput="msc_set('${bid}','buttonText',this.value)"/>
   </div>
   <div class="mse-prop-row">
     <div class="mse-prop-label">Button Colour</div>
     <div class="mse-color-row">
-      <div class="mse-color-swatch" style="background:${p.buttonColor || MSState.config.accentColor || '#00d4ff'}">
-        <input type="color" value="${p.buttonColor || MSState.config.accentColor || '#00d4ff'}"
+      <div class="mse-color-swatch" style="background:${p.buttonColor||MSState.config.accentColor||'#00d4ff'}">
+        <input type="color" value="${p.buttonColor||MSState.config.accentColor||'#00d4ff'}"
           oninput="msc_set('${bid}','buttonColor',this.value)"/>
       </div>
-      <input type="text" class="mse-prop-input" value="${p.buttonColor || ''}" placeholder="Uses accent colour"
+      <input type="text" class="mse-prop-input" value="${p.buttonColor||''}" placeholder="Uses accent colour"
         oninput="msc_set('${bid}','buttonColor',this.value)" style="flex:1"/>
     </div>
   </div>
   <div class="mse-prop-row">
     <div class="mse-prop-label">Success Message</div>
     <textarea class="mse-prop-textarea" placeholder="We'll be in touch soon!"
-      style="min-height:56px" oninput="msc_set('${bid}','successMessage',this.value)">${(p.successMessage || '').replace(/</g, '&lt;')}</textarea>
+      style="min-height:56px" oninput="msc_set('${bid}','successMessage',this.value)">${(p.successMessage||'').replace(/</g,'&lt;')}</textarea>
     <div class="mse-prop-hint">Shown to the visitor after they submit</div>
   </div>
   <div class="mse-prop-row">
@@ -455,25 +455,25 @@ function renderBlockProps(block) {
         <div class="mse-prop-label" style="margin-bottom:2px">Show Progress Bar</div>
         <div class="mse-prop-hint" style="margin:0">Section X of Y indicator</div>
       </div>
-      <div class="mse-toggle ${p.showProgressBar !== false ? 'on' : ''}" style="width:32px;height:18px;flex-shrink:0"
-        onclick="msc_set('${bid}','showProgressBar',${p.showProgressBar === false});updateRightPanel()"></div>
+      <div class="mse-toggle ${p.showProgressBar!==false?'on':''}" style="width:32px;height:18px;flex-shrink:0"
+        onclick="msc_set('${bid}','showProgressBar',${p.showProgressBar===false});updateRightPanel()"></div>
     </div>
   </div>
   <div class="mse-prop-row">
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div class="mse-prop-label">Alignment</div>
       <div class="mse-align-row">
-        ${['left', 'center'].map(a => `<button class="mse-align-btn ${(p.alignment || 'left') === a ? 'on' : ''}"
+        ${['left','center'].map(a=>`<button class="mse-align-btn ${(p.alignment||'left')===a?'on':''}"
           onclick="msc_set('${bid}','alignment','${a}');updateRightPanel()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
-            ${a === 'left' ? '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>' : '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>'}
+            ${a==='left'?'<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>':'<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>'}
           </svg></button>`).join('')}
       </div>
     </div>
   </div>
   <div class="mse-prop-row">
     <div class="mse-prop-label">Google Sheet <span style="font-size:10px;color:var(--green);font-weight:600;margin-left:6px">AUTO-CREATED ON PUBLISH</span></div>
-    <input class="mse-prop-input" value="${p.sheetId || ''}" placeholder="Leave blank — auto-created on Publish"
+    <input class="mse-prop-input" value="${p.sheetId||''}" placeholder="Leave blank — auto-created on Publish"
       oninput="msc_set('${bid}','sheetId',this.value)"/>
     <div class="mse-prop-hint">A Sheet is created automatically when you publish. Or paste an existing Sheet ID here.</div>
   </div>
@@ -770,63 +770,55 @@ console.log('[Honourix] mini-site-canvas.js loaded — renderBlockProps overridd
 
 /* Field type metadata — groups + labels */
 const MSCF_FIELD_TYPES = [
-  {
-    group: 'Text Inputs', types: [
-      { t: 'text', icon: 'T', label: 'Short Text' },
-      { t: 'textarea', icon: '¶', label: 'Long Text' },
-      { t: 'email', icon: '@', label: 'Email' },
-      { t: 'tel', icon: '#', label: 'Phone' },
-      { t: 'number', icon: '12', label: 'Number' },
-      { t: 'url', icon: '⎈', label: 'URL' },
-      { t: 'date', icon: '📅', label: 'Date' },
-      { t: 'time', icon: '⏱', label: 'Time' },
-    ]
-  },
-  {
-    group: 'Choice', types: [
-      { t: 'radio', icon: '◉', label: 'Multiple Choice' },
-      { t: 'checkbox-group', icon: '☑', label: 'Checkboxes' },
-      { t: 'dropdown', icon: '▾', label: 'Dropdown' },
-      { t: 'linear-scale', icon: '━', label: 'Linear Scale' },
-      { t: 'rating', icon: '★', label: 'Star Rating' },
-      { t: 'ranking', icon: '↕', label: 'Ranking' },
-      { t: 'image-choice', icon: '🖼', label: 'Image Choice' },
-    ]
-  },
-  {
-    group: 'Media / Upload', types: [
-      { t: 'file', icon: '📎', label: 'File Upload' },
-    ]
-  },
-  {
-    group: 'Special', types: [
-      { t: 'section-text', icon: 'ℹ', label: 'Instruction Text' },
-      { t: 'divider', icon: '─', label: 'Divider' },
-    ]
-  },
+  { group:'Text Inputs', types:[
+    { t:'text',     icon:'T',  label:'Short Text'   },
+    { t:'textarea', icon:'¶',  label:'Long Text'    },
+    { t:'email',    icon:'@',  label:'Email'        },
+    { t:'tel',      icon:'#',  label:'Phone'        },
+    { t:'number',   icon:'12', label:'Number'       },
+    { t:'url',      icon:'⎈',  label:'URL'          },
+    { t:'date',     icon:'📅', label:'Date'         },
+    { t:'time',     icon:'⏱', label:'Time'         },
+  ]},
+  { group:'Choice', types:[
+    { t:'radio',          icon:'◉', label:'Multiple Choice' },
+    { t:'checkbox-group', icon:'☑', label:'Checkboxes'      },
+    { t:'dropdown',       icon:'▾', label:'Dropdown'        },
+    { t:'linear-scale',   icon:'━', label:'Linear Scale'    },
+    { t:'rating',         icon:'★', label:'Star Rating'     },
+    { t:'ranking',        icon:'↕', label:'Ranking'         },
+    { t:'image-choice',   icon:'🖼', label:'Image Choice'   },
+  ]},
+  { group:'Media / Upload', types:[
+    { t:'file', icon:'📎', label:'File Upload' },
+  ]},
+  { group:'Special', types:[
+    { t:'section-text', icon:'ℹ', label:'Instruction Text' },
+    { t:'divider',      icon:'─', label:'Divider'          },
+  ]},
 ];
 
 function mscf_typeBadge(type) {
   const colors = {
-    text: '#60a5fa', textarea: '#60a5fa', email: '#a78bfa', tel: '#a78bfa',
-    number: '#34d399', url: '#34d399', date: '#f59e0b', time: '#f59e0b',
-    'datetime-local': '#f59e0b',
-    radio: '#f472b6', 'checkbox-group': '#f472b6', dropdown: '#f472b6',
-    'linear-scale': '#00d4ff', rating: '#fbbf24', ranking: '#fb923c',
-    'image-choice': '#c084fc', file: '#94a3b8',
-    'section-text': '#4ade80', divider: '#64748b',
+    text:'#60a5fa', textarea:'#60a5fa', email:'#a78bfa', tel:'#a78bfa',
+    number:'#34d399', url:'#34d399', date:'#f59e0b', time:'#f59e0b',
+    'datetime-local':'#f59e0b',
+    radio:'#f472b6', 'checkbox-group':'#f472b6', dropdown:'#f472b6',
+    'linear-scale':'#00d4ff', rating:'#fbbf24', ranking:'#fb923c',
+    'image-choice':'#c084fc', file:'#94a3b8',
+    'section-text':'#4ade80', divider:'#64748b',
   };
   const names = {
-    text: 'Text', textarea: 'Textarea', email: 'Email', tel: 'Phone',
-    number: 'Number', url: 'URL', date: 'Date', time: 'Time',
-    'datetime-local': 'Date+Time', radio: 'Choice', 'checkbox-group': 'Checkboxes',
-    dropdown: 'Dropdown', 'linear-scale': 'Scale', rating: 'Rating',
-    ranking: 'Ranking', 'image-choice': 'Img Choice', file: 'File',
-    'section-text': 'Text Block', divider: 'Divider', select: 'Dropdown',
-    checkbox: 'Checkboxes',
+    text:'Text', textarea:'Textarea', email:'Email', tel:'Phone',
+    number:'Number', url:'URL', date:'Date', time:'Time',
+    'datetime-local':'Date+Time', radio:'Choice', 'checkbox-group':'Checkboxes',
+    dropdown:'Dropdown', 'linear-scale':'Scale', rating:'Rating',
+    ranking:'Ranking', 'image-choice':'Img Choice', file:'File',
+    'section-text':'Text Block', divider:'Divider', select:'Dropdown',
+    checkbox:'Checkboxes',
   };
   const c = colors[type] || '#94a3b8';
-  return `<span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:${c}22;color:${c};flex-shrink:0">${names[type] || type}</span>`;
+  return `<span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:${c}22;color:${c};flex-shrink:0">${names[type]||type}</span>`;
 }
 
 /* Type picker overlay (injected inline beneath the "Add Field" button) */
@@ -863,14 +855,14 @@ function mscf_sectionCard(bid, sec, si, total) {
 
   <!-- Section header -->
   <div style="display:flex;align-items:center;gap:6px;padding:9px 10px;background:rgba(124,58,237,0.08);border-bottom:1px solid rgba(255,255,255,0.06)">
-    <span style="font-size:11px;font-weight:700;color:#a78bfa;flex-shrink:0">${si + 1}</span>
-    <input class="mse-prop-input" value="${(sec.title || '').replace(/"/g, '&quot;')}"
+    <span style="font-size:11px;font-weight:700;color:#a78bfa;flex-shrink:0">${si+1}</span>
+    <input class="mse-prop-input" value="${(sec.title||'').replace(/"/g,'&quot;')}"
       placeholder="Section title"
       style="flex:1;font-size:12.5px;padding:4px 8px;background:transparent;border-color:transparent"
       oninput="mscf_updateSection('${bid}','${sec.id}','title',this.value)"/>
     ${si > 0 ? `<button class="mse-icon-btn" title="Move up" onclick="mscf_moveSection('${bid}',${si},-1)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg></button>` : ''}
-    ${si < total - 1 ? `<button class="mse-icon-btn" title="Move down" onclick="mscf_moveSection('${bid}',${si},+1)">
+    ${si < total-1 ? `<button class="mse-icon-btn" title="Move down" onclick="mscf_moveSection('${bid}',${si},+1)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="6 9 12 15 18 9"/></svg></button>` : ''}
     ${canDel ? `<button class="mse-icon-btn" title="Delete section" style="color:var(--red)"
       onclick="if(confirm('Delete this section and all its fields?'))MSState.removeFormSection('${bid}','${sec.id}');updateRightPanel()">
@@ -884,14 +876,14 @@ function mscf_sectionCard(bid, sec, si, total) {
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Description (optional)</div>
       <textarea class="mse-prop-textarea" placeholder="Instructions shown above fields…"
         style="min-height:44px;font-size:12px"
-        oninput="mscf_updateSection('${bid}','${sec.id}','description',this.value)">${(sec.description || '').replace(/</g, '&lt;')}</textarea>
+        oninput="mscf_updateSection('${bid}','${sec.id}','description',this.value)">${(sec.description||'').replace(/</g,'&lt;')}</textarea>
     </div>
 
     <!-- Fields list -->
     <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">
       Fields (${fields.length})
     </div>
-    ${fields.length ? fields.map((f, fi) => mscf_fieldCard(bid, sec.id, f, fi, fields.length)).join('') : `
+    ${fields.length ? fields.map((f,fi) => mscf_fieldCard(bid, sec.id, f, fi, fields.length)).join('') : `
     <div style="text-align:center;padding:14px 0;font-size:12px;color:var(--text-3)">No fields yet — add one below</div>`}
 
     <!-- Add field -->
@@ -910,8 +902,8 @@ function mscf_sectionCard(bid, sec, si, total) {
 
 /* Individual field row with expand-on-click details */
 function mscf_fieldCard(bid, secId, f, fi, total) {
-  const hasOptions = ['radio', 'checkbox-group', 'dropdown', 'ranking', 'image-choice', 'checkbox', 'select'].includes(f.type);
-  const isSpecial = f.type === 'section-text' || f.type === 'divider';
+  const hasOptions = ['radio','checkbox-group','dropdown','ranking','image-choice','checkbox','select'].includes(f.type);
+  const isSpecial  = f.type === 'section-text' || f.type === 'divider';
   return `
 <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;margin-bottom:6px;overflow:hidden">
 
@@ -924,15 +916,15 @@ function mscf_fieldCard(bid, secId, f, fi, total) {
     </div>
     ${mscf_typeBadge(f.type)}
     ${isSpecial
-      ? `<span style="flex:1;font-size:12px;color:var(--text-3);font-style:italic">${f.type === 'divider' ? '— divider —' : (f.heading || 'Instruction text')}</span>`
-      : `<input class="mse-prop-input" value="${(f.label || '').replace(/"/g, '&quot;')}"
+      ? `<span style="flex:1;font-size:12px;color:var(--text-3);font-style:italic">${f.type==='divider'?'— divider —':(f.heading||'Instruction text')}</span>`
+      : `<input class="mse-prop-input" value="${(f.label||'').replace(/"/g,'&quot;')}"
           placeholder="Question label" style="flex:1;font-size:12.5px;padding:4px 7px;background:transparent;border-color:transparent"
           oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{label:this.value})"/>`}
-    ${!isSpecial ? `<div class="mse-toggle ${f.required ? 'on' : ''}" title="${f.required ? 'Required' : 'Optional'}" style="width:28px;height:16px;flex-shrink:0"
+    ${!isSpecial ? `<div class="mse-toggle ${f.required?'on':''}" title="${f.required?'Required':'Optional'}" style="width:28px;height:16px;flex-shrink:0"
       onclick="MSState.updateFormField('${bid}','${secId}','${f.id}',{required:${!f.required}});updateRightPanel()"></div>` : ''}
     ${fi > 0 ? `<button class="mse-icon-btn" onclick="mscf_moveField('${bid}','${secId}',${fi},-1)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><polyline points="18 15 12 9 6 15"/></svg></button>` : ''}
-    ${fi < total - 1 ? `<button class="mse-icon-btn" onclick="mscf_moveField('${bid}','${secId}',${fi},+1)">
+    ${fi < total-1 ? `<button class="mse-icon-btn" onclick="mscf_moveField('${bid}','${secId}',${fi},+1)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><polyline points="6 9 12 15 18 9"/></svg></button>` : ''}
     <button class="mse-icon-btn" style="color:var(--red)"
       onclick="MSState.removeFormField('${bid}','${secId}','${f.id}');updateRightPanel()">
@@ -955,13 +947,13 @@ function mscf_fieldProps(bid, secId, f, hasOptions) {
   ${f.type !== 'rating' ? `
   <div style="margin-bottom:8px">
     <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Placeholder</div>
-    <input class="mse-prop-input" value="${(f.placeholder || '').replace(/"/g, '&quot;')}"
+    <input class="mse-prop-input" value="${(f.placeholder||'').replace(/"/g,'&quot;')}"
       placeholder="Hint text inside the input" style="font-size:12px;padding:6px 8px"
       oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{placeholder:this.value})"/>
   </div>` : ''}
   <div style="margin-bottom:8px">
     <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Helper Text</div>
-    <input class="mse-prop-input" value="${(f.description || '').replace(/"/g, '&quot;')}"
+    <input class="mse-prop-input" value="${(f.description||'').replace(/"/g,'&quot;')}"
       placeholder="Optional note shown below the label" style="font-size:12px;padding:6px 8px"
       oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{description:this.value})"/>
   </div>
@@ -969,31 +961,31 @@ function mscf_fieldProps(bid, secId, f, hasOptions) {
   <div style="margin-bottom:8px">
     <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Options (one per line)</div>
     <textarea class="mse-prop-textarea" style="min-height:72px;font-size:12px;font-family:var(--font-mono)"
-      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{options:this.value.split('\\n').map(s=>s.trim()).filter(Boolean)})">${((f.options || []).map(o => typeof o === 'object' ? o.label : o)).join('\n').replace(/</g, '&lt;')}</textarea>
+      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{options:this.value.split('\\n').map(s=>s.trim()).filter(Boolean)})">${((f.options||[]).map(o=>typeof o==='object'?o.label:o)).join('\n').replace(/</g,'&lt;')}</textarea>
   </div>` : ''}
   ${f.type === 'linear-scale' ? `
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
     <div>
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Min</div>
-      <input type="number" class="mse-prop-input" value="${f.min || 1}" style="font-size:12px;padding:6px 8px"
+      <input type="number" class="mse-prop-input" value="${f.min||1}" style="font-size:12px;padding:6px 8px"
         oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{min:+this.value})"/>
     </div>
     <div>
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Max</div>
-      <input type="number" class="mse-prop-input" value="${f.max || 5}" style="font-size:12px;padding:6px 8px"
+      <input type="number" class="mse-prop-input" value="${f.max||5}" style="font-size:12px;padding:6px 8px"
         oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{max:+this.value})"/>
     </div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
     <div>
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Min Label</div>
-      <input class="mse-prop-input" value="${(f.minLabel || '').replace(/"/g, '&quot;')}" placeholder="e.g. Not at all"
+      <input class="mse-prop-input" value="${(f.minLabel||'').replace(/"/g,'&quot;')}" placeholder="e.g. Not at all"
         style="font-size:12px;padding:6px 8px"
         oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{minLabel:this.value})"/>
     </div>
     <div>
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Max Label</div>
-      <input class="mse-prop-input" value="${(f.maxLabel || '').replace(/"/g, '&quot;')}" placeholder="e.g. Absolutely"
+      <input class="mse-prop-input" value="${(f.maxLabel||'').replace(/"/g,'&quot;')}" placeholder="e.g. Absolutely"
         style="font-size:12px;padding:6px 8px"
         oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{maxLabel:this.value})"/>
     </div>
@@ -1002,13 +994,13 @@ function mscf_fieldProps(bid, secId, f, hasOptions) {
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
     <div>
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Accepted Types</div>
-      <input class="mse-prop-input" value="${(f.accept || '.pdf,.jpg,.png').replace(/"/g, '&quot;')}" placeholder=".pdf,.jpg,.png"
+      <input class="mse-prop-input" value="${(f.accept||'.pdf,.jpg,.png').replace(/"/g,'&quot;')}" placeholder=".pdf,.jpg,.png"
         style="font-size:12px;padding:6px 8px"
         oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{accept:this.value})"/>
     </div>
     <div>
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Max Size (MB)</div>
-      <input type="number" class="mse-prop-input" value="${f.maxSizeMB || 5}" style="font-size:12px;padding:6px 8px"
+      <input type="number" class="mse-prop-input" value="${f.maxSizeMB||5}" style="font-size:12px;padding:6px 8px"
         oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{maxSizeMB:+this.value})"/>
     </div>
   </div>` : ''}
@@ -1016,13 +1008,13 @@ function mscf_fieldProps(bid, secId, f, hasOptions) {
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
     <div>
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Min Value</div>
-      <input type="number" class="mse-prop-input" value="${f.min || ''}" placeholder="None"
+      <input type="number" class="mse-prop-input" value="${f.min||''}" placeholder="None"
         style="font-size:12px;padding:6px 8px"
         oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{min:this.value?+this.value:undefined})"/>
     </div>
     <div>
       <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Max Value</div>
-      <input type="number" class="mse-prop-input" value="${f.max || ''}" placeholder="None"
+      <input type="number" class="mse-prop-input" value="${f.max||''}" placeholder="None"
         style="font-size:12px;padding:6px 8px"
         oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{max:this.value?+this.value:undefined})"/>
     </div>
@@ -1035,7 +1027,7 @@ function mscf_specialFieldProps(bid, secId, f) {
   return `
   <div style="margin-bottom:8px">
     <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Heading</div>
-    <input class="mse-prop-input" value="${(f.heading || '').replace(/"/g, '&quot;')}"
+    <input class="mse-prop-input" value="${(f.heading||'').replace(/"/g,'&quot;')}"
       placeholder="Optional heading text" style="font-size:12px;padding:6px 8px"
       oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{heading:this.value})"/>
   </div>
@@ -1043,7 +1035,7 @@ function mscf_specialFieldProps(bid, secId, f) {
     <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Body</div>
     <textarea class="mse-prop-textarea" style="min-height:72px;font-size:12px"
       placeholder="Instruction or note text shown to visitors…"
-      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{body:this.value})">${(f.body || '').replace(/</g, '&lt;')}</textarea>
+      oninput="MSState.updateFormField('${bid}','${secId}','${f.id}',{body:this.value})">${(f.body||'').replace(/</g,'&lt;')}</textarea>
   </div>`;
 }
 
@@ -1051,27 +1043,27 @@ function mscf_specialFieldProps(bid, secId, f) {
 function mscf_routingPanel(bid, sec, si, total) {
   const r = sec.routing || {};
   const routingType = r.type || 'auto';
-  const condFields = (sec.fields || []).filter(f => ['radio', 'dropdown', 'checkbox-group', 'select'].includes(f.type));
-  const condField = condFields.find(f => f.id === r.conditionFieldId);
+  const condFields  = (sec.fields||[]).filter(f => ['radio','dropdown','checkbox-group','select'].includes(f.type));
+  const condField   = condFields.find(f => f.id === r.conditionFieldId);
 
   return `
 <div style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px">
   <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Section Logic</div>
 
   <!-- Routing type selector -->
-  <div style="display:flex;gap:4px;margin-bottom:${routingType === 'conditional' ? '10px' : '0'}">
+  <div style="display:flex;gap:4px;margin-bottom:${routingType==='conditional'?'10px':'0'}">
     ${[
-      { v: 'auto', label: 'Auto Next' },
-      { v: 'conditional', label: 'Conditional', disabled: condFields.length === 0 },
-      { v: 'submit', label: 'Go to Submit' },
+      { v:'auto',        label:'Auto Next' },
+      { v:'conditional', label:'Conditional', disabled: condFields.length === 0 },
+      { v:'submit',      label:'Go to Submit' },
     ].map(opt => `
     <button onclick="MSState.updateSectionRouting('${bid}','${sec.id}',{type:'${opt.v}'});updateRightPanel()"
       ${opt.disabled ? 'disabled title="Add a radio/dropdown field first"' : ''}
       style="flex:1;padding:5px 4px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);
-             border:1px solid ${routingType === opt.v ? 'rgba(124,58,237,0.5)' : 'rgba(255,255,255,0.08)'};
-             background:${routingType === opt.v ? 'rgba(124,58,237,0.18)' : 'transparent'};
-             color:${routingType === opt.v ? '#a78bfa' : 'var(--text-3)'};
-             ${opt.disabled ? 'opacity:0.4;' : ''}">
+             border:1px solid ${routingType===opt.v ? 'rgba(124,58,237,0.5)' : 'rgba(255,255,255,0.08)'};
+             background:${routingType===opt.v ? 'rgba(124,58,237,0.18)' : 'transparent'};
+             color:${routingType===opt.v ? '#a78bfa' : 'var(--text-3)'};
+             ${opt.disabled?'opacity:0.4;':''}">
       ${opt.label}
     </button>`).join('')}
   </div>
@@ -1083,29 +1075,28 @@ function mscf_routingPanel(bid, sec, si, total) {
     <select class="mse-prop-select" style="font-size:12px"
       onchange="MSState.updateSectionRouting('${bid}','${sec.id}',{conditionFieldId:this.value,rules:[]});updateRightPanel()">
       <option value="">-- pick a field --</option>
-      ${condFields.map(f => `<option value="${f.id}" ${r.conditionFieldId === f.id ? 'selected' : ''}>${f.label || f.id}</option>`).join('')}
+      ${condFields.map(f=>`<option value="${f.id}" ${r.conditionFieldId===f.id?'selected':''}>${f.label||f.id}</option>`).join('')}
     </select>
   </div>
 
   ${condField ? `
   <!-- Rules: value → goto section -->
   <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">If answer is…</div>
-  ${(condField.options || []).map((opt, oi) => {
-      const optLabel = typeof opt === 'object' ? opt.label : opt;
-      const rule = (r.rules || []).find(rule => rule.value === optLabel) || {};
-      const allSections = MSState.getBlock(bid)?.props?.sections || [];
-      return `
+  ${(condField.options||[]).map((opt,oi) => {
+    const optLabel = typeof opt === 'object' ? opt.label : opt;
+    const rule = (r.rules||[]).find(rule => rule.value === optLabel) || {};
+    const allSections = MSState.getBlock(bid)?.props?.sections || [];
+    return `
   <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
     <div style="flex:1;font-size:12px;color:var(--text-2);padding:5px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${optLabel}</div>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0;color:var(--text-3)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     <select class="mse-prop-select" style="font-size:11.5px;flex:1"
       onchange="mscf_setRule('${bid}','${sec.id}','${optLabel}',this.value)">
-      <option value="next" ${(rule.goTo || 'next') === 'next' ? 'selected' : ''}>Next Section</option>
-      <option value="submit" ${rule.goTo === 'submit' ? 'selected' : ''}>Submit Form</option>
-      ${allSections.filter((s, i) => s.id !== sec.id).map(s => `<option value="${s.id}" ${rule.goTo === s.id ? 'selected' : ''}>${s.title || 'Section ' + (allSections.indexOf(s) + 1)}</option>`).join('')}
+      <option value="next" ${(rule.goTo||'next')==='next'?'selected':''}>Next Section</option>
+      <option value="submit" ${rule.goTo==='submit'?'selected':''}>Submit Form</option>
+      ${allSections.filter((s,i)=>s.id!==sec.id).map(s=>`<option value="${s.id}" ${rule.goTo===s.id?'selected':''}>${s.title||'Section '+(allSections.indexOf(s)+1)}</option>`).join('')}
     </select>
-  </div>`;
-    }).join('')}
+  </div>`;}).join('')}
 
   <!-- Default -->
   <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.05)">
@@ -1113,9 +1104,9 @@ function mscf_routingPanel(bid, sec, si, total) {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0;color:var(--text-3)"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     <select class="mse-prop-select" style="font-size:11.5px;flex:1"
       onchange="MSState.updateSectionRouting('${bid}','${sec.id}',{defaultGoTo:this.value})">
-      <option value="next" ${(r.defaultGoTo || 'next') === 'next' ? 'selected' : ''}>Next Section</option>
-      <option value="submit" ${r.defaultGoTo === 'submit' ? 'selected' : ''}>Submit Form</option>
-      ${(MSState.getBlock(bid)?.props?.sections || []).filter(s => s.id !== sec.id).map(s => `<option value="${s.id}" ${r.defaultGoTo === s.id ? 'selected' : ''}>${s.title || 'Section'}</option>`).join('')}
+      <option value="next" ${(r.defaultGoTo||'next')==='next'?'selected':''}>Next Section</option>
+      <option value="submit" ${r.defaultGoTo==='submit'?'selected':''}>Submit Form</option>
+      ${(MSState.getBlock(bid)?.props?.sections||[]).filter(s=>s.id!==sec.id).map(s=>`<option value="${s.id}" ${r.defaultGoTo===s.id?'selected':''}>${s.title||'Section'}</option>`).join('')}
     </select>
   </div>` : ''}` : ''}
 
