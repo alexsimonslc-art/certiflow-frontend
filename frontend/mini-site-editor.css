@@ -56,12 +56,43 @@ input, select, textarea { font-family: var(--font); }
 .mse-layout {
   display: grid;
   grid-template-rows: var(--topbar-h) 1fr;
-  grid-template-columns: var(--left-panel-w) 1fr var(--right-panel-w);
+  grid-template-columns: var(--left-panel-w) 1fr 5px var(--right-panel-w);
   grid-template-areas:
-    "topbar topbar topbar"
-    "left   canvas right";
+    "topbar topbar topbar  topbar"
+    "left   canvas rhandle right";
   height: 100vh;
   overflow: hidden;
+}
+
+/* Right panel drag handle */
+#mse-resize-handle {
+  grid-area: rhandle;
+  background: transparent;
+  cursor: col-resize;
+  z-index: 100;
+  transition: background 0.15s;
+  position: relative;
+}
+#mse-resize-handle:hover,
+#mse-resize-handle.dragging {
+  background: rgba(0, 212, 255, 0.28);
+}
+#mse-resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 32px;
+  border-radius: 99px;
+  background: rgba(0, 212, 255, 0.4);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+#mse-resize-handle:hover::after,
+#mse-resize-handle.dragging::after {
+  opacity: 1;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1280,4 +1311,9 @@ input, select, textarea { font-family: var(--font); }
 @media (max-width: 700px) {
   .mse-left { display: none; }
   .mse-layout { grid-template-columns: 1fr; grid-template-areas: "topbar" "canvas"; }
+}
+
+/* Body state while dragging right panel */
+body[style*="col-resize"] * {
+  cursor: col-resize !important;
 }

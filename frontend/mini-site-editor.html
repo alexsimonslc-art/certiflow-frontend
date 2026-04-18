@@ -304,11 +304,8 @@
     <!-- ═══════════════════════════════════════════════════════
        RIGHT PANEL — Properties
   ═══════════════════════════════════════════════════════ -->
-    <!-- Drag handle for resizing right panel -->
-    <div id="mse-resize-handle" style="width:5px;cursor:col-resize;background:transparent;flex-shrink:0;position:relative;z-index:100;transition:background 0.15s"
-      onmouseenter="this.style.background='rgba(0,212,255,0.25)'"
-      onmouseleave="if(!window._msResizing)this.style.background='transparent'"></div>
-
+    <!-- Drag handle: occupies grid-area "rhandle" (5px column) -->
+    <div id="mse-resize-handle"></div>
     <aside class="mse-right" id="mseRight">
 
       <div class="mse-right-tabs">
@@ -475,22 +472,6 @@
     ════════════════════════════════════════════════════════════════ */
     document.addEventListener('DOMContentLoaded', () => {
       if (!MSState.init()) return;
-
-      // ── Migrate old flat fields[] → sections[] ─────────────────
-      MSState.blocks.forEach(b => {
-        if (b.type === 'form' && b.props.fields && !b.props.sections) {
-          b.props.sections = [{
-            id: 'sec_1', title: 'Section 1', description: '',
-            fields: b.props.fields.map(f => ({ description: '', ...f })),
-            routing: { type: 'auto', conditionFieldId: null, rules: [], defaultGoTo: 'next' },
-          }];
-          delete b.props.fields;
-          MSState.dirty = true;
-        }
-      });
-      if (MSState.dirty) MSState.save();
-      // ────────────────────────────────────────────────────────────
-
       populateSiteSettings();
       refreshCanvas();
       renderLayers();
@@ -1419,6 +1400,62 @@
       if (e.target === document.getElementById('publishOverlay')) closePublish();
     });
 
+    /* ── Resizable right panel ─────────────────────────────────
+       The layout is CSS Grid — width is controlled by --right-panel-w
+       on :root, NOT by panel.style.width. We mutate the CSS variable.
+    ────────────────────────────────────────────────────────── */
+    (function () {
+      const MIN_W = 260, MAX_W = 640;
+      const handle = document.getElementById('mse-resize-handle');
+      if (!handle) return;
+
+      function setW(w) {
+        w = Math.min(MAX_W, Math.max(MIN_W, Math.round(w)));
+        document.documentElement.style.setProperty('--right-panel-w', w + 'px');
+        return w;
+      }
+
+      // Restore previously saved width
+      const saved = parseInt(localStorage.getItem('hx_right_panel_w') || '0');
+      if (saved >= MIN_W && saved <= MAX_W) setW(saved);
+
+      handle.addEventListener('mousedown', e => {
+        e.preventDefault();
+        handle.classList.add('dragging');
+        window._msResizing = true;
+
+        const startX = e.clientX;
+        // Read the current value of the CSS variable (not offsetWidth)
+        const curW = parseInt(
+          getComputedStyle(document.documentElement)
+            .getPropertyValue('--right-panel-w').trim()
+        ) || 272;
+
+        function onMove(ev) {
+          // Mouse moves LEFT  (+delta) → panel grows
+          // Mouse moves RIGHT (-delta) → panel shrinks
+          setW(curW + (startX - ev.clientX));
+        }
+        function onUp() {
+          window._msResizing = false;
+          handle.classList.remove('dragging');
+          const finalW = parseInt(
+            getComputedStyle(document.documentElement)
+              .getPropertyValue('--right-panel-w')
+          ) || 272;
+          localStorage.setItem('hx_right_panel_w', finalW);
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          document.body.style.userSelect = '';
+          document.body.style.cursor = '';
+        }
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'col-resize';
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    })();
+
     /* ════════════════════════════════════════════════════════════════
        TOAST
     ════════════════════════════════════════════════════════════════ */
@@ -1437,40 +1474,6 @@
       clearTimeout(el._t);
       el._t = setTimeout(() => { el.className = ''; el.style.display = 'none'; }, duration);
     }
-    /* ── Resizable right panel ────────────────────────────────── */
-    (function() {
-      const MIN_W = 280, MAX_W = 600;
-      const handle = document.getElementById('mse-resize-handle');
-      const panel  = document.getElementById('mseRight');
-      if (!handle || !panel) return;
-
-      // Restore saved width
-      const saved = parseInt(localStorage.getItem('hx_right_panel_w') || '0');
-      if (saved >= MIN_W && saved <= MAX_W) panel.style.width = saved + 'px';
-
-      handle.addEventListener('mousedown', e => {
-        e.preventDefault();
-        window._msResizing = true;
-        handle.style.background = 'rgba(0,212,255,0.4)';
-        const startX = e.clientX;
-        const startW = panel.offsetWidth;
-
-        function onMove(e) {
-          const delta = startX - e.clientX;   // dragging left = wider
-          const newW  = Math.min(MAX_W, Math.max(MIN_W, startW + delta));
-          panel.style.width = newW + 'px';
-        }
-        function onUp() {
-          window._msResizing = false;
-          handle.style.background = 'transparent';
-          localStorage.setItem('hx_right_panel_w', panel.offsetWidth);
-          document.removeEventListener('mousemove', onMove);
-          document.removeEventListener('mouseup',   onUp);
-        }
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup',   onUp);
-      });
-    })();
   </script>
   <!-- ═══════════════════════════════════════════════════════
      EXTENSION SCRIPTS — load after inline to allow overrides
