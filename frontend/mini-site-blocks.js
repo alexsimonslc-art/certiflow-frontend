@@ -251,7 +251,7 @@ function msb_speakers(block, cfg) {
 </div>`;
 
   const dots = items.length > 1 ? `
-<div style="display:flex;justify-content:center;gap:6px;margin-top:16px">
+<div id="spkDots_${uid}" style="display:none;justify-content:center;gap:6px;margin-top:16px">
   ${items.map((_,i) => `<div id="spkDot_${uid}_${i}" style="width:${i===0?'20px':'6px'};height:6px;border-radius:99px;background:${i===0?t.accent:'rgba(255,255,255,0.2)'};transition:all 0.3s ease;cursor:pointer" onclick="spkGoTo_${uid}(${i})"></div>`).join('')}
 </div>` : '';
 
@@ -266,37 +266,67 @@ function msb_speakers(block, cfg) {
 <svg style="display:none" onload="
 (function(){
   var track=document.getElementById('spkTrack_${uid}');
+  var dotsEl=document.getElementById('spkDots_${uid}');
   if(!track)return;
   var cards=track.querySelectorAll('.spk-card-${uid}');
   var n=cards.length;
-  if(n&lt;2)return;
   var cur=0,timer;
+
   function goTo(i){
     cur=((i%n)+n)%n;
     track.scrollTo({left:cards[cur].offsetLeft,behavior:'smooth'});
     updateDots();
   }
   window['spkGoTo_${uid}']=goTo;
+
   function updateDots(){
     for(var i=0;i&lt;n;i++){
       var d=document.getElementById('spkDot_${uid}_'+i);
-      if(!d)return;
+      if(!d)continue;
       d.style.width=i===cur?'20px':'6px';
       d.style.background=i===cur?'${t.accent}':'rgba(255,255,255,0.2)';
     }
   }
-  function start(){timer=setInterval(function(){goTo(cur+1);},3500);}
-  function stop(){clearInterval(timer);}
-  track.addEventListener('mouseenter',stop);
-  track.addEventListener('mouseleave',start);
-  track.addEventListener('touchstart',stop,{passive:true});
-  track.addEventListener('touchend',function(){setTimeout(start,4000);},{passive:true});
-  track.addEventListener('scroll',function(){
-    var best=0,min=Infinity;
-    for(var i=0;i&lt;n;i++){var d=Math.abs(cards[i].offsetLeft-track.scrollLeft);if(d&lt;min){min=d;best=i;}}
-    if(best!==cur){cur=best;updateDots();}
-  },{passive:true});
-  start();
+
+  function startAuto(){timer=setInterval(function(){goTo(cur+1);},3500);}
+  function stopAuto(){clearInterval(timer);}
+
+  function applyMode(){
+    var overflows=track.scrollWidth > track.clientWidth + 4;
+    if(overflows){
+      /* CAROUSEL MODE */
+      track.style.flexWrap='nowrap';
+      track.style.overflowX='auto';
+      track.style.justifyContent='flex-start';
+      track.style.scrollSnapType='x mandatory';
+      if(dotsEl) dotsEl.style.display='flex';
+      stopAuto();
+      if(n&gt;1){
+        track.addEventListener('mouseenter',stopAuto);
+        track.addEventListener('mouseleave',startAuto);
+        track.addEventListener('touchstart',stopAuto,{passive:true});
+        track.addEventListener('touchend',function(){setTimeout(startAuto,4000);},{passive:true});
+        track.addEventListener('scroll',function(){
+          var best=0,min=Infinity;
+          for(var i=0;i&lt;n;i++){var dx=Math.abs(cards[i].offsetLeft-track.scrollLeft);if(dx&lt;min){min=dx;best=i;}}
+          if(best!==cur){cur=best;updateDots();}
+        },{passive:true});
+        startAuto();
+      }
+    } else {
+      /* GRID MODE — centered, no scroll, no dots */
+      stopAuto();
+      track.style.flexWrap='wrap';
+      track.style.overflowX='visible';
+      track.style.justifyContent='center';
+      track.style.scrollSnapType='none';
+      if(dotsEl) dotsEl.style.display='none';
+    }
+  }
+
+  /* Run after layout paint so scrollWidth is accurate */
+  setTimeout(applyMode, 0);
+  window.addEventListener('resize', applyMode);
 })();
 "></svg>`;
 
