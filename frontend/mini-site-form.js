@@ -408,12 +408,21 @@ input:focus, select:focus, textarea:focus {
       const data = {};
       formData.forEach((val, key) => {
         if (key === 'hp_field') return;
+        if (val instanceof File) {
+          // File fields: store filename + size, not binary data
+          data[key] = val.name ? `${val.name} (${Math.round(val.size/1024)}KB)` : '—';
+          return;
+        }
         // Merge multiple checkboxes with same name
-        if (data[key]) {
+        if (data[key] !== undefined) {
           data[key] = Array.isArray(data[key]) ? [...data[key], val] : [data[key], val];
         } else {
           data[key] = val;
         }
+      });
+      // Convert checkbox arrays to comma-separated strings for Sheets
+      Object.keys(data).forEach(k => {
+        if (Array.isArray(data[k])) data[k] = data[k].join(', ');
       });
 
       // ── Duplicate check

@@ -113,15 +113,15 @@ function msb_cover(block, cfg) {
 
   ${p.showLogo !== false ? `
   <div style="position:relative;z-index:3;margin-bottom:18px">
-    <div style="width:${logoW}px;height:${logoH}px;border-radius:${radius};background:${p.logoImage ? 'transparent' : 'rgba(255,255,255,0.12)'};border:2.5px solid rgba(255,255,255,0.28);display:flex;align-items:center;justify-content:center;overflow:hidden;backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 0 4px rgba(255,255,255,0.06)">
+    <div style="width:min(${logoW}px,42vw);height:min(${logoH}px,${shape === 'rectangle' ? '21vw' : '42vw'});border-radius:${radius};background:${p.logoBorder === false ? 'transparent' : (p.logoImage ? 'transparent' : 'rgba(255,255,255,0.12)')};${p.logoBorder === false ? '' : 'border:2.5px solid rgba(255,255,255,0.28);backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 0 4px rgba(255,255,255,0.06);'}display:flex;align-items:center;justify-content:center;overflow:hidden">
       ${p.logoImage
         ? `<img src="${p.logoImage}" style="width:100%;height:100%;object-fit:contain" alt="logo"/>`
         : `<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" style="width:34px;height:34px"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>`}
     </div>
   </div>` : '<div style="height:28px;position:relative;z-index:3"></div>'}
 
-  <div style="position:relative;z-index:3;text-align:center;max-width:540px">
-    ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:clamp(24px,5vw,40px);font-weight:800;color:#ffffff;line-height:1.1;letter-spacing:-0.8px;font-family:'Syne','${t.font}',sans-serif;text-shadow:0 2px 16px rgba(0,0,0,0.4)">${p.siteName || cfg.name}</h1>` : ''}
+  <div style="position:relative;z-index:3;text-align:${p.alignment||'center'};max-width:540px;${p.alignment==='left'?'margin-right:auto;padding-left:8px':p.alignment==='right'?'margin-left:auto;padding-right:8px':''}">
+    ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:clamp(24px,5vw,40px);font-weight:800;color:#ffffff;line-height:1.1;letter-spacing:-0.8px;font-family:'${t.fontDisplay}','${t.font}',sans-serif;text-shadow:0 2px 16px rgba(0,0,0,0.4)">${p.siteName || cfg.name}</h1>` : ''}
     ${p.tagline ? `<p style="margin:0;font-size:clamp(13px,2.2vw,16px);color:rgba(255,255,255,0.68);font-weight:400;line-height:1.6;letter-spacing:0.1px">${p.tagline}</p>` : ''}
   </div>
 
@@ -138,7 +138,7 @@ function msb_about(block, cfg) {
   const align = p.alignment || 'left';
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'About This Event', t)}
+  ${msb_title(p.title || 'About This Event', t, p.alignment)}
   <p style="margin:0;font-size:clamp(14px,2.2vw,16px);color:${t.sub};line-height:1.8;text-align:${align};white-space:pre-wrap">${p.content || ''}</p>
 </div>`, bg);
 }
@@ -152,7 +152,7 @@ function msb_announcements(block, cfg) {
   const items = p.items || [];
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Announcements', t)}
+  ${msb_title(p.title || 'Announcements', t, p.alignment)}
   <div style="display:flex;flex-direction:column;gap:10px">
     ${items.length ? items.map(item => `
     <div style="display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-radius:12px;background:rgba(${t.accentRgb},0.07);border:1px solid rgba(${t.accentRgb},0.18);position:relative;overflow:hidden">
@@ -214,7 +214,7 @@ function msb_speakers(block, cfg) {
   const isList = p.layout === 'list';
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Speakers', t)}
+  ${msb_title(p.title || 'Speakers', t, p.alignment)}
   <div style="display:${isList ? 'flex flex-direction:column' : 'grid'};${isList ? 'gap:14px' : 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px'}">
     ${items.length ? items.map(sp => isList ? `
     <div style="display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:12px;background:${t.bgCard};border:1px solid ${t.border}">
@@ -249,7 +249,7 @@ function msb_faq(block, cfg) {
   const items = p.items || [];
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Frequently Asked Questions', t)}
+  ${msb_title(p.title || 'Frequently Asked Questions', t, p.alignment)}
   <div style="display:flex;flex-direction:column;gap:4px">
     ${items.map((q, i) => `
     <details style="border:1px solid ${t.border};border-radius:12px;overflow:hidden;background:${t.bgCard}" ${i === 0 ? 'open' : ''}>
@@ -278,16 +278,19 @@ function msb_sponsors(block, cfg) {
   const tierSizes = { 0: '80px', 1: '64px', 2: '52px', 3: '48px' };
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Our Sponsors', t)}
+  ${msb_title(p.title || 'Our Sponsors', t, p.alignment)}
   ${tiers.map((tier, ti) => `
   <div style="margin-bottom:28px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${t.muted};margin-bottom:12px">${tier.name}</div>
-    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:${p.alignment === 'left' ? 'flex-start' : p.alignment === 'right' ? 'flex-end' : 'center'};flex-direction:${p.horizontal === false ? 'column' : 'row'}">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${t.muted};margin-bottom:12px;text-align:${p.alignment === 'center' ? 'center' : p.alignment === 'right' ? 'right' : 'left'}">${tier.name}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:${p.alignment === 'right' ? 'flex-end' : p.alignment === 'center' ? 'center' : 'flex-start'};flex-direction:${p.horizontal === false ? 'column' : 'row'}">
       ${tier.items?.length ? tier.items.map(s => `
-        <div style="height:${tierSizes[ti] || '48px'};padding:10px 16px;border-radius:10px;background:${t.bgCard};border:1px solid ${t.border};display:inline-flex;align-items:center;justify-content:center">
-          ${s.logo ? `<img src="${s.logo}" style="height:${tierSizes[ti] ? parseInt(tierSizes[ti]) - 20 + 'px' : '28px'};max-width:120px;object-fit:contain" alt="${s.name || ''}"/>` : `<span style="font-size:13px;font-weight:600;color:${t.sub}">${s.name || 'Sponsor'}</span>`}
+        <div style="display:flex;flex-direction:column;align-items:center;gap:7px">
+          <div style="padding:10px 16px;min-height:${tierSizes[ti] || '48px'};border-radius:10px;background:${t.bgCard};border:1px solid ${t.border};display:inline-flex;align-items:center;justify-content:center">
+            ${s.logo ? `<img src="${s.logo}" style="height:${tierSizes[ti] ? parseInt(tierSizes[ti]) - 20 + 'px' : '28px'};max-width:120px;object-fit:contain" alt="${s.name || ''}"/>` : `<span style="font-size:13px;font-weight:600;color:${t.sub}">${s.name || 'Sponsor'}</span>`}
+          </div>
+          ${s.logo && s.name ? `<span style="font-size:11px;font-weight:500;color:${t.muted};text-align:center;max-width:100px;word-break:break-word">${s.name}</span>` : ''}
         </div>`).join('') :
-      `<div style="height:${tierSizes[ti] || '48px'};padding:10px 20px;border-radius:10px;border:1.5px dashed ${t.border};display:inline-flex;align-items:center;justify-content:center">
+      `<div style="padding:10px 20px;min-height:${tierSizes[ti] || '48px'};border-radius:10px;border:1.5px dashed ${t.border};display:inline-flex;align-items:center;justify-content:center">
           <span style="font-size:12px;color:${t.muted}">Add logos →</span>
         </div>`}
     </div>
@@ -323,23 +326,41 @@ function msb_form(block, cfg) {
   </label>`).join('')}
 </div>`;
       case 'checkbox': return `
-<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput}">
-  <span style="width:18px;height:18px;border-radius:5px;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg};transition:all 0.15s">
-    <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="3" style="width:11px;height:11px;opacity:0" class="ms-chk-${f.id}"></svg>
-  </span>
-  <input type="checkbox" name="${f.id}" style="display:none" ${f.required ? 'required' : ''} onchange="const ic=this.closest('label');const dot=ic.querySelector('.ms-chk-${f.id}');dot.style.opacity=this.checked?'1':'0';ic.style.borderColor=this.checked?'${t.accent}':'';ic.querySelector('span').style.background=this.checked?'rgba(${t.accentRgb},0.15)':''"/>
-  <span style="font-size:14px;color:${t.sub}">${f.label}</span>
-</label>`;
+<div style="display:flex;flex-direction:column;gap:8px">
+  ${(f.options && f.options.length ? f.options : ['Yes']).map((o, oi) => `
+  <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;border-radius:9px;border:1.5px solid ${t.border2};background:${t.bgInput};transition:border-color 0.15s">
+    <span style="width:18px;height:18px;border-radius:5px;border:2px solid ${t.border2};flex-shrink:0;display:flex;align-items:center;justify-content:center;background:${t.bg};transition:all 0.15s" id="ms-chk-box-${f.id}-${oi}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="3" style="width:11px;height:11px;opacity:0;transition:opacity 0.15s" id="ms-chk-ico-${f.id}-${oi}"><polyline points="20 6 9 17 4 12"/></svg>
+    </span>
+    <input type="checkbox" name="${f.id}" value="${o}" style="display:none" onchange="const b=document.getElementById('ms-chk-box-${f.id}-${oi}');const i=document.getElementById('ms-chk-ico-${f.id}-${oi}');if(this.checked){b.style.background='rgba(${t.accentRgb},0.15)';b.style.borderColor='${t.accent}';i.style.opacity='1';this.closest('label').style.borderColor='${t.accent}'}else{b.style.background='';b.style.borderColor='';i.style.opacity='0';this.closest('label').style.borderColor=''}"/>
+    <span style="font-size:14px;color:${t.sub}">${o}</span>
+  </label>`).join('')}
+</div>`;
+      case 'file': return `
+<div>
+  <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px 16px;border-radius:9px;border:1.5px dashed ${t.border2};background:${t.bgInput};transition:border-color 0.15s" onmouseenter="this.style.borderColor='${t.accent}'" onmouseleave="this.style.borderColor=''">
+    <div style="width:38px;height:38px;border-radius:9px;background:rgba(${t.accentRgb},0.10);border:1px solid rgba(${t.accentRgb},0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="2" style="width:18px;height:18px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:600;color:${t.text}">Click to choose file</div>
+      <div style="font-size:12px;color:${t.muted}" id="ms-file-label-${f.id}">${f.placeholder || 'No file chosen'}</div>
+    </div>
+    <input type="file" name="${f.id}" style="display:none" ${f.required ? 'required' : ''}
+      onchange="document.getElementById('ms-file-label-${f.id}').textContent=this.files[0]?this.files[0].name+' ('+Math.round(this.files[0].size/1024)+'KB)':'No file chosen';this.closest('label').style.borderColor='${t.accent}'"/>
+  </label>
+  <div style="font-size:11px;color:${t.muted};margin-top:4px">Max recommended size: 5MB</div>
+</div>`;
       default: return `<input type="${f.type || 'text'}" name="${f.id}" placeholder="${f.placeholder || ''}" style="${inputStyle}" ${f.required ? 'required' : ''}/>`;
     }
   };
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Register Now', t)}
+  ${msb_title(p.title || 'Register Now', t, p.alignment)}
   ${p.subtitle ? `<p style="margin:-8px 0 20px;font-size:14.5px;color:${t.sub};line-height:1.6">${p.subtitle}</p>` : ''}
   ${isOpen ? `
-  <form data-ms-form="${p.sheetId || ''}" style="max-width:520px;display:flex;flex-direction:column;gap:16px;${p.alignment === 'center' ? 'margin:0 auto;text-align:center' : ''};" data-ms-success-msg="${(p.successMessage || '').replace(/"/g, '&quot;')}" style="max-width:520px;display:flex;flex-direction:column;gap:16px;${p.alignment === 'center' ? 'margin:0 auto;text-align:center' : ''};" data-ms-success-msg="${(p.successMessage || '').replace(/"/g, '&quot;')}" style="max-width:520px;display:flex;flex-direction:column;gap:16px" onsubmit="return false">
+  <form data-ms-form="${p.sheetId||''}" data-ms-success-msg="${(p.successMessage||'').replace(/"/g,'&quot;')}" style="max-width:520px;display:flex;flex-direction:column;gap:16px;${p.alignment==='center'?'margin:0 auto;text-align:center':p.alignment==='right'?'margin-left:auto':''};" onsubmit="return false">
     ${fields.map(f => `
     <div style="display:flex;flex-direction:column;gap:6px">
       ${f.type !== 'checkbox' ? `<label style="font-size:12.5px;font-weight:600;color:${t.sub};text-transform:uppercase;letter-spacing:0.5px">${f.label || ''}${f.required ? '<span style="color:#f43f5e;margin-left:3px">*</span>' : ''}</label>` : ''}
@@ -371,7 +392,7 @@ function msb_documents(block, cfg) {
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Resources', t)}
+  ${msb_title(p.title || 'Resources', t, p.alignment)}
   <div style="display:flex;flex-direction:column;gap:10px;max-width:520px">
     ${items.length ? items.map(doc => {
     const color = doc.iconColor || getColor(doc.url);
@@ -429,7 +450,7 @@ function msb_video(block, cfg) {
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${p.title ? msb_title(p.title, t) : ''}
+  ${p.title ? msb_title(p.title, t, p.alignment) : ''}
   ${items.length ? items.map(v => videoCard(v)).join('') :
       `<div style="aspect-ratio:16/9;border-radius:12px;background:${t.bgCard};border:1.5px dashed ${t.border};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
     <svg viewBox="0 0 24 24" fill="none" stroke="${t.muted}" stroke-width="1.5" style="width:36px;height:36px"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>

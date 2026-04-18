@@ -85,6 +85,23 @@ function msc_bgRow(bid, val) {
 </div>`;
 }
 
+/** Render an alignment row — works for every block type. */
+function msc_alignRow(bid, p) {
+  return `
+<div class="mse-prop-row">
+  <div class="mse-prop-label">Section Alignment</div>
+  <div class="mse-align-row">
+    ${['left', 'center', 'right'].map(a => `<button class="mse-align-btn ${(p.alignment || 'left') === a ? 'on' : ''}"
+      onclick="msc_set('${bid}','alignment','${a}');updateRightPanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+        ${a === 'left' ? '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>'
+      : a === 'center' ? '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/>'
+        : '<line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/>'}
+      </svg></button>`).join('')}
+  </div>
+</div>`;
+}
+
 /** Render a section-title field. */
 function msc_titleRow(bid, val, placeholder) {
   return `
@@ -162,6 +179,7 @@ function renderBlockProps(block) {
     <input class="mse-prop-input" value="${(p.tagline || '').replace(/"/g, '&quot;')}" placeholder="A short tagline"
       oninput="msc_set('${bid}','tagline',this.value)"/>
   </div>
+  ${msc_alignRow(bid, p)}
   <div class="mse-prop-row">
     <div class="mse-prop-label">Cover Image URL</div>
     <input class="mse-prop-input" type="url" value="${p.coverImage || ''}" placeholder="https://… or public Drive link"
@@ -205,6 +223,11 @@ function renderBlockProps(block) {
         oninput="document.getElementById('logoSzV_${bid}').textContent=this.value+'px';msc_set('${bid}','logoSize',+this.value)"/>
     </div>
   </div>
+  <div class="mse-toggle-row">
+    <span>Show Logo Border & Background</span>
+    <div class="mse-toggle ${p.logoBorder !== false ? 'on' : ''}"
+      onclick="msc_set('${bid}','logoBorder',${p.logoBorder === false});updateRightPanel()"></div>
+  </div>
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
@@ -238,6 +261,7 @@ function renderBlockProps(block) {
 <div class="mse-props-section">
   <div class="mse-props-sec-label" style="color:#00d4ff">Announcements</div>
   ${msc_titleRow(bid, p.title, 'Announcements')}
+  ${msc_alignRow(bid, p)}
   <div class="mse-prop-row" style="margin-top:4px">
     <div class="mse-prop-label" style="margin-bottom:8px">Items (${items.length})</div>
     ${items.map((item, i) => msc_itemCard(bid, 'items', i, items.length, `Item ${i + 1}`, `
@@ -259,6 +283,7 @@ function renderBlockProps(block) {
     case 'datetime': return `
 <div class="mse-props-section">
   <div class="mse-props-sec-label" style="color:#f59e0b">Date & Venue</div>
+  ${msc_alignRow(bid, p)}
   <div class="mse-prop-row">
     <div class="mse-prop-label">Event Date</div>
     <input class="mse-prop-input" value="${(p.date || '').replace(/"/g, '&quot;')}" placeholder="e.g. 15 March 2026"
@@ -360,6 +385,7 @@ function renderBlockProps(block) {
 <div class="mse-props-section">
   <div class="mse-props-sec-label" style="color:#f59e0b">FAQ</div>
   ${msc_titleRow(bid, p.title, 'Frequently Asked Questions')}
+  ${msc_alignRow(bid, p)}
   <div class="mse-prop-row" style="margin-top:4px">
     <div class="mse-prop-label" style="margin-bottom:8px">Questions (${items.length})</div>
     ${items.map((q, i) => msc_itemCard(bid, 'items', i, items.length, `Q${i + 1}`, `
@@ -430,7 +456,7 @@ function renderBlockProps(block) {
     /* ─── FORM ──────────────────────────────────────────────── */
     case 'form': {
       const fields = p.fields || [];
-      const FIELD_TYPES = ['text', 'email', 'tel', 'number', 'date', 'textarea', 'select', 'checkbox'];
+      const FIELD_TYPES = ['text', 'email', 'tel', 'number', 'date', 'textarea', 'select', 'checkbox', 'file'];
       return `
 <div class="mse-props-section">
   <div class="mse-props-sec-label" style="color:#a78bfa">Registration Form</div>
@@ -499,12 +525,13 @@ function renderBlockProps(block) {
           placeholder="Hint text…" style="font-size:12.5px;padding:7px 9px"
           oninput="MSState.updateBlockField('${bid}','${f.id}',{placeholder:this.value})"/>
       </div>
-      ${f.type === 'select' ? `
+      ${(f.type === 'select' || f.type === 'checkbox') ? `
       <div style="margin-bottom:8px">
         <div style="font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">Options (comma-separated)</div>
         <input type="text" class="mse-prop-input" value="${(f.options || []).join(',').replace(/"/g, '&quot;')}"
-          placeholder="Option A, Option B" style="font-size:12.5px;padding:7px 9px"
-          oninput="MSState.updateBlockField('${bid}','${f.id}',{options:this.value.split(',').map(s=>s.trim())})"/>
+          placeholder="Option A, Option B, Option C" style="font-size:12.5px;padding:7px 9px"
+          oninput="MSState.updateBlockField('${bid}','${f.id}',{options:this.value.split(',').map(s=>s.trim()).filter(Boolean)});updateRightPanel()"/>
+        <div style="font-size:10px;color:var(--text-3);margin-top:3px">${f.type === 'checkbox' ? 'Visitors can select multiple options' : 'Visitors can select one option'}</div>
       </div>` : ''}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
         <span style="font-size:11.5px;color:var(--text-3)">Required</span>
@@ -527,6 +554,7 @@ function renderBlockProps(block) {
 <div class="mse-props-section">
   <div class="mse-props-sec-label" style="color:#a78bfa">Document Links</div>
   ${msc_titleRow(bid, p.title, 'Resources')}
+  ${msc_alignRow(bid, p)}
   <div class="mse-prop-row" style="margin-top:4px">
     <div class="mse-prop-label" style="margin-bottom:8px">Documents (${items.length})</div>
     ${items.map((doc, i) => msc_itemCard(bid, 'items', i, items.length, doc.label || `Document ${i + 1}`, `
@@ -576,6 +604,7 @@ function renderBlockProps(block) {
     <input class="mse-prop-input" value="${(p.title || '').replace(/"/g, '&quot;')}" placeholder="Optional — leave blank to hide"
       oninput="msc_set('${bid}','title',this.value)"/>
   </div>
+  ${msc_alignRow(bid, p)}
   <div class="mse-prop-row" style="margin-top:4px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <div class="mse-prop-label">Videos (${items.length} / 2)</div>
@@ -622,6 +651,7 @@ function renderBlockProps(block) {
 <div class="mse-props-section">
   <div class="mse-props-sec-label" style="color:#a78bfa">Social Links</div>
   ${msc_titleRow(bid, p.title, 'Follow Us')}
+  ${msc_alignRow(bid, p)}
   <div class="mse-prop-row" style="margin-top:4px">
     <div class="mse-prop-label" style="margin-bottom:8px">Links (${links.length})</div>
     ${links.map((lk, i) => msc_itemCard(bid, 'links', i, links.length, lk.platform || `Link ${i + 1}`, `
