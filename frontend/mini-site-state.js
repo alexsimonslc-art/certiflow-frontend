@@ -324,7 +324,7 @@ const MSState = {
       },
     };
 
-    const token = localStorage.getItem('hx_token') || '';
+    const token = localStorage.getItem('Honourix_token') || '';
     const res = await fetch(
       'https://certiflow-backend-73xk.onrender.com/api/minisite/publish',
       {

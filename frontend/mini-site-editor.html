@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="mini-site-editor.css"/>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="mini-site-state.js"></script>
+  <script src="mini-site-blocks.js"></script>
 </head>
 <body>
 
@@ -173,7 +174,7 @@
           <div class="mse-chrome-dot"></div>
           <div class="mse-chrome-dot"></div>
         </div>
-        <div class="mse-chrome-url" id="chromeUrl">honourix.app/s/</div>
+        <div class="mse-chrome-url" id="chromeUrl">Loading…</div>
       </div>
       <!-- Page frame -->
       <div class="mse-canvas-frame" id="canvasFrame">
@@ -286,7 +287,7 @@
           <input type="text" class="mse-prop-input" id="siteSlugInput"
             placeholder="my-event-2026"
             oninput="onSlugInput(this.value)"/>
-          <div class="mse-prop-hint" id="slugHint">honourix.app/s/<span id="slugPreview">—</span></div>
+          <div class="mse-prop-hint" id="slugHint">Loading…<span id="slugPreview">—</span></div>
         </div>
       </div>
     </div>
@@ -311,7 +312,7 @@
     </div>
     <div class="mse-publish-body">
       <div class="mse-pub-url-box">
-        <div class="mse-pub-url" id="publishUrlDisplay">honourix.app/s/</div>
+        <div class="mse-pub-url" id="publishUrlDisplay">Loading…</div>
         <button class="mse-pub-copy-btn" onclick="copyPublishUrl()">Copy</button>
       </div>
       <div class="mse-toggle-row" style="padding:12px 0">
@@ -1283,5 +1284,12 @@ function mseToast(msg, type = 'info', duration = 3000) {
   el._t = setTimeout(() => { el.className = ''; el.style.display = 'none'; }, duration);
 }
 </script>
+<!-- ═══════════════════════════════════════════════════════
+     EXTENSION SCRIPTS — load after inline to allow overrides
+     Load order matters: blocks → canvas → special → theme
+═══════════════════════════════════════════════════════ -->
+<script src="mini-site-canvas.js"></script>
+<script src="mini-site-special.js"></script>
+<script src="mini-site-theme.js"></script>
 </body>
 </html>
