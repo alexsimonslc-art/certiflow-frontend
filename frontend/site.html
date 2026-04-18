@@ -41,7 +41,7 @@
      TOP BAR  (sticky — shown after content loads)
 ════════════════════════════════════════════════════════════════ -->
   <header class="ms-topbar" id="msTopbar" style="display:none">
-    <a class="ms-topbar-brand" href="https://honourix.app" target="_blank" rel="noopener">
+    <a class="ms-topbar-brand" href="/index.html">
       <div class="ms-topbar-mark">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
@@ -82,9 +82,9 @@
         d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </svg>
     <span>on</span>
-    <a href="https://honourix.app" target="_blank" rel="noopener">Honourix</a>
+    <a class="ms-topbar-<a href=" /index.html">Honourix</a>
     <div class="ms-footer-dot"></div>
-    <a href="https://honourix.app" target="_blank" rel="noopener">Create your own event page →</a>
+    <a href="/mini-site.html">Create your own event page →</a>brand" href="/index.html">
   </footer>
 
   <!-- ════════════════════════════════════════════════════════════
@@ -98,7 +98,7 @@
     <div class="ms-error-code" id="errorCode">404</div>
     <div class="ms-error-title" id="errorTitle">Page not found</div>
     <div class="ms-error-sub" id="errorSub">This event page doesn't exist or hasn't been published yet.</div>
-    <a href="https://honourix.app" class="ms-error-btn">
+    <a href="/index.html" class="ms-error-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
         <polyline points="9 22 9 12 15 12 15 22" />
@@ -260,6 +260,11 @@
       });
 
       content.classList.add('visible');
+
+      // Bind form submit handlers AFTER blocks are in the DOM.
+      // mini-site-form.js runs on DOMContentLoaded (before async fetch completes)
+      // so its initial scan finds no forms. Re-run it now that forms exist.
+      if (window.MSForm?.boot) window.MSForm.boot();
     }
 
     /* ════════════════════════════════════════════════════════════════

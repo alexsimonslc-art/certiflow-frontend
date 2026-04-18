@@ -237,7 +237,7 @@ function mst_renderQRSection(slug) {
   Set a URL slug in Site Settings to generate a QR code.
 </div>`;
   }
-  const siteUrl = `https://honourix.app/s/${slug}`;
+  const siteUrl = `${window.location.origin}/site.html?slug=${slug}`;
   const qrUrl = mst_getQRUrl(siteUrl);
   return `
 <div style="display:flex;align-items:center;gap:18px">
@@ -366,7 +366,7 @@ function mst_rebuildSiteSettings() {
       <input type="text" class="mse-prop-input" id="mstSlugInput" value="${c.slug || ''}"
         placeholder="my-event-2026"
         oninput="mst_onSlugInput(this.value)"/>
-      <div style="font-size:11.5px;color:var(--cyan);margin-top:4px;font-family:var(--font-mono)">honourix.app/s/<span id="mstSlugPreview">${c.slug || '—'}</span></div>
+      <div style="font-size:11.5px;color:var(--cyan);margin-top:4px;font-family:var(--font-mono);word-break:break-all" id="mstSlugHint">${c.slug ? `${window.location.origin}/site.html?slug=${c.slug}` : `${window.location.origin}/site.html?slug=…`}</div>
     </div>
   </div>
 
@@ -420,9 +420,12 @@ function mst_onSlugInput(val) {
   const origPrev = document.getElementById('slugPreview');
   if (origPrev) origPrev.textContent = clean || '—';
   const chrome = document.getElementById('chromeUrl');
-  if (chrome) chrome.textContent = `honourix.app/s/${clean || '—'}`;
+  const _url = clean ? `${window.location.origin}/site.html?slug=${clean}` : `${window.location.origin}/site.html?slug=…`;
+  if (chrome) chrome.textContent = _url;
   const pub = document.getElementById('publishUrlDisplay');
-  if (pub) pub.textContent = `honourix.app/s/${clean || '—'}`;
+  if (pub) pub.textContent = _url;
+  const hint = document.getElementById('mstSlugHint');
+  if (hint) hint.textContent = _url;
   MSState.updateConfig({ slug: clean });
 }
 
@@ -448,13 +451,23 @@ const _mst_origOpenPublish = (typeof openPublish === 'function') ? openPublish :
 
 function openPublish() {
   const slug = MSState.config.slug || '';
-  const url = `honourix.app/s/${slug || '—'}`;
+  const isLive = MSState.config.status === 'published';
+  const publicUrl = slug
+    ? `${window.location.origin}/site.html?slug=${slug}`
+    : `${window.location.origin}/site.html?slug=…`;
+
   const pubUrl = document.getElementById('publishUrlDisplay');
-  if (pubUrl) pubUrl.textContent = url;
+  if (pubUrl) pubUrl.textContent = publicUrl;
   const pubReg = document.getElementById('publishRegToggle');
   if (pubReg) pubReg.classList.toggle('on', MSState.config.registrationOpen !== false);
-  const lbl = document.getElementById('publishConfirmLabel');
-  if (lbl) lbl.textContent = MSState.config.status === 'published' ? 'Update Site' : 'Publish Now';
+
+  // Always rebuild the confirm button so it's never stuck in disabled/Published state
+  const btn = document.getElementById('publishConfirmBtn');
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M5 3l14 9-14 9V3z"/></svg><span id="publishConfirmLabel">${isLive ? 'Update Site' : 'Publish Now'}</span>`;
+  }
+  document.getElementById('publishPanelTitle').textContent = isLive ? 'Update Site' : 'Publish Site';
 
   // Inject QR code section if not already present
   const body = document.querySelector('.mse-publish-body');
