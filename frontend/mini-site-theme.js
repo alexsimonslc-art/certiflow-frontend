@@ -538,36 +538,25 @@ function populateSiteSettings() {
 })();
 
 function mst_wireCardHovers() {
-  var HBG = 'linear-gradient(135deg,rgba(255,255,255,0.18) 0%,rgba(255,255,255,0.07) 60%,rgba(255,255,255,0.03) 100%)';
-  var HBORD = 'rgba(255,255,255,0.45)';
-  var HSHAD = 'inset 0 1px 0 rgba(255,255,255,0.22), 0 6px 20px rgba(0,0,0,0.38)';
-
   document.querySelectorAll('#rightSiteBody button').forEach(function (btn) {
     if (btn._mstHooked) return;
     btn._mstHooked = true;
-    var origBg = btn.style.background;
-    var origBord = btn.style.border || btn.style.borderColor || '';
-    var origShad = btn.style.boxShadow || '';
+
+    // Snapshot the FULL inline style string before any hover
+    var savedCss = btn.style.cssText;
 
     btn.addEventListener('mouseenter', function () {
-      this.style.background = HBG;
-      this.style.borderColor = HBORD;
-      this.style.boxShadow = HSHAD;
-      this.style.transform = 'translateY(-1px)';
+      // Append hover styles on top
+      this.style.cssText = savedCss +
+        ';background:linear-gradient(135deg,rgba(255,255,255,0.18) 0%,rgba(255,255,255,0.07) 60%,rgba(255,255,255,0.03) 100%)!important' +
+        ';border-color:rgba(255,255,255,0.50)!important' +
+        ';box-shadow:inset 0 1px 0 rgba(255,255,255,0.22),0 6px 20px rgba(0,0,0,0.38)!important' +
+        ';transform:translateY(-1px)!important';
     });
-    btn.addEventListener('mouseleave', function() {
-      this.style.background = origBg;
-      if (origBord) {
-        this.style.borderColor = origBord;
-      } else {
-        this.style.removeProperty('border-color');
-      }
-      if (origShad) {
-        this.style.boxShadow = origShad;
-      } else {
-        this.style.removeProperty('box-shadow');
-      }
-      this.style.removeProperty('transform');
+
+    btn.addEventListener('mouseleave', function () {
+      // Full restore — wipes every hover property in one shot
+      this.style.cssText = savedCss;
     });
   });
 }
