@@ -224,7 +224,7 @@ function msb_speakers(block, cfg) {
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
   ${msb_title(p.title || 'Speakers', t, p.alignment)}
-  <div style="display:${isList ? 'flex flex-direction:column' : 'grid'};${isList ? 'gap:14px' : 'display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,210px));gap:20px;justify-content:center'}">
+  <div style="display:${isList ? 'flex flex-direction:column' : 'grid'};${isList ? 'gap:14px' : 'display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,220px));gap:24px;justify-content:center;justify-items:center'}">
     ${items.length ? items.map(sp => isList ? `
     <div style="display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:12px;background:${t.bgCard};border:1px solid ${t.border}">
       <div style="width:52px;height:52px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba(' + t.accentRgb + ',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;flex-shrink:0">
@@ -236,13 +236,18 @@ function msb_speakers(block, cfg) {
         ${sp.bio ? `<div style="font-size:12.5px;color:${t.sub};margin-top:6px;line-height:1.5">${sp.bio}</div>` : ''}
       </div>
     </div>` : `
-    <div style="text-align:center;padding:20px 14px;border-radius:14px;background:${t.bgCard};border:1px solid ${t.border}">
-      <div style="width:80px;height:80px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba(' + t.accentRgb + ',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;margin:0 auto 12px">
-        ${sp.photo ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover" alt="${sp.name || ''}"/>` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:${t.accent}">${(sp.name || '?')[0]}</div>`}
+    <div style="width:210px;border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column">
+      <div style="width:100%;height:240px;overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
+        ${sp.photo
+    ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
+    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
+        <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,${t.bgCard})"></div>
       </div>
-      <div style="font-size:14px;font-weight:700;color:${t.text};margin-bottom:4px">${sp.name || 'Speaker'}</div>
-      ${sp.role ? `<div style="font-size:12px;color:${t.muted}">${sp.role}</div>` : ''}
-      ${sp.bio ? `<div style="font-size:12px;color:${t.sub};margin-top:8px;line-height:1.5">${sp.bio}</div>` : ''}
+      <div style="padding:14px 16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:16px;font-weight:700;color:${t.text};line-height:1.25">${sp.name || 'Speaker'}</div>
+        ${sp.role ? `<div style="font-size:12.5px;font-weight:500;color:${t.accent}">${sp.role}</div>` : ''}
+        ${sp.bio ? `<div style="font-size:12px;color:${t.sub};margin-top:6px;line-height:1.55">${sp.bio}</div>` : ''}
+      </div>
     </div>`).join('') :
       `<div style="color:${t.muted};font-size:14px;padding:8px 0">Add speakers in the properties panel.</div>`}
   </div>
@@ -312,9 +317,9 @@ function msb_sponsors(block, cfg) {
    BLOCK 8 — REGISTRATION FORM
 ═══════════════════════════════════════════════════════════════ */
 function msb_form(block, cfg) {
-  const p   = block.props;
-  const t   = msb_theme(cfg);
-  const bg  = p.bgColor || t.bgAlt;
+  const p = block.props;
+  const t = msb_theme(cfg);
+  const bg = p.bgColor || t.bgAlt;
   const btnBg = p.buttonColor || t.accent;
   const [br, bg_, bb] = msb_hexRgb(btnBg);
   const isOpen = cfg.registrationOpen !== false;
