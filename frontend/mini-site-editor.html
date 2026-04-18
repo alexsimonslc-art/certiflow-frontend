@@ -304,7 +304,9 @@
     <!-- ═══════════════════════════════════════════════════════
        RIGHT PANEL — Properties
   ═══════════════════════════════════════════════════════ -->
-    <aside class="mse-right">
+    <!-- Resize handle — grid-area: rhandle -->
+    <div id="mse-resize-handle"></div>
+    <aside class="mse-right" id="mseRight">
 
       <div class="mse-right-tabs">
         <div class="mse-right-tab active" id="rtabBlock" onclick="switchRightTab('block')">Block</div>
@@ -1074,20 +1076,56 @@
 
         case 'form': return `
       <div class="mse-props-section">
-        <div class="mse-props-sec-label" style="color:#a78bfa">Registration Form</div>
-        <div class="mse-prop-row"><div class="mse-prop-label">Form Title</div>
-          <input class="mse-prop-input" value="${p.title || ''}"
-            oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
-        <div class="mse-prop-row"><div class="mse-prop-label">Subtitle</div>
-          <input class="mse-prop-input" value="${p.subtitle || ''}" placeholder="Optional description"
-            oninput="MSState.updateBlock('${block.id}',{subtitle:this.value});refreshCanvas()"/></div>
-        <div class="mse-prop-row"><div class="mse-prop-label">Button Text</div>
-          <input class="mse-prop-input" value="${p.buttonText || 'Submit Registration'}"
-            oninput="MSState.updateBlock('${block.id}',{buttonText:this.value});refreshCanvas()"/></div>
-        <div class="mse-prop-row"><div class="mse-prop-label">Google Sheet ID</div>
-          <input class="mse-prop-input" type="text" value="${p.sheetId || ''}" placeholder="Sheet ID from Drive URL"
-            oninput="MSState.updateBlock('${block.id}',{sheetId:this.value})"/>
-          <div class="mse-prop-hint">Responses will append to your Google Sheet. Full form field editor in Batch 5.</div></div>
+        <div class="mse-props-sec-label" style="color:#a78bfa">Connect a Form</div>
+
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Block Title</div>
+          <input class="mse-prop-input" value="${p.title || 'Register Now'}"
+            oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/>
+        </div>
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Subtitle</div>
+          <input class="mse-prop-input" value="${p.subtitle || ''}" placeholder="Optional tagline"
+            oninput="MSState.updateBlock('${block.id}',{subtitle:this.value});refreshCanvas()"/>
+        </div>
+
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Form Source</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            ${['url', 'hxform'].map(t => `
+            <label style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;border:1.5px solid ${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.5)' : 'rgba(255,255,255,0.12)'};background:${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.08)' : 'rgba(255,255,255,0.04)'};transition:all 0.15s">
+              <input type="radio" name="ct_${block.id}" value="${t}" ${(p.connectType || 'url') === t ? 'checked' : ''} style="display:none"
+                onchange="MSState.updateBlock('${block.id}',{connectType:'${t}'});updateRightPanel()"/>
+              <div style="width:14px;height:14px;border-radius:50%;border:2px solid ${(p.connectType || 'url') === t ? 'var(--cyan)' : 'rgba(255,255,255,0.3)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                ${(p.connectType || 'url') === t ? '<div style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></div>' : ''}
+              </div>
+              <div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms (coming soon)'}</div>
+                <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Forms built with our Form Builder'}</div>
+              </div>
+            </label>`).join('')}
+          </div>
+        </div>
+
+        ${(p.connectType || 'url') === 'url' ? `
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Form URL</div>
+          <input class="mse-prop-input" type="url" value="${p.connectUrl || ''}" placeholder="https://forms.google.com/…"
+            oninput="MSState.updateBlock('${block.id}',{connectUrl:this.value});refreshCanvas()"/>
+          <div class="mse-prop-hint">Paste your Google Forms, Typeform, or any form link</div>
+        </div>` : `
+        <div class="mse-prop-row">
+          <div style="text-align:center;padding:14px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.18);border-radius:9px">
+            <div style="font-size:13px;font-weight:600;color:#a78bfa;margin-bottom:6px">HX Forms — Coming Soon</div>
+            <div style="font-size:12px;color:var(--text-3)">Build forms with our Form Builder tool and connect them here.</div>
+          </div>
+        </div>`}
+
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Button Label</div>
+          <input class="mse-prop-input" value="${p.buttonText || 'Register Now →'}"
+            oninput="MSState.updateBlock('${block.id}',{buttonText:this.value});refreshCanvas()"/>
+        </div>
         ${bgRow}
       </div>`;
 
@@ -1391,6 +1429,7 @@
       }
     }
 
+    /* ── Theme & Font selectors ──────────────────────────────────── */
     function setThemeBox(val) {
       MSState.updateConfig({ theme: val });
       refreshCanvas();
@@ -1464,8 +1503,9 @@
   <script src="mini-site-special.js"></script>
   <script src="mini-site-theme.js"></script>
 
-  <!-- ═══ Theme/Font Glass Hover ═══ -->
+  <!-- ═══ Glass hover + Resize — injected last ═══ -->
   <style>
+    /* Theme / Font selector layout & base */
     .mse-theme-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1490,11 +1530,9 @@
       font-family: var(--font);
       color: var(--text-2);
       background: rgba(255, 255, 255, 0.06);
-      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: none;
     }
 
     .mse-font-pill {
@@ -1508,21 +1546,20 @@
       overflow: hidden;
       text-overflow: ellipsis;
       background: rgba(255, 255, 255, 0.06);
-      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
       cursor: pointer;
-      position: relative;
-      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: none;
     }
 
     .mse-theme-box.on,
     .mse-font-pill.on {
-      background: rgba(0, 212, 255, 0.12) !important;
-      border-color: rgba(0, 212, 255, 0.65) !important;
-      box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.22) !important;
+      background: rgba(0, 212, 255, 0.14) !important;
+      border-color: rgba(0, 212, 255, 0.70) !important;
       color: #67e8f9 !important;
+      box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.25) !important;
     }
 
-    /* Mini editor mockup inside theme box */
+    /* Mini editor mockup */
     .mse-theme-preview {
       width: 100%;
       height: 46px;
@@ -1558,7 +1595,7 @@
       bottom: 0;
       width: 22%;
       background: rgba(255, 255, 255, 0.06);
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .mtp-left.light {
@@ -1579,7 +1616,7 @@
     .mtp-block {
       height: 6px;
       border-radius: 2px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.16);
     }
 
     .mtp-block.short {
@@ -1587,43 +1624,93 @@
     }
 
     .mtp-block.light {
-      background: rgba(0, 0, 0, 0.13);
+      background: rgba(0, 0, 0, 0.14);
+    }
+
+    /* Resize handle */
+    #mse-resize-handle {
+      grid-area: rhandle;
+      background: transparent;
+      cursor: col-resize;
+      z-index: 100;
+      transition: background 0.15s;
+      position: relative;
+    }
+
+    #mse-resize-handle:hover,
+    #mse-resize-handle.dragging {
+      background: rgba(0, 212, 255, 0.28);
     }
   </style>
 
   <script>
-    /* Glass hover — JS inline styles, bypasses all CSS cascade issues */
+    /* ── Glass hover via JS — direct inline style, cannot be blocked by CSS ── */
     (function () {
-      var ON_BG = 'linear-gradient(135deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.10) 55%, rgba(255,255,255,0.05) 100%)';
-      var ON_BORDER = 'rgba(255,255,255,0.52)';
-      var ON_SHADOW = 'inset 0 1px 0 rgba(255,255,255,0.32), 0 6px 24px rgba(0,0,0,0.38)';
+      var HBG = 'linear-gradient(135deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.11) 55%, rgba(255,255,255,0.05) 100%)';
+      var HBORDER = 'rgba(255,255,255,0.60)';
+      var HSHADOW = 'inset 0 1.5px 0 rgba(255,255,255,0.38), 0 6px 24px rgba(0,0,0,0.42)';
 
-      function wireHover(el) {
+      function wire(el) {
         el.addEventListener('mouseenter', function () {
           if (this.classList.contains('on')) return;
-          this.style.background = ON_BG;
-          this.style.borderColor = ON_BORDER;
-          this.style.boxShadow = ON_SHADOW;
-          this.style.color = '#eef4ff';
+          this.style.cssText += ';background:' + HBG + '!important;border-color:' + HBORDER + '!important;box-shadow:' + HSHADOW + '!important;color:#fff!important';
         });
         el.addEventListener('mouseleave', function () {
           if (this.classList.contains('on')) return;
-          this.style.background = '';
-          this.style.borderColor = '';
-          this.style.boxShadow = '';
-          this.style.color = '';
+          ['background', 'border-color', 'box-shadow', 'color'].forEach(p => this.style.removeProperty(p));
         });
       }
 
       function init() {
-        document.querySelectorAll('.mse-theme-box, .mse-font-pill').forEach(wireHover);
+        document.querySelectorAll('.mse-theme-box,.mse-font-pill').forEach(wire);
+      }
+      document.readyState === 'loading'
+        ? document.addEventListener('DOMContentLoaded', init)
+        : init();
+    })();
+
+    /* ── Resizable right panel — CSS Grid var mutation ── */
+    (function () {
+      var MIN_W = 260, MAX_W = 640;
+      var handle = document.getElementById('mse-resize-handle');
+      if (!handle) return;
+
+      function setW(w) {
+        w = Math.min(MAX_W, Math.max(MIN_W, Math.round(w)));
+        document.documentElement.style.setProperty('--right-panel-w', w + 'px');
+        return w;
       }
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-      } else {
-        init();
-      }
+      var saved = parseInt(localStorage.getItem('hx_right_panel_w') || '0');
+      if (saved >= MIN_W && saved <= MAX_W) setW(saved);
+
+      handle.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+        handle.classList.add('dragging');
+        window._msResizing = true;
+
+        var startX = e.clientX;
+        var curW = parseInt(
+          getComputedStyle(document.documentElement).getPropertyValue('--right-panel-w').trim()
+        ) || 272;
+
+        function onMove(ev) { setW(curW + (startX - ev.clientX)); }
+        function onUp() {
+          window._msResizing = false;
+          handle.classList.remove('dragging');
+          localStorage.setItem('hx_right_panel_w',
+            parseInt(getComputedStyle(document.documentElement).getPropertyValue('--right-panel-w')) || 272
+          );
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          document.body.style.userSelect = '';
+          document.body.style.cursor = '';
+        }
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'col-resize';
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
     })();
   </script>
 </body>
