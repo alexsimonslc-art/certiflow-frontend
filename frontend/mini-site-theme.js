@@ -372,6 +372,7 @@ function mst_rebuildSiteSettings() {
   </div>
 
   `;
+  setTimeout(mst_wireCardHovers, 0);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -535,5 +536,32 @@ function populateSiteSettings() {
     run();
   }
 })();
+
+function mst_wireCardHovers() {
+  var HBG = 'linear-gradient(135deg,rgba(255,255,255,0.18) 0%,rgba(255,255,255,0.07) 60%,rgba(255,255,255,0.03) 100%)';
+  var HBORD = 'rgba(255,255,255,0.45)';
+  var HSHAD = 'inset 0 1px 0 rgba(255,255,255,0.22), 0 6px 20px rgba(0,0,0,0.38)';
+
+  document.querySelectorAll('#rightSiteBody button').forEach(function (btn) {
+    if (btn._mstHooked) return;
+    btn._mstHooked = true;
+    var origBg = btn.style.background;
+    var origBord = btn.style.border || btn.style.borderColor || '';
+    var origShad = btn.style.boxShadow || '';
+
+    btn.addEventListener('mouseenter', function () {
+      this.style.background = HBG;
+      this.style.borderColor = HBORD;
+      this.style.boxShadow = HSHAD;
+      this.style.transform = 'translateY(-1px)';
+    });
+    btn.addEventListener('mouseleave', function () {
+      this.style.background = origBg;
+      this.style.borderColor = origBord;
+      this.style.boxShadow = origShad;
+      this.style.transform = '';
+    });
+  });
+}
 
 console.log('[Honourix] mini-site-theme.js loaded ✓');
