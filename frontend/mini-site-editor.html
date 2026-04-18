@@ -300,24 +300,25 @@
       </div>
 
       <!-- Mobile iframe preview — shown when mobile mode is active -->
-      <div id="mse-mobile-wrap"
-        style="display:none;flex-direction:column;align-items:center;padding:24px 0 60px;width:100%">
-        <div
-          style="background:#1c2a3a;border-radius:48px;padding:14px;box-shadow:0 24px 80px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.08)">
-          <div style="background:#000;border-radius:36px;overflow:hidden;width:390px">
-            <div
-              style="height:32px;background:#0a0a0a;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <div style="width:90px;height:6px;background:#2a2a2a;border-radius:99px"></div>
-            </div>
-            <iframe id="mse-mobile-frame" style="width:390px;height:720px;border:none;display:block"
-              scrolling="yes"></iframe>
-            <div style="height:24px;background:#0a0a0a;display:flex;align-items:center;justify-content:center">
-              <div style="width:110px;height:5px;background:#2a2a2a;border-radius:99px"></div>
+      <div id="mse-mobile-wrap" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 0 40px;width:100%;min-height:100%">
+        <!-- Phone shell scales to fit screen without changing iframe viewport -->
+        <div id="mse-phone-shell" style="transform-origin:top center;flex-shrink:0">
+          <div style="background:linear-gradient(160deg,#1e2d3d,#111a26);border-radius:44px;padding:12px;box-shadow:0 20px 60px rgba(0,0,0,0.75),inset 0 1px 0 rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.07)">
+            <div style="background:#000;border-radius:34px;overflow:hidden;width:390px">
+              <!-- Status bar / notch -->
+              <div style="height:30px;background:#050505;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <div style="width:80px;height:5px;background:#1a1a1a;border-radius:99px"></div>
+              </div>
+              <!-- The iframe — viewport is exactly 390px wide -->
+              <iframe id="mse-mobile-frame" style="width:390px;height:clamp(460px,calc(100vh - 310px),700px);border:none;display:block" scrolling="yes"></iframe>
+              <!-- Home bar -->
+              <div style="height:22px;background:#050505;display:flex;align-items:center;justify-content:center">
+                <div style="width:100px;height:4px;background:#1a1a1a;border-radius:99px"></div>
+              </div>
             </div>
           </div>
         </div>
-        <div style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--font)">390 × 844 —
-          iPhone 14</div>
+        <div style="margin-top:12px;font-size:11.5px;color:rgba(255,255,255,0.25);font-family:var(--font);letter-spacing:0.3px">390px viewport · iPhone 14</div>
       </div>
     </main>
 
@@ -528,6 +529,7 @@
       updateUndoRedo();
       updateSaveStatus('saved');
       lucide.createIcons();
+      document.getElementById('canvasWrap').style.zoom = '0.82';
 
       MSState.onChange(type => {
         if (type !== 'select') {
@@ -1342,10 +1344,12 @@
       const mobileWrap = document.getElementById('mse-mobile-wrap');
       if (mode === 'mobile') {
         canvasWrap.style.display = 'none';
+        canvasWrap.style.zoom = '';
         mobileWrap.style.display = 'flex';
         refreshMobilePreview();
       } else {
         canvasWrap.style.display = '';
+        canvasWrap.style.zoom = '0.82';
         mobileWrap.style.display = 'none';
       }
     }
@@ -1368,7 +1372,11 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:'${t_cfg.fontFamily || 'Plus Jakarta Sans'}',sans-serif;background:${bg};color:${textColor};-webkit-font-smoothing:antialiased}
+  body{font-family:'${t_cfg.fontFamily || 'Plus Jakarta Sans'}',sans-serif;background:${bg};color:${textColor};-webkit-font-smoothing:antialiased;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent}
+  ::-webkit-scrollbar{width:3px;height:3px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:99px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(0,212,255,0.5)}
   details summary::-webkit-details-marker{display:none}
   details[open]>summary svg{transform:rotate(180deg)}
   details>summary svg{transition:transform 0.2s}
