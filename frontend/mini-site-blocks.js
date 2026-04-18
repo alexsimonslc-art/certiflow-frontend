@@ -50,18 +50,18 @@ function msb_wrap(content, bg, extraStyle) {
 
 /** Section title with accent left-bar */
 function msb_title(text, t, align) {
-  const a = align || 'left';
+  const a = align || 'center';
   if (a === 'center') return `<div style="text-align:center;margin-bottom:20px">
-    <h2 style="margin:0 0 8px;font-size:clamp(18px,3vw,24px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
+    <h2 style="margin:0 0 8px;font-size:clamp(20px,3vw,32px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
     <div style="width:40px;height:3px;background:${t.accent};border-radius:99px;margin:0 auto"></div>
   </div>`;
   if (a === 'right') return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-direction:row-reverse">
     <div style="width:3px;height:28px;background:${t.accent};border-radius:99px;flex-shrink:0"></div>
-    <h2 style="margin:0;flex:1;text-align:right;font-size:clamp(18px,3vw,24px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
+    <h2 style="margin:0;flex:1;text-align:right;font-size:clamp(20px,3vw,32px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
   </div>`;
   return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
     <div style="width:3px;height:28px;background:${t.accent};border-radius:99px;flex-shrink:0"></div>
-    <h2 style="margin:0;font-size:clamp(18px,3vw,24px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
+    <h2 style="margin:0;font-size:clamp(20px,3vw,32px);font-weight:700;color:${t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
   </div>`;
 }
 
@@ -144,7 +144,7 @@ function msb_cover(block, cfg) {
 function msb_about(block, cfg) {
   const p = block.props, t = msb_theme(cfg);
   const bg = p.bgColor || t.bg;
-  const align = p.alignment || 'left';
+  const align = p.alignment || 'center';
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
   ${msb_title(p.title || 'About This Event', t, p.alignment)}
@@ -189,8 +189,8 @@ function msb_datetime(block, cfg) {
   <div style="flex:1;min-width:140px;padding:20px 16px;border-radius:14px;background:${t.bgCard};border:1px solid ${t.border};display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;box-sizing:border-box">
     <div style="width:44px;height:44px;border-radius:11px;background:rgba(${t.accentRgb},0.12);border:1px solid rgba(${t.accentRgb},0.2);display:flex;align-items:center;justify-content:center">${iconSvg}</div>
     ${link
-      ? `<a href="${link}" target="_blank" style="font-size:clamp(13px,2vw,15px);font-weight:700;color:${t.accent};line-height:1.3;text-decoration:none;word-break:break-word">${value || '—'}</a>`
-      : `<div style="font-size:clamp(13px,2vw,15px);font-weight:700;color:${t.text};line-height:1.3;word-break:break-word">${value || '—'}</div>`}
+      ? `<a href="${link}" target="_blank" style="font-size:clamp(15px,2vw,19px);font-weight:700;color:${t.accent};line-height:1.3;text-decoration:none;word-break:break-word">${value || '—'}</a>`
+      : `<div style="font-size:clamp(15px,2vw,19px);font-weight:700;color:${t.text};line-height:1.3;word-break:break-word">${value || '—'}</div>`}
     <div style="font-size:11.5px;color:${t.muted};text-transform:uppercase;letter-spacing:0.6px;font-weight:600">${label}</div>
   </div>`;
 
@@ -224,7 +224,7 @@ function msb_speakers(block, cfg) {
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
   ${msb_title(p.title || 'Speakers', t, p.alignment)}
-  <div style="display:${isList ? 'flex flex-direction:column' : 'grid'};${isList ? 'gap:14px' : 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px'}">
+  <div style="display:${isList ? 'flex flex-direction:column' : 'grid'};${isList ? 'gap:14px' : 'display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,210px));gap:20px;justify-content:center'}">
     ${items.length ? items.map(sp => isList ? `
     <div style="display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:12px;background:${t.bgCard};border:1px solid ${t.border}">
       <div style="width:52px;height:52px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba(' + t.accentRgb + ',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;flex-shrink:0">
@@ -237,7 +237,7 @@ function msb_speakers(block, cfg) {
       </div>
     </div>` : `
     <div style="text-align:center;padding:20px 14px;border-radius:14px;background:${t.bgCard};border:1px solid ${t.border}">
-      <div style="width:64px;height:64px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba(' + t.accentRgb + ',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;margin:0 auto 12px">
+      <div style="width:80px;height:80px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba(' + t.accentRgb + ',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;margin:0 auto 12px">
         ${sp.photo ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover" alt="${sp.name || ''}"/>` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:${t.accent}">${(sp.name || '?')[0]}</div>`}
       </div>
       <div style="font-size:14px;font-weight:700;color:${t.text};margin-bottom:4px">${sp.name || 'Speaker'}</div>
@@ -259,7 +259,7 @@ function msb_faq(block, cfg) {
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
   ${msb_title(p.title || 'Frequently Asked Questions', t, p.alignment)}
-  <div style="display:flex;flex-direction:column;gap:4px">
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:820px;margin:0 auto">
     ${items.map((q, i) => `
     <details style="border:1px solid ${t.border};border-radius:12px;overflow:hidden;background:${t.bgCard}" ${i === 0 ? 'open' : ''}>
       <summary style="list-style:none;padding:16px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;user-select:none">
@@ -372,7 +372,7 @@ function msb_documents(block, cfg) {
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
   ${msb_title(p.title || 'Resources', t, p.alignment)}
-  <div style="display:flex;flex-direction:column;gap:10px;max-width:520px">
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:600px;margin:0 auto">
     ${items.length ? items.map(doc => {
     const color = doc.iconColor || getColor(doc.url);
     const [cr, cg, cb] = msb_hexRgb(color);
@@ -410,7 +410,7 @@ function msb_video(block, cfg) {
     const isYT = !!ytId;
 
     return `
-  <div style="width:100%;margin-bottom:16px">
+  <div style="width:100%;max-width:640px;margin:0 auto 20px">
     ${v.title ? `<div style="font-size:15px;font-weight:600;color:${t.text};margin-bottom:10px">${v.title}</div>` : ''}
     ${isYT ? `
     <div style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;${t.shadow ? `box-shadow:${t.shadow}` : ''}">

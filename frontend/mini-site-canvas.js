@@ -397,14 +397,38 @@ function renderBlockProps(block) {
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
+      /** Sponsor item card — uses msc_removeSponsorItem instead of msc_removeItem */
+      function msc_sponsorItemCard(bid, tierIdx, si, total, label, innerHtml) {
+        return `
+<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:8px;overflow:hidden">
+  <div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06)">
+    <span style="font-size:11.5px;font-weight:700;color:var(--text-3);flex:1;text-transform:uppercase;letter-spacing:0.5px">${label}</span>
+    ${si > 0 ? `<button class="mse-icon-btn" title="Move up" onclick="msc_moveSponsorItem('${bid}',${tierIdx},${si},-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="18 15 12 9 6 15"/></svg></button>` : ''}
+    ${si < total - 1 ? `<button class="mse-icon-btn" title="Move down" onclick="msc_moveSponsorItem('${bid}',${tierIdx},${si},1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="6 9 12 15 18 9"/></svg></button>` : ''}
+    <button class="mse-icon-btn" title="Delete" style="color:var(--red)" onclick="msc_removeSponsorItem('${bid}',${tierIdx},${si})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div style="padding:10px">${innerHtml}</div>
+</div>`;
+      }
 
+      function msc_moveSponsorItem(blockId, tierIdx, si, dir) {
+        const block = MSState.getBlock(blockId);
+        if (!block) return;
+        const tiers = JSON.parse(JSON.stringify(block.props.tiers || []));
+        const items = tiers[tierIdx]?.items;
+        if (!items) return;
+        const n = si + dir;
+        if (n < 0 || n >= items.length) return;
+        [items[si], items[n]] = [items[n], items[si]];
+        MSState.updateBlock(blockId, { tiers });
+        updateRightPanel();
+      }
     /* ─── SPONSORS ──────────────────────────────────────────── */
     case 'sponsors': {
       const tiers = p.tiers || [];
       const tiersHtml = tiers.map((tier, ti) => {
         const tierItems = tier.items || [];
-        const itemsHtml = tierItems.map((s, si) => msc_itemCard(bid, `__tier_${ti}_items`, si, tierItems.length, s.name || `Sponsor ${si + 1}`, `
-          ${msc_miniField('Sponsor Name', s.name, `msc_setSponsorItem('${bid}',${ti},${si},'name',this.value)`, 'text', 'Company name')}
+        const itemsHtml = tierItems.map((s, si) => msc_sponsorItemCard(bid, ti, si, tierItems.length, s.name || `Sponsor ${si + 1}`, `          ${msc_miniField('Sponsor Name', s.name, `msc_setSponsorItem('${bid}',${ti},${si},'name',this.value)`, 'text', 'Company name')}
           ${msc_miniField('Logo URL', s.logo, `msc_setSponsorItem('${bid}',${ti},${si},'logo',this.value)`, 'url', 'https://…')}
           ${msc_miniField('Website URL', s.url, `msc_setSponsorItem('${bid}',${ti},${si},'url',this.value)`, 'url', 'https://…')}
         `)).join('');
@@ -461,38 +485,38 @@ function renderBlockProps(block) {
 
   <div class="mse-prop-row">
     <div class="mse-prop-label">Block Title</div>
-    <input class="mse-prop-input" value="${p.title||'Register Now'}"
+    <input class="mse-prop-input" value="${p.title || 'Register Now'}"
       oninput="msc_set('${bid}','title',this.value)"/>
   </div>
 
   <div class="mse-prop-row">
     <div class="mse-prop-label">Subtitle</div>
-    <input class="mse-prop-input" value="${(p.subtitle||'').replace(/"/g,'&quot;')}" placeholder="Optional tagline"
+    <input class="mse-prop-input" value="${(p.subtitle || '').replace(/"/g, '&quot;')}" placeholder="Optional tagline"
       oninput="msc_set('${bid}','subtitle',this.value)"/>
   </div>
 
   <div class="mse-prop-row">
     <div class="mse-prop-label">Form Source</div>
     <div style="display:flex;flex-direction:column;gap:6px">
-      ${['url','hxform'].map(t => `
-      <label style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;border:1.5px solid ${(p.connectType||'url')===t?'rgba(0,212,255,0.5)':'rgba(255,255,255,0.12)'};background:${(p.connectType||'url')===t?'rgba(0,212,255,0.08)':'rgba(255,255,255,0.04)'};transition:all 0.15s">
-        <input type="radio" name="ct_${bid}" value="${t}" ${(p.connectType||'url')===t?'checked':''} style="display:none"
+      ${['url', 'hxform'].map(t => `
+      <label style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;border:1.5px solid ${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.5)' : 'rgba(255,255,255,0.12)'};background:${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.08)' : 'rgba(255,255,255,0.04)'};transition:all 0.15s">
+        <input type="radio" name="ct_${bid}" value="${t}" ${(p.connectType || 'url') === t ? 'checked' : ''} style="display:none"
           onchange="msc_set('${bid}','connectType','${t}');updateRightPanel()"/>
-        <div style="width:14px;height:14px;border-radius:50%;border:2px solid ${(p.connectType||'url')===t?'var(--cyan)':'rgba(255,255,255,0.3)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          ${(p.connectType||'url')===t?'<div style=\"width:6px;height:6px;border-radius:50%;background:var(--cyan)\"></div>':''}
+        <div style="width:14px;height:14px;border-radius:50%;border:2px solid ${(p.connectType || 'url') === t ? 'var(--cyan)' : 'rgba(255,255,255,0.3)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          ${(p.connectType || 'url') === t ? '<div style=\"width:6px;height:6px;border-radius:50%;background:var(--cyan)\"></div>' : ''}
         </div>
         <div>
-          <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t==='url'?'Paste any form URL':'HX Forms (coming soon)'}</div>
-          <div style="font-size:11px;color:var(--text-3)">${t==='url'?'Google Forms, Typeform, Jotform…':'Forms built with our Form Builder'}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms (coming soon)'}</div>
+          <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Forms built with our Form Builder'}</div>
         </div>
       </label>`).join('')}
     </div>
   </div>
 
-  ${(p.connectType||'url')==='url' ? `
+  ${(p.connectType || 'url') === 'url' ? `
   <div class="mse-prop-row">
     <div class="mse-prop-label">Form URL</div>
-    <input class="mse-prop-input" type="url" value="${p.connectUrl||''}" placeholder="https://forms.google.com/…"
+    <input class="mse-prop-input" type="url" value="${p.connectUrl || ''}" placeholder="https://forms.google.com/…"
       oninput="msc_set('${bid}','connectUrl',this.value)"/>
     <div class="mse-prop-hint">Paste your Google Forms, Typeform, or any other form link</div>
   </div>` : `
@@ -505,18 +529,18 @@ function renderBlockProps(block) {
 
   <div class="mse-prop-row">
     <div class="mse-prop-label">Button Label</div>
-    <input class="mse-prop-input" value="${p.buttonText||'Register Now →'}"
+    <input class="mse-prop-input" value="${p.buttonText || 'Register Now →'}"
       oninput="msc_set('${bid}','buttonText',this.value)"/>
   </div>
 
   <div class="mse-prop-row">
     <div class="mse-prop-label">Button Colour</div>
     <div class="mse-color-row">
-      <div class="mse-color-swatch" style="background:${p.buttonColor||MSState.config.accentColor||'#00d4ff'}">
-        <input type="color" value="${p.buttonColor||MSState.config.accentColor||'#00d4ff'}"
+      <div class="mse-color-swatch" style="background:${p.buttonColor || MSState.config.accentColor || '#00d4ff'}">
+        <input type="color" value="${p.buttonColor || MSState.config.accentColor || '#00d4ff'}"
           oninput="msc_set('${bid}','buttonColor',this.value)"/>
       </div>
-      <input type="text" class="mse-prop-input" value="${p.buttonColor||''}" placeholder="Uses accent colour"
+      <input type="text" class="mse-prop-input" value="${p.buttonColor || ''}" placeholder="Uses accent colour"
         oninput="msc_set('${bid}','buttonColor',this.value)" style="flex:1"/>
     </div>
   </div>
