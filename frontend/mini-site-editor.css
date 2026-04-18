@@ -755,12 +755,12 @@ textarea {
 /* Canvas wrapper handles width */
 .mse-canvas-wrap {
   width: 100%;
-  max-width: 700px;
+  max-width: min(1100px, 100%);
   transition: max-width 0.3s var(--ease);
 }
 
 .mse-canvas-wrap.mobile {
-  max-width: 375px;
+  max-width: 390px;
 }
 
 /* Empty canvas state */

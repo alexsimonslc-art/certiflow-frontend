@@ -224,7 +224,7 @@ function msb_speakers(block, cfg) {
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
   ${msb_title(p.title || 'Speakers', t, p.alignment)}
-  <div style="display:${isList ? 'flex flex-direction:column' : 'grid'};${isList ? 'gap:14px' : 'display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,220px));gap:24px;justify-content:center;justify-items:center'}">
+  <div style="display:${isList ? 'flex flex-direction:column' : 'grid'};${isList ? 'gap:14px' : 'display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,220px));gap:20px;justify-content:center'}">
     ${items.length ? items.map(sp => isList ? `
     <div style="display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:12px;background:${t.bgCard};border:1px solid ${t.border}">
       <div style="width:52px;height:52px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba(' + t.accentRgb + ',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;flex-shrink:0">
@@ -236,8 +236,8 @@ function msb_speakers(block, cfg) {
         ${sp.bio ? `<div style="font-size:12.5px;color:${t.sub};margin-top:6px;line-height:1.5">${sp.bio}</div>` : ''}
       </div>
     </div>` : `
-    <div style="width:210px;border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column">
-      <div style="width:100%;height:240px;overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
+   <div style="width:100%;border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column">
+      <div style="width:100%;height:clamp(150px,28vw,240px);overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
         ${sp.photo
     ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
     : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
