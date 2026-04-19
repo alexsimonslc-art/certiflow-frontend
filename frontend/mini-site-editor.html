@@ -299,12 +299,45 @@
         </div>
       </div>
 
+      <!-- Mobile iframe preview — shown when mobile mode is active -->
+      <div id="mse-mobile-wrap" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 0 32px;width:100%">
+        <!-- Shell wrapper: zoom auto-applied by scaleMobilePhone() -->
+        <div id="mse-phone-shell" style="transform-origin:top center;flex-shrink:0;display:inline-block">
+          <!-- Outer phone body -->
+          <div style="background:linear-gradient(170deg,#1c2533 0%,#0e161f 100%);border-radius:52px;padding:13px;box-shadow:0 28px 80px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.06),inset 0 1px 0 rgba(255,255,255,0.08)">
+            <!-- Side buttons (visual only) -->
+            <div style="position:absolute;left:-4px;top:130px;width:4px;height:36px;background:#1a2535;border-radius:3px 0 0 3px"></div>
+            <div style="position:absolute;left:-4px;top:180px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px"></div>
+            <div style="position:absolute;left:-4px;top:256px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px"></div>
+            <div style="position:absolute;right:-4px;top:170px;width:4px;height:84px;background:#1a2535;border-radius:0 3px 3px 0"></div>
+            <!-- Screen -->
+            <div style="background:#000;border-radius:42px;overflow:hidden;width:460px;position:relative">
+              <!-- Dynamic island -->
+              <div style="height:48px;background:#050505;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0">
+                <div style="width:120px;height:32px;background:#000;border-radius:99px;border:1px solid #111;display:flex;align-items:center;justify-content:center;gap:6px">
+                  <div style="width:10px;height:10px;border-radius:50%;background:#111"></div>
+                  <div style="width:6px;height:6px;border-radius:50%;background:#1a1a1a"></div>
+                </div>
+              </div>
+              <!-- iframe — true 430px mobile viewport, no scroll visible -->
+              <iframe id="mse-mobile-frame" style="width:460px;height:932px;border:none;display:block" scrolling="yes"></iframe>
+              <!-- Home indicator -->
+              <div style="height:28px;background:#050505;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <div style="width:120px;height:5px;background:#1c1c1e;border-radius:99px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--font);letter-spacing:0.4px">430 × 932 · iPhone 14 Pro Max</div>
+      </div>
     </main>
 
     <!-- ═══════════════════════════════════════════════════════
        RIGHT PANEL — Properties
   ═══════════════════════════════════════════════════════ -->
-    <aside class="mse-right">
+    <!-- Resize handle — grid-area: rhandle -->
+    <div id="mse-resize-handle"></div>
+    <aside class="mse-right" id="mseRight">
 
       <div class="mse-right-tabs">
         <div class="mse-right-tab active" id="rtabBlock" onclick="switchRightTab('block')">Block</div>
@@ -330,11 +363,32 @@
 
           <div class="mse-prop-row">
             <div class="mse-prop-label">Theme</div>
-            <select class="mse-prop-select" id="siteTheme"
-              onchange="MSState.updateConfig({theme:this.value});refreshCanvas()">
-              <option value="dark">Dark</option>
-              <option value="light">Light</option>
-            </select>
+            <div class="mse-theme-grid">
+              <button class="mse-theme-box" data-value="dark" onclick="setThemeBox('dark')">
+                <div class="mse-theme-preview">
+                  <div class="mtp-topbar"></div>
+                  <div class="mtp-left"></div>
+                  <div class="mtp-body">
+                    <div class="mtp-block"></div>
+                    <div class="mtp-block short"></div>
+                    <div class="mtp-block"></div>
+                  </div>
+                </div>
+                <span>Dark</span>
+              </button>
+              <button class="mse-theme-box" data-value="light" onclick="setThemeBox('light')">
+                <div class="mse-theme-preview light">
+                  <div class="mtp-topbar light"></div>
+                  <div class="mtp-left light"></div>
+                  <div class="mtp-body">
+                    <div class="mtp-block light"></div>
+                    <div class="mtp-block short light"></div>
+                    <div class="mtp-block light"></div>
+                  </div>
+                </div>
+                <span>Light</span>
+              </button>
+            </div>
           </div>
 
           <div class="mse-prop-row">
@@ -350,19 +404,28 @@
 
           <div class="mse-prop-row">
             <div class="mse-prop-label">Font Family</div>
-            <select class="mse-prop-select" id="siteFontFamily"
-              onchange="MSState.updateConfig({fontFamily:this.value});refreshCanvas()">
-              <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
-              <option value="Syne">Syne</option>
-              <option value="Montserrat">Montserrat</option>
-              <option value="Raleway">Raleway</option>
-              <option value="Playfair Display">Playfair Display</option>
-              <option value="Cormorant Garamond">Cormorant Garamond</option>
-              <option value="Dancing Script">Dancing Script</option>
-              <option value="Cinzel">Cinzel</option>
-              <option value="EB Garamond">EB Garamond</option>
-              <option value="JetBrains Mono">JetBrains Mono</option>
-            </select>
+            <div class="mse-font-grid">
+              <button class="mse-font-pill" data-font="Plus Jakarta Sans" onclick="setFontBox('Plus Jakarta Sans')"
+                style="font-family:Plus Jakarta Sans,sans-serif">Plus Jakarta Sans</button>
+              <button class="mse-font-pill" data-font="Syne" onclick="setFontBox('Syne')"
+                style="font-family:Syne,sans-serif;font-weight:700">Syne</button>
+              <button class="mse-font-pill" data-font="Montserrat" onclick="setFontBox('Montserrat')"
+                style="font-family:Montserrat,sans-serif">Montserrat</button>
+              <button class="mse-font-pill" data-font="Raleway" onclick="setFontBox('Raleway')"
+                style="font-family:Raleway,sans-serif">Raleway</button>
+              <button class="mse-font-pill" data-font="Playfair Display" onclick="setFontBox('Playfair Display')"
+                style="font-family:Playfair Display,serif">Playfair Display</button>
+              <button class="mse-font-pill" data-font="Cormorant Garamond" onclick="setFontBox('Cormorant Garamond')"
+                style="font-family:Cormorant Garamond,serif">Cormorant Garamond</button>
+              <button class="mse-font-pill" data-font="Dancing Script" onclick="setFontBox('Dancing Script')"
+                style="font-family:Dancing Script,cursive">Dancing Script</button>
+              <button class="mse-font-pill" data-font="Cinzel" onclick="setFontBox('Cinzel')"
+                style="font-family:Cinzel,serif">Cinzel</button>
+              <button class="mse-font-pill" data-font="EB Garamond" onclick="setFontBox('EB Garamond')"
+                style="font-family:EB Garamond,serif">EB Garamond</button>
+              <button class="mse-font-pill" data-font="JetBrains Mono" onclick="setFontBox('JetBrains Mono')"
+                style="font-family:JetBrains Mono,monospace">JetBrains Mono</button>
+            </div>
           </div>
 
           <div class="mse-prop-row">
@@ -468,20 +531,15 @@
     /* ════════════════════════════════════════════════════════════════
        INIT
     ════════════════════════════════════════════════════════════════ */
-    document.addEventListener('DOMContentLoaded', async () => {
-      const _initResult = MSState.init();
-      if (_initResult && typeof _initResult.then === 'function') {
-        const ok = await _initResult;
-        if (!ok) return;
-      } else if (!_initResult) {
-        return;
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!MSState.init()) return;
       populateSiteSettings();
       refreshCanvas();
       renderLayers();
       updateUndoRedo();
       updateSaveStatus('saved');
       lucide.createIcons();
+      document.getElementById('canvasWrap').style.zoom = '0.82';
 
       MSState.onChange(type => {
         if (type !== 'select') {
@@ -540,6 +598,7 @@
 
       refreshBlockSelection();
       lucide.createIcons();
+      refreshMobilePreview();
     }
 
     function refreshBlockSelection() {
@@ -1050,20 +1109,56 @@
 
         case 'form': return `
       <div class="mse-props-section">
-        <div class="mse-props-sec-label" style="color:#a78bfa">Registration Form</div>
-        <div class="mse-prop-row"><div class="mse-prop-label">Form Title</div>
-          <input class="mse-prop-input" value="${p.title || ''}"
-            oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
-        <div class="mse-prop-row"><div class="mse-prop-label">Subtitle</div>
-          <input class="mse-prop-input" value="${p.subtitle || ''}" placeholder="Optional description"
-            oninput="MSState.updateBlock('${block.id}',{subtitle:this.value});refreshCanvas()"/></div>
-        <div class="mse-prop-row"><div class="mse-prop-label">Button Text</div>
-          <input class="mse-prop-input" value="${p.buttonText || 'Submit Registration'}"
-            oninput="MSState.updateBlock('${block.id}',{buttonText:this.value});refreshCanvas()"/></div>
-        <div class="mse-prop-row"><div class="mse-prop-label">Google Sheet ID</div>
-          <input class="mse-prop-input" type="text" value="${p.sheetId || ''}" placeholder="Sheet ID from Drive URL"
-            oninput="MSState.updateBlock('${block.id}',{sheetId:this.value})"/>
-          <div class="mse-prop-hint">Responses will append to your Google Sheet. Full form field editor in Batch 5.</div></div>
+        <div class="mse-props-sec-label" style="color:#a78bfa">Connect a Form</div>
+
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Block Title</div>
+          <input class="mse-prop-input" value="${p.title || 'Register Now'}"
+            oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/>
+        </div>
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Subtitle</div>
+          <input class="mse-prop-input" value="${p.subtitle || ''}" placeholder="Optional tagline"
+            oninput="MSState.updateBlock('${block.id}',{subtitle:this.value});refreshCanvas()"/>
+        </div>
+
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Form Source</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            ${['url', 'hxform'].map(t => `
+            <label style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;border:1.5px solid ${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.5)' : 'rgba(255,255,255,0.12)'};background:${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.08)' : 'rgba(255,255,255,0.04)'};transition:all 0.15s">
+              <input type="radio" name="ct_${block.id}" value="${t}" ${(p.connectType || 'url') === t ? 'checked' : ''} style="display:none"
+                onchange="MSState.updateBlock('${block.id}',{connectType:'${t}'});updateRightPanel()"/>
+              <div style="width:14px;height:14px;border-radius:50%;border:2px solid ${(p.connectType || 'url') === t ? 'var(--cyan)' : 'rgba(255,255,255,0.3)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                ${(p.connectType || 'url') === t ? '<div style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></div>' : ''}
+              </div>
+              <div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms (coming soon)'}</div>
+                <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Forms built with our Form Builder'}</div>
+              </div>
+            </label>`).join('')}
+          </div>
+        </div>
+
+        ${(p.connectType || 'url') === 'url' ? `
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Form URL</div>
+          <input class="mse-prop-input" type="url" value="${p.connectUrl || ''}" placeholder="https://forms.google.com/…"
+            oninput="MSState.updateBlock('${block.id}',{connectUrl:this.value});refreshCanvas()"/>
+          <div class="mse-prop-hint">Paste your Google Forms, Typeform, or any form link</div>
+        </div>` : `
+        <div class="mse-prop-row">
+          <div style="text-align:center;padding:14px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.18);border-radius:9px">
+            <div style="font-size:13px;font-weight:600;color:#a78bfa;margin-bottom:6px">HX Forms — Coming Soon</div>
+            <div style="font-size:12px;color:var(--text-3)">Build forms with our Form Builder tool and connect them here.</div>
+          </div>
+        </div>`}
+
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Button Label</div>
+          <input class="mse-prop-input" value="${p.buttonText || 'Register Now →'}"
+            oninput="MSState.updateBlock('${block.id}',{buttonText:this.value});refreshCanvas()"/>
+        </div>
         ${bgRow}
       </div>`;
 
@@ -1163,8 +1258,7 @@
       if (slugInput && document.activeElement !== slugInput) slugInput.value = c.slug;
       document.getElementById('slugPreview').textContent = c.slug || '—';
 
-      const themeEl = document.getElementById('siteTheme');
-      if (themeEl) themeEl.value = c.theme;
+      document.querySelectorAll('.mse-theme-box').forEach(b => b.classList.toggle('on', b.dataset.value === c.theme));
 
       const accentIn = document.getElementById('accentColorInput');
       const accentHx = document.getElementById('accentColorHex');
@@ -1173,8 +1267,7 @@
       if (accentHx && document.activeElement !== accentHx) accentHx.value = c.accentColor;
       if (swatch) swatch.style.background = c.accentColor;
 
-      const fontEl = document.getElementById('siteFontFamily');
-      if (fontEl) fontEl.value = c.fontFamily;
+      document.querySelectorAll('.mse-font-pill').forEach(p => p.classList.toggle('on', p.dataset.font === c.fontFamily));
 
       ['shapeCircle', 'shapeRounded', 'shapeSquare'].forEach(id => {
         const el = document.getElementById(id);
@@ -1256,10 +1349,74 @@
     function setPreviewMode(mode) {
       document.getElementById('btnDesktop').classList.toggle('active', mode === 'desktop');
       document.getElementById('btnMobile').classList.toggle('active', mode === 'mobile');
-      document.getElementById('canvasWrap').classList.toggle('mobile', mode === 'mobile');
       MSState.previewMode = mode;
+      const canvasWrap = document.getElementById('canvasWrap');
+      const mobileWrap = document.getElementById('mse-mobile-wrap');
+      if (mode === 'mobile') {
+        canvasWrap.style.display = 'none';
+        canvasWrap.style.zoom = '';
+        mobileWrap.style.display = 'flex';
+        refreshMobilePreview();
+        setTimeout(scaleMobilePhone, 50);
+      } else {
+        canvasWrap.style.display = '';
+        canvasWrap.style.zoom = '0.82';
+        mobileWrap.style.display = 'none';
+      }
     }
 
+    function refreshMobilePreview() {
+      if (MSState.previewMode !== 'mobile') return;
+      const frame = document.getElementById('mse-mobile-frame');
+      if (!frame) return;
+      const t_cfg = MSState.config;
+      const fontUrl = (typeof MSB_GOOGLE_FONT_URLS !== 'undefined' && MSB_GOOGLE_FONT_URLS[t_cfg.fontFamily]) || '';
+      const blocksHtml = MSState.blocks.map(b => renderMSBlock(b, t_cfg)).join('');
+      const bg = t_cfg.theme === 'light' ? '#ffffff' : (t_cfg.bgOverride || '#0a0f1e');
+      const textColor = t_cfg.theme === 'light' ? '#1e293b' : '#eef4ff';
+      frame.srcdoc = `<!DOCTYPE html><html><head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=390px,initial-scale=1.0"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'${t_cfg.fontFamily || 'Plus Jakarta Sans'}',sans-serif;background:${bg};color:${textColor};-webkit-font-smoothing:antialiased;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent}
+  ::-webkit-scrollbar{width:3px;height:3px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:99px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(0,212,255,0.5)}
+  details summary::-webkit-details-marker{display:none}
+  details[open]>summary svg{transform:rotate(180deg)}
+  details>summary svg{transition:transform 0.2s}
+</style>
+</head><body>${blocksHtml}</body></html>`;
+    }
+
+    // ADD after refreshMobilePreview function:
+
+    function scaleMobilePhone() {
+      const shell = document.getElementById('mse-phone-shell');
+      const canvas = document.getElementById('canvasArea');
+      if (!shell || !canvas) return;
+      // Reset zoom to measure natural size
+      shell.style.zoom = '1';
+      const availH = canvas.clientHeight - 80; // 40px top + 40px bottom margin
+      const availW = canvas.clientWidth - 48;  // side margin
+      const shellH = shell.offsetHeight;
+      const shellW = shell.offsetWidth;
+      const scaleH = availH / shellH;
+      const scaleW = availW / shellW;
+      const scale = Math.min(1, scaleH, scaleW);
+      shell.style.zoom = scale.toString();
+    }
+
+    // Rescale phone on window resize
+    window.addEventListener('resize', () => {
+      if (MSState.previewMode === 'mobile') scaleMobilePhone();
+    });
     /* ════════════════════════════════════════════════════════════════
        SAVE / UNDO / REDO
     ════════════════════════════════════════════════════════════════ */
@@ -1369,6 +1526,18 @@
       }
     }
 
+    /* ── Theme & Font selectors ──────────────────────────────────── */
+    function setThemeBox(val) {
+      MSState.updateConfig({ theme: val });
+      refreshCanvas();
+      document.querySelectorAll('.mse-theme-box').forEach(b => b.classList.toggle('on', b.dataset.value === val));
+    }
+    function setFontBox(val) {
+      MSState.updateConfig({ fontFamily: val });
+      refreshCanvas();
+      document.querySelectorAll('.mse-font-pill').forEach(p => p.classList.toggle('on', p.dataset.font === val));
+    }
+
     function copyPublishUrl() {
       const url = MSState.config.slug
         ? `${window.location.origin}/site.html?slug=${MSState.config.slug}`
@@ -1430,6 +1599,217 @@
   <script src="mini-site-canvas.js"></script>
   <script src="mini-site-special.js"></script>
   <script src="mini-site-theme.js"></script>
+
+  <!-- ═══ Glass hover + Resize — injected last ═══ -->
+  <style>
+    /* Theme / Font selector layout & base */
+    .mse-theme-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .mse-font-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .mse-theme-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      padding: 12px 8px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font);
+      color: var(--text-2);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
+      cursor: pointer;
+      transition: none;
+    }
+
+    .mse-font-pill {
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-2);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
+      cursor: pointer;
+      transition: none;
+    }
+
+    .mse-theme-box.on,
+    .mse-font-pill.on {
+      background: rgba(0, 212, 255, 0.14) !important;
+      border-color: rgba(0, 212, 255, 0.70) !important;
+      color: #67e8f9 !important;
+      box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.25) !important;
+    }
+
+    /* Mini editor mockup */
+    .mse-theme-preview {
+      width: 100%;
+      height: 46px;
+      border-radius: 6px;
+      background: #04080f;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .mse-theme-preview.light {
+      background: #f0f4ff;
+    }
+
+    .mtp-topbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .mtp-topbar.light {
+      background: #dde8f8;
+    }
+
+    .mtp-left {
+      position: absolute;
+      top: 7px;
+      left: 0;
+      bottom: 0;
+      width: 22%;
+      background: rgba(255, 255, 255, 0.06);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mtp-left.light {
+      background: #e4eef9;
+    }
+
+    .mtp-body {
+      position: absolute;
+      top: 11px;
+      left: 26%;
+      right: 4px;
+      bottom: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .mtp-block {
+      height: 6px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .mtp-block.short {
+      width: 55%;
+    }
+
+    .mtp-block.light {
+      background: rgba(0, 0, 0, 0.14);
+    }
+
+    /* Resize handle */
+    #mse-resize-handle {
+      grid-area: rhandle;
+      background: transparent;
+      cursor: col-resize;
+      z-index: 100;
+      transition: background 0.15s;
+      position: relative;
+    }
+
+    #mse-resize-handle:hover,
+    #mse-resize-handle.dragging {
+      background: rgba(0, 212, 255, 0.28);
+    }
+  </style>
+
+  <script>
+    /* ── Glass hover via JS — direct inline style, cannot be blocked by CSS ── */
+    (function () {
+      var HBG = 'linear-gradient(135deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.11) 55%, rgba(255,255,255,0.05) 100%)';
+      var HBORDER = 'rgba(255,255,255,0.60)';
+      var HSHADOW = 'inset 0 1.5px 0 rgba(255,255,255,0.38), 0 6px 24px rgba(0,0,0,0.42)';
+
+      function wire(el) {
+        el.addEventListener('mouseenter', function () {
+          if (this.classList.contains('on')) return;
+          this.style.cssText += ';background:' + HBG + '!important;border-color:' + HBORDER + '!important;box-shadow:' + HSHADOW + '!important;color:#fff!important';
+        });
+        el.addEventListener('mouseleave', function () {
+          if (this.classList.contains('on')) return;
+          ['background', 'border-color', 'box-shadow', 'color'].forEach(p => this.style.removeProperty(p));
+        });
+      }
+
+      function init() {
+        document.querySelectorAll('.mse-theme-box,.mse-font-pill').forEach(wire);
+      }
+      document.readyState === 'loading'
+        ? document.addEventListener('DOMContentLoaded', init)
+        : init();
+    })();
+
+    /* ── Resizable right panel — CSS Grid var mutation ── */
+    (function () {
+      var MIN_W = 260, MAX_W = 640;
+      var handle = document.getElementById('mse-resize-handle');
+      if (!handle) return;
+
+      function setW(w) {
+        w = Math.min(MAX_W, Math.max(MIN_W, Math.round(w)));
+        document.documentElement.style.setProperty('--right-panel-w', w + 'px');
+        return w;
+      }
+
+      var saved = parseInt(localStorage.getItem('hx_right_panel_w') || '0');
+      if (saved >= MIN_W && saved <= MAX_W) setW(saved);
+
+      handle.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+        handle.classList.add('dragging');
+        window._msResizing = true;
+
+        var startX = e.clientX;
+        var curW = parseInt(
+          getComputedStyle(document.documentElement).getPropertyValue('--right-panel-w').trim()
+        ) || 272;
+
+        function onMove(ev) { setW(curW + (startX - ev.clientX)); }
+        function onUp() {
+          window._msResizing = false;
+          handle.classList.remove('dragging');
+          localStorage.setItem('hx_right_panel_w',
+            parseInt(getComputedStyle(document.documentElement).getPropertyValue('--right-panel-w')) || 272
+          );
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          document.body.style.userSelect = '';
+          document.body.style.cursor = '';
+        }
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'col-resize';
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    })();
+  </script>
 </body>
 
 </html>
