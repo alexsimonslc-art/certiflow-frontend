@@ -146,6 +146,11 @@ function hxf_uid() {
   return 'f_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
+function hxf_isLocalId(id) {
+  if (!id) return false;
+  return !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+}
+
 /* ================================================================
    HXFState — per-form builder state object
    Usage:
@@ -238,11 +243,17 @@ const HXFState = {
   async saveToBackendNow() {
     if (!this.config) return false;
     try {
+      // If formId is a local non-UUID (e.g. "f_mo5jaokfun6m"), treat as NEW form.
+      // Never send a local ID to Supabase — it expects UUID or null.
+      const isLocal   = hxf_isLocalId(this.formId);
+      const localId   = isLocal ? this.formId : null; // remember to swap in localStorage
+      const sendId    = isLocal ? undefined : this.formId;
+ 
       const res = await fetch(`${HXF_API}/save`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + hxf_getToken() },
         body:    JSON.stringify({
-          id:     this.formId,
+          id:     sendId,   // undefined → backend does INSERT, returns real UUID
           name:   this.name,
           slug:   this.slug,
           config: this.config,
@@ -250,13 +261,32 @@ const HXFState = {
       });
       if (!res.ok) throw new Error((await res.json()).error || res.status);
       const data = await res.json();
-      // If this was a new form, capture the generated ID and slug
-      if (data.form?.id && !this.formId) {
-        this.formId = data.form.id;
-        this.slug   = data.form.slug;
-        this.save(); // re-save locally with the real ID
+ 
+      // Capture real UUID returned from Supabase
+      if (data.form?.id && (isLocal || !this.formId)) {
+        const realId   = data.form.id;
+        const realSlug = data.form.slug;
+ 
+        // Swap old local ID for real UUID in localStorage
+        const forms = this._loadLocal();
+        const idx   = forms.findIndex(f => f.id === (localId || this.formId));
+        if (idx > -1) {
+          forms[idx] = { ...forms[idx], id: realId, slug: realSlug };
+          localStorage.setItem(hxf_storageKey(), JSON.stringify(forms));
+        }
+ 
+        this.formId = realId;
+        this.slug   = realSlug;
+ 
+        // Update browser URL so refresh still works with the real UUID
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', realId);
+        window.history.replaceState({}, '', url.toString());
+ 
+        console.info('[HXFState] New form saved — real UUID:', realId);
       }
-      this._backendDirty   = false;
+ 
+      this._backendDirty    = false;
       this._lastBackendSave = Date.now();
       return true;
     } catch (e) {
