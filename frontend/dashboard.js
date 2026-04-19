@@ -102,6 +102,7 @@ function renderSidebar(activePage) {
     { page: 'combined-tool.html', icon: 'zap',               label: 'Combined Pipeline', section: null },
     { page: 'mini-site.html',     icon: 'layout-template',   label: 'Mini Sites',        section: null },
     { page: 'hx-forms.html',      icon: 'file-text',         label: 'HX Forms',          section: null },
+    { page: 'hx-database.html',    icon: 'database',          label: 'Database',          section: null },
     { page: 'campaigns.html',     icon: 'folder-open',       label: 'Campaigns',         section: 'Manage' },
     { page: 'settings.html',      icon: 'settings',          label: 'Settings',          section: null },
   ];

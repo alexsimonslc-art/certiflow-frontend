@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loading… — Database</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <link rel="stylesheet" href="dashboard-patch.css"/>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ════════════════════════════════════════════════════════
+       DATABASE VIEW — Local Styles
+    ════════════════════════════════════════════════════════ */
+
+    /* ── Page header ─────────────────────────────────────── */
+    .dbv-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; gap: 14px; flex-wrap: wrap;
+    }
+    .dbv-header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .dbv-back {
+      display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+      padding: 8px 14px; border-radius: 9px; font-size: 13px; font-weight: 600;
+      color: var(--text-2); background: var(--glass); border: 1px solid var(--glass-border-2);
+      text-decoration: none; transition: var(--transition); cursor: pointer;
+    }
+    .dbv-back:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .dbv-back svg { width: 13px; height: 13px; }
+    .dbv-form-title {
+      font-family: var(--font-display); font-size: 22px; font-weight: 700;
+      color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .dbv-status {
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+      border-radius: 99px; font-size: 11.5px; font-weight: 600; flex-shrink: 0;
+    }
+    .dbv-status.published { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+    .dbv-status.closed    { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(244,63,94,0.2); }
+    .dbv-status.draft     { background: var(--glass); color: var(--text-3); border: 1px solid var(--glass-border); }
+    .dbv-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .dbv-status.published .dbv-status-dot { animation: pulseDot 1.5s ease infinite; }
+    @keyframes pulseDot { 0%,100%{opacity:1;box-shadow:0 0 5px currentColor} 50%{opacity:.4} }
+
+    .dbv-header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .dbv-btn {
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--glass-border-2); background: var(--glass); color: var(--text-2);
+      font-family: var(--font); transition: var(--transition);
+    }
+    .dbv-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .dbv-btn svg { width: 13px; height: 13px; }
+    .dbv-btn.green { color: var(--green); border-color: rgba(16,185,129,0.25); background: var(--green-dim); }
+    .dbv-btn.green:hover { background: rgba(16,185,129,0.2); }
+    .dbv-btn-primary {
+      background: var(--grad-primary); color: #fff; border: none;
+      box-shadow: 0 4px 16px rgba(0,212,255,0.15);
+    }
+    .dbv-btn-primary:hover { box-shadow: 0 6px 24px rgba(0,212,255,0.3); color: #fff; }
+
+    /* ── Live counter banner ──────────────────────────────── */
+    .dbv-live-banner {
+      display: none; align-items: center; gap: 10px;
+      padding: 10px 16px; margin-bottom: 18px; border-radius: 10px;
+      background: var(--cyan-dim); border: 1px solid rgba(0,212,255,0.2);
+      font-size: 13.5px; color: var(--text-2);
+    }
+    .dbv-live-banner.visible { display: flex; }
+    .dbv-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); animation: pulseDot 1.2s ease infinite; flex-shrink: 0; }
+    .dbv-refresh-now { color: var(--cyan); font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+    .dbv-refresh-now:hover { opacity: 0.8; }
+
+    /* ── Tab bar ─────────────────────────────────────────── */
+    .dbv-tabs {
+      display: flex; gap: 4px; margin-bottom: 24px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 12px; padding: 5px;
+    }
+    .dbv-tab {
+      display: flex; align-items: center; gap: 7px;
+      padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+      color: var(--text-3); cursor: pointer; transition: var(--transition);
+      background: none; border: none; font-family: var(--font);
+    }
+    .dbv-tab:hover { color: var(--text-2); }
+    .dbv-tab.active { background: var(--grad-primary); color: #fff; box-shadow: 0 2px 12px rgba(0,212,255,0.2); }
+    .dbv-tab svg { width: 15px; height: 15px; }
+
+    /* ══════════════════════════════════════════════════════
+       DASHBOARD TAB
+    ══════════════════════════════════════════════════════ */
+
+    /* Stat cards row */
+    .dbv-stats-row {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px;
+    }
+    .dbv-stat-card {
+      background: rgba(255,255,255,0.035); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; padding: 20px 22px;
+      position: relative; overflow: hidden; transition: var(--transition);
+    }
+    .dbv-stat-card:hover { border-color: rgba(255,255,255,0.16); }
+    .dbv-stat-card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.04) 0%,transparent 60%); pointer-events:none; }
+    .dbv-stat-label { font-size:11.5px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+    .dbv-stat-num { font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1; letter-spacing:-1px; margin-bottom:4px; }
+    .dbv-stat-sub { font-size:12.5px; color:var(--text-3); }
+    .dbv-stat-icon { position:absolute; right:18px; top:50%; transform:translateY(-50%); width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+    .dbv-stat-icon svg { width:17px; height:17px; }
+    .dbv-stat-icon.cyan   { background:var(--cyan-dim);   color:var(--cyan); }
+    .dbv-stat-icon.green  { background:var(--green-dim);  color:var(--green); }
+    .dbv-stat-icon.purple { background:var(--purple-dim); color:#a78bfa; }
+    .dbv-stat-icon.gold   { background:var(--gold-dim);   color:var(--gold); }
+
+    /* Chart grid */
+    .dbv-chart-grid { display: grid; gap: 20px; }
+    .dbv-chart-grid.has-timeline { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .dbv-chart-grid .timeline-card { grid-column: 1 / -1; }
+
+    .dbv-chart-card {
+      background: rgba(255,255,255,0.035); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; padding: 22px 24px;
+      position: relative; overflow: hidden;
+    }
+    .dbv-chart-card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,transparent 60%); pointer-events:none; }
+    .dbv-chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .dbv-chart-title { font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); }
+    .dbv-chart-sub   { font-size:12px; color:var(--text-3); margin-top:2px; }
+    .dbv-chart-wrap  { position:relative; }
+    .dbv-chart-wrap canvas { max-height: 260px; }
+
+    /* Time period pills */
+    .dbv-period-pills { display:flex; gap:4px; }
+    .dbv-period-pill {
+      padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600;
+      color:var(--text-3); cursor:pointer; border:none; background:none;
+      font-family:var(--font); transition:var(--transition);
+    }
+    .dbv-period-pill:hover { color:var(--text-2); }
+    .dbv-period-pill.active { background:rgba(0,212,255,0.12); color:var(--cyan); }
+
+    /* Number stats (for number/scale fields) */
+    .dbv-num-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:6px; }
+    .dbv-num-stat { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:9px; padding:12px; text-align:center; }
+    .dbv-num-stat-val { font-family:var(--font-display); font-size:22px; font-weight:700; color:var(--text); }
+    .dbv-num-stat-lbl { font-size:11px; color:var(--text-3); margin-top:3px; }
+
+    /* No charts state */
+    .dbv-no-charts {
+      display:flex; flex-direction:column; align-items:center;
+      padding:56px 24px; text-align:center;
+      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07);
+      border-radius:16px;
+    }
+    .dbv-no-charts svg { width:40px; height:40px; color:var(--text-3); opacity:0.3; margin-bottom:14px; }
+    .dbv-no-charts h3 { font-size:16px; font-weight:600; color:var(--text-2); margin-bottom:6px; }
+    .dbv-no-charts p  { font-size:13.5px; color:var(--text-3); max-width:300px; line-height:1.6; }
+
+    /* ══════════════════════════════════════════════════════
+       DATABASE TAB
+    ══════════════════════════════════════════════════════ */
+
+    /* Sub-tab pills */
+    .dbv-sub-tabs { display:flex; gap:5px; margin-bottom:18px; }
+    .dbv-sub-tab {
+      padding:7px 16px; border-radius:8px; font-size:13px; font-weight:600;
+      color:var(--text-3); cursor:pointer; border:none; background:none;
+      font-family:var(--font); transition:var(--transition);
+      border:1px solid transparent;
+    }
+    .dbv-sub-tab:hover { color:var(--text-2); }
+    .dbv-sub-tab.active { background:var(--glass); border-color:var(--glass-border-2); color:var(--text); }
+
+    /* Toolbar */
+    .dbv-toolbar {
+      display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;
+    }
+    .dbv-search-wrap { position:relative; flex:1; min-width:200px; }
+    .dbv-table-search {
+      width:100%; padding:9px 14px 9px 36px;
+      background:var(--glass); border:1px solid var(--glass-border-2);
+      border-radius:9px; color:var(--text); font-size:13.5px;
+      font-family:var(--font); outline:none; transition:var(--transition);
+    }
+    .dbv-table-search:focus { border-color:rgba(0,212,255,0.4); box-shadow:0 0 0 3px rgba(0,212,255,0.07); }
+    .dbv-table-search::placeholder { color:var(--text-3); }
+    .dbv-search-ico { position:absolute; left:11px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--text-3); pointer-events:none; }
+
+    .dbv-date-range { display:flex; align-items:center; gap:6px; }
+    .dbv-date-input {
+      padding:8px 10px; border-radius:8px; font-size:13px;
+      background:var(--glass); border:1px solid var(--glass-border-2);
+      color:var(--text); font-family:var(--font); outline:none; cursor:pointer;
+    }
+    .dbv-date-input:focus { border-color:rgba(0,212,255,0.4); }
+    .dbv-col-toggle-btn {
+      display:flex; align-items:center; gap:6px; padding:8px 13px;
+      border-radius:9px; font-size:12.5px; font-weight:600; cursor:pointer;
+      border:1px solid var(--glass-border-2); background:var(--glass); color:var(--text-2);
+      font-family:var(--font); transition:var(--transition); flex-shrink:0;
+    }
+    .dbv-col-toggle-btn:hover { color:var(--text); }
+    .dbv-col-toggle-btn svg { width:13px; height:13px; }
+
+    /* Results info */
+    .dbv-results-info { font-size:12.5px; color:var(--text-3); margin-bottom:12px; }
+    .dbv-results-info strong { color:var(--text-2); }
+
+    /* Table */
+    .dbv-table-wrap {
+      border:1px solid rgba(255,255,255,0.09); border-radius:14px;
+      overflow:hidden; overflow-x:auto;
+      background:rgba(255,255,255,0.02);
+    }
+    .dbv-table-wrap::-webkit-scrollbar { height:4px; }
+    .dbv-table-wrap::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:4px; }
+    .dbv-table { width:100%; border-collapse:collapse; }
+
+    .dbv-table thead tr { background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.09); }
+    .dbv-table thead th {
+      padding:11px 14px; font-size:11.5px; font-weight:700;
+      color:var(--text-3); text-transform:uppercase; letter-spacing:0.6px;
+      text-align:left; white-space:nowrap; cursor:pointer; user-select:none;
+      transition:color 0.15s;
+    }
+    .dbv-table thead th:hover { color:var(--text-2); }
+    .dbv-table thead th.sort-asc::after  { content:' ↑'; color:var(--cyan); }
+    .dbv-table thead th.sort-desc::after { content:' ↓'; color:var(--cyan); }
+    .dbv-table thead th:first-child { width:50px; }
+
+    .dbv-table tbody tr { border-bottom:1px solid rgba(255,255,255,0.05); transition:background 0.15s; cursor:pointer; }
+    .dbv-table tbody tr:hover { background:rgba(255,255,255,0.03); }
+    .dbv-table tbody tr:last-child { border-bottom:none; }
+    .dbv-table tbody td { padding:11px 14px; font-size:13.5px; color:var(--text-2); max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .dbv-table tbody td:first-child { color:var(--text-3); font-size:12px; font-family:var(--font-mono); }
+    .dbv-row-num { width:36px; height:36px; border-radius:8px; background:rgba(255,255,255,0.04); display:flex; align-items:center; justify-content:center; font-size:12px; font-family:var(--font-mono); color:var(--text-3); }
+
+    /* Empty table state */
+    .dbv-table-empty {
+      display:flex; flex-direction:column; align-items:center;
+      padding:56px 24px; text-align:center;
+    }
+    .dbv-table-empty svg { width:36px; height:36px; color:var(--text-3); opacity:0.3; margin-bottom:12px; }
+    .dbv-table-empty h3 { font-size:15px; font-weight:600; color:var(--text-2); margin-bottom:5px; }
+    .dbv-table-empty p  { font-size:13.5px; color:var(--text-3); }
+
+    /* Pagination */
+    .dbv-pagination { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-top:1px solid rgba(255,255,255,0.07); }
+    .dbv-pag-info { font-size:12.5px; color:var(--text-3); }
+    .dbv-pag-btns { display:flex; gap:5px; }
+    .dbv-pag-btn {
+      padding:6px 13px; border-radius:7px; font-size:12.5px; font-weight:600;
+      background:var(--glass); border:1px solid var(--glass-border-2); color:var(--text-2);
+      cursor:pointer; font-family:var(--font); transition:var(--transition);
+    }
+    .dbv-pag-btn:hover { color:var(--text); border-color:rgba(255,255,255,0.2); }
+    .dbv-pag-btn:disabled { opacity:0.35; pointer-events:none; }
+    .dbv-pag-btn.active  { background:var(--grad-primary); color:#fff; border-color:transparent; }
+
+    /* Column visibility dropdown */
+    .dbv-col-dropdown {
+      position:absolute; top:calc(100% + 8px); right:0; z-index:50;
+      background:#0d1728; border:1px solid rgba(255,255,255,0.12);
+      border-radius:12px; padding:10px; min-width:180px;
+      box-shadow:0 16px 48px rgba(0,0,0,0.5);
+      display:none; flex-direction:column; gap:4px;
+    }
+    .dbv-col-dropdown.open { display:flex; }
+    .dbv-col-item {
+      display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:7px;
+      font-size:13px; color:var(--text-2); cursor:pointer; user-select:none;
+      transition:background 0.15s;
+    }
+    .dbv-col-item:hover { background:rgba(255,255,255,0.05); color:var(--text); }
+    .dbv-col-check {
+      width:16px; height:16px; border-radius:4px; border:1.5px solid rgba(255,255,255,0.2);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s;
+    }
+    .dbv-col-check.on { background:var(--cyan); border-color:var(--cyan); }
+    .dbv-col-check.on::after { content:'✓'; font-size:10px; color:#000; font-weight:700; }
+
+    /* Row detail modal */
+    .dbv-row-modal-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75);
+      backdrop-filter:blur(16px); z-index:999; align-items:center; justify-content:center;
+    }
+    .dbv-row-modal-overlay.open { display:flex; }
+    .dbv-row-modal {
+      background:#080f1e; border:1px solid rgba(255,255,255,0.12); border-radius:20px;
+      padding:28px; max-width:520px; width:94%; max-height:85vh; overflow-y:auto;
+      box-shadow:0 40px 100px rgba(0,0,0,0.7); animation:slideUp 0.22s var(--ease) both;
+    }
+    .dbv-row-modal::-webkit-scrollbar { width:4px; }
+    .dbv-row-modal::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:4px; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .dbv-row-modal-title { font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--text); margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; }
+    .dbv-row-modal-close { font-size:20px; cursor:pointer; color:var(--text-3); background:none; border:none; padding:4px; line-height:1; transition:color 0.15s; }
+    .dbv-row-modal-close:hover { color:var(--text); }
+    .dbv-row-field { padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.07); }
+    .dbv-row-field:last-child { border-bottom:none; }
+    .dbv-row-field-label { font-size:11.5px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+    .dbv-row-field-value { font-size:14px; color:var(--text); line-height:1.5; word-break:break-word; }
+    .dbv-row-field-value.empty { color:var(--text-3); font-style:italic; }
+
+    /* ══════════════════════════════════════════════════════
+       PIVOT TAB
+    ══════════════════════════════════════════════════════ */
+    .dbv-pivot-controls { display:flex; align-items:flex-end; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
+    .dbv-pivot-select-wrap { display:flex; flex-direction:column; gap:6px; }
+    .dbv-pivot-label { font-size:11.5px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; }
+    .dbv-pivot-select {
+      padding:9px 32px 9px 12px; border-radius:9px; font-size:13.5px; min-width:180px;
+      background:var(--glass); border:1px solid var(--glass-border-2); color:var(--text);
+      font-family:var(--font); outline:none; cursor:pointer; appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%22 height=%2212%22 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%235a7394%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 10px center;
+    }
+    .dbv-pivot-select:focus { border-color:rgba(0,212,255,0.4); }
+    .dbv-pivot-select option { background:#0d1728; }
+
+    .dbv-pivot-wrap { overflow-x:auto; }
+    .dbv-pivot-table { border-collapse:collapse; min-width:100%; }
+    .dbv-pivot-table th, .dbv-pivot-table td {
+      padding:10px 16px; text-align:center; font-size:13px;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+    .dbv-pivot-table thead th {
+      background:rgba(255,255,255,0.04); font-weight:700; color:var(--text-3);
+      font-size:11.5px; text-transform:uppercase; letter-spacing:0.5px;
+    }
+    .dbv-pivot-table thead th:first-child { text-align:left; }
+    .dbv-pivot-table tbody td { color:var(--text-2); }
+    .dbv-pivot-table tbody td:first-child { color:var(--text); font-weight:600; text-align:left; }
+    .dbv-pivot-table tbody tr:hover td { background:rgba(255,255,255,0.025); }
+    .dbv-pivot-table .total-row td { background:rgba(0,212,255,0.06); color:var(--text); font-weight:700; border-top:2px solid rgba(0,212,255,0.2); }
+    .dbv-pivot-table .total-col { background:rgba(0,212,255,0.04); font-weight:700; color:var(--cyan); }
+    .dbv-pivot-no-data { padding:40px; text-align:center; color:var(--text-3); font-size:14px; }
+
+    /* ── Skeleton ─────────────────────────────────────────── */
+    .dbv-skel { animation:dbvPulse 1.4s ease infinite; background:rgba(255,255,255,0.06); border-radius:10px; }
+    @keyframes dbvPulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+    /* ── Loading overlay ─────────────────────────────────── */
+    .dbv-loading {
+      display:flex; flex-direction:column; align-items:center;
+      padding:80px 24px; gap:16px; color:var(--text-3);
+    }
+    .dbv-loading-spin {
+      width:40px; height:40px; border:3px solid rgba(0,212,255,0.2);
+      border-top-color:var(--cyan); border-radius:50%;
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width:1200px) {
+      .dbv-chart-grid.has-timeline { grid-template-columns:1fr; }
+      .dbv-chart-grid.has-timeline .timeline-card { grid-column:1; }
+    }
+    @media (max-width:900px) {
+      .dbv-stats-row { grid-template-columns:1fr 1fr; }
+      .dbv-chart-grid { grid-template-columns:1fr !important; }
+    }
+    @media (max-width:600px) {
+      .dbv-stats-row { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebarMount"></div>
+
+  <div class="main-area">
+    <header class="top-header">
+      <div class="page-breadcrumb">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;opacity:.4"><polyline points="9 18 15 12 9 6"/></svg>
+        <a href="hx-database.html" style="color:var(--text-2);text-decoration:none;transition:color 0.15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-2)'">Database</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;opacity:.4"><polyline points="9 18 15 12 9 6"/></svg>
+        <span id="breadcrumbForm">Loading…</span>
+      </div>
+      <div class="header-actions" id="headerActions" style="display:none">
+        <button class="btn btn-secondary btn-sm" onclick="refreshData()" id="refreshBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <main class="page-content fade-in">
+
+      <!-- Loading state -->
+      <div id="loadingState">
+        <div class="dbv-loading">
+          <div class="dbv-loading-spin"></div>
+          <div style="font-size:14px;color:var(--text-3)">Loading submission data…</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:-6px">Reading from your Google Sheet</div>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div id="errorState" style="display:none">
+        <div style="display:flex;flex-direction:column;align-items:center;padding:64px 24px;text-align:center">
+          <div style="width:64px;height:64px;border-radius:16px;background:var(--red-dim);display:flex;align-items:center;justify-content:center;margin-bottom:18px">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <h3 style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px">Could not load data</h3>
+          <p style="font-size:14px;color:var(--text-2);max-width:360px;line-height:1.6;margin-bottom:22px" id="errorMsg">Something went wrong.</p>
+          <a href="hx-database.html" class="btn btn-secondary">← Back to Database</a>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div id="mainContent" style="display:none">
+
+        <!-- Page header -->
+        <div class="dbv-header">
+          <div class="dbv-header-left">
+            <a href="hx-database.html" class="dbv-back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              Database
+            </a>
+            <div class="dbv-form-title" id="formTitle">Loading…</div>
+            <div class="dbv-status" id="formStatus"></div>
+          </div>
+          <div class="dbv-header-right">
+            <button class="dbv-btn" id="sheetBtn" onclick="openSheet()" style="display:none">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+              Open Sheet
+            </button>
+            <button class="dbv-btn green" onclick="exportCSV()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+            <button class="dbv-btn" onclick="refreshData()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="refreshIcon"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live banner -->
+        <div class="dbv-live-banner" id="liveBanner">
+          <div class="dbv-live-dot"></div>
+          <span id="liveBannerText">New responses available.</span>
+          <span class="dbv-refresh-now" onclick="refreshData()">Refresh now</span>
+        </div>
+
+        <!-- Tab bar -->
+        <div class="dbv-tabs">
+          <button class="dbv-tab active" id="tabDashboard" onclick="switchTab('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+          </button>
+          <button class="dbv-tab" id="tabDatabase" onclick="switchTab('database')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Database
+            <span id="rowCount" style="background:rgba(0,212,255,0.12);color:var(--cyan);border-radius:99px;padding:2px 8px;font-size:11px;font-weight:700">0</span>
+          </button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="panelDashboard">
+          <div class="dbv-stats-row" id="dashStats"></div>
+          <div id="dashCharts"></div>
+        </div>
+
+        <!-- DATABASE TAB -->
+        <div id="panelDatabase" style="display:none">
+          <!-- Sub-tabs -->
+          <div class="dbv-sub-tabs">
+            <button class="dbv-sub-tab active" id="subTable"  onclick="switchSubTab('table')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;margin-right:5px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+              Table
+            </button>
+            <button class="dbv-sub-tab" id="subPivot" onclick="switchSubTab('pivot')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;margin-right:5px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+              Pivot
+            </button>
+          </div>
+
+          <!-- TABLE sub-tab -->
+          <div id="subPanelTable">
+            <div class="dbv-toolbar">
+              <div class="dbv-search-wrap">
+                <svg class="dbv-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input class="dbv-table-search" id="tableSearch" type="text" placeholder="Search all fields…" oninput="applyFilters()"/>
+              </div>
+              <div class="dbv-date-range">
+                <input class="dbv-date-input" id="dateFrom" type="date" onchange="applyFilters()" title="From date"/>
+                <span style="color:var(--text-3);font-size:13px">→</span>
+                <input class="dbv-date-input" id="dateTo" type="date" onchange="applyFilters()" title="To date"/>
+              </div>
+              <div style="position:relative">
+                <button class="dbv-col-toggle-btn" onclick="toggleColDropdown()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                  Columns
+                </button>
+                <div class="dbv-col-dropdown" id="colDropdown">
+                  <!-- Populated by renderColDropdown() -->
+                </div>
+              </div>
+            </div>
+
+            <div class="dbv-results-info" id="resultsInfo"></div>
+
+            <div class="dbv-table-wrap">
+              <table class="dbv-table" id="dataTable">
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+              <div id="tableEmpty" style="display:none">
+                <div class="dbv-table-empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <h3>No results</h3>
+                  <p>No responses match your search or filters.</p>
+                </div>
+              </div>
+              <div class="dbv-pagination" id="paginationBar" style="display:none">
+                <div class="dbv-pag-info" id="pagInfo"></div>
+                <div class="dbv-pag-btns" id="pagBtns"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PIVOT sub-tab -->
+          <div id="subPanelPivot" style="display:none">
+            <div class="dbv-pivot-controls">
+              <div class="dbv-pivot-select-wrap">
+                <div class="dbv-pivot-label">Row</div>
+                <select class="dbv-pivot-select" id="pivotRow" onchange="renderPivot()">
+                  <option value="">— Select field —</option>
+                </select>
+              </div>
+              <div style="padding-bottom:10px;color:var(--text-3);font-size:13px;">×</div>
+              <div class="dbv-pivot-select-wrap">
+                <div class="dbv-pivot-label">Column</div>
+                <select class="dbv-pivot-select" id="pivotCol" onchange="renderPivot()">
+                  <option value="">— Select field —</option>
+                </select>
+              </div>
+              <div class="dbv-pivot-select-wrap">
+                <div class="dbv-pivot-label">Values</div>
+                <select class="dbv-pivot-select" id="pivotVal" onchange="renderPivot()">
+                  <option value="count">Count</option>
+                </select>
+              </div>
+              <button class="dbv-btn green" onclick="exportPivotCSV()" style="margin-bottom:1px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export
+              </button>
+            </div>
+            <div class="dbv-table-wrap">
+              <div class="dbv-pivot-wrap" id="pivotOutput">
+                <div class="dbv-pivot-no-data">Select row and column fields above to build the pivot table.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /mainContent -->
+    </main>
+  </div>
+</div>
+
+<!-- Row detail modal -->
+<div class="dbv-row-modal-overlay" id="rowModal" onclick="if(event.target===this)closeRowModal()">
+  <div class="dbv-row-modal">
+    <div class="dbv-row-modal-title">
+      <span>Response Details</span>
+      <button class="dbv-row-modal-close" onclick="closeRowModal()">✕</button>
+    </div>
+    <div id="rowModalContent"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="dashboard.js"></script>
+<script>
+/* ════════════════════════════════════════════════════════════════
+   DATABASE VIEW — Main Logic
+════════════════════════════════════════════════════════════════ */
+
+requireAuth();
+document.getElementById('sidebarMount').outerHTML = renderSidebar('hx-database.html');
+initSidebar();
+
+const API = 'https://certiflow-backend-73xk.onrender.com';
+
+/* ── Runtime state ──────────────────────────────────────────────── */
+let _formId   = new URLSearchParams(window.location.search).get('form');
+let _data     = null;    // { headers, rows, fields, formName, status, sheetId }
+let _filtered = [];      // rows after search/filter
+let _sortCol  = 1;       // default sort by "Submitted At"
+let _sortDir  = 'desc';
+let _page     = 0;
+const PAGE_SIZE = 50;
+let _hiddenCols = new Set();
+let _activeTab  = 'dashboard';
+let _subTab     = 'table';
+let _timePeriod = 'day';
+let _charts     = {};    // Chart.js instances — destroyed on re-render
+let _liveCount  = 0;
+let _liveTimer  = null;
+
+/* ════════════════════════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════════════════════════ */
+(async function boot() {
+  if (!_formId) {
+    showError('No form specified. Please go back and select a form.');
+    return;
+  }
+  await loadData();
+  startLiveWatcher();
+})();
+
+/* ── Load data from backend ─────────────────────────────────────── */
+async function loadData(force = false) {
+  // Check sessionStorage cache first
+  const cacheKey = `hxdb_${_formId}`;
+  const cached   = !force && sessionStorage.getItem(cacheKey);
+  if (cached) {
+    _data = JSON.parse(cached);
+    renderAll();
+    return;
+  }
+
+  try {
+    const res  = await fetch(`${API}/api/hxdb/data/${_formId}`, {
+      headers: { 'Authorization': 'Bearer ' + getToken() },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Could not load data');
+    }
+    _data = await res.json();
+    sessionStorage.setItem(cacheKey, JSON.stringify(_data));
+    renderAll();
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function refreshData() {
+  const icon = document.getElementById('refreshIcon');
+  icon?.classList.add('spinning');
+  sessionStorage.removeItem(`hxdb_${_formId}`);
+  await loadData(true);
+  icon?.classList.remove('spinning');
+  document.getElementById('liveBanner').classList.remove('visible');
+  _liveCount = _data?.rows?.length || 0;
+  toast('Data refreshed', 'success', 2000);
+}
+
+/* ── Live watcher: checks submission_count in Supabase every 30s ── */
+function startLiveWatcher() {
+  _liveCount = _data?.rows?.length || 0;
+  _liveTimer = setInterval(async () => {
+    try {
+      // Lightweight: fetch just the submission_count from our summary endpoint
+      const res  = await fetch(`${API}/api/hxdb/summary`, {
+        headers: { 'Authorization': 'Bearer ' + getToken() },
+      });
+      if (!res.ok) return;
+      const { forms } = await res.json();
+      const form = forms.find(f => f.id === _formId);
+      if (!form) return;
+      const newCount = form.submissionCount || 0;
+      if (newCount > _liveCount) {
+        const diff = newCount - _liveCount;
+        const banner = document.getElementById('liveBanner');
+        document.getElementById('liveBannerText').textContent =
+          `${diff} new response${diff > 1 ? 's' : ''} received.`;
+        banner.classList.add('visible');
+      }
+    } catch { /* silent */ }
+  }, 30000);
+}
+
+/* ── Render everything once data is loaded ─────────────────────── */
+function renderAll() {
+  if (!_data) return;
+
+  document.getElementById('loadingState').style.display    = 'none';
+  document.getElementById('errorState').style.display      = 'none';
+  document.getElementById('mainContent').style.display     = '';
+  document.getElementById('headerActions').style.display   = '';
+
+  // Breadcrumb + title + status
+  const name = _data.formName || 'Form';
+  document.title = `${name} — Database`;
+  document.getElementById('breadcrumbForm').textContent = name;
+  document.getElementById('formTitle').textContent      = name;
+
+  const statusEl = document.getElementById('formStatus');
+  statusEl.className = 'dbv-status ' + (_data.status || 'draft');
+  statusEl.innerHTML = `<div class="dbv-status-dot"></div> ${ucFirst(_data.status||'draft')}`;
+
+  // Sheet button
+  if (_data.sheetId) {
+    document.getElementById('sheetBtn').style.display = '';
+    window._sheetId = _data.sheetId;
+  }
+
+  // Row count badge
+  document.getElementById('rowCount').textContent = (_data.rows||[]).length;
+
+  // Populate pivot selects
+  populatePivotSelects();
+
+  // Render active tab
+  renderDashboard();
+  applyFilters();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════════════════════════════ */
+function switchTab(tab) {
+  _activeTab = tab;
+  document.getElementById('tabDashboard').classList.toggle('active', tab === 'dashboard');
+  document.getElementById('tabDatabase').classList.toggle('active', tab === 'database');
+  document.getElementById('panelDashboard').style.display = tab === 'dashboard' ? '' : 'none';
+  document.getElementById('panelDatabase').style.display  = tab === 'database'  ? '' : 'none';
+}
+
+function switchSubTab(sub) {
+  _subTab = sub;
+  document.getElementById('subTable').classList.toggle('active', sub === 'table');
+  document.getElementById('subPivot').classList.toggle('active', sub === 'pivot');
+  document.getElementById('subPanelTable').style.display = sub === 'table' ? '' : 'none';
+  document.getElementById('subPanelPivot').style.display = sub === 'pivot' ? '' : 'none';
+  if (sub === 'pivot') renderPivot();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DASHBOARD TAB — Stat cards + Auto-charts
+════════════════════════════════════════════════════════════════ */
+function renderDashboard() {
+  const rows    = _data?.rows    || [];
+  const headers = _data?.headers || [];
+  if (!rows.length) { renderEmptyDashboard(); return; }
+
+  // ── Stat cards ────────────────────────────────────────────────
+  const total    = rows.length;
+  const tsIdx    = headers.indexOf('Submitted At');
+  const today    = rows.filter(r => {
+    if (tsIdx < 0) return false;
+    return new Date(r[tsIdx]).toDateString() === new Date().toDateString();
+  }).length;
+  const thisWeek = rows.filter(r => {
+    if (tsIdx < 0) return false;
+    const diff = Date.now() - new Date(r[tsIdx]).getTime();
+    return diff < 7 * 86400000;
+  }).length;
+  const lastTs   = tsIdx >= 0 ? rows.map(r => r[tsIdx]).filter(Boolean).sort().pop() : null;
+  const lastStr  = lastTs ? timeAgo(lastTs) : '—';
+
+  document.getElementById('dashStats').innerHTML = `
+    <div class="dbv-stat-card">
+      <div class="dbv-stat-label">Total Responses</div>
+      <div class="dbv-stat-num">${total.toLocaleString()}</div>
+      <div class="dbv-stat-sub">All time</div>
+      <div class="dbv-stat-icon cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+    </div>
+    <div class="dbv-stat-card">
+      <div class="dbv-stat-label">Today</div>
+      <div class="dbv-stat-num">${today}</div>
+      <div class="dbv-stat-sub">Since midnight</div>
+      <div class="dbv-stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+    </div>
+    <div class="dbv-stat-card">
+      <div class="dbv-stat-label">This Week</div>
+      <div class="dbv-stat-num">${thisWeek}</div>
+      <div class="dbv-stat-sub">Last 7 days</div>
+      <div class="dbv-stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+    </div>
+    <div class="dbv-stat-card">
+      <div class="dbv-stat-label">Last Response</div>
+      <div class="dbv-stat-num" style="font-size:20px;letter-spacing:-0.3px;margin-top:4px">${lastStr}</div>
+      <div class="dbv-stat-sub">${lastTs ? new Date(lastTs).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
+      <div class="dbv-stat-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12"/></svg></div>
+    </div>`;
+
+  // ── Charts ────────────────────────────────────────────────────
+  // Destroy existing charts first
+  Object.values(_charts).forEach(c => c.destroy());
+  _charts = {};
+
+  const chartsContainer = document.getElementById('dashCharts');
+  const chartFields = (_data.fields || []).filter(f =>
+    ['radio','dropdown','checkbox','number','linear_scale'].includes(f.type)
+  );
+
+  let html = `<div class="dbv-chart-grid${tsIdx >= 0 ? ' has-timeline' : ''}">`;
+
+  // Timeline chart (always first if we have timestamps)
+  if (tsIdx >= 0) {
+    html += `
+      <div class="dbv-chart-card timeline-card">
+        <div class="dbv-chart-header">
+          <div>
+            <div class="dbv-chart-title">Submissions Over Time</div>
+            <div class="dbv-chart-sub">Daily response count</div>
+          </div>
+          <div class="dbv-period-pills">
+            <button class="dbv-period-pill${_timePeriod==='day'?' active':''}" onclick="setTimePeriod('day')">Day</button>
+            <button class="dbv-period-pill${_timePeriod==='week'?' active':''}" onclick="setTimePeriod('week')">Week</button>
+            <button class="dbv-period-pill${_timePeriod==='month'?' active':''}" onclick="setTimePeriod('month')">Month</button>
+          </div>
+        </div>
+        <div class="dbv-chart-wrap"><canvas id="chartTimeline"></canvas></div>
+      </div>`;
+  }
+
+  // Field charts
+  chartFields.forEach(f => {
+    html += `
+      <div class="dbv-chart-card">
+        <div class="dbv-chart-header">
+          <div>
+            <div class="dbv-chart-title">${escHtml(f.label)}</div>
+            <div class="dbv-chart-sub">${CHART_TYPE_LABEL[f.type] || ''}</div>
+          </div>
+        </div>
+        <div id="chartWrap_${f.id}"></div>
+      </div>`;
+  });
+
+  if (!chartFields.length && tsIdx < 0) {
+    html += `
+      <div class="dbv-no-charts" style="grid-column:1/-1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <h3>No chart-worthy fields</h3>
+        <p>Add Multiple Choice, Dropdown, Checkbox, Number, or Rating Scale fields to your form to see analytics here.</p>
+      </div>`;
+  }
+
+  html += '</div>';
+  chartsContainer.innerHTML = html;
+
+  // Now render charts
+  if (tsIdx >= 0) renderTimelineChart(rows, tsIdx);
+  chartFields.forEach(f => renderFieldChart(f, rows, headers));
+}
+
+const CHART_TYPE_LABEL = {
+  radio: 'Multiple choice distribution',
+  dropdown: 'Response distribution',
+  checkbox: 'Selection breakdown',
+  number: 'Numeric statistics',
+  linear_scale: 'Rating distribution',
+};
+
+const CHART_COLORS = [
+  'rgba(0,212,255,0.85)', 'rgba(124,58,237,0.85)', 'rgba(16,185,129,0.85)',
+  'rgba(245,158,11,0.85)', 'rgba(244,63,94,0.85)', 'rgba(99,102,241,0.85)',
+  'rgba(236,72,153,0.85)', 'rgba(6,182,212,0.85)',
+];
+
+Chart.defaults.color = '#7a90b0';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+/* ── Timeline chart ─────────────────────────────────────────────── */
+function renderTimelineChart(rows, tsIdx) {
+  const canvas = document.getElementById('chartTimeline');
+  if (!canvas) return;
+
+  // Group by period
+  const counts = {};
+  rows.forEach(r => {
+    const raw = r[tsIdx];
+    if (!raw) return;
+    const d   = new Date(raw);
+    let key;
+    if (_timePeriod === 'day')   key = d.toISOString().slice(0,10);
+    if (_timePeriod === 'week')  key = weekKey(d);
+    if (_timePeriod === 'month') key = d.toISOString().slice(0,7);
+    counts[key] = (counts[key]||0) + 1;
+  });
+
+  const labels  = Object.keys(counts).sort();
+  const values  = labels.map(k => counts[k]);
+  const display = labels.map(l => {
+    if (_timePeriod === 'month') return new Date(l+'-01').toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
+    if (_timePeriod === 'week')  return 'W/o ' + l.slice(5);
+    return new Date(l).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  });
+
+  if (_charts.timeline) _charts.timeline.destroy();
+  _charts.timeline = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: display,
+      datasets: [{
+        label: 'Responses',
+        data: values,
+        borderColor: '#00d4ff',
+        backgroundColor: 'rgba(0,212,255,0.08)',
+        borderWidth: 2.5,
+        pointRadius: values.length < 30 ? 4 : 2,
+        pointBackgroundColor: '#00d4ff',
+        fill: true,
+        tension: 0.35,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+}
+
+function setTimePeriod(period) {
+  _timePeriod = period;
+  document.querySelectorAll('.dbv-period-pill').forEach(p => p.classList.toggle('active', p.textContent.toLowerCase() === period));
+  const tsIdx = _data.headers.indexOf('Submitted At');
+  if (tsIdx >= 0) renderTimelineChart(_data.rows, tsIdx);
+}
+
+function weekKey(d) {
+  const start = new Date(d); start.setDate(d.getDate() - d.getDay());
+  return start.toISOString().slice(0,10);
+}
+
+/* ── Field charts ───────────────────────────────────────────────── */
+function renderFieldChart(field, rows, headers) {
+  const wrap = document.getElementById('chartWrap_' + field.id);
+  if (!wrap) return;
+  const hIdx = headers.indexOf(field.label);
+  if (hIdx < 0) return;
+  const vals = rows.map(r => r[hIdx]).filter(Boolean);
+  if (!vals.length) { wrap.innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:8px 0">No data yet</div>'; return; }
+
+  if (field.type === 'number' || field.type === 'linear_scale') {
+    const nums = vals.map(Number).filter(n => !isNaN(n));
+    if (!nums.length) return;
+    const avg    = (nums.reduce((a,b) => a+b, 0) / nums.length).toFixed(1);
+    const min    = Math.min(...nums);
+    const max    = Math.max(...nums);
+    const sorted = [...nums].sort((a,b) => a-b);
+    const median = sorted[Math.floor(sorted.length/2)];
+
+    // Also render a bar/star viz for scale fields
+    if (field.type === 'linear_scale') {
+      const scaleMax = field.max || 5;
+      const dist = {};
+      for (let i = 1; i <= scaleMax; i++) dist[i] = 0;
+      nums.forEach(n => { if (dist[n] !== undefined) dist[n]++; });
+      const canvas = document.createElement('canvas');
+      wrap.innerHTML = '';
+      wrap.appendChild(canvas);
+      const id = 'sc_' + field.id;
+      canvas.id = id;
+      _charts[id] = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(dist),
+          datasets: [{ data: Object.values(dist), backgroundColor: CHART_COLORS.slice(0,scaleMax), borderRadius: 6, borderSkipped: false }],
+        },
+        options: { responsive:true, maintainAspectRatio:true, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{precision:0},grid:{color:'rgba(255,255,255,0.06)'}},x:{grid:{display:false}}} },
+      });
+    }
+
+    wrap.innerHTML += `
+      <div class="dbv-num-stats" style="margin-top:${field.type==='linear_scale'?'14px':'0'}">
+        <div class="dbv-num-stat"><div class="dbv-num-stat-val">${avg}</div><div class="dbv-num-stat-lbl">Average</div></div>
+        <div class="dbv-num-stat"><div class="dbv-num-stat-val">${min}</div><div class="dbv-num-stat-lbl">Min</div></div>
+        <div class="dbv-num-stat"><div class="dbv-num-stat-val">${max}</div><div class="dbv-num-stat-lbl">Max</div></div>
+      </div>`;
+    return;
+  }
+
+  // Categorical: count occurrences
+  const counts = {};
+  vals.forEach(v => {
+    const parts = v.includes(',') ? v.split(', ') : [v];
+    parts.forEach(p => { counts[p.trim()] = (counts[p.trim()]||0) + 1; });
+  });
+  const sorted  = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+  const labels  = sorted.map(([l]) => l);
+  const values  = sorted.map(([,v]) => v);
+  const total   = values.reduce((a,b) => a+b, 0);
+  const colors  = CHART_COLORS.slice(0, labels.length);
+
+  const canvas = document.createElement('canvas');
+  wrap.appendChild(canvas);
+  const chartId = 'f_' + field.id;
+
+  const isDonut = field.type === 'radio' && labels.length <= 6;
+
+  _charts[chartId] = new Chart(canvas, {
+    type: isDonut ? 'doughnut' : 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors,
+        ...(isDonut ? { borderWidth: 2, borderColor: '#080d1c', hoverOffset: 6 }
+                    : { borderRadius: 6, borderSkipped: false }),
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      indexAxis: isDonut ? undefined : 'y',
+      plugins: {
+        legend: isDonut ? { position:'right', labels:{ padding:14, boxWidth:12, font:{size:12} } } : { display:false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const pct = ((ctx.raw / total) * 100).toFixed(1);
+              return ` ${ctx.raw} (${pct}%)`;
+            },
+          },
+        },
+      },
+      scales: isDonut ? {} : {
+        x: { beginAtZero:true, ticks:{precision:0}, grid:{color:'rgba(255,255,255,0.06)'} },
+        y: { grid:{display:false} },
+      },
+    },
+  });
+}
+
+function renderEmptyDashboard() {
+  document.getElementById('dashStats').innerHTML = '';
+  document.getElementById('dashCharts').innerHTML = `
+    <div class="dbv-no-charts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      <h3>No responses yet</h3>
+      <p>Share your form link to start collecting responses. They'll appear here automatically.</p>
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DATABASE TAB — TABLE VIEW
+════════════════════════════════════════════════════════════════ */
+function applyFilters() {
+  const rows    = _data?.rows    || [];
+  const headers = _data?.headers || [];
+  const query   = (document.getElementById('tableSearch')?.value||'').toLowerCase().trim();
+  const dateFrom = document.getElementById('dateFrom')?.value;
+  const dateTo   = document.getElementById('dateTo')?.value;
+  const tsIdx    = headers.indexOf('Submitted At');
+
+  _filtered = rows.filter(row => {
+    // Text search across all cells
+    if (query && !row.some(cell => String(cell||'').toLowerCase().includes(query))) return false;
+    // Date range
+    if (dateFrom && tsIdx >= 0) {
+      if (new Date(row[tsIdx]) < new Date(dateFrom)) return false;
+    }
+    if (dateTo && tsIdx >= 0) {
+      const toEnd = new Date(dateTo); toEnd.setHours(23,59,59,999);
+      if (new Date(row[tsIdx]) > toEnd) return false;
+    }
+    return true;
+  });
+
+  // Sort
+  _filtered.sort((a, b) => {
+    const av = a[_sortCol] || '';
+    const bv = b[_sortCol] || '';
+    const cmp = av.localeCompare(bv, undefined, { numeric: true, sensitivity: 'base' });
+    return _sortDir === 'asc' ? cmp : -cmp;
+  });
+
+  _page = 0;
+  renderTable();
+}
+
+function renderTable() {
+  const headers    = _data?.headers || [];
+  const visHeaders = headers.filter((_, i) => !_hiddenCols.has(i));
+
+  // Results info
+  document.getElementById('resultsInfo').innerHTML = `
+    Showing <strong>${_filtered.length}</strong> of <strong>${(_data?.rows||[]).length}</strong> responses`;
+
+  if (!headers.length) {
+    document.getElementById('tableHead').innerHTML = '';
+    document.getElementById('tableBody').innerHTML = '';
+    document.getElementById('tableEmpty').style.display = '';
+    return;
+  }
+
+  // Table head
+  document.getElementById('tableHead').innerHTML = `
+    <tr>
+      <th>#</th>
+      ${visHeaders.map((h, vi) => {
+        const origIdx = headers.indexOf(h);
+        const cls = origIdx === _sortCol ? (_sortDir === 'asc' ? 'sort-asc' : 'sort-desc') : '';
+        return `<th class="${cls}" onclick="sortBy(${origIdx})">${escHtml(h)}</th>`;
+      }).join('')}
+    </tr>`;
+
+  // Paginate
+  const start  = _page * PAGE_SIZE;
+  const end    = start + PAGE_SIZE;
+  const pageRows = _filtered.slice(start, end);
+
+  if (!pageRows.length) {
+    document.getElementById('tableBody').innerHTML = '';
+    document.getElementById('tableEmpty').style.display = '';
+    document.getElementById('paginationBar').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('tableEmpty').style.display = 'none';
+
+  document.getElementById('tableBody').innerHTML = pageRows.map((row, i) => {
+    const visVals = headers.map((h, idx) => ({ h, idx, v: row[idx]||'' })).filter(x => !_hiddenCols.has(x.idx));
+    return `
+      <tr onclick="openRowModal(${start + i})">
+        <td><div class="dbv-row-num">${start + i + 1}</div></td>
+        ${visVals.map(({h, v}) => {
+          const isDate = h === 'Submitted At' && v;
+          const display = isDate
+            ? new Date(v).toLocaleString('en-IN',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'})
+            : v;
+          return `<td title="${escHtml(v)}">${escHtml(display)}</td>`;
+        }).join('')}
+      </tr>`;
+  }).join('');
+
+  // Pagination
+  const totalPages = Math.ceil(_filtered.length / PAGE_SIZE);
+  if (totalPages > 1) {
+    document.getElementById('paginationBar').style.display = '';
+    document.getElementById('pagInfo').textContent = `Page ${_page+1} of ${totalPages} (${_filtered.length} rows)`;
+    const btns = document.getElementById('pagBtns');
+    btns.innerHTML = '';
+    // Prev
+    const prev = document.createElement('button');
+    prev.className = 'dbv-pag-btn'; prev.textContent = '←';
+    prev.disabled = _page === 0;
+    prev.onclick = () => { _page--; renderTable(); };
+    btns.appendChild(prev);
+    // Page numbers
+    const range = pageRange(_page, totalPages);
+    range.forEach(p => {
+      if (p === '…') { const s = document.createElement('span'); s.textContent='…'; s.style.cssText='color:var(--text-3);padding:0 4px'; btns.appendChild(s); return; }
+      const btn = document.createElement('button');
+      btn.className = 'dbv-pag-btn' + (p === _page ? ' active' : '');
+      btn.textContent = p + 1;
+      btn.onclick = () => { _page = p; renderTable(); };
+      btns.appendChild(btn);
+    });
+    // Next
+    const next = document.createElement('button');
+    next.className = 'dbv-pag-btn'; next.textContent = '→';
+    next.disabled = _page >= totalPages - 1;
+    next.onclick = () => { _page++; renderTable(); };
+    btns.appendChild(next);
+  } else {
+    document.getElementById('paginationBar').style.display = 'none';
+  }
+
+  // Column toggle dropdown
+  renderColDropdown(headers);
+}
+
+function pageRange(cur, total) {
+  if (total <= 7) return Array.from({length:total},(_,i)=>i);
+  const pages = [];
+  if (cur > 2) { pages.push(0); if (cur > 3) pages.push('…'); }
+  for (let i = Math.max(0,cur-2); i <= Math.min(total-1,cur+2); i++) pages.push(i);
+  if (cur < total-3) { if (cur < total-4) pages.push('…'); pages.push(total-1); }
+  return pages;
+}
+
+function sortBy(colIdx) {
+  if (_sortCol === colIdx) { _sortDir = _sortDir === 'asc' ? 'desc' : 'asc'; }
+  else { _sortCol = colIdx; _sortDir = 'asc'; }
+  applyFilters();
+}
+
+/* ── Column visibility ──────────────────────────────────────────── */
+function renderColDropdown(headers) {
+  const dd = document.getElementById('colDropdown');
+  if (!dd) return;
+  dd.innerHTML = headers.map((h, i) => {
+    const on = !_hiddenCols.has(i);
+    return `
+      <div class="dbv-col-item" onclick="toggleCol(${i})">
+        <div class="dbv-col-check${on?' on':''}"></div>
+        <span>${escHtml(h)}</span>
+      </div>`;
+  }).join('');
+}
+function toggleColDropdown() {
+  document.getElementById('colDropdown').classList.toggle('open');
+  document.addEventListener('click', closeColDropdown, { once: true });
+}
+function closeColDropdown(e) {
+  if (!e?.target?.closest('.dbv-col-toggle-btn')) {
+    document.getElementById('colDropdown')?.classList.remove('open');
+  }
+}
+function toggleCol(idx) {
+  if (_hiddenCols.has(idx)) _hiddenCols.delete(idx);
+  else if (_hiddenCols.size < (_data.headers.length - 1)) _hiddenCols.add(idx);
+  renderTable();
+}
+
+/* ── Row detail modal ───────────────────────────────────────────── */
+function openRowModal(rowIdx) {
+  const row     = _filtered[rowIdx];
+  const headers = _data?.headers || [];
+  if (!row) return;
+
+  document.getElementById('rowModalContent').innerHTML = headers.map((h, i) => {
+    const val = row[i] || '';
+    const isDate = h === 'Submitted At' && val;
+    const display = isDate
+      ? new Date(val).toLocaleString('en-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})
+      : val;
+    const isUrl = val && (val.startsWith('http://') || val.startsWith('https://'));
+    const valueHtml = !val ? '<span class="dbv-row-field-value empty">—</span>'
+      : isUrl ? `<a href="${escHtml(val)}" target="_blank" style="color:var(--cyan)">${escHtml(display)}</a>`
+      : `<div class="dbv-row-field-value">${escHtml(display)}</div>`;
+
+    return `<div class="dbv-row-field">
+      <div class="dbv-row-field-label">${escHtml(h)}</div>
+      ${valueHtml}
+    </div>`;
+  }).join('');
+
+  document.getElementById('rowModal').classList.add('open');
+}
+function closeRowModal() { document.getElementById('rowModal').classList.remove('open'); }
+
+/* ── CSV Export ─────────────────────────────────────────────────── */
+function exportCSV() {
+  const headers = _data?.headers || [];
+  const rows    = _filtered.length ? _filtered : (_data?.rows || []);
+  if (!rows.length) { toast('No data to export', 'warn'); return; }
+  const lines   = [headers.join(','), ...rows.map(r =>
+    headers.map((_, i) => `"${(r[i]||'').replace(/"/g,'""')}"`).join(',')
+  )];
+  const blob    = new Blob([lines.join('\n')], { type:'text/csv' });
+  const a       = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob),
+    download: `${_data.formName || 'responses'}_${new Date().toISOString().slice(0,10)}.csv`,
+  });
+  a.click(); URL.revokeObjectURL(a.href);
+  toast(`Exported ${rows.length} rows`, 'success');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PIVOT TAB
+════════════════════════════════════════════════════════════════ */
+function populatePivotSelects() {
+  const headers = _data?.headers || [];
+  const fields  = _data?.fields  || [];
+  // Only include categorical fields (radio, dropdown, checkbox) + text for pivot
+  const catFields = fields.filter(f => ['radio','dropdown','checkbox','text','phone','number'].includes(f.type));
+  const opts = catFields.map(f => {
+    const idx = headers.indexOf(f.label);
+    return idx >= 0 ? `<option value="${idx}">${escHtml(f.label)}</option>` : '';
+  }).filter(Boolean).join('');
+
+  ['pivotRow','pivotCol'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel) sel.innerHTML = `<option value="">— Select field —</option>` + opts;
+  });
+}
+
+function renderPivot() {
+  const rowSel = document.getElementById('pivotRow');
+  const colSel = document.getElementById('pivotCol');
+  const out    = document.getElementById('pivotOutput');
+  const rIdx   = +rowSel?.value;
+  const cIdx   = +colSel?.value;
+  if (!rowSel?.value || !colSel?.value || rIdx === cIdx) {
+    out.innerHTML = '<div class="dbv-pivot-no-data">Select two different fields to build the pivot table.</div>';
+    return;
+  }
+
+  const rows = _data?.rows || [];
+  const rVals = [...new Set(rows.map(r => r[rIdx]||'(blank)').filter(Boolean))].sort();
+  const cVals = [...new Set(rows.map(r => r[cIdx]||'(blank)').filter(Boolean))].sort();
+  const matrix = {};
+  rVals.forEach(r => { matrix[r] = {}; cVals.forEach(c => { matrix[r][c] = 0; }); });
+  const rTotals = {}, cTotals = {};
+  rVals.forEach(r => rTotals[r] = 0);
+  cVals.forEach(c => cTotals[c] = 0);
+  let grand = 0;
+
+  rows.forEach(row => {
+    const rv = row[rIdx]||'(blank)'; const cv = row[cIdx]||'(blank)';
+    if (matrix[rv] !== undefined && matrix[rv][cv] !== undefined) {
+      matrix[rv][cv]++;
+      rTotals[rv]++;
+      cTotals[cv]++;
+      grand++;
+    }
+  });
+
+  const rHeader  = (_data.headers||[])[rIdx] || 'Row';
+  const cHeader  = (_data.headers||[])[cIdx] || 'Column';
+
+  out.innerHTML = `
+    <table class="dbv-pivot-table">
+      <thead>
+        <tr>
+          <th>${escHtml(rHeader)} \\ ${escHtml(cHeader)}</th>
+          ${cVals.map(c => `<th>${escHtml(c)}</th>`).join('')}
+          <th class="total-col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rVals.map(rv => `
+          <tr>
+            <td>${escHtml(rv)}</td>
+            ${cVals.map(cv => `<td>${matrix[rv][cv]||0}</td>`).join('')}
+            <td class="total-col">${rTotals[rv]}</td>
+          </tr>`).join('')}
+        <tr class="total-row">
+          <td>Total</td>
+          ${cVals.map(cv => `<td>${cTotals[cv]}</td>`).join('')}
+          <td>${grand}</td>
+        </tr>
+      </tbody>
+    </table>`;
+}
+
+function exportPivotCSV() {
+  const wrap = document.getElementById('pivotOutput');
+  const table = wrap?.querySelector('table');
+  if (!table) { toast('Build a pivot table first', 'warn'); return; }
+  const rows = [];
+  table.querySelectorAll('tr').forEach(tr => {
+    const cells = [...tr.querySelectorAll('th,td')].map(td => `"${td.textContent.trim().replace(/"/g,'""')}"`);
+    rows.push(cells.join(','));
+  });
+  const blob = new Blob([rows.join('\n')], { type:'text/csv' });
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob),
+    download: `pivot_${new Date().toISOString().slice(0,10)}.csv`,
+  });
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+/* ── Utils ──────────────────────────────────────────────────────── */
+function openSheet() {
+  if (window._sheetId) window.open('https://docs.google.com/spreadsheets/d/' + window._sheetId, '_blank');
+}
+function showError(msg) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display   = '';
+  document.getElementById('errorMsg').textContent        = msg;
+}
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function ucFirst(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function timeAgo(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff/60000), h = Math.floor(m/60), d = Math.floor(h/24);
+  if (d>30) return new Date(iso).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  if (d>0) return `${d}d ago`; if (h>0) return `${h}h ago`;
+  if (m>0) return `${m}m ago`; return 'Just now';
+}
+</script>
+<style>
+@keyframes spin { to { transform:rotate(360deg); } }
+.spinning { animation:spin 0.8s linear infinite; }
+</style>
+</body>
+</html>
