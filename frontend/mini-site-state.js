@@ -25,7 +25,7 @@ const BLOCK_REG = {
     defaults: () => ({
       title: 'About This Event',
       content: 'Write a description of your event here. Tell people what to expect, who should attend, and why they should register.',
-      alignment: 'left', bgColor: '',
+      alignment: 'center', bgColor: '',
     }),
   },
 
@@ -92,9 +92,9 @@ const BLOCK_REG = {
       subtitle: 'Secure your spot — it only takes a minute.',
       buttonText: 'Register Now →',
       buttonColor: '',
-      connectType: 'url',   // 'url' | 'hxform'
-      connectUrl: '',        // form URL when connectType is 'url'
-      hxFormId: '',          // HX Form id when connectType is 'hxform'
+      connectType: 'url',
+      connectUrl: '',
+      hxFormId: '',
       bgColor: '',
     }),
   },
@@ -143,11 +143,42 @@ const BLOCK_REG = {
 
 /* ── Category metadata ─────────────────────────────────────── */
 const BLOCK_CATS = {
-  structure: { label: 'Structure', color: '#00d4ff' },
-  event: { label: 'Event Info', color: '#f59e0b' },
-  engagement: { label: 'Engagement', color: '#a78bfa' },
-  layout: { label: 'Layout', color: '#5a7394' },
+  structure:  { label: 'Structure',   color: '#00d4ff' },
+  event:      { label: 'Event Info',  color: '#f59e0b' },
+  engagement: { label: 'Engagement',  color: '#a78bfa' },
+  layout:     { label: 'Layout',      color: '#5a7394' },
 };
+
+/* ═══════════════════════════════════════════════════════════════
+   USER SCOPING HELPERS
+   Scope localStorage keys per-user so accounts never share data.
+═══════════════════════════════════════════════════════════════ */
+
+/** Extract the logged-in user's unique ID from their JWT. */
+function mss_getUserId() {
+  try {
+    const token = localStorage.getItem('Honourix_token') || '';
+    if (!token) return 'anon';
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.googleId || payload.sub || payload.id || 'anon';
+  } catch (e) {
+    return 'anon';
+  }
+}
+
+/** Per-user localStorage key — different for every Google account. */
+function mss_storageKey() {
+  return 'hx_minisites_' + mss_getUserId();
+}
+
+/** Backend base URL. */
+const MSS_API = 'https://certiflow-backend-73xk.onrender.com/api/minisite';
+
+/** Auth header helper. */
+function mss_authHeader() {
+  const token = localStorage.getItem('Honourix_token') || '';
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 /* ═══════════════════════════════════════════════════════════════
    MSSTATE — Central state manager
@@ -163,57 +194,155 @@ const MSState = {
   dirty: false,
   _cb: null,
 
-  /* ── Boot from URL ?id= ─── */
+  /* ── Boot from URL ?id= ────────────────────────────────────
+     1. Try to load from backend (latest data, user-scoped)
+     2. Fall back to user-scoped localStorage (offline / fast load)
+     3. If neither has it, redirect to site list
+  ─────────────────────────────────────────────────────────── */
   init() {
     const params = new URLSearchParams(window.location.search);
     this.siteId = params.get('id');
     if (!this.siteId) { window.location.href = 'mini-site.html'; return false; }
 
-    const sites = JSON.parse(localStorage.getItem('hx_minisites') || '[]');
-    const site = sites.find(s => s.id === this.siteId);
-    if (!site) { window.location.href = 'mini-site.html'; return false; }
+    // Try localStorage first for instant load, then sync from backend
+    const sites = JSON.parse(localStorage.getItem(mss_storageKey()) || '[]');
+    const site   = sites.find(s => s.id === this.siteId);
 
+    if (site) {
+      this._applySiteData(site);
+      // Background sync from backend to pick up any changes from other devices
+      this._fetchFromBackend().catch(() => {/* silently ignore if offline */});
+      return true;
+    }
+
+    // Not in localStorage — must fetch from backend (new device / cleared storage)
+    // Return false here and do async init via initAsync() called from editor
+    this._loadingFromBackend = true;
+    return this._fetchFromBackend().then(ok => {
+      if (!ok) window.location.href = 'mini-site.html';
+      return ok;
+    });
+  },
+
+  /** Fetch this site's config from backend and apply it. */
+  async _fetchFromBackend() {
+    try {
+      const token = localStorage.getItem('Honourix_token') || '';
+      if (!token) return false;
+
+      // Fetch the full site list and find our site
+      const res = await fetch(`${MSS_API}/list`, {
+        headers: { 'Content-Type': 'application/json', ...mss_authHeader() },
+      });
+      if (!res.ok) return false;
+
+      const data = await res.json();
+      const sites = data.sites || [];
+
+      // Merge into user-scoped localStorage
+      const local = JSON.parse(localStorage.getItem(mss_storageKey()) || '[]');
+      sites.forEach(backendSite => {
+        const idx = local.findIndex(s => s.id === backendSite.id);
+        const merged = {
+          id:        backendSite.id,
+          name:      backendSite.name,
+          slug:      backendSite.slug,
+          status:    backendSite.status,
+          updatedAt: backendSite.updated_at,
+          config:    backendSite.config || {},
+        };
+        if (idx >= 0) local[idx] = merged;
+        else local.push(merged);
+      });
+      localStorage.setItem(mss_storageKey(), JSON.stringify(local));
+
+      // Apply this specific site
+      const site = local.find(s => s.id === this.siteId);
+      if (!site) return false;
+      this._applySiteData(site);
+      return true;
+    } catch (e) {
+      console.warn('[MSState] Backend fetch failed:', e.message);
+      return false;
+    }
+  },
+
+  /** Apply a site data object to this MSState instance. */
+  _applySiteData(site) {
     this.config = {
-      name: site.name || 'Untitled Site',
-      slug: site.slug || '',
-      template: site.template || 'blank',
-      theme: site.config?.theme || 'dark',
-      accentColor: site.config?.accentColor || '#00d4ff',
-      fontFamily: site.config?.fontFamily || 'Plus Jakarta Sans',
-      logoShape: site.config?.logoShape || 'circle',
+      name:             site.name || 'Untitled Site',
+      slug:             site.slug || '',
+      template:         site.template || 'blank',
+      theme:            site.config?.theme || 'dark',
+      accentColor:      site.config?.accentColor || '#00d4ff',
+      fontFamily:       site.config?.fontFamily || 'Plus Jakarta Sans',
+      fontHeading:      site.config?.fontHeading || '',
+      logoShape:        site.config?.logoShape || 'circle',
       registrationOpen: site.config?.registrationOpen !== false,
-      status: site.status || 'draft',
+      activePalette:    site.config?.activePalette || null,
+      activeFontPair:   site.config?.activeFontPair || null,
+      status:           site.status || 'draft',
     };
-    this.blocks = (site.config?.blocks || []).map(b => JSON.parse(JSON.stringify(b)));
+    this.blocks  = (site.config?.blocks || []).map(b => JSON.parse(JSON.stringify(b)));
     this.histIdx = -1;
     this.history = [];
     this._pushHistory();
+  },
+
+  /* ── Persist: localStorage (instant) + backend (durable) ── */
+  save() {
+    // 1. Write to user-scoped localStorage
+    const sites = JSON.parse(localStorage.getItem(mss_storageKey()) || '[]');
+    const idx   = sites.findIndex(s => s.id === this.siteId);
+    if (idx < 0) return false;
+
+    const configPayload = {
+      theme:            this.config.theme,
+      accentColor:      this.config.accentColor,
+      fontFamily:       this.config.fontFamily,
+      fontHeading:      this.config.fontHeading || '',
+      logoShape:        this.config.logoShape,
+      registrationOpen: this.config.registrationOpen,
+      activePalette:    this.config.activePalette || null,
+      activeFontPair:   this.config.activeFontPair || null,
+      blocks:           this.blocks.map(b => JSON.parse(JSON.stringify(b))),
+    };
+
+    sites[idx] = {
+      ...sites[idx],
+      name:      this.config.name,
+      slug:      this.config.slug,
+      status:    this.config.status,
+      updatedAt: new Date().toISOString(),
+      config:    configPayload,
+    };
+    localStorage.setItem(mss_storageKey(), JSON.stringify(sites));
+    this.dirty = false;
+
+    // 2. Async save to backend (fire and forget — errors are non-fatal)
+    this._saveToBackend(configPayload).catch(err =>
+      console.warn('[MSState] Backend save failed (non-fatal):', err.message)
+    );
+
     return true;
   },
 
-  /* ── Persist to localStorage ─── */
-  save() {
-    const sites = JSON.parse(localStorage.getItem('hx_minisites') || '[]');
-    const idx = sites.findIndex(s => s.id === this.siteId);
-    if (idx < 0) return false;
-    sites[idx] = {
-      ...sites[idx],
-      name: this.config.name,
-      slug: this.config.slug,
-      status: this.config.status,
-      updatedAt: new Date().toISOString(),
-      config: {
-        theme: this.config.theme,
-        accentColor: this.config.accentColor,
-        fontFamily: this.config.fontFamily,
-        logoShape: this.config.logoShape,
-        registrationOpen: this.config.registrationOpen,
-        blocks: this.blocks.map(b => JSON.parse(JSON.stringify(b))),
-      },
-    };
-    localStorage.setItem('hx_minisites', JSON.stringify(sites));
-    this.dirty = false;
-    return true;
+  /** POST config to /api/minisite/save — keeps Supabase in sync. */
+  async _saveToBackend(configPayload) {
+    const token = localStorage.getItem('Honourix_token') || '';
+    if (!token) return; // not logged in — skip silently
+
+    await fetch(`${MSS_API}/save`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        id:               this.siteId,
+        name:             this.config.name,
+        slug:             this.config.slug,
+        status:           this.config.status || 'draft',
+        config:           configPayload,
+      }),
+    });
   },
 
   /* ── Block CRUD ─── */
@@ -221,7 +350,7 @@ const MSState = {
     const def = BLOCK_REG[type];
     if (!def) return null;
     const block = {
-      id: 'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      id:    'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
       type,
       props: def.defaults(),
     };
@@ -241,7 +370,6 @@ const MSState = {
     const idx = this.blocks.findIndex(b => b.id === id);
     this.blocks = this.blocks.filter(b => b.id !== id);
     if (this.selectedId === id) {
-      // Select adjacent block after deletion
       this.selectedId = this.blocks[Math.min(idx, this.blocks.length - 1)]?.id || null;
     }
     this._pushHistory();
@@ -278,13 +406,6 @@ const MSState = {
     this._notify('update');
   },
 
-  /**
-   * updateBlockField — surgically updates a single field inside block.props.fields[].
-   * Unlike updateBlock which shallow-merges at the props root level,
-   * this targets a specific field object by its id.
-   * Notifies 'field-update' so onChange can refresh BOTH canvas AND right panel
-   * (needed so toggles like "Required" reflect the new state immediately).
-   */
   updateBlockField(blockId, fieldId, partialFieldProps) {
     const block = this.blocks.find(b => b.id === blockId);
     if (!block) return;
@@ -292,55 +413,49 @@ const MSState = {
     if (!field) return;
     Object.assign(field, partialFieldProps);
     this.dirty = true;
-    this._notify('field-update'); // distinct type → editor rebuilds right panel
+    this._notify('field-update');
   },
 
-  /**
-   * publish() — saves to localStorage then POSTs to backend.
-   * Returns { success, slug, publicUrl } from server.
-   * Throws on network/server error so editor can show a toast.
-   */
+  /* ── publish() ─── */
   async publish() {
-    // 1. Persist to localStorage with live status
     this.config.status = 'published';
-    this.save();
+    this.save(); // also saves to backend via _saveToBackend
 
-    // 2. POST to backend
-    const payload = {
-      siteId: this.siteId,
-      slug: this.config.slug,
-      name: this.config.name,
-      status: 'published',
+    const configPayload = {
+      theme:            this.config.theme,
+      accentColor:      this.config.accentColor,
+      fontFamily:       this.config.fontFamily,
+      fontHeading:      this.config.fontHeading || '',
+      logoShape:        this.config.logoShape,
       registrationOpen: this.config.registrationOpen !== false,
-      config: {
-        theme: this.config.theme,
-        accentColor: this.config.accentColor,
-        fontFamily: this.config.fontFamily,
-        logoShape: this.config.logoShape,
-        registrationOpen: this.config.registrationOpen !== false,
-        blocks: this.blocks.map(b => JSON.parse(JSON.stringify(b))),
-      },
+      activePalette:    this.config.activePalette || null,
+      activeFontPair:   this.config.activeFontPair || null,
+      blocks:           this.blocks.map(b => JSON.parse(JSON.stringify(b))),
     };
 
     const token = localStorage.getItem('Honourix_token') || '';
-    const res = await fetch(
-      'https://certiflow-backend-73xk.onrender.com/api/minisite/publish',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(payload),
-      }
-    );
+    const res = await fetch(`${MSS_API}/publish`, {
+      method:  'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        siteId:           this.siteId,
+        slug:             this.config.slug,
+        name:             this.config.name,
+        status:           'published',
+        registrationOpen: this.config.registrationOpen !== false,
+        config:           configPayload,
+      }),
+    });
 
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       throw new Error(body.error || `Server error ${res.status}`);
     }
 
-    return await res.json(); // { success, slug, publicUrl }
+    return await res.json();
   },
 
   updateConfig(partial) {
@@ -359,13 +474,8 @@ const MSState = {
     this._notify('select');
   },
 
-  getBlock(id) {
-    return this.blocks.find(b => b.id === id) || null;
-  },
-
-  getSelected() {
-    return this.selectedId ? this.getBlock(this.selectedId) : null;
-  },
+  getBlock(id)    { return this.blocks.find(b => b.id === id) || null; },
+  getSelected()   { return this.selectedId ? this.getBlock(this.selectedId) : null; },
 
   /* ── History ─── */
   _pushHistory() {
@@ -376,24 +486,15 @@ const MSState = {
     this.dirty = true;
   },
 
-  undo() {
-    if (!this.canUndo()) return;
-    this.histIdx--;
-    this._applySnapshot();
-  },
-
-  redo() {
-    if (!this.canRedo()) return;
-    this.histIdx++;
-    this._applySnapshot();
-  },
+  undo() { if (!this.canUndo()) return; this.histIdx--; this._applySnapshot(); },
+  redo() { if (!this.canRedo()) return; this.histIdx++; this._applySnapshot(); },
 
   _applySnapshot() {
     try {
       const snap = JSON.parse(this.history[this.histIdx]);
       this.config = snap.config;
       this.blocks = snap.blocks;
-      this.dirty = true;
+      this.dirty  = true;
       this._notify('history');
     } catch { }
   },
@@ -401,7 +502,6 @@ const MSState = {
   canUndo() { return this.histIdx > 0; },
   canRedo() { return this.histIdx < this.history.length - 1; },
 
-  /* ── Event system ─── */
   onChange(fn) { this._cb = fn; },
   _notify(type) { if (this._cb) this._cb(type || 'change'); },
 };
