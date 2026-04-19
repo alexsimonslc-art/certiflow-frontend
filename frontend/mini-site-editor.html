@@ -26,7 +26,7 @@
 
       <!-- Left -->
       <div class="mse-topbar-left">
-        <a href="mini-site.html" class="mse-back-btn" id="backBtn">
+        <a href="#" class="mse-back-btn" id="backBtn" onclick="confirmLeave(event, 'mini-site.html')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
@@ -300,35 +300,51 @@
       </div>
 
       <!-- Mobile iframe preview — shown when mobile mode is active -->
-      <div id="mse-mobile-wrap" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 0 32px;width:100%">
+      <div id="mse-mobile-wrap"
+        style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 0 32px;width:100%">
         <!-- Shell wrapper: zoom auto-applied by scaleMobilePhone() -->
         <div id="mse-phone-shell" style="transform-origin:top center;flex-shrink:0;display:inline-block">
           <!-- Outer phone body -->
-          <div style="background:linear-gradient(170deg,#1c2533 0%,#0e161f 100%);border-radius:52px;padding:13px;box-shadow:0 28px 80px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.06),inset 0 1px 0 rgba(255,255,255,0.08)">
+          <div
+            style="background:linear-gradient(170deg,#1c2533 0%,#0e161f 100%);border-radius:52px;padding:13px;box-shadow:0 28px 80px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.06),inset 0 1px 0 rgba(255,255,255,0.08)">
             <!-- Side buttons (visual only) -->
-            <div style="position:absolute;left:-4px;top:130px;width:4px;height:36px;background:#1a2535;border-radius:3px 0 0 3px"></div>
-            <div style="position:absolute;left:-4px;top:180px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px"></div>
-            <div style="position:absolute;left:-4px;top:256px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px"></div>
-            <div style="position:absolute;right:-4px;top:170px;width:4px;height:84px;background:#1a2535;border-radius:0 3px 3px 0"></div>
+            <div
+              style="position:absolute;left:-4px;top:130px;width:4px;height:36px;background:#1a2535;border-radius:3px 0 0 3px">
+            </div>
+            <div
+              style="position:absolute;left:-4px;top:180px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px">
+            </div>
+            <div
+              style="position:absolute;left:-4px;top:256px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px">
+            </div>
+            <div
+              style="position:absolute;right:-4px;top:170px;width:4px;height:84px;background:#1a2535;border-radius:0 3px 3px 0">
+            </div>
             <!-- Screen -->
             <div style="background:#000;border-radius:42px;overflow:hidden;width:460px;position:relative">
               <!-- Dynamic island -->
-              <div style="height:48px;background:#050505;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0">
-                <div style="width:120px;height:32px;background:#000;border-radius:99px;border:1px solid #111;display:flex;align-items:center;justify-content:center;gap:6px">
+              <div
+                style="height:48px;background:#050505;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0">
+                <div
+                  style="width:120px;height:32px;background:#000;border-radius:99px;border:1px solid #111;display:flex;align-items:center;justify-content:center;gap:6px">
                   <div style="width:10px;height:10px;border-radius:50%;background:#111"></div>
                   <div style="width:6px;height:6px;border-radius:50%;background:#1a1a1a"></div>
                 </div>
               </div>
               <!-- iframe — true 430px mobile viewport, no scroll visible -->
-              <iframe id="mse-mobile-frame" style="width:460px;height:932px;border:none;display:block" scrolling="yes"></iframe>
+              <iframe id="mse-mobile-frame" style="width:460px;height:932px;border:none;display:block"
+                scrolling="yes"></iframe>
               <!-- Home indicator -->
-              <div style="height:28px;background:#050505;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <div
+                style="height:28px;background:#050505;display:flex;align-items:center;justify-content:center;flex-shrink:0">
                 <div style="width:120px;height:5px;background:#1c1c1e;border-radius:99px"></div>
               </div>
             </div>
           </div>
         </div>
-        <div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--font);letter-spacing:0.4px">430 × 932 · iPhone 14 Pro Max</div>
+        <div
+          style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--font);letter-spacing:0.4px">
+          430 × 932 · iPhone 14 Pro Max</div>
       </div>
     </main>
 
@@ -562,7 +578,13 @@
       });
 
       // Auto-save every 30s
-      setInterval(() => { if (MSState.dirty) doSave(); }, 30000);
+      // localStorage saves happen on every change via MSState.save()
+      // Supabase saves every 5 minutes (reduces DB load)
+      setInterval(async () => {
+        if (MSState._backendDirty) {
+          await MSState.saveToBackendNow();
+        }
+      }, 5 * 60 * 1000); // 5 minutes
     });
 
     /* ════════════════════════════════════════════════════════════════
@@ -1491,6 +1513,8 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     Publishing…</span>`;
 
       try {
+        // Force immediate backend sync before publish
+        await MSState.saveToBackendNow();
         const result = await MSState.publish();
 
         // Build the real public URL (single place to change when domain is ready)
@@ -1809,7 +1833,73 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         document.addEventListener('mouseup', onUp);
       });
     })();
+
+    /* ── Leave warning ── */
+    let _leaveTarget = null;
+
+    function confirmLeave(e, url) {
+      if (!MSState._backendDirty) {
+        window.location.href = url;
+        return;
+      }
+      e.preventDefault();
+      _leaveTarget = url;
+      const modal = document.getElementById('mse-leave-modal');
+      modal.style.display = 'flex';
+    }
+
+    function closeLeaveModal() {
+      document.getElementById('mse-leave-modal').style.display = 'none';
+      _leaveTarget = null;
+    }
+
+    function confirmLeaveNow() {
+      const url = _leaveTarget;
+      closeLeaveModal();
+      window.location.href = url;
+    }
+
+    async function saveAndLeave() {
+      const btn = document.querySelector('#mse-leave-modal button:last-child');
+      btn.textContent = 'Saving…';
+      btn.disabled = true;
+      await MSState.saveToBackendNow();
+      const url = _leaveTarget;
+      closeLeaveModal();
+      window.location.href = url;
+    }
+
+    /* Native browser dialog only for close/refresh (unavoidable) */
+    window.addEventListener('beforeunload', e => {
+      if (MSState._backendDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
   </script>
+  <!-- Custom leave warning modal -->
+  <div id="mse-leave-modal"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(16px);z-index:9999;align-items:center;justify-content:center">
+    <div
+      style="background:#080f1e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:28px 30px;max-width:400px;width:90%;box-shadow:0 40px 80px rgba(0,0,0,0.6);animation:panelIn 0.2s ease both">
+      <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">
+        Unsaved changes</div>
+      <div style="font-size:14px;color:var(--text-2);line-height:1.6;margin-bottom:24px">Your latest edits haven't been
+        saved to the cloud yet. Leave without saving?</div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="closeLeaveModal()"
+          style="padding:9px 18px;border-radius:9px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.07);color:var(--text);font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font)">Keep
+          Editing</button>
+        <button onclick="confirmLeaveNow()"
+          style="padding:9px 18px;border-radius:9px;border:none;background:var(--red-dim);color:var(--red);font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font);border:1px solid rgba(244,63,94,0.2)">Leave
+          Anyway</button>
+        <button onclick="saveAndLeave()"
+          style="padding:9px 18px;border-radius:9px;border:none;background:linear-gradient(135deg,#00d4ff,#7c3aed);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font)">Save
+          & Leave</button>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

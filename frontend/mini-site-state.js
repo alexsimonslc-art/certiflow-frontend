@@ -211,6 +211,9 @@ const MSState = {
   histIdx: -1,
   MAX_HIST: 50,
   dirty: false,
+  _backendDirty: false,
+  _lastSaveTime: null,
+  _lastBackendSave: null,
   _cb: null,
 
   /* ── Boot from URL ?id= ────────────────────────────────────
@@ -339,9 +342,9 @@ const MSState = {
     this.dirty = false;
 
     // 2. Async save to backend (fire and forget — errors are non-fatal)
-    this._saveToBackend(configPayload).catch(err =>
-      console.warn('[MSState] Backend save failed (non-fatal):', err.message)
-    );
+    // 2. Mark that backend needs updating — actual write happens on interval or publish
+    this._backendDirty = true;
+    this._lastSaveTime = Date.now();
 
     return true;
   },
@@ -523,4 +526,23 @@ const MSState = {
 
   onChange(fn) { this._cb = fn; },
   _notify(type) { if (this._cb) this._cb(type || 'change'); },
+
+  // ADD this method inside MSState, just before the closing };
+
+  /** Force an immediate Supabase write. Called by publish + 5-min interval. */
+  async saveToBackendNow() {
+    const sites = JSON.parse(localStorage.getItem(mss_storageKey()) || '[]');
+    const site = sites.find(s => s.id === this.siteId);
+    if (!site) return false;
+    try {
+      await this._saveToBackend(site.config);
+      this._backendDirty = false;
+      this._lastBackendSave = Date.now();
+      return true;
+    } catch(e) {
+      console.warn('[MSState] saveToBackendNow failed:', e.message);
+      return false;
+    }
+  },
+  
 };
