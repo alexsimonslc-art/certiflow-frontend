@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loading… — HX Forms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+  /* ════════════════════════════════════════════════════════════════
+     HX Forms — Public View  (self-contained, no dashboard deps)
+  ════════════════════════════════════════════════════════════════ */
+  :root {
+    --bg:           #04080f;
+    --surface:      rgba(10, 18, 35, 0.80);
+    --glass:        rgba(255,255,255,0.04);
+    --glass-b:      rgba(255,255,255,0.09);
+    --glass-b2:     rgba(255,255,255,0.14);
+    --text:         #eef4ff;
+    --text-2:       #98b0cc;
+    --text-3:       #546a85;
+    --red:          #f43f5e;
+    --red-dim:      rgba(244,63,94,0.12);
+    --font:         'Plus Jakarta Sans', sans-serif;
+    --font-display: 'Syne', sans-serif;
+    --accent:       #00d4ff;
+    --accent-dim:   rgba(0,212,255,0.10);
+    --accent-grad:  linear-gradient(135deg,#00d4ff,#7c3aed);
+    --ease:         cubic-bezier(0.16,1,0.3,1);
+    --radius:       11px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Background glow */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 65% 50% at 15% 0%,   rgba(0,212,255,0.07)  0%, transparent 55%),
+      radial-gradient(ellipse 50% 55% at 88% 90%,   rgba(124,58,237,0.09) 0%, transparent 55%);
+  }
+
+  /* ── Accent bar at top ──────────────────────────────────────── */
+  .hxfv-accent-bar {
+    height: 4px; width: 100%; position: fixed; top: 0; left: 0; z-index: 100;
+    background: var(--accent-grad); transition: background 0.4s;
+  }
+
+  /* ── Page wrap ──────────────────────────────────────────────── */
+  .hxfv-page {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 56px 16px 80px;
+  }
+
+  .hxfv-container { width: 100%; max-width: 580px; }
+
+  /* ── Loading skeleton ───────────────────────────────────────── */
+  .hxfv-skeleton { animation: skPulse 1.4s ease infinite; }
+  @keyframes skPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .hxfv-sk-line {
+    height: 14px; border-radius: 6px;
+    background: rgba(255,255,255,0.08); margin-bottom: 12px;
+  }
+  .hxfv-sk-box {
+    height: 48px; border-radius: var(--radius);
+    background: rgba(255,255,255,0.06); margin-bottom: 18px;
+  }
+
+  /* ── Error / Closed state ───────────────────────────────────── */
+  .hxfv-error-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: 48px 16px;
+  }
+  .hxfv-error-icon {
+    width: 72px; height: 72px; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 22px;
+  }
+  .hxfv-error-icon svg { width: 32px; height: 32px; }
+  .hxfv-error-icon.not-found { background: rgba(255,255,255,0.05); color: var(--text-3); }
+  .hxfv-error-icon.closed    { background: rgba(244,63,94,0.10);   color: var(--red); }
+  .hxfv-error-icon.full      { background: rgba(245,158,11,0.10);  color: #f59e0b; }
+  .hxfv-error-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .hxfv-error-sub   { font-size: 14.5px; color: var(--text-2); line-height: 1.6; max-width: 360px; }
+  .hxfv-error-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 99px; margin-bottom: 16px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+  }
+  .hxfv-error-badge.closed { background: var(--red-dim); color: var(--red); border: 1px solid rgba(244,63,94,0.2); }
+  .hxfv-error-badge.full   { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+
+  /* ── Form header ────────────────────────────────────────────── */
+  .hxfv-header { margin-bottom: 32px; }
+  .hxfv-org-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; color: var(--text-3);
+    margin-bottom: 14px; letter-spacing: 0.3px; text-transform: uppercase;
+  }
+  .hxfv-org-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .hxfv-title {
+    font-family: var(--font-display); font-size: clamp(22px, 5vw, 30px);
+    font-weight: 800; color: var(--text); line-height: 1.25;
+    letter-spacing: -0.5px; margin-bottom: 12px;
+  }
+  .hxfv-desc {
+    font-size: 15px; color: var(--text-2); line-height: 1.65;
+  }
+
+  /* ── Field wrapper ──────────────────────────────────────────── */
+  .hxfv-field {
+    margin-bottom: 22px;
+    animation: fieldIn 0.3s var(--ease) both;
+  }
+  @keyframes fieldIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .hxfv-label {
+    display: flex; align-items: baseline; gap: 5px;
+    font-size: 14px; font-weight: 600; color: var(--text);
+    margin-bottom: 9px; line-height: 1.4;
+  }
+  .hxfv-req { color: var(--red); font-size: 13px; flex-shrink: 0; }
+  .hxfv-hint { font-size: 12.5px; color: var(--text-3); margin-top: -5px; margin-bottom: 9px; }
+
+  /* Base input */
+  .hxfv-input, .hxfv-textarea, .hxfv-select {
+    width: 100%; padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-b);
+    border-radius: var(--radius);
+    color: var(--text); font-size: 15px;
+    font-family: var(--font); outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    -webkit-appearance: none;
+  }
+  .hxfv-input:focus, .hxfv-textarea:focus, .hxfv-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-dim);
+  }
+  .hxfv-input::placeholder, .hxfv-textarea::placeholder { color: var(--text-3); }
+  .hxfv-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+  .hxfv-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2714%22 height=%2214%22 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%235a7394%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 13px center;
+    padding-right: 40px;
+  }
+  .hxfv-select option { background: #0d1728; color: var(--text); }
+
+  /* Field error state */
+  .hxfv-field.has-error .hxfv-input,
+  .hxfv-field.has-error .hxfv-textarea,
+  .hxfv-field.has-error .hxfv-select {
+    border-color: rgba(244,63,94,0.6);
+    box-shadow: 0 0 0 4px rgba(244,63,94,0.08);
+  }
+  .hxfv-error-msg {
+    display: none; font-size: 12.5px; color: var(--red);
+    margin-top: 6px; font-weight: 500;
+  }
+  .hxfv-field.has-error .hxfv-error-msg { display: block; }
+
+  /* ── Radio / Checkbox cards ─────────────────────────────────── */
+  .hxfv-options { display: flex; flex-direction: column; gap: 7px; }
+  .hxfv-option-label {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: var(--radius);
+    border: 1px solid var(--glass-b); cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+    font-size: 14.5px; color: var(--text-2); user-select: none;
+  }
+  .hxfv-option-label:hover { border-color: var(--glass-b2); color: var(--text); background: rgba(255,255,255,0.025); }
+  .hxfv-option-label input { display: none; }
+  .hxfv-option-indicator {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
+    transition: all 0.18s; position: relative;
+  }
+  .hxfv-option-indicator.box { border-radius: 5px; }
+
+  /* Selected state — driven by JS class */
+  .hxfv-option-label.selected {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    color: var(--text);
+  }
+  .hxfv-option-label.selected .hxfv-option-indicator {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+  .hxfv-option-label.selected .hxfv-option-indicator::after {
+    content: '✓';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #000;
+  }
+  .hxfv-field.has-error .hxfv-options .hxfv-option-label {
+    border-color: rgba(244,63,94,0.3);
+  }
+
+  /* ── Linear scale — Stars ───────────────────────────────────── */
+  .hxfv-stars { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hxfv-star-btn {
+    font-size: 28px; background: none; border: none;
+    cursor: pointer; transition: transform 0.12s;
+    color: rgba(255,255,255,0.15); line-height: 1; padding: 2px;
+  }
+  .hxfv-star-btn:hover { transform: scale(1.15); }
+  .hxfv-star-btn.active { color: var(--accent); }
+  .hxfv-scale-labels { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-3); margin-top: 6px; }
+
+  /* ── Linear scale — Numbers ─────────────────────────────────── */
+  .hxfv-num-scale { display: flex; gap: 6px; flex-wrap: wrap; }
+  .hxfv-num-btn {
+    width: 38px; height: 38px; border-radius: 9px;
+    border: 1px solid var(--glass-b); background: transparent;
+    font-size: 13.5px; font-weight: 600; color: var(--text-3);
+    cursor: pointer; transition: all 0.15s; font-family: var(--font);
+  }
+  .hxfv-num-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .hxfv-num-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 12px var(--accent-dim); }
+
+  /* ── File upload ────────────────────────────────────────────── */
+  .hxfv-upload-zone {
+    border: 2px dashed var(--glass-b); border-radius: var(--radius);
+    padding: 24px; text-align: center; cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+    position: relative;
+  }
+  .hxfv-upload-zone:hover, .hxfv-upload-zone.drag-over {
+    border-color: var(--accent); background: var(--accent-dim);
+  }
+  .hxfv-upload-zone input[type="file"] {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer;
+  }
+  .hxfv-upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .hxfv-upload-text { font-size: 14px; color: var(--text-2); }
+  .hxfv-upload-text strong { color: var(--accent); }
+  .hxfv-upload-sub { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+  .hxfv-upload-preview {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 13px; border-radius: 9px; margin-top: 10px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--glass-b);
+    font-size: 13px; color: var(--text-2);
+  }
+  .hxfv-upload-preview svg { width: 15px; height: 15px; color: var(--accent); flex-shrink: 0; }
+
+  /* ── Section break ──────────────────────────────────────────── */
+  .hxfv-section-break {
+    padding: 10px 0 6px; margin-bottom: 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .hxfv-section-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+  .hxfv-section-desc  { font-size: 14px; color: var(--text-2); line-height: 1.55; }
+
+  /* ── Submit button ──────────────────────────────────────────── */
+  .hxfv-submit {
+    width: 100%; padding: 14px;
+    border-radius: 12px; border: none;
+    background: var(--accent-grad);
+    color: #fff; font-size: 15.5px; font-weight: 700;
+    font-family: var(--font); cursor: pointer;
+    box-shadow: 0 6px 28px rgba(0,212,255,0.22);
+    transition: box-shadow 0.2s, transform 0.15s, opacity 0.2s;
+    margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .hxfv-submit:hover { box-shadow: 0 10px 36px rgba(0,212,255,0.35); transform: translateY(-1px); }
+  .hxfv-submit:active { transform: translateY(0); }
+  .hxfv-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+  .hxfv-submit svg { width: 16px; height: 16px; }
+  @keyframes btnSpin { to { transform: rotate(360deg); } }
+  .hxfv-submit.loading::before {
+    content: '';
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+    border-radius: 50%; animation: btnSpin 0.7s linear infinite;
+  }
+
+  /* ── Thank you state ────────────────────────────────────────── */
+  .hxfv-ty-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: 24px 16px;
+    animation: tyIn 0.5s var(--ease) both;
+  }
+  @keyframes tyIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+  .hxfv-ty-ring {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg,#10b981,#06b6d4);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 22px;
+    box-shadow: 0 0 48px rgba(16,185,129,0.3);
+    animation: popIn 0.55s var(--ease) both;
+  }
+  @keyframes popIn { 0%{transform:scale(0.4);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+  .hxfv-ty-ring svg { width: 32px; height: 32px; color: #fff; }
+  .hxfv-ty-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+  .hxfv-ty-msg   { font-size: 15px; color: var(--text-2); line-height: 1.6; max-width: 380px; margin-bottom: 28px; }
+  .hxfv-ty-another {
+    padding: 11px 24px; border-radius: 10px;
+    background: var(--glass); border: 1px solid var(--glass-b2);
+    color: var(--text-2); font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: var(--font); transition: all 0.18s;
+  }
+  .hxfv-ty-another:hover { color: var(--text); background: rgba(255,255,255,0.07); }
+
+  /* ── Footer ─────────────────────────────────────────────────── */
+  .hxfv-footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 16px 16px 32px;
+    font-size: 12.5px; color: var(--text-3);
+  }
+  .hxfv-footer a { color: var(--text-2); text-decoration: none; font-weight: 600; }
+  .hxfv-footer a:hover { color: var(--text); }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .hxfv-page { padding: 44px 12px 64px; }
+    .hxfv-title { font-size: 22px; }
+    .hxfv-num-btn { width: 34px; height: 34px; }
+  }
+  </style>
+</head>
+<body>
+
+<!-- Accent bar -->
+<div class="hxfv-accent-bar" id="accentBar"></div>
+
+<!-- ── Loading State ──────────────────────────────────────────── -->
+<div class="hxfv-page" id="loadingState">
+  <div class="hxfv-container hxfv-skeleton">
+    <div class="hxfv-sk-line" style="width:60%;height:32px;margin-bottom:16px"></div>
+    <div class="hxfv-sk-line" style="width:85%;height:14px;margin-bottom:6px"></div>
+    <div class="hxfv-sk-line" style="width:70%;height:14px;margin-bottom:32px"></div>
+    <div class="hxfv-sk-box"></div>
+    <div class="hxfv-sk-box"></div>
+    <div class="hxfv-sk-box" style="height:90px"></div>
+    <div class="hxfv-sk-box"></div>
+  </div>
+</div>
+
+<!-- ── Error / Closed State ───────────────────────────────────── -->
+<div class="hxfv-page" id="errorState" style="display:none">
+  <div class="hxfv-container">
+    <div class="hxfv-error-wrap">
+      <div class="hxfv-error-icon" id="errIcon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div id="errBadge"></div>
+      <div class="hxfv-error-title" id="errTitle">Something went wrong</div>
+      <div class="hxfv-error-sub"   id="errSub">We couldn't load this form.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Form State ─────────────────────────────────────────────── -->
+<div class="hxfv-page" id="formState" style="display:none">
+  <div class="hxfv-container">
+
+    <div class="hxfv-header">
+      <div class="hxfv-org-badge">
+        <div class="hxfv-org-dot" id="orgDot"></div>
+        <span id="orgBadgeText">HX Forms</span>
+      </div>
+      <h1 class="hxfv-title" id="formTitle"></h1>
+      <p  class="hxfv-desc"  id="formDesc"  style="display:none"></p>
+    </div>
+
+    <div id="fieldsContainer"></div>
+
+    <button class="hxfv-submit" id="submitBtn" onclick="handleSubmit()">
+      <span id="submitLabel">Submit</span>
+    </button>
+
+  </div>
+</div>
+
+<!-- ── Thank You State ────────────────────────────────────────── -->
+<div class="hxfv-page" id="thankYouState" style="display:none">
+  <div class="hxfv-container">
+    <div class="hxfv-ty-wrap">
+      <div class="hxfv-ty-ring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="hxfv-ty-title">You're all set!</div>
+      <div class="hxfv-ty-msg" id="tyMessage"></div>
+      <button class="hxfv-ty-another" id="tyAnotherBtn" style="display:none" onclick="resetForm()">
+        Submit another response
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ─────────────────────────────────────────────────── -->
+<footer class="hxfv-footer">
+  Powered by <a href="/index.html" target="_blank">Honourix</a>
+</footer>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   HX Form View — Public renderer + submit logic
+
+   Data flow:
+   1. Read slug from ?f=slug
+   2. Fetch form config from Supabase directly (no backend cold start)
+   3. Render all fields
+   4. Silently ping backend to wake it up
+   5. User fills form → submit → POST to backend
+   6. Show thank-you state
+════════════════════════════════════════════════════════════════ */
+
+const SUPABASE_URL  = 'https://lbvcrhequonhggsguqqz.supabase.co';   // ← your project URL
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxidmNyaGVxdW9uaGdnc2d1cXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjAxNTgsImV4cCI6MjA5MDE5NjE1OH0.cSL32z9OS94E-UUghgwqeck9czs1IqO9o-yek5TeF9w';             // ← replace
+const BACKEND       = 'https://certiflow-backend-73xk.onrender.com';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+/* ── Accent colour map ─────────────────────────────────────────── */
+const ACCENTS = {
+  cyan:   { solid: '#00d4ff', grad: 'linear-gradient(135deg,#00d4ff,#7c3aed)', dim: 'rgba(0,212,255,0.10)' },
+  purple: { solid: '#a78bfa', grad: 'linear-gradient(135deg,#7c3aed,#a855f7)', dim: 'rgba(124,58,237,0.10)' },
+  green:  { solid: '#10b981', grad: 'linear-gradient(135deg,#10b981,#06b6d4)', dim: 'rgba(16,185,129,0.10)' },
+  gold:   { solid: '#f59e0b', grad: 'linear-gradient(135deg,#f59e0b,#ef4444)', dim: 'rgba(245,158,11,0.10)'  },
+  pink:   { solid: '#ec4899', grad: 'linear-gradient(135deg,#ec4899,#8b5cf6)', dim: 'rgba(236,72,153,0.10)'  },
+};
+
+/* ── Runtime state ─────────────────────────────────────────────── */
+let formConfig  = null;    // full config from Supabase
+let formSlug    = '';
+let formValues  = {};      // { fieldId: value }
+let fileObjects = {};      // { fieldId: File } — for upload fields
+let accent      = ACCENTS.cyan;
+
+/* ════════════════════════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════════════════════════ */
+(async function boot() {
+  // 1. Extract slug
+  formSlug = new URLSearchParams(window.location.search).get('f') || '';
+  if (!formSlug) { return showError('not-found', 'No form specified', 'Add ?f=your-form-slug to the URL.'); }
+
+  // 2. Wake the backend silently while user reads the form
+  fetch(BACKEND + '/api/ping').catch(() => {});
+
+  // 3. Load form config from Supabase (instant — always on)
+  try {
+    const { data, error } = await sb
+      .from('hx_forms')
+      .select('id, name, slug, status, config, submission_count')
+      .eq('slug', formSlug)
+      .in('status', ['published', 'closed'])
+      .single();
+
+    if (error || !data) {
+      // 4. Fallback: try backend (in case Supabase hiccup)
+      const res = await fetch(`${BACKEND}/api/hxforms/view/${encodeURIComponent(formSlug)}`);
+      if (!res.ok) throw new Error('not-found');
+      const json = await res.json();
+      renderForm(json.form);
+    } else {
+      renderForm(data);
+    }
+  } catch (e) {
+    showError('not-found', 'Form not found', 'This form doesn\'t exist or the link may be incorrect.');
+  }
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   RENDER FORM
+════════════════════════════════════════════════════════════════ */
+function renderForm(form) {
+  formConfig = form;
+  const cfg  = form.config || {};
+  const s    = cfg.settings || {};
+  const th   = cfg.theme    || {};
+  const fields = cfg.fields || [];
+
+  // Set accent from theme
+  accent = ACCENTS[th.color] || ACCENTS.cyan;
+  applyAccent(accent);
+
+  // Closed state
+  if (form.status === 'closed') {
+    return showError('closed',
+      'Form closed',
+      'This form is no longer accepting responses.',
+      'Closed'
+    );
+  }
+
+  // Max submissions check
+  if (s.maxSubmissions && form.submission_count >= s.maxSubmissions) {
+    return showError('full',
+      'Responses full',
+      'This form has reached its maximum number of responses.',
+      'Full'
+    );
+  }
+
+  // Page title + meta
+  const title = s.title || form.name || 'Form';
+  document.title = `${title} — HX Forms`;
+
+  // Header
+  document.getElementById('formTitle').textContent = title;
+  const descEl = document.getElementById('formDesc');
+  if (s.description) { descEl.textContent = s.description; descEl.style.display = ''; }
+
+  // Submit label
+  document.getElementById('submitLabel').textContent = s.submitLabel || 'Submit';
+
+  // Allow multiple → show "submit another" after
+  if (s.allowMultiple) document.getElementById('tyAnotherBtn').style.display = '';
+
+  // Render fields
+  document.getElementById('fieldsContainer').innerHTML = fields.map(f => renderField(f)).join('');
+  wireFields(fields);
+
+  // Show form
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('formState').style.display    = '';
+}
+
+/* ── Apply accent to CSS vars ──────────────────────────────────── */
+function applyAccent(a) {
+  const root = document.documentElement;
+  root.style.setProperty('--accent',      a.solid);
+  root.style.setProperty('--accent-dim',  a.dim);
+  root.style.setProperty('--accent-grad', a.grad);
+  document.getElementById('accentBar').style.background = a.grad;
+  document.getElementById('orgDot').style.background    = a.solid;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FIELD RENDERING
+════════════════════════════════════════════════════════════════ */
+function renderField(f) {
+
+  // Section break — no label wrapper
+  if (f.type === 'section_break') {
+    return `
+      <div class="hxfv-section-break">
+        ${f.label    ? `<div class="hxfv-section-title">${esc(f.label)}</div>` : ''}
+        ${f.description ? `<div class="hxfv-section-desc">${esc(f.description)}</div>` : ''}
+      </div>`;
+  }
+
+  const req     = f.required ? `<span class="hxfv-req">*</span>` : '';
+  const errMsg  = `<div class="hxfv-error-msg" id="err-${f.id}">This field is required.</div>`;
+  let   input   = '';
+
+  switch (f.type) {
+
+    case 'text':
+      input = `<input class="hxfv-input" id="fi-${f.id}" type="text"
+                      placeholder="${escAttr(f.placeholder||'')}"
+                      oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
+      break;
+
+    case 'email':
+      input = `<input class="hxfv-input" id="fi-${f.id}" type="email"
+                      placeholder="${escAttr(f.placeholder||'you@example.com')}"
+                      oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
+      break;
+
+    case 'phone':
+      input = `<input class="hxfv-input" id="fi-${f.id}" type="tel"
+                      placeholder="${escAttr(f.placeholder||'+91 98765 43210')}"
+                      oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
+      break;
+
+    case 'number':
+      input = `<input class="hxfv-input" id="fi-${f.id}" type="number"
+                      placeholder="${escAttr(f.placeholder||'0')}"
+                      ${f.validation?.min != null ? `min="${f.validation.min}"` : ''}
+                      ${f.validation?.max != null ? `max="${f.validation.max}"` : ''}
+                      oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
+      break;
+
+    case 'textarea':
+      input = `<textarea class="hxfv-textarea" id="fi-${f.id}"
+                         placeholder="${escAttr(f.placeholder||'')}"
+                         oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"></textarea>`;
+      break;
+
+    case 'date':
+      input = `<input class="hxfv-input" id="fi-${f.id}" type="date"
+                      onchange="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
+      break;
+
+    case 'time':
+      input = `<input class="hxfv-input" id="fi-${f.id}" type="time"
+                      onchange="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
+      break;
+
+    case 'dropdown':
+      const opts = (f.options || []).map(o => `<option value="${escAttr(o)}">${esc(o)}</option>`).join('');
+      input = `<select class="hxfv-select" id="fi-${f.id}"
+                       onchange="fv['${f.id}']=this.value;clearErr('${f.id}')">
+                 <option value="">— Select —</option>
+                 ${opts}
+               </select>`;
+      break;
+
+    case 'radio':
+      input = `<div class="hxfv-options" id="fi-${f.id}">
+        ${(f.options||[]).map((o,i) => `
+          <label class="hxfv-option-label" onclick="pickRadio('${f.id}',${i},${(f.options||[]).length})">
+            <div class="hxfv-option-indicator"></div>
+            <span>${esc(o)}</span>
+          </label>`).join('')}
+      </div>`;
+      break;
+
+    case 'checkbox':
+      input = `<div class="hxfv-options" id="fi-${f.id}">
+        ${(f.options||[]).map((o,i) => `
+          <label class="hxfv-option-label" onclick="pickCheckbox('${f.id}',${i})">
+            <div class="hxfv-option-indicator box"></div>
+            <span>${esc(o)}</span>
+          </label>`).join('')}
+      </div>`;
+      // Init checkbox value as empty array
+      formValues[f.id] = [];
+      break;
+
+    case 'linear_scale':
+      const max = f.max || 5;
+      if ((f.style || 'stars') === 'stars') {
+        input = `
+          <div class="hxfv-stars" id="fi-${f.id}">
+            ${Array.from({length:max},(_,i) =>
+              `<button type="button" class="hxfv-star-btn" data-val="${i+1}" onclick="pickStar('${f.id}',${i+1},${max})">★</button>`
+            ).join('')}
+          </div>
+          <div class="hxfv-scale-labels">
+            <span>${esc(f.minLabel||'Poor')}</span>
+            <span>${esc(f.maxLabel||'Excellent')}</span>
+          </div>`;
+      } else {
+        input = `
+          <div class="hxfv-num-scale" id="fi-${f.id}">
+            ${Array.from({length:max},(_,i) =>
+              `<button type="button" class="hxfv-num-btn" data-val="${i+1}" onclick="pickNum('${f.id}',${i+1},${max})">${i+1}</button>`
+            ).join('')}
+          </div>
+          <div class="hxfv-scale-labels" style="max-width:${max*44}px">
+            <span>${esc(f.minLabel||'Poor')}</span>
+            <span>${esc(f.maxLabel||'Excellent')}</span>
+          </div>`;
+      }
+      break;
+
+    case 'file_upload':
+      const accept = f.accept && f.accept !== '*' ? f.accept : '';
+      input = `
+        <div class="hxfv-upload-zone" id="fi-${f.id}"
+             ondragover="this.classList.add('drag-over')"
+             ondragleave="this.classList.remove('drag-over')"
+             ondrop="handleDrop('${f.id}',event)">
+          <input type="file" ${accept ? `accept="${escAttr(accept)}"` : ''}
+                 onchange="handleFileChange('${f.id}',this)"/>
+          <div class="hxfv-upload-icon">📎</div>
+          <div class="hxfv-upload-text"><strong>Click to upload</strong> or drag & drop</div>
+          <div class="hxfv-upload-sub">${accept || 'Any file'} · Max ${f.maxMB||10} MB</div>
+        </div>
+        <div class="hxfv-upload-preview" id="fp-${f.id}" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span id="fn-${f.id}">No file</span>
+        </div>`;
+      break;
+
+    default:
+      input = `<input class="hxfv-input" id="fi-${f.id}" type="text"
+                      placeholder="${escAttr(f.placeholder||'')}"
+                      oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
+  }
+
+  return `
+    <div class="hxfv-field" id="fw-${f.id}" data-field-id="${f.id}">
+      <div class="hxfv-label">${esc(f.label || 'Field')} ${req}</div>
+      ${input}
+      ${errMsg}
+    </div>`;
+}
+
+/* ── Wire up field events post-render ──────────────────────────── */
+function wireFields(fields) {
+  // Initialize formValues
+  fields.forEach(f => {
+    if (f.type === 'checkbox' && !(f.id in formValues)) formValues[f.id] = [];
+    else if (!(f.id in formValues)) formValues[f.id] = '';
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INTERACTIVE FIELD HANDLERS
+════════════════════════════════════════════════════════════════ */
+
+const fv = new Proxy(formValues, {
+  set(target, key, value) {
+    target[key] = value;
+    return true;
+  }
+});
+
+function pickRadio(fieldId, idx, total) {
+  formValues[fieldId] = (formConfig.config.fields.find(f=>f.id===fieldId)?.options||[])[idx] || '';
+  clearErr(fieldId);
+  const container = document.getElementById('fi-' + fieldId);
+  if (!container) return;
+  container.querySelectorAll('.hxfv-option-label').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+}
+
+function pickCheckbox(fieldId, idx) {
+  const field = formConfig.config.fields.find(f => f.id === fieldId);
+  const val   = (field?.options || [])[idx] || '';
+  if (!Array.isArray(formValues[fieldId])) formValues[fieldId] = [];
+  const arr = formValues[fieldId];
+  const pos = arr.indexOf(val);
+  if (pos > -1) arr.splice(pos, 1);
+  else arr.push(val);
+  clearErr(fieldId);
+  const container = document.getElementById('fi-' + fieldId);
+  if (!container) return;
+  container.querySelectorAll('.hxfv-option-label').forEach((el, i) => {
+    const optVal = (field?.options || [])[i] || '';
+    el.classList.toggle('selected', arr.includes(optVal));
+  });
+}
+
+function pickStar(fieldId, val, max) {
+  formValues[fieldId] = val;
+  clearErr(fieldId);
+  const container = document.getElementById('fi-' + fieldId);
+  if (!container) return;
+  container.querySelectorAll('.hxfv-star-btn').forEach(btn => {
+    btn.classList.toggle('active', +btn.dataset.val <= val);
+  });
+}
+
+function pickNum(fieldId, val, max) {
+  formValues[fieldId] = val;
+  clearErr(fieldId);
+  const container = document.getElementById('fi-' + fieldId);
+  if (!container) return;
+  container.querySelectorAll('.hxfv-num-btn').forEach(btn => {
+    btn.classList.toggle('active', +btn.dataset.val === val);
+  });
+}
+
+function handleFileChange(fieldId, input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  const field  = formConfig.config.fields.find(f => f.id === fieldId);
+  const maxMB  = (field?.maxMB || 10) * 1024 * 1024;
+  if (file.size > maxMB) {
+    showFieldError(fieldId, `File too large. Max ${field?.maxMB || 10} MB.`);
+    input.value = '';
+    return;
+  }
+  fileObjects[fieldId]  = file;
+  formValues[fieldId]   = file.name;
+  clearErr(fieldId);
+  const prev = document.getElementById('fp-' + fieldId);
+  const name = document.getElementById('fn-' + fieldId);
+  if (prev) prev.style.display = '';
+  if (name) name.textContent = `${file.name} (${(file.size/1024/1024).toFixed(1)} MB)`;
+}
+
+function handleDrop(fieldId, e) {
+  e.preventDefault();
+  document.getElementById('fi-' + fieldId)?.classList.remove('drag-over');
+  const file = e.dataTransfer.files?.[0];
+  if (!file) return;
+  // Reuse file change logic
+  const fakeInput = { files: [file] };
+  handleFileChange(fieldId, fakeInput);
+  // Also update the native input if we can
+  const zone = document.getElementById('fi-' + fieldId);
+  if (zone) {
+    const inp = zone.querySelector('input[type="file"]');
+    // Can't programmatically set file input value for security, just use fileObjects
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   VALIDATION
+════════════════════════════════════════════════════════════════ */
+function validate() {
+  const fields = formConfig?.config?.fields || [];
+  let valid = true;
+  let firstErrId = null;
+
+  fields.forEach(f => {
+    if (f.type === 'section_break') return;
+    clearErr(f.id);
+
+    const val = formValues[f.id];
+    const isEmpty = Array.isArray(val) ? val.length === 0 : !String(val||'').trim();
+
+    if (f.required && isEmpty) {
+      showFieldError(f.id, 'This field is required.');
+      if (!firstErrId) firstErrId = f.id;
+      valid = false;
+      return;
+    }
+
+    if (!isEmpty) {
+      // Email format
+      if (f.type === 'email' && val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        showFieldError(f.id, 'Please enter a valid email address.');
+        if (!firstErrId) firstErrId = f.id;
+        valid = false;
+        return;
+      }
+      // Number range
+      if (f.type === 'number' && val !== '') {
+        const n = +val;
+        if (f.validation?.min != null && n < f.validation.min) {
+          showFieldError(f.id, `Minimum value is ${f.validation.min}.`);
+          if (!firstErrId) firstErrId = f.id;
+          valid = false;
+          return;
+        }
+        if (f.validation?.max != null && n > f.validation.max) {
+          showFieldError(f.id, `Maximum value is ${f.validation.max}.`);
+          if (!firstErrId) firstErrId = f.id;
+          valid = false;
+          return;
+        }
+      }
+    }
+  });
+
+  if (firstErrId) {
+    const el = document.getElementById('fw-' + firstErrId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  return valid;
+}
+
+function showFieldError(fieldId, msg) {
+  const wrap = document.getElementById('fw-' + fieldId);
+  const err  = document.getElementById('err-' + fieldId);
+  if (wrap) wrap.classList.add('has-error');
+  if (err)  err.textContent = msg;
+}
+
+function clearErr(fieldId) {
+  const wrap = document.getElementById('fw-' + fieldId);
+  const err  = document.getElementById('err-' + fieldId);
+  if (wrap) wrap.classList.remove('has-error');
+  if (err)  err.textContent = 'This field is required.';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SUBMIT
+════════════════════════════════════════════════════════════════ */
+async function handleSubmit() {
+  if (!validate()) return;
+
+  const btn       = document.getElementById('submitBtn');
+  const labelEl   = document.getElementById('submitLabel');
+  btn.disabled    = true;
+  btn.classList.add('loading');
+  labelEl.textContent = '';
+
+  // Build submission payload
+  const payload = { data: {} };
+  const fields  = formConfig?.config?.fields || [];
+  fields.forEach(f => {
+    if (f.type === 'section_break') return;
+    if (f.type === 'file_upload') {
+      // In Batch 4 we'll send the actual file to Drive.
+      // For now, record the filename only so Sheet gets populated.
+      payload.data[f.id] = formValues[f.id] || '';
+    } else {
+      payload.data[f.id] = formValues[f.id] ?? '';
+    }
+  });
+
+  // Add field labels as metadata so Sheet headers are readable
+  payload.fieldMeta = {};
+  fields.forEach(f => {
+    if (f.type !== 'section_break') {
+      payload.fieldMeta[f.id] = f.label || f.id;
+    }
+  });
+
+  try {
+    const res = await fetch(`${BACKEND}/api/hxforms/submit/${encodeURIComponent(formSlug)}`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      // Handle "form closed" mid-session (someone closed it while they were filling)
+      if (res.status === 403) {
+        showError('closed', 'Form closed', err.error || 'This form is no longer accepting responses.', 'Closed');
+        return;
+      }
+      throw new Error(err.error || 'Submission failed');
+    }
+
+    const data = await res.json();
+    showThankYou(data.message || formConfig?.config?.settings?.successMessage || 'Thank you for your response!');
+
+    // Redirect if configured
+    const redirectUrl = formConfig?.config?.settings?.redirectUrl;
+    if (redirectUrl) {
+      setTimeout(() => { window.location.href = redirectUrl; }, 2500);
+    }
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    labelEl.textContent = formConfig?.config?.settings?.submitLabel || 'Submit';
+    showToast(e.message || 'Something went wrong. Please try again.', 'error');
+  }
+}
+
+/* ── Show thank you ─────────────────────────────────────────────── */
+function showThankYou(message) {
+  document.getElementById('formState').style.display    = 'none';
+  document.getElementById('thankYouState').style.display = '';
+  document.getElementById('tyMessage').textContent = message;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Reset for "submit another" ────────────────────────────────── */
+function resetForm() {
+  formValues  = {};
+  fileObjects = {};
+  document.getElementById('thankYouState').style.display = 'none';
+  renderForm(formConfig); // re-render fresh form
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ERROR STATE
+════════════════════════════════════════════════════════════════ */
+function showError(type, title, sub, badge) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('formState').style.display    = 'none';
+  document.getElementById('errorState').style.display   = '';
+
+  const icons = {
+    'not-found': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    'closed':    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    'full':      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>`,
+  };
+
+  document.getElementById('errIcon').className = `hxfv-error-icon ${type}`;
+  document.getElementById('errIcon').innerHTML = icons[type] || icons['not-found'];
+  document.getElementById('errTitle').textContent = title;
+  document.getElementById('errSub').textContent   = sub;
+
+  const badgeEl = document.getElementById('errBadge');
+  if (badge) {
+    badgeEl.innerHTML = `<div class="hxfv-error-badge ${type}">● ${badge}</div>`;
+    badgeEl.style.display = '';
+  } else {
+    badgeEl.style.display = 'none';
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TOAST (minimal, self-contained)
+════════════════════════════════════════════════════════════════ */
+function showToast(msg, type = 'error') {
+  const existing = document.getElementById('hxfv-toast');
+  if (existing) existing.remove();
+  const colors = {
+    error:   { bg:'rgba(244,63,94,0.12)',  border:'rgba(244,63,94,0.3)',  icon:'#f43f5e', sym:'✕' },
+    success: { bg:'rgba(16,185,129,0.12)', border:'rgba(16,185,129,0.3)', icon:'#10b981', sym:'✓' },
+    warn:    { bg:'rgba(245,158,11,0.12)', border:'rgba(245,158,11,0.3)', icon:'#f59e0b', sym:'⚠' },
+  };
+  const c = colors[type] || colors.error;
+  const el = document.createElement('div');
+  el.id = 'hxfv-toast';
+  el.style.cssText = `
+    position:fixed;bottom:24px;right:20px;z-index:9999;
+    background:${c.bg};border:1px solid ${c.border};
+    backdrop-filter:blur(20px);color:#dde6f5;
+    font-size:14px;font-weight:500;padding:12px 18px;
+    border-radius:11px;display:flex;align-items:center;gap:10px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    font-family:'Plus Jakarta Sans',sans-serif;max-width:320px;
+    animation:toastIn 0.3s ease;
+  `;
+  el.innerHTML = `
+    <style>@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>
+    <span style="color:${c.icon};font-size:15px">${c.sym}</span>
+    <span>${msg}</span>`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+/* ── Helpers ─────────────────────────────────────────────────────── */
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escAttr(s) {
+  return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+</body>
+</html>
