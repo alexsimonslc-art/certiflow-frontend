@@ -524,6 +524,39 @@
   .hxfb-leave-sub   { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 22px; }
   .hxfb-leave-btns  { display: flex; gap: 8px; justify-content: center; }
 
+  /* ── Condition rows ─────────────────────────────────────────── */
+  .hxfb-cond-section {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 12px; margin-top: 4px;
+  }
+  .hxfb-cond-section-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.6px;
+    text-transform: uppercase; color: #f59e0b;
+    display: flex; align-items: center; gap: 5px; margin-bottom: 10px;
+  }
+  .hxfb-cond-section-label svg { width: 12px; height: 12px; }
+  .hxfb-cond-row {
+    display: flex; align-items: center; gap: 5px; margin-bottom: 7px;
+  }
+  .hxfb-cond-row .hxfb-select { flex: 1; min-width: 0; padding: 7px 26px 7px 8px; font-size: 12px; }
+  .hxfb-cond-row .hxfb-input  { flex: 1; min-width: 0; padding: 7px 8px; font-size: 12px; }
+  .hxfb-cond-logic-row {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12px; color: var(--text-3); margin-top: 6px; margin-bottom: 4px;
+  }
+  .hxfb-cond-logic-row .hxfb-select { width: auto; padding: 5px 24px 5px 8px; font-size: 12px; }
+  .hxfb-cond-always {
+    font-size: 12px; color: var(--text-3);
+    padding: 7px 10px; border-radius: 8px;
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 8px;
+  }
+  .hxfb-cond-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 4px; margin-bottom: 6px;
+    background: rgba(245,158,11,0.10); border: 1px solid rgba(245,158,11,0.2);
+    font-size: 10.5px; font-weight: 700; color: #f59e0b;
+  }
   @media (max-width: 900px) {
     .hxfb-layout { grid-template-columns: 1fr; }
     .hxfb-right  { display: none; }
@@ -1024,7 +1057,12 @@ function fieldEditor(f, idx, total) {
         </div>`;
     }
   }
-
+ 
+  // Conditions section (all non-section-break fields)
+  if (f.type !== 'section_break') {
+    html += renderConditionsEditor(f, _S.config.fields);
+  }
+ 
   // Action row: move up / move down / duplicate / delete
   html += `
     <div class="hxfb-field-actions">
@@ -1306,6 +1344,10 @@ function renderPreview() {
 }
 
 function renderFieldPreview(f, accentSolid) {
+  const condBadge = (f.conditions?.length > 0)
+    ? `<div class="hxfb-cond-badge">⚡ Conditional</div>`
+    : '';
+ 
   if (f.type === 'section_break') {
     return `
       <div class="hxfb-prev-section-break">
@@ -1383,7 +1425,7 @@ function renderFieldPreview(f, accentSolid) {
       break;
   }
 
-  return `
+  return condBadge + `
     <div class="hxfb-prev-field">
       <div class="hxfb-prev-label">${escHtml(f.label || 'Untitled')} ${reqStar}</div>
       ${inputHtml}
@@ -1488,6 +1530,177 @@ async function saveAndLeave() {
 window.addEventListener('beforeunload', e => {
   if (_S && _S._backendDirty) { e.preventDefault(); e.returnValue = ''; }
 });
+
+/* ════════════════════════════════════════════════════════════════
+   BATCH 5 — CONDITIONAL LOGIC BUILDER
+════════════════════════════════════════════════════════════════ */
+ 
+/* ── Renders the conditions section for a field ──────────────────── */
+function renderConditionsEditor(field, allFields) {
+  const idx        = allFields.findIndex(f => f.id === field.id);
+  const prevFields = allFields.slice(0, idx).filter(f => f.type !== 'section_break');
+ 
+  // No previous fields → can't set conditions
+  if (prevFields.length === 0) {
+    return `
+      <div class="hxfb-cond-section">
+        <div class="hxfb-cond-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          Conditional Logic
+        </div>
+        <div class="hxfb-cond-always">Add fields above this one to enable show/hide conditions.</div>
+      </div>`;
+  }
+ 
+  const conditions = field.conditions || [];
+  const logic      = field.conditionLogic || 'all';
+ 
+  return `
+    <div class="hxfb-cond-section">
+      <div class="hxfb-cond-section-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Conditional Logic
+        ${conditions.length > 0 ? `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;border-radius:4px;padding:1px 6px;font-size:10px">${conditions.length}</span>` : ''}
+      </div>
+ 
+      ${conditions.length === 0
+        ? `<div class="hxfb-cond-always">Always visible — no conditions set.</div>`
+        : `
+          <div id="condlist-${field.id}">
+            ${conditions.map(c => renderConditionRow(c, field.id, prevFields)).join('')}
+          </div>
+          ${conditions.length > 1 ? `
+            <div class="hxfb-cond-logic-row">
+              Show when
+              <select class="hxfb-select"
+                      onchange="updateCondLogic('${field.id}',this.value)">
+                <option value="all" ${logic==='all'?'selected':''}>ALL</option>
+                <option value="any" ${logic==='any'?'selected':''}>ANY</option>
+              </select>
+              conditions match
+            </div>` : ''}
+        `}
+ 
+      <button class="hxfb-add-option-btn" onclick="addCondition('${field.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add condition
+      </button>
+    </div>`;
+}
+ 
+/* ── Renders one condition row ───────────────────────────────────── */
+function renderConditionRow(cond, fieldId, prevFields) {
+  const ops = [
+    { value: 'equals',       label: 'equals' },
+    { value: 'not_equals',   label: 'does not equal' },
+    { value: 'contains',     label: 'contains' },
+    { value: 'not_contains', label: 'does not contain' },
+    { value: 'is_filled',    label: 'is filled' },
+    { value: 'is_empty',     label: 'is empty' },
+  ];
+  const needsValue = !['is_filled', 'is_empty'].includes(cond.operator || 'equals');
+ 
+  // Get options for the source field (for radio/dropdown/checkbox → show option values)
+  const srcField = prevFields.find(f => f.id === cond.fieldId);
+  const srcOpts  = srcField && ['radio','dropdown','checkbox'].includes(srcField.type)
+    ? srcField.options || [] : [];
+ 
+  return `
+    <div class="hxfb-cond-row" id="condrow-${cond.id}">
+ 
+      <!-- Source field selector -->
+      <select class="hxfb-select"
+              onchange="updateCond('${fieldId}','${cond.id}','fieldId',this.value)">
+        ${prevFields.map(f =>
+          `<option value="${f.id}" ${f.id===cond.fieldId?'selected':''}>${escHtml(f.label||'Untitled')}</option>`
+        ).join('')}
+      </select>
+ 
+      <!-- Operator selector -->
+      <select class="hxfb-select"
+              onchange="updateCond('${fieldId}','${cond.id}','operator',this.value)">
+        ${ops.map(o =>
+          `<option value="${o.value}" ${o.value===(cond.operator||'equals')?'selected':''}>${o.label}</option>`
+        ).join('')}
+      </select>
+ 
+      <!-- Value input (hidden for is_filled / is_empty) -->
+      ${needsValue
+        ? srcOpts.length > 0
+          ? `<select class="hxfb-select"
+                     onchange="updateCond('${fieldId}','${cond.id}','value',this.value)">
+               <option value="">— pick —</option>
+               ${srcOpts.map(o =>
+                 `<option value="${escAttr(o)}" ${o===cond.value?'selected':''}>${escHtml(o)}</option>`
+               ).join('')}
+             </select>`
+          : `<input class="hxfb-input" value="${escAttr(cond.value||'')}"
+                    placeholder="value"
+                    oninput="updateCondValue('${fieldId}','${cond.id}',this.value)"/>`
+        : `<div style="flex:1"></div>`}
+ 
+      <!-- Remove button -->
+      <button class="hxfb-option-del" onclick="removeCond('${fieldId}','${cond.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>`;
+}
+ 
+/* ── Condition management functions ─────────────────────────────── */
+ 
+function addCondition(fieldId) {
+  const field      = _S.config.fields.find(f => f.id === fieldId);
+  if (!field) return;
+  const idx        = _S.config.fields.findIndex(f => f.id === fieldId);
+  const prevFields = _S.config.fields.slice(0, idx).filter(f => f.type !== 'section_break');
+  if (!prevFields.length) return;
+ 
+  const newCond = {
+    id:       'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+    fieldId:  prevFields[0].id,
+    operator: 'equals',
+    value:    '',
+  };
+ 
+  _S.updateField(fieldId, { conditions: [...(field.conditions || []), newCond] });
+  setSaveStatus('unsaved');
+  renderFieldList();
+}
+ 
+function removeCond(fieldId, condId) {
+  const field = _S.config.fields.find(f => f.id === fieldId);
+  if (!field) return;
+  _S.updateField(fieldId, { conditions: (field.conditions || []).filter(c => c.id !== condId) });
+  setSaveStatus('unsaved');
+  renderFieldList();
+}
+ 
+// Called by operator + source field selectors (triggers re-render to show/hide value input)
+function updateCond(fieldId, condId, key, value) {
+  const field = _S.config.fields.find(f => f.id === fieldId);
+  if (!field) return;
+  _S.updateField(fieldId, {
+    conditions: (field.conditions || []).map(c => c.id === condId ? { ...c, [key]: value } : c),
+  });
+  setSaveStatus('unsaved');
+  renderFieldList(); // re-render so value input toggles correctly
+}
+ 
+// Called by value text input (NO re-render to avoid losing focus)
+function updateCondValue(fieldId, condId, value) {
+  const field = _S.config.fields.find(f => f.id === fieldId);
+  if (!field) return;
+  _S.updateField(fieldId, {
+    conditions: (field.conditions || []).map(c => c.id === condId ? { ...c, value } : c),
+  });
+  setSaveStatus('unsaved');
+  // Don't re-render — user is typing
+}
+ 
+function updateCondLogic(fieldId, logic) {
+  _S.updateField(fieldId, { conditionLogic: logic });
+  setSaveStatus('unsaved');
+}
 
 /* ── Helpers ─────────────────────────────────────────────────────── */
 function escHtml(s) {
