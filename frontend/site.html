@@ -18,6 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
   <!-- site.css — standalone, no dashboard deps -->
   <link rel="stylesheet" href="site.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 
 <body>
@@ -134,6 +135,9 @@
        CONFIGURATION
     ════════════════════════════════════════════════════════════════ */
     const MS_API_BASE = 'https://certiflow-backend-73xk.onrender.com';
+    const SUPABASE_URL  = 'https://lbvcrhequonhggsguqqz.supabase.co';   // ← your project URL
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxidmNyaGVxdW9uaGdnc2d1cXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjAxNTgsImV4cCI6MjA5MDE5NjE1OH0.cSL32z9OS94E-UUghgwqeck9czs1IqO9o-yek5TeF9w';                       // ← safe public key
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
     /* ── Extract slug from URL ──────────────────────────────────── */
     function getSlug() {
@@ -374,53 +378,76 @@
       showSkeleton();
       setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 600);
 
-      // ── 1. Try backend (works for every visitor on any device)
+// ── 1. Try Supabase directly (always on, no cold start, safe public read)
       let siteData = null;
       try {
-        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-        const timer = controller ? setTimeout(() => controller.abort(), 8000) : null;
+        const { data, error } = await sb
+          .from('mini_sites')
+          .select('id, name, slug, status, config, registration_open, submission_count')
+          .eq('slug', slug)
+          .eq('status', 'published')
+          .single();
 
-        const res = await fetch(
-          `${MS_API_BASE}/api/minisite/config/${encodeURIComponent(slug)}`,
-          controller ? { signal: controller.signal } : {}
-        );
-        if (timer) clearTimeout(timer);
-
-        if (res.ok) {
-          siteData = await res.json();
-        } else if (res.status !== 404) {
-          const body = await res.json().catch(() => ({}));
-          console.warn('[site.html] Backend error:', body.error || res.status);
+        if (data && !error) {
+          siteData = {
+            id:               data.id,
+            name:             data.name,
+            slug:             data.slug,
+            registrationOpen: data.registration_open !== false,
+            submissionCount:  data.submission_count || 0,
+            config:           { ...data.config, blocks: data.config?.blocks || [] },
+          };
+          console.info('[site.html] Loaded from Supabase (fast path)');
         }
-      } catch (fetchErr) {
-        console.warn('[site.html] Backend unreachable, trying localStorage:', fetchErr.message);
+      } catch (sbErr) {
+        console.warn('[site.html] Supabase read failed:', sbErr.message);
       }
 
-      // ── 2. Fallback: localStorage — works for organiser on their own device / local dev
+      // ── 2. Fallback: Render backend (in case Supabase has a hiccup)
+      if (!siteData) {
+        try {
+          const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          const timer = controller ? setTimeout(() => controller.abort(), 10000) : null;
+          const res = await fetch(
+            `${MS_API_BASE}/api/minisite/config/${encodeURIComponent(slug)}`,
+            controller ? { signal: controller.signal } : {}
+          );
+          if (timer) clearTimeout(timer);
+          if (res.ok) {
+            siteData = await res.json();
+            console.info('[site.html] Loaded from backend (fallback)');
+          }
+        } catch (fetchErr) {
+          console.warn('[site.html] Backend also unreachable:', fetchErr.message);
+        }
+      }
+
+      // ── 3. Last resort: localStorage (organiser on their own device only)
       if (!siteData) {
         try {
           const stored = JSON.parse(localStorage.getItem('hx_minisites') || '[]');
-          const local = stored.find(s => s.slug === slug);
+          const local  = stored.find(s => s.slug === slug);
           if (local) {
-            console.info('[site.html] Loaded from localStorage (offline/local fallback)');
+            console.info('[site.html] Loaded from localStorage (last resort)');
             siteData = {
-              id: local.id,
-              name: local.name,
-              slug: local.slug,
+              id:               local.id,
+              name:             local.name,
+              slug:             local.slug,
               registrationOpen: local.config?.registrationOpen !== false,
-              submissionCount: 0,
-              config: { ...local.config, blocks: local.config?.blocks || [] },
+              submissionCount:  0,
+              config:           { ...local.config, blocks: local.config?.blocks || [] },
             };
           }
         } catch (_) { }
       }
 
-      // ── 3. Both failed — show error
+      // ── 4. Everything failed — show error
       if (!siteData) {
         document.getElementById('ms-content').innerHTML = '';
         showError('404', 'Event not found', `No published event page found for "${slug}".`);
         return;
       }
+
 
       // Expose globals for mini-site-form.js
       window.__MS_SITE_ID = siteData.id;
