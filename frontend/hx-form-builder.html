@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Builder — Honourix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <link rel="stylesheet" href="dashboard-patch.css"/>
+  <style>
+  /* ════════════════════════════════════════════════════════════════
+     HX Form Builder — Local Styles
+  ════════════════════════════════════════════════════════════════ */
+
+  * { box-sizing: border-box; }
+
+  body { overflow: hidden; height: 100vh; }
+
+  /* ── Layout ──────────────────────────────────────────────────── */
+  .hxfb-shell {
+    display: flex; flex-direction: column;
+    height: 100vh; overflow: hidden;
+  }
+
+  /* ── Top Bar ─────────────────────────────────────────────────── */
+  .hxfb-topbar {
+    height: 54px; flex-shrink: 0;
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px;
+    background: rgba(4,8,15,0.9);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    position: relative; z-index: 40;
+  }
+  .hxfb-back {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 12px; border-radius: 9px;
+    font-size: 13px; font-weight: 600; color: var(--text-2);
+    background: var(--glass); border: 1px solid var(--glass-border);
+    text-decoration: none; transition: var(--transition); flex-shrink: 0;
+    cursor: pointer;
+  }
+  .hxfb-back:hover { color: var(--text); border-color: var(--glass-border-2); }
+  .hxfb-back svg { width: 13px; height: 13px; }
+
+  .hxfb-divider { width: 1px; height: 22px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+
+  .hxfb-name-wrap { flex: 1; min-width: 0; }
+  .hxfb-name {
+    font-family: var(--font-display); font-size: 15px; font-weight: 700;
+    color: var(--text); outline: none; display: inline-block;
+    max-width: 100%; min-width: 40px; padding: 4px 8px;
+    border-radius: 7px; border: 1px solid transparent;
+    transition: var(--transition); cursor: text; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .hxfb-name:hover { background: var(--glass); border-color: var(--glass-border); }
+  .hxfb-name:focus { background: var(--glass); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); white-space: normal; overflow: visible; }
+
+  .hxfb-save-status {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12.5px; color: var(--text-3); flex-shrink: 0;
+  }
+  .hxfb-save-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green); transition: background 0.3s;
+  }
+  .hxfb-save-dot.unsaved { background: var(--gold); }
+  .hxfb-save-dot.saving  { background: var(--cyan); animation: pulseSaving 0.8s ease infinite; }
+  @keyframes pulseSaving { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hxfb-topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  .hxfb-status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 11px; border-radius: 99px;
+    font-size: 11.5px; font-weight: 600;
+  }
+  .hxfb-status-badge.published { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+  .hxfb-status-badge.closed    { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(244,63,94,0.2); }
+
+  .hxfb-view-btn {
+    padding: 7px 13px; border-radius: 9px; font-size: 12.5px; font-weight: 600;
+    background: var(--glass); border: 1px solid var(--glass-border-2); color: var(--text-2);
+    cursor: pointer; transition: var(--transition); font-family: var(--font);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hxfb-view-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .hxfb-view-btn svg { width: 13px; height: 13px; }
+
+  .hxfb-publish-btn {
+    padding: 8px 18px; border-radius: 9px; font-size: 13px; font-weight: 700;
+    background: var(--grad-primary); color: #fff;
+    border: none; cursor: pointer; font-family: var(--font);
+    box-shadow: 0 4px 16px rgba(0,212,255,0.2);
+    transition: var(--transition); display: flex; align-items: center; gap: 6px;
+  }
+  .hxfb-publish-btn:hover { box-shadow: 0 6px 24px rgba(0,212,255,0.35); }
+  .hxfb-publish-btn:disabled { opacity: 0.6; pointer-events: none; }
+  .hxfb-publish-btn svg { width: 14px; height: 14px; }
+
+  /* ── Main Layout ─────────────────────────────────────────────── */
+  .hxfb-layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    height: calc(100vh - 54px);
+    overflow: hidden;
+  }
+
+  /* ── Left Panel ──────────────────────────────────────────────── */
+  .hxfb-left {
+    display: flex; flex-direction: column;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    background: rgba(4,8,18,0.6);
+    overflow: hidden;
+  }
+
+  .hxfb-tabs {
+    display: flex; padding: 10px 12px 0; gap: 4px; flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .hxfb-tab {
+    padding: 9px 16px; border-radius: 9px 9px 0 0; font-size: 13px; font-weight: 600;
+    color: var(--text-3); cursor: pointer; transition: var(--transition);
+    background: none; border: none; font-family: var(--font);
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .hxfb-tab:hover { color: var(--text-2); }
+  .hxfb-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+  /* Fields tab */
+  .hxfb-fields-tab { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .hxfb-field-list { flex: 1; overflow-y: auto; padding: 12px 0 8px; }
+  .hxfb-field-list::-webkit-scrollbar { width: 3px; }
+  .hxfb-field-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+
+  /* Empty fields state */
+  .hxfb-fields-empty {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 32px 20px; text-align: center;
+  }
+  .hxfb-fields-empty svg { width: 32px; height: 32px; color: var(--text-3); margin-bottom: 10px; opacity: 0.4; }
+  .hxfb-fields-empty p { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+
+  /* Field card */
+  .hxfb-field-card {
+    margin: 0 10px 7px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 11px; overflow: hidden;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .hxfb-field-card.expanded {
+    border-color: rgba(0,212,255,0.35);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.07);
+  }
+
+  .hxfb-field-hdr {
+    display: flex; align-items: center; gap: 9px;
+    padding: 10px 11px; cursor: pointer;
+    background: rgba(255,255,255,0.02); transition: background 0.15s;
+    user-select: none;
+  }
+  .hxfb-field-hdr:hover { background: rgba(255,255,255,0.04); }
+  .hxfb-field-type-icon {
+    width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hxfb-field-type-icon svg { width: 13px; height: 13px; }
+  .hxfb-field-type-icon.text      { background: rgba(0,212,255,0.12);  color: var(--cyan); }
+  .hxfb-field-type-icon.textarea  { background: rgba(0,212,255,0.12);  color: var(--cyan); }
+  .hxfb-field-type-icon.email     { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .hxfb-field-type-icon.phone     { background: rgba(16,185,129,0.12); color: var(--green); }
+  .hxfb-field-type-icon.number    { background: rgba(245,158,11,0.12); color: var(--gold); }
+  .hxfb-field-type-icon.dropdown  { background: rgba(0,212,255,0.12);  color: var(--cyan); }
+  .hxfb-field-type-icon.radio     { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .hxfb-field-type-icon.checkbox  { background: rgba(16,185,129,0.12); color: var(--green); }
+  .hxfb-field-type-icon.date      { background: rgba(245,158,11,0.12); color: var(--gold); }
+  .hxfb-field-type-icon.time      { background: rgba(245,158,11,0.12); color: var(--gold); }
+  .hxfb-field-type-icon.file_upload    { background: rgba(0,212,255,0.12);  color: var(--cyan); }
+  .hxfb-field-type-icon.linear_scale  { background: rgba(244,63,94,0.12);  color: var(--red); }
+  .hxfb-field-type-icon.section_break { background: rgba(255,255,255,0.06); color: var(--text-3); }
+
+  .hxfb-field-info { flex: 1; min-width: 0; }
+  .hxfb-field-lbl { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hxfb-field-meta { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+
+  .hxfb-req-star { color: var(--red); font-size: 11px; margin-right: 4px; }
+  .hxfb-chevron { width: 14px; height: 14px; color: var(--text-3); transition: transform 0.2s; flex-shrink: 0; }
+  .hxfb-field-card.expanded .hxfb-chevron { transform: rotate(180deg); }
+
+  /* Field editor body */
+  .hxfb-field-body {
+    display: none; padding: 14px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    background: rgba(0,0,0,0.15);
+  }
+  .hxfb-field-card.expanded .hxfb-field-body { display: block; }
+
+  /* Micro form controls inside field editor */
+  .hxfb-prop { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .hxfb-prop:last-child { margin-bottom: 0; }
+  .hxfb-prop-label { font-size: 11.5px; font-weight: 600; color: var(--text-3); letter-spacing: 0.3px; text-transform: uppercase; }
+  .hxfb-input {
+    padding: 8px 10px; border-radius: 8px; font-size: 13.5px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text); font-family: var(--font); outline: none;
+    transition: border-color 0.15s;
+  }
+  .hxfb-input:focus { border-color: rgba(0,212,255,0.4); }
+  .hxfb-input::placeholder { color: var(--text-3); }
+  .hxfb-select {
+    padding: 8px 10px; border-radius: 8px; font-size: 13px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text); font-family: var(--font); outline: none; cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%22 height=%2212%22 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%234a6080%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    padding-right: 30px;
+  }
+  .hxfb-select option { background: #0d1728; }
+  .hxfb-select:focus { border-color: rgba(0,212,255,0.4); }
+
+  .hxfb-toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px; border-radius: 8px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+    font-size: 13px; color: var(--text-2);
+  }
+  .hxfb-toggle {
+    width: 36px; height: 20px; border-radius: 99px;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15);
+    position: relative; cursor: pointer; transition: var(--transition); flex-shrink: 0;
+  }
+  .hxfb-toggle.on { background: var(--grad-primary); border-color: transparent; box-shadow: 0 0 8px rgba(0,212,255,0.3); }
+  .hxfb-toggle::after {
+    content: ''; position: absolute; left: 3px; top: 2px;
+    width: 14px; height: 14px; border-radius: 50%; background: #fff;
+    transition: var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .hxfb-toggle.on::after { transform: translateX(16px); }
+
+  .hxfb-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* Options list */
+  .hxfb-options-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+  .hxfb-option-row { display: flex; align-items: center; gap: 6px; }
+  .hxfb-option-drag { color: var(--text-3); cursor: grab; font-size: 14px; flex-shrink: 0; padding: 2px; }
+  .hxfb-option-input {
+    flex: 1; padding: 7px 10px; border-radius: 7px; font-size: 13px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+    color: var(--text); font-family: var(--font); outline: none;
+  }
+  .hxfb-option-input:focus { border-color: rgba(0,212,255,0.35); }
+  .hxfb-option-del {
+    width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; color: var(--text-3); cursor: pointer;
+    transition: var(--transition);
+  }
+  .hxfb-option-del:hover { color: var(--red); background: var(--red-dim); }
+  .hxfb-option-del svg { width: 12px; height: 12px; }
+  .hxfb-add-option-btn {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12.5px; font-weight: 600; color: var(--cyan);
+    background: none; border: none; cursor: pointer; padding: 4px 0;
+    font-family: var(--font); transition: opacity 0.15s;
+  }
+  .hxfb-add-option-btn:hover { opacity: 0.7; }
+  .hxfb-add-option-btn svg { width: 13px; height: 13px; }
+
+  /* Field action row */
+  .hxfb-field-actions {
+    display: flex; align-items: center; gap: 5px;
+    padding-top: 12px; margin-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .hxfb-action-btn {
+    display: flex; align-items: center; gap: 5px; padding: 6px 10px;
+    border-radius: 7px; font-size: 12px; font-weight: 500;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    color: var(--text-3); cursor: pointer; transition: var(--transition);
+    font-family: var(--font);
+  }
+  .hxfb-action-btn:hover { color: var(--text); border-color: var(--glass-border-2); }
+  .hxfb-action-btn.danger:hover { color: var(--red); background: var(--red-dim); border-color: rgba(244,63,94,0.2); }
+  .hxfb-action-btn svg { width: 12px; height: 12px; }
+
+  /* ── Add Field Panel ─────────────────────────────────────────── */
+  .hxfb-add-panel {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    background: rgba(0,0,0,0.2);
+    flex-shrink: 0; overflow: hidden;
+    max-height: 0; transition: max-height 0.3s var(--ease);
+  }
+  .hxfb-add-panel.open { max-height: 280px; }
+
+  .hxfb-type-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
+    padding: 12px 10px;
+    overflow-y: auto; max-height: 268px;
+  }
+  .hxfb-type-grid::-webkit-scrollbar { width: 3px; }
+  .hxfb-type-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+
+  .hxfb-type-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    padding: 9px 6px; border-radius: 9px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    color: var(--text-3); cursor: pointer; font-size: 11px; font-weight: 600;
+    transition: all 0.15s; font-family: var(--font); text-align: center;
+  }
+  .hxfb-type-btn:hover { background: var(--cyan-dim); color: var(--cyan); border-color: rgba(0,212,255,0.25); }
+  .hxfb-type-btn svg { width: 15px; height: 15px; }
+
+  .hxfb-add-trigger {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 10px 14px; border-top: 1px solid rgba(255,255,255,0.07);
+    font-size: 13px; font-weight: 600; color: var(--cyan);
+    cursor: pointer; transition: background 0.15s; background: none;
+    border-left: none; border-right: none; border-bottom: none;
+    font-family: var(--font); width: 100%;
+  }
+  .hxfb-add-trigger:hover { background: rgba(0,212,255,0.05); }
+  .hxfb-add-trigger svg { width: 14px; height: 14px; transition: transform 0.25s; }
+  .hxfb-add-trigger.open svg { transform: rotate(45deg); }
+
+  /* ── Settings Tab ────────────────────────────────────────────── */
+  .hxfb-settings-body {
+    flex: 1; overflow-y: auto; padding: 16px 14px;
+  }
+  .hxfb-settings-body::-webkit-scrollbar { width: 3px; }
+  .hxfb-settings-body::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+
+  .hxfb-settings-section { margin-bottom: 20px; }
+  .hxfb-settings-sec-title {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text-3);
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  /* Theme color pills */
+  .hxfb-color-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hxfb-color-pill {
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .hxfb-color-pill:hover { transform: scale(1.15); }
+  .hxfb-color-pill.selected { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.2); }
+
+  /* ── Right Panel (Preview) ───────────────────────────────────── */
+  .hxfb-right {
+    overflow-y: auto; overflow-x: hidden;
+    background:
+      repeating-conic-gradient(rgba(255,255,255,0.012) 0% 25%, transparent 0% 50%) 0 0 / 24px 24px,
+      var(--bg);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 28px 24px 48px;
+  }
+  .hxfb-right::-webkit-scrollbar { width: 4px; }
+  .hxfb-right::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  .hxfb-preview-wrap {
+    width: 100%; max-width: 560px;
+    background: #080d1c;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+  }
+
+  /* Preview header (accent bar) */
+  .hxfb-prev-accent {
+    height: 5px;
+    background: var(--grad-primary);
+    transition: background 0.3s;
+  }
+
+  .hxfb-prev-body { padding: 28px 28px 24px; }
+
+  .hxfb-prev-title {
+    font-family: var(--font-display); font-size: 22px; font-weight: 700;
+    color: var(--text); margin-bottom: 8px; line-height: 1.3;
+  }
+  .hxfb-prev-desc { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 26px; }
+
+  .hxfb-prev-empty {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 32px 16px; text-align: center;
+    border: 2px dashed rgba(255,255,255,0.08); border-radius: 12px;
+    color: var(--text-3); font-size: 13px; gap: 8px;
+  }
+  .hxfb-prev-empty svg { width: 28px; height: 28px; opacity: 0.3; }
+
+  /* Preview field */
+  .hxfb-prev-field { margin-bottom: 20px; pointer-events: none; }
+  .hxfb-prev-label {
+    font-size: 13.5px; font-weight: 600; color: var(--text);
+    margin-bottom: 7px; display: flex; align-items: center; gap: 4px;
+  }
+  .hxfb-prev-req { color: var(--red); font-size: 13px; }
+  .hxfb-prev-input {
+    width: 100%; padding: 10px 13px; border-radius: 9px; font-size: 14px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-2); font-family: var(--font);
+  }
+  .hxfb-prev-textarea {
+    width: 100%; padding: 10px 13px; border-radius: 9px; font-size: 14px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-2); font-family: var(--font);
+    min-height: 80px; resize: none;
+  }
+  .hxfb-prev-option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 13px; border-radius: 9px; margin-bottom: 6px;
+    border: 1px solid rgba(255,255,255,0.1); font-size: 13.5px; color: var(--text-2);
+    background: rgba(255,255,255,0.03);
+  }
+  .hxfb-prev-option-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
+  }
+  .hxfb-prev-option-box {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
+  }
+
+  .hxfb-prev-stars { display: flex; gap: 6px; }
+  .hxfb-prev-star { font-size: 24px; color: rgba(255,255,255,0.15); }
+
+  .hxfb-prev-upload {
+    border: 2px dashed rgba(255,255,255,0.12); border-radius: 10px;
+    padding: 20px; text-align: center; color: var(--text-3); font-size: 13px;
+  }
+
+  .hxfb-prev-section-break {
+    padding: 16px 0 12px; border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 8px 0 16px;
+  }
+  .hxfb-prev-section-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .hxfb-prev-section-desc  { font-size: 13px; color: var(--text-2); }
+
+  .hxfb-prev-submit {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; padding: 13px; border-radius: 11px;
+    font-size: 15px; font-weight: 700; color: #fff;
+    background: var(--grad-primary);
+    margin-top: 28px; border: none;
+    box-shadow: 0 6px 24px rgba(0,212,255,0.2);
+    font-family: var(--font);
+  }
+
+  /* Preview label */
+  .hxfb-preview-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--text-3);
+    text-align: center; margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .hxfb-preview-label::before, .hxfb-preview-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(255,255,255,0.07); max-width: 80px;
+  }
+
+  /* ── Publish Success Modal ────────────────────────────────────── */
+  .hxfb-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(18px);
+    z-index: 999; align-items: center; justify-content: center;
+  }
+  .hxfb-modal-overlay.open { display: flex; }
+
+  .hxfb-pub-modal {
+    background: #080f1e; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px; padding: 36px 32px 30px;
+    max-width: 460px; width: 94%; text-align: center;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+    animation: slideUpModal 0.25s var(--ease) both;
+  }
+  @keyframes slideUpModal {
+    from { opacity:0; transform: translateY(18px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .hxfb-pub-ring {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--grad-green);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 40px rgba(16,185,129,0.35);
+    animation: popIn 0.5s var(--ease) both;
+  }
+  .hxfb-pub-ring svg { width: 28px; height: 28px; color: #fff; }
+  @keyframes popIn { 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+
+  .hxfb-pub-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .hxfb-pub-sub   { font-size: 14px; color: var(--text-2); line-height: 1.55; margin-bottom: 22px; }
+
+  .hxfb-pub-link-box {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 11px; padding: 10px 12px; margin-bottom: 22px;
+  }
+  .hxfb-pub-link-url { flex: 1; font-size: 12.5px; color: var(--cyan); font-family: var(--font-mono); text-align: left; word-break: break-all; }
+  .hxfb-pub-copy {
+    padding: 6px 12px; border-radius: 7px; font-size: 12px; font-weight: 600;
+    background: var(--cyan-dim); border: 1px solid rgba(0,212,255,0.2); color: var(--cyan);
+    cursor: pointer; font-family: var(--font); flex-shrink: 0; transition: var(--transition);
+  }
+  .hxfb-pub-copy:hover { background: rgba(0,212,255,0.2); }
+
+  .hxfb-pub-btns { display: flex; gap: 10px; justify-content: center; }
+
+  /* ── Leave modal ──────────────────────────────────────────────── */
+  .hxfb-leave-modal {
+    background: #080f1e; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px; padding: 28px 30px 24px;
+    max-width: 390px; width: 92%; text-align: center;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    animation: slideUpModal 0.2s var(--ease) both;
+  }
+  .hxfb-leave-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .hxfb-leave-sub   { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 22px; }
+  .hxfb-leave-btns  { display: flex; gap: 8px; justify-content: center; }
+
+  @media (max-width: 900px) {
+    .hxfb-layout { grid-template-columns: 1fr; }
+    .hxfb-right  { display: none; }
+  }
+  </style>
+</head>
+<body>
+<div class="hxfb-shell">
+
+  <!-- ── Top Bar ──────────────────────────────────────────────── -->
+  <header class="hxfb-topbar">
+    <button class="hxfb-back" onclick="confirmLeave(event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Forms
+    </button>
+
+    <div class="hxfb-divider"></div>
+
+    <div class="hxfb-name-wrap">
+      <span class="hxfb-name" id="formNameEl" contenteditable="true"
+            spellcheck="false"
+            onblur="onNameBlur()"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">
+        Untitled Form
+      </span>
+    </div>
+
+    <div class="hxfb-save-status">
+      <div class="hxfb-save-dot" id="saveDot"></div>
+      <span id="saveStatusTxt">Saved</span>
+    </div>
+
+    <div class="hxfb-topbar-right">
+      <span class="hxfb-status-badge" id="statusBadge" style="display:none"></span>
+      <button class="hxfb-view-btn" id="viewLiveBtn" style="display:none" onclick="viewLive()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        View Live
+      </button>
+      <button class="hxfb-publish-btn" id="publishBtn" onclick="doPublish()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Publish
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Main Layout ──────────────────────────────────────────── -->
+  <div class="hxfb-layout">
+
+    <!-- LEFT PANEL -->
+    <aside class="hxfb-left">
+
+      <!-- Tab bar -->
+      <div class="hxfb-tabs">
+        <button class="hxfb-tab active" id="tabFields"   onclick="switchTab('fields')">Fields</button>
+        <button class="hxfb-tab"        id="tabSettings" onclick="switchTab('settings')">Settings</button>
+      </div>
+
+      <!-- FIELDS TAB -->
+      <div id="fieldsTabPanel" class="hxfb-fields-tab">
+        <div class="hxfb-field-list" id="fieldList">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Add field trigger button -->
+        <button class="hxfb-add-trigger" id="addTriggerBtn" onclick="toggleAddPanel()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Field
+        </button>
+
+        <!-- Field type picker (slide-down) -->
+        <div class="hxfb-add-panel" id="addFieldPanel">
+          <div class="hxfb-type-grid">
+            <button class="hxfb-type-btn" onclick="addField('text')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+              Short Text
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('textarea')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+              Paragraph
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('email')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+              Email
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('phone')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Phone
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('number')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+              Number
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('date')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Date
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('time')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Time
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('dropdown')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18"/><path d="M3 15h18"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+              Dropdown
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('radio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+              Multiple Choice
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('checkbox')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Checkboxes
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('file_upload')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              File Upload
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('linear_scale')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Rating Scale
+            </button>
+            <button class="hxfb-type-btn" onclick="addField('section_break')" style="grid-column:1/-1;flex-direction:row;justify-content:center;gap:7px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              Section Break
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS TAB -->
+      <div id="settingsTabPanel" class="hxfb-settings-body" style="display:none">
+        <!-- Populated by renderSettingsTab() -->
+      </div>
+
+    </aside>
+
+    <!-- RIGHT PANEL (Preview) -->
+    <main class="hxfb-right">
+      <div style="width:100%;max-width:560px;">
+        <div class="hxfb-preview-label">Live Preview</div>
+        <div class="hxfb-preview-wrap" id="previewWrap">
+          <div class="hxfb-prev-accent" id="prevAccent"></div>
+          <div class="hxfb-prev-body" id="prevBody">
+            <!-- Populated by renderPreview() -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<!-- ── Publish Success Modal ───────────────────────────────────── -->
+<div class="hxfb-modal-overlay" id="publishModal">
+  <div class="hxfb-pub-modal">
+    <div class="hxfb-pub-ring">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="hxfb-pub-title">Form Published!</div>
+    <div class="hxfb-pub-sub">Your form is now live. Anyone with the link can fill it out.</div>
+    <div class="hxfb-pub-link-box">
+      <span class="hxfb-pub-link-url" id="publishedUrlEl"></span>
+      <button class="hxfb-pub-copy" id="copyUrlBtn" onclick="copyPublishedUrl()">Copy</button>
+    </div>
+    <div class="hxfb-pub-btns">
+      <button class="btn btn-secondary btn-sm" onclick="closePublishModal()">Done</button>
+      <button class="btn btn-primary btn-sm" onclick="openPublishedForm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open Form
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Leave Warning Modal ─────────────────────────────────────── -->
+<div class="hxfb-modal-overlay" id="leaveModal">
+  <div class="hxfb-leave-modal">
+    <div class="hxfb-leave-title">Unsaved changes</div>
+    <div class="hxfb-leave-sub">Your latest edits haven't been saved to the cloud yet. Leave without saving?</div>
+    <div class="hxfb-leave-btns">
+      <button class="btn btn-secondary btn-sm" onclick="closeLeaveModal()">Keep Editing</button>
+      <button class="btn btn-danger btn-sm"    onclick="leaveNow()">Leave Anyway</button>
+      <button class="btn btn-primary btn-sm"   onclick="saveAndLeave()">Save & Leave</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="dashboard.js"></script>
+<script src="hx-form-state.js"></script>
+<script>
+/* ════════════════════════════════════════════════════════════════
+   HX Form Builder — Main Logic
+════════════════════════════════════════════════════════════════ */
+
+requireAuth();
+
+/* ── UI State ──────────────────────────────────────────────────── */
+let expandedId    = null;   // currently expanded field id
+let activeTab     = 'fields';
+let addPanelOpen  = false;
+let publishedUrl  = null;
+let leaveTarget   = 'hx-forms.html';
+
+/* ── Accent colours map ────────────────────────────────────────── */
+const ACCENT = {
+  cyan:   'linear-gradient(90deg,#00d4ff,#7c3aed)',
+  purple: 'linear-gradient(90deg,#7c3aed,#a855f7)',
+  green:  'linear-gradient(90deg,#10b981,#06b6d4)',
+  gold:   'linear-gradient(90deg,#f59e0b,#ef4444)',
+  pink:   'linear-gradient(90deg,#ec4899,#8b5cf6)',
+};
+const ACCENT_SOLID = {
+  cyan: '#00d4ff', purple: '#a78bfa', green: '#10b981', gold: '#f59e0b', pink: '#ec4899',
+};
+
+/* ── Boot ──────────────────────────────────────────────────────── */
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const id     = params.get('id');
+
+  const state = Object.create(HXFState);
+  window._S   = state; // global reference for event handlers
+
+  const found = await state.init(id);
+  if (!found && id) {
+    toast('Form not found. Starting a new form.', 'warn');
+  }
+
+  // Populate name in header
+  document.getElementById('formNameEl').textContent = state.name || 'Untitled Form';
+  updateTopBarStatus();
+  renderFieldList();
+  renderSettingsTab();
+  renderPreview();
+
+  // If no fields and brand new → open add panel automatically
+  if (!state.config.fields.length) toggleAddPanel();
+
+  setSaveStatus('saved');
+})();
+
+/* ── Name editing ──────────────────────────────────────────────── */
+function onNameBlur() {
+  const el  = document.getElementById('formNameEl');
+  const val = el.textContent.trim();
+  if (!val) { el.textContent = _S.name; return; }
+  if (val !== _S.name) {
+    _S.name = val;
+    if (_S.config.settings) _S.config.settings.title = val;
+    _S.dirty = true;
+    _S.save();
+    setSaveStatus('unsaved');
+    renderPreview();
+  }
+}
+
+/* ── Tab switching ─────────────────────────────────────────────── */
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tabFields').classList.toggle('active',   tab === 'fields');
+  document.getElementById('tabSettings').classList.toggle('active', tab === 'settings');
+  document.getElementById('fieldsTabPanel').style.display   = tab === 'fields'   ? 'flex' : 'none';
+  document.getElementById('settingsTabPanel').style.display = tab === 'settings' ? '' : 'none';
+}
+
+/* ── Save status ───────────────────────────────────────────────── */
+function setSaveStatus(state) {
+  const dot = document.getElementById('saveDot');
+  const txt = document.getElementById('saveStatusTxt');
+  dot.className = 'hxfb-save-dot' + (state === 'unsaved' ? ' unsaved' : state === 'saving' ? ' saving' : '');
+  txt.textContent = state === 'saved' ? 'Saved' : state === 'saving' ? 'Saving…' : 'Unsaved';
+}
+
+/* ── Top bar status badge + view live ──────────────────────────── */
+function updateTopBarStatus() {
+  const badge   = document.getElementById('statusBadge');
+  const viewBtn = document.getElementById('viewLiveBtn');
+  const pubBtn  = document.getElementById('publishBtn');
+  const status  = _S.status;
+
+  if (status === 'published' || status === 'closed') {
+    badge.textContent = status === 'published' ? '● Published' : '● Closed';
+    badge.className   = 'hxfb-status-badge ' + status;
+    badge.style.display = '';
+    viewBtn.style.display = '';
+    pubBtn.textContent = status === 'closed' ? 'Re-open' : 'Update';
+  } else {
+    badge.style.display   = 'none';
+    viewBtn.style.display = 'none';
+    pubBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> Publish`;
+  }
+}
+
+function viewLive() {
+  if (_S.slug) window.open('hx-form-view.html?f=' + _S.slug, '_blank');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FIELD LIST RENDERING
+════════════════════════════════════════════════════════════════ */
+const FIELD_TYPE_META = {
+  text:          { label: 'Short Text',      icon: 'type' },
+  textarea:      { label: 'Paragraph',       icon: 'align-left' },
+  email:         { label: 'Email',           icon: 'at-sign' },
+  phone:         { label: 'Phone',           icon: 'phone' },
+  number:        { label: 'Number',          icon: 'hash' },
+  date:          { label: 'Date',            icon: 'calendar' },
+  time:          { label: 'Time',            icon: 'clock' },
+  dropdown:      { label: 'Dropdown',        icon: 'chevrons-up-down' },
+  radio:         { label: 'Multiple Choice', icon: 'circle-dot' },
+  checkbox:      { label: 'Checkboxes',      icon: 'check-square' },
+  file_upload:   { label: 'File Upload',     icon: 'upload-cloud' },
+  linear_scale:  { label: 'Rating Scale',    icon: 'star' },
+  section_break: { label: 'Section Break',   icon: 'minus' },
+};
+
+function renderFieldList() {
+  const list   = document.getElementById('fieldList');
+  const fields = _S.config?.fields || [];
+
+  if (!fields.length) {
+    list.innerHTML = `
+      <div class="hxfb-fields-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <p>No fields yet. Click<br><strong style="color:var(--cyan)">Add Field</strong> to start.</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = fields.map((f, i) => fieldCard(f, i, fields.length)).join('');
+  lucide.createIcons();
+}
+
+function fieldCard(f, idx, total) {
+  const meta     = FIELD_TYPE_META[f.type] || { label: f.type, icon: 'file' };
+  const isExp    = expandedId === f.id;
+  const typeIcon = `<i data-lucide="${meta.icon}" style="width:13px;height:13px"></i>`;
+
+  return `
+  <div class="hxfb-field-card${isExp ? ' expanded' : ''}" id="fc-${f.id}">
+    <div class="hxfb-field-hdr" onclick="toggleField('${f.id}')">
+      <div class="hxfb-field-type-icon ${f.type}">${typeIcon}</div>
+      <div class="hxfb-field-info">
+        <div class="hxfb-field-lbl">
+          ${f.required ? '<span class="hxfb-req-star">*</span>' : ''}${escHtml(f.label || 'Untitled')}
+        </div>
+        <div class="hxfb-field-meta">${meta.label}</div>
+      </div>
+      <svg class="hxfb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    ${isExp ? `<div class="hxfb-field-body">${fieldEditor(f, idx, total)}</div>` : ''}
+  </div>`;
+}
+
+/* ── Toggle expand ──────────────────────────────────────────────── */
+function toggleField(id) {
+  expandedId = expandedId === id ? null : id;
+  renderFieldList();
+  if (expandedId) {
+    setTimeout(() => {
+      const el = document.getElementById('fc-' + expandedId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FIELD EDITOR (per-type)
+════════════════════════════════════════════════════════════════ */
+function fieldEditor(f, idx, total) {
+  const id = f.id;
+
+  // Common: label + placeholder (most types)
+  let html = `
+    <div class="hxfb-prop">
+      <label class="hxfb-prop-label">Field Label</label>
+      <input class="hxfb-input" value="${escAttr(f.label)}"
+             oninput="updateFP('${id}','label',this.value)" placeholder="Enter label"/>
+    </div>`;
+
+  if (f.type === 'section_break') {
+    html += `
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Section Description</label>
+        <input class="hxfb-input" value="${escAttr(f.description || '')}"
+               oninput="updateFP('${id}','description',this.value)" placeholder="Optional description"/>
+      </div>`;
+  } else {
+    // Placeholder (not for radio/checkbox/file/scale/date/time)
+    if (!['radio','checkbox','file_upload','linear_scale','date','time'].includes(f.type)) {
+      html += `
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Placeholder</label>
+          <input class="hxfb-input" value="${escAttr(f.placeholder || '')}"
+                 oninput="updateFP('${id}','placeholder',this.value)" placeholder="Hint text (optional)"/>
+        </div>`;
+    }
+
+    // Number: min/max
+    if (f.type === 'number') {
+      html += `
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Range</label>
+          <div class="hxfb-grid-2">
+            <input class="hxfb-input" type="number" value="${f.validation?.min ?? ''}"
+                   oninput="updateFPNested('${id}','validation','min',this.value||null)" placeholder="Min"/>
+            <input class="hxfb-input" type="number" value="${f.validation?.max ?? ''}"
+                   oninput="updateFPNested('${id}','validation','max',this.value||null)" placeholder="Max"/>
+          </div>
+        </div>`;
+    }
+
+    // Options: dropdown / radio / checkbox
+    if (['dropdown','radio','checkbox'].includes(f.type)) {
+      const opts = f.options || [];
+      html += `
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Options</label>
+          <div class="hxfb-options-list" id="opts-${id}">
+            ${opts.map((o, i) => `
+              <div class="hxfb-option-row">
+                <span class="hxfb-option-drag">⠿</span>
+                <input class="hxfb-option-input" value="${escAttr(o)}"
+                       oninput="updateOpt('${id}',${i},this.value)" placeholder="Option ${i+1}"/>
+                <button class="hxfb-option-del" onclick="removeOpt('${id}',${i})" ${opts.length <= 1 ? 'disabled style="opacity:.3"' : ''}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>`).join('')}
+          </div>
+          <button class="hxfb-add-option-btn" onclick="addOpt('${id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add option
+          </button>
+        </div>`;
+    }
+
+    // Linear scale
+    if (f.type === 'linear_scale') {
+      html += `
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Scale Range</label>
+          <div class="hxfb-grid-2">
+            <input class="hxfb-input" type="number" value="${f.min ?? 1}" min="1" max="5"
+                   oninput="updateFP('${id}','min',+this.value)" placeholder="Min"/>
+            <input class="hxfb-input" type="number" value="${f.max ?? 5}" min="2" max="10"
+                   oninput="updateFP('${id}','max',+this.value)" placeholder="Max"/>
+          </div>
+        </div>
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Scale Labels</label>
+          <div class="hxfb-grid-2">
+            <input class="hxfb-input" value="${escAttr(f.minLabel||'Poor')}"
+                   oninput="updateFP('${id}','minLabel',this.value)" placeholder="Low label"/>
+            <input class="hxfb-input" value="${escAttr(f.maxLabel||'Excellent')}"
+                   oninput="updateFP('${id}','maxLabel',this.value)" placeholder="High label"/>
+          </div>
+        </div>
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Display Style</label>
+          <select class="hxfb-select" onchange="updateFP('${id}','style',this.value)">
+            <option value="stars"   ${f.style==='stars'   ? 'selected':''}>★ Stars</option>
+            <option value="numbers" ${f.style==='numbers' ? 'selected':''}>1–${f.max||5} Numbers</option>
+          </select>
+        </div>`;
+    }
+
+    // File upload
+    if (f.type === 'file_upload') {
+      html += `
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Accepted Types</label>
+          <select class="hxfb-select" onchange="updateFP('${id}','accept',this.value)">
+            <option value="*"             ${(!f.accept||f.accept==='*') ? 'selected':''}>Any file</option>
+            <option value="image/*"       ${f.accept==='image/*'       ? 'selected':''}>Images only</option>
+            <option value=".pdf"          ${f.accept==='.pdf'          ? 'selected':''}>PDF only</option>
+            <option value=".pdf,.doc,.docx" ${f.accept==='.pdf,.doc,.docx' ? 'selected':''}>Documents</option>
+          </select>
+        </div>
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Max File Size</label>
+          <select class="hxfb-select" onchange="updateFP('${id}','maxMB',+this.value)">
+            <option value="2"  ${f.maxMB===2  ? 'selected':''}>2 MB</option>
+            <option value="5"  ${f.maxMB===5  ? 'selected':''}>5 MB</option>
+            <option value="10" ${(!f.maxMB||f.maxMB===10) ? 'selected':''}>10 MB</option>
+            <option value="25" ${f.maxMB===25 ? 'selected':''}>25 MB</option>
+          </select>
+        </div>`;
+    }
+
+    // Required toggle (not for section_break)
+    if (f.type !== 'section_break') {
+      html += `
+        <div class="hxfb-prop">
+          <div class="hxfb-toggle-row">
+            <span>Required</span>
+            <div class="hxfb-toggle${f.required ? ' on' : ''}" onclick="toggleReq('${id}')"></div>
+          </div>
+        </div>`;
+    }
+  }
+
+  // Action row: move up / move down / duplicate / delete
+  html += `
+    <div class="hxfb-field-actions">
+      <button class="hxfb-action-btn" onclick="moveFP('${id}','up')"   title="Move up"   ${idx===0 ? 'disabled style="opacity:.35"' : ''}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+      </button>
+      <button class="hxfb-action-btn" onclick="moveFP('${id}','down')" title="Move down" ${idx===total-1 ? 'disabled style="opacity:.35"' : ''}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <button class="hxfb-action-btn" onclick="dupFP('${id}')" title="Duplicate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>
+      <div style="flex:1"></div>
+      <button class="hxfb-action-btn danger" onclick="delFP('${id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Delete
+      </button>
+    </div>`;
+
+  return html;
+}
+
+/* ── Field update helpers ───────────────────────────────────────── */
+function updateFP(id, prop, value) {
+  _S.updateField(id, { [prop]: value });
+  setSaveStatus('unsaved');
+  renderFieldListHeader(id); // just update the header, not full re-render
+  renderPreview();
+}
+
+function updateFPNested(id, obj, prop, value) {
+  const field = _S.config.fields.find(f => f.id === id);
+  if (!field) return;
+  _S.updateField(id, { [obj]: { ...(field[obj] || {}), [prop]: value } });
+  setSaveStatus('unsaved');
+  renderPreview();
+}
+
+function toggleReq(id) {
+  const field = _S.config.fields.find(f => f.id === id);
+  if (!field) return;
+  _S.updateField(id, { required: !field.required });
+  setSaveStatus('unsaved');
+  renderFieldListHeader(id);
+  renderPreview();
+}
+
+function addOpt(id) {
+  const field = _S.config.fields.find(f => f.id === id);
+  if (!field) return;
+  const opts = [...(field.options || []), 'Option ' + ((field.options?.length || 0) + 1)];
+  _S.updateField(id, { options: opts });
+  setSaveStatus('unsaved');
+  // Re-render just the options list
+  const el = document.getElementById('opts-' + id);
+  if (el) {
+    el.parentElement.outerHTML = el.parentElement.outerHTML; // cheap refresh
+    renderFieldList(); // full re-render options section
+  }
+  renderPreview();
+}
+
+function removeOpt(id, idx) {
+  const field = _S.config.fields.find(f => f.id === id);
+  if (!field || (field.options || []).length <= 1) return;
+  const opts = field.options.filter((_, i) => i !== idx);
+  _S.updateField(id, { options: opts });
+  setSaveStatus('unsaved');
+  renderFieldList();
+  renderPreview();
+}
+
+function updateOpt(id, idx, value) {
+  const field = _S.config.fields.find(f => f.id === id);
+  if (!field) return;
+  const opts = [...(field.options || [])];
+  opts[idx] = value;
+  _S.updateField(id, { options: opts });
+  setSaveStatus('unsaved');
+  renderPreview();
+}
+
+function moveFP(id, dir) {
+  _S.moveField(id, dir);
+  setSaveStatus('unsaved');
+  renderFieldList();
+  renderPreview();
+}
+
+function dupFP(id) {
+  const copy = _S.duplicateField(id);
+  if (copy) { expandedId = copy.id; setSaveStatus('unsaved'); }
+  renderFieldList();
+  renderPreview();
+}
+
+function delFP(id) {
+  _S.deleteField(id);
+  if (expandedId === id) expandedId = null;
+  setSaveStatus('unsaved');
+  renderFieldList();
+  renderPreview();
+}
+
+/* Partial header-only refresh (keeps editor open) */
+function renderFieldListHeader(id) {
+  const field = _S.config.fields.find(f => f.id === id);
+  if (!field) return;
+  const card = document.getElementById('fc-' + id);
+  if (!card) return;
+  const hdr = card.querySelector('.hxfb-field-hdr');
+  if (!hdr) return;
+  const lblEl = hdr.querySelector('.hxfb-field-lbl');
+  if (lblEl) lblEl.innerHTML = `${field.required ? '<span class="hxfb-req-star">*</span>' : ''}${escHtml(field.label || 'Untitled')}`;
+}
+
+/* ── Add field panel ────────────────────────────────────────────── */
+function toggleAddPanel() {
+  addPanelOpen = !addPanelOpen;
+  document.getElementById('addFieldPanel').classList.toggle('open', addPanelOpen);
+  document.getElementById('addTriggerBtn').classList.toggle('open', addPanelOpen);
+}
+
+function addField(type) {
+  const field = _S.addField(type);
+  if (!field) return;
+  expandedId = field.id;
+  setSaveStatus('unsaved');
+  addPanelOpen = false;
+  document.getElementById('addFieldPanel').classList.remove('open');
+  document.getElementById('addTriggerBtn').classList.remove('open');
+  renderFieldList();
+  renderPreview();
+  // Scroll to the new field
+  setTimeout(() => {
+    const el = document.getElementById('fc-' + field.id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 80);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SETTINGS TAB
+════════════════════════════════════════════════════════════════ */
+function renderSettingsTab() {
+  const s   = _S.config?.settings || {};
+  const th  = _S.config?.theme    || {};
+  const colors = [
+    { key: 'cyan',   color: '#00d4ff', label: 'Cyan' },
+    { key: 'purple', color: '#a78bfa', label: 'Purple' },
+    { key: 'green',  color: '#10b981', label: 'Green' },
+    { key: 'gold',   color: '#f59e0b', label: 'Gold' },
+    { key: 'pink',   color: '#ec4899', label: 'Pink' },
+  ];
+
+  document.getElementById('settingsTabPanel').innerHTML = `
+    <div class="hxfb-settings-section">
+      <div class="hxfb-settings-sec-title">Form Details</div>
+
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Form Title</label>
+        <input class="hxfb-input" value="${escAttr(s.title||'')}"
+               oninput="updateSetting('title',this.value)" placeholder="Form title"/>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Description</label>
+        <textarea class="hxfb-input" rows="3"
+                  oninput="updateSetting('description',this.value)"
+                  placeholder="Brief description shown above the form"
+                  style="resize:vertical;min-height:60px">${escHtml(s.description||'')}</textarea>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Submit Button Label</label>
+        <input class="hxfb-input" value="${escAttr(s.submitLabel||'Submit')}"
+               oninput="updateSetting('submitLabel',this.value)" placeholder="Submit"/>
+      </div>
+    </div>
+
+    <div class="hxfb-settings-section">
+      <div class="hxfb-settings-sec-title">After Submission</div>
+
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Success Message</label>
+        <input class="hxfb-input" value="${escAttr(s.successMessage||'Thank you for your response!')}"
+               oninput="updateSetting('successMessage',this.value)"/>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Redirect URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
+        <input class="hxfb-input" type="url" value="${escAttr(s.redirectUrl||'')}"
+               oninput="updateSetting('redirectUrl',this.value)" placeholder="https://…"/>
+      </div>
+    </div>
+
+    <div class="hxfb-settings-section">
+      <div class="hxfb-settings-sec-title">Submission Rules</div>
+
+      <div class="hxfb-prop">
+        <div class="hxfb-toggle-row">
+          <div>
+            <div style="font-size:13px;color:var(--text)">Allow multiple submissions</div>
+            <div style="font-size:11.5px;color:var(--text-3);margin-top:2px">Same person can submit more than once</div>
+          </div>
+          <div class="hxfb-toggle${s.allowMultiple ? ' on' : ''}" onclick="toggleSetting('allowMultiple')"></div>
+        </div>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Max Submissions <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
+        <input class="hxfb-input" type="number" value="${s.maxSubmissions||''}"
+               oninput="updateSetting('maxSubmissions',this.value?+this.value:null)" placeholder="Unlimited"/>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Close Date <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
+        <input class="hxfb-input" type="date" value="${s.closeDate||''}"
+               oninput="updateSetting('closeDate',this.value||null)"/>
+      </div>
+    </div>
+
+    <div class="hxfb-settings-section">
+      <div class="hxfb-settings-sec-title">Theme Colour</div>
+      <div class="hxfb-color-grid">
+        ${colors.map(c => `
+          <div class="hxfb-color-pill${th.color===c.key?' selected':''}"
+               style="background:${c.color}" title="${c.label}"
+               onclick="updateThemeColor('${c.key}')">
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function updateSetting(key, value) {
+  _S.updateSettings({ [key]: value });
+  setSaveStatus('unsaved');
+  renderPreview();
+}
+function toggleSetting(key) {
+  _S.updateSettings({ [key]: !_S.config.settings[key] });
+  setSaveStatus('unsaved');
+  renderSettingsTab();
+  renderPreview();
+}
+function updateThemeColor(color) {
+  _S.updateTheme({ color });
+  setSaveStatus('unsaved');
+  renderSettingsTab();
+  renderPreview();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PREVIEW RENDERING
+════════════════════════════════════════════════════════════════ */
+function renderPreview() {
+  const fields   = _S.config?.fields   || [];
+  const settings = _S.config?.settings || {};
+  const theme    = _S.config?.theme    || {};
+  const accent   = ACCENT[theme.color] || ACCENT.cyan;
+  const accentSolid = ACCENT_SOLID[theme.color] || ACCENT_SOLID.cyan;
+
+  document.getElementById('prevAccent').style.background = accent;
+
+  const submitLabel = settings.submitLabel || 'Submit';
+
+  let fieldsHtml = '';
+  if (!fields.length) {
+    fieldsHtml = `
+      <div class="hxfb-prev-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Add fields to see your form preview
+      </div>`;
+  } else {
+    fieldsHtml = fields.map(f => renderFieldPreview(f, accentSolid)).join('');
+  }
+
+  document.getElementById('prevBody').innerHTML = `
+    <div class="hxfb-prev-title">${escHtml(settings.title || 'Untitled Form')}</div>
+    ${settings.description ? `<div class="hxfb-prev-desc">${escHtml(settings.description)}</div>` : ''}
+    ${fieldsHtml}
+    ${fields.length ? `<button class="hxfb-prev-submit" style="background:${accent}">${escHtml(submitLabel)}</button>` : ''}
+  `;
+}
+
+function renderFieldPreview(f, accentSolid) {
+  if (f.type === 'section_break') {
+    return `
+      <div class="hxfb-prev-section-break">
+        ${f.label ? `<div class="hxfb-prev-section-title">${escHtml(f.label)}</div>` : ''}
+        ${f.description ? `<div class="hxfb-prev-section-desc">${escHtml(f.description)}</div>` : ''}
+      </div>`;
+  }
+
+  const reqStar = f.required ? `<span class="hxfb-prev-req">*</span>` : '';
+  let inputHtml = '';
+
+  switch (f.type) {
+    case 'text': case 'email': case 'phone':
+      inputHtml = `<div class="hxfb-prev-input" style="color:var(--text-3)">${f.placeholder || 'Your answer'}</div>`;
+      break;
+    case 'textarea':
+      inputHtml = `<div class="hxfb-prev-textarea" style="color:var(--text-3)">${f.placeholder || 'Your answer'}</div>`;
+      break;
+    case 'number':
+      inputHtml = `<div class="hxfb-prev-input" style="color:var(--text-3)">${f.placeholder || '0'}</div>`;
+      break;
+    case 'date':
+      inputHtml = `<div class="hxfb-prev-input" style="color:var(--text-3)">dd / mm / yyyy</div>`;
+      break;
+    case 'time':
+      inputHtml = `<div class="hxfb-prev-input" style="color:var(--text-3)">hh : mm</div>`;
+      break;
+    case 'dropdown':
+      inputHtml = `
+        <div class="hxfb-prev-input" style="display:flex;justify-content:space-between;align-items:center;color:var(--text-3)">
+          <span>${(f.options?.[0]) || 'Select an option'}</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>`;
+      break;
+    case 'radio':
+      inputHtml = (f.options || []).slice(0,3).map((o,i) => `
+        <div class="hxfb-prev-option" style="${i===0 ? `border-color:${accentSolid};background:rgba(0,0,0,0.2)`:'' }">
+          <div class="hxfb-prev-option-dot" style="${i===0 ? `border-color:${accentSolid};background:${accentSolid};box-shadow:0 0 0 3px rgba(0,0,0,0.3)`:'' }"></div>
+          ${escHtml(o)}
+        </div>`).join('');
+      break;
+    case 'checkbox':
+      inputHtml = (f.options || []).slice(0,3).map((o,i) => `
+        <div class="hxfb-prev-option">
+          <div class="hxfb-prev-option-box"></div>
+          ${escHtml(o)}
+        </div>`).join('');
+      break;
+    case 'linear_scale':
+      const max  = f.max || 5;
+      const styl = f.style || 'stars';
+      if (styl === 'stars') {
+        inputHtml = `<div class="hxfb-prev-stars">
+          ${Array.from({length:max},(_,i)=>`<span class="hxfb-prev-star" style="${i<3?`color:${accentSolid}`:''}">★</span>`).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-top:4px">
+          <span>${f.minLabel||'Poor'}</span><span>${f.maxLabel||'Excellent'}</span>
+        </div>`;
+      } else {
+        inputHtml = `<div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${Array.from({length:max},(_,i)=>`<div style="width:34px;height:34px;border-radius:7px;border:1px solid ${i<3?accentSolid:'rgba(255,255,255,0.1)'};background:${i<3?`rgba(0,0,0,0.2)`:'transparent'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:${i<3?accentSolid:'var(--text-3)'}">${i+1}</div>`).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-top:6px">
+          <span>${f.minLabel||'Poor'}</span><span>${f.maxLabel||'Excellent'}</span>
+        </div>`;
+      }
+      break;
+    case 'file_upload':
+      inputHtml = `
+        <div class="hxfb-prev-upload">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 6px;display:block;color:var(--text-3)"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          Click to upload ${f.accept && f.accept !== '*' ? `(${f.accept})` : ''}
+          <div style="font-size:11px;margin-top:3px">Max ${f.maxMB||10} MB</div>
+        </div>`;
+      break;
+  }
+
+  return `
+    <div class="hxfb-prev-field">
+      <div class="hxfb-prev-label">${escHtml(f.label || 'Untitled')} ${reqStar}</div>
+      ${inputHtml}
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PUBLISH
+════════════════════════════════════════════════════════════════ */
+async function doPublish() {
+  const btn = document.getElementById('publishBtn');
+  if (!_S.config.fields.length && _S.status !== 'published') {
+    toast('Add at least one field before publishing.', 'warn');
+    return;
+  }
+
+  // If closed → reopen
+  if (_S.status === 'closed') {
+    btn.disabled = true; btn.textContent = 'Reopening…';
+    try {
+      await _S.reopen();
+      updateTopBarStatus();
+      toast('Form is live again!', 'success');
+    } catch(e) { toast(e.message, 'error'); }
+    btn.disabled = false;
+    return;
+  }
+
+  // Save first, then publish
+  btn.disabled = true;
+  btn.textContent = _S.status === 'published' ? 'Saving…' : 'Publishing…';
+
+  try {
+    setSaveStatus('saving');
+    const result = await _S.publish();
+    setSaveStatus('saved');
+    updateTopBarStatus();
+
+    if (_S.status === 'published') {
+      publishedUrl = result.publicUrl ||
+        `${window.location.origin}/hx-form-view.html?f=${_S.slug}`;
+      document.getElementById('publishedUrlEl').textContent = publishedUrl;
+      document.getElementById('publishModal').classList.add('open');
+    } else {
+      toast('Saved to Supabase!', 'success');
+    }
+  } catch(e) {
+    setSaveStatus('unsaved');
+    toast(e.message || 'Publish failed', 'error');
+  } finally {
+    btn.disabled = false;
+    updateTopBarStatus();
+  }
+}
+
+function closePublishModal() {
+  document.getElementById('publishModal').classList.remove('open');
+}
+
+function openPublishedForm() {
+  if (publishedUrl) window.open(publishedUrl, '_blank');
+  closePublishModal();
+}
+
+function copyPublishedUrl() {
+  if (!publishedUrl) return;
+  navigator.clipboard.writeText(publishedUrl).then(() => {
+    const btn = document.getElementById('copyUrlBtn');
+    btn.textContent = 'Copied!';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 2000);
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LEAVE WARNING
+════════════════════════════════════════════════════════════════ */
+function confirmLeave(e) {
+  if (!_S._backendDirty) { window.location.href = leaveTarget; return; }
+  e.preventDefault();
+  document.getElementById('leaveModal').classList.add('open');
+}
+
+function closeLeaveModal() {
+  document.getElementById('leaveModal').classList.remove('open');
+}
+
+function leaveNow() {
+  closeLeaveModal();
+  window.location.href = leaveTarget;
+}
+
+async function saveAndLeave() {
+  const btn = document.querySelector('#leaveModal .btn-primary');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  setSaveStatus('saving');
+  await _S.saveToBackendNow();
+  setSaveStatus('saved');
+  window.location.href = leaveTarget;
+}
+
+window.addEventListener('beforeunload', e => {
+  if (_S && _S._backendDirty) { e.preventDefault(); e.returnValue = ''; }
+});
+
+/* ── Helpers ─────────────────────────────────────────────────────── */
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escAttr(s) {
+  return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+lucide.createIcons();
+</script>
+</body>
+</html>
