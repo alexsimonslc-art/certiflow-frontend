@@ -180,6 +180,25 @@ function mss_authHeader() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+/* ── One-time migration: move old hx_minisites → user-scoped key ── */
+(function mss_migrate() {
+  try {
+    const userId = mss_getUserId();
+    if (userId === 'anon') return; // not logged in yet
+    const newKey = 'hx_minisites_' + userId;
+    // Already migrated if new key has data
+    if (localStorage.getItem(newKey)) return;
+    // Check old unscoped key
+    const old = localStorage.getItem('hx_minisites');
+    if (!old) return;
+    const sites = JSON.parse(old);
+    if (!Array.isArray(sites) || !sites.length) return;
+    // Copy to new scoped key
+    localStorage.setItem(newKey, old);
+    console.log('[MSState] Migrated', sites.length, 'sites to scoped key:', newKey);
+  } catch(e) {}
+})();
+
 /* ═══════════════════════════════════════════════════════════════
    MSSTATE — Central state manager
 ═══════════════════════════════════════════════════════════════ */
