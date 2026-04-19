@@ -764,6 +764,59 @@
       pointer-events: none;
     }
 
+
+    /* ── Multi-page progress bar ────────────────────────────────── */
+  .hxfv-progress-wrap {
+    margin-bottom: 24px; display: none;
+  }
+  .hxfv-progress-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12.5px; color: var(--text-3); margin-bottom: 8px; font-weight: 500;
+  }
+  .hxfv-progress-meta strong { color: var(--text-2); }
+  .hxfv-progress-track {
+    height: 5px; background: rgba(255,255,255,0.08);
+    border-radius: 99px; overflow: hidden;
+  }
+  .hxfv-progress-fill {
+    height: 100%; border-radius: 99px;
+    background: var(--accent-grad);
+    transition: width 0.45s var(--ease);
+  }
+ 
+  /* ── Page section title (for page 2+) ───────────────────────── */
+  .hxfv-page-hdr { margin-bottom: 26px; display: none; }
+  .hxfv-page-hdr-title {
+    font-family: var(--font-display); font-size: clamp(18px,4vw,24px);
+    font-weight: 700; color: var(--text); margin-bottom: 7px; line-height: 1.3;
+  }
+  .hxfv-page-hdr-desc { font-size: 14.5px; color: var(--text-2); line-height: 1.6; }
+ 
+  /* ── Nav row: Back + Next/Submit ────────────────────────────── */
+  .hxfv-nav-row {
+    display: flex; gap: 10px; align-items: center; margin-top: 12px;
+  }
+  .hxfv-back-btn {
+    padding: 13px 20px; border-radius: 12px; font-size: 15px; font-weight: 700;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-2); cursor: pointer; font-family: var(--font);
+    transition: all 0.18s; display: none; flex-shrink: 0;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .hxfv-back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.22); }
+  .hxfv-back-btn svg { width: 15px; height: 15px; }
+  /* submit button gets flex:1 when back is visible */
+  .hxfv-nav-row .hxfv-submit { margin-top: 0; flex: 1; }
+ 
+  /* Page-in animation */
+  .hxfv-page-enter {
+    animation: pageIn 0.3s var(--ease) both;
+  }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
     /* ── Responsive ─────────────────────────────────────────────── */
     @media (max-width: 600px) {
       .hxfv-page {
@@ -820,25 +873,50 @@
 
   <!-- ── Form State ─────────────────────────────────────────────── -->
   <div class="hxfv-page" id="formState" style="display:none">
-    <div class="hxfv-container">
-
-      <div class="hxfv-header">
-        <div class="hxfv-org-badge">
-          <div class="hxfv-org-dot" id="orgDot"></div>
-          <span id="orgBadgeText">HX Forms</span>
-        </div>
-        <h1 class="hxfv-title" id="formTitle"></h1>
-        <p class="hxfv-desc" id="formDesc" style="display:none"></p>
+  <div class="hxfv-container">
+ 
+    <!-- Progress bar (hidden when single page) -->
+    <div class="hxfv-progress-wrap" id="progressWrap">
+      <div class="hxfv-progress-meta">
+        <span>Step <strong id="pgNum">1</strong> of <strong id="pgTotal">1</strong></span>
+        <span id="pgPct">0%</span>
       </div>
-
-      <div id="fieldsContainer"></div>
-
-      <button class="hxfv-submit" id="submitBtn" onclick="handleSubmit()">
-        <span id="submitLabel">Submit</span>
-      </button>
-
+      <div class="hxfv-progress-track">
+        <div class="hxfv-progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
     </div>
+ 
+    <!-- Form title header (page 1 only) -->
+    <div class="hxfv-header" id="formMainHeader">
+      <div class="hxfv-org-badge">
+        <div class="hxfv-org-dot" id="orgDot"></div>
+        <span id="orgBadgeText">HX Forms</span>
+      </div>
+      <h1 class="hxfv-title" id="formTitle"></h1>
+      <p  class="hxfv-desc"  id="formDesc"  style="display:none"></p>
+    </div>
+ 
+    <!-- Section title (page 2+, from Page Break label) -->
+    <div class="hxfv-page-hdr" id="pageHdr">
+      <div class="hxfv-page-hdr-title" id="pageHdrTitle"></div>
+      <div class="hxfv-page-hdr-desc"  id="pageHdrDesc"  style="display:none"></div>
+    </div>
+ 
+    <div id="fieldsContainer"></div>
+ 
+    <!-- Nav row: back + next/submit -->
+    <div class="hxfv-nav-row">
+      <button class="hxfv-back-btn" id="backBtn" onclick="prevPage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <button class="hxfv-submit" id="submitBtn">
+        <span id="submitLabel">Next</span>
+      </button>
+    </div>
+ 
   </div>
+</div>
 
   <!-- ── Thank You State ────────────────────────────────────────── -->
   <div class="hxfv-page" id="thankYouState" style="display:none">
@@ -897,6 +975,104 @@
     let formValues = {};      // { fieldId: value }
     let fileObjects = {};      // { fieldId: File } — for upload fields
     let accent = ACCENTS.cyan;
+
+
+    /* ════════════════════════════════════════════════════════════════
+      MULTI-PAGE ENGINE
+    ════════════════════════════════════════════════════════════════ */
+    let _pages       = [];   // [{ title, desc, fields[] }]
+    let _currentPage = 0;
+    
+    /** Split fields into pages at section_break boundaries */
+    function buildPages() {
+      const fields = formConfig?.config?.fields || [];
+      _pages = [];
+      let page = { title: null, desc: null, fields: [] };
+    
+      fields.forEach(f => {
+        if (f.type === 'section_break') {
+          _pages.push(page);
+          page = { title: f.label || '', desc: f.description || '', fields: [] };
+        } else {
+          page.fields.push(f);
+        }
+      });
+      _pages.push(page);
+    
+      // Drop empty pages (e.g. two consecutive page breaks)
+      if (_pages.length > 1) {
+        _pages = _pages.filter(p => p.fields.length > 0);
+      }
+      _currentPage = 0;
+    }
+    
+    /** Render a specific page */
+    function showPage(n) {
+      _currentPage = n;
+      const page    = _pages[n];
+      const total   = _pages.length;
+      const isFirst = n === 0;
+      const isLast  = n === total - 1;
+      const s       = formConfig?.config?.settings || {};
+    
+      // Progress bar
+      const progressWrap = document.getElementById('progressWrap');
+      if (total > 1) {
+        progressWrap.style.display = '';
+        const pct = Math.round(((n + 1) / total) * 100);
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('pgNum').textContent   = n + 1;
+        document.getElementById('pgTotal').textContent = total;
+        document.getElementById('pgPct').textContent   = pct + '%';
+      } else {
+        progressWrap.style.display = 'none';
+      }
+    
+      // Page 1: show form header; Page 2+: show section title
+      document.getElementById('formMainHeader').style.display = isFirst ? '' : 'none';
+      const pageHdr = document.getElementById('pageHdr');
+      if (!isFirst && page.title) {
+        pageHdr.style.display = '';
+        document.getElementById('pageHdrTitle').textContent = page.title;
+        const descEl = document.getElementById('pageHdrDesc');
+        if (page.desc) { descEl.textContent = page.desc; descEl.style.display = ''; }
+        else descEl.style.display = 'none';
+      } else {
+        pageHdr.style.display = 'none';
+      }
+    
+      // Render fields with animation
+      const container = document.getElementById('fieldsContainer');
+      container.innerHTML = page.fields.map(f => renderField(f)).join('');
+      container.classList.remove('hxfv-page-enter');
+      void container.offsetWidth; // reflow
+      container.classList.add('hxfv-page-enter');
+      wireFields(page.fields);
+      evaluateConditions();
+    
+      // Back button
+      const backBtn = document.getElementById('backBtn');
+      backBtn.style.display = isFirst ? 'none' : 'flex';
+    
+      // Submit/Next button label + action
+      const labelEl = document.getElementById('submitLabel');
+      const btn     = document.getElementById('submitBtn');
+      labelEl.textContent = isLast ? (s.submitLabel || 'Submit') : 'Next →';
+      btn.onclick = isLast ? handleSubmit : nextPage;
+      // Style change: next vs submit
+      btn.style.background = isLast ? 'var(--accent-grad)' : 'var(--accent-grad)';
+    
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function nextPage() {
+      if (!validate()) return;
+      if (_currentPage < _pages.length - 1) showPage(_currentPage + 1);
+    }
+    
+    function prevPage() {
+      if (_currentPage > 0) showPage(_currentPage - 1);
+    }
 
     /* ════════════════════════════════════════════════════════════════
        BOOT
@@ -982,35 +1158,22 @@
       // Page title + meta
       const title = s.title || form.name || 'Form';
       document.title = `${title} — HX Forms`;
-
-      // Header
+    
+      // Header (page 1)
       document.getElementById('formTitle').textContent = title;
       const descEl = document.getElementById('formDesc');
       if (s.description) { descEl.textContent = s.description; descEl.style.display = ''; }
-
-      // Submit label
-      document.getElementById('submitLabel').textContent = s.submitLabel || 'Submit';
-
+    
       // Allow multiple → show "submit another" after
       if (s.allowMultiple) document.getElementById('tyAnotherBtn').style.display = '';
-
-      // Duplicate guard: if already submitted this session and multiple not allowed
-      const submitKey = 'hxf_submitted_' + formSlug;
-      if (!s.allowMultiple && sessionStorage.getItem(submitKey)) {
-        return showError('closed',
-          'Already submitted',
-          'You have already submitted this form. Thank you for your response!',
-          'Submitted'
-        );
-      }
-
-      // Render fields
-      document.getElementById('fieldsContainer').innerHTML = fields.map(f => renderField(f)).join('');
-      wireFields(fields);
-
+    
+      // Build pages from section_breaks + show page 1
+      buildPages();
+      showPage(0);
+    
       // Show form
       document.getElementById('loadingState').style.display = 'none';
-      document.getElementById('formState').style.display = '';
+      document.getElementById('formState').style.display    = '';
     }
 
     /* ── Apply accent to CSS vars ──────────────────────────────────── */
@@ -1288,13 +1451,15 @@
        VALIDATION
     ════════════════════════════════════════════════════════════════ */
     function validate() {
-      const fields = formConfig?.config?.fields || [];
+      // Only validate fields on the CURRENT page
+      const page   = _pages[_currentPage] || { fields: [] };
+      const fields = page.fields;
       let valid = true;
       let firstErrId = null;
-
+    
       fields.forEach(f => {
         if (f.type === 'section_break') return;
-        if (!isFieldVisible(f)) return;   // skip hidden conditional fields
+        if (!isFieldVisible(f)) return;
         clearErr(f.id);
 
         const val = formValues[f.id];
@@ -1369,11 +1534,11 @@
       labelEl.textContent = '';
 
       // Build submission payload
-      const payload = { data: {} };
-      const fields = formConfig?.config?.fields || [];
-      fields.forEach(f => {
+       const payload = { data: {} };
+       const fields  = formConfig?.config?.fields || [];
+       fields.forEach(f => {
         if (f.type === 'section_break') return;
-        if (!isFieldVisible(f)) return;   // hidden fields don't go to Sheet
+        if (!isFieldVisible(f)) return;
         if (f.type === 'file_upload') {
           // In Batch 4 we'll send the actual file to Drive.
           // For now, record the filename only so Sheet gets populated.
@@ -1436,10 +1601,12 @@
     }
     /* ── Reset for "submit another" ────────────────────────────────── */
     function resetForm() {
-      formValues = {};
+      formValues  = {};
       fileObjects = {};
+      _pages      = [];
+      _currentPage = 0;
       document.getElementById('thankYouState').style.display = 'none';
-      renderForm(formConfig); // re-render fresh form
+      renderForm(formConfig);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
