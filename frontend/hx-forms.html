@@ -6,6 +6,7 @@
   <title>HX Forms — Honourix</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <link rel="stylesheet" href="dashboard.css"/>
   <link rel="stylesheet" href="dashboard-patch.css"/>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -289,6 +290,71 @@
       0%,100% { opacity:1; box-shadow: 0 0 6px currentColor; }
       50%      { opacity:.5; box-shadow: 0 0 2px currentColor; }
     }
+
+     /* ── Card extras — Batch 6 ──────────────────────────────── */
+    .hxf-card-sheet-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 600; color: var(--text-3);
+      padding: 4px 0; cursor: pointer; background: none; border: none;
+      font-family: var(--font); transition: color 0.15s;
+    }
+    .hxf-card-sheet-link:hover { color: var(--green); }
+    .hxf-card-sheet-link svg { width: 12px; height: 12px; }
+ 
+    .hxf-close-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: var(--transition); border: none; font-family: var(--font);
+      flex-shrink: 0;
+    }
+    .hxf-close-btn.close  { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(244,63,94,0.2); }
+    .hxf-close-btn.reopen { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+    .hxf-close-btn:hover.close  { background: rgba(244,63,94,0.22); }
+    .hxf-close-btn:hover.reopen { background: rgba(16,185,129,0.22); }
+    .hxf-close-btn svg { width: 12px; height: 12px; }
+ 
+    .hxf-responses-bar-wrap { margin: -4px 0 2px; }
+    .hxf-responses-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: 11.5px; color: var(--text-3); margin-bottom: 5px;
+    }
+    .hxf-responses-bar-track {
+      height: 4px; background: rgba(255,255,255,0.07);
+      border-radius: 99px; overflow: hidden;
+    }
+    .hxf-responses-bar-fill {
+      height: 100%; border-radius: 99px;
+      transition: width 0.6s var(--ease);
+    }
+ 
+    .hxf-closedate-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; color: var(--text-3); font-weight: 500;
+    }
+    .hxf-closedate-badge.soon { color: var(--gold); }
+    .hxf-closedate-badge svg  { width: 11px; height: 11px; }
+ 
+    /* QR modal */
+    .hxf-qr-modal {
+      background: #080f1e; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px; padding: 28px 28px 24px;
+      max-width: 340px; width: 94%; text-align: center;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+      animation: slideUp 0.22s var(--ease) both;
+    }
+    .hxf-qr-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .hxf-qr-sub   { font-size: 13px; color: var(--text-2); margin-bottom: 18px; line-height: 1.5; }
+    .hxf-qr-canvas-wrap {
+      background: #fff; border-radius: 12px; padding: 16px;
+      display: inline-block; margin-bottom: 18px;
+    }
+    .hxf-qr-url {
+      font-size: 11.5px; color: var(--text-3); font-family: var(--font-mono);
+      word-break: break-all; margin-bottom: 18px; padding: 8px 10px;
+      background: rgba(255,255,255,0.04); border-radius: 7px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .hxf-qr-btns { display: flex; gap: 8px; justify-content: center; }
   </style>
 </head>
 <body>
@@ -439,6 +505,25 @@
   </div>
 </div>
 
+<!-- ── QR Code Modal ──────────────────────────────────────────── -->
+<div class="hxf-modal-overlay" id="qrModal" onclick="if(event.target===this)closeQR()">
+  <div class="hxf-qr-modal">
+    <div class="hxf-qr-title" id="qrTitle">Form QR Code</div>
+    <div class="hxf-qr-sub">Scan to open the form on any device</div>
+    <div class="hxf-qr-canvas-wrap">
+      <canvas id="qrCanvas"></canvas>
+    </div>
+    <div class="hxf-qr-url" id="qrUrl"></div>
+    <div class="hxf-qr-btns">
+      <button class="btn btn-secondary btn-sm" onclick="closeQR()">Close</button>
+      <button class="btn btn-primary btn-sm" onclick="downloadQR()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PNG
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ── Delete Confirm Modal ────────────────────────────────────── -->
 <div class="hxf-modal-overlay" id="deleteModal" onclick="if(event.target===this)closeDeleteModal()">
   <div class="hxf-del-modal">
@@ -566,11 +651,53 @@
     const status   = f.status || 'draft';
     const count    = f.submission_count || 0;
     const fields   = (f.config?.fields || []).length;
+    const maxSub   = f.config?.settings?.maxSubmissions || 0;
+    const closeDate = f.config?.settings?.closeDate || '';
     const updated  = f.updated_at ? new Date(f.updated_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}) : '—';
     const isPublished = status === 'published';
+    const isClosed    = status === 'closed';
     const slug     = f.slug || '';
     const pubUrl   = `hx-form-view.html?f=${slug}`;
-
+    const origin   = window.location.origin;
+    const fullUrl  = `${origin}/${pubUrl}`;
+ 
+    // Max responses progress bar
+    let progressHtml = '';
+    if (maxSub > 0 && count > 0) {
+      const pct   = Math.min(100, Math.round((count / maxSub) * 100));
+      const color = pct >= 100 ? '#f43f5e' : pct >= 80 ? '#f59e0b' : '#10b981';
+      progressHtml = `
+        <div class="hxf-responses-bar-wrap">
+          <div class="hxf-responses-bar-label">
+            <span>${count} responses</span>
+            <span>${count} / ${maxSub}</span>
+          </div>
+          <div class="hxf-responses-bar-track">
+            <div class="hxf-responses-bar-fill" style="width:${pct}%;background:${color}"></div>
+          </div>
+        </div>`;
+    } else if (count > 0) {
+      progressHtml = `
+        <div class="hxf-card-responses">${count}<span>response${count !== 1 ? 's' : ''}</span></div>`;
+    }
+ 
+    // Close date badge
+    let closeDateHtml = '';
+    if (closeDate && isPublished) {
+      const cd     = new Date(closeDate);
+      const now    = new Date();
+      const daysLeft = Math.ceil((cd - now) / 86400000);
+      const label  = cd < now ? 'Closed ' + cd.toLocaleDateString('en-IN',{day:'numeric',month:'short'})
+                               : daysLeft <= 3 ? `Closes in ${daysLeft}d`
+                               : 'Closes ' + cd.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+      const soon   = daysLeft <= 3 && cd > now;
+      closeDateHtml = `
+        <div class="hxf-closedate-badge${soon?' soon':''}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          ${label}
+        </div>`;
+    }
+ 
     return `
     <div class="hxf-card" id="card-${f.id}">
       <div class="hxf-card-top">
@@ -582,9 +709,9 @@
           ${STATUS_LABELS[status] || status}
         </div>
       </div>
-
+ 
       <div class="hxf-card-name">${escHtml(f.name)}</div>
-
+ 
       <div class="hxf-card-meta">
         <div class="hxf-card-meta-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
@@ -594,26 +721,41 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           ${updated}
         </div>
+        ${closeDateHtml}
       </div>
-
-      ${count > 0 ? `
-      <div>
-        <div class="hxf-card-responses">${count}<span>response${count !== 1 ? 's' : ''}</span></div>
-      </div>` : ''}
-
+ 
+      ${progressHtml}
+ 
       <div class="hxf-card-footer">
         <button class="hxf-btn hxf-btn-primary" onclick="editForm('${f.id}')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           Edit
         </button>
-
+ 
         ${isPublished ? `
-        <button class="hxf-link-btn" onclick="copyLink('${pubUrl}','${f.id}')" id="copybtn-${f.id}" title="Copy form link">
+        <button class="hxf-link-btn" onclick="copyLink('${fullUrl}','${f.id}')" id="copybtn-${f.id}" title="Copy form link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
           Copy Link
+        </button>
+        <button class="hxf-btn hxf-btn-ghost" onclick="openQR('${f.id}','${escHtml(f.name)}','${fullUrl}')" title="QR Code" style="padding:7px 9px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="10" y="10" width="2" height="2"/><rect x="14" y="14" width="7" height="7"/></svg>
         </button>` : ''}
-
+ 
+        ${(isPublished || isClosed) ? `
+        <button class="hxf-close-btn ${isClosed?'reopen':'close'}" onclick="toggleFormClose('${f.id}','${status}')" id="closebtn-${f.id}">
+          ${isClosed
+            ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Re-open`
+            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Close`}
+        </button>` : ''}
+ 
         <div style="flex:1"></div>
+ 
+        ${f.sheet_id ? `
+        <button class="hxf-card-sheet-link" onclick="window.open('https://docs.google.com/spreadsheets/d/${f.sheet_id}','_blank')" title="Open responses in Google Sheets">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Sheet
+        </button>` : ''}
+ 
         <button class="hxf-btn hxf-btn-danger-ghost" onclick="openDeleteModal('${f.id}')" title="Delete form">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
         </button>
@@ -774,6 +916,65 @@
     btn.textContent = 'Delete Form'; btn.disabled = false;
   }
 
+  /* ── Close / Re-open form ─────────────────────────────────────────── */
+  async function toggleFormClose(formId, currentStatus) {
+    const btn    = document.getElementById('closebtn-' + formId);
+    const isOpen = currentStatus === 'published';
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+ 
+    const endpoint = isOpen ? 'close' : 'reopen';
+    try {
+      const res = await fetch(
+        `https://certiflow-backend-73xk.onrender.com/api/hxforms/${endpoint}/${formId}`,
+        { method: 'POST', headers: { 'Authorization': 'Bearer ' + hxf_getToken() } }
+      );
+      if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+ 
+      // Update in localStorage immediately
+      const forms = JSON.parse(localStorage.getItem(hxf_storageKey()) || '[]');
+      const idx   = forms.findIndex(f => f.id === formId);
+      if (idx > -1) forms[idx].status = isOpen ? 'closed' : 'published';
+      localStorage.setItem(hxf_storageKey(), JSON.stringify(forms));
+      _allForms = forms;
+ 
+      renderGrid();
+      updateStats();
+      lucide.createIcons();
+      toast(isOpen ? 'Form closed — no longer accepting responses.' : 'Form is live again!',
+            isOpen ? 'warn' : 'success', 3000);
+    } catch (e) {
+      toast(e.message, 'error');
+      if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+    }
+  }
+ 
+  /* ── QR Code ──────────────────────────────────────────────────────── */
+  let _qrUrl = '';
+ 
+  function openQR(formId, name, url) {
+    _qrUrl = url;
+    document.getElementById('qrTitle').textContent = name;
+    document.getElementById('qrUrl').textContent   = url;
+    document.getElementById('qrModal').classList.add('open');
+    // Generate QR into canvas
+    QRCode.toCanvas(document.getElementById('qrCanvas'), url, {
+      width: 220, margin: 1,
+      color: { dark: '#000000', light: '#ffffff' },
+    }, err => { if (err) console.error('QR error:', err); });
+  }
+ 
+  function closeQR() {
+    document.getElementById('qrModal').classList.remove('open');
+  }
+ 
+  function downloadQR() {
+    const canvas = document.getElementById('qrCanvas');
+    const a      = document.createElement('a');
+    a.download   = 'form-qr.png';
+    a.href       = canvas.toDataURL('image/png');
+    a.click();
+  }
+  
   /* ── Helpers ───────────────────────────────────────────────────────── */
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

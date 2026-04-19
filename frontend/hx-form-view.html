@@ -964,6 +964,21 @@
         );
       }
 
+      // Close date check — if closeDate has passed, treat as closed
+      if (s.closeDate) {
+        const cd = new Date(s.closeDate);
+        // Set to end of that day
+        cd.setHours(23, 59, 59, 999);
+        if (cd < new Date()) {
+          return showError('closed',
+            'Form closed',
+            'This form stopped accepting responses on ' +
+              cd.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) + '.',
+            'Closed'
+          );
+        }
+      }
+      
       // Page title + meta
       const title = s.title || form.name || 'Form';
       document.title = `${title} — HX Forms`;
@@ -978,6 +993,16 @@
 
       // Allow multiple → show "submit another" after
       if (s.allowMultiple) document.getElementById('tyAnotherBtn').style.display = '';
+
+      // Duplicate guard: if already submitted this session and multiple not allowed
+      const submitKey = 'hxf_submitted_' + formSlug;
+      if (!s.allowMultiple && sessionStorage.getItem(submitKey)) {
+        return showError('closed',
+          'Already submitted',
+          'You have already submitted this form. Thank you for your response!',
+          'Submitted'
+        );
+      }
 
       // Render fields
       document.getElementById('fieldsContainer').innerHTML = fields.map(f => renderField(f)).join('');
@@ -1402,12 +1427,13 @@
 
     /* ── Show thank you ─────────────────────────────────────────────── */
     function showThankYou(message) {
-      document.getElementById('formState').style.display = 'none';
+      // Mark as submitted for this browser session (duplicate guard)
+      sessionStorage.setItem('hxf_submitted_' + formSlug, '1');
+      document.getElementById('formState').style.display    = 'none';
       document.getElementById('thankYouState').style.display = '';
       document.getElementById('tyMessage').textContent = message;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
     /* ── Reset for "submit another" ────────────────────────────────── */
     function resetForm() {
       formValues = {};

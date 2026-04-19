@@ -591,6 +591,14 @@
 
     <div class="hxfb-topbar-right">
       <span class="hxfb-status-badge" id="statusBadge" style="display:none"></span>
+      <button class="hxfb-view-btn" id="sheetLinkBtn" style="display:none" onclick="openSheet()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Sheet
+      </button>
+      <button class="hxfb-view-btn" id="closeFmBtn" style="display:none" onclick="toggleClose()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Close Form
+      </button>
       <button class="hxfb-view-btn" id="viewLiveBtn" style="display:none" onclick="viewLive()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         View Live
@@ -832,26 +840,66 @@ function setSaveStatus(state) {
 
 /* ── Top bar status badge + view live ──────────────────────────── */
 function updateTopBarStatus() {
-  const badge   = document.getElementById('statusBadge');
-  const viewBtn = document.getElementById('viewLiveBtn');
-  const pubBtn  = document.getElementById('publishBtn');
-  const status  = _S.status;
-
-  if (status === 'published' || status === 'closed') {
+  const badge       = document.getElementById('statusBadge');
+  const viewBtn     = document.getElementById('viewLiveBtn');
+  const sheetBtn    = document.getElementById('sheetLinkBtn');
+  const closeBtn    = document.getElementById('closeFmBtn');
+  const pubBtn      = document.getElementById('publishBtn');
+  const status      = _S.status;
+  const isLive      = status === 'published' || status === 'closed';
+ 
+  if (isLive) {
     badge.textContent = status === 'published' ? '● Published' : '● Closed';
     badge.className   = 'hxfb-status-badge ' + status;
-    badge.style.display = '';
+    badge.style.display   = '';
     viewBtn.style.display = '';
-    pubBtn.textContent = status === 'closed' ? 'Re-open' : 'Update';
+ 
+    // Sheet button — only show if sheet exists
+    sheetBtn.style.display = _S.config?.sheetId ? '' : 'none';
+ 
+    // Close/Reopen button
+    closeBtn.style.display = '';
+    if (status === 'closed') {
+      closeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Re-open`;
+      closeBtn.style.color = 'var(--green)';
+    } else {
+      closeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Close Form`;
+      closeBtn.style.color = '';
+    }
+ 
+    pubBtn.textContent = status === 'closed' ? 'Re-open' : 'Save';
   } else {
     badge.style.display   = 'none';
     viewBtn.style.display = 'none';
+    sheetBtn.style.display = 'none';
+    closeBtn.style.display = 'none';
     pubBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> Publish`;
   }
 }
-
+ 
 function viewLive() {
   if (_S.slug) window.open('hx-form-view.html?f=' + _S.slug, '_blank');
+}
+ 
+function openSheet() {
+  const sid = _S.config?.sheetId;
+  if (sid) window.open('https://docs.google.com/spreadsheets/d/' + sid, '_blank');
+}
+ 
+async function toggleClose() {
+  const btn    = document.getElementById('closeFmBtn');
+  const isOpen = _S.status === 'published';
+  btn.disabled = true;
+  try {
+    if (isOpen) await _S.close();
+    else        await _S.reopen();
+    updateTopBarStatus();
+    toast(isOpen ? 'Form closed.' : 'Form is live again!', isOpen ? 'warn' : 'success');
+  } catch (e) {
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 /* ════════════════════════════════════════════════════════════════
