@@ -25,13 +25,7 @@ const ED = {
   selId: null,
   scale: 1,
 };
-function getFontCSS(name) {
-  // FONT_CSS_MAP is declared in dashboard.js — reuse it
-  if (typeof FONT_CSS_MAP !== 'undefined' && FONT_CSS_MAP[name]) {
-    return FONT_CSS_MAP[name];
-  }
-  return `'${name}', Helvetica, sans-serif`;
-}
+function getFontCSS(name) { return (FONT_MAP[name] || FONT_MAP['Helvetica']).css; }
 
 
 
