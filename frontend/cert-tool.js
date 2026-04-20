@@ -197,7 +197,7 @@ async function loadHxFormData(formId) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       <span><strong>${CS.rows.length} submissions</strong> loaded from <strong>${data.formName}</strong> — ${CS.headers.length} columns</span>
     </div>
-    <div style="overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px">
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
       <table style="width:max-content;min-width:100%;border-collapse:collapse">
         <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
         <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
@@ -236,7 +236,7 @@ function renderSheetPreview() {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       <span>Sheet loaded — <strong>${CS.rows.length} participants</strong>, ${CS.headers.length} columns detected</span>
     </div>
-    <div style="overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px">
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
       <table style="width:max-content;min-width:100%;border-collapse:collapse">
         <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
         <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
@@ -664,10 +664,10 @@ function buildPreview() {
   const cols = [name, email, ...CS.fieldMappings.filter(m => m.col).map(m => m.col)];
   const rows = CS.rows.slice(0, 12);
   document.getElementById('previewTableWrap').innerHTML = `
-    <div class="data-table-wrap">
-      <table>
-        <thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
-        <tbody>${rows.map(r => `<tr>${cols.map(c => `<td>${r[c]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:300px;border:1px solid var(--glass-border);border-radius:10px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse">
+        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${cols.map(c => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${c}</th>`).join('')}</tr></thead>
+        <tbody>${rows.map(r => `<tr style="border-top:1px solid var(--glass-border)">${cols.map(c => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[c]||''}</td>`).join('')}</tr>`).join('')}</tbody>
       </table>
     </div>
     ${count > 12 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${count-12} more rows</div>` : ''}
