@@ -735,7 +735,10 @@
                   <label class="form-label">Name Column <span class="req">*</span></label>
                   <select id="nameCol" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"><option value="">Select column…</option></select>
                 </div>
-                
+                <div class="form-group">
+                  <label class="form-label">Email Column <span class="req">*</span></label>
+                  <select id="emailCol" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"><option value="">Select column…</option></select>
+                </div>
               </div>
             </div>
 
@@ -943,12 +946,12 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 Certificate Links
               </div>
-              <input type="text" id="resultSearch" class="form-input" placeholder="Search by name" oninput="filterResults()" style="width:240px"/>
+              <input type="text" id="resultSearch" class="form-input" placeholder="Search by name or email…" oninput="filterResults()" style="width:240px"/>
             </div>
             <div>
               <div class="result-grid header">
                 <div>Name</div>
-                
+                <div>Email</div>
                 <div>Certificate Link</div>
                 <div style="text-align:right">Actions</div>
               </div>
@@ -981,7 +984,7 @@
           <option value="{{date}}">{{date}} — Date</option>
           <option value="{{score}}">{{score}} — Score / Grade</option>
           <option value="{{org}}">{{org}} — Organisation</option>
-          
+          <option value="{{email}}">{{email}} — Email Address</option>
           <option value="custom">Custom placeholder…</option>
         </select>
       </div>
