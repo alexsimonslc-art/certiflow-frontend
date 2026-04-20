@@ -1003,6 +1003,20 @@ function renderCertPreview(idx) {
 /* ════════════════════════════════════════════════════════════════
    STEP 5 — GENERATE
 ════════════════════════════════════════════════════════════════ */
+function measureFontAscent(field) {
+  const fs = field.fontSize;
+  const fw = field.bold ? 700 : getFontWeight(field.fontFamily || 'Helvetica');
+  const fi = field.italic ? 'italic' : 'normal';
+  const ff = getFontCSS(field.fontFamily || 'Helvetica');
+  const tmp = document.createElement('canvas').getContext('2d');
+  tmp.font = `${fi} ${fw} ${fs}px ${ff}`;
+  const m = tmp.measureText('Ag');
+  // fontBoundingBoxAscent is what textBaseline:'top' uses — exact match
+  return (typeof m.fontBoundingBoxAscent === 'number' && m.fontBoundingBoxAscent > 0)
+    ? m.fontBoundingBoxAscent
+    : fs; // safe fallback: full em
+}
+
 async function startGeneration() {
   goStep(5, true);
   const total = CS.rows.length;
@@ -1014,9 +1028,9 @@ async function startGeneration() {
     template: {
     width: ED.w,
     height: ED.h,
-    backgroundBase64: ED.bgBase64,   // ← only rename the KEY, not the value
+    backgroundBase64: ED.bgBase64,
     bgColor: ED.bgColor,
-    fields: ED.fields,
+    fields: ED.fields.map(f => ({ ...f, fontBoundingBoxAscent: measureFontAscent(f) })),
     fontUrls: getUsedFontUrls(),
     },
     participants:  CS.rows,
