@@ -323,8 +323,9 @@ function resizeCanvas() {
 
   ED.scale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
 
-  const cw = Math.round(ED.w * ED.scale);
-  const ch = Math.round(ED.h * ED.scale);
+  const cont = document.getElementById('canvasContainer');
+  const cw = cont ? cont.offsetWidth  : Math.round(ED.w * ED.scale);
+  const ch = cont ? cont.offsetHeight : Math.round(ED.h * ED.scale);
   const dpr = window.devicePixelRatio || 1;
 
   const cont = document.getElementById('canvasContainer');
@@ -342,7 +343,7 @@ function resizeCanvas() {
   ctx.scale(dpr, dpr);
 
   ED.ready = true;
-  redraw();
+  requestAnimationFrame(() => redraw());
 }
 
 function redrawCanvas() {
@@ -410,8 +411,9 @@ function renderHandles() {
   if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
   ED.fields.forEach(f => {
-    const cw = Math.round(ED.w * ED.scale);
-    const ch = Math.round(ED.h * ED.scale);
+    const cont = document.getElementById('canvasContainer');
+    const cw = cont ? cont.offsetWidth  : Math.round(ED.w * ED.scale);
+    const ch = cont ? cont.offsetHeight : Math.round(ED.h * ED.scale);
     const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
     const el = document.createElement('div');
