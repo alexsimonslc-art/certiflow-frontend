@@ -59,7 +59,7 @@ function buildStepper() {
     const isActive = n === CS.step;
     return `
       ${n > 1 ? `<div class="step-connector" id="sc${n}"></div>` : ''}
-      <div class="step-node ${isActive ? 'active' : ''}" id="sn${n}" 
+      <div class="step-node ${isActive ? 'active' : ''}" id="sn${n}"
           onclick="goStep(${n})" style="cursor:pointer">
         <div class="step-circle" id="scircle${n}">${n}</div>
         <div class="step-label">
