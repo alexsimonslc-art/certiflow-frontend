@@ -1020,28 +1020,58 @@ async function startGeneration() {
     fontUrls: getUsedFontUrls(),
     },
     participants:  CS.rows,
-    nameCol:       document.getElementById('nameCol').value,
-    emailCol:      document.getElementById('emailCol').value,
-    fieldMappings: CS.fieldMappings.filter(m => m.col && m.ph),
+    nameCol:       ED.fields.find(f => f.isPrimary)?.column || '',
+    emailCol:      '',
+    fieldMappings: ED.fields.map(f => ({ col: f.column, ph: f.placeholder })),
     sheetId:       document.getElementById('sheetId')?.value || null,
     writeBack:     document.getElementById('writeBackToggle').classList.contains('on'),
   };
 
   try {
-    const res = await apiFetch('/api/certificates/generate', { method: 'POST', body: JSON.stringify(payload) });
-    CS.results = res.results || [];
-    CS.results.forEach((r, i) => {
-      setTimeout(() => {
-        const done = i + 1;
-        const pct = Math.round(done / total * 100);
-        document.getElementById('genCounter').textContent = `${done} / ${total}`;
-        document.getElementById('genBar').style.width = pct + '%';
-        document.getElementById('genPct').textContent  = pct + '%';
-        document.getElementById('genStatus').textContent = `Processing… ${pct}% complete`;
-        r.status === 'success' ? log('ok', `Generated: ${r.name}`) : log('err', `Failed: ${r.name} — ${r.error}`);
-        if (done === total) setTimeout(() => showResults(), 600);
-      }, i * 80);
+    // Reset bar to 0
+    document.getElementById('genBar').style.width = '0%';
+    document.getElementById('genPct').textContent  = '0%';
+    document.getElementById('genStatus').textContent = 'Sending job to server…';
+    log('info', `Sending ${total} certificates to generation server…`);
+
+    const res = await apiFetch('/api/certificates/generate', {
+      method: 'POST',
+      body: JSON.stringify(payload)
     });
+
+    CS.results = res.results || [];
+    const ok  = CS.results.filter(r => r.status === 'success').length;
+    const bad = CS.results.filter(r => r.status !== 'success').length;
+
+    // Animate progress based on each completed certificate
+    let displayed = 0;
+    function animateNext() {
+      if (displayed >= CS.results.length) {
+        setTimeout(() => showResults(), 600);
+        return;
+      }
+      const r    = CS.results[displayed];
+      displayed++;
+      const pct  = Math.round(displayed / total * 100);
+
+      document.getElementById('genCounter').textContent  = `${displayed} / ${total}`;
+      document.getElementById('genBar').style.width      = pct + '%';
+      document.getElementById('genPct').textContent      = pct + '%';
+      document.getElementById('genStatus').textContent   = `Processing… ${displayed} of ${total} complete`;
+
+      if (r.status === 'success') {
+        log('ok', `✓ ${r.name || 'Certificate ' + displayed}`);
+      } else {
+        log('err', `✗ ${r.name || 'Certificate ' + displayed} — ${r.error || 'Failed'}`);
+      }
+
+      // Delay per cert scales with total: fast for small batches, steady for large
+      const delay = Math.max(60, Math.min(300, Math.round(8000 / total)));
+      setTimeout(animateNext, delay);
+    }
+
+    animateNext();
+
   } catch (e) {
     log('err', 'Generation failed: ' + e.message);
     toast('Failed: ' + e.message, 'error');
@@ -1090,38 +1120,84 @@ if (typeof saveCampaign === 'function') {
 }
 
 function renderResultRows(results) {
-  const el = document.getElementById('resultRows');
-  el.innerHTML = results.map(r => `
-    <div class="result-grid" data-n="${r.name}" data-e="${r.email||''}">
-      <div style="font-weight:600;color:var(--text);font-size:14.5px">${r.name}</div>
-      <div style="color:var(--text-2);font-size:14px">${r.email||'—'}</div>
-      <div style="min-width:0">
-        ${r.status === 'success'
-          ? `<a href="${r.link}" target="_blank" style="color:var(--cyan);font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.link}</a>`
-          : `<span style="color:var(--red);font-size:13px">${r.error||'Failed'}</span>`}
-      </div>
-      <div style="display:flex;gap:6px;justify-content:flex-end">
-        ${r.status === 'success' ? `
-          <button class="icon-btn" onclick="copyToClipboard('${r.link}','Link')" title="Copy link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          </button>
-          <a href="${r.link}" target="_blank" class="icon-btn" title="Open PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </a>` : `<span class="badge badge-red">Failed</span>`}
-      </div>
-    </div>`).join('');
+  const container = document.getElementById('resultRows');
+
+  // Build merged rows: original CS.rows data + certificate link appended
+  const allCols = CS.headers || [];
+
+  // Match each result to its original row by index (results preserve order)
+  const mergedRows = results.map((r, i) => {
+    const original = CS.rows[i] || {};
+    return { ...original, __status: r.status, __link: r.link || '', __error: r.error || '', __name: r.name || '' };
+  });
+
+  // Table wrapper with horizontal scroll, link column frozen right
+  container.innerHTML = `
+    <div style="position:relative;width:100%;overflow:auto;max-height:420px;border:1px solid var(--glass-border);border-radius:12px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent" id="resultTableWrap">
+      <table style="border-collapse:collapse;width:max-content;min-width:100%;font-size:13.5px">
+        <thead>
+          <tr style="position:sticky;top:0;z-index:3;background:var(--surface)">
+            <th style="padding:10px 14px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border);min-width:36px">#</th>
+            ${allCols.map(h => `
+              <th style="padding:10px 14px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border);min-width:120px">${h}</th>
+            `).join('')}
+            <th style="padding:10px 18px;font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border);border-left:1px solid var(--glass-border);min-width:220px;position:sticky;right:0;z-index:2;background:var(--surface)">Certificate Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${mergedRows.map((row, i) => {
+            const r = results[i];
+            const isOk = r.status === 'success';
+            const linkCell = isOk
+              ? `<a href="${r.link}" target="_blank" style="color:var(--cyan);text-decoration:none;display:flex;align-items:center;gap:6px;font-size:12.5px;white-space:nowrap" title="${r.link}">
+                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                   Open PDF
+                 </a>`
+              : `<span style="color:var(--red);font-size:12.5px">${r.error || 'Failed'}</span>`;
+            return `
+            <tr data-n="${row.__name}" data-e="${row[CS.headers?.[1]] || ''}" style="border-top:1px solid rgba(255,255,255,0.04);transition:background 0.12s" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
+              <td style="padding:10px 14px;color:var(--text-3);text-align:center;font-size:12px">${i + 1}</td>
+              ${allCols.map(h => `<td style="padding:10px 14px;color:var(--text-2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis" title="${row[h] || ''}">${row[h] || '—'}</td>`).join('')}
+              <td style="padding:10px 18px;border-left:1px solid var(--glass-border);position:sticky;right:0;z-index:1;background:var(--surface-card, var(--surface));backdrop-filter:blur(8px)">
+                ${linkCell}
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
 }
 
 function filterResults() {
   const q = document.getElementById('resultSearch').value.toLowerCase();
-  document.querySelectorAll('#resultRows .result-grid').forEach(row => {
-    const match = !q || (row.dataset.n||'').toLowerCase().includes(q) || (row.dataset.e||'').toLowerCase().includes(q);
+  document.querySelectorAll('#resultRows tbody tr').forEach(row => {
+    const match = !q || (row.dataset.n || '').toLowerCase().includes(q) || (row.dataset.e || '').toLowerCase().includes(q);
     row.style.display = match ? '' : 'none';
   });
 }
 
 function downloadResults() {
-  downloadCSV(CS.results.map(r => ({ Name: r.name, Email: r.email||'', Status: r.status, 'Certificate Link': r.link||'', Error: r.error||'' })), `Honourix-certs-${Date.now()}.csv`);
+  const allCols = CS.headers || [];
+
+  // Build export rows: all original data + Certificate Link at end
+  const exportData = CS.results.map((r, i) => {
+    const original = CS.rows[i] || {};
+    const row = {};
+    allCols.forEach(h => { row[h] = original[h] ?? ''; });
+    row['Certificate Link'] = r.link || (r.error ? `ERROR: ${r.error}` : '');
+    return row;
+  });
+
+  const ws = XLSX.utils.json_to_sheet(exportData);
+
+  // Style header row (column widths)
+  const colWidths = [...allCols.map(h => ({ wch: Math.max(h.length + 2, 15) })), { wch: 55 }];
+  ws['!cols'] = colWidths;
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Certificates');
+  XLSX.writeFile(wb, `Honourix-certs-${Date.now()}.xlsx`);
+  toast('Excel file downloaded!', 'success', 3000);
 }
 
 function startNew() {
