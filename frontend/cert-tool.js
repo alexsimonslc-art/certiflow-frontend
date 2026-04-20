@@ -125,7 +125,6 @@ function validateStep(n) {
   }
   if (n === 3) {
     if (!document.getElementById('nameCol').value) { toast('Please select the Name column', 'error'); return false; }
-    if (!document.getElementById('emailCol').value) { toast('Please select the Email column', 'error'); return false; }
   }
   return true;
 }
@@ -135,15 +134,29 @@ function validateStep(n) {
 ════════════════════════════════════════════════════════════════ */
 function switchSrc(type) {
   CS.srcType = type;
-  ['srcSheets','srcFile','srcHxForm'].forEach(id => {
+  ['srcSheets', 'srcFile', 'srcManual', 'srcHxForm'].forEach(id => {
     const el = document.getElementById(id); if (el) el.style.display = 'none';
   });
-  ['srcSheetsOpt','srcFileOpt','srcHxFormOpt'].forEach(id => {
+  ['srcSheetsOpt', 'srcFileOpt', 'srcManualOpt', 'srcHxFormOpt'].forEach(id => {
     const el = document.getElementById(id); if (el) el.className = 'source-opt';
   });
-  if (type === 'sheets')  { document.getElementById('srcSheets').style.display  = 'block'; document.getElementById('srcSheetsOpt').className  = 'source-opt active'; }
-  if (type === 'file')    { document.getElementById('srcFile').style.display    = 'block'; document.getElementById('srcFileOpt').className    = 'source-opt active'; }
-  if (type === 'hxform')  { document.getElementById('srcHxForm').style.display  = 'block'; document.getElementById('srcHxFormOpt').className  = 'source-opt active'; loadHxFormList_cert(); }
+  if (type === 'sheets') {
+    document.getElementById('srcSheets').style.display = 'block';
+    document.getElementById('srcSheetsOpt').className  = 'source-opt active';
+  } else if (type === 'file') {
+    document.getElementById('srcFile').style.display = 'block';
+    document.getElementById('srcFileOpt').className  = 'source-opt active';
+  } else if (type === 'manual') {
+    document.getElementById('srcManual').style.display = 'block';
+    document.getElementById('srcManualOpt').className  = 'source-opt active';
+    if (document.getElementById('manualBody').children.length === 0) {
+      manualAddRow(); manualAddRow();
+    }
+  } else if (type === 'hxform') {
+    document.getElementById('srcHxForm').style.display = 'block';
+    document.getElementById('srcHxFormOpt').className  = 'source-opt active';
+    loadHxFormList_cert();
+  }
 }
 
 async function loadHxFormList_cert() {
@@ -175,9 +188,10 @@ async function loadHxFormData(formId) {
     if (!res.ok) throw new Error((await res.json()).error || 'Failed');
     const data = await res.json();
     if (!data.rows?.length) { toast('No submissions in this form yet', 'warning'); return; }
-    CS.headers = data.headers;
-    CS.rows    = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
-    const el   = document.getElementById('hxFormResult');
+    CS.headers     = data.headers;
+    CS.rows        = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
+    window.allCols = CS.headers;
+    const el       = document.getElementById('hxFormResult');
     el.innerHTML = `<div class="notice notice-green">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       <span><strong>${CS.rows.length} submissions</strong> loaded from <strong>${data.formName}</strong></span>
@@ -799,41 +813,12 @@ function startNew() {
   goStep(1, true);
 }
 
-/* ══════════════════════════════════════════════
-   PATCH: extend switchSrc to handle 'manual'
-   ══════════════════════════════════════════════ */
-const _origSwitchSrc = window.switchSrc;
-window.switchSrc = function(mode) {
-  // hide all three panels
-  ['srcSheets','srcFile','srcManual'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  // deactivate all three buttons
-  ['srcSheetsOpt','srcFileOpt','srcManualOpt'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('active');
-  });
 
-  if (mode === 'sheets') {
-    document.getElementById('srcSheets').style.display = 'block';
-    document.getElementById('srcSheetsOpt').classList.add('active');
-  } else if (mode === 'file') {
-    document.getElementById('srcFile').style.display = 'block';
-    document.getElementById('srcFileOpt').classList.add('active');
-  } else if (mode === 'manual') {
-    document.getElementById('srcManual').style.display = 'block';
-    document.getElementById('srcManualOpt').classList.add('active');
-    if (document.getElementById('manualBody').children.length === 0) {
-      manualAddRow(); manualAddRow(); // start with 2 empty rows
-    }
-  }
-};
 
 /* ══════════════════════════════════════════════
    MANUAL ENTRY — state & helpers
    ══════════════════════════════════════════════ */
-let manualCols = ['Name', 'Email'];
+let manualCols = ['Name'];
 
 function manualRebuildHeader() {
   const tr = document.getElementById('manualHeaderRow');
@@ -844,7 +829,7 @@ function manualRebuildHeader() {
     th.setAttribute('style', thStyle);
     th.innerHTML = `<div style="display:flex;align-items:center;gap:6px">
       <span>${col}</span>
-      ${ci >= 2 ? `<button onclick="manualDeleteCol(${ci})" title="Remove column"
+            ${ci >= 1 ? `<button onclick=\"manualDeleteCol(${ci})\" title=\"Remove column\"
         style="width:16px;height:16px;border-radius:4px;background:none;border:none;color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>` : ''}
@@ -919,9 +904,9 @@ function manualApply() {
 
   if (!data.length) { alert('Please add at least one row with data.'); return; }
 
-  // ── Feed into cert-tool's data variables ──
-  // These are the same variables loadSheet() and handleFile() populate.
-  window.gRows = data;
+  // ── Feed into cert-tool's CS state ──
+  CS.rows    = data;
+  CS.headers = manualCols;
   window.allCols = manualCols;
 
   // Populate Name / Email column dropdowns in Step 3
