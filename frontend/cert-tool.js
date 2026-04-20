@@ -333,7 +333,7 @@ function resizeCanvas() {
   redraw();
 }
 
-function redraw() {
+function redrawCanvas() {
   const w = canvas.width, h = canvas.height;
   ctx.clearRect(0, 0, w, h);
   if (ED.bgImg) {
@@ -342,6 +342,41 @@ function redraw() {
     ctx.fillStyle = ED.bgColor;
     ctx.fillRect(0, 0, w, h);
   }
+  // Draw all field text directly on canvas — pixel-identical to preview & PDF
+  ED.fields.forEach(f => {
+    const boxX = (f.x / 100) * w;
+    const boxY = (f.y / 100) * h;
+    const boxW = (f.width / 100) * w;
+    const fs   = Math.max(4, f.fontSize * ED.scale);
+    const ls   = (f.letterSpacing || 0) * ED.scale;
+    const fw   = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
+    const fi   = f.italic ? 'italic' : 'normal';
+    const ff   = getFontCSS(f.fontFamily || 'Helvetica');
+    const value = (f.column && CS.rows && CS.rows[0])
+      ? (CS.rows[0][f.column] || f.previewText || f.placeholder)
+      : (f.previewText || f.placeholder);
+    ctx.save();
+    ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
+    ctx.fillStyle = f.color || '#1a1a1a';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    let textW = ctx.measureText(value).width;
+    if (ls > 0 && value.length > 1) textW += ls * (value.length - 1);
+    let drawX = boxX;
+    if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
+    else if (f.align === 'right') drawX = boxX + boxW - textW;
+    if (ls > 0 && value.length > 1) {
+      let cx = drawX;
+      for (const ch of value) { ctx.fillText(ch, cx, boxY); cx += ctx.measureText(ch).width + ls; }
+    } else {
+      ctx.fillText(value, drawX, boxY);
+    }
+    ctx.restore();
+  });
+}
+
+function redraw() {
+  redrawCanvas();
   renderHandles();
 }
 
@@ -353,15 +388,10 @@ function renderHandles() {
     const cw = canvas.width, ch = canvas.height;
     const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
-    const ls = ((f.letterSpacing || 0) * ED.scale).toFixed(2);
-    const ff = getFontCSS(f.fontFamily || 'Helvetica');
-    const fw = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
-    const fi = f.italic ? 'italic' : 'normal';
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
-    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;font-size:${fs}px;font-family:${ff};font-weight:${fw};font-style:${fi};color:${f.color||'#111'};text-align:${f.align||'left'};letter-spacing:${ls}px;line-height:1;`;
-    const liveVal = (f.column && CS.rows && CS.rows[0]) ? (CS.rows[0][f.column] || f.previewText || f.placeholder) : (f.previewText || f.placeholder);
-    el.textContent = liveVal;
+    // Transparent overlay — text is rendered on canvas, div is for drag/select only
+    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${Math.round(fs * 1.3)}px;background:transparent;color:transparent;`;
     const del = document.createElement('div');
     del.className = 'tf-del'; del.textContent = '×';
     del.addEventListener('click', e => { e.stopPropagation(); deleteField(f.id); });
@@ -420,15 +450,22 @@ function startDrag(e, field, el) {
   const mm = ev => {
     field.x = Math.max(0, Math.min(95, sfx + ((ev.clientX - sx) / canvas.width) * 100));
     field.y = Math.max(0, Math.min(95, sfy + ((ev.clientY - sy) / canvas.height) * 100));
+    // Move the transparent handle div
     el.style.left = (field.x / 100 * canvas.width)  + 'px';
     el.style.top  = (field.y / 100 * canvas.height) + 'px';
+    // Redraw canvas text only (don't rebuild DOM handles during drag)
+    redrawCanvas();
     if (field.id === ED.selId) {
-      const px = document.getElementById('propX'), py = document.getElementById('propY');
+      const px = document.getElementById('pX'), py = document.getElementById('pY');
       if (px) px.value = field.x.toFixed(1);
       if (py) py.value = field.y.toFixed(1);
     }
   };
-  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); };
+  const mu = () => {
+    document.removeEventListener('mousemove', mm);
+    document.removeEventListener('mouseup', mu);
+    redraw(); // Full redraw + handle sync on release
+  };
   document.addEventListener('mousemove', mm);
   document.addEventListener('mouseup', mu);
 }
