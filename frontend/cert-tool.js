@@ -799,7 +799,8 @@ function buildPreview() {
   document.getElementById('genCountLabel').textContent    = `(${count})`;
 
   // -- Summary grid (removed email col + sheet ID, added est. size) --
-  const bgKB = ED.bgBase64 ? Math.round(ED.bgBase64.length * 0.75 / 1024) : 0;
+  const b64clean = ED.bgBase64 ? ED.bgBase64.split(',')[1] || ED.bgBase64 : null;
+  const bgKB = b64clean ? Math.round(b64clean.length * 0.75 / 1024) : 0;
   const estMB = bgKB > 0 ? ((bgKB * count * 1.15) / 1024).toFixed(1) : '—';
   const items = [
     { k: 'Campaign',        v: camp },
@@ -864,20 +865,28 @@ function renderCertPreview(idx) {
   ctx.scale(scale, scale);
 
   const doDraw = () => {
+    const cw = ED.w, ch = ED.h;
     ED.fields.forEach(f => {
-      const value = row[f.column] || f.placeholder;
+      // positions are percentages (0–100), convert to pixels
+      const px = (f.x / 100) * cw;
+      const py = (f.y / 100) * ch;
+      const fw = (f.width / 100) * cw;
+
+      const value    = (f.column && row[f.column]) ? row[f.column] : f.placeholder;
+      const fontStyle  = f.italic ? 'italic' : 'normal';
+      const fontWeight = f.bold   ? 700      : getFontWeight(f.fontFamily || 'Helvetica');
+      const fontCSS    = getFontCSS(f.fontFamily || 'Helvetica');
+
       ctx.save();
-      ctx.font        = `${f.fontStyle || ''} ${f.fontWeight || 'normal'} ${f.fontSize || 32}px "${f.fontFamily || 'Inter'}"`;
-      ctx.fillStyle   = f.color || '#000000';
-      ctx.textAlign   = f.align || 'center';
+      ctx.font         = `${fontStyle} ${fontWeight} ${f.fontSize || 32}px ${fontCSS}`;
+      ctx.fillStyle    = f.color || '#1a1a1a';
+      ctx.textAlign    = f.align || 'center';
       ctx.textBaseline = 'middle';
-      if (f.shadow) {
-        ctx.shadowColor   = 'rgba(0,0,0,0.35)';
-        ctx.shadowBlur    = 4;
-        ctx.shadowOffsetX = 1;
-        ctx.shadowOffsetY = 1;
-      }
-      ctx.fillText(value, f.x + f.w / 2, f.y + f.h / 2);
+      ctx.letterSpacing = `${f.letterSpacing || 0}px`;
+
+      // draw text centered in the field box
+      const textX = f.align === 'left' ? px : f.align === 'right' ? px + fw : px + fw / 2;
+      ctx.fillText(value, textX, py + (f.fontSize || 32) / 2 + 4);
       ctx.restore();
     });
     ctx.restore();
