@@ -359,7 +359,7 @@ function renderHandles() {
     const fi = f.italic ? 'italic' : 'normal';
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
-    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;font-size:${fs}px;font-family:${ff};font-weight:${fw};font-style:${fi};color:${f.color||'#111'};text-align:${f.align||'left'};letter-spacing:${ls}px;line-height:1.2;`;
+    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;font-size:${fs}px;font-family:${ff};font-weight:${fw};font-style:${fi};color:${f.color||'#111'};text-align:${f.align||'left'};letter-spacing:${ls}px;line-height:1;`;
     const liveVal = (f.column && CS.rows && CS.rows[0]) ? (CS.rows[0][f.column] || f.previewText || f.placeholder) : (f.previewText || f.placeholder);
     el.textContent = liveVal;
     const del = document.createElement('div');
