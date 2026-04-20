@@ -25,18 +25,10 @@ const ED = {
   selId: null,
   scale: 1,
 };
-function getFontCSS(name) { return (FONT_MAP[name] || FONT_MAP['Helvetica']).css; }
 
 
 
-function getUsedFontUrls() {
-  const urls = {};
-  ED.fields.forEach(f => {
-    const name = f.fontFamily || 'Helvetica';
-    if (FONT_URLS[name]) urls[name] = FONT_URLS[name];
-  });
-  return urls;
-}
+
 
 const STEPS = [
   { label: 'Data Source' },
