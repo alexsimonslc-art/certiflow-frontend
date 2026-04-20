@@ -798,7 +798,7 @@
             </div>
 
             <!-- Write-back card -->
-             
+
             <!-- Write-back card -->
             <div class="card" id="s3WritebackCard">
               <div class="card-header" style="margin-bottom:0;display:flex;align-items:center;justify-content:space-between">
@@ -860,16 +860,32 @@
               <div class="summary-grid" id="summaryGrid"></div>
             </div>
 
-            <!-- Participant table -->
+            <!-- Certificate Visual Preview -->
             <div class="card" style="padding:0;overflow:hidden">
-              <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center">
+              <div style="padding:14px 20px;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center">
                 <div class="card-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                  Participant Preview
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+                  Certificate Preview
                 </div>
-                <span class="badge badge-cyan" id="participantBadge">0 participants</span>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span class="badge badge-cyan" id="participantBadge">0 participants</span>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <button onclick="certPrevNav(-1)" style="width:30px;height:30px;border-radius:7px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <span id="certNavLabel" style="font-size:13px;color:var(--text-2);min-width:52px;text-align:center">1 / 1</span>
+                    <button onclick="certPrevNav(1)" style="width:30px;height:30px;border-radius:7px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div id="previewTableWrap" style="overflow-x:auto"></div>
+              <!-- Canvas render area -->
+              <div style="padding:20px;background:var(--bg);display:flex;justify-content:center">
+                <canvas id="certPrevCanvas" style="max-width:100%;border-radius:8px;box-shadow:var(--shadow-lg)"></canvas>
+              </div>
+              <!-- Participant data strip -->
+              <div id="certPrevStrip" style="padding:12px 20px;border-top:1px solid var(--glass-border);display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--text-2);background:var(--glass)"></div>
             </div>
 
             <div style="display:flex;justify-content:space-between;gap:12px">
@@ -877,7 +893,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                 Back
               </button>
-              <button class="btn btn-primary btn-xl" onclick="startGeneration()">
+              <button class="btn btn-primary btn-xl" onclick="startGeneration()" style="min-width:260px">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 Generate <span id="genCountLabel"></span> Certificates
               </button>

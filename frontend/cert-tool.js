@@ -788,52 +788,110 @@ function validateStep3() {
 /* ════════════════════════════════════════════════════════════════
    STEP 4 — PREVIEW
 ════════════════════════════════════════════════════════════════ */
+// tracks which cert is currently shown in preview
+let certPrevIndex = 0;
+
 function buildPreview() {
-  const name  = document.getElementById('nameCol').value;
-  const email = document.getElementById('emailCol').value;
   const count = CS.rows.length;
   const camp  = document.getElementById('campaignName').value;
 
-  document.getElementById('participantBadge').textContent = `${count} participants`;
+  document.getElementById('participantBadge').textContent = `${count} participant${count !== 1 ? 's' : ''}`;
   document.getElementById('genCountLabel').textContent    = `(${count})`;
 
+  // -- Summary grid (removed email col + sheet ID, added est. size) --
+  const bgKB = ED.bgBase64 ? Math.round(ED.bgBase64.length * 0.75 / 1024) : 0;
+  const estMB = bgKB > 0 ? ((bgKB * count * 1.15) / 1024).toFixed(1) : '—';
   const items = [
-    { k: 'Campaign', v: camp },
-    { k: 'Participants', v: `${count}` },
-    { k: 'Name column', v: name },
-    { k: 'Email column', v: email },
-    { k: 'Template fields', v: `${ED.fields.length} fields` },
-    { k: 'Canvas size', v: `${ED.w}×${ED.h}px` },
-    { k: 'Write links back', v: document.getElementById('writeBackToggle').classList.contains('on') ? 'Yes' : 'No' },
-    { k: 'Sheet ID', v: document.getElementById('sheetId')?.value?.slice(0,12) + '…' || 'CSV file' },
+    { k: 'Campaign',        v: camp },
+    { k: 'Participants',    v: `${count}` },
+    { k: 'Template fields', v: `${ED.fields.length} field${ED.fields.length !== 1 ? 's' : ''}` },
+    { k: 'Canvas size',     v: `${ED.w} × ${ED.h} px` },
+    { k: 'Est. total size', v: `~${estMB} MB (approx)` },
+    { k: 'Write links back',v: document.getElementById('writeBackToggle')?.classList.contains('on') ? 'Yes' : 'No' },
   ];
   document.getElementById('summaryGrid').innerHTML = items.map(i =>
     `<div class="summary-item"><div class="summary-key">${i.k}</div><div class="summary-val">${i.v}</div></div>`
   ).join('');
 
-  const cols = [name, email, ...CS.fieldMappings.filter(m => m.col).map(m => m.col)];
-  const rows = CS.rows.slice(0, 12);
-  document.getElementById('previewTableWrap').innerHTML = `
-    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:300px;border:1px solid var(--glass-border);border-radius:10px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
-      <table style="width:max-content;min-width:100%;border-collapse:collapse">
-        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${cols.map(c => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${c}</th>`).join('')}</tr></thead>
-        <tbody>${rows.map(r => `<tr style="border-top:1px solid var(--glass-border)">${cols.map(c => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[c]||''}</td>`).join('')}</tr>`).join('')}</tbody>
-      </table>
-    </div>
-    ${count > 12 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${count-12} more rows</div>` : ''}
-  `;
-
-  const allMaps = [{ col: name, ph: 'name' }, { col: email, ph: 'email' }, ...CS.fieldMappings.filter(m => m.col && m.ph)];
-  document.getElementById('mappingsReview').innerHTML = allMaps.map(m => `
+  // -- Mappings review panel (right sidebar) --
+  document.getElementById('mappingsReview').innerHTML = ED.fields.map(f => `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--glass);border-radius:8px">
-      <span style="font-size:14px;color:var(--text);font-weight:500">${m.col}</span>
+      <span style="font-size:13.5px;color:var(--text);font-weight:500">${f.column || '—'}</span>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      <code style="background:var(--purple-dim);color:var(--purple-2);padding:2px 9px;border-radius:5px;font-size:12.5px;font-family:var(--font-mono)">{{${m.ph}}}</code>
+      <code style="background:rgba(0,212,255,0.08);color:var(--cyan);padding:2px 9px;border-radius:5px;font-size:12px;font-family:var(--font-mono)">${f.placeholder}</code>
     </div>`).join('');
 
+  // -- Job summary (step 5 sidebar) --
   document.getElementById('jobSummary').innerHTML = items.slice(0, 4).map(i =>
     `<div class="summary-item"><div class="summary-key">${i.k}</div><div class="summary-val">${i.v}</div></div>`
   ).join('');
+
+  // -- Cert preview --
+  certPrevIndex = 0;
+  renderCertPreview(0);
+}
+
+function certPrevNav(dir) {
+  const total = CS.rows.length;
+  certPrevIndex = Math.max(0, Math.min(total - 1, certPrevIndex + dir));
+  renderCertPreview(certPrevIndex);
+}
+
+function renderCertPreview(idx) {
+  const total   = CS.rows.length;
+  const row     = CS.rows[idx] || {};
+  const canvas  = document.getElementById('certPrevCanvas');
+  const strip   = document.getElementById('certPrevStrip');
+  const navLbl  = document.getElementById('certNavLabel');
+  if (!canvas) return;
+
+  if (navLbl) navLbl.textContent = `${idx + 1} / ${total}`;
+
+  // -- data strip below canvas --
+  if (strip) {
+    strip.innerHTML = ED.fields.map(f =>
+      `<span><span style="color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-right:4px">${f.placeholder.replace(/[{}]/g,'')}</span><span style="color:var(--text);font-weight:500">${row[f.column] || '—'}</span></span>`
+    ).join('');
+  }
+
+  // -- draw canvas --
+  const scale   = Math.min(1, 720 / ED.w);   // fit within 720px wide
+  canvas.width  = ED.w * scale;
+  canvas.height = ED.h * scale;
+  const ctx     = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.scale(scale, scale);
+
+  const doDraw = () => {
+    ED.fields.forEach(f => {
+      const value = row[f.column] || f.placeholder;
+      ctx.save();
+      ctx.font        = `${f.fontStyle || ''} ${f.fontWeight || 'normal'} ${f.fontSize || 32}px "${f.fontFamily || 'Inter'}"`;
+      ctx.fillStyle   = f.color || '#000000';
+      ctx.textAlign   = f.align || 'center';
+      ctx.textBaseline = 'middle';
+      if (f.shadow) {
+        ctx.shadowColor   = 'rgba(0,0,0,0.35)';
+        ctx.shadowBlur    = 4;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+      }
+      ctx.fillText(value, f.x + f.w / 2, f.y + f.h / 2);
+      ctx.restore();
+    });
+    ctx.restore();
+  };
+
+  if (ED.bgBase64) {
+    const img = new Image();
+    img.onload = () => { ctx.drawImage(img, 0, 0, ED.w, ED.h); doDraw(); };
+    img.src    = ED.bgBase64;
+  } else {
+    ctx.fillStyle = ED.bgColor || '#ffffff';
+    ctx.fillRect(0, 0, ED.w, ED.h);
+    doDraw();
+  }
 }
 
 /* ════════════════════════════════════════════════════════════════
