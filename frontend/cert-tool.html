@@ -267,20 +267,43 @@
 }
 .notice-info svg { width: 18px; height: 18px; color: var(--cyan); flex-shrink: 0; margin-top: 1px; }
 
-/* Source picker */
-.source-picker { display: flex; gap: 10px; margin-bottom: 20px; }
-.source-opt {
-  flex: 1; padding: 14px 16px;
-  border: 1px solid var(--glass-border); border-radius: var(--radius);
-  cursor: pointer; text-align: center; transition: var(--transition);
-  background: var(--glass);
+/* Source picker — shared style matching mail-tool */
+.src-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
 }
-.source-opt:hover { border-color: var(--glass-border-2); }
-.source-opt.active { border-color: rgba(0,212,255,0.4); background: var(--cyan-dim); }
-.source-opt svg { width: 22px; height: 22px; color: var(--text-3); margin-bottom: 6px; display: block; margin-left: auto; margin-right: auto; }
-.source-opt.active svg { color: var(--cyan); }
-.source-opt span { font-size: 13px; font-weight: 600; color: var(--text-2); display: block; }
-.source-opt.active span { color: var(--cyan); }
+.src-opt {
+  padding: 18px;
+  border: 1.5px solid var(--glass-border);
+  border-radius: 14px;
+  cursor: pointer;
+  background: var(--glass);
+  transition: var(--transition);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.src-opt:hover { border-color: var(--glass-border-2); }
+.src-opt.active { border-color: rgba(0,212,255,0.45); background: rgba(0,212,255,0.08); }
+.src-opt-icon {
+  width: 44px; height: 44px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+}
+.src-opt-icon svg { width: 20px; height: 20px; color: var(--text-2); }
+.src-opt.active .src-opt-icon { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.2); }
+.src-opt.active .src-opt-icon svg { color: var(--cyan); }
+.src-opt-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.src-opt-desc { font-size: 13px; color: var(--text-2); line-height: 1.4; }
+.src-opt.active .src-opt-title { color: var(--cyan); }
+/* keep old .source-opt/.source-picker for any legacy references */
+.source-picker { display: flex; gap: 10px; margin-bottom: 20px; }
+.source-opt { flex: 1; padding: 14px 16px; border: 1px solid var(--glass-border); border-radius: var(--radius); cursor: pointer; text-align: center; transition: var(--transition); background: var(--glass); }
 
 /* Result table */
 .result-grid {
