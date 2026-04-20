@@ -872,43 +872,55 @@ function renderCertPreview(idx) {
   ctx.save();
   ctx.scale(scale * dpr, scale * dpr);
 
-  const doDraw = () => {
+    const doDraw = () => {
     const cw = ED.w, ch = ED.h;
-    ED.fields.forEach(f => {
-      // positions are percentages (0–100), convert to pixels
-      const px = (f.x / 100) * cw;
-      const py = (f.y / 100) * ch;
-      const fw = (f.width / 100) * cw;
 
-      const value    = (f.column && row[f.column]) ? row[f.column] : f.placeholder;
+    ED.fields.forEach(f => {
+      const boxX = (f.x / 100) * cw;
+      const boxY = (f.y / 100) * ch;
+      const boxW = (f.width / 100) * cw;
+
+      const value = (f.column && row[f.column]) ? String(row[f.column]) : (f.previewText || f.placeholder || '');
       const fontStyle  = f.italic ? 'italic' : 'normal';
-      const fontWeight = f.bold   ? 700      : getFontWeight(f.fontFamily || 'Helvetica');
+      const fontWeight = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
       const fontCSS    = getFontCSS(f.fontFamily || 'Helvetica');
+      const fontSize   = f.fontSize || 32;
+      const letterSpacing = Number(f.letterSpacing || 0);
 
       ctx.save();
-      ctx.font         = `${fontStyle} ${fontWeight} ${f.fontSize || 32}px ${fontCSS}`;
-      ctx.fillStyle    = f.color || '#1a1a1a';
-      ctx.textAlign    = f.align || 'center';
-      ctx.textBaseline = 'top';
-      ctx.letterSpacing = `${f.letterSpacing || 0}px`;
+      ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontCSS}`;
+      ctx.fillStyle = f.color || '#1a1a1a';
+      ctx.textBaseline = 'alphabetic';
 
-      // Match exactly how the editor overlay div positions text (top-left origin)
-      const textX = f.align === 'left' ? px : f.align === 'right' ? px + fw : px + fw / 2;
-      ctx.fillText(value, textX, py);
+      const m = ctx.measureText(value);
+      const ascent = m.actualBoundingBoxAscent || fontSize * 0.8;
+      const descent = m.actualBoundingBoxDescent || fontSize * 0.2;
+
+      let textWidth = m.width;
+      if (letterSpacing && value.length > 1) textWidth += letterSpacing * (value.length - 1);
+
+      let drawX = boxX;
+      if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textWidth) / 2;
+      else if (f.align === 'right') drawX = boxX + boxW - textWidth;
+
+      // Match DOM text box: top edge of box, then move down by ascent
+      const drawY = boxY + ascent;
+
+      if (letterSpacing > 0) {
+        let cx = drawX;
+        for (const ch of value) {
+          ctx.fillText(ch, cx, drawY);
+          cx += ctx.measureText(ch).width + letterSpacing;
+        }
+      } else {
+        ctx.fillText(value, drawX, drawY);
+      }
+
       ctx.restore();
     });
+
     ctx.restore();
   };
-
-  if (ED.bgBase64) {
-    const img = new Image();
-    img.onload = () => { ctx.drawImage(img, 0, 0, ED.w, ED.h); doDraw(); };
-    img.src    = ED.bgBase64;
-  } else {
-    ctx.fillStyle = ED.bgColor || '#ffffff';
-    ctx.fillRect(0, 0, ED.w, ED.h);
-    doDraw();
-  }
 }
 
 /* ════════════════════════════════════════════════════════════════
