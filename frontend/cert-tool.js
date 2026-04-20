@@ -1134,9 +1134,9 @@ function renderResultRows(results) {
   });
 
   // Table wrapper with horizontal scroll, link column frozen right
-  container.innerHTML = `
-    <div style="position:relative;width:100%;overflow:auto;max-height:420px;border:1px solid var(--glass-border);border-radius:12px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent" id="resultTableWrap">
-      <table style="border-collapse:collapse;width:max-content;min-width:100%;font-size:13.5px">
+    container.innerHTML = `
+      <div style="position:relative;width:100%;max-width:100%;overflow:auto;max-height:420px;border:1px solid var(--glass-border);border-radius:12px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;box-sizing:border-box" id="resultTableWrap">
+        <table style="border-collapse:collapse;width:max-content;min-width:100%;font-size:13.5px">
         <thead>
           <tr style="position:sticky;top:0;z-index:3;background:var(--surface)">
             <th style="padding:10px 14px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border);min-width:36px">#</th>
