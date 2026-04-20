@@ -839,74 +839,67 @@ function certPrevNav(dir) {
 }
 
 function renderCertPreview(idx) {
-  const total   = CS.rows.length;
-  const row     = CS.rows[idx] || {};
-  const canvas  = document.getElementById('certPrevCanvas');
-  const strip   = document.getElementById('certPrevStrip');
-  const navLbl  = document.getElementById('certNavLabel');
+  const total  = CS.rows.length;
+  const row    = CS.rows[idx] || {};
+  const canvas = document.getElementById('certPrevCanvas');
+  const strip  = document.getElementById('certPrevStrip');
+  const navLbl = document.getElementById('certNavLabel');
   if (!canvas) return;
 
   if (navLbl) navLbl.textContent = `${idx + 1} / ${total}`;
 
-  // -- data strip below canvas --
   if (strip) {
     strip.innerHTML = ED.fields.map(f =>
       `<span><span style="color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-right:4px">${f.placeholder.replace(/[{}]/g,'')}</span><span style="color:var(--text);font-weight:500">${row[f.column] || '—'}</span></span>`
     ).join('');
   }
 
-  // -- draw canvas --
-  const dpr     = window.devicePixelRatio || 1;
-  const scale   = Math.min(1, 720 / ED.w);
-  const cssW    = Math.round(ED.w * scale);
-  const cssH    = Math.round(ED.h * scale);
+  const dpr   = window.devicePixelRatio || 1;
+  const scale = Math.min(1, 720 / ED.w);
+  const cssW  = Math.round(ED.w * scale);
+  const cssH  = Math.round(ED.h * scale);
 
-  // Set physical pixels = CSS pixels × DPR (fixes blur on retina)
-  canvas.width  = cssW * dpr;
+  canvas.width = cssW * dpr;
   canvas.height = cssH * dpr;
-  canvas.style.width  = cssW + 'px';
+  canvas.style.width = cssW + 'px';
   canvas.style.height = cssH + 'px';
 
-  const ctx     = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.save();
   ctx.scale(scale * dpr, scale * dpr);
 
-    const doDraw = () => {
-    const cw = ED.w, ch = ED.h;
-
+  const drawFields = () => {
     ED.fields.forEach(f => {
-      const boxX = (f.x / 100) * cw;
-      const boxY = (f.y / 100) * ch;
-      const boxW = (f.width / 100) * cw;
-
+      const boxX = (f.x / 100) * ED.w;
+      const boxY = (f.y / 100) * ED.h;
+      const boxW = (f.width / 100) * ED.w;
       const value = (f.column && row[f.column]) ? String(row[f.column]) : (f.previewText || f.placeholder || '');
-      const fontStyle  = f.italic ? 'italic' : 'normal';
+
+      const fontStyle = f.italic ? 'italic' : 'normal';
       const fontWeight = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
-      const fontCSS    = getFontCSS(f.fontFamily || 'Helvetica');
-      const fontSize   = f.fontSize || 32;
+      const fontCSS = getFontCSS(f.fontFamily || 'Helvetica');
+      const fontSize = f.fontSize || 32;
       const letterSpacing = Number(f.letterSpacing || 0);
 
       ctx.save();
       ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontCSS}`;
       ctx.fillStyle = f.color || '#1a1a1a';
-      ctx.textBaseline = 'alphabetic';
+      ctx.textBaseline = 'top';
+      ctx.textAlign = 'left';
 
-      const m = ctx.measureText(value);
-      const ascent = m.actualBoundingBoxAscent || fontSize * 0.8;
-      const descent = m.actualBoundingBoxDescent || fontSize * 0.2;
-
-      let textWidth = m.width;
-      if (letterSpacing && value.length > 1) textWidth += letterSpacing * (value.length - 1);
+      let textWidth = ctx.measureText(value).width;
+      if (letterSpacing > 0 && value.length > 1) {
+        textWidth += letterSpacing * (value.length - 1);
+      }
 
       let drawX = boxX;
       if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textWidth) / 2;
       else if (f.align === 'right') drawX = boxX + boxW - textWidth;
 
-      // Match DOM text box: top edge of box, then move down by ascent
-      const drawY = boxY + ascent;
+      const drawY = boxY;
 
-      if (letterSpacing > 0) {
+      if (letterSpacing > 0 && value.length > 1) {
         let cx = drawX;
         for (const ch of value) {
           ctx.fillText(ch, cx, drawY);
@@ -918,9 +911,27 @@ function renderCertPreview(idx) {
 
       ctx.restore();
     });
-
-    ctx.restore();
   };
+
+  if (ED.bgImg) {
+    ctx.drawImage(ED.bgImg, 0, 0, ED.w, ED.h);
+    drawFields();
+  } else if (ED.bgBase64) {
+    const img = new Image();
+    img.onload = () => {
+      const ctx2 = canvas.getContext('2d');
+      ctx2.setTransform(1, 0, 0, 1, 0, 0);
+      ctx2.clearRect(0, 0, canvas.width, canvas.height);
+      ctx2.scale(scale * dpr, scale * dpr);
+      ctx2.drawImage(img, 0, 0, ED.w, ED.h);
+      drawFields();
+    };
+    img.src = ED.bgBase64;
+  } else {
+    ctx.fillStyle = ED.bgColor || '#ffffff';
+    ctx.fillRect(0, 0, ED.w, ED.h);
+    drawFields();
+  }
 }
 
 /* ════════════════════════════════════════════════════════════════
