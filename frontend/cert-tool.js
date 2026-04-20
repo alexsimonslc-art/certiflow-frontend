@@ -138,23 +138,23 @@ function switchSrc(type) {
     const el = document.getElementById(id); if (el) el.style.display = 'none';
   });
   ['srcSheetsOpt', 'srcFileOpt', 'srcManualOpt', 'srcHxFormOpt'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.className = 'source-opt';
+    const el = document.getElementById(id); if (el) el.className = 'src-opt';
   });
   if (type === 'sheets') {
     document.getElementById('srcSheets').style.display = 'block';
-    document.getElementById('srcSheetsOpt').className  = 'source-opt active';
+    document.getElementById('srcSheetsOpt').className  = 'src-opt active';
   } else if (type === 'file') {
     document.getElementById('srcFile').style.display = 'block';
-    document.getElementById('srcFileOpt').className  = 'source-opt active';
+    document.getElementById('srcFileOpt').className  = 'src-opt active';
   } else if (type === 'manual') {
     document.getElementById('srcManual').style.display = 'block';
-    document.getElementById('srcManualOpt').className  = 'source-opt active';
+    document.getElementById('srcManualOpt').className  = 'src-opt active';
     if (document.getElementById('manualBody').children.length === 0) {
       manualAddRow(); manualAddRow();
     }
   } else if (type === 'hxform') {
     document.getElementById('srcHxForm').style.display = 'block';
-    document.getElementById('srcHxFormOpt').className  = 'source-opt active';
+    document.getElementById('srcHxFormOpt').className  = 'src-opt active';
     loadHxFormList_cert();
   }
 }
