@@ -378,25 +378,17 @@ function redrawCanvas() {
     ctx.save();
     ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
     ctx.fillStyle = f.color || '#1a1a1a';
-    ctx.textBaseline = 'top';
+    // AFTER:
+    ctx.textBaseline = 'alphabetic';
     ctx.textAlign = 'left';
-
-    let textW = ctx.measureText(value).width;
-    if (ls > 0 && value.length > 1) textW += ls * (value.length - 1);
-
-    let drawX = boxX;
-    if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
-    else if (f.align === 'right') drawX = boxX + boxW - textW;
-
-    if (ls > 0 && value.length > 1) {
-      let cx = drawX;
-      for (const ch of value) {
-        ctx.fillText(ch, cx, boxY);
-        cx += ctx.measureText(ch).width + ls;
-      }
-    } else {
-      ctx.fillText(value, drawX, boxY);
-    }
+    // Measure the actual ascent for this font at this size
+    const metrics = ctx.measureText(value.length > 0 ? value : 'M');
+    const actualAscent = metrics.actualBoundingBoxAscent;
+    // drawY: move down from the box top by the ascent so cap-top aligns to boxY
+    const drawY = boxY + actualAscent;
+    // ...
+    ctx.fillText(value, drawX, drawY);
+    // (same for the char-by-char letterSpacing loop — replace boxY with drawY there too)
     ctx.restore();
   });
 }
@@ -618,15 +610,17 @@ function addField() {
     letterSpacing: 0,
   };
   ED.fields.push(field);
-  closeAFModal();
-  if (!canvas.width) {
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      resizeCanvas();
+    closeAFModal();
+    if (!canvas.width) {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        resizeCanvas();
+        redraw();              // ← ADD THIS: paint the new field text first
+        selectField(field.id);
+      }));
+    } else {
+      redraw();                // ← ADD THIS: paint before selecting
       selectField(field.id);
-    }));
-  } else {
-    selectField(field.id);
-  }
+    }
   toast(`Added ${ph} field`, 'success', 2000);
 }
 
@@ -970,7 +964,7 @@ function renderCertPreview(idx) {
       if (letterSpacing > 0 && value.length > 1) {
         let cx = drawX;
         for (const ch of value) {
-          ctx.fillText(ch, cx, drawY);
+          ctx.fillText(ch, cx, drawY); 
           cx += ctx.measureText(ch).width + letterSpacing;
         }
       } else {
