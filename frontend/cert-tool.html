@@ -77,12 +77,40 @@
 .manual-col-del svg { width:11px;height:11px; }
 
 /* ── Source picker 3-column for manual option ── */
-.source-picker { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 12px; }
-.src-opt-icon { width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:1px solid var(--glass-border); }
-.src-opt-icon svg { width:20px;height:20px;color:var(--text-2); }
-.source-opt.active .src-opt-icon { background:rgba(0,212,255,0.12);border-color:rgba(0,212,255,0.2); }
-.source-opt.active .src-opt-icon svg { color:var(--cyan); }
-.src-opt-title { font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px; }
+/* Source picker */
+.src-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.src-opt {
+  padding: 18px;
+  border: 1.5px solid var(--glass-border);
+  border-radius: 14px;
+  cursor: pointer;
+  background: var(--glass);
+  transition: var(--transition);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.src-opt:hover { border-color: var(--glass-border-2); }
+.src-opt.active { border-color: rgba(0,212,255,0.45); background: rgba(0,212,255,0.08); }
+.src-opt-icon {
+  width: 44px; height: 44px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+}
+.src-opt-icon svg { width: 20px; height: 20px; color: var(--text-2); }
+.src-opt.active .src-opt-icon { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.2); }
+.src-opt.active .src-opt-icon svg { color: var(--cyan); }
+.src-opt-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.src-opt-desc { font-size: 13px; color: var(--text-2); line-height: 1.4; }
+.src-opt.active .src-opt-title { color: var(--cyan); }
 .src-opt-desc { font-size:13px;color:var(--text-2);line-height:1.4; }
 .source-opt.active .src-opt-title { color:var(--cyan); }
 
@@ -301,9 +329,7 @@
 .src-opt-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .src-opt-desc { font-size: 13px; color: var(--text-2); line-height: 1.4; }
 .src-opt.active .src-opt-title { color: var(--cyan); }
-/* keep old .source-opt/.source-picker for any legacy references */
-.src-picker { display: flex; gap: 10px; margin-bottom: 20px; }
-.src-opt { flex: 1; padding: 14px 16px; border: 1px solid var(--glass-border); border-radius: var(--radius); cursor: pointer; text-align: center; transition: var(--transition); background: var(--glass); }
+
 
 /* Result table */
 .result-grid {
@@ -400,7 +426,7 @@
 
               <div style="margin-top:20px">
                 <!-- Source Picker — 3 options -->
-                <div class="src-picker" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+                <div class="src-picker">
 
                   <!-- Google Sheets -->
                   <div class="src-opt active" id="srcSheetsOpt" onclick="switchSrc('sheets')">
