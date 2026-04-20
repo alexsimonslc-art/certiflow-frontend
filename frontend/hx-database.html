@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="dashboard.css"/>
-  <link rel="stylesheet" href="dashboard-patch.css"/>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
     /* ── Page-specific ───────────────────────────────────────── */
@@ -137,7 +136,7 @@
       color: var(--text); line-height: 1.3;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-    
+
 
     /* Big response count */
     .db-response-block { display: flex; align-items: baseline; gap: 6px; }
@@ -291,10 +290,12 @@
 <script>
 /* ── Boot ─────────────────────────────────────────────────────── */
 requireAuth();
-document.getElementById('sidebarMount').outerHTML = renderSidebar('hx-database.html');
+document.getElementById('sidebarMount').innerHTML = '';
+const _sidebarEl = document.createElement('div');
+_sidebarEl.innerHTML = renderSidebar('hx-database.html');
+document.getElementById('sidebarMount').replaceWith(_sidebarEl.firstElementChild);
 initSidebar();
 
-const API   = 'https://certiflow-backend-73xk.onrender.com';
 let _forms  = [];
 let _filter = 'all';
 

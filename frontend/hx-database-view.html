@@ -6,8 +6,7 @@
   <title>Loading… — Database</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="dashboard.css"/>
-  <link rel="stylesheet" href="dashboard-patch.css"/>
+  <link rel="stylesheet" href="dashboard.css"/> 
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
@@ -586,7 +585,7 @@ requireAuth();
 document.getElementById('sidebarMount').outerHTML = renderSidebar('hx-database.html');
 initSidebar();
 
-const API = 'https://certiflow-backend-73xk.onrender.com';
+
 
 /* ── Runtime state ──────────────────────────────────────────────── */
 let _formId   = new URLSearchParams(window.location.search).get('form');
