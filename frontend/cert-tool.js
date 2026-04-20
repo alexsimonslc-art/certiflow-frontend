@@ -179,7 +179,13 @@ async function loadHxFormList_cert() {
 async function loadHxFormData(formId) {
   if (!formId) return;
   const sel = document.getElementById('hxFormSelect');
+  const el  = document.getElementById('hxFormResult');
   sel.disabled = true;
+  el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--glass);margin-top:4px;font-size:14px;color:var(--text-2)">
+    <svg style="flex-shrink:0;animation:spin 0.9s linear infinite" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+    Loading form data…
+  </div>`;
+  el.style.display = 'block';
   try {
     const token = localStorage.getItem('Honourix_token');
     const res   = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
@@ -206,7 +212,8 @@ async function loadHxFormData(formId) {
     ${CS.rows.length > 5 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${CS.rows.length - 5} more rows not shown</div>` : ''}`;
     el.style.display = 'block';
     toast(`${CS.rows.length} responses ready`, 'success');
-  } catch(e) {
+    } catch(e) {
+    el.style.display = 'none';
     toast('Could not load: ' + e.message, 'error');
   } finally { sel.disabled = false; }
 }
@@ -267,11 +274,19 @@ function handleFile(e) {
 }
 
 function showFilePreview(name) {
+  const preview = CS.rows.slice(0, 5);
   document.getElementById('fileResult').innerHTML = `
     <div class="notice notice-green" style="margin-bottom:12px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       <span><strong>${name}</strong> — ${CS.rows.length} rows, ${CS.headers.length} columns</span>
-    </div>`;
+    </div>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse">
+        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
+        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+    </div>
+    ${CS.rows.length > 5 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${CS.rows.length - 5} more rows not shown</div>` : ''}`;
   document.getElementById('fileResult').style.display = 'block';
   toast(`Loaded ${CS.rows.length} participants from file`, 'success');
 }
