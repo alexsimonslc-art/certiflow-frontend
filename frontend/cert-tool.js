@@ -358,7 +358,8 @@ function renderHandles() {
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
     el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;font-size:${fs}px;font-family:${ff};font-weight:${fw};font-style:${fi};color:${f.color||'#111'};text-align:${f.align||'left'};letter-spacing:${ls}px;line-height:1.2;`;
-    el.textContent = f.previewText || f.placeholder;
+    const liveVal = (f.column && CS.rows && CS.rows[0]) ? (CS.rows[0][f.column] || f.previewText || f.placeholder) : (f.previewText || f.placeholder);
+    el.textContent = liveVal;
     const del = document.createElement('div');
     del.className = 'tf-del'; del.textContent = '×';
     del.addEventListener('click', e => { e.stopPropagation(); deleteField(f.id); });
@@ -431,26 +432,77 @@ function startDrag(e, field, el) {
 }
 
 /* ── Add Field ─────────────────────────────────────────────────── */
-function openAFModal()  { document.getElementById('afOverlay').classList.add('open'); }
+function openAFModal() {
+  // Populate column dropdown from imported data
+  const sel = document.getElementById('afColSelect');
+  sel.innerHTML = '<option value="">— Select a column —</option>';
+  if (CS.headers && CS.headers.length) {
+    CS.headers.forEach(h => {
+      const o = document.createElement('option');
+      o.value = h; o.textContent = h;
+      sel.appendChild(o);
+    });
+  }
+  // Reset fields
+  document.getElementById('afPhInner').value = '';
+  document.getElementById('afColHint').style.display = 'none';
+  document.getElementById('newFieldSize').value = 36;
+  document.getElementById('afPrimary').checked = ED.fields.length === 0; // auto-check for first field
+  document.getElementById('afFilePreview').textContent = 'Alex_01.pdf';
+  document.getElementById('afOverlay').classList.add('open');
+}
 function closeAFModal() { document.getElementById('afOverlay').classList.remove('open'); }
 function openAddFieldModal()  { openAFModal(); }
 function closeAddFieldModal() { closeAFModal(); }
-function addField() {
-  let ph = document.getElementById('newFieldPh').value;
-  if (ph === 'custom') {
-    const custom = document.getElementById('customPhInput').value.trim();
-    if (!custom) { toast('Enter a custom placeholder', 'error'); return; }
-    ph = '{{' + custom.replace(/[{}]/g, '') + '}}';
+
+function afColumnChanged(col) {
+  if (!col) return;
+  // Auto-suggest placeholder from column name
+  const suggested = col.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+  document.getElementById('afPhInner').value = suggested;
+  // Show sample value from Row 0
+  const sample = CS.rows && CS.rows[0] ? (CS.rows[0][col] || '') : '';
+  const hint = document.getElementById('afColHint');
+  if (sample) {
+    hint.textContent = 'Sample value from row 1: "' + sample + '"';
+    hint.style.display = 'block';
+  } else {
+    hint.style.display = 'none';
   }
-  const prev = document.getElementById('newFieldPreview').value.trim();
-  const size = parseInt(document.getElementById('newFieldSize').value) || 36;
-  const previews = { '{{name}}':'John Smith','{{course}}':'Web Development','{{date}}':'March 2026','{{score}}':'95%','{{email}}':'john@example.com','{{org}}':'NIT Trichy' };
+  afPhInput(suggested);
+}
+
+function afPhInput(val) {
+  const clean = val.replace(/[{}]/g, '').trim();
+  const sample = document.getElementById('afColSelect').value && CS.rows && CS.rows[0]
+    ? (CS.rows[0][document.getElementById('afColSelect').value] || clean || 'Alex')
+    : (clean || 'Alex');
+  document.getElementById('afFilePreview').textContent = (sample || 'Alex') + '_01.pdf';
+}
+
+function addField() {
+  const colSel  = document.getElementById('afColSelect');
+  const phInner = document.getElementById('afPhInner').value.trim().replace(/[{}]/g, '');
+  const col     = colSel.value;
+  const size    = parseInt(document.getElementById('newFieldSize').value) || 36;
+  const isPrimary = document.getElementById('afPrimary').checked;
+
+  if (!phInner) { toast('Enter a placeholder name', 'error'); return; }
+
+  const ph = '{{' + phInner + '}}';
+
+  // Derive live previewText from Row 0 data
+  const previewText = col && CS.rows && CS.rows[0] ? (CS.rows[0][col] || phInner) : phInner;
+
+  // If marking as primary, unmark others
+  if (isPrimary) ED.fields.forEach(f => { f.isPrimary = false; });
 
   const field = {
     id: 'f_' + Date.now(),
     placeholder: ph,
-    previewText: prev || previews[ph] || ph.replace(/[{}]/g, ''),
-    column: '',
+    previewText,
+    column: col,
+    isPrimary,
     x: 10, y: 35 + ED.fields.length * 14,
     width: 80, fontSize: size,
     fontFamily: 'Helvetica',
@@ -460,7 +512,7 @@ function addField() {
     italic: false,
     letterSpacing: 0,
   };
-    ED.fields.push(field);
+  ED.fields.push(field);
   closeAFModal();
   if (!canvas.width) {
     requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -481,7 +533,10 @@ function selectField(id) {
   document.getElementById('propsEmpty').style.display = 'none';
   document.getElementById('propsForm').style.display  = 'flex';
   document.getElementById('pPh').value    = f.placeholder;
-  document.getElementById('pPrev').value  = f.previewText || '';
+  const livePreview = (f.column && CS.rows && CS.rows[0]) ? (CS.rows[0][f.column] || f.previewText || '') : (f.previewText || '');
+  document.getElementById('pPrev').value = livePreview;
+  document.getElementById('pPrev').style.color = (f.column && CS.rows && CS.rows[0]) ? 'var(--cyan)' : 'var(--text)';
+  document.getElementById('pPrev').title = f.column ? 'Live value from row 1 of your data' : 'Manual preview text';
   document.getElementById('pFont').value  = f.fontFamily || 'Helvetica';
   document.getElementById('pSize').value  = f.fontSize;
   document.getElementById('pSizeVal').textContent = f.fontSize + 'px';
@@ -526,7 +581,7 @@ function switchEPTab(tab) { ['fields','props'].forEach(t => { document.getElemen
 function renderChipList() {
   const el = document.getElementById('fieldChipList'); if (!el) return;
   if (!ED.fields.length) { el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span></div>`; return; }
-  el.innerHTML = ED.fields.map(f => `<div class="fc-chip ${f.id===ED.selId?'sel':''}" onclick="selectField('${f.id}')"><div class="fc-dot" style="background:${f.color}"></div><span class="fc-name">${f.previewText||f.placeholder}</span><span class="fc-ph">${f.placeholder}</span></div>`).join('');
+  el.innerHTML = ED.fields.map(f => `<div class="fc-chip ${f.id===ED.selId?'sel':''}" onclick="selectField('${f.id}')"><div class="fc-dot" style="background:${f.color}"></div><div style="flex:1;min-width:0"><span class="fc-name">${f.previewText||f.placeholder}</span><span class="fc-ph">${f.placeholder}${f.column?' → '+f.column:''}</span></div>${f.isPrimary?'<span style="font-size:10px;font-weight:700;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.25);border-radius:4px;padding:1px 5px;flex-shrink:0">PRIMARY</span>':''}</div>`).join('');
 }
 /* ── Background ──────────────────────────────────────────────────── */
 function uploadBackground(e) {
