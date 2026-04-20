@@ -856,13 +856,21 @@ function renderCertPreview(idx) {
   }
 
   // -- draw canvas --
-  const scale   = Math.min(1, 720 / ED.w);   // fit within 720px wide
-  canvas.width  = ED.w * scale;
-  canvas.height = ED.h * scale;
+  const dpr     = window.devicePixelRatio || 1;
+  const scale   = Math.min(1, 720 / ED.w);
+  const cssW    = Math.round(ED.w * scale);
+  const cssH    = Math.round(ED.h * scale);
+
+  // Set physical pixels = CSS pixels × DPR (fixes blur on retina)
+  canvas.width  = cssW * dpr;
+  canvas.height = cssH * dpr;
+  canvas.style.width  = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+
   const ctx     = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
-  ctx.scale(scale, scale);
+  ctx.scale(scale * dpr, scale * dpr);
 
   const doDraw = () => {
     const cw = ED.w, ch = ED.h;
@@ -881,12 +889,12 @@ function renderCertPreview(idx) {
       ctx.font         = `${fontStyle} ${fontWeight} ${f.fontSize || 32}px ${fontCSS}`;
       ctx.fillStyle    = f.color || '#1a1a1a';
       ctx.textAlign    = f.align || 'center';
-      ctx.textBaseline = 'middle';
+      ctx.textBaseline = 'top';
       ctx.letterSpacing = `${f.letterSpacing || 0}px`;
 
-      // draw text centered in the field box
+      // Match exactly how the editor overlay div positions text (top-left origin)
       const textX = f.align === 'left' ? px : f.align === 'right' ? px + fw : px + fw / 2;
-      ctx.fillText(value, textX, py + (f.fontSize || 32) / 2 + 4);
+      ctx.fillText(value, textX, py);
       ctx.restore();
     });
     ctx.restore();
