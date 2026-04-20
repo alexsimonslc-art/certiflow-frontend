@@ -123,8 +123,10 @@ function validateStep(n) {
   if (n === 2) {
     if (ED.fields.length === 0) { toast('Please add at least one text field to your template', 'warning'); return false; }
   }
-  if (n === 3) {
-    if (!document.getElementById('nameCol').value) { toast('Please select the Name column', 'error'); return false; }
+    if (n === 3) {
+    const unmapped = ED.fields.filter(f => !f.column);
+    if (unmapped.length) { toast('Please map all fields before continuing', 'error'); return false; }
+    if (!ED.fields.some(f => f.isPrimary)) { toast('Please star one field as Primary (for filename)', 'error'); return false; }
   }
   return true;
 }
@@ -454,7 +456,54 @@ function openAFModal() {
 function closeAFModal() { document.getElementById('afOverlay').classList.remove('open'); }
 function openAddFieldModal()  { openAFModal(); }
 function closeAddFieldModal() { closeAFModal(); }
+/* ── File Naming Modal ─────────────────────────────── */
+function openFNModal() {
+  // Populate the locked name pill with primary field's sample value
+  const primary = ED.fields.find(f => f.isPrimary);
+  const sampleName = primary && CS.rows && CS.rows[0]
+    ? (CS.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g,''))
+    : 'ParticipantName';
+  document.getElementById('fnNamePill').textContent = sampleName;
+  document.getElementById('fnEventInput').value = CS.eventName || '';
+  fnUpdatePreview();
+  document.getElementById('fnOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('fnEventInput').focus(), 120);
+}
 
+function closeFNModal() {
+  document.getElementById('fnOverlay').classList.remove('open');
+}
+
+function fnUpdatePreview() {
+  const primary = ED.fields.find(f => f.isPrimary);
+  const sampleName = primary && CS.rows && CS.rows[0]
+    ? sanitizeFilename(CS.rows[0][primary.column] || 'Name')
+    : 'Name';
+  const event = document.getElementById('fnEventInput').value.trim();
+  const eventPart = event ? '_' + sanitizeFilename(event) : '';
+  document.getElementById('fnPreviewText').textContent =
+    sampleName + eventPart + '_01.pdf';
+  // Show/hide the separator between event and number
+  document.getElementById('fnSepNum').style.display = event ? 'none' : '';
+}
+
+function fnConfirm() {
+  CS.eventName = document.getElementById('fnEventInput').value.trim();
+  closeFNModal();
+  openFNModal(4);   // proceed to cert preview step
+}
+
+function sanitizeFilename(str) {
+  return String(str).replace(/[^a-zA-Z0-9_\-\u0900-\u097F\u00C0-\u024F]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+}
+
+function buildOutputFilename(rowData, index) {
+  const primary = ED.fields.find(f => f.isPrimary);
+  const name = primary ? sanitizeFilename(rowData[primary.column] || 'cert') : 'cert';
+  const event = CS.eventName ? '_' + sanitizeFilename(CS.eventName) : '';
+  const num = String(index + 1).padStart(2, '0');
+  return `${name}${event}_${num}.pdf`;
+}
 function afColumnChanged(col) {
   if (!col) return;
   // Auto-suggest placeholder from column name
@@ -640,69 +689,109 @@ function loadSavedTemplate() {
 ════════════════════════════════════════════════════════════════ */
 function populateStep3() {
   saveTemplate();
-  const opts = CS.headers.map(h => `<option value="${h}">${h}</option>`).join('');
-  ['nameCol','emailCol'].forEach(id => {
-    document.getElementById(id).innerHTML = `<option value="">Select column…</option>${opts}`;
-  });
-  const ng = CS.headers.find(h => /name/i.test(h));
-  const eg = CS.headers.find(h => /email|mail/i.test(h));
-  if (ng) document.getElementById('nameCol').value  = ng;
-  if (eg) document.getElementById('emailCol').value = eg;
+  buildStep3();
+}
 
-  // Column hint list
+function buildStep3() {
+  const rows  = document.getElementById('s3Rows');
+  const empty = document.getElementById('s3Empty');
+  const count = document.getElementById('s3FieldCount');
+
+  // Rebuild the column hint list on the right panel
   const hints = CS.headers.map(h => `
     <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--glass-border)">
       <span style="width:7px;height:7px;background:var(--cyan);border-radius:50%;flex-shrink:0"></span>
       <span style="font-size:14px;color:var(--text)">${h}</span>
     </div>`).join('');
   const ch = document.getElementById('colsListHint');
-  if (ch) ch.innerHTML = hints;
+  if (ch) ch.innerHTML = hints || '<span style="color:var(--text-3);font-size:13px">No columns loaded yet.</span>';
 
-  // Detected tags from template
-  const tags = ED.fields.map(f => f.placeholder);
-  const tagEl = document.getElementById('detectedTagsList');
-  if (tagEl) tagEl.textContent = tags.join(', ') || 'none';
+  if (!ED.fields.length) {
+    if (rows)  rows.style.display  = 'none';
+    if (empty) empty.style.display = 'block';
+    if (count) count.textContent   = '0 fields';
+    buildStep3Writeback();
+    return;
+  }
 
-  // Refresh mapping dropdowns
-  document.querySelectorAll('.map-col-select').forEach(sel => {
-    const cur = sel.value;
-    sel.innerHTML = `<option value="">Sheet column…</option>${opts}`;
-    if (cur) sel.value = cur;
-  });
-}
+  if (empty) empty.style.display = 'none';
+  if (rows)  rows.style.display  = 'flex';
+  if (count) count.textContent   = `${ED.fields.length} field${ED.fields.length > 1 ? 's' : ''}`;
 
-function addMapping() {
-  CS.fieldMappings.push({ col: '', ph: '' });
-  renderMappingRows();
-  document.getElementById('noMappingsMsg').style.display = 'none';
-}
+  const opts = CS.headers.map(h => `<option value="${h}">${h}</option>`).join('');
 
-function renderMappingRows() {
-  const opts  = CS.headers.map(h => `<option value="${h}">${h}</option>`).join('');
-  const tags  = ED.fields.map(f => f.placeholder.replace(/[{}]/g, '')).filter(Boolean);
-  const tagOpts = tags.map(t => `<option value="${t}">{{${t}}}</option>`).join('');
-  const container = document.getElementById('fieldMappings');
-  container.innerHTML = CS.fieldMappings.map((m, i) => `
-    <div class="field-map-row">
-      <select class="form-select map-col-select" onchange="CS.fieldMappings[${i}].col=this.value">
-        <option value="">Sheet column…</option>${opts}
-        ${m.col ? `<option value="${m.col}" selected>${m.col}</option>` : ''}
+  rows.innerHTML = ED.fields.map((f, i) => {
+    const isLast = i === ED.fields.length - 1;
+    const colOpts = `<option value="">— choose column —</option>${CS.headers.map(h =>
+      `<option value="${h}" ${f.column === h ? 'selected' : ''}>${h}</option>`
+    ).join('')}`;
+
+    return `
+    <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:12px;padding:14px 18px;${!isLast ? 'border-bottom:1px solid var(--glass-border)' : ''}">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0">
+        <div style="width:8px;height:8px;border-radius:50%;background:${f.isPrimary ? 'var(--cyan)' : 'var(--glass-border)'};flex-shrink:0;transition:background 0.2s"></div>
+        <code style="font-family:var(--font-mono);font-size:13px;color:var(--cyan);background:rgba(0,212,255,0.08);padding:4px 10px;border-radius:6px;white-space:nowrap">${f.placeholder}</code>
+        ${f.isPrimary ? '<span style="font-size:10.5px;padding:2px 7px;background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.25);border-radius:12px;color:var(--cyan);font-weight:700;letter-spacing:.03em;flex-shrink:0">PRIMARY</span>' : ''}
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);flex-shrink:0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <select class="form-select" style="font-size:13.5px;padding:9px 32px 9px 12px" onchange="s3ColChanged('${f.id}', this.value)">
+        ${colOpts}
       </select>
-      <svg class="field-map-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      <select class="form-select map-col-select" onchange="CS.fieldMappings[${i}].ph=this.value">
-        <option value="">Template tag…</option>${tagOpts}
-        ${m.ph ? `<option value="${m.ph}" selected>{{${m.ph}}}</option>` : ''}
-      </select>
-      <button class="field-map-remove" onclick="removeMapping(${i})" title="Remove">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>`).join('');
+      <div title="Set as primary field (used for PDF filename)"
+        onclick="s3SetPrimary('${f.id}')"
+        style="width:32px;height:32px;border-radius:8px;border:1px solid ${f.isPrimary ? 'rgba(0,212,255,0.4)' : 'var(--glass-border)'};background:${f.isPrimary ? 'rgba(0,212,255,0.08)' : 'var(--glass)'};display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s;flex-shrink:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="${f.isPrimary ? 'var(--cyan)' : 'none'}" stroke="${f.isPrimary ? 'var(--cyan)' : 'var(--text-3)'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+    </div>`;
+  }).join('');
+
+  buildStep3Writeback();
 }
 
-function removeMapping(i) {
-  CS.fieldMappings.splice(i, 1);
-  renderMappingRows();
-  if (!CS.fieldMappings.length) document.getElementById('noMappingsMsg').style.display = 'flex';
+function s3ColChanged(fieldId, colValue) {
+  const f = ED.fields.find(x => x.id === fieldId);
+  if (f) { f.column = colValue; renderCanvas(); }
+}
+
+function s3SetPrimary(fieldId) {
+  ED.fields.forEach(f => f.isPrimary = (f.id === fieldId));
+  buildStep3();
+}
+
+function buildStep3Writeback() {
+  const badge   = document.getElementById('s3WritebackBadge');
+  const desc    = document.getElementById('s3WritebackDesc');
+  const options = document.getElementById('s3WritebackOptions');
+  const isGS    = CS.srcType === 'sheets';
+
+  if (!badge || !desc) return;
+
+  if (isGS) {
+    badge.textContent = 'Active';
+    badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.25)';
+    desc.textContent = 'After generation, certificate links will be written back to your Google Sheet as a new column at the end of your data.';
+    if (options) options.style.display = 'block';
+  } else {
+    const srcLabel = CS.srcType === 'file' ? 'CSV/Excel upload' : CS.srcType === 'manual' ? 'manual entry' : CS.srcType === 'hxform' ? 'HX Form' : 'this source';
+    badge.textContent = 'N/A for this source';
+    badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--glass-border)';
+    desc.textContent = `Write-back is only available when data is imported via Google Sheets ID. You imported data via ${srcLabel}, so this option is not applicable.`;
+    if (options) options.style.display = 'none';
+  }
+}
+
+function validateStep3() {
+  const unmapped = ED.fields.filter(f => !f.column);
+  if (unmapped.length) {
+    toast(`Please map a column for: ${unmapped.map(f => f.placeholder).join(', ')}`, 'error');
+    return;
+  }
+  const hasPrimary = ED.fields.some(f => f.isPrimary);
+  if (!hasPrimary) {
+    toast('Please star (★) one field as Primary — it will be used for the PDF filename.', 'error');
+    return;
+  }
+  openFNModal();
 }
 
 /* ════════════════════════════════════════════════════════════════
