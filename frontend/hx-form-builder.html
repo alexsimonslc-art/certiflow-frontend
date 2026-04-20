@@ -430,6 +430,14 @@
   .hxfb-action-btn svg { width: 12px; height: 12px; }
 
   /* Settings panel */
+  /* Rich-text description editor */
+  .hxfb-rte-wrap { border:1px solid rgba(255,255,255,0.1); border-radius:9px; overflow:hidden; background:rgba(255,255,255,0.05); }
+  .hxfb-rte-bar  { display:flex; gap:3px; padding:5px 7px; background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.08); }
+  .hxfb-rte-btn  { padding:3px 9px; border-radius:5px; border:none; background:none; color:var(--text-2); cursor:pointer; font-size:13px; font-family:var(--font); transition:var(--transition); }
+  .hxfb-rte-btn:hover { background:rgba(0,212,255,0.1); color:var(--cyan); }
+  .hxfb-rte-body { padding:9px 11px; color:var(--text); font-size:13px; line-height:1.6; outline:none; min-height:64px; }
+  .hxfb-rte-body:empty::before { content:attr(placeholder); color:var(--text-3); pointer-events:none; }
+  .hxfb-rte-body ul, .hxfb-rte-body ol { margin:4px 0 4px 18px; }
   .hxfb-settings-section { margin-bottom: 20px; }
   .hxfb-settings-sec-title {
     font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
@@ -1020,12 +1028,20 @@ function fieldEditor(f, idx, total) {
       const opts = f.options || [];
       html += `
         <div class="hxfb-prop">
-          <label class="hxfb-prop-label">Options</label>
+          <label class="hxfb-prop-label" style="display:flex;justify-content:space-between;align-items:center">
+            Options
+            <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);font-size:10.5px">Label &nbsp;·&nbsp; Cap (seats)</span>
+          </label>
           <div class="hxfb-options-list">
             ${opts.map((o, i) => `
               <div class="hxfb-option-row">
                 <input class="hxfb-option-input" value="${escAttr(o)}"
                        oninput="updateOpt('${id}',${i},this.value)" placeholder="Option ${i+1}"/>
+                <input class="hxfb-option-input" type="number" min="1"
+                       style="width:66px;flex-shrink:0;text-align:center"
+                       value="${(f.optionCaps||[])[i]||''}" placeholder="∞"
+                       title="Seat cap — leave blank for unlimited"
+                       oninput="updateOptCap('${id}',${i},this.value?+this.value:null)"/>
                 <button class="hxfb-option-del" onclick="removeOpt('${id}',${i})" ${opts.length<=1?'disabled style="opacity:.3"':''}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
@@ -1170,6 +1186,15 @@ function updateOpt(id, idx, value) {
   setSaveStatus('unsaved');
   renderPreview();
 }
+function updateOptCap(id, idx, value) {
+  const field = _S.config.fields.find(f => f.id === id);
+  if (!field) return;
+  const caps = [...(field.optionCaps||[])];
+  while (caps.length <= idx) caps.push(null);
+  caps[idx] = value;
+  _S.updateField(id, { optionCaps: caps });
+  setSaveStatus('unsaved');
+}
 function moveFP(id, dir) {
   _S.moveField(id, dir);
   setSaveStatus('unsaved');
@@ -1209,6 +1234,11 @@ function updateThemeColor(color) {
   renderSettings();
   renderPreview();
 }
+function updateThemeFont(type, value) {
+  _S.updateTheme({ [type === 'heading' ? 'headingFont' : 'bodyFont']: value });
+  setSaveStatus('unsaved');
+  renderPreview();
+}
 
 /* ════════════════════════════════════════════════════════════════
    SETTINGS (renders in right settings tab)
@@ -1231,12 +1261,46 @@ function renderSettings() {
       </div>
       <div class="hxfb-prop">
         <label class="hxfb-prop-label">Description</label>
-        <textarea class="hxfb-input" rows="3" oninput="updateSetting('description',this.value)"
-          placeholder="Shown above the form" style="resize:vertical;min-height:56px">${escHtml(s.description||'')}</textarea>
+        <div class="hxfb-rte-wrap">
+          <div class="hxfb-rte-bar">
+            <button class="hxfb-rte-btn" title="Bold"          onmousedown="event.preventDefault();document.execCommand('bold')"><strong>B</strong></button>
+            <button class="hxfb-rte-btn" title="Italic"        onmousedown="event.preventDefault();document.execCommand('italic')"><em>I</em></button>
+            <button class="hxfb-rte-btn" title="Bullet list"   onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">≡</button>
+            <button class="hxfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">①</button>
+          </div>
+          <div class="hxfb-rte-body" contenteditable="true" id="descRTE"
+               oninput="updateSetting('description', this.innerHTML)"
+               placeholder="Brief description shown above the form">${s.description||''}</div>
+        </div>
       </div>
       <div class="hxfb-prop">
         <label class="hxfb-prop-label">Submit Button Label</label>
         <input class="hxfb-input" value="${escAttr(s.submitLabel||'Submit')}" oninput="updateSetting('submitLabel',this.value)"/>
+      </div>
+    </div>
+
+    <div class="hxfb-settings-section">
+      <div class="hxfb-settings-sec-title">Appearance</div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Cover Image URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
+        <input class="hxfb-input" type="url" value="${escAttr(s.coverImage||'')}"
+               oninput="updateSetting('coverImage',this.value)" placeholder="https://… displayed above form title"/>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Heading Font</label>
+        <select class="hxfb-select" onchange="updateThemeFont('heading',this.value)">
+          ${['Plus Jakarta Sans','Syne','Montserrat','Raleway','Playfair Display','Cormorant Garamond','Dancing Script','Cinzel','EB Garamond'].map(f =>
+            `<option value="${f}" ${(th.headingFont||'Plus Jakarta Sans')===f?'selected':''}>${f}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Body Font</label>
+        <select class="hxfb-select" onchange="updateThemeFont('body',this.value)">
+          ${['Plus Jakarta Sans','Montserrat','Raleway','EB Garamond','JetBrains Mono'].map(f =>
+            `<option value="${f}" ${(th.bodyFont||'Plus Jakarta Sans')===f?'selected':''}>${f}</option>`
+          ).join('')}
+        </select>
       </div>
     </div>
 
@@ -1445,8 +1509,9 @@ function pvShowPage(n, animate = true) {
 
   // Header
   if (isFirst) {
-    html += `<div class="hxfb-pv-title">${escHtml(s.title || _S.name || 'Untitled Form')}</div>`;
-    if (s.description) html += `<div class="hxfb-pv-desc">${escHtml(s.description)}</div>`;
+    if (s.coverImage) html += `<div style="margin:-22px -22px 18px;height:140px;background:url('${escHtml(s.coverImage)}') center/cover no-repeat;border-radius:4px 4px 0 0"></div>`;
+    html += `<div class="hxfb-pv-title" style="font-family:'${escHtml(th.headingFont||'Plus Jakarta Sans')}',sans-serif">${escHtml(s.title || _S.name || 'Untitled Form')}</div>`;
+    if (s.description) html += `<div class="hxfb-pv-desc" style="font-family:'${escHtml(th.bodyFont||'Plus Jakarta Sans')}',sans-serif">${s.description}</div>`;
   } else if (page.title) {
     html += `<div class="hxfb-pv-page-title">${escHtml(page.title)}</div>`;
     if (page.desc) html += `<div class="hxfb-pv-page-desc">${escHtml(page.desc)}</div>`;

@@ -1521,6 +1521,38 @@
       if (err) err.textContent = 'This field is required.';
     }
 
+    /* ── Option Caps: fetch live counts and disable full options ── */
+    async function applyOptionCaps(slug) {
+      try {
+        const res  = await fetch(`${HXF_PUBLIC}/public/caps?slug=${encodeURIComponent(slug)}`);
+        if (!res.ok) return;
+        const { optionCounts, fields } = await res.json();
+        (fields || []).forEach(field => {
+          if (!['radio','dropdown'].includes(field.type)) return;
+          const caps = field.optionCaps || [];
+          if (!caps.some(c => c)) return;
+          const counts = optionCounts?.[field.id] || {};
+          (field.options || []).forEach((opt, i) => {
+            const cap = caps[i]; if (!cap) return;
+            const taken = counts[opt] || 0;
+            if (taken >= cap) {
+              // radio / checkbox option wrappers
+              document.querySelectorAll(`[data-option-val="${CSS.escape(opt)}"]`).forEach(el => {
+                el.style.opacity = '0.4'; el.style.pointerEvents = 'none';
+                const badge = document.createElement('span');
+                badge.style.cssText = 'font-size:10px;margin-left:8px;color:var(--red);font-weight:700';
+                badge.textContent = 'FULL';
+                el.appendChild(badge);
+              });
+              // dropdown <option>
+              document.querySelectorAll(`option[value="${opt}"]`).forEach(el => {
+                el.disabled = true; el.textContent += ' (Full)';
+              });
+            }
+          });
+        });
+      } catch { /* non-critical */ }
+    }
     /* ════════════════════════════════════════════════════════════════
        SUBMIT
     ════════════════════════════════════════════════════════════════ */

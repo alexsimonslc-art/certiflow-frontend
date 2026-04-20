@@ -135,11 +135,58 @@ function validateStep(n) {
 ════════════════════════════════════════════════════════════════ */
 function switchSrc(type) {
   CS.srcType = type;
-  document.getElementById('srcSheets').style.display = type === 'sheets' ? 'block' : 'none';
-  document.getElementById('srcFile').style.display   = type === 'file'   ? 'block' : 'none';
-  
- document.getElementById('srcSheetsOpt').className  = 'src-opt' + (type === 'sheets' ? ' active' : '');
-  document.getElementById('srcFileOpt').className    = 'src-opt' + (type === 'file'   ? ' active' : '');
+  ['srcSheets','srcFile','srcHxForm'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.style.display = 'none';
+  });
+  ['srcSheetsOpt','srcFileOpt','srcHxFormOpt'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.className = 'source-opt';
+  });
+  if (type === 'sheets')  { document.getElementById('srcSheets').style.display  = 'block'; document.getElementById('srcSheetsOpt').className  = 'source-opt active'; }
+  if (type === 'file')    { document.getElementById('srcFile').style.display    = 'block'; document.getElementById('srcFileOpt').className    = 'source-opt active'; }
+  if (type === 'hxform')  { document.getElementById('srcHxForm').style.display  = 'block'; document.getElementById('srcHxFormOpt').className  = 'source-opt active'; loadHxFormList_cert(); }
+}
+
+async function loadHxFormList_cert() {
+  const sel = document.getElementById('hxFormSelect');
+  if (!sel || sel.dataset.loaded) return;
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const res   = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const { forms } = await res.json();
+    const eligible  = (forms || []).filter(f => f.submissionCount > 0);
+    sel.innerHTML = '<option value="">Select a form…</option>' +
+      eligible.map(f => `<option value="${f.id}">${f.name} (${f.submissionCount} responses)</option>`).join('');
+    if (!eligible.length) sel.innerHTML = '<option value="">No forms with submissions yet</option>';
+    sel.dataset.loaded = '1';
+  } catch { sel.innerHTML = '<option value="">Could not load — check login</option>'; }
+}
+
+async function loadHxFormData(formId) {
+  if (!formId) return;
+  const sel = document.getElementById('hxFormSelect');
+  sel.disabled = true;
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const res   = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+    const data = await res.json();
+    if (!data.rows?.length) { toast('No submissions in this form yet', 'warning'); return; }
+    CS.headers = data.headers;
+    CS.rows    = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
+    const el   = document.getElementById('hxFormResult');
+    el.innerHTML = `<div class="notice notice-green">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>${CS.rows.length} submissions</strong> loaded from <strong>${data.formName}</strong></span>
+    </div>`;
+    el.style.display = 'block';
+    toast(`${CS.rows.length} responses ready`, 'success');
+  } catch(e) {
+    toast('Could not load: ' + e.message, 'error');
+  } finally { sel.disabled = false; }
 }
 
 async function loadSheet() {

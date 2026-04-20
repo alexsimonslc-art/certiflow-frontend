@@ -26,7 +26,7 @@
     /* ─── Source picker ─── */
     .src-picker {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
       margin-bottom: 20px;
     }
@@ -325,6 +325,13 @@
                   <div class="src-opt-title">Manual Entry</div>
                   <div class="src-opt-desc">Type recipients directly</div>
                 </div>
+                <div class="src-opt" id="mSrcHxFormOpt" onclick="mSwitchSrc('hxform')">
+                  <div class="src-opt-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  </div>
+                  <div class="src-opt-title">HX Form</div>
+                  <div class="src-opt-desc">Import responses as recipients</div>
+                </div>
               </div>
 
               <!-- ── Google Sheets Panel ── -->
@@ -381,6 +388,18 @@
                   </button>
                 </div>
                 <div id="mManualLoadedMsg" style="display:none;margin-top:8px"></div>
+              </div>
+
+              <!-- ── HX Form panel ── -->
+              <div id="mSrcHxForm" style="display:none;margin-top:16px">
+                <div class="form-group">
+                  <label class="form-label">Select HX Form <span class="req">*</span></label>
+                  <select id="mHxFormSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="mLoadHxFormData(this.value)">
+                    <option value="">Loading your forms…</option>
+                  </select>
+                  <span class="form-hint">Imports respondent names and emails as mail recipients</span>
+                </div>
+                <div id="mHxFormResult" style="display:none;margin-top:12px"></div>
               </div>
 
               

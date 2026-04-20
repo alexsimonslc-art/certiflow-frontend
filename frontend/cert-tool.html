@@ -405,6 +405,12 @@
                     <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Manual Entry</div>
                     <div style="font-size:12.5px;color:var(--text-2);line-height:1.4">Type data directly</div>
                   </div>
+
+                  <div class="source-opt" id="srcHxFormOpt" onclick="switchSrc('hxform')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span>HX Form</span>
+                  </div>
+
                 </div>
 
                 <!-- ── Google Sheets panel ── -->
@@ -475,6 +481,17 @@
                   <div id="manualAppliedMsg" style="display:none"></div>
                 </div>
 
+              <!-- HX Form panel -->
+                <div id="srcHxForm" style="display:none">
+                  <div class="form-group" style="margin-bottom:14px">
+                    <label class="form-label">Select HX Form <span class="req">*</span></label>
+                    <select id="hxFormSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="loadHxFormData(this.value)">
+                      <option value="">Loading your forms…</option>
+                    </select>
+                    <span class="form-hint">Shows published HX Forms that have at least one submission</span>
+                  </div>
+                  <div id="hxFormResult" style="display:none"></div>
+                </div>
               </div>
             </div>
 

@@ -1081,12 +1081,69 @@ function saveCampaign(type, name, total, success, folderLink) {
    SWITCH SOURCE (sheets / file / manual)
 ══════════════════════════════════════════════════════════════ */
 function mSwitchSrc(mode) {
-  document.getElementById('mSrcSheets').style.display  = mode === 'sheets' ? 'block' : 'none';
-  document.getElementById('mSrcFile').style.display    = mode === 'file'   ? 'block' : 'none';
-  document.getElementById('mSrcManual').style.display  = mode === 'manual' ? 'block' : 'none';
-  ['mSrcSheetsOpt','mSrcFileOpt','mSrcManualOpt'].forEach(id => document.getElementById(id).classList.remove('active'));
-  document.getElementById(mode === 'sheets' ? 'mSrcSheetsOpt' : mode === 'file' ? 'mSrcFileOpt' : 'mSrcManualOpt').classList.add('active');
+  document.getElementById('mSrcSheets').style.display = mode === 'sheets' ? 'block' : 'none';
+  document.getElementById('mSrcFile').style.display   = mode === 'file'   ? 'block' : 'none';
+  document.getElementById('mSrcManual').style.display = mode === 'manual' ? 'block' : 'none';
+  const hxEl = document.getElementById('mSrcHxForm');
+  if (hxEl) hxEl.style.display = mode === 'hxform' ? 'block' : 'none';
+  ['mSrcSheetsOpt','mSrcFileOpt','mSrcManualOpt','mSrcHxFormOpt'].forEach(id => {
+    document.getElementById(id)?.classList.remove('active');
+  });
+  const activeId = { sheets:'mSrcSheetsOpt', file:'mSrcFileOpt', manual:'mSrcManualOpt', hxform:'mSrcHxFormOpt' }[mode];
+  document.getElementById(activeId)?.classList.add('active');
   if (mode === 'manual') mManualRenderTable();
+  if (mode === 'hxform') mLoadHxFormList();
+}
+
+async function mLoadHxFormList() {
+  const sel = document.getElementById('mHxFormSelect');
+  if (!sel || sel.dataset.loaded) return;
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const res   = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const { forms } = await res.json();
+    const eligible  = (forms || []).filter(f => f.submissionCount > 0);
+    sel.innerHTML = '<option value="">Select a form…</option>' +
+      eligible.map(f => `<option value="${f.id}">${f.name} (${f.submissionCount} responses)</option>`).join('');
+    if (!eligible.length) sel.innerHTML = '<option value="">No forms with submissions found</option>';
+    sel.dataset.loaded = '1';
+  } catch { sel.innerHTML = '<option value="">Could not load forms</option>'; }
+}
+
+async function mLoadHxFormData(formId) {
+  if (!formId) return;
+  const sel = document.getElementById('mHxFormSelect');
+  sel.disabled = true;
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const res   = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+    const data = await res.json();
+    if (!data.rows?.length) { toast('No submissions in this form yet', 'warning'); return; }
+    MS.headers = data.headers;
+    MS.rows    = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
+    mPopulateDropdowns();
+    // Force-set Name/Email if those columns exist
+    const nameEl  = document.getElementById('mNameCol');
+    const emailEl = document.getElementById('mEmailCol');
+    const nameH   = data.headers.find(h => /^name$/i.test(h) || /submitted.*name/i.test(h) || h === 'Full Name');
+    const emailH  = data.headers.find(h => /email/i.test(h));
+    if (nameH && nameEl)   nameEl.value  = nameH;
+    if (emailH && emailEl) emailEl.value = emailH;
+    const el = document.getElementById('mHxFormResult');
+    el.innerHTML = `<div class="notice notice-green">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>${MS.rows.length} responses</strong> imported from <strong>${data.formName}</strong></span>
+    </div>`;
+    el.style.display = 'block';
+    toast(`${MS.rows.length} recipients ready`, 'success');
+  } catch(e) {
+    toast('Could not load form: ' + e.message, 'error');
+  } finally { sel.disabled = false; }
 }
 
 /* ══════════════════════════════════════════════════════════════

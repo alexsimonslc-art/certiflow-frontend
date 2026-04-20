@@ -1155,8 +1155,8 @@
                 ${(p.connectType || 'url') === t ? '<div style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></div>' : ''}
               </div>
               <div>
-                <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms (coming soon)'}</div>
-                <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Forms built with our Form Builder'}</div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms'}</div>
+                <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Connect your HX Form Builder forms'}</div>
               </div>
             </label>`).join('')}
           </div>
@@ -1170,11 +1170,14 @@
           <div class="mse-prop-hint">Paste your Google Forms, Typeform, or any form link</div>
         </div>` : `
         <div class="mse-prop-row">
-          <div style="text-align:center;padding:14px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.18);border-radius:9px">
-            <div style="font-size:13px;font-weight:600;color:#a78bfa;margin-bottom:6px">HX Forms — Coming Soon</div>
-            <div style="font-size:12px;color:var(--text-3)">Build forms with our Form Builder tool and connect them here.</div>
-          </div>
-        </div>`}
+          <div class="mse-prop-label">Select HX Form</div>
+          <select class="mse-prop-select" id="hxfPicker_${block.id}"
+                  onchange="msePickHxForm('${block.id}',this.value)">
+            <option value="">Loading your forms…</option>
+          </select>
+          <div class="mse-prop-hint">Only published HX Forms appear here</div>
+        </div>
+        <script>setTimeout(()=>mseLoadHxForms('${block.id}','${(p.connectUrl||'').replace(/'/g,"\\'")}'),0);<\/script>`}
 
         <div class="mse-prop-row">
           <div class="mse-prop-label">Button Label</div>
@@ -1600,6 +1603,32 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     /* ════════════════════════════════════════════════════════════════
        TOAST
     ════════════════════════════════════════════════════════════════ */
+    /* ── HX Forms live picklist ──────────────────────────────── */
+    async function mseLoadHxForms(blockId, selectedUrl) {
+      const sel = document.getElementById('hxfPicker_' + blockId);
+      if (!sel) return;
+      try {
+        const token = localStorage.getItem('Honourix_token');
+        const res   = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const { forms } = await res.json();
+        const pub = (forms || []).filter(f => f.status === 'published');
+        sel.innerHTML = '<option value="">— Select a form —</option>' +
+          pub.map(f => {
+            const url = window.location.origin + '/hx-form-view.html?f=' + f.slug;
+            return `<option value="${url}" ${url === selectedUrl ? 'selected' : ''}>${f.name} (${f.submissionCount} responses)</option>`;
+          }).join('');
+        if (!pub.length) sel.innerHTML = '<option value="">No published HX Forms found</option>';
+      } catch {
+        sel.innerHTML = '<option value="">Could not load forms — check login</option>';
+      }
+    }
+    function msePickHxForm(blockId, url) {
+      MSState.updateBlock(blockId, { connectUrl: url });
+      refreshCanvas();
+    }
+
     function mseToast(msg, type = 'info', duration = 3000) {
       const el = document.getElementById('mse-toast');
       const colors = {

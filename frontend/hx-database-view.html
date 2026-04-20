@@ -174,7 +174,18 @@
 
     /* Toolbar */
     .dbv-toolbar {
-      display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;
+      display:flex; align-items:center; gap:8px; margin-bottom:16px;
+      flex-wrap:wrap; min-width:0; overflow:visible;
+    }
+    .dbv-toolbar > * { flex-shrink: 0; }
+    .dbv-search-wrap { flex: 1 1 180px; min-width: 140px; max-width: 340px; }
+    .dbv-date-range  { flex-shrink: 1; min-width: 0; gap: 4px; }
+    .dbv-date-input  { min-width: 0; width: 130px; max-width: 100%; }
+    @media (max-width: 768px) {
+      .dbv-toolbar { flex-direction: column; align-items: stretch; }
+      .dbv-search-wrap { max-width: 100%; }
+      .dbv-date-range  { justify-content: flex-start; }
+      .dbv-date-input  { width: 100%; }
     }
     .dbv-search-wrap { position:relative; flex:1; min-width:200px; }
     .dbv-table-search {
@@ -392,10 +403,23 @@
 
       <!-- Loading state -->
       <div id="loadingState">
-        <div class="dbv-loading">
-          <div class="dbv-loading-spin"></div>
-          <div style="font-size:14px;color:var(--text-3)">Loading submission data…</div>
-          <div style="font-size:12px;color:var(--text-3);margin-top:-6px">Reading from your Google Sheet</div>
+        <div class="dbv-loading" style="padding:100px 24px;gap:20px">
+          <div style="text-align:center">
+            <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px" id="loadingTitle">Connecting to your data…</div>
+            <div style="font-size:13.5px;color:var(--text-3)" id="loadingSubtitle">Reading from your Google Sheet</div>
+          </div>
+          <div style="width:320px;max-width:90vw">
+            <div style="background:rgba(255,255,255,0.07);border-radius:99px;height:6px;overflow:hidden;margin-bottom:10px">
+              <div id="loadingBar" style="height:100%;border-radius:99px;background:var(--grad-primary);width:0%;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);box-shadow:0 0 12px rgba(0,212,255,0.4)"></div>
+            </div>
+            <div style="font-size:11.5px;color:var(--text-3);text-align:center" id="loadingPct">0%</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:4px">
+            <div id="loadingStep" style="font-size:13px;color:var(--text-2);display:flex;align-items:center;gap:8px">
+              <div style="width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:pulseDot 1.2s ease infinite;flex-shrink:0"></div>
+              <span id="loadingStepText">Authenticating…</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -611,20 +635,76 @@ let _liveTimer  = null;
     showError('No form specified. Please go back and select a form.');
     return;
   }
-  await loadData();
+  // Always force-refresh on page enter so charts render immediately
+  sessionStorage.removeItem(`hxdb_${_formId}`);
+  await loadData(true);
   startLiveWatcher();
 })();
 
 /* ── Load data from backend ─────────────────────────────────────── */
+/* ── Progress bar helpers ───────────────────────────────────────── */
+let _progTimer = null;
+let _progVal   = 0;
+
+function setProgress(pct, titleText, subText) {
+  _progVal = pct;
+  const bar  = document.getElementById('loadingBar');
+  const pctEl = document.getElementById('loadingPct');
+  const titleEl = document.getElementById('loadingTitle');
+  const subEl   = document.getElementById('loadingSubtitle');
+  const stepEl  = document.getElementById('loadingStepText');
+  if (bar)   bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+  if (titleText && titleEl) titleEl.textContent = titleText;
+  if (subText && subEl)     subEl.textContent   = subText;
+  if (stepEl && titleText)  stepEl.textContent  = titleText;
+}
+
+function startFakeProgress() {
+  // Slowly creep from 0 → 85% while waiting for the real fetch
+  const steps = [
+    { pct: 8,  title: 'Authenticating…',          sub: 'Verifying your session' },
+    { pct: 22, title: 'Connecting to server…',    sub: 'Waking up the backend' },
+    { pct: 40, title: 'Fetching your responses…', sub: 'Reading from your Google Sheet' },
+    { pct: 58, title: 'Fetching your responses…', sub: 'This may take a moment' },
+    { pct: 72, title: 'Almost done…',             sub: 'Processing your data' },
+    { pct: 84, title: 'Almost there…',            sub: 'Preparing charts and tables' },
+  ];
+  let i = 0;
+  _progTimer = setInterval(() => {
+    if (i < steps.length) {
+      setProgress(steps[i].pct, steps[i].title, steps[i].sub);
+      i++;
+    } else {
+      clearInterval(_progTimer);
+    }
+  }, 900);
+}
+
+function finishProgress(cb) {
+  clearInterval(_progTimer);
+  setProgress(100, 'Ready!', 'Loading your dashboard…');
+  setTimeout(cb, 400);
+}
+
 async function loadData(force = false) {
-  // Check sessionStorage cache first
   const cacheKey = `hxdb_${_formId}`;
   const cached   = !force && sessionStorage.getItem(cacheKey);
   if (cached) {
-    _data = JSON.parse(cached);
-    renderAll();
+    // Cached — quick fake progress then render
+    setProgress(0, 'Loading from cache…', 'Almost instant');
+    setTimeout(() => setProgress(60, 'Loading from cache…', 'Processing…'), 80);
+    setTimeout(() => {
+      finishProgress(() => {
+        _data = JSON.parse(cached);
+        renderAll();
+      });
+    }, 300);
     return;
   }
+
+  // Real fetch — start fake progress
+  startFakeProgress();
 
   try {
     const res  = await fetch(`${API}/api/hxdb/data/${_formId}`, {
@@ -636,8 +716,9 @@ async function loadData(force = false) {
     }
     _data = await res.json();
     sessionStorage.setItem(cacheKey, JSON.stringify(_data));
-    renderAll();
+    finishProgress(() => renderAll());
   } catch (e) {
+    clearInterval(_progTimer);
     showError(e.message);
   }
 }
@@ -1198,8 +1279,24 @@ function renderColDropdown(headers) {
   }).join('');
 }
 function toggleColDropdown() {
-  document.getElementById('colDropdown').classList.toggle('open');
-  document.addEventListener('click', closeColDropdown, { once: true });
+  const dd = document.getElementById('colDropdown');
+  if (!dd) return;
+  const isOpen = dd.classList.contains('open');
+  if (isOpen) {
+    dd.classList.remove('open');
+  } else {
+    dd.classList.add('open');
+    // Close when clicking anywhere outside
+    setTimeout(() => {
+      function outsideClick(e) {
+        if (!dd.contains(e.target) && !e.target.closest('.dbv-col-toggle-btn')) {
+          dd.classList.remove('open');
+          document.removeEventListener('click', outsideClick);
+        }
+      }
+      document.addEventListener('click', outsideClick);
+    }, 0);
+  }
 }
 function closeColDropdown(e) {
   if (!e?.target?.closest('.dbv-col-toggle-btn')) {
