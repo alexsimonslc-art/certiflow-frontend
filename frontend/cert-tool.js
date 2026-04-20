@@ -25,10 +25,24 @@ const ED = {
   selId: null,
   scale: 1,
 };
+function getFontCSS(name) {
+  // FONT_CSS_MAP is declared in dashboard.js — reuse it
+  if (typeof FONT_CSS_MAP !== 'undefined' && FONT_CSS_MAP[name]) {
+    return FONT_CSS_MAP[name];
+  }
+  return `'${name}', Helvetica, sans-serif`;
+}
 
 
 
-
+function getUsedFontUrls() {
+  const urls = {};
+  ED.fields.forEach(f => {
+    const name = f.fontFamily || 'Helvetica';
+    if (FONT_URLS[name]) urls[name] = FONT_URLS[name];
+  });
+  return urls;
+}
 
 const STEPS = [
   { label: 'Data Source' },
@@ -59,8 +73,7 @@ function buildStepper() {
     const isActive = n === CS.step;
     return `
       ${n > 1 ? `<div class="step-connector" id="sc${n}"></div>` : ''}
-      <div class="step-node ${isActive ? 'active' : ''}" id="sn${n}" 
-          onclick="goStep(${n})" style="cursor:pointer">
+      <div class="step-node ${isActive ? 'active' : ''}" id="sn${n}">
         <div class="step-circle" id="scircle${n}">${n}</div>
         <div class="step-label">
           <div class="step-num-label">Step ${n}</div>
@@ -310,11 +323,11 @@ function resizeCanvas() {
 
   ED.scale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
 
-  const cont = document.getElementById('canvasContainer');
-  const cw = cont ? cont.offsetWidth  : Math.round(ED.w * ED.scale);
-  const ch = cont ? cont.offsetHeight : Math.round(ED.h * ED.scale);
+  const cw = Math.round(ED.w * ED.scale);
+  const ch = Math.round(ED.h * ED.scale);
   const dpr = window.devicePixelRatio || 1;
 
+  const cont = document.getElementById('canvasContainer');
   if (cont) {
     cont.style.width = cw + 'px';
     cont.style.height = ch + 'px';
@@ -329,7 +342,7 @@ function resizeCanvas() {
   ctx.scale(dpr, dpr);
 
   ED.ready = true;
-  requestAnimationFrame(() => redraw());
+  redraw();
 }
 
 function redrawCanvas() {
@@ -364,17 +377,25 @@ function redrawCanvas() {
     ctx.save();
     ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
     ctx.fillStyle = f.color || '#1a1a1a';
-    // AFTER:
-    ctx.textBaseline = 'alphabetic';
+    ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
-    // Measure the actual ascent for this font at this size
-    const metrics = ctx.measureText(value.length > 0 ? value : 'M');
-    const actualAscent = metrics.actualBoundingBoxAscent;
-    // drawY: move down from the box top by the ascent so cap-top aligns to boxY
-    const drawY = boxY + actualAscent;
-    // ...
-    ctx.fillText(value, drawX, drawY);
-    // (same for the char-by-char letterSpacing loop — replace boxY with drawY there too)
+
+    let textW = ctx.measureText(value).width;
+    if (ls > 0 && value.length > 1) textW += ls * (value.length - 1);
+
+    let drawX = boxX;
+    if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
+    else if (f.align === 'right') drawX = boxX + boxW - textW;
+
+    if (ls > 0 && value.length > 1) {
+      let cx = drawX;
+      for (const ch of value) {
+        ctx.fillText(ch, cx, boxY);
+        cx += ctx.measureText(ch).width + ls;
+      }
+    } else {
+      ctx.fillText(value, drawX, boxY);
+    }
     ctx.restore();
   });
 }
@@ -389,9 +410,8 @@ function renderHandles() {
   if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
   ED.fields.forEach(f => {
-    const cont = document.getElementById('canvasContainer');
-    const cw = cont ? cont.offsetWidth  : Math.round(ED.w * ED.scale);
-    const ch = cont ? cont.offsetHeight : Math.round(ED.h * ED.scale);
+    const cw = Math.round(ED.w * ED.scale);
+    const ch = Math.round(ED.h * ED.scale);
     const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
     const el = document.createElement('div');
@@ -596,17 +616,15 @@ function addField() {
     letterSpacing: 0,
   };
   ED.fields.push(field);
-    closeAFModal();
-    if (!canvas.width) {
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        resizeCanvas();
-        redraw();              // ← ADD THIS: paint the new field text first
-        selectField(field.id);
-      }));
-    } else {
-      redraw();                // ← ADD THIS: paint before selecting
+  closeAFModal();
+  if (!canvas.width) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      resizeCanvas();
       selectField(field.id);
-    }
+    }));
+  } else {
+    selectField(field.id);
+  }
   toast(`Added ${ph} field`, 'success', 2000);
 }
 
@@ -933,7 +951,7 @@ function renderCertPreview(idx) {
       ctx.save();
       ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontCSS}`;
       ctx.fillStyle = f.color || '#1a1a1a';
-      ctx.textBaseline = 'alphabetic';
+      ctx.textBaseline = 'top';
       ctx.textAlign = 'left';
 
       let textWidth = ctx.measureText(value).width;
@@ -941,7 +959,7 @@ function renderCertPreview(idx) {
         textWidth += letterSpacing * (value.length - 1);
       }
 
-      const drawY = boxY + actualAscent;
+      let drawX = boxX;
       if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textWidth) / 2;
       else if (f.align === 'right') drawX = boxX + boxW - textWidth;
 
@@ -950,7 +968,7 @@ function renderCertPreview(idx) {
       if (letterSpacing > 0 && value.length > 1) {
         let cx = drawX;
         for (const ch of value) {
-          ctx.fillText(ch, cx, drawY); 
+          ctx.fillText(ch, cx, drawY);
           cx += ctx.measureText(ch).width + letterSpacing;
         }
       } else {
