@@ -390,13 +390,13 @@ function renderHandles() {
     const fs = Math.max(6, f.fontSize * ED.scale);
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
+    el.dataset.fid = f.id;
     // Transparent overlay — text is rendered on canvas, div is for drag/select only
-    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${Math.round(fs * 1.3)}px;background:transparent;color:transparent;`;
-    const del = document.createElement('div');
+    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${Math.round(fs * 1.3)}px;background:transparent;color:transparent;`;    const del = document.createElement('div');
     del.className = 'tf-del'; del.textContent = '×';
     del.addEventListener('click', e => { e.stopPropagation(); deleteField(f.id); });
     el.appendChild(del);
-    el.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f, el); });
+    el.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); });
     fieldOverlay.appendChild(el);
   });
   renderChipList();
@@ -444,16 +444,18 @@ function loadFontIfNeeded(name) {
 }
 
 /* ── Drag ─────────────────────────────────────────────────────── */
-function startDrag(e, field, el) {
+function startDrag(e, field) {
   const sx = e.clientX, sy = e.clientY;
   const sfx = field.x, sfy = field.y;
   const mm = ev => {
     field.x = Math.max(0, Math.min(95, sfx + ((ev.clientX - sx) / canvas.width) * 100));
     field.y = Math.max(0, Math.min(95, sfy + ((ev.clientY - sy) / canvas.height) * 100));
-    // Move the transparent handle div
-    el.style.left = (field.x / 100 * canvas.width)  + 'px';
-    el.style.top  = (field.y / 100 * canvas.height) + 'px';
-    // Redraw canvas text only (don't rebuild DOM handles during drag)
+    // Query the live DOM element (selectField may have rebuilt the overlay)
+    const liveEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
+    if (liveEl) {
+      liveEl.style.left = (field.x / 100 * canvas.width) + 'px';
+      liveEl.style.top  = (field.y / 100 * canvas.height) + 'px';
+    }
     redrawCanvas();
     if (field.id === ED.selId) {
       const px = document.getElementById('pX'), py = document.getElementById('pY');
@@ -464,7 +466,7 @@ function startDrag(e, field, el) {
   const mu = () => {
     document.removeEventListener('mousemove', mm);
     document.removeEventListener('mouseup', mu);
-    redraw(); // Full redraw + handle sync on release
+    redraw();
   };
   document.addEventListener('mousemove', mm);
   document.addEventListener('mouseup', mu);
@@ -645,12 +647,12 @@ function deleteField(id) {
 }
 function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
 function deleteSelField()      { if (ED.selId) deleteField(ED.selId); }
-function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; renderHandles(); }
-function setFPFont(name) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.fontFamily = name; loadFontIfNeeded(name); updateFontPreview(name, f.bold, f.italic); renderHandles(); }
-function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value)||f.x; f.y = parseFloat(document.getElementById('pY').value)||f.y; renderHandles(); }
+function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; redraw(); }
+function setFPFont(name) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.fontFamily = name; loadFontIfNeeded(name); updateFontPreview(name, f.bold, f.italic); redraw(); }
+function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value)||f.x; f.y = parseFloat(document.getElementById('pY').value)||f.y; redraw(); }
 function setAlign(a) { setFP('align', a); ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a==='center'?'alC':a==='right'?'alR':'alL').classList.add('on'); }
-function toggleBold()   { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold   = !f.bold;   document.getElementById('boldBtn').classList.toggle('on', f.bold);   renderHandles(); }
-function toggleItalic() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.italic = !f.italic; document.getElementById('italicBtn').classList.toggle('on', f.italic); renderHandles(); }
+function toggleBold()   { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold   = !f.bold;   document.getElementById('boldBtn').classList.toggle('on', f.bold);   redraw(); }
+function toggleItalic() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.italic = !f.italic; document.getElementById('italicBtn').classList.toggle('on', f.italic); redraw(); }
 function switchEPTab(tab) { ['fields','props'].forEach(t => { document.getElementById(`epTab_${t}`).className = 'ep-tab'+(t===tab?' active':''); document.getElementById(`epPanel_${t}`).className = 'ep-panel'+(t===tab?' active':''); }); }
 function renderChipList() {
   const el = document.getElementById('fieldChipList'); if (!el) return;
