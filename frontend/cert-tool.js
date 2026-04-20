@@ -457,21 +457,14 @@ function closeAFModal() { document.getElementById('afOverlay').classList.remove(
 function openAddFieldModal()  { openAFModal(); }
 function closeAddFieldModal() { closeAFModal(); }
 /* ── File Naming Modal ─────────────────────────────── */
-function openFNModal() {
-  // Populate the locked name pill with primary field's sample value
+function fnRefreshNamePill() {
   const primary = ED.fields.find(f => f.isPrimary);
   const sampleName = primary && CS.rows && CS.rows[0]
     ? (CS.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g,''))
-    : 'ParticipantName';
-  document.getElementById('fnNamePill').textContent = sampleName;
-  document.getElementById('fnEventInput').value = CS.eventName || '';
+    : 'participant_name';
+  const pill = document.getElementById('fnNamePill');
+  if (pill) pill.textContent = sampleName;
   fnUpdatePreview();
-  document.getElementById('fnOverlay').classList.add('open');
-  setTimeout(() => document.getElementById('fnEventInput').focus(), 120);
-}
-
-function closeFNModal() {
-  document.getElementById('fnOverlay').classList.remove('open');
 }
 
 function fnUpdatePreview() {
@@ -479,18 +472,13 @@ function fnUpdatePreview() {
   const sampleName = primary && CS.rows && CS.rows[0]
     ? sanitizeFilename(CS.rows[0][primary.column] || 'Name')
     : 'Name';
-  const event = document.getElementById('fnEventInput').value.trim();
+  const eventInput = document.getElementById('fnEventInput');
+  const event = eventInput ? eventInput.value.trim() : '';
   const eventPart = event ? '_' + sanitizeFilename(event) : '';
-  document.getElementById('fnPreviewText').textContent =
-    sampleName + eventPart + '_01.pdf';
-  // Show/hide the separator between event and number
-  document.getElementById('fnSepNum').style.display = event ? 'none' : '';
-}
-
-function fnConfirm() {
-  CS.eventName = document.getElementById('fnEventInput').value.trim();
-  closeFNModal();
-  openFNModal(4);   // proceed to cert preview step
+  const preview = document.getElementById('fnPreviewText');
+  if (preview) preview.textContent = sampleName + eventPart + '_01.pdf';
+  const sep = document.getElementById('fnSepNum');
+  if (sep) sep.style.display = event ? 'none' : '';
 }
 
 function sanitizeFilename(str) {
@@ -690,6 +678,7 @@ function loadSavedTemplate() {
 function populateStep3() {
   saveTemplate();
   buildStep3();
+  fnRefreshNamePill();
 }
 
 function buildStep3() {
@@ -791,7 +780,9 @@ function validateStep3() {
     toast('Please star (★) one field as Primary — it will be used for the PDF filename.', 'error');
     return;
   }
-  openFNModal();
+  // Save event name from the inline card input, then proceed
+  CS.eventName = (document.getElementById('fnEventInput')?.value || '').trim();
+  goStep(4);
 }
 
 /* ════════════════════════════════════════════════════════════════

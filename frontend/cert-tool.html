@@ -743,6 +743,62 @@
               <div id="s3Rows" style="display:flex;flex-direction:column;gap:0;margin-top:18px"></div>
             </div>
 
+                        <!-- Output File Naming card -->
+            <div class="card" id="s3NamingCard">
+              <div class="card-header" style="margin-bottom:0;display:flex;align-items:center;justify-content:space-between">
+                <div>
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Output File Naming
+                  </div>
+                  <div class="card-desc">Each PDF is named using this format. Numbers prevent duplicate filenames.</div>
+                </div>
+              </div>
+
+              <!-- Visual format pills -->
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:18px;margin-bottom:16px;padding:14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px">
+                <!-- Locked: participant name -->
+                <div style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--glass-border);border-radius:8px">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <span id="fnNamePill" style="font-family:var(--font-mono);font-size:13px;color:var(--text-3)">participant_name</span>
+                </div>
+
+                <span style="font-size:16px;color:var(--text-3);font-weight:300">_</span>
+
+                <!-- Editable: event name -->
+                <input type="text" id="fnEventInput" class="form-input"
+                  placeholder="EventName (optional)"
+                  style="padding:7px 12px;font-family:var(--font-mono);font-size:13px;width:180px;height:36px;border-radius:8px"
+                  oninput="fnUpdatePreview()"/>
+
+                <span style="font-size:16px;color:var(--text-3);font-weight:300" id="fnSepNum">_</span>
+
+                <!-- Locked: auto number -->
+                <div style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--glass-border);border-radius:8px">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <span style="font-family:var(--font-mono);font-size:13px;color:var(--text-3)">01</span>
+                </div>
+
+                <span style="font-size:16px;color:var(--text-3);font-weight:300">.</span>
+
+                <!-- Locked: extension -->
+                <div style="padding:7px 12px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--glass-border);border-radius:8px">
+                  <span style="font-family:var(--font-mono);font-size:13px;color:var(--text-3)">pdf</span>
+                </div>
+              </div>
+
+              <!-- Live preview strip -->
+              <div style="padding:10px 14px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:8px;display:flex;align-items:center;gap:10px">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--cyan);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <div>
+                  <div style="font-size:11px;color:var(--text-3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em">Preview</div>
+                  <div id="fnPreviewText" style="font-family:var(--font-mono);font-size:13px;color:var(--cyan);font-weight:600">Alex_01.pdf</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Write-back card -->
+             
             <!-- Write-back card -->
             <div class="card" id="s3WritebackCard">
               <div class="card-header" style="margin-bottom:0;display:flex;align-items:center;justify-content:space-between">
@@ -1000,69 +1056,6 @@
   </div>
 </div>
 <!-- ── File Naming Modal ───────────────────────────── -->
-<div class="af-overlay" id="fnOverlay">
-  <div class="af-box" style="max-width:480px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700">Output File Naming</h3>
-      <button onclick="closeFNModal()" style="width:32px;height:32px;border-radius:8px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <p style="font-size:13px;color:var(--text-3);margin-bottom:22px">Each certificate PDF will be named using the format below. Numbers are added automatically to prevent duplicates.</p>
-
-    <!-- Visual format builder -->
-    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:22px;padding:14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px">
-      <!-- Participant name pill — dim/locked -->
-      <div style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--glass-border);border-radius:8px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span id="fnNamePill" style="font-family:var(--font-mono);font-size:13px;color:var(--text-3)">participant_name</span>
-      </div>
-
-      <span style="font-size:16px;color:var(--text-3);font-weight:300">_</span>
-
-      <!-- Event name input -->
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <input type="text" id="fnEventInput" class="form-input"
-          placeholder="EventName (optional)"
-          style="padding:7px 12px;font-family:var(--font-mono);font-size:13px;min-width:170px;height:36px;border-radius:8px"
-          oninput="fnUpdatePreview()"
-          onkeydown="if(event.key==='Enter')fnConfirm()"/>
-      </div>
-
-      <span style="font-size:16px;color:var(--text-3);font-weight:300" id="fnSepNum">_</span>
-
-      <!-- Auto number pill — dim/locked -->
-      <div style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--glass-border);border-radius:8px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span style="font-family:var(--font-mono);font-size:13px;color:var(--text-3)">01</span>
-      </div>
-
-      <span style="font-size:16px;color:var(--text-3);font-weight:300">.</span>
-
-      <!-- Extension pill — dim/locked -->
-      <div style="padding:7px 12px;background:rgba(255,255,255,0.04);border:1.5px dashed var(--glass-border);border-radius:8px">
-        <span style="font-family:var(--font-mono);font-size:13px;color:var(--text-3)">pdf</span>
-      </div>
-    </div>
-
-    <!-- Live preview -->
-    <div style="padding:12px 16px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:8px;margin-bottom:22px;display:flex;align-items:center;gap:10px">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--cyan);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <div>
-        <div style="font-size:11px;color:var(--text-3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em">Preview</div>
-        <div id="fnPreviewText" style="font-family:var(--font-mono);font-size:14px;color:var(--cyan);font-weight:600">Alex_01.pdf</div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-secondary btn-full" onclick="closeFNModal()">Cancel</button>
-      <button class="btn btn-primary btn-full btn-lg" onclick="fnConfirm()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="20 6 9 17 4 12"/></svg>
-        Confirm & Preview Certs
-      </button>
-    </div>
-  </div>
-</div>
 <script src="dashboard.js"></script>
 <script src="cert-tool.js"></script>
 </body>
