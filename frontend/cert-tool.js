@@ -1134,16 +1134,16 @@ function renderResultRows(results) {
   });
 
   // Table wrapper with horizontal scroll, link column frozen right
-    container.innerHTML = `
-      <div style="position:relative;width:100%;max-width:100%;overflow:auto;max-height:420px;border:1px solid var(--glass-border);border-radius:12px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;box-sizing:border-box" id="resultTableWrap">
-        <table style="border-collapse:collapse;width:max-content;min-width:100%;font-size:13.5px">
+  container.innerHTML = `
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:420px;border:1px solid var(--glass-border);border-radius:12px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent" id="resultTableWrap">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse;font-size:13.5px">
         <thead>
           <tr style="position:sticky;top:0;z-index:3;background:var(--surface)">
             <th style="padding:10px 14px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border);min-width:36px">#</th>
             ${allCols.map(h => `
               <th style="padding:10px 14px;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border);min-width:120px">${h}</th>
             `).join('')}
-            <th style="padding:10px 18px;font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border);border-left:1px solid var(--glass-border);min-width:220px;position:sticky;right:0;z-index:2;background:var(--surface)">Certificate Link</th>
+            <th style="padding:10px 18px;font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border);border-left:1px solid var(--glass-border);min-width:220px;position:sticky;right:0;z-index:4;background:var(--surface)">Certificate Link</th>
           </tr>
         </thead>
         <tbody>
@@ -1152,15 +1152,15 @@ function renderResultRows(results) {
             const isOk = r.status === 'success';
             const linkCell = isOk
               ? `<a href="${r.link}" target="_blank" style="color:var(--cyan);text-decoration:none;display:flex;align-items:center;gap:6px;font-size:12.5px;white-space:nowrap" title="${r.link}">
-                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                   Open PDF
-                 </a>`
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Open PDF
+                  </a>`
               : `<span style="color:var(--red);font-size:12.5px">${r.error || 'Failed'}</span>`;
             return `
             <tr data-n="${row.__name}" data-e="${row[CS.headers?.[1]] || ''}" style="border-top:1px solid rgba(255,255,255,0.04);transition:background 0.12s" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
               <td style="padding:10px 14px;color:var(--text-3);text-align:center;font-size:12px">${i + 1}</td>
               ${allCols.map(h => `<td style="padding:10px 14px;color:var(--text-2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis" title="${row[h] || ''}">${row[h] || '—'}</td>`).join('')}
-              <td style="padding:10px 18px;border-left:1px solid var(--glass-border);position:sticky;right:0;z-index:1;background:var(--surface-card, var(--surface));backdrop-filter:blur(8px)">
+              <td style="padding:10px 18px;border-left:1px solid var(--glass-border);position:sticky;right:0;z-index:2;background:var(--surface)">
                 ${linkCell}
               </td>
             </tr>`;
