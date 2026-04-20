@@ -316,33 +316,50 @@ function initCanvas() {
 function resizeCanvas() {
   const zone = document.getElementById('canvasWrap');
   if (!zone) return;
+
   const zw = zone.clientWidth;
   const zh = zone.clientHeight;
   if (zw < 10) { setTimeout(resizeCanvas, 50); return; }
+
   ED.scale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
+
   const cw = Math.round(ED.w * ED.scale);
   const ch = Math.round(ED.h * ED.scale);
+  const dpr = window.devicePixelRatio || 1;
+
   const cont = document.getElementById('canvasContainer');
   if (cont) {
-    cont.style.width  = cw + 'px';
+    cont.style.width = cw + 'px';
     cont.style.height = ch + 'px';
   }
-  canvas.width  = cw;
-  canvas.height = ch;
+
+  canvas.style.width = cw + 'px';
+  canvas.style.height = ch + 'px';
+  canvas.width = Math.round(cw * dpr);
+  canvas.height = Math.round(ch * dpr);
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+
   ED.ready = true;
   redraw();
 }
 
 function redrawCanvas() {
-  const w = canvas.width, h = canvas.height;
+  const w = Math.round(ED.w * ED.scale);
+  const h = Math.round(ED.h * ED.scale);
+
   ctx.clearRect(0, 0, w, h);
+
   if (ED.bgImg) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(ED.bgImg, 0, 0, w, h);
   } else {
     ctx.fillStyle = ED.bgColor;
     ctx.fillRect(0, 0, w, h);
   }
-  // Draw all field text directly on canvas — pixel-identical to preview & PDF
+
   ED.fields.forEach(f => {
     const boxX = (f.x / 100) * w;
     const boxY = (f.y / 100) * h;
@@ -352,22 +369,30 @@ function redrawCanvas() {
     const fw   = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
     const fi   = f.italic ? 'italic' : 'normal';
     const ff   = getFontCSS(f.fontFamily || 'Helvetica');
+
     const value = (f.column && CS.rows && CS.rows[0])
       ? (CS.rows[0][f.column] || f.previewText || f.placeholder)
       : (f.previewText || f.placeholder);
+
     ctx.save();
     ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
     ctx.fillStyle = f.color || '#1a1a1a';
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
+
     let textW = ctx.measureText(value).width;
     if (ls > 0 && value.length > 1) textW += ls * (value.length - 1);
+
     let drawX = boxX;
     if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
     else if (f.align === 'right') drawX = boxX + boxW - textW;
+
     if (ls > 0 && value.length > 1) {
       let cx = drawX;
-      for (const ch of value) { ctx.fillText(ch, cx, boxY); cx += ctx.measureText(ch).width + ls; }
+      for (const ch of value) {
+        ctx.fillText(ch, cx, boxY);
+        cx += ctx.measureText(ch).width + ls;
+      }
     } else {
       ctx.fillText(value, drawX, boxY);
     }
@@ -385,7 +410,8 @@ function renderHandles() {
   if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
   ED.fields.forEach(f => {
-    const cw = canvas.width, ch = canvas.height;
+    const cw = Math.round(ED.w * ED.scale);
+    const ch = Math.round(ED.h * ED.scale);
     const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
     const el = document.createElement('div');
@@ -448,13 +474,14 @@ function startDrag(e, field) {
   const sx = e.clientX, sy = e.clientY;
   const sfx = field.x, sfy = field.y;
   const mm = ev => {
-    field.x = Math.max(0, Math.min(95, sfx + ((ev.clientX - sx) / canvas.width) * 100));
-    field.y = Math.max(0, Math.min(95, sfy + ((ev.clientY - sy) / canvas.height) * 100));
-    // Query the live DOM element (selectField may have rebuilt the overlay)
+    const dispW = Math.round(ED.w * ED.scale);
+    const dispH = Math.round(ED.h * ED.scale);
+    field.x = Math.max(0, Math.min(95, sfx + ((ev.clientX - sx) / dispW) * 100));
+    field.y = Math.max(0, Math.min(95, sfy + ((ev.clientY - sy) / dispH) * 100));
     const liveEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
     if (liveEl) {
-      liveEl.style.left = (field.x / 100 * canvas.width) + 'px';
-      liveEl.style.top  = (field.y / 100 * canvas.height) + 'px';
+      liveEl.style.left = (field.x / 100 * dispW) + 'px';
+      liveEl.style.top  = (field.y / 100 * dispH) + 'px';
     }
     redrawCanvas();
     if (field.id === ED.selId) {
