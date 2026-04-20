@@ -328,7 +328,6 @@ function resizeCanvas() {
   const ch = cont ? cont.offsetHeight : Math.round(ED.h * ED.scale);
   const dpr = window.devicePixelRatio || 1;
 
-  const cont = document.getElementById('canvasContainer');
   if (cont) {
     cont.style.width = cw + 'px';
     cont.style.height = ch + 'px';
@@ -947,7 +946,7 @@ function renderCertPreview(idx) {
       ctx.save();
       ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontCSS}`;
       ctx.fillStyle = f.color || '#1a1a1a';
-      ctx.textBaseline = 'top';
+      ctx.textBaseline = 'alphabetic';
       ctx.textAlign = 'left';
 
       let textWidth = ctx.measureText(value).width;
@@ -955,7 +954,7 @@ function renderCertPreview(idx) {
         textWidth += letterSpacing * (value.length - 1);
       }
 
-      let drawX = boxX;
+      const drawY = boxY + actualAscent;
       if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textWidth) / 2;
       else if (f.align === 'right') drawX = boxX + boxW - textWidth;
 
