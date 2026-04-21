@@ -420,49 +420,37 @@ function renderHandles() {
   ED.fields.forEach(f => {
     const cw = Math.round(ED.w * ED.scale);
     const ch = Math.round(ED.h * ED.scale);
-    const x = (f.x / 100) * cw;
-    const y = (f.y / 100) * ch;
-    const w = (f.width / 100) * cw;
+    const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
-    const h = Math.round(fs * 1.3);
-
-    const cx = x + w / 2;
-    const cy = y + h / 2;
-
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
     el.dataset.fid = f.id;
+    // Transparent overlay — text is rendered on canvas, div is for drag/select only
+    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${Math.round(fs * 1.3)}px;background:transparent;color:transparent;`;
     
-    // Apply center-based positioning to allow smooth CSS rotation
-    el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%, -50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
-
-    // Modern Delete Button
+    // Delete button
     const del = document.createElement('div');
-    del.className = 'tf-del-btn';
-    del.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-    del.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
+    del.className = 'tf-del'; del.textContent = '×';
+    del.addEventListener('click', e => { e.stopPropagation(); deleteField(f.id); });
     el.appendChild(del);
 
-    // Resize Handle (Bottom Right)
-    const resizer = document.createElement('div');
-    resizer.className = 'tf-resizer br';
-    resizer.addEventListener('mousedown', e => { e.stopPropagation(); startResize(e, f); });
-    el.appendChild(resizer);
+    // Left Width Controller
+    const leftResizer = document.createElement('div');
+    leftResizer.className = 'tf-resizer left';
+    leftResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startResize(e, f, 'left'); });
+    el.appendChild(leftResizer);
 
-    // Rotate Handle (Top Center)
-    const rotLine = document.createElement('div');
-    rotLine.className = 'tf-rotater-line';
-    const rotater = document.createElement('div');
-    rotater.className = 'tf-rotater';
-    rotater.addEventListener('mousedown', e => { e.stopPropagation(); startRotate(e, f); });
-    el.appendChild(rotLine);
-    el.appendChild(rotater);
+    // Right Width Controller
+    const rightResizer = document.createElement('div');
+    rightResizer.className = 'tf-resizer right';
+    rightResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startResize(e, f, 'right'); });
+    el.appendChild(rightResizer);
 
-    // Drag/Move
     el.addEventListener('mousedown', e => { 
-        if (e.target === el) {
-            e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
-        }
+      // Only trigger drag if we click the handle body, not the width resizers
+      if (e.target === el) {
+        e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
+      }
     });
     fieldOverlay.appendChild(el);
   });
@@ -555,42 +543,79 @@ function loadFontIfNeeded(name) {
   document.head.appendChild(link);
 }
 
-/* ── Drag ─────────────────────────────────────────────────────── */
+/* ── Drag & Resize ─────────────────────────────────────────────────────── */
 function startDrag(e, field) {
+  const sx = e.clientX, sy = e.clientY;
+  const sfx = field.x, sfy = field.y;
+  const mm = ev => {
+    const dispW = Math.round(ED.w * ED.scale);
+    const dispH = Math.round(ED.h * ED.scale);
+    // FIX: Removed strict bounding clamp (Math.max/min) which caused the field to randomly jump to the side
+    field.x = sfx + ((ev.clientX - sx) / dispW) * 100;
+    field.y = sfy + ((ev.clientY - sy) / dispH) * 100;
+    
+    const liveEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
+    if (liveEl) {
+      liveEl.style.left = (field.x / 100 * dispW) + 'px';
+      liveEl.style.top  = (field.y / 100 * dispH) + 'px';
+    }
+    redrawCanvas();
+    if (field.id === ED.selId) {
+      const px = document.getElementById('pX'), py = document.getElementById('pY');
+      if (px) px.value = field.x.toFixed(1);
+      if (py) py.value = field.y.toFixed(1);
+    }
+  };
+  const mu = () => {
+    document.removeEventListener('mousemove', mm);
+    document.removeEventListener('mouseup', mu);
+    redraw();
+    saveTemplate();
+  };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+}
+
+// Visual Width Controller Logic
+function startResize(e, field, side) {
   const startX = e.clientX;
-  const startY = e.clientY;
   const startFieldX = field.x;
-  const startFieldY = field.y;
-  
+  const startFieldW = field.width;
   const dispW = Math.round(ED.w * ED.scale);
-  const dispH = Math.round(ED.h * ED.scale);
 
   const mm = ev => {
-    // Calculate raw mouse movement distance
     const dx = ev.clientX - startX;
-    const dy = ev.clientY - startY;
-    
-    // Convert to percentages and apply directly
-    field.x = startFieldX + (dx / dispW) * 100;
-    field.y = startFieldY + (dy / dispH) * 100;
-    
-    // Update the right-side properties panel coordinates instantly
-    if (field.id === ED.selId) {
-      const pX = document.getElementById('pX'); if(pX) pX.value = field.x.toFixed(1);
-      const pY = document.getElementById('pY'); if(pY) pY.value = field.y.toFixed(1);
+    const pctDelta = (dx / dispW) * 100;
+
+    if (side === 'right') {
+      field.width = Math.max(5, startFieldW + pctDelta);
+    } else if (side === 'left') {
+      const newW = Math.max(5, startFieldW - pctDelta);
+      if (newW > 5) { 
+        field.width = newW;
+        field.x = startFieldX + pctDelta;
+      }
     }
     
-    // Redraw graphics and handles
-    redraw();
-    renderHandles();
+    const liveEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
+    if (liveEl) {
+      liveEl.style.left = (field.x / 100 * dispW) + 'px';
+      liveEl.style.width = (field.width / 100 * dispW) + 'px';
+    }
+    redrawCanvas();
+    
+    if (field.id === ED.selId) {
+      const px = document.getElementById('pX'); if (px) px.value = field.x.toFixed(1);
+      const pw = document.getElementById('pW'); if (pw) pw.value = field.width.toFixed(1);
+    }
   };
 
   const mu = () => { 
     document.removeEventListener('mousemove', mm); 
     document.removeEventListener('mouseup', mu); 
-    saveTemplate(); 
+    redraw(); 
+    saveTemplate();
   };
-  
   document.addEventListener('mousemove', mm);
   document.addEventListener('mouseup', mu);
 }
@@ -767,10 +792,9 @@ function updateFontPreview(name, bold, italic) {
 
 function deleteField(id) {
   ED.fields = ED.fields.filter(f => f.id !== id);
-  if (ED.selId === id) { ED.selId = null; hideProps(); }
+  if (ED.selId === id) { ED.selId = null; document.getElementById('propsEmpty').style.display = ''; document.getElementById('propsForm').style.display = 'none'; }
   renderHandles();
-  renderChipList();
-  redraw(); // FIX: Force the canvas to wipe the deleted text immediately
+  redrawCanvas(); // FIX: Instantly erase text preview from canvas
   saveTemplate();
 }
 function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
@@ -1314,6 +1338,7 @@ function startNew() {
   document.getElementById('sheetResult').style.display = 'none';
   ED.fields = []; ED.selId = null;
   redraw();
+  saveTemplate(); // FIX: Erases saved fields from storage so the next campaign starts entirely blank
   goStep(1, true);
 }
 

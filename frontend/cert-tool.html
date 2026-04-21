@@ -165,19 +165,27 @@
   border: 1.5px dashed transparent;
 }
 .tf-handle:hover { border-color: rgba(0,212,255,0.4); }
-.tf-handle.sel { border-color: var(--cyan); border-style: solid; box-shadow: 0 0 0 1px rgba(0,212,255,0.2); }
-
-.tf-del-btn {
-  display: none; position: absolute; top: -14px; right: -14px;
-  width: 28px; height: 28px; background: var(--surface);
-  border: 1px solid var(--glass-border); border-radius: 50%;
-  color: var(--text-2); cursor: pointer; z-index: 20;
-  align-items: center; justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+.tf-handle.sel { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.1); }
+.tf-del {
+  display: none;
+  position: absolute; top: -10px; right: -10px;
+  width: 20px; height: 20px;
+  background: var(--red); border-radius: 50%;
+  font-size: 13px; line-height: 20px; text-align: center;
+  color: #fff; cursor: pointer; z-index: 20;
 }
-.tf-del-btn:hover { color: #f43f5e; border-color: #f43f5e; background: rgba(244,63,94,0.1); }
-.tf-handle.sel .tf-del-btn { display: flex; }
+.tf-handle.sel .tf-del { display: block; }
+
+/* Width Controllers (Canva-style edge handles) */
+.tf-resizer {
+  display: none; position: absolute; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 24px; background: #fff; border: 2px solid var(--cyan);
+  border-radius: 4px; z-index: 10; cursor: ew-resize;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.tf-handle.sel .tf-resizer { display: block; }
+.tf-resizer.left { left: -5px; }
+.tf-resizer.right { right: -5px; }
 
 .tf-resizer {
   display: none; position: absolute;
