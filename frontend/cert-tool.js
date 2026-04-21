@@ -375,6 +375,14 @@ function redrawCanvas() {
       : (f.previewText || f.placeholder);
 
     ctx.save();
+    
+    // Apply Canvas rotation to match the CSS bounding box perfectly
+    const cx = boxX + boxW / 2;
+    const cy = boxY + (fs * 1.3) / 2;
+    ctx.translate(cx, cy);
+    ctx.rotate((f.rotation || 0) * Math.PI / 180);
+    ctx.translate(-cx, -cy);
+
     ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
     ctx.fillStyle = f.color || '#1a1a1a';
     ctx.textBaseline = 'top';
@@ -388,10 +396,10 @@ function redrawCanvas() {
     else if (f.align === 'right') drawX = boxX + boxW - textW;
 
     if (ls > 0 && value.length > 1) {
-      let cx = drawX;
+      let drawCx = drawX;
       for (const ch of value) {
-        ctx.fillText(ch, cx, boxY);
-        cx += ctx.measureText(ch).width + ls;
+        ctx.fillText(ch, drawCx, boxY);
+        drawCx += ctx.measureText(ch).width + ls;
       }
     } else {
       ctx.fillText(value, drawX, boxY);
@@ -412,20 +420,98 @@ function renderHandles() {
   ED.fields.forEach(f => {
     const cw = Math.round(ED.w * ED.scale);
     const ch = Math.round(ED.h * ED.scale);
-    const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
+    const x = (f.x / 100) * cw;
+    const y = (f.y / 100) * ch;
+    const w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
+    const h = Math.round(fs * 1.3);
+
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
     el.dataset.fid = f.id;
-    // Transparent overlay — text is rendered on canvas, div is for drag/select only
-    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${Math.round(fs * 1.3)}px;background:transparent;color:transparent;`;    const del = document.createElement('div');
-    del.className = 'tf-del'; del.textContent = '×';
-    del.addEventListener('click', e => { e.stopPropagation(); deleteField(f.id); });
+    
+    // Apply center-based positioning to allow smooth CSS rotation
+    el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%, -50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
+
+    // Modern Delete Button
+    const del = document.createElement('div');
+    del.className = 'tf-del-btn';
+    del.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    del.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
     el.appendChild(del);
-    el.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); });
+
+    // Resize Handle (Bottom Right)
+    const resizer = document.createElement('div');
+    resizer.className = 'tf-resizer br';
+    resizer.addEventListener('mousedown', e => { e.stopPropagation(); startResize(e, f); });
+    el.appendChild(resizer);
+
+    // Rotate Handle (Top Center)
+    const rotLine = document.createElement('div');
+    rotLine.className = 'tf-rotater-line';
+    const rotater = document.createElement('div');
+    rotater.className = 'tf-rotater';
+    rotater.addEventListener('mousedown', e => { e.stopPropagation(); startRotate(e, f); });
+    el.appendChild(rotLine);
+    el.appendChild(rotater);
+
+    // Drag/Move
+    el.addEventListener('mousedown', e => { 
+        if (e.target === el) {
+            e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
+        }
+    });
     fieldOverlay.appendChild(el);
   });
   renderChipList();
+}
+
+// New Resize Logic
+function startResize(e, field) {
+  selectField(field.id);
+  const startX = e.clientX;
+  const startW = field.width;
+  const startSize = field.fontSize;
+  const dispW = Math.round(ED.w * ED.scale);
+
+  const mm = ev => {
+    const dx = ev.clientX - startX;
+    const deltaPct = (dx / dispW) * 100;
+    const scaleRatio = Math.max(0.1, (startW + deltaPct) / startW);
+    field.width = startW * scaleRatio;
+    field.fontSize = Math.max(8, Math.round(startSize * scaleRatio));
+    redraw();
+    if (field.id === ED.selId) {
+      const pW = document.getElementById('pW'); if(pW) pW.value = field.width.toFixed(1);
+      const pSize = document.getElementById('pSize'); if(pSize) pSize.value = field.fontSize;
+      const pSizeVal = document.getElementById('pSizeVal'); if(pSizeVal) pSizeVal.textContent = field.fontSize + 'px';
+    }
+  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+}
+
+// New Rotate Logic
+function startRotate(e, field) {
+  selectField(field.id);
+  const handleEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
+  const rect = handleEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  const mm = ev => {
+    const angle = Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180 / Math.PI;
+    // Native Math.atan2 is 0 at right (3 o'clock). Handle points up (-90deg). Add 90.
+    field.rotation = Math.round((angle + 90) % 360);
+    redraw();
+  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
 }
 
 const FONT_MAP = {
@@ -621,9 +707,11 @@ function addField() {
     requestAnimationFrame(() => requestAnimationFrame(() => {
       resizeCanvas();
       selectField(field.id);
+      redraw();
     }));
   } else {
     selectField(field.id);
+    redraw();
   }
   toast(`Added ${ph} field`, 'success', 2000);
 }
@@ -731,7 +819,7 @@ function loadSavedTemplate() {
     const t = JSON.parse(raw);
     ED.w = t.w || 1122; ED.h = t.h || 794;
     ED.bgColor = t.bgColor || '#ffffff';
-    ED.fields  = (t.fields || []).map(f => ({ bold: false, italic: false, letterSpacing: 0, ...f }));
+    ED.fields  = (t.fields || []).map(f => ({ bold: false, italic: false, letterSpacing: 0, ...f, fontSize: Number(f.fontSize) || 36, x: Number(f.x) || 0, y: Number(f.y) || 0, width: Number(f.width) || 80, rotation: Number(f.rotation) || 0 }));
     if (t.bgBase64) { const img = new Image(); img.onload = () => { ED.bgImg = img; redraw(); }; img.src = t.bgBase64; ED.bgBase64 = t.bgBase64; }
     resizeCanvas();
     if (t.fields?.length) toast('Previous template restored', 'info', 2500);
