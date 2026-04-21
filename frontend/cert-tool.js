@@ -557,30 +557,40 @@ function loadFontIfNeeded(name) {
 
 /* ── Drag ─────────────────────────────────────────────────────── */
 function startDrag(e, field) {
-  const sx = e.clientX, sy = e.clientY;
-  const sfx = field.x, sfy = field.y;
+  const startX = e.clientX;
+  const startY = e.clientY;
+  const startFieldX = field.x;
+  const startFieldY = field.y;
+  
+  const dispW = Math.round(ED.w * ED.scale);
+  const dispH = Math.round(ED.h * ED.scale);
+
   const mm = ev => {
-    const dispW = Math.round(ED.w * ED.scale);
-    const dispH = Math.round(ED.h * ED.scale);
-    field.x = Math.max(0, Math.min(95, sfx + ((ev.clientX - sx) / dispW) * 100));
-    field.y = Math.max(0, Math.min(95, sfy + ((ev.clientY - sy) / dispH) * 100));
-    const liveEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
-    if (liveEl) {
-      liveEl.style.left = (field.x / 100 * dispW) + 'px';
-      liveEl.style.top  = (field.y / 100 * dispH) + 'px';
-    }
-    redrawCanvas();
+    // Calculate raw mouse movement distance
+    const dx = ev.clientX - startX;
+    const dy = ev.clientY - startY;
+    
+    // Convert to percentages and apply directly
+    field.x = startFieldX + (dx / dispW) * 100;
+    field.y = startFieldY + (dy / dispH) * 100;
+    
+    // Update the right-side properties panel coordinates instantly
     if (field.id === ED.selId) {
-      const px = document.getElementById('pX'), py = document.getElementById('pY');
-      if (px) px.value = field.x.toFixed(1);
-      if (py) py.value = field.y.toFixed(1);
+      const pX = document.getElementById('pX'); if(pX) pX.value = field.x.toFixed(1);
+      const pY = document.getElementById('pY'); if(pY) pY.value = field.y.toFixed(1);
     }
-  };
-  const mu = () => {
-    document.removeEventListener('mousemove', mm);
-    document.removeEventListener('mouseup', mu);
+    
+    // Redraw graphics and handles
     redraw();
+    renderHandles();
   };
+
+  const mu = () => { 
+    document.removeEventListener('mousemove', mm); 
+    document.removeEventListener('mouseup', mu); 
+    saveTemplate(); 
+  };
+  
   document.addEventListener('mousemove', mm);
   document.addEventListener('mouseup', mu);
 }
@@ -757,8 +767,11 @@ function updateFontPreview(name, bold, italic) {
 
 function deleteField(id) {
   ED.fields = ED.fields.filter(f => f.id !== id);
-  if (ED.selId === id) { ED.selId = null; document.getElementById('propsEmpty').style.display = ''; document.getElementById('propsForm').style.display = 'none'; }
+  if (ED.selId === id) { ED.selId = null; hideProps(); }
   renderHandles();
+  renderChipList();
+  redraw(); // FIX: Force the canvas to wipe the deleted text immediately
+  saveTemplate();
 }
 function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
 function deleteSelField()      { if (ED.selId) deleteField(ED.selId); }
@@ -819,7 +832,8 @@ function loadSavedTemplate() {
     const t = JSON.parse(raw);
     ED.w = t.w || 1122; ED.h = t.h || 794;
     ED.bgColor = t.bgColor || '#ffffff';
-    ED.fields  = (t.fields || []).map(f => ({ bold: false, italic: false, letterSpacing: 0, ...f, fontSize: Number(f.fontSize) || 36, x: Number(f.x) || 0, y: Number(f.y) || 0, width: Number(f.width) || 80, rotation: Number(f.rotation) || 0 }));
+    // FIX: Force fields to be totally empty on load so old campaign text doesn't carry over
+    ED.fields  = [];
     if (t.bgBase64) { const img = new Image(); img.onload = () => { ED.bgImg = img; redraw(); }; img.src = t.bgBase64; ED.bgBase64 = t.bgBase64; }
     resizeCanvas();
     if (t.fields?.length) toast('Previous template restored', 'info', 2500);
