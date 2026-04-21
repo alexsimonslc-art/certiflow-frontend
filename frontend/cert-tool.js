@@ -413,8 +413,7 @@ function redraw() {
   renderHandles();
 }
 
-/* ── Field Handles ──────────────────────────────────────────────── */
-/* ── Field Handles ──────────────────────────────────────────────── */
+//* ── Dynamic Bounding Box UI ──────────────────────────────────────────────── */
 function renderHandles() {
   if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
@@ -434,46 +433,84 @@ function renderHandles() {
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
     el.dataset.fid = f.id;
     
-    // Apply center-based positioning to allow smooth CSS rotation
+    // Core Positioning & Rotation Map
     el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%, -50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
 
-    // Modern Delete Button
-    const del = document.createElement('div');
-    del.className = 'tf-del-btn';
-    del.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-    del.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
-    el.appendChild(del);
+    // 1. Top Action Bar (Duplicate & Delete)
+    const actionBar = document.createElement('div');
+    actionBar.className = 'tf-action-bar';
+    
+    const btnDup = document.createElement('div');
+    btnDup.className = 'tf-action-btn';
+    btnDup.title = "Duplicate";
+    btnDup.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+    btnDup.addEventListener('mousedown', e => { e.stopPropagation(); duplicateField(f.id); });
+    
+    const btnDel = document.createElement('div');
+    btnDel.className = 'tf-action-btn del';
+    btnDel.title = "Delete";
+    btnDel.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
+    btnDel.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
+    
+    actionBar.appendChild(btnDup);
+    actionBar.appendChild(btnDel);
+    el.appendChild(actionBar);
 
-    // Diagonal Resizer (Bottom Right - Changes Font Size)
-    const resizer = document.createElement('div');
-    resizer.className = 'tf-resizer-corner br';
-    resizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f); });
-    el.appendChild(resizer);
+    // 2. Bottom Control Pill (Move & Rotate)
+    const ctrlPill = document.createElement('div');
+    ctrlPill.className = 'tf-ctrl-pill';
+    
+    const btnMove = document.createElement('div');
+    btnMove.className = 'tf-ctrl-btn move';
+    btnMove.title = "Move";
+    btnMove.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="19 9 22 12 19 15"></polyline><polyline points="9 19 12 22 15 19"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>';
+    btnMove.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startDrag(e, f); });
+    
+    const btnRot = document.createElement('div');
+    btnRot.className = 'tf-ctrl-btn rot';
+    btnRot.title = "Rotate";
+    btnRot.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 2.63-6.37L21 8"></path></svg>';
+    btnRot.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startRotate(e, f); });
+    
+    ctrlPill.appendChild(btnMove);
+    ctrlPill.appendChild(btnRot);
+    el.appendChild(ctrlPill);
 
-    // Width Stretcher (Left - Changes Width Only)
-    const leftResizer = document.createElement('div');
-    leftResizer.className = 'tf-resizer-width left';
-    leftResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, 'left'); });
-    el.appendChild(leftResizer);
+    // 3. Dynamic Corners & Controllers
+    // Threshold Check: If the box is too small on the canvas, it switches to minimalist mode
+    const isSmall = h < 40 || w < 80;
 
-    // Width Stretcher (Right - Changes Width Only)
-    const rightResizer = document.createElement('div');
-    rightResizer.className = 'tf-resizer-width right';
-    rightResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, 'right'); });
-    el.appendChild(rightResizer);
+    if (isSmall) {
+        // Minimal Mode: Top Left Corner + Left Width Stretcher ONLY
+        const tl = document.createElement('div');
+        tl.className = 'tf-resizer-corner tl';
+        tl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, 'l'); });
+        el.appendChild(tl);
 
-    // Rotate Handle (Top Center)
-    const rotLine = document.createElement('div');
-    rotLine.className = 'tf-rotater-line';
-    const rotater = document.createElement('div');
-    rotater.className = 'tf-rotater';
-    rotater.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startRotate(e, f); });
-    el.appendChild(rotLine);
-    el.appendChild(rotater);
+        const leftResizer = document.createElement('div');
+        leftResizer.className = 'tf-resizer-width left';
+        leftResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, 'left'); });
+        el.appendChild(leftResizer);
+    } else {
+        // Full Mode: All 4 Corners + Both Width Stretchers
+        ['tl', 'tr', 'bl', 'br'].forEach(corner => {
+            const cEl = document.createElement('div');
+            cEl.className = `tf-resizer-corner ${corner}`;
+            cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
+            el.appendChild(cEl);
+        });
 
-    // Drag Base
+        ['left', 'right'].forEach(side => {
+            const sEl = document.createElement('div');
+            sEl.className = `tf-resizer-width ${side}`;
+            sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
+            el.appendChild(sEl);
+        });
+    }
+
+    // Freeform Draging Base (allows you to drag by clicking anywhere inside the box, just like Canva)
     el.addEventListener('mousedown', e => { 
-        if (e.target === el) { // Only drag if clicking the box, not the handles
+        if (e.target === el) { 
             e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
         }
     });
@@ -592,16 +629,18 @@ function startDrag(e, field) {
   document.addEventListener('mouseup', mu);
 }
 
-function startScale(e, field) {
+function startScale(e, field, corner = 'r') {
   const startX = e.clientX;
   const startW = field.width;
   const startSize = field.fontSize;
   const dispW = Math.round(ED.w * ED.scale);
 
   const mm = ev => {
-    const dx = ev.clientX - startX;
+    let dx = ev.clientX - startX;
+    if (corner.includes('l')) dx = -dx; // Reverse pulling direction if pulling from the left side
     const deltaPct = (dx / dispW) * 100;
     const scaleRatio = Math.max(0.1, (startW + deltaPct) / startW);
+    
     field.width = startW * scaleRatio;
     field.fontSize = Math.max(8, Math.round(startSize * scaleRatio));
     redraw();
@@ -652,12 +691,30 @@ function startRotate(e, field) {
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
 
+  // Create the dynamic tooltip
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tf-rot-tooltip';
+  document.body.appendChild(tooltip);
+
   const mm = ev => {
     const angle = Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180 / Math.PI;
     field.rotation = Math.round((angle + 90) % 360);
+    if (field.rotation < 0) field.rotation += 360; // Normalize purely to 0-360
+    
+    // Track tooltip to the mouse
+    tooltip.textContent = `${field.rotation}°`;
+    tooltip.style.left = (ev.clientX + 15) + 'px';
+    tooltip.style.top = (ev.clientY - 35) + 'px';
+    tooltip.style.display = 'block';
+
     redraw();
   };
-  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
+  const mu = () => { 
+    document.removeEventListener('mousemove', mm); 
+    document.removeEventListener('mouseup', mu); 
+    tooltip.remove(); // Kill tooltip on release
+    saveTemplate(); 
+  };
   document.addEventListener('mousemove', mm);
   document.addEventListener('mouseup', mu);
 }
@@ -880,6 +937,19 @@ function deleteField(id) {
   if (ED.selId === id) { ED.selId = null; document.getElementById('propsEmpty').style.display = ''; document.getElementById('propsForm').style.display = 'none'; }
   renderHandles();
   redrawCanvas(); // FIX: Instantly erase text preview from canvas
+  saveTemplate();
+}
+
+function duplicateField(id) {
+  const f = ED.fields.find(x => x.id === id);
+  if (!f) return;
+  const newF = JSON.parse(JSON.stringify(f));
+  newF.id = 'f_' + Date.now();
+  newF.x = Math.min(95, newF.x + 3); // Offset x slightly so it doesn't overlap perfectly
+  newF.y = Math.min(95, newF.y + 3); // Offset y slightly
+  ED.fields.push(newF);
+  selectField(newF.id);
+  redraw();
   saveTemplate();
 }
 function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
