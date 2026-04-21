@@ -24,7 +24,15 @@ const ED = {
   fields: [],
   selId: null,
   scale: 1,
+  zoom: 1, // New Zoom State
 };
+
+function setZoom(val) {
+  ED.zoom = Math.max(0.1, Math.min(3, parseFloat(val)));
+  const zr = document.getElementById('canvasZoom'); if(zr) zr.value = ED.zoom;
+  const zl = document.getElementById('zoomLabel'); if(zl) zl.textContent = Math.round(ED.zoom * 100) + '%';
+  resizeCanvas();
+}
 function getFontCSS(name) {
   // FONT_CSS_MAP is declared in dashboard.js — reuse it
   if (typeof FONT_CSS_MAP !== 'undefined' && FONT_CSS_MAP[name]) {
@@ -312,7 +320,61 @@ function initCanvas() {
   ED.ready     = true;
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
+  
+  // ── Mouse Wheel Zoom ──
+  const zone = document.getElementById('canvasWrap');
+  if (zone) {
+    zone.addEventListener('wheel', e => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.05 : -0.05;
+        setZoom((ED.zoom || 1) + delta);
+      }
+    }, { passive: false });
+  }
+
+  // ── Pro Keyboard Shortcuts ──
+  document.addEventListener('keydown', e => {
+    if (CS.step !== 2) return;
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+    
+    // Zoom shortcuts
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === '=' || e.key === '+') { e.preventDefault(); setZoom((ED.zoom || 1) + 0.1); return; }
+      if (e.key === '-') { e.preventDefault(); setZoom((ED.zoom || 1) - 0.1); return; }
+      if (e.key === '0') { e.preventDefault(); setZoom(1); return; }
+      if (e.key.toLowerCase() === 'd' && ED.selId) { 
+          e.preventDefault(); 
+          if (typeof duplicateField === 'function') duplicateField(ED.selId); 
+          return; 
+      }
+    }
+    
+    // Movement shortcuts (Arrow Keys)
+    if (ED.selId) {
+      const f = ED.fields.find(x => x.id === ED.selId);
+      if (!f) return;
+      const step = e.shiftKey ? 1 : 0.1; // Shift makes it move 10x faster
+      let moved = false;
+      
+      if (e.key === 'ArrowUp') { f.y -= step; moved = true; }
+      if (e.key === 'ArrowDown') { f.y += step; moved = true; }
+      if (e.key === 'ArrowLeft') { f.x -= step; moved = true; }
+      if (e.key === 'ArrowRight') { f.x += step; moved = true; }
+      if (e.key === 'Delete' || e.key === 'Backspace') { deleteField(ED.selId); return; }
+      
+      if (moved) {
+        e.preventDefault();
+        redraw();
+        const px = document.getElementById('pX'), py = document.getElementById('pY');
+        if (px) px.value = f.x.toFixed(1);
+        if (py) py.value = f.y.toFixed(1);
+        saveTemplate();
+      }
+    }
+  });
 }
+
 function resizeCanvas() {
   const zone = document.getElementById('canvasWrap');
   if (!zone) return;
@@ -321,7 +383,11 @@ function resizeCanvas() {
   const zh = zone.clientHeight;
   if (zw < 10) { setTimeout(resizeCanvas, 50); return; }
 
-  ED.scale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
+  // Base fit calculation
+  const baseScale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
+  
+  // Apply zoom multiplier
+  ED.scale = baseScale * (ED.zoom || 1);
 
   const cw = Math.round(ED.w * ED.scale);
   const ch = Math.round(ED.h * ED.scale);
@@ -375,35 +441,58 @@ function redrawCanvas() {
       : (f.previewText || f.placeholder);
 
     ctx.save();
-    
-    // Apply Canvas rotation to match the CSS bounding box perfectly
-    const cx = boxX + boxW / 2;
-    const cy = boxY + (fs * 1.3) / 2;
-    ctx.translate(cx, cy);
-    ctx.rotate((f.rotation || 0) * Math.PI / 180);
-    ctx.translate(-cx, -cy);
-
     ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
     ctx.fillStyle = f.color || '#1a1a1a';
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
 
-    let textW = ctx.measureText(value).width;
-    if (ls > 0 && value.length > 1) textW += ls * (value.length - 1);
-
-    let drawX = boxX;
-    if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
-    else if (f.align === 'right') drawX = boxX + boxW - textW;
-
-    if (ls > 0 && value.length > 1) {
-      let drawCx = drawX;
-      for (const ch of value) {
-        ctx.fillText(ch, drawCx, boxY);
-        drawCx += ctx.measureText(ch).width + ls;
+    // Advanced Text Wrapper Engine
+    const words = String(value).split(' ');
+    const lines = [];
+    let currentLine = words[0] || '';
+    for (let j = 1; j < words.length; j++) {
+      const word = words[j];
+      const testLine = currentLine + ' ' + word;
+      let testWidth = ctx.measureText(testLine).width;
+      if (ls > 0 && testLine.length > 1) testWidth += ls * (testLine.length - 1);
+      if (testWidth > boxW && currentLine !== '') {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
       }
-    } else {
-      ctx.fillText(value, drawX, boxY);
     }
+    if (currentLine !== '') lines.push(currentLine);
+    if (lines.length === 0) lines.push('');
+
+    const numLines = lines.length;
+
+    // Apply exact center rotation based on total line height
+    const cx = boxX + boxW / 2;
+    const cy = boxY + (fs * 1.3 * numLines) / 2;
+    ctx.translate(cx, cy);
+    ctx.rotate((f.rotation || 0) * Math.PI / 180);
+    ctx.translate(-cx, -cy);
+
+    lines.forEach((line, i) => {
+      const drawY = boxY + (i * fs * 1.3);
+      let textW = ctx.measureText(line).width;
+      if (ls > 0 && line.length > 1) textW += ls * (line.length - 1);
+      
+      let drawX = boxX;
+      if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
+      else if (f.align === 'right') drawX = boxX + boxW - textW;
+
+      if (ls > 0 && line.length > 1) {
+        let drawCx = drawX;
+        for (const ch of line) {
+          ctx.fillText(ch, drawCx, drawY);
+          drawCx += ctx.measureText(ch).width + ls;
+        }
+      } else {
+        ctx.fillText(line, drawX, drawY);
+      }
+    });
     ctx.restore();
   });
 }
@@ -424,8 +513,24 @@ function renderHandles() {
     const y = (f.y / 100) * ch;
     const w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
-    const h = Math.round(fs * 1.3);
+    
+    // Auto-calculate the bounding box height based on wrapped lines
+    const value = (f.column && CS.rows && CS.rows[0]) ? (CS.rows[0][f.column] || f.previewText || f.placeholder) : (f.previewText || f.placeholder);
+    ctx.save();
+    ctx.font = `${f.italic ? 'italic' : 'normal'} ${f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica')} ${fs}px ${getFontCSS(f.fontFamily || 'Helvetica')}`;
+    const ls = (f.letterSpacing || 0) * ED.scale;
+    const words = String(value).split(' ');
+    let linesCount = 1; let currentLine = words[0] || '';
+    for (let j = 1; j < words.length; j++) {
+      const testLine = currentLine + ' ' + words[j];
+      let testWidth = ctx.measureText(testLine).width;
+      if (ls > 0 && testLine.length > 1) testWidth += ls * (testLine.length - 1);
+      if (testWidth > w && currentLine !== '') { linesCount++; currentLine = words[j]; } 
+      else { currentLine = testLine; }
+    }
+    ctx.restore();
 
+    const h = Math.round(fs * 1.3 * linesCount);
     const cx = x + w / 2;
     const cy = y + h / 2;
 
@@ -481,16 +586,16 @@ function renderHandles() {
     const isSmall = h < 40 || w < 80;
 
     if (isSmall) {
-        // Minimal Mode: Top Left Corner + Left Width Stretcher ONLY
+        // Minimal Mode: Top Left Corner + RIGHT Width Stretcher ONLY (Fixed Side)
         const tl = document.createElement('div');
         tl.className = 'tf-resizer-corner tl';
         tl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, 'l'); });
         el.appendChild(tl);
 
-        const leftResizer = document.createElement('div');
-        leftResizer.className = 'tf-resizer-width left';
-        leftResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, 'left'); });
-        el.appendChild(leftResizer);
+        const rightResizer = document.createElement('div');
+        rightResizer.className = 'tf-resizer-width right';
+        rightResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, 'right'); });
+        el.appendChild(rightResizer);
     } else {
         // Full Mode: All 4 Corners + Both Width Stretchers
         ['tl', 'tr', 'bl', 'br'].forEach(corner => {

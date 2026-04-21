@@ -732,6 +732,17 @@
                   <div id="fieldOverlay"></div>
                 </div>
               </div>
+              
+              <div style="display:flex; justify-content:center; align-items:center; gap:12px; padding:10px 16px; background:var(--surface); border-top:1px solid var(--glass-border); border-bottom-left-radius:var(--radius-lg);">
+                <button class="btn btn-ghost btn-sm" style="padding:4px 8px" onclick="setZoom((ED.zoom||1)-0.1)" title="Zoom Out (Ctrl -)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <input type="range" id="canvasZoom" min="0.1" max="3" step="0.05" value="1" oninput="setZoom(this.value)" style="width:140px; accent-color:var(--cyan)">
+                <button class="btn btn-ghost btn-sm" style="padding:4px 8px" onclick="setZoom((ED.zoom||1)+0.1)" title="Zoom In (Ctrl +)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <span id="zoomLabel" style="font-size:12.5px; font-family:var(--font-mono); color:var(--text-3); min-width:44px; text-align:right">100%</span>
+              </div>
             </div>
 
             <div class="cert-props-col">
