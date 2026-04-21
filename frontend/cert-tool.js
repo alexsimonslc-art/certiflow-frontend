@@ -414,43 +414,68 @@ function redraw() {
 }
 
 /* ── Field Handles ──────────────────────────────────────────────── */
+/* ── Field Handles ──────────────────────────────────────────────── */
 function renderHandles() {
   if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
   ED.fields.forEach(f => {
     const cw = Math.round(ED.w * ED.scale);
     const ch = Math.round(ED.h * ED.scale);
-    const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
+    const x = (f.x / 100) * cw;
+    const y = (f.y / 100) * ch;
+    const w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
+    const h = Math.round(fs * 1.3);
+
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
     el.dataset.fid = f.id;
-    // Transparent overlay — text is rendered on canvas, div is for drag/select only
-    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${Math.round(fs * 1.3)}px;background:transparent;color:transparent;`;
     
-    // Delete button
+    // Apply center-based positioning to allow smooth CSS rotation
+    el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%, -50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
+
+    // Modern Delete Button
     const del = document.createElement('div');
-    del.className = 'tf-del'; del.textContent = '×';
-    del.addEventListener('click', e => { e.stopPropagation(); deleteField(f.id); });
+    del.className = 'tf-del-btn';
+    del.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    del.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
     el.appendChild(del);
 
-    // Left Width Controller
+    // Diagonal Resizer (Bottom Right - Changes Font Size)
+    const resizer = document.createElement('div');
+    resizer.className = 'tf-resizer-corner br';
+    resizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f); });
+    el.appendChild(resizer);
+
+    // Width Stretcher (Left - Changes Width Only)
     const leftResizer = document.createElement('div');
-    leftResizer.className = 'tf-resizer left';
-    leftResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startResize(e, f, 'left'); });
+    leftResizer.className = 'tf-resizer-width left';
+    leftResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, 'left'); });
     el.appendChild(leftResizer);
 
-    // Right Width Controller
+    // Width Stretcher (Right - Changes Width Only)
     const rightResizer = document.createElement('div');
-    rightResizer.className = 'tf-resizer right';
-    rightResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startResize(e, f, 'right'); });
+    rightResizer.className = 'tf-resizer-width right';
+    rightResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, 'right'); });
     el.appendChild(rightResizer);
 
+    // Rotate Handle (Top Center)
+    const rotLine = document.createElement('div');
+    rotLine.className = 'tf-rotater-line';
+    const rotater = document.createElement('div');
+    rotater.className = 'tf-rotater';
+    rotater.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startRotate(e, f); });
+    el.appendChild(rotLine);
+    el.appendChild(rotater);
+
+    // Drag Base
     el.addEventListener('mousedown', e => { 
-      // Only trigger drag if we click the handle body, not the width resizers
-      if (e.target === el) {
-        e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
-      }
+        if (e.target === el) { // Only drag if clicking the box, not the handles
+            e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
+        }
     });
     fieldOverlay.appendChild(el);
   });
@@ -544,38 +569,98 @@ function loadFontIfNeeded(name) {
 }
 
 /* ── Drag & Resize ─────────────────────────────────────────────────────── */
+/* ── Drag, Scale, Resize & Rotate ─────────────────────────────────────────────────────── */
 function startDrag(e, field) {
-  const sx = e.clientX, sy = e.clientY;
-  const sfx = field.x, sfy = field.y;
+  const startX = e.clientX, startY = e.clientY;
+  const startFieldX = field.x, startFieldY = field.y;
+  const dispW = Math.round(ED.w * ED.scale);
+  const dispH = Math.round(ED.h * ED.scale);
+
   const mm = ev => {
-    const dispW = Math.round(ED.w * ED.scale);
-    const dispH = Math.round(ED.h * ED.scale);
-    // FIX: Removed strict bounding clamp (Math.max/min) which caused the field to randomly jump to the side
-    field.x = sfx + ((ev.clientX - sx) / dispW) * 100;
-    field.y = sfy + ((ev.clientY - sy) / dispH) * 100;
+    field.x = startFieldX + ((ev.clientX - startX) / dispW) * 100;
+    field.y = startFieldY + ((ev.clientY - startY) / dispH) * 100;
+    redraw();
     
-    const liveEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
-    if (liveEl) {
-      liveEl.style.left = (field.x / 100 * dispW) + 'px';
-      liveEl.style.top  = (field.y / 100 * dispH) + 'px';
-    }
-    redrawCanvas();
     if (field.id === ED.selId) {
       const px = document.getElementById('pX'), py = document.getElementById('pY');
       if (px) px.value = field.x.toFixed(1);
       if (py) py.value = field.y.toFixed(1);
     }
   };
-  const mu = () => {
-    document.removeEventListener('mousemove', mm);
-    document.removeEventListener('mouseup', mu);
-    redraw();
-    saveTemplate();
-  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
   document.addEventListener('mousemove', mm);
   document.addEventListener('mouseup', mu);
 }
 
+function startScale(e, field) {
+  const startX = e.clientX;
+  const startW = field.width;
+  const startSize = field.fontSize;
+  const dispW = Math.round(ED.w * ED.scale);
+
+  const mm = ev => {
+    const dx = ev.clientX - startX;
+    const deltaPct = (dx / dispW) * 100;
+    const scaleRatio = Math.max(0.1, (startW + deltaPct) / startW);
+    field.width = startW * scaleRatio;
+    field.fontSize = Math.max(8, Math.round(startSize * scaleRatio));
+    redraw();
+    if (field.id === ED.selId) {
+      const pW = document.getElementById('pW'); if(pW) pW.value = field.width.toFixed(1);
+      const pSize = document.getElementById('pSize'); if(pSize) pSize.value = field.fontSize;
+      const pSizeVal = document.getElementById('pSizeVal'); if(pSizeVal) pSizeVal.textContent = field.fontSize + 'px';
+    }
+  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+}
+
+function startWidthResize(e, field, side) {
+  const startX = e.clientX;
+  const startFieldX = field.x;
+  const startFieldW = field.width;
+  const dispW = Math.round(ED.w * ED.scale);
+
+  const mm = ev => {
+    const dx = ev.clientX - startX;
+    const pctDelta = (dx / dispW) * 100;
+
+    if (side === 'right') {
+      field.width = Math.max(5, startFieldW + pctDelta);
+    } else if (side === 'left') {
+      const newW = Math.max(5, startFieldW - pctDelta);
+      if (newW > 5) { 
+        field.width = newW;
+        field.x = startFieldX + pctDelta;
+      }
+    }
+    redraw();
+    if (field.id === ED.selId) {
+      const pX = document.getElementById('pX'); if(pX) pX.value = field.x.toFixed(1);
+      const pW = document.getElementById('pW'); if(pW) pW.value = field.width.toFixed(1);
+    }
+  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+}
+
+function startRotate(e, field) {
+  const handleEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
+  const rect = handleEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  const mm = ev => {
+    const angle = Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180 / Math.PI;
+    field.rotation = Math.round((angle + 90) % 360);
+    redraw();
+  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+}
 // Visual Width Controller Logic
 function startResize(e, field, side) {
   const startX = e.clientX;
