@@ -13,6 +13,7 @@ const MS = {
 };
 let mManualCols = ['Email', 'Name'];
 let mManualRows = [{ Email: '', Name: '' }];
+const M_LOCKED_COLS = ['Email']; // Email is always first & non-deletable
 // Quota — populated by mFetchQuota()
 window.mailQuotaRemaining = 9999;             // safe fallback until loaded
 const MSTEPS = [
@@ -340,8 +341,45 @@ const ME_DEFS = {
     label: 'Footer',
     defaults: () => ({ text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }),
   },
+  social: {
+    label: 'Social Links',
+    defaults: () => ({
+      platforms: [
+        { name: 'LinkedIn',  url: '', icon: 'linkedin'  },
+        { name: 'Twitter/X', url: '', icon: 'x'         },
+        { name: 'Instagram', url: '', icon: 'instagram' },
+      ],
+      bgColor: '#ffffff',
+      align: 'center',
+      paddingV: 20,
+      paddingH: 40,
+      iconSize: 32,
+      style: 'plain',
+      color: '#475569',
+    }),
+  },
+  table: {
+    label: 'Table',
+    defaults: () => ({
+      rows: 3, cols: 3,
+      data: [['Header 1','Header 2','Header 3'],['Cell','Cell','Cell'],['Cell','Cell','Cell']],
+      headerRow: true,
+      borderWidth: 1,
+      borderColor: '#e2e8f0',
+      headerBg: '#f1f5f9',
+      headerColor: '#1e293b',
+      cellBg: '#ffffff',
+      cellColor: '#475569',
+      cellPadding: 10,
+      fontSize: 14,
+      bgColor: '#ffffff',
+      paddingV: 20,
+      paddingH: 40,
+      width: '100%',
+    }),
+  },
 };
-
+  
 /* ══════════════════════════════════════════════════════════════
    BLOCK → EMAIL HTML
 ══════════════════════════════════════════════════════════════ */
@@ -358,14 +396,14 @@ function meBlockToHtml(block) {
 
     case 'header':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}">
-  <h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fontStack}">${p.text}</h1>
+  <h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight||700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fontStack};font-style:${p.fontStyle||'normal'}">${p.text}</h1>
 </div>`;
 
     case 'text':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}">
-  <p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fontStack}">${p.text.replace(/\n/g, '<br/>')}</p>
+  <p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fontStack};font-weight:${p.fontWeight||400};font-style:${p.fontStyle||'normal'}">${p.text.replace(/\n/g, '<br/>')}</p>
 </div>`;
-
+    
     case 'button':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
   <a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fontStack}">${p.text}</a>
@@ -393,6 +431,53 @@ function meBlockToHtml(block) {
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
   <p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fontStack}">${p.text.replace(/\n/g, '<br/>')}</p>
 </div>`;
+    case 'social': {
+      const iconBase = 'https://cdn.simpleicons.org/';
+      const knownIcons = {
+        linkedin:'linkedin', 'twitter/x':'x', twitter:'x', instagram:'instagram',
+        facebook:'facebook', youtube:'youtube', tiktok:'tiktok', pinterest:'pinterest',
+        github:'github', whatsapp:'whatsapp', telegram:'telegram', discord:'discord',
+        snapchat:'snapchat', website:'',
+      };
+      const size = p.iconSize || 32;
+      const pad  = p.style === 'plain' ? 0 : Math.round(size * 0.25);
+      const br   = p.style === 'circle' ? '50%' : p.style === 'square' ? '8px' : '0';
+      const bgBadge = p.style !== 'plain' ? `background:rgba(0,0,0,0.08);` : '';
+
+      const icons = (p.platforms || []).filter(pl => pl.url).map(pl => {
+        const slug = knownIcons[(pl.name||'').toLowerCase()] || (pl.name||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+        const imgHtml = slug
+          ? `<img src="${iconBase}${slug}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;width:${size}px;height:${size}px"/>`
+          : `<span style="font-size:${size*0.5}px;line-height:${size}px;color:${p.color}">${pl.name.slice(0,2).toUpperCase()}</span>`;
+        return `<a href="${pl.url}" style="display:inline-block;margin:0 ${Math.round(size*0.2)}px;text-decoration:none;${bgBadge}padding:${pad}px;border-radius:${br};vertical-align:middle">${imgHtml}</a>`;
+      }).join('');
+
+      return icons
+        ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">${icons}</div>`
+        : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center;color:#94a3b8;font-size:13px">Add social links in properties →</div>`;
+    }
+
+    case 'table': {
+      const d   = p.data || [[]];
+      const bw  = p.borderWidth || 0;
+      const bst = bw > 0 ? `${bw}px solid ${p.borderColor}` : 'none';
+      const rows = d.map((row, ri) => {
+        const isHeader = p.headerRow && ri === 0;
+        const cells = row.map(cell =>
+          isHeader
+            ? `<th style="padding:${p.cellPadding}px;background:${p.headerBg};color:${p.headerColor};font-weight:700;font-size:${p.fontSize}px;border:${bst};text-align:left">${cell}</th>`
+            : `<td style="padding:${p.cellPadding}px;background:${p.cellBg};color:${p.cellColor};font-size:${p.fontSize}px;border:${bst}">${cell}</td>`
+        ).join('');
+        return `<tr>${cells}</tr>`;
+      }).join('');
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}">
+        <table width="${p.width}" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:${p.width};border:${bst}">
+          ${rows}
+        </table>
+      </div>`;
+    }
+    case 'raw':
+      return p.html || '';
 
     default:
       return '';
@@ -404,6 +489,12 @@ function meGetHtml() {
   if (!ME.blocks.length) return '';
   const outerBg = '#f1f5f9';
   const inner   = ME.blocks.map(b => meBlockToHtml(b)).join('\n');
+  const brandingBar = `<div style="padding:12px 24px;background:#f1f5f9;text-align:center;border-top:1px solid #e2e8f0">
+    <p style="margin:0;font-size:11px;color:#94a3b8;font-family:Arial,sans-serif">
+      Sent via <a href="https://honourix.com" style="color:#64748b;text-decoration:none;font-weight:600">Honourix</a>
+      &nbsp;·&nbsp; <span style="letter-spacing:0.5px">Trusted Certificate &amp; Mail Platform</span>
+    </p>
+  </div>`;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -419,6 +510,7 @@ function meGetHtml() {
 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)">
 <tr><td>
 ${inner}
+${brandingBar}
 </td></tr>
 </table>
 </td></tr>
@@ -547,7 +639,7 @@ function meRenderCanvas() {
     // Block type label
     const label = document.createElement('div');
     label.style.cssText = 'position:absolute;top:4px;left:8px;font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:rgba(0,212,255,0.7);opacity:0;transition:opacity 0.15s;pointer-events:none;z-index:5;font-family:var(--font)';
-    label.textContent = (ME_DEFS[block.type] || {}).label || block.type;
+    label.textContent = block.type === 'raw' ? 'Custom HTML' : ((ME_DEFS[block.type] || {}).label || block.type);
     label.className = 'me-block-label';
 
     // Rendered block HTML
@@ -634,6 +726,8 @@ function meSelectBlock(id) {
 /* ══════════════════════════════════════════════════════════════
    PROPERTY PANEL
 ══════════════════════════════════════════════════════════════ */
+let meLastFocusedField = null; // tracks which input was last focused
+
 function meRenderProps(block) {
   const body = document.getElementById('mePropsBody');
   if (!body) return;
@@ -651,6 +745,25 @@ function meRenderProps(block) {
   // Build property rows based on block type
   if (['logo','header','text','footer'].includes(block.type)) {
     rows.push(meFieldTextarea('Text', block.id, 'text', p.text));
+    if (['header','text','footer'].includes(block.type)) {
+      rows.push(`<div class="me-field">
+        <div class="me-field-label">Formatting</div>
+        <div class="me-align-btns">
+          <button class="me-align-btn ${p.fontWeight>=700?'active':''}" title="Bold"
+            onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight>=700?400:700});this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach((b,i)=>{if(i===0)b.classList.toggle('active',${p.fontWeight<700})})">
+            <strong style="font-size:13px">B</strong>
+          </button>
+          <button class="me-align-btn ${p.fontWeight===600?'active':''}" title="Semi-Bold"
+            onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight===600?400:600});this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach((b,i)=>{if(i===1)b.classList.toggle('active',${p.fontWeight!==600})})">
+            <span style="font-size:13px;font-weight:600">S</span>
+          </button>
+          <button class="me-align-btn ${p.fontStyle==='italic'?'active':''}" title="Italic"
+            onclick="meUpdateProp('${block.id}','fontStyle',${p.fontStyle==='italic'?"'normal'":"'italic'"})">
+            <em style="font-size:13px">I</em>
+          </button>
+        </div>
+      </div>`);
+    }
   }
   if (block.type === 'logo') {
     rows.push(meFieldText('Tagline', block.id, 'tagline', p.tagline || ''));
@@ -672,6 +785,76 @@ function meRenderProps(block) {
   if (block.type === 'divider') {
     rows.push(meFieldColor('Line Color', block.id, 'color', p.color));
     rows.push(meFieldRange('Thickness (px)', block.id, 'thickness', p.thickness, 1, 8));
+  }
+    if (block.type === 'social') {
+    const plats = ['LinkedIn','Twitter/X','Instagram','Facebook','YouTube','TikTok','Pinterest','GitHub','WhatsApp','Telegram','Discord','Snapchat'];
+    const currentPlatforms = p.platforms || [];
+    const platRows = currentPlatforms.map((pl, i) => `
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+        <select class="me-input" style="flex:0 0 110px;font-size:12px;padding:6px 8px" onchange="meSocialUpdatePlatform('${block.id}',${i},'name',this.value)">
+          ${plats.map(pt => `<option value="${pt}" ${pl.name===pt?'selected':''}>${pt}</option>`).join('')}
+        </select>
+        <input class="me-input" type="url" placeholder="https://..." value="${pl.url||''}" 
+          onfocus="meLastFocusedField={id:'${block.id}',key:'social_url_${i}',el:this}"
+          oninput="meSocialUpdatePlatform('${block.id}',${i},'url',this.value)" style="flex:1;font-size:12px;padding:6px 8px"/>
+        <button class="manual-col-del" onclick="meSocialRemovePlatform('${block.id}',${i})" style="width:24px;height:24px;flex-shrink:0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`).join('');
+
+    rows.push(`<div class="me-field">
+      <div class="me-field-label">Platforms</div>
+      ${platRows}
+      <button class="btn btn-outline btn-sm" style="margin-top:4px;font-size:11px" onclick="meSocialAddPlatform('${block.id}')">+ Add Platform</button>
+    </div>`);
+
+    rows.push(`<div class="me-field">
+      <div class="me-field-label">Icon Style</div>
+      <div class="me-align-btns">
+        ${['plain','circle','square'].map(s => `<button class="me-align-btn ${p.style===s?'active':''}" onclick="meUpdateProp('${block.id}','style','${s}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
+      </div>
+    </div>`);
+    rows.push(meFieldRange('Icon Size', block.id, 'iconSize', p.iconSize||32, 20, 60));
+    rows.push(meFieldAlign(block.id, p.align));
+  }
+
+  if (block.type === 'table') {
+    rows.push(`<div class="me-field">
+      <div class="me-field-label">Edit Cells</div>
+      <div style="overflow-x:auto;border:1px solid rgba(255,255,255,0.08);border-radius:8px;max-height:200px;overflow-y:auto">
+        <table style="border-collapse:collapse;width:max-content;min-width:100%">
+          ${(p.data||[]).map((row,ri) => `<tr>${row.map((cell,ci) => `
+            <td style="padding:3px"><input class="me-input" value="${(cell||'').replace(/"/g,'&quot;')}"
+              style="width:80px;font-size:12px;padding:5px 7px"
+              oninput="meTableUpdateCell('${block.id}',${ri},${ci},this.value)"/></td>`).join('')}</tr>`).join('')}
+        </table>
+      </div>
+    </div>`);
+    rows.push(`<div class="me-field"><div class="me-field-label">Size</div>
+      <div style="display:flex;gap:6px">
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--text-3);margin-bottom:3px">Rows</div>
+          <input class="me-input" type="number" value="${p.rows}" min="1" max="20" style="font-size:13px;padding:6px 8px" oninput="meTableResize('${block.id}','rows',+this.value)"/>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--text-3);margin-bottom:3px">Cols</div>
+          <input class="me-input" type="number" value="${p.cols}" min="1" max="10" style="font-size:13px;padding:6px 8px" oninput="meTableResize('${block.id}','cols',+this.value)"/>
+        </div>
+      </div>
+    </div>`);
+    rows.push(`<div class="me-field"><div class="me-field-label">Header Row</div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" ${p.headerRow?'checked':''} onchange="meUpdateProp('${block.id}','headerRow',this.checked)" style="accent-color:var(--cyan)"/>
+        <span style="font-size:13px;color:var(--text-2)">First row is header</span>
+      </label></div>`);
+    rows.push(meFieldRange('Border Width', block.id, 'borderWidth', p.borderWidth, 0, 5));
+    rows.push(meFieldColor('Border Color', block.id, 'borderColor', p.borderColor));
+    rows.push(meFieldColor('Header Background', block.id, 'headerBg', p.headerBg));
+    rows.push(meFieldColor('Header Text', block.id, 'headerColor', p.headerColor));
+    rows.push(meFieldColor('Cell Background', block.id, 'cellBg', p.cellBg));
+    rows.push(meFieldColor('Cell Text', block.id, 'cellColor', p.cellColor));
+    rows.push(meFieldRange('Cell Padding', block.id, 'cellPadding', p.cellPadding, 4, 32));
+    rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 24));
   }
   if (block.type === 'spacer') {
     rows.push(meFieldRange('Height (px)', block.id, 'height', p.height, 8, 120));
@@ -709,7 +892,9 @@ function meRenderProps(block) {
 function meFieldText(label, id, key, val) {
   return `<div class="me-field">
     <div class="me-field-label">${label}</div>
-    <input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}" oninput="meUpdateProp('${id}','${key}',this.value)"/>
+    <input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}"
+      onfocus="meLastFocusedField={id:'${id}',key:'${key}',el:this}"
+      oninput="meUpdateProp('${id}','${key}',this.value)"/>
   </div>`;
 }
 function meFieldTextarea(label, id, key, val) {
@@ -763,6 +948,66 @@ function meUpdateProp(id, key, value) {
   clearTimeout(ME._propSyncTimer);
   ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
 }
+// Social block helpers
+function meSocialAddPlatform(blockId) {
+  const block = ME.blocks.find(b => b.id === blockId);
+  if (!block) return;
+  block.props.platforms = block.props.platforms || [];
+  block.props.platforms.push({ name:'LinkedIn', url:'' });
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  meRenderProps(block);
+  clearTimeout(ME._propSyncTimer);
+  ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+function meSocialRemovePlatform(blockId, idx) {
+  const block = ME.blocks.find(b => b.id === blockId);
+  if (!block) return;
+  block.props.platforms.splice(idx, 1);
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  meRenderProps(block);
+  clearTimeout(ME._propSyncTimer);
+  ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+function meSocialUpdatePlatform(blockId, idx, field, val) {
+  const block = ME.blocks.find(b => b.id === blockId);
+  if (!block) return;
+  block.props.platforms[idx][field] = val;
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  clearTimeout(ME._propSyncTimer);
+  ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+
+// Table block helpers
+function meTableUpdateCell(blockId, ri, ci, val) {
+  const block = ME.blocks.find(b => b.id === blockId);
+  if (!block) return;
+  block.props.data[ri][ci] = val;
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  clearTimeout(ME._propSyncTimer);
+  ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+function meTableResize(blockId, dim, val) {
+  const block = ME.blocks.find(b => b.id === blockId);
+  if (!block || val < 1) return;
+  const d = block.props.data;
+  if (dim === 'rows') {
+    block.props.rows = val;
+    while (d.length < val) d.push(Array(block.props.cols).fill(''));
+    while (d.length > val) d.pop();
+  } else {
+    block.props.cols = val;
+    d.forEach(row => { while (row.length < val) row.push(''); while (row.length > val) row.pop(); });
+  }
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  meRenderProps(block);
+  clearTimeout(ME._propSyncTimer);
+  ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
 
 /* ══════════════════════════════════════════════════════════════
    SYNC FUNCTIONS
@@ -786,9 +1031,129 @@ function meSyncTextarea() {
 }
 
 function meSyncVisualFromCode() {
-  // Code → update textarea (visual can't be reverse-parsed cleanly, just notify)
   if (ME.cm) document.getElementById('mHtmlTmpl').value = ME.cm.getValue();
-  toast('Code synced to textarea. Visual builder shows current blocks.', 'info', 3000);
+  toast('Code saved. Visual builder shows current blocks.', 'info', 2500);
+}
+
+function meApplyCodeToVisual() {
+  if (!ME.cm) return;
+  const html = ME.cm.getValue().trim();
+  if (!html) { toast('Code editor is empty', 'warn'); return; }
+
+  // Save raw HTML to textarea
+  document.getElementById('mHtmlTmpl').value = html;
+
+  // Try to parse known block patterns back into ME.blocks
+  const parsed = meParseHtmlToBlocks(html);
+  if (parsed && parsed.length) {
+    ME.blocks = parsed;
+    ME.selectedId = null;
+    meRenderCanvas();
+    meRenderProps(null);
+    toast('✓ Visual canvas updated from code (' + parsed.length + ' blocks detected)', 'success', 2500);
+  } else {
+    // Unknown/external HTML — store as raw passthrough block
+    ME.blocks = [{
+      id: 'b' + (ME.nextId++),
+      type: 'raw',
+      props: { html: html }
+    }];
+    meRenderCanvas();
+    meRenderProps(null);
+    toast('External HTML applied. Editing in visual mode may be limited.', 'info', 3000);
+  }
+}
+
+// Parse full email HTML back into blocks array (best-effort)
+function meParseHtmlToBlocks(html) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const blocks = [];
+
+    // Look for the inner table cell that contains blocks
+    const innerTd = doc.querySelector('table table td') || doc.querySelector('table td');
+    if (!innerTd) return null;
+
+    const children = Array.from(innerTd.children);
+    if (!children.length) return null;
+
+    children.forEach(el => {
+      const style = el.getAttribute('style') || '';
+      const bgMatch = style.match(/background[^;]*?:\s*([#\w(),\s]+)/);
+      const bgColor = bgMatch ? bgMatch[1].trim() : '#ffffff';
+      const padMatch = style.match(/padding:\s*(\d+)px\s+(\d+)px/);
+      const paddingV = padMatch ? parseInt(padMatch[1]) : 20;
+      const paddingH = padMatch ? parseInt(padMatch[2]) : 40;
+
+      // Spacer
+      const hMatch = style.match(/height:\s*(\d+)px/);
+      if (hMatch && !el.querySelector('h1,p,a,img,div>div')) {
+        blocks.push({ id: 'b'+(ME.nextId++), type:'spacer', props:{ height:parseInt(hMatch[1]), bgColor } });
+        return;
+      }
+      // Divider
+      const innerDiv = el.querySelector('div');
+      if (innerDiv && el.children.length === 1) {
+        const iStyle = innerDiv.getAttribute('style') || '';
+        const hpx = iStyle.match(/height:\s*(\d+)px/);
+        const col = iStyle.match(/background:\s*([#\w]+)/);
+        if (hpx) {
+          blocks.push({ id:'b'+(ME.nextId++), type:'divider', props:{ color: col?col[1]:'#e2e8f0', bgColor, paddingV, thickness:parseInt(hpx[1]) }});
+          return;
+        }
+      }
+      // Heading h1
+      const h1 = el.querySelector('h1');
+      if (h1) {
+        const s = h1.getAttribute('style') || '';
+        const fsz = (s.match(/font-size:\s*(\d+)px/) || [])[1] || 28;
+        const fw  = (s.match(/font-weight:\s*(\d+)/)  || [])[1] || 700;
+        const col = (s.match(/color:\s*([#\w]+)/)      || [])[1] || '#1e293b';
+        const aln = (s.match(/text-align:\s*(\w+)/)    || [])[1] || 'center';
+        blocks.push({ id:'b'+(ME.nextId++), type:'header', props:{ text:h1.textContent, fontSize:+fsz, fontWeight:+fw, color:col, bgColor, align:aln, paddingV, paddingH }});
+        return;
+      }
+      // Button
+      const anchor = el.querySelector('a');
+      if (anchor) {
+        const s   = anchor.getAttribute('style') || '';
+        const bg  = (s.match(/background:\s*([^;]+)/)  || [])[1] || '#00d4ff';
+        const col = (s.match(/color:\s*([#\w]+)/)       || [])[1] || '#ffffff';
+        const br  = (s.match(/border-radius:\s*(\d+)px/) || [])[1] || 10;
+        const fs  = (s.match(/font-size:\s*(\d+)px/)    || [])[1] || 15;
+        const fw  = (s.match(/font-weight:\s*(\d+)/)    || [])[1] || 700;
+        const aln = (style.match(/text-align:\s*(\w+)/) || [])[1] || 'center';
+        blocks.push({ id:'b'+(ME.nextId++), type:'button', props:{ text:anchor.textContent.trim(), link:anchor.getAttribute('href')||'#', btnBg:bg.trim(), btnColor:col, bgColor, align:aln, paddingV, paddingH, borderRadius:+br, fontSize:+fs, fontWeight:+fw }});
+        return;
+      }
+      // Image
+      const img = el.querySelector('img');
+      if (img) {
+        const s  = img.getAttribute('style') || '';
+        const br = (s.match(/border-radius:\s*(\d+)px/) || [])[1] || 8;
+        const w  = (s.match(/width:\s*(\d+)%/)          || [])[1] || 100;
+        blocks.push({ id:'b'+(ME.nextId++), type:'image', props:{ src:img.getAttribute('src')||'', alt:img.getAttribute('alt')||'', width:+w, borderRadius:+br, bgColor, paddingV, paddingH }});
+        return;
+      }
+      // Paragraph / text
+      const p = el.querySelector('p');
+      if (p) {
+        const s   = p.getAttribute('style') || '';
+        const fs  = (s.match(/font-size:\s*(\d+)px/)  || [])[1] || 16;
+        const col = (s.match(/color:\s*([#\w]+)/)      || [])[1] || '#475569';
+        const lh  = (s.match(/line-height:\s*([\d.]+)/) || [])[1] || 1.75;
+        const aln = (s.match(/text-align:\s*(\w+)/)    || [])[1] || 'left';
+        blocks.push({ id:'b'+(ME.nextId++), type:'text', props:{ text:p.innerHTML.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,''), fontSize:+fs, color:col, bgColor, align:aln, paddingV, paddingH, lineHeight:+lh }});
+        return;
+      }
+    });
+
+    return blocks.length ? blocks : null;
+  } catch(e) {
+    console.warn('Block parse failed:', e);
+    return null;
+  }
 }
 
 function meRefreshPreviewIframe() {
@@ -846,7 +1211,19 @@ function meInsertTag(tag) {
     ME.cm.focus();
     toast('Inserted ' + tag, 'success', 1200);
   } else if (ME.activeTab === 'visual') {
-    // Insert into selected block's text if applicable
+    // If a specific field had focus, insert there
+    if (meLastFocusedField && meLastFocusedField.el) {
+      const el  = meLastFocusedField.el;
+      const s   = el.selectionStart || el.value.length;
+      const e   = el.selectionEnd   || el.value.length;
+      el.value  = el.value.slice(0, s) + tag + el.value.slice(e);
+      el.selectionStart = el.selectionEnd = s + tag.length;
+      meUpdateProp(meLastFocusedField.id, meLastFocusedField.key, el.value);
+      el.focus();
+      toast('Inserted ' + tag, 'success', 1200);
+      return;
+    }
+    // Fallback: append to selected block's text
     const block = ME.blocks.find(b => b.id === ME.selectedId);
     if (block && block.props.text !== undefined) {
       block.props.text = (block.props.text || '') + tag;
@@ -935,18 +1312,62 @@ const ME_TEMPLATES = {
 function meBuildTemplatePicker() {
   const row = document.getElementById('meTplRow');
   if (!row) return;
-  row.innerHTML = Object.entries(ME_TEMPLATES).map(([key, tpl]) => `
-    <div class="me-tpl-card" onclick="meLoadTemplate('${key}')">
-      <div class="me-tpl-thumb" style="background:${tpl.thumb}">${tpl.name.split(' ')[0]}</div>
-      <div class="me-tpl-info">
-        <div class="me-tpl-name">${tpl.name.slice(tpl.name.indexOf(' ')+1)}</div>
-        <button class="me-tpl-btn">Use This</button>
+
+  // Blank template entry
+  const blankCard = `
+    <div class="me-tpl-card" onclick="meLoadTemplate('blank')">
+      <div class="me-tpl-thumb" style="background:#f8fafc;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" style="width:36px;height:36px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
       </div>
-    </div>
-  `).join('');
+      <div class="me-tpl-info">
+        <div class="me-tpl-name">Blank Template</div>
+        <button class="me-tpl-btn">Start Fresh</button>
+      </div>
+    </div>`;
+
+  const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
+    // Generate mini preview HTML for the iframe thumbnail
+    const previewHtml = meGetHtmlFromBlocks(tpl.blocks);
+    return `
+      <div class="me-tpl-card" onclick="meLoadTemplate('${key}')">
+        <div class="me-tpl-thumb">
+          <iframe srcdoc="${previewHtml.replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" scrolling="no" tabindex="-1"></iframe>
+          <div class="me-tpl-thumb-overlay"></div>
+        </div>
+        <div class="me-tpl-info">
+          <div class="me-tpl-name">${tpl.name.slice(tpl.name.indexOf(' ')+1)}</div>
+          <button class="me-tpl-btn">Use This</button>
+        </div>
+      </div>`;
+  });
+
+  row.innerHTML = blankCard + cards.join('');
+}
+
+// Generate HTML from a blocks array (without assigning IDs)
+function meGetHtmlFromBlocks(blocks) {
+  const inner = blocks.map(b => meBlockToHtml({ type: b.type, props: b.props })).join('\n');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+    <style>*{margin:0;padding:0;box-sizing:border-box}body{background:#f1f5f9;font-family:Arial,sans-serif}</style>
+    </head><body>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9">
+    <tr><td align="center" style="padding:16px 8px">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:12px;overflow:hidden">
+    <tr><td>${inner}</td></tr></table></td></tr></table>
+    </body></html>`;
 }
 
 function meLoadTemplate(key) {
+  if (key === 'blank') {
+    ME.blocks = [];
+    ME.selectedId = null;
+    meRenderCanvas();
+    meSyncToCode();
+    meHideTemplatePicker();
+    if (ME.activeTab !== 'visual') meSwitchTab('visual');
+    toast('Blank canvas ready', 'success', 1500);
+    return;
+  }
   const tpl = ME_TEMPLATES[key];
   if (!tpl) return;
   ME.blocks = tpl.blocks.map(b => ({
@@ -1030,7 +1451,21 @@ function mRenderAt(idx) {
 
 function mNavPrev() { if (MS.prevIdx > 0)                  { MS.prevIdx--; mRenderAt(MS.prevIdx); } }
 function mNavNext() { if (MS.prevIdx < MS.rows.length - 1) { MS.prevIdx++; mRenderAt(MS.prevIdx); } }
-
+function mAppendLog(msg, type) {
+  const log = document.getElementById('mSendLog');
+  if (!log) return;
+  const now = new Date();
+  const ts  = now.toTimeString().slice(0,8);
+  const colors = { success:'#4ade80', error:'#f87171', warn:'#fbbf24', info:'var(--text-2)' };
+  const icons  = { success:'✓', error:'✗', warn:'⚠', info:'·' };
+  const color  = colors[type] || colors.info;
+  const icon   = icons[type]  || '·';
+  const entry  = document.createElement('div');
+  entry.style.cssText = `color:${color};padding:1px 0;display:flex;gap:8px;align-items:baseline`;
+  entry.innerHTML = `<span style="color:var(--text-3);flex-shrink:0">[${ts}]</span><span style="flex-shrink:0">${icon}</span><span>${msg}</span>`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
 /* ══════════════════════════════════════════════════════════════
    SEND
 ══════════════════════════════════════════════════════════════ */
@@ -1238,34 +1673,44 @@ async function mLoadHxFormData(formId) {
    MANUAL ENTRY — mirrors combined-tool exactly
 ══════════════════════════════════════════════════════════════ */
 function mManualRenderTable() {
-  const headerRow = document.getElementById('mManualHeaderRow');
-  const body      = document.getElementById('mManualBody');
-  if (!headerRow || !body) return;
+  const thead = document.getElementById('mManualHeaderRow');
+  const tbody = document.getElementById('mManualBody');
+  if (!thead || !tbody) return;
 
-  headerRow.innerHTML = '<th style="width:36px">#</th>' +
-    mManualCols.map((col, ci) => {
-      const isEmailLocked = col === 'Email';
-      const isDefault     = (col === 'Name' || col === 'Email');
-      const control = isEmailLocked
-        ? `<span style="font-size:10px;padding:1px 7px;border-radius:4px;background:rgba(0,212,255,0.12);color:var(--cyan);font-weight:700;letter-spacing:0.3px;margin-left:4px;vertical-align:middle">Required</span>`
-        : (!isDefault
-          ? `<button class="manual-col-del" onclick="mManualRemoveColumn(${ci})" title="Remove column">
-               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-             </button>` : '');
-      return `<th><div class="manual-col-header"><span>${col}</span>${control}</div></th>`;
+  // Header row
+  thead.innerHTML =
+    mManualCols.map(col => {
+      const locked = M_LOCKED_COLS.includes(col);
+      return `<th>
+        <div class="manual-col-header">
+          <span>${col}</span>
+          ${locked
+            ? `<span title="Required" style="color:var(--cyan);font-size:10px;font-weight:700;margin-left:2px">✱</span>`
+            : `<button class="manual-col-del" onclick="mManualDeleteColumn('${col}')" title="Remove column">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>`}
+        </div>
+      </th>`;
     }).join('') + '<th style="width:36px"></th>';
 
-  body.innerHTML = mManualRows.map((row, ri) =>
-    '<tr>' +
-      `<td style="color:var(--text-3);font-size:12px;text-align:center">${ri + 1}</td>` +
-      mManualCols.map(col =>
-        `<td><input type="text" placeholder="${col}" value="${(row[col] || '').replace(/"/g, '&quot;')}" oninput="mManualRows[${ri}]['${col}']=this.value"/></td>`
-      ).join('') +
-      `<td><button class="manual-row-del" onclick="mManualRemoveRow(${ri})">
-         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-       </button></td>` +
-    '</tr>'
-  ).join('');
+  // Body rows
+  tbody.innerHTML = mManualRows.map((row, ri) => `
+    <tr>
+      ${mManualCols.map(col => {
+        const locked = M_LOCKED_COLS.includes(col);
+        return `<td>
+          <input type="${locked ? 'email' : 'text'}"
+            placeholder="${locked ? 'email@example.com' : col}"
+            value="${(row[col]||'').replace(/"/g,'&quot;')}"
+            oninput="mManualRows[${ri}]['${col}']=this.value"
+            style="${locked ? 'border-color:rgba(0,212,255,0.2)' : ''}"/>
+        </td>`;
+      }).join('')}
+      <td><button class="manual-row-del" onclick="mManualDeleteRow(${ri})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </button></td>
+    </tr>
+  `).join('');
 }
 
 function mManualAddRow() {
@@ -1282,14 +1727,20 @@ function mManualRemoveRow(idx) {
 }
 
 function mManualAddColumn() {
-  const name = prompt('Column name (e.g. Course, Date, Score):');
+  const name = prompt('Column name:');
   if (!name || !name.trim()) return;
   const col = name.trim();
-  if (mManualCols.includes(col)) { toast('Column already exists', 'warning'); return; }
+  if (mManualCols.includes(col)) { toast('Column already exists', 'warn'); return; }
   mManualCols.push(col);
   mManualRows.forEach(r => r[col] = '');
   mManualRenderTable();
-  toast('Added column: ' + col, 'success', 1500);
+}
+
+function mManualDeleteColumn(col) {
+  if (M_LOCKED_COLS.includes(col)) { toast('Email column is required and cannot be removed', 'warn'); return; }
+  mManualCols = mManualCols.filter(c => c !== col);
+  mManualRows.forEach(r => delete r[col]);
+  mManualRenderTable();
 }
 
 function mManualRemoveColumn(ci) {
@@ -1302,30 +1753,25 @@ function mManualRemoveColumn(ci) {
 }
 
 function mManualApplyData() {
-  // Validate: Email is required on every row
-  const missingEmail = mManualRows.filter(r => !r.Email?.trim()).length;
-  if (missingEmail > 0) {
-    toast(`${missingEmail} row(s) are missing an Email address. Email is required for all recipients.`, 'error');
+  // Validate: all Email fields must be filled
+  const emptyEmails = mManualRows.filter(r => !r['Email'] || !r['Email'].trim());
+  if (emptyEmails.length) {
+    toast(`${emptyEmails.length} row(s) missing Email — Email is required for all rows`, 'error');
     return;
   }
-  const valid = mManualRows.filter(r => r.Name?.trim() || r.Email?.trim());
-  if (!valid.length) { toast('Add at least one participant with a name or email', 'error'); return; }
+  const validRows = mManualRows.filter(r => mManualCols.some(c => r[c] && r[c].trim()));
+  if (!validRows.length) { toast('Add at least one recipient', 'error'); return; }
   MS.headers = [...mManualCols];
-  MS.rows    = valid.map(r => ({ ...r }));
+  MS.rows    = validRows;
   mPopulateDropdowns();
-  // Force-set selects immediately — don't rely on regex match alone
-  const nameEl  = document.getElementById('mNameCol');
-  const emailEl = document.getElementById('mEmailCol');
-  if (nameEl  && MS.headers.includes('Name'))  nameEl.value  = 'Name';
-  if (emailEl && MS.headers.includes('Email')) emailEl.value = 'Email';
-  document.getElementById('mColCard').style.display = 'block';
+  // Auto-select Email column
+  const emailSel = document.getElementById('mEmailCol');
+  if (emailSel) emailSel.value = 'Email';
   const msg = document.getElementById('mManualLoadedMsg');
-  if (msg) {
-    msg.style.display = 'block';
-    msg.innerHTML = `<div class="data-ok">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="width:16px;height:16px;flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
-      <span><strong style="color:#34d399">Data loaded</strong> — ${valid.length} recipients entered manually</span>
-    </div>`;
-  }
-  toast(valid.length + ' recipients ready', 'success');
+  msg.innerHTML = `<div class="notice notice-green">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    <span><strong>${validRows.length} recipients</strong> loaded from manual entry</span>
+  </div>`;
+  msg.style.display = 'block';
+  toast(validRows.length + ' recipients applied', 'success');
 }
