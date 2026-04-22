@@ -321,9 +321,10 @@ function initCanvas() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
   
-  // ── Mouse Wheel Zoom ──
+  // ── Mouse Wheel Zoom & Canvas Panning ──
   const zone = document.getElementById('canvasWrap');
   if (zone) {
+    // Zoom
     zone.addEventListener('wheel', e => {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
@@ -331,6 +332,31 @@ function initCanvas() {
         setZoom((ED.zoom || 1) + delta);
       }
     }, { passive: false });
+
+    // Pan
+    let isPanning = false;
+    let startX, startY, scrollLeft, scrollTop;
+    zone.addEventListener('mousedown', e => {
+      // Only pan if clicking empty space on the background or the canvas itself (not on field handles)
+      if (e.target === zone || e.target.id === 'certCanvas') {
+        isPanning = true;
+        startX = e.pageX - zone.offsetLeft;
+        startY = e.pageY - zone.offsetTop;
+        scrollLeft = zone.scrollLeft;
+        scrollTop = zone.scrollTop;
+      }
+    });
+    zone.addEventListener('mousemove', e => {
+      if (!isPanning) return;
+      e.preventDefault();
+      const x = e.pageX - zone.offsetLeft;
+      const y = e.pageY - zone.offsetTop;
+      zone.scrollLeft = scrollLeft - (x - startX);
+      zone.scrollTop = scrollTop - (y - startY);
+    });
+    window.addEventListener('mouseup', () => {
+      isPanning = false;
+    });
   }
 
   // ── Pro Keyboard Shortcuts ──
@@ -585,33 +611,25 @@ function renderHandles() {
     // Threshold Check: If the box is too small on the canvas, it switches to minimalist mode
     const isSmall = h < 40 || w < 80;
 
-    if (isSmall) {
-        // Minimal Mode: Top Left Corner + RIGHT Width Stretcher ONLY (Fixed Side)
-        const tl = document.createElement('div');
-        tl.className = 'tf-resizer-corner tl';
-        tl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, 'l'); });
-        el.appendChild(tl);
+    // We always build all controllers, but if the box is too small, we set opacity to 0 
+    // for the extra ones so they are invisible, but fully functional when hovered over!
+    const isSmall = h < 40 || w < 80;
 
-        const rightResizer = document.createElement('div');
-        rightResizer.className = 'tf-resizer-width right';
-        rightResizer.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, 'right'); });
-        el.appendChild(rightResizer);
-    } else {
-        // Full Mode: All 4 Corners + Both Width Stretchers
-        ['tl', 'tr', 'bl', 'br'].forEach(corner => {
-            const cEl = document.createElement('div');
-            cEl.className = `tf-resizer-corner ${corner}`;
-            cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
-            el.appendChild(cEl);
-        });
+    ['tl', 'tr', 'bl', 'br'].forEach(corner => {
+        const cEl = document.createElement('div');
+        cEl.className = `tf-resizer-corner ${corner}`;
+        if (isSmall && corner !== 'tl') cEl.style.opacity = '0'; // Hide visually, but keep active!
+        cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
+        el.appendChild(cEl);
+    });
 
-        ['left', 'right'].forEach(side => {
-            const sEl = document.createElement('div');
-            sEl.className = `tf-resizer-width ${side}`;
-            sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
-            el.appendChild(sEl);
-        });
-    }
+    ['left', 'right'].forEach(side => {
+        const sEl = document.createElement('div');
+        sEl.className = `tf-resizer-width ${side}`;
+        if (isSmall && side !== 'right') sEl.style.opacity = '0'; // Hide visually, but keep active!
+        sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
+        el.appendChild(sEl);
+    });
 
     // Freeform Draging Base (allows you to drag by clicking anywhere inside the box, just like Canva)
     el.addEventListener('mousedown', e => { 
