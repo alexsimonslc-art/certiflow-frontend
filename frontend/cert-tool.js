@@ -1409,71 +1409,96 @@ async function startGeneration() {
   goStep(5, true);
   const total = CS.rows.length;
   document.getElementById('genCounter').textContent = `0 / ${total}`;
-  log('info', 'Preparing certificate generation job…');
+  document.getElementById('genLog').innerHTML = ''; // Clear old logs
+  log('info', 'Initializing generation sequence...');
 
   const payload = {
     campaignName:  document.getElementById('campaignName').value,
     template: {
-    width: ED.w,
-    height: ED.h,
-    backgroundBase64: ED.bgBase64,
-    bgColor: ED.bgColor,
-    fields: ED.fields.map(f => ({ ...f })),
-    fontUrls: getUsedFontUrls(),
+      width: ED.w,
+      height: ED.h,
+      backgroundBase64: ED.bgBase64,
+      bgColor: ED.bgColor,
+      fields: ED.fields.map(f => ({ ...f })),
+      fontUrls: getUsedFontUrls(),
     },
     participants:  CS.rows,
     nameCol:       ED.fields.find(f => f.isPrimary)?.column || '',
     emailCol:      '',
     fieldMappings: ED.fields.map(f => ({ col: f.column, ph: f.placeholder })),
     sheetId:       document.getElementById('sheetId')?.value || null,
-    writeBack:     document.getElementById('writeBackToggle').classList.contains('on'),
+    writeBack:     document.getElementById('writeBackToggle')?.classList.contains('on') || false,
   };
 
   try {
-    // Reset bar to 0
     document.getElementById('genBar').style.width = '0%';
     document.getElementById('genPct').textContent  = '0%';
-    document.getElementById('genStatus').textContent = 'Sending job to server…';
-    log('info', `Sending ${total} certificates to generation server…`);
+    document.getElementById('genStatus').textContent = 'Connecting to server...';
 
-    const res = await apiFetch('/api/certificates/generate', {
+    const token = localStorage.getItem('Honourix_token');
+    const apiUrl = 'https://certiflow-backend-73xk.onrender.com/api/certificates/generate';
+
+    // Send payload and wait for the stream connection
+    const response = await fetch(apiUrl, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
       body: JSON.stringify(payload)
     });
 
-    CS.results = res.results || [];
-    const ok  = CS.results.filter(r => r.status === 'success').length;
-    const bad = CS.results.filter(r => r.status !== 'success').length;
-
-    // Animate progress based on each completed certificate
-    let displayed = 0;
-    function animateNext() {
-      if (displayed >= CS.results.length) {
-        setTimeout(() => showResults(), 600);
-        return;
-      }
-      const r    = CS.results[displayed];
-      displayed++;
-      const pct  = Math.round(displayed / total * 100);
-
-      document.getElementById('genCounter').textContent  = `${displayed} / ${total}`;
-      document.getElementById('genBar').style.width      = pct + '%';
-      document.getElementById('genPct').textContent      = pct + '%';
-      document.getElementById('genStatus').textContent   = `Processing… ${displayed} of ${total} complete`;
-
-      if (r.status === 'success') {
-        log('ok', `✓ ${r.name || 'Certificate ' + displayed}`);
-      } else {
-        log('err', `✗ ${r.name || 'Certificate ' + displayed} — ${r.error || 'Failed'}`);
-      }
-
-      // Delay per cert scales with total: fast for small batches, steady for large
-      const delay = Math.max(60, Math.min(300, Math.round(8000 / total)));
-      setTimeout(animateNext, delay);
+    if (!response.ok) {
+       const errData = await response.json().catch(()=>({}));
+       throw new Error(errData.error || `HTTP Error ${response.status}`);
     }
 
-    animateNext();
+    // Attach stream reader
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    let processed = 0;
+    CS.results = [];
 
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // Keep the last partial line in the buffer until the next chunk
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const event = JSON.parse(line);
+
+          // LIVE UI UPDATES based on streamed events
+          if (event.type === 'info') {
+            log('info', event.message);
+            document.getElementById('genStatus').textContent = event.message;
+          } 
+          else if (event.type === 'success' || event.type === 'error') {
+            processed++;
+            CS.results.push(event.result);
+            
+            const pct = Math.round((processed / total) * 100);
+            document.getElementById('genCounter').textContent  = `${processed} / ${total}`;
+            document.getElementById('genBar').style.width      = pct + '%';
+            document.getElementById('genPct').textContent      = pct + '%';
+            document.getElementById('genStatus').textContent   = `Processing… ${processed} of ${total} complete`;
+
+            log(event.type === 'success' ? 'ok' : 'err', event.message);
+          } 
+          else if (event.type === 'done') {
+            log('info', event.message);
+            setTimeout(() => showResults(), 800);
+          }
+        } catch(e) {
+          console.warn("Error parsing stream chunk:", e, line);
+        }
+      }
+    }
   } catch (e) {
     log('err', 'Generation failed: ' + e.message);
     toast('Failed: ' + e.message, 'error');
