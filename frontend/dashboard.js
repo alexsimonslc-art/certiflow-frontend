@@ -431,3 +431,24 @@ function loadScript(src) {
     document.head.appendChild(s);
   });
 }
+
+// ── Global Sidebar Shortcut ──
+document.addEventListener('keydown', (e) => {
+  // Check for Ctrl + . (Windows) OR Cmd + . (Mac)
+  if ((e.ctrlKey || e.metaKey) && e.key === '.') {
+    e.preventDefault(); // Prevents any default browser actions
+
+    // Replace '.collapse-btn' with the actual ID or Class of your collapse button!
+    const collapseBtn = document.querySelector('.collapse-btn') || document.getElementById('sidebarCollapseBtn');
+    
+    if (collapseBtn) {
+      collapseBtn.click(); // Fakes a mouse click on the button
+    } else {
+      // Fallback: Directly toggle the collapsed class on the sidebar itself
+      const sidebar = document.querySelector('.app-sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('collapsed'); 
+      }
+    }
+  }
+});
