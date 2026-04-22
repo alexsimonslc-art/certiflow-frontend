@@ -22,6 +22,8 @@ const MSTEPS = [
 ];
 
 /* ── Editor State ────────────────────────────────────────────── */
+window.meLastFocusedKey = 'text'; // FIX: Tracks exactly where to drop the merge tags!
+
 const ME = {
   blocks: [],
   selectedId: null,
@@ -33,6 +35,45 @@ const ME = {
   initialized: false,
 };
 
+// Global var to block sending if quota is exceeded
+window.mailQuotaRemaining = 0; 
+
+// Fetch and render the live quota
+async function fetchMailQuota() {
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    if (!token) return;
+    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/quota', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error('Quota fetch failed');
+    const data = await res.json();
+    
+    // Update the Widget UI
+    const typeEl = document.getElementById('quotaAccountType');
+    const sentEl = document.getElementById('quotaSent');
+    const limitEl = document.getElementById('quotaLimit');
+    const bar = document.getElementById('quotaBar');
+
+    if (typeEl) typeEl.textContent = `${data.accountType} Account`;
+    if (sentEl) sentEl.textContent = data.sentToday;
+    if (limitEl) limitEl.textContent = data.dailyLimit;
+    
+    window.mailQuotaRemaining = data.remaining;
+
+    if (bar) {
+      const pct = Math.min((data.sentToday / data.dailyLimit) * 100, 100);
+      bar.style.width = pct + '%';
+      // Color Warning Logic
+      if (pct >= 100) { bar.style.background = '#f43f5e'; bar.style.boxShadow = '0 0 12px #f43f5e'; } // Red
+      else if (pct >= 80) { bar.style.background = '#fbbf24'; bar.style.boxShadow = '0 0 12px #fbbf24'; } // Yellow
+      else { bar.style.background = 'var(--cyan)'; bar.style.boxShadow = '0 0 12px var(--cyan)'; } // Cyan
+    }
+  } catch (err) {
+    console.error('Failed to fetch quota:', err);
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════
    INIT
 ══════════════════════════════════════════════════════════════ */
@@ -42,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
   mBuildStepper();
   meBuildTemplatePicker();
   lucide.createIcons();
-if (document.getElementById('mManualHeaderRow')) mManualRenderTable();
+  fetchMailQuota(); // Fetch quota immediately
+  if (document.getElementById('mManualHeaderRow')) mManualRenderTable();
   // Drag-drop on upload zone
   const zone = document.getElementById('mUploadZone');
   if (zone) {
@@ -233,11 +275,22 @@ const ME_DEFS = {
   },
   header: {
     label: 'Heading',
-    defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }),
+    defaults: () => ({ text: 'Your Email Heading', fontFamily: 'Arial, sans-serif', fontStyle: 'normal', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }),
   },
   text: {
     label: 'Text',
-    defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }),
+    defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontFamily: 'Arial, sans-serif', fontStyle: 'normal', fontWeight: 400, fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }),
+  },
+  social: {
+    label: 'Social Links',
+    defaults: () => ({ linkedin: '', twitter: '', instagram: '', facebook: '', website: '', align: 'center', iconSize: 28, spacing: 16, bgColor: '#ffffff', paddingV: 24 }),
+  },
+  table: {
+    label: 'Data Table',
+    defaults: () => ({ 
+      tableData: [['Date', '{{date}}'], ['Venue', '{{org}}']], 
+      borderColor: '#e2e8f0', headBg: '#f8fafc', cellPadding: 12, bgColor: '#ffffff', paddingV: 24, paddingH: 40, fontFamily: 'Arial, sans-serif', color: '#1e293b' 
+    }),
   },
   button: {
     label: 'Button',
@@ -266,10 +319,53 @@ const ME_DEFS = {
 ══════════════════════════════════════════════════════════════ */
 function meBlockToHtml(block) {
   const p = block.props;
-  const fontStack =  "'Montserrat','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
+  const sysFont = "-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
+  const fFamily = p.fontFamily ? `${p.fontFamily}, ${sysFont}` : sysFont;
 
   switch (block.type) {
     case 'logo':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
+  <div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fFamily}">${p.text}</div>
+  ${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fFamily}">${p.tagline}</div>` : ''}
+</div>`;
+
+    case 'header':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}">
+  <h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};font-style:${p.fontStyle||'normal'};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fFamily}">${p.text}</h1>
+</div>`;
+
+    case 'text':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}">
+  <p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight||400};font-style:${p.fontStyle||'normal'};color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fFamily}">${p.text.replace(/\n/g, '<br/>')}</p>
+</div>`;
+
+    case 'button':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
+  <a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fFamily}">${p.text}</a>
+</div>`;
+
+    case 'social':
+      let links = '';
+      if (p.linkedin) links += `<a href="${p.linkedin}" style="display:inline-block;margin:0 ${p.spacing/2}px;"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="${p.iconSize}" alt="LinkedIn"/></a>`;
+      if (p.twitter) links += `<a href="${p.twitter}" style="display:inline-block;margin:0 ${p.spacing/2}px;"><img src="https://cdn-icons-png.flaticon.com/512/5969/5969020.png" width="${p.iconSize}" alt="X"/></a>`;
+      if (p.instagram) links += `<a href="${p.instagram}" style="display:inline-block;margin:0 ${p.spacing/2}px;"><img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" width="${p.iconSize}" alt="Instagram"/></a>`;
+      if (p.facebook) links += `<a href="${p.facebook}" style="display:inline-block;margin:0 ${p.spacing/2}px;"><img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" width="${p.iconSize}" alt="Facebook"/></a>`;
+      if (p.website) links += `<a href="${p.website}" style="display:inline-block;margin:0 ${p.spacing/2}px;"><img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" width="${p.iconSize}" alt="Website"/></a>`;
+      
+      return `<div style="padding:${p.paddingV}px 40px;background:${p.bgColor};text-align:${p.align}">${links || `<span style="color:#94a3b8;font-family:${sysFont};font-size:13px;">[Add Social Links in Properties]</span>`}</div>`;
+
+    case 'table':
+      if (!p.tableData || !p.tableData.length) return '';
+      const rows = p.tableData.map((row, i) => {
+        const bg = i === 0 ? p.headBg : 'transparent';
+        const fw = i === 0 ? '700' : '400';
+        return `<tr><td style="padding:${p.cellPadding}px;border-bottom:1px solid ${p.borderColor};background:${bg};font-weight:${fw};width:40%;">${row[0]}</td><td style="padding:${p.cellPadding}px;border-bottom:1px solid ${p.borderColor};">${row[1]}</td></tr>`;
+      }).join('');
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};">
+        <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${p.borderColor};font-family:${fFamily};font-size:14px;color:${p.color};border-collapse:collapse;text-align:left;">
+          ${rows}
+        </table>
+      </div>`;
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
   <div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fontStack}">${p.text}</div>
   ${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fontStack}">${p.tagline}</div>` : ''}
@@ -387,11 +483,15 @@ function meOnStepEnter() {
     }, 400);
   });
 
-  // If no blocks and no existing HTML, load default template
+  // Show template picker if starting fresh
   if (!ME.blocks.length && !ME.cm.getValue().trim()) {
-    meLoadTemplate('cert');
-  } else if (ME.blocks.length) {
-    meSyncToCode();
+    document.getElementById('meTemplateScreen').style.display = 'block';
+    document.getElementById('meCard').style.display = 'none';
+    meBuildTemplatePicker(); // Renders the new grid
+  } else {
+    document.getElementById('meTemplateScreen').style.display = 'none';
+    document.getElementById('meCard').style.display = 'block';
+    if (ME.blocks.length) meSyncToCode();
   }
 }
 
@@ -571,6 +671,30 @@ function meRenderProps(block) {
   if (['logo','header','text','footer'].includes(block.type)) {
     rows.push(meFieldTextarea('Text', block.id, 'text', p.text));
   }
+  
+  // Font Styling Row
+  if (['header','text'].includes(block.type)) {
+    rows.push(meFieldFont(block.id, p));
+  }
+
+  // Social Links
+  if (block.type === 'social') {
+    rows.push(meFieldText('LinkedIn URL', block.id, 'linkedin', p.linkedin));
+    rows.push(meFieldText('X (Twitter) URL', block.id, 'twitter', p.twitter));
+    rows.push(meFieldText('Instagram URL', block.id, 'instagram', p.instagram));
+    rows.push(meFieldText('Facebook URL', block.id, 'facebook', p.facebook));
+    rows.push(meFieldText('Website URL', block.id, 'website', p.website));
+    rows.push(meFieldRange('Icon Size', block.id, 'iconSize', p.iconSize, 16, 48));
+    rows.push(meFieldRange('Icon Spacing', block.id, 'spacing', p.spacing, 4, 40));
+  }
+
+  // Data Table
+  if (block.type === 'table') {
+    rows.push(meFieldTable(block.id, p.tableData));
+    rows.push(meFieldColor('Border Color', block.id, 'borderColor', p.borderColor));
+    rows.push(meFieldColor('Header Background', block.id, 'headBg', p.headBg));
+    rows.push(meFieldRange('Cell Padding', block.id, 'cellPadding', p.cellPadding, 4, 24));
+  }
   if (block.type === 'logo') {
     rows.push(meFieldText('Tagline', block.id, 'tagline', p.tagline || ''));
   }
@@ -628,9 +752,67 @@ function meRenderProps(block) {
 function meFieldText(label, id, key, val) {
   return `<div class="me-field">
     <div class="me-field-label">${label}</div>
-    <input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}" oninput="meUpdateProp('${id}','${key}',this.value)"/>
+    <input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}" onfocus="window.meLastFocusedKey='${key}'" oninput="meUpdateProp('${id}','${key}',this.value)"/>
   </div>`;
 }
+function meFieldTextarea(label, id, key, val) {
+  return `<div class="me-field">
+    <div class="me-field-label">${label}</div>
+    <textarea class="me-textarea" onfocus="window.meLastFocusedKey='${key}'" oninput="meUpdateProp('${id}','${key}',this.value)">${(val||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+  </div>`;
+}
+
+// FORMATTING & FONTS WIDGET
+function meFieldFont(id, p) {
+  const fonts = ['Arial, sans-serif', 'Helvetica, sans-serif', 'Verdana, sans-serif', 'Tahoma, sans-serif', 'Georgia, serif', "'Courier New', monospace"];
+  const weights = [{l:'Normal', v:400}, {l:'Semi-Bold', v:600}, {l:'Bold', v:700}];
+  return `
+  <div class="me-field">
+    <div class="me-field-label">Typography</div>
+    <select class="me-input" onchange="meUpdateProp('${id}','fontFamily',this.value)" style="margin-bottom:6px;">
+      ${fonts.map(f => `<option value="${f}" ${p.fontFamily===f?'selected':''}>${f.split(',')[0].replace(/'/g,'')}</option>`).join('')}
+    </select>
+    <div style="display:flex; gap:6px;">
+      <select class="me-input" onchange="meUpdateProp('${id}','fontWeight',Number(this.value))">
+        ${weights.map(w => `<option value="${w.v}" ${p.fontWeight===w.v?'selected':''}>${w.l}</option>`).join('')}
+      </select>
+      <button class="me-align-btn ${p.fontStyle==='italic'?'active':''}" onclick="meUpdateProp('${id}','fontStyle', '${p.fontStyle==='italic'?'normal':'italic'}')" style="width:40px; font-family:serif; font-style:italic; font-weight:bold;">I</button>
+    </div>
+  </div>`;
+}
+
+// DYNAMIC TABLE WIDGET
+function meFieldTable(id, tableData) {
+  let html = `<div class="me-field"><div class="me-field-label" style="display:flex;justify-content:space-between">Table Rows (Max 10) 
+  <span style="color:var(--cyan);cursor:pointer;" onclick="if(ME.blocks.find(b=>b.id==='${id}').props.tableData.length<10){ ME.blocks.find(b=>b.id==='${id}').props.tableData.push(['New Label','{{tag}}']); meRenderProps(ME.blocks.find(b=>b.id==='${id}')); meUpdateProp('${id}','tableData', ME.blocks.find(b=>b.id==='${id}').props.tableData); }">+ Add</span></div>`;
+  
+  tableData.forEach((row, i) => {
+    html += `<div style="display:flex; gap:4px; margin-bottom:6px;">
+      <input class="me-input" type="text" value="${(row[0]||'').replace(/"/g,'&quot;')}" placeholder="Label" onfocus="window.meLastFocusedKey='tableData'; window.meTableIdx=${i}; window.meTableCol=0;" oninput="const b=ME.blocks.find(b=>b.id==='${id}'); b.props.tableData[${i}][0]=this.value; meUpdateProp('${id}','tableData', b.props.tableData)"/>
+      <input class="me-input" type="text" value="${(row[1]||'').replace(/"/g,'&quot;')}" placeholder="Value" onfocus="window.meLastFocusedKey='tableData'; window.meTableIdx=${i}; window.meTableCol=1;" oninput="const b=ME.blocks.find(b=>b.id==='${id}'); b.props.tableData[${i}][1]=this.value; meUpdateProp('${id}','tableData', b.props.tableData)"/>
+      <button class="me-ctrl-btn del" style="width:36px;height:36px;flex-shrink:0;" onclick="const b=ME.blocks.find(b=>b.id==='${id}'); b.props.tableData.splice(${i},1); meRenderProps(b); meUpdateProp('${id}','tableData', b.props.tableData)">×</button>
+    </div>`;
+  });
+  return html + `</div>`;
+}
+
+// We must also intercept tags for the table widget:
+const originalMeInsertTag = meInsertTag;
+meInsertTag = function(tag) {
+  if (ME.activeTab === 'visual' && window.meLastFocusedKey === 'tableData' && window.meTableIdx !== undefined) {
+      const block = ME.blocks.find(b => b.id === ME.selectedId);
+      block.props.tableData[window.meTableIdx][window.meTableCol] += tag;
+      meRenderProps(block);
+      meUpdateProp(ME.selectedId, 'tableData', block.props.tableData);
+      return;
+  }
+  originalMeInsertTag(tag);
+}
+  return `<div class="me-field">
+    <div class="me-field-label">${label}</div>
+    <input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}" oninput="meUpdateProp('${id}','${key}',this.value)"/>
+  </div>`;
+
 function meFieldTextarea(label, id, key, val) {
   return `<div class="me-field">
     <div class="me-field-label">${label}</div>
@@ -716,7 +898,7 @@ function meRefreshPreviewIframe() {
   let html = document.getElementById('mHtmlTmpl').value || meGetHtml();
   // Apply first recipient data for preview
   if (MS.rows.length) html = mPersonalise(html, MS.rows[0]);
-  iframe.srcdoc = html;
+  iframe.srcdoc = mInjectWatermark(html); // INJECT WATERMARK FOR PREVIEW TAB
 }
 
 function meSetDevice(device) {
@@ -765,10 +947,10 @@ function meInsertTag(tag) {
     ME.cm.focus();
     toast('Inserted ' + tag, 'success', 1200);
   } else if (ME.activeTab === 'visual') {
-    // Insert into selected block's text if applicable
+    // Insert into selected block's active property field (Fixes the Button URL bug!)
     const block = ME.blocks.find(b => b.id === ME.selectedId);
-    if (block && block.props.text !== undefined) {
-      block.props.text = (block.props.text || '') + tag;
+    if (block && block.props[window.meLastFocusedKey] !== undefined) {
+      block.props[window.meLastFocusedKey] = (block.props[window.meLastFocusedKey] || '') + tag;
       meRenderCanvas();
       meRenderProps(block);
       meSyncToCode();
@@ -782,13 +964,16 @@ function meInsertTag(tag) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   TEMPLATE PICKER
+   TEMPLATE PICKER & CSS MINIATURES
 ══════════════════════════════════════════════════════════════ */
 const ME_TEMPLATES = {
+  blank: {
+    name: 'Blank Canvas', desc: 'Start from scratch',
+    blocks: [],
+    miniature: `<div style="width:100%;height:100%;border:2px dashed rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:12px;font-weight:600;">Empty</div>`
+  },
   cert: {
-    name: '🎓 Certificate Dispatch',
-    desc: 'Cert link + personalization',
-    thumb: 'linear-gradient(135deg,#0d1728,#1a2744)',
+    name: 'Certificate Dispatch', desc: 'Cert link + personalization',
     blocks: [
       { type:'logo',    props:{ text:'HONOURIX', tagline:'Certificate Platform', bgColor:'#0d1728', color:'#00d4ff', fontSize:20, fontWeight:800, align:'center', paddingV:28, paddingH:40 } },
       { type:'header',  props:{ text:'Your Certificate is Ready 🎉', fontSize:26, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:36, paddingH:40 } },
@@ -796,71 +981,55 @@ const ME_TEMPLATES = {
       { type:'button',  props:{ text:'Download Certificate', link:'{{certificateLink}}', btnBg:'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor:'#ffffff', bgColor:'#ffffff', align:'center', paddingV:28, paddingH:40, borderRadius:10, fontSize:15, fontWeight:700 } },
       { type:'divider', props:{ color:'#e2e8f0', bgColor:'#ffffff', paddingV:16, thickness:1 } },
       { type:'footer',  props:{ text:'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 } },
-    ]
+    ],
+    miniature: `<div style="width:100%;height:100%;background:#fff;border-radius:4px;display:flex;flex-direction:column;padding:8px;gap:6px;"><div style="height:14px;background:#0d1728;border-radius:2px;"></div><div style="height:4px;background:#e2e8f0;border-radius:2px;width:70%;margin:0 auto;"></div><div style="height:2px;background:#e2e8f0;border-radius:1px;width:90%;"></div><div style="height:2px;background:#e2e8f0;border-radius:1px;width:80%;"></div><div style="height:12px;background:linear-gradient(135deg,#00d4ff,#7c3aed);border-radius:3px;width:60%;margin:4px auto 0;"></div></div>`
   },
   event: {
-    name: '📅 Event Invitation',
-    desc: 'Banner + date + RSVP',
-    thumb: 'linear-gradient(135deg,#7c3aed,#4f46e5)',
+    name: 'Event Invitation', desc: 'Banner + date + RSVP',
     blocks: [
       { type:'logo',    props:{ text:'EVENT', tagline:'', bgColor:'#7c3aed', color:'#ffffff', fontSize:18, fontWeight:800, align:'center', paddingV:24, paddingH:40 } },
       { type:'header',  props:{ text:'You\'re Invited, {{name}}!', fontSize:28, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:36, paddingH:40 } },
       { type:'text',    props:{ text:'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize:16, color:'#475569', bgColor:'#ffffff', align:'center', paddingV:8, paddingH:40, lineHeight:1.75 } },
       { type:'text',    props:{ text:'📅 Date: {{date}}\n📍 Venue: {{org}}', fontSize:15, color:'#1e293b', bgColor:'#f8fafc', align:'center', paddingV:20, paddingH:40, lineHeight:2 } },
       { type:'button',  props:{ text:'RSVP Now', link:'#', btnBg:'#7c3aed', btnColor:'#ffffff', bgColor:'#ffffff', align:'center', paddingV:28, paddingH:40, borderRadius:8, fontSize:15, fontWeight:700 } },
-      { type:'footer',  props:{ text:'If you\'re unable to attend, please let us know at your earliest convenience.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 } },
-    ]
-  },
-  thankyou: {
-    name: '🙏 Thank You',
-    desc: 'Warm appreciation note',
-    thumb: 'linear-gradient(135deg,#10b981,#059669)',
-    blocks: [
-      { type:'logo',    props:{ text:'THANK YOU', tagline:'', bgColor:'#10b981', color:'#ffffff', fontSize:20, fontWeight:800, align:'center', paddingV:28, paddingH:40 } },
-      { type:'header',  props:{ text:'Thank You, {{name}}!', fontSize:28, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:36, paddingH:40 } },
-      { type:'text',    props:{ text:'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize:16, color:'#475569', bgColor:'#ffffff', align:'left', paddingV:12, paddingH:40, lineHeight:1.8 } },
-      { type:'divider', props:{ color:'#d1fae5', bgColor:'#ffffff', paddingV:16, thickness:2 } },
-      { type:'footer',  props:{ text:'With gratitude,\nThe Honourix Team', bgColor:'#f0fdf4', color:'#6b7280', fontSize:13, align:'center', paddingV:24, paddingH:40 } },
-    ]
+    ],
+    miniature: `<div style="width:100%;height:100%;background:#fff;border-radius:4px;display:flex;flex-direction:column;padding:8px;gap:6px;"><div style="height:20px;background:#7c3aed;border-radius:2px;"></div><div style="height:2px;background:#e2e8f0;border-radius:1px;width:90%;"></div><div style="height:2px;background:#e2e8f0;border-radius:1px;width:50%;margin:0 auto;"></div><div style="height:12px;background:#7c3aed;border-radius:3px;width:50%;margin:4px auto 0;"></div></div>`
   },
   announcement: {
-    name: '📢 Announcement',
-    desc: 'Bold headline + CTA',
-    thumb: 'linear-gradient(135deg,#f59e0b,#ef4444)',
+    name: 'Announcement', desc: 'Bold headline + CTA',
     blocks: [
-      { type:'logo',    props:{ text:'ANNOUNCEMENT', tagline:'', bgColor:'#0f172a', color:'#f59e0b', fontSize:16, fontWeight:800, align:'center', paddingV:24, paddingH:40 } },
       { type:'header',  props:{ text:'Important Update', fontSize:30, fontWeight:800, color:'#0f172a', bgColor:'#ffffff', align:'center', paddingV:36, paddingH:40 } },
-      { type:'text',    props:{ text:'Dear {{name}},\n\nWe have an important announcement to share with you. Please read the following information carefully.', fontSize:16, color:'#374151', bgColor:'#ffffff', align:'left', paddingV:8, paddingH:40, lineHeight:1.75 } },
-      { type:'text',    props:{ text:'Your update / announcement body goes here. You can edit this block to include all the relevant details.', fontSize:15, color:'#4b5563', bgColor:'#fffbeb', align:'left', paddingV:20, paddingH:40, lineHeight:1.75 } },
+      { type:'text',    props:{ text:'Dear {{name}},\n\nWe have an important announcement to share with you.', fontSize:16, color:'#374151', bgColor:'#ffffff', align:'left', paddingV:8, paddingH:40, lineHeight:1.75 } },
+      { type:'text',    props:{ text:'Your update details go here.', fontSize:15, color:'#4b5563', bgColor:'#fffbeb', align:'left', paddingV:20, paddingH:40, lineHeight:1.75 } },
       { type:'button',  props:{ text:'Learn More', link:'#', btnBg:'#f59e0b', btnColor:'#000000', bgColor:'#ffffff', align:'center', paddingV:28, paddingH:40, borderRadius:8, fontSize:15, fontWeight:700 } },
-      { type:'footer',  props:{ text:'You received this because you are part of our community.', bgColor:'#f8fafc', color:'#9ca3af', fontSize:12, align:'center', paddingV:20, paddingH:40 } },
-    ]
+    ],
+    miniature: `<div style="width:100%;height:100%;background:#fff;border-radius:4px;display:flex;flex-direction:column;padding:8px;gap:6px;"><div style="height:6px;background:#0f172a;border-radius:2px;width:40%;margin:0 auto;"></div><div style="height:18px;background:#fffbeb;border-radius:2px;border:1px solid #fde68a;"></div><div style="height:2px;background:#e2e8f0;border-radius:1px;width:90%;"></div><div style="height:12px;background:#f59e0b;border-radius:3px;width:40%;margin:4px auto 0;"></div></div>`
   },
   plain: {
-    name: '🧾 Plain Professional',
-    desc: 'Clean text-only email',
-    thumb: 'linear-gradient(135deg,#334155,#1e293b)',
+    name: 'Plain Professional', desc: 'Clean text-only email',
     blocks: [
       { type:'spacer',  props:{ height:24, bgColor:'#ffffff' } },
       { type:'text',    props:{ text:'Hi {{name}},', fontSize:18, color:'#1e293b', bgColor:'#ffffff', align:'left', paddingV:4, paddingH:40, lineHeight:1.6 } },
-      { type:'text',    props:{ text:'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point. Let the reader know exactly what you need them to do.', fontSize:16, color:'#374151', bgColor:'#ffffff', align:'left', paddingV:8, paddingH:40, lineHeight:1.8 } },
+      { type:'text',    props:{ text:'This is the main body of your email. Keep it short, professional, and to the point.', fontSize:16, color:'#374151', bgColor:'#ffffff', align:'left', paddingV:8, paddingH:40, lineHeight:1.8 } },
       { type:'text',    props:{ text:'Best regards,\nThe Honourix Team', fontSize:15, color:'#1e293b', bgColor:'#ffffff', align:'left', paddingV:12, paddingH:40, lineHeight:1.7 } },
-      { type:'divider', props:{ color:'#e2e8f0', bgColor:'#ffffff', paddingV:16, thickness:1 } },
-      { type:'footer',  props:{ text:'Sent via Honourix | Unsubscribe', bgColor:'#f8fafc', color:'#9ca3af', fontSize:12, align:'center', paddingV:20, paddingH:40 } },
-    ]
-  },
+    ],
+    miniature: `<div style="width:100%;height:100%;background:#fff;border-radius:4px;display:flex;flex-direction:column;padding:12px 8px;gap:5px;"><div style="height:2px;background:#cbd5e1;border-radius:1px;width:40%;"></div><div style="height:2px;background:#cbd5e1;border-radius:1px;width:90%;margin-top:6px;"></div><div style="height:2px;background:#cbd5e1;border-radius:1px;width:85%;"></div><div style="height:2px;background:#cbd5e1;border-radius:1px;width:60%;"></div></div>`
+  }
 };
 
 function meBuildTemplatePicker() {
-  const row = document.getElementById('meTplRow');
-  if (!row) return;
-  row.innerHTML = Object.entries(ME_TEMPLATES).map(([key, tpl]) => `
-    <div class="me-tpl-card" onclick="meLoadTemplate('${key}')">
-      <div class="me-tpl-thumb" style="background:${tpl.thumb}">${tpl.name.split(' ')[0]}</div>
-      <div class="me-tpl-info">
-        <div class="me-tpl-name">${tpl.name.slice(tpl.name.indexOf(' ')+1)}</div>
-        <button class="me-tpl-btn">Use This</button>
+  const grid = document.getElementById('meTplGrid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(ME_TEMPLATES).map(([key, tpl]) => `
+    <div style="background:rgba(255,255,255,0.02); border:1px solid var(--glass-border); border-radius:12px; padding:16px; cursor:pointer; transition:all 0.2s; text-align:center;" 
+         onmouseover="this.style.borderColor='var(--cyan)'; this.style.transform='translateY(-4px)'; this.style.background='rgba(0,212,255,0.03)';" 
+         onmouseout="this.style.borderColor='var(--glass-border)'; this.style.transform='translateY(0)'; this.style.background='rgba(255,255,255,0.02)';"
+         onclick="meLoadTemplate('${key}')">
+      <div style="height:110px; width:100%; background:var(--surface); border-radius:8px; padding:10px; margin-bottom:16px; border:1px solid rgba(255,255,255,0.05); box-shadow:inset 0 2px 10px rgba(0,0,0,0.2);">
+        ${tpl.miniature}
       </div>
+      <h4 style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:4px;">${tpl.name}</h4>
+      <p style="font-size:13px; color:var(--text-3);">${tpl.desc}</p>
     </div>
   `).join('');
 }
@@ -874,22 +1043,36 @@ function meLoadTemplate(key) {
     props: JSON.parse(JSON.stringify(b.props)),
   }));
   ME.selectedId = null;
+  
+  // Hide Chooser, Show Editor
+  document.getElementById('meTemplateScreen').style.display = 'none';
+  document.getElementById('meCard').style.display = 'block';
+  
   meRenderCanvas();
   meSyncToCode();
-  meHideTemplatePicker();
   if (ME.activeTab !== 'visual') meSwitchTab('visual');
-  toast('Template loaded: ' + tpl.name, 'success', 2000);
+  toast(key === 'blank' ? 'Started a blank canvas' : 'Template loaded: ' + tpl.name, 'success');
 }
 
-function meShowTemplatePicker() {
-  const wrap = document.getElementById('meTplPickerWrap');
-  if (wrap) wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+// THE STRIPE-STYLE WATERMARK INJECTOR (Invisible in Editor, Appears in Dispatch/Preview)
+function mInjectWatermark(html) {
+  const watermark = `
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px; margin-bottom:24px;">
+  <tr>
+    <td align="center" style="padding:16px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; font-size:12.5px; color:#94a3b8;">
+      <a href="https://certiflow.com" target="_blank" style="color:#94a3b8; text-decoration:none; display:inline-flex; align-items:center;">
+        <span style="display:inline-block; width:14px; height:14px; background:linear-gradient(135deg, #00d4ff, #7c3aed); border-radius:4px; vertical-align:middle; margin-right:8px; position:relative; top:-1px;"></span>
+        Powered securely by <strong style="color:#64748b; font-weight:700; margin-left:4px;">Certiflow</strong>
+      </a>
+    </td>
+  </tr>
+</table>`;
+  
+  if (html.includes('</body>')) {
+    return html.replace('</body>', watermark + '</body>');
+  }
+  return html + watermark;
 }
-function meHideTemplatePicker() {
-  const wrap = document.getElementById('meTplPickerWrap');
-  if (wrap) wrap.style.display = 'none';
-}
-
 /* ══════════════════════════════════════════════════════════════
    PREVIEW (Step 3)
 ══════════════════════════════════════════════════════════════ */
@@ -942,10 +1125,17 @@ function mRenderAt(idx) {
   document.getElementById('mFinalSubject').textContent = subj;
   document.getElementById('mPrvNav').textContent       = (idx+1) + ' / ' + MS.rows.length;
 
+  // Render in iframe with Watermark
+  const iframe = document.getElementById('mPreviewIframe');
+  if (iframe) iframe.srcdoc = mInjectWatermark(body); // INJECT WATERMARK FOR STEP 3 REVIEW
+}
+  document.getElementById('mFinalSubject').textContent = subj;
+  document.getElementById('mPrvNav').textContent       = (idx+1) + ' / ' + MS.rows.length;
+
   // Render in iframe
   const iframe = document.getElementById('mPreviewIframe');
   if (iframe) iframe.srcdoc = body;
-}
+
 
 function mNavPrev() { if (MS.prevIdx > 0)                  { MS.prevIdx--; mRenderAt(MS.prevIdx); } }
 function mNavNext() { if (MS.prevIdx < MS.rows.length - 1) { MS.prevIdx++; mRenderAt(MS.prevIdx); } }
@@ -959,7 +1149,7 @@ async function mStartSend() {
   const nameC  = document.getElementById('mNameCol').value;
   const emailC = document.getElementById('mEmailCol').value;
   const subj   = document.getElementById('mSubject').value;
-  const tmpl   = document.getElementById('mHtmlTmpl').value;
+  const tmpl   = mInjectWatermark(document.getElementById('mHtmlTmpl').value); // INJECT WATERMARK INTO LIVE SEND
   const camp   = document.getElementById('mCampName').value;
 
   document.getElementById('mSendCounter').textContent = '0 / ' + total;
@@ -1157,10 +1347,15 @@ function mManualRenderTable() {
   headerRow.innerHTML = '<th style="width:36px">#</th>' +
     mManualCols.map((col, ci) => {
       const isDefault = (col === 'Name' || col === 'Email');
-      return `<th><div class="manual-col-header"><span>${col}</span>${!isDefault
-        ? `<button class="manual-col-del" onclick="mManualRemoveColumn(${ci})" title="Remove column">
+      let extras = '';
+      if (col === 'Email') {
+         extras = `<span style="font-size:9px; color:var(--cyan); margin-left:6px; padding:2px 5px; background:rgba(0,212,255,0.1); border-radius:4px; font-weight:700; text-transform:uppercase;">Required</span>`;
+      } else if (!isDefault) {
+         extras = `<button class="manual-col-del" onclick="mManualRemoveColumn(${ci})" title="Remove column">
              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-           </button>` : ''}</div></th>`;
+           </button>`;
+      }
+      return `<th><div class="manual-col-header"><span>${col}</span>${extras}</div></th>`;
     }).join('') + '<th style="width:36px"></th>';
 
   body.innerHTML = mManualRows.map((row, ri) =>
