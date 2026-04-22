@@ -1609,14 +1609,49 @@ function downloadResults() {
 
 function startNew() {
   if (!window.confirm('Start a new campaign? Current results will be cleared.')) return;
-  CS.rows = []; CS.results = []; CS.fieldMappings = [];
+
+  // 1. Completely reset the core data state
+  CS.rows = [];
+  CS.headers = [];
+  CS.results = [];
+  CS.fieldMappings = [];
+  CS.eventName = '';
+  window.allCols = [];
+
+  // 2. Reset Step 1 UI Elements & Inputs
   document.getElementById('campaignName').value = '';
+
+  // Reset Sheets UI
   const sid = document.getElementById('sheetId'); if (sid) sid.value = '';
-  document.getElementById('sheetResult').style.display = 'none';
-  ED.fields = []; ED.selId = null;
+  const sr = document.getElementById('sheetResult'); if (sr) sr.style.display = 'none';
+
+  // Reset File Upload UI (This fixes the re-upload bug)
+  const fileRes = document.getElementById('fileResult'); if (fileRes) fileRes.style.display = 'none';
+  document.querySelectorAll('input[type="file"]').forEach(i => i.value = ''); 
+
+  // Reset HX Form UI
+  const hxRes = document.getElementById('hxFormResult'); if (hxRes) hxRes.style.display = 'none';
+  const hxSel = document.getElementById('hxFormSelect'); if (hxSel) hxSel.value = '';
+
+  // Reset Manual Entry UI
+  const manMsg = document.getElementById('manualAppliedMsg'); if (manMsg) manMsg.style.display = 'none';
+  const tbody = document.getElementById('manualBody');
+  if (tbody) {
+    tbody.innerHTML = '';
+    manualCols = ['Name'];
+    if (typeof manualRebuildHeader === 'function') manualRebuildHeader();
+    manualAddRow(); manualAddRow();
+  }
+
+  // 3. Reset Canvas & Editor State
+  ED.fields = []; 
+  ED.selId = null;
   redraw();
-  saveTemplate(); // FIX: Erases saved fields from storage so the next campaign starts entirely blank
+  saveTemplate(); // Erases saved fields from storage so the next campaign starts blank
+
+  // 4. Return to Step 1
   goStep(1, true);
+  toast('Ready for a new campaign', 'info');
 }
 
 
