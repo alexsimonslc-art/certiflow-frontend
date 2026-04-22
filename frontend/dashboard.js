@@ -151,7 +151,7 @@ function renderSidebar(activePage) {
       <!-- ☰ Workspace row — hamburger always stays here -->
       <div class="nav-section-label nav-section-with-toggle">
         <span class="section-text">Workspace</span>
-        <button class="sidebar-toggle-btn" id="sidebarCollapseBtn" title="Toggle sidebar">
+        <button class="sidebar-toggle-btn" id="sidebarCollapseBtn" title="Collapse (Ctrl + .)" aria-label="Collapse sidebar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
             <line x1="3" y1="5" x2="21" y2="5"/>
             <line x1="3" y1="12" x2="21" y2="12"/>
