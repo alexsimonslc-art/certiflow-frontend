@@ -336,10 +336,14 @@ function initCanvas() {
     // Pan
     let isPanning = false;
     let startX, startY, scrollLeft, scrollTop;
+    
+    // Explicitly set base cursor
+    zone.style.cursor = 'grab';
+
     zone.addEventListener('mousedown', e => {
-      // Only pan if clicking empty space on the background or the canvas itself (not on field handles)
       if (e.target === zone || e.target.id === 'certCanvas') {
         isPanning = true;
+        zone.style.cursor = 'grabbing'; // FIX: Force cursor to close hand
         startX = e.pageX - zone.offsetLeft;
         startY = e.pageY - zone.offsetTop;
         scrollLeft = zone.scrollLeft;
@@ -356,6 +360,7 @@ function initCanvas() {
     });
     window.addEventListener('mouseup', () => {
       isPanning = false;
+      if (zone) zone.style.cursor = 'grab'; // FIX: Release hand back to open state
     });
   }
 
