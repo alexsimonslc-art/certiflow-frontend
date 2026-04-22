@@ -314,6 +314,30 @@
 .ep-body { flex: 1; overflow-y: auto; padding: 14px; }
 .ep-body::-webkit-scrollbar { width: 4px; }
 .ep-body::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; }
+/* ── Canvas Scroll Zone — Custom Scrollbar ── */
+.canvas-scroll-zone::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.canvas-scroll-zone::-webkit-scrollbar-track {
+  background: transparent;
+}
+.canvas-scroll-zone::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.25);   /* --cyan at 25% opacity */
+  border-radius: 99px;
+  transition: background 0.2s ease;
+}
+.canvas-scroll-zone::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.55);   /* --cyan at 55% — brightens on hover */
+}
+.canvas-scroll-zone::-webkit-scrollbar-corner {
+  background: transparent;               /* hides the ugly box where both bars meet */
+}
+/* Firefox fallback */
+.canvas-scroll-zone {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 212, 255, 0.25) transparent;
+}
 .ep-panel { display: none; flex-direction: column; gap: 0; }
 .ep-panel.active { display: flex; }
 .ep-sec {
