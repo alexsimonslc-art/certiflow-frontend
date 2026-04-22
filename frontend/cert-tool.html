@@ -352,8 +352,17 @@
   background: var(--glass); border: 1px solid var(--glass-border);
   border-radius: 7px; padding: 7px 10px;
   font-size: 13px; color: var(--text); width: 100%;
+  /* Remove default number spinner arrows */
+  -moz-appearance: textfield;
 }
 .pr-input:focus { outline: none; border-color: var(--cyan); }
+
+/* Hide WebKit/Blink (Chrome, Edge, Safari) spinner buttons */
+.pr-input::-webkit-outer-spin-button,
+.pr-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .pr-select {
   background: var(--glass); border: 1px solid var(--glass-border);
   border-radius: 7px; padding: 7px 10px;
