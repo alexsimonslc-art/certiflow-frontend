@@ -208,7 +208,7 @@ async function loadHxFormData(formId) {
     CS.rows        = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
     window.allCols = CS.headers;
     const el       = document.getElementById('hxFormResult');
-    const preview  = CS.rows.slice(0, 5);
+    const preview  = CS.rows; // FIX: Show all rows
     el.innerHTML = `<div class="notice notice-green" style="margin-bottom:12px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       <span><strong>${CS.rows.length} submissions</strong> loaded from <strong>${data.formName}</strong> — ${CS.headers.length} columns</span>
@@ -218,8 +218,7 @@ async function loadHxFormData(formId) {
         <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
         <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
       </table>
-    </div>
-    ${CS.rows.length > 5 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${CS.rows.length - 5} more rows not shown</div>` : ''}`;
+    </div>`;
     el.style.display = 'block';
     toast(`${CS.rows.length} responses ready`, 'success');
     } catch(e) {
@@ -247,7 +246,7 @@ async function loadSheet() {
 
 function renderSheetPreview() {
   const el = document.getElementById('sheetResult');
-  const preview = CS.rows.slice(0, 5);
+  const preview = CS.rows; // FIX: Show all rows
   el.innerHTML = `
     <div class="notice notice-green" style="margin-bottom:12px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -259,7 +258,6 @@ function renderSheetPreview() {
         <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
       </table>
     </div>
-    ${CS.rows.length > 5 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${CS.rows.length - 5} more rows not shown</div>` : ''}
   `;
   el.style.display = 'block';
 }
@@ -284,7 +282,7 @@ function handleFile(e) {
 }
 
 function showFilePreview(name) {
-  const preview = CS.rows.slice(0, 5);
+  const preview = CS.rows; // FIX: Show all rows
   document.getElementById('fileResult').innerHTML = `
     <div class="notice notice-green" style="margin-bottom:12px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -295,8 +293,7 @@ function showFilePreview(name) {
         <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
         <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
       </table>
-    </div>
-    ${CS.rows.length > 5 ? `<div style="padding:10px 16px;font-size:13px;color:var(--text-3);text-align:center">+${CS.rows.length - 5} more rows not shown</div>` : ''}`;
+    </div>`;
   document.getElementById('fileResult').style.display = 'block';
   toast(`Loaded ${CS.rows.length} participants from file`, 'success');
 }
