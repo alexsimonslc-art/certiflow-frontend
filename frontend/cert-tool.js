@@ -1743,3 +1743,9 @@ function manualApply() {
     <span><strong style="color:#10b981">${data.length} participant${data.length !== 1 ? 's' : ''}</strong> ready — columns: ${manualCols.map(c => `<code style="font-family:var(--font-mono);font-size:12px;background:var(--glass);padding:1px 5px;border-radius:4px">${c}</code>`).join(', ')}</span>
   </div>`;
 }
+function nudgeInput(id, step, up) {
+  const el = document.getElementById(id);
+  const val = parseFloat(el.value) || 0;
+  el.value = parseFloat((val + (up ? step : -step)).toFixed(2));
+  el.dispatchEvent(new Event('change'));
+}
