@@ -145,11 +145,12 @@
     .me-empty-canvas { display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--text-3);text-align:center;padding:40px; }
     .me-empty-canvas svg { width:40px;height:40px;opacity:0.3; }
 
-    .me-block-wrap { position:relative;cursor:pointer;transition:outline 0.15s;outline:2px solid transparent;outline-offset:0px;width:100%; }
+    /* FIX: Added an invisible background so your mouse doesn't "fall through" empty space and lose the hover! */
+    .me-block-wrap { position:relative;cursor:pointer;transition:outline 0.15s;outline:2px solid transparent;outline-offset:0px;width:100%; background:rgba(255,255,255,0.001); }
     .me-block-wrap:hover { outline-color:rgba(0,212,255,0.3); }
     .me-block-wrap.selected { outline-color:var(--cyan);outline-style:solid; }
 
-    .me-block-controls { position:absolute;top:4px;right:4px;display:flex;gap:4px;z-index:10;opacity:0;transition:opacity 0.15s; }
+    .me-block-controls { position:absolute;top:4px;right:4px;display:flex;gap:4px;z-index:10;opacity:0;transition:opacity 0.15s; pointer-events:auto; }
     .me-block-wrap:hover .me-block-controls,
     .me-block-wrap.selected .me-block-controls { opacity:1; }
     .me-ctrl-btn { width:26px;height:26px;border-radius:6px;border:none;background:rgba(8,14,28,0.92);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-family:var(--font);transition:all 0.15s; }
@@ -440,21 +441,28 @@
           
 
           <!-- Tips sidebar -->
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:14px">Gmail Send Limits</div>
-              <div class="gmail-limits">
-                <div class="limit-card"><div class="limit-num">500</div><div class="limit-label">emails/day<br/>Free Gmail</div></div>
-                <div class="limit-card"><div class="limit-num">2000</div><div class="limit-label">emails/day<br/>Workspace</div></div>
+          <div style="background: var(--surface); border: 1px solid var(--glass-border); border-radius: 16px; padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); position: sticky; top: 20px;">
+            <div style="display:flex; align-items:center; gap: 14px; margin-bottom: 20px;">
+              <div style="width:44px; height:44px; border-radius:12px; background:rgba(0, 212, 255, 0.1); border: 1px solid rgba(0,212,255,0.2); display:flex; align-items:center; justify-content:center; color:var(--cyan);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
               </div>
-              <p style="font-size:12.5px;color:var(--text-3);margin-top:12px;line-height:1.5">Honourix staggers sends automatically to stay within your Google limits.</p>
+              <div>
+                <div style="font-size:12.5px; color:var(--text-3); font-weight:700; text-transform:uppercase; letter-spacing:0.8px;" id="quotaAccountType">Connecting...</div>
+                <div style="font-size:16px; font-weight:700; color:var(--text);">Daily Mail Quota</div>
+              </div>
             </div>
-            <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:12px">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.77 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.72 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.28-1.28a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                Sends from your Gmail
-              </div>
-              <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">Emails dispatched via your authenticated Gmail — your domain, your reputation, maximum deliverability.</p>
+
+            <div style="margin-bottom: 10px; display:flex; justify-content:space-between; align-items:flex-end;">
+              <span style="font-size: 32px; font-weight: 800; color: var(--cyan); font-family: var(--font-mono); line-height: 1;" id="quotaSent">--</span>
+              <span style="font-size: 14px; color: var(--text-2); font-weight: 500; margin-bottom: 4px;">/ <span id="quotaLimit">--</span> sent</span>
+            </div>
+
+            <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.03);">
+              <div id="quotaBar" style="width: 0%; height: 100%; background: var(--cyan); border-radius: 4px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px var(--cyan);"></div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.02); border-radius: 8px; padding: 12px; font-size: 13px; color: var(--text-2); line-height: 1.5; border: 1px solid rgba(255,255,255,0.04);">
+              <strong style="color:var(--text);">Note:</strong> This quota protects against spam and automatically resets at midnight (IST).
             </div>
           </div>
 
@@ -481,7 +489,15 @@
           </div>
 
           <!-- ── 3-Mode Editor Card ─────────────────────────────── -->
-          <div class="me-card" id="meCard">
+          <div id="meTemplateScreen" style="display:none; padding: 20px 0;">
+            <div style="text-align:center; margin-bottom:32px;">
+              <h3 style="font-size:24px; font-weight:800; color:var(--text); margin-bottom:8px; font-family:var(--font-display);">Choose a Template</h3>
+              <p style="color:var(--text-2); font-size:15px;">Select a layout to start building your email campaign.</p>
+            </div>
+            <div id="meTplGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:24px; max-width: 1000px; margin: 0 auto;"></div>
+          </div>
+
+          <div class="me-card" id="meCard" style="display:none;">
 
             <!-- Header -->
             <div class="me-head">
@@ -554,6 +570,14 @@
                 <button class="me-palette-btn" onclick="meAddBlock('image')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                   Image
+                </button>
+                <button class="me-palette-btn" onclick="meAddBlock('table')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="12" y1="9" x2="12" y2="21"/></svg>
+                  Data Table
+                </button>
+                <button class="me-palette-btn" onclick="meAddBlock('social')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                  Social Links
                 </button>
                 <button class="me-palette-btn" onclick="meAddBlock('divider')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
