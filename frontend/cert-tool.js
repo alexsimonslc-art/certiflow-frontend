@@ -528,7 +528,7 @@ function redraw() {
   renderHandles();
 }
 
-//* ── Dynamic Bounding Box UI ──────────────────────────────────────────────── */
+/* ── Dynamic Bounding Box UI ──────────────────────────────────────────────── */
 function renderHandles() {
   if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
@@ -608,11 +608,6 @@ function renderHandles() {
     el.appendChild(ctrlPill);
 
     // 3. Dynamic Corners & Controllers
-    // Threshold Check: If the box is too small on the canvas, it switches to minimalist mode
-    const isSmall = h < 40 || w < 80;
-
-    // We always build all controllers, but if the box is too small, we set opacity to 0 
-    // for the extra ones so they are invisible, but fully functional when hovered over!
     const isSmall = h < 40 || w < 80;
 
     ['tl', 'tr', 'bl', 'br'].forEach(corner => {
@@ -631,7 +626,7 @@ function renderHandles() {
         el.appendChild(sEl);
     });
 
-    // Freeform Draging Base (allows you to drag by clicking anywhere inside the box, just like Canva)
+    // Freeform Draging Base
     el.addEventListener('mousedown', e => { 
         if (e.target === el) { 
             e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
@@ -641,7 +636,6 @@ function renderHandles() {
   });
   renderChipList();
 }
-
 // New Resize Logic
 function startResize(e, field) {
   selectField(field.id);
