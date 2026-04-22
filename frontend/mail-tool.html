@@ -372,18 +372,18 @@
 
               <!-- ── Google Sheets Panel ── -->
               <div id="mSrcSheets" style="margin-top:16px">
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom:0;">
                   <label class="form-label">Google Sheet ID <span class="req">*</span></label>
-                  <input type="text" id="mSheetId" class="form-input" placeholder="Paste your Sheet ID here" style="font-size:15px;padding:12px 14px"/>
-                  <span class="form-hint">Found in the sheet URL: …/spreadsheets/d/<strong>SHEET_ID</strong>/edit</span>
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <input type="text" id="mSheetId" class="form-input" placeholder="Paste your Sheet ID here" style="flex:1; font-size:15px; padding:12px 16px;"/>
+                    <button class="btn btn-primary" id="mLoadBtn" onclick="mLoadSheet()" style="padding:12px 24px; font-size:15px; white-space:nowrap;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:6px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                      Load Sheet
+                    </button>
+                  </div>
+                  <span class="form-hint" style="margin-top:8px; display:block;">Found in the sheet URL: …/spreadsheets/d/<strong>SHEET_ID</strong>/edit</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
-                  <button class="btn btn-secondary" id="mLoadBtn" onclick="mLoadSheet()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                    Load Sheet
-                  </button>
-                </div>
-                <div id="mSheetResult" style="display:none;margin-top:14px"></div>
+                <div id="mSheetResult" style="display:none;margin-top:16px"></div>
               </div>
 
               <!-- ── File Upload Panel ── -->
@@ -428,14 +428,20 @@
 
               <!-- ── HX Form panel ── -->
               <div id="mSrcHxForm" style="display:none;margin-top:16px">
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom:0;">
                   <label class="form-label">Select HX Form <span class="req">*</span></label>
-                  <select id="mHxFormSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="mLoadHxFormData(this.value)">
-                    <option value="">Loading your forms…</option>
-                  </select>
-                  <span class="form-hint">Imports respondent names and emails as mail recipients</span>
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <select id="mHxFormSelect" class="form-select" style="flex:1; font-size:15px; padding:12px 36px 12px 16px;" onchange="mLoadHxFormData(this.value)">
+                      <option value="">Loading your forms…</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="mLoadHxFormData(document.getElementById('mHxFormSelect').value)" style="padding:12px 24px; font-size:15px; white-space:nowrap;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                      Import Form
+                    </button>
+                  </div>
+                  <span class="form-hint" style="margin-top:8px; display:block;">Imports respondent names and emails as mail recipients</span>
                 </div>
-                <div id="mHxFormResult" style="display:none;margin-top:12px"></div>
+                <div id="mHxFormResult" style="display:none;margin-top:16px"></div>
               </div>
 
               

@@ -158,16 +158,23 @@ async function mLoadSheet() {
 
 function mShowSheetPreview() {
   const el = document.getElementById('mSheetResult');
-  const preview = MS.rows; // Show all rows
   el.innerHTML = `
-    <div class="notice notice-green" style="margin-bottom:12px">
+    <div class="notice notice-green" style="margin-bottom:0">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       <span>Sheet loaded — <strong>${MS.rows.length} recipients</strong>, ${MS.headers.length} columns detected</span>
     </div>
-    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
-      <table style="width:max-content;min-width:100%;border-collapse:collapse">
-        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${MS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
-        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${MS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:300px;border:1px solid var(--glass-border);border-radius:10px;margin-top:16px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;background:var(--surface);">
+      <table style="width:100%;min-width:max-content;border-collapse:collapse;font-size:13.5px;text-align:left;">
+        <thead>
+          <tr style="position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--glass-border);box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+            ${MS.headers.map(h => `<th style="padding:12px 16px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${MS.rows.map(r => `<tr style="border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+            ${MS.headers.map(h => `<td style="padding:10px 16px;color:var(--text);white-space:nowrap;">${r[h]||''}</td>`).join('')}
+          </tr>`).join('')}
+        </tbody>
       </table>
     </div>
   `;
@@ -196,19 +203,27 @@ function mHandleFile(e) {
 }
 
 function mShowFileMsg(name) {
-  const preview = MS.rows; // Show all rows
   const el = document.getElementById('mFileResult');
   el.innerHTML = `
-    <div class="notice notice-green" style="margin-bottom:12px">
+    <div class="notice notice-green" style="margin-bottom:0">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       <span><strong>${name}</strong> — ${MS.rows.length} recipients, ${MS.headers.length} columns</span>
     </div>
-    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
-      <table style="width:max-content;min-width:100%;border-collapse:collapse">
-        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${MS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
-        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${MS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:300px;border:1px solid var(--glass-border);border-radius:10px;margin-top:16px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;background:var(--surface);">
+      <table style="width:100%;min-width:max-content;border-collapse:collapse;font-size:13.5px;text-align:left;">
+        <thead>
+          <tr style="position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--glass-border);box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+            ${MS.headers.map(h => `<th style="padding:12px 16px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${MS.rows.map(r => `<tr style="border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+            ${MS.headers.map(h => `<td style="padding:10px 16px;color:var(--text);white-space:nowrap;">${r[h]||''}</td>`).join('')}
+          </tr>`).join('')}
+        </tbody>
       </table>
-    </div>`;
+    </div>
+  `;
   el.style.display = 'block';
   toast('Loaded ' + MS.rows.length + ' recipients', 'success');
 }
@@ -1651,15 +1666,23 @@ async function mLoadHxFormData(formId) {
     if (nameH && nameEl)   nameEl.value  = nameH;
     if (emailH && emailEl) emailEl.value = emailH;
     const el = document.getElementById('mHxFormResult');
-    const preview = MS.rows; // Show all rows
-    el.innerHTML = `<div class="notice notice-green" style="margin-bottom:12px">
+    el.innerHTML = `
+    <div class="notice notice-green" style="margin-bottom:0">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       <span><strong>${MS.rows.length} responses</strong> imported from <strong>${data.formName}</strong> — ${MS.headers.length} columns</span>
     </div>
-    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
-      <table style="width:max-content;min-width:100%;border-collapse:collapse">
-        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${MS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
-        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${MS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:300px;border:1px solid var(--glass-border);border-radius:10px;margin-top:16px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;background:var(--surface);">
+      <table style="width:100%;min-width:max-content;border-collapse:collapse;font-size:13.5px;text-align:left;">
+        <thead>
+          <tr style="position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--glass-border);box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+            ${MS.headers.map(h => `<th style="padding:12px 16px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${MS.rows.map(r => `<tr style="border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+            ${MS.headers.map(h => `<td style="padding:10px 16px;color:var(--text);white-space:nowrap;">${r[h]||''}</td>`).join('')}
+          </tr>`).join('')}
+        </tbody>
       </table>
     </div>`;
     el.style.display = 'block';
