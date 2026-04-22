@@ -11,8 +11,10 @@ const MS = {
   headers: [], rows: [], results: [],
   prevIdx: 0,
 };
-let mManualCols = ['Name', 'Email'];
-let mManualRows = [{ Name: '', Email: '' }];
+let mManualCols = ['Email', 'Name'];
+let mManualRows = [{ Email: '', Name: '' }];
+// Quota — populated by mFetchQuota()
+window.mailQuotaRemaining = 9999;             // safe fallback until loaded
 const MSTEPS = [
   { label: 'Recipients' },
   { label: 'Email Template' },
@@ -44,6 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
 if (document.getElementById('mManualHeaderRow')) mManualRenderTable();
   // Drag-drop on upload zone
+    // Fetch quota on load
+  mFetchQuota();
+
   const zone = document.getElementById('mUploadZone');
   if (zone) {
     zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
@@ -211,6 +216,73 @@ function mPopulateDropdowns() {
     const tag = '{{' + h.toLowerCase().replace(/\s+/g, '_') + '}}';
     return '<div class="merge-tag" onclick="meInsertTag(\'' + tag + '\')">' + tag + '</div>';
   }).join('');
+}
+/* ══════════════════════════════════════════════════════════════
+   QUOTA — fetch & render widget
+══════════════════════════════════════════════════════════════ */
+async function mFetchQuota() {
+  try {
+    const data = await apiFetch('/api/quota');
+    const sentToday  = data.sentToday  || 0;
+    const limit      = data.limit      || (data.isWorkspace ? 1500 : 100);
+    const isWorkspace = data.isWorkspace || false;
+    const email      = data.email || '';
+    const totalSent  = data.totalSent  || sentToday;
+
+    window.mailQuotaRemaining = Math.max(0, limit - sentToday);
+
+    const pct = Math.min(100, sentToday === 0 ? 0 : Math.round((sentToday / limit) * 100));
+
+    // Badge
+    const badge = document.getElementById('mQuotaBadge');
+    if (badge) {
+      badge.textContent = isWorkspace ? 'WORKSPACE' : 'STANDARD';
+      badge.style.background = isWorkspace ? 'rgba(124,58,237,0.15)' : 'rgba(0,212,255,0.12)';
+      badge.style.color      = isWorkspace ? 'var(--purple-2,#a78bfa)' : 'var(--cyan)';
+    }
+
+    // Account dot + label
+    const dot = document.getElementById('mAcctDot');
+    const lbl = document.getElementById('mAcctLabel');
+    if (dot) dot.style.background = isWorkspace ? '#7c3aed' : '#00d4ff';
+    if (lbl) lbl.textContent = isWorkspace
+      ? `Workspace · ${email}`
+      : `Standard Gmail · ${email}`;
+
+    // Counter
+    const counter = document.getElementById('mQuotaCounter');
+    if (counter) counter.textContent = sentToday + ' / ' + limit;
+
+    // Progress bar colour
+    const bar = document.getElementById('mQuotaBar');
+    if (bar) {
+      bar.style.width = pct + '%';
+      bar.style.background = pct >= 90
+        ? 'linear-gradient(90deg,#f43f5e,#ef4444)'
+        : pct >= 70
+          ? 'linear-gradient(90deg,#f59e0b,#f97316)'
+          : 'linear-gradient(90deg,#00d4ff,#7c3aed)';
+    }
+
+    // Sub labels
+    const sentEl = document.getElementById('mQuotaSent');
+    const leftEl = document.getElementById('mQuotaLeft');
+    if (sentEl) sentEl.textContent = sentToday + ' sent today';
+    if (leftEl) leftEl.textContent = window.mailQuotaRemaining + ' remaining';
+
+    // Micro stats
+    const lifeEl  = document.getElementById('mQuotaLifetime');
+    const limitEl = document.getElementById('mQuotaLimitDisplay');
+    if (lifeEl)  lifeEl.textContent  = totalSent.toLocaleString();
+    if (limitEl) limitEl.textContent = limit.toLocaleString();
+
+  } catch (e) {
+    const counter = document.getElementById('mQuotaCounter');
+    const lbl     = document.getElementById('mAcctLabel');
+    if (counter) counter.textContent = 'Unavailable';
+    if (lbl)     lbl.textContent     = 'Could not load quota';
+    console.warn('Quota fetch failed:', e.message);
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1156,11 +1228,15 @@ function mManualRenderTable() {
 
   headerRow.innerHTML = '<th style="width:36px">#</th>' +
     mManualCols.map((col, ci) => {
-      const isDefault = (col === 'Name' || col === 'Email');
-      return `<th><div class="manual-col-header"><span>${col}</span>${!isDefault
-        ? `<button class="manual-col-del" onclick="mManualRemoveColumn(${ci})" title="Remove column">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-           </button>` : ''}</div></th>`;
+      const isEmailLocked = col === 'Email';
+      const isDefault     = (col === 'Name' || col === 'Email');
+      const control = isEmailLocked
+        ? `<span style="font-size:10px;padding:1px 7px;border-radius:4px;background:rgba(0,212,255,0.12);color:var(--cyan);font-weight:700;letter-spacing:0.3px;margin-left:4px;vertical-align:middle">Required</span>`
+        : (!isDefault
+          ? `<button class="manual-col-del" onclick="mManualRemoveColumn(${ci})" title="Remove column">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+             </button>` : '');
+      return `<th><div class="manual-col-header"><span>${col}</span>${control}</div></th>`;
     }).join('') + '<th style="width:36px"></th>';
 
   body.innerHTML = mManualRows.map((row, ri) =>
@@ -1202,13 +1278,20 @@ function mManualAddColumn() {
 
 function mManualRemoveColumn(ci) {
   const col = mManualCols[ci];
-  if (col === 'Name' || col === 'Email') { toast('Cannot remove default columns', 'warning'); return; }
+  if (col === 'Email') { toast('The Email column is required and cannot be removed.', 'error'); return; }
+  if (col === 'Name')  { toast('Cannot remove default columns', 'warning'); return; }
   mManualCols.splice(ci, 1);
   mManualRows.forEach(r => delete r[col]);
   mManualRenderTable();
 }
 
 function mManualApplyData() {
+  // Validate: Email is required on every row
+  const missingEmail = mManualRows.filter(r => !r.Email?.trim()).length;
+  if (missingEmail > 0) {
+    toast(`${missingEmail} row(s) are missing an Email address. Email is required for all recipients.`, 'error');
+    return;
+  }
   const valid = mManualRows.filter(r => r.Name?.trim() || r.Email?.trim());
   if (!valid.length) { toast('Add at least one participant with a name or email', 'error'); return; }
   MS.headers = [...mManualCols];
