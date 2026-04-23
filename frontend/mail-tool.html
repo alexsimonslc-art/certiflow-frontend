@@ -96,6 +96,8 @@
 
     /* ─── Layout ─────────────────────────────────────────────── */
     .tool-cols { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+    .tool-cols > * { min-width: 0; } /* FIX: Prevents massive tables from blowing out the screen! */
+    @keyframes spin { to { transform: rotate(360deg); } } /* Adds the HX Form spinner logic */
     @media (max-width: 1200px) { .tool-cols { grid-template-columns: 1fr 280px; } }
     @media (max-width: 1000px) { .tool-cols { grid-template-columns: 1fr; } }
 
@@ -432,18 +434,10 @@
               <div id="mSrcHxForm" style="display:none;margin-top:16px">
                 <div class="form-group" style="margin-bottom:0">
                   <label class="form-label">Select HX Form <span class="req">*</span></label>
-                  <div style="display:flex;gap:12px;align-items:flex-start">
-                    <div style="flex:1">
-                      <select id="mHxFormSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="mLoadHxFormData(this.value)">
-                        <option value="">Loading your forms…</option>
-                      </select>
-                      <span class="form-hint" style="margin-top:8px;display:block">Imports respondent names and emails as mail recipients</span>
-                    </div>
-                    <button class="btn btn-primary" onclick="mLoadHxFormData(document.getElementById('mHxFormSelect').value)" style="padding:12px 24px;font-size:15px;white-space:nowrap;height:47px">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:6px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                      Import Form
-                    </button>
-                  </div>
+                  <select id="mHxFormSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="mLoadHxFormData(this.value)">
+                    <option value="">Loading your forms…</option>
+                  </select>
+                  <span class="form-hint" style="margin-top:8px;display:block">Imports respondent names and emails as mail recipients</span>
                 </div>
                 <div id="mHxFormResult" style="display:none;margin-top:20px"></div>
               </div>

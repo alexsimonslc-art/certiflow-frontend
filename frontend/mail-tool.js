@@ -1685,7 +1685,16 @@ async function mLoadHxFormList() {
 async function mLoadHxFormData(formId) {
   if (!formId) return;
   const sel = document.getElementById('mHxFormSelect');
+  const el  = document.getElementById('mHxFormResult');
   sel.disabled = true;
+
+  // ─── SHOW LOADING ANIMATION ───
+  el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--glass);margin-top:4px;font-size:14px;color:var(--text-2)">
+    <svg style="flex-shrink:0;animation:spin 0.9s linear infinite" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+    Loading form data...
+  </div>`;
+  el.style.display = 'block';
+
   try {
     const token = localStorage.getItem('Honourix_token');
     const res   = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
@@ -1693,7 +1702,11 @@ async function mLoadHxFormData(formId) {
     });
     if (!res.ok) throw new Error((await res.json()).error || 'Failed');
     const data = await res.json();
-    if (!data.rows?.length) { toast('No submissions in this form yet', 'warning'); return; }
+    if (!data.rows?.length) { 
+      toast('No submissions in this form yet', 'warning'); 
+      el.style.display = 'none';
+      return; 
+    }
     
     MS.headers = data.headers;
     MS.rows    = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
@@ -1708,7 +1721,6 @@ async function mLoadHxFormData(formId) {
     if (emailH && emailEl) emailEl.value = emailH;
     
     // ─── PREMIUM UI INJECTION ───
-    const el = document.getElementById('mHxFormResult');
     el.innerHTML = `
       <div class="notice notice-green" style="margin-bottom:16px;padding:14px 18px;border-radius:10px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1729,10 +1741,10 @@ async function mLoadHxFormData(formId) {
         </table>
       </div>
     `;
-    el.style.display = 'block';
     toast(`${MS.rows.length} recipients ready`, 'success');
 
   } catch(e) {
+    el.style.display = 'none';
     toast('Could not load form: ' + e.message, 'error');
   } finally { 
     sel.disabled = false; 
