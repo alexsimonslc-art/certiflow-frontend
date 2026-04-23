@@ -725,19 +725,17 @@
                       Add Column
                     </button>
                   </div>
-                  <div style="overflow-x:auto;border:1px solid var(--glass-border);border-radius:10px;margin-bottom:12px">
-                    <table style="width:100%;border-collapse:collapse">
+                  <div style="overflow-x:auto;border:1px solid var(--glass-border);border-radius:10px;margin-bottom:12px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;padding-bottom:4px;">
+                    <table class="manual-entry-table" style="min-width:100%">
                       <thead>
                         <tr id="manualHeaderRow">
-                          <th style="padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border);width:36px">#</th>
-                          <th style="padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border)">Name</th>
-                          <th style="padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border)">Email</th>
-                          <th style="padding:10px 12px;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border);width:36px"></th>
+                          <th style="width:36px;text-align:center;">#</th>
+                          <th><div class="manual-col-header"><span>Name</span></div></th>
+                          <th style="width:36px"></th>
                         </tr>
                       </thead>
                       <tbody id="manualBody">
-                        <!-- rows injected by JS -->
-                      </tbody>
+                        </tbody>
                     </table>
                   </div>
                   <div style="display:flex;gap:10px;margin-bottom:14px">

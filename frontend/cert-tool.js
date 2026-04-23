@@ -1685,21 +1685,20 @@ let manualCols = ['Name'];
 
 function manualRebuildHeader() {
   const tr = document.getElementById('manualHeaderRow');
-  const thStyle = 'padding:10px 12px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--glass-border)';
-  tr.innerHTML = `<th style="${thStyle};width:36px">#</th>`;
+  tr.innerHTML = `<th style="width:36px;text-align:center;">#</th>`;
+  
   manualCols.forEach((col, ci) => {
     const th = document.createElement('th');
-    th.setAttribute('style', thStyle);
-    th.innerHTML = `<div style="display:flex;align-items:center;gap:6px">
+    th.innerHTML = `<div class="manual-col-header">
       <span>${col}</span>
-            ${ci >= 1 ? `<button onclick=\"manualDeleteCol(${ci})\" title=\"Remove column\"
-        style="width:16px;height:16px;border-radius:4px;background:none;border:none;color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      ${ci >= 1 ? `<button class="manual-col-del" onclick="manualDeleteCol(${ci})" title="Remove column">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>` : ''}
     </div>`;
     tr.appendChild(th);
   });
-  tr.innerHTML += `<th style="${thStyle};width:36px"></th>`;
+  
+  tr.innerHTML += `<th style="width:36px"></th>`;
   _manualRefreshRows();
 }
 
@@ -1716,23 +1715,21 @@ function manualAddRow(vals = []) {
   const tbody = document.getElementById('manualBody');
   const idx = tbody.children.length;
   const tr = document.createElement('tr');
-  let html = `<td style="padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.04);text-align:center;font-size:12px;color:var(--text-3);width:36px">${idx + 1}</td>`;
+  
+  let html = `<td><div style="font-size:12px; color:var(--text-3); text-align:center; font-weight:600;">${idx + 1}</div></td>`;
+  
   manualCols.forEach((col, ci) => {
-    html += `<td style="padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.04)">
-      <input type="text" placeholder="${col}" value="${vals[ci] || ''}"
-        style="width:100%;padding:8px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:7px;color:var(--text);font-size:13.5px;font-family:var(--font);outline:none;transition:border-color 0.15s"
-        onfocus="this.style.borderColor='rgba(0,212,255,0.4)'"
-        onblur="this.style.borderColor='rgba(255,255,255,0.08)'" />
+    html += `<td>
+      <input type="text" placeholder="${col}" value="${(vals[ci] || '').replace(/"/g,'&quot;')}" />
     </td>`;
   });
-  html += `<td style="padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.04);width:36px">
-    <button onclick="this.closest('tr').remove();_manualReindex()" title="Remove row"
-      style="width:28px;height:28px;border-radius:6px;background:none;border:none;color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s"
-      onmouseenter="this.style.color='#f43f5e';this.style.background='rgba(244,63,94,0.1)'"
-      onmouseleave="this.style.color='var(--text-3)';this.style.background='none'">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  
+  html += `<td>
+    <button class="manual-row-del" onclick="this.closest('tr').remove();_manualReindex()" title="Remove row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
     </button>
   </td>`;
+  
   tr.innerHTML = html;
   tbody.appendChild(tr);
 }
