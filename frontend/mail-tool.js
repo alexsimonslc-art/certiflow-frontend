@@ -1751,8 +1751,8 @@ function mManualRenderTable() {
   const tbody = document.getElementById('mManualBody');
   if (!thead || !tbody) return;
 
-  // Header row
-  thead.innerHTML =
+  // Header row (Now with the '#' column at the start)
+  thead.innerHTML = '<th style="width:36px; text-align:center; padding:10px 0;">#</th>' +
     mManualCols.map(col => {
       const locked = M_LOCKED_COLS.includes(col);
       return `<th>
@@ -1767,9 +1767,10 @@ function mManualRenderTable() {
       </th>`;
     }).join('') + '<th style="width:36px"></th>';
 
-  // Body rows
+  // Body rows (Now injecting the row index + 1 at the start of each row)
   tbody.innerHTML = mManualRows.map((row, ri) => `
     <tr>
+      <td><div style="font-size:12px; color:var(--text-3); text-align:center; font-weight:600;">${ri + 1}</div></td>
       ${mManualCols.map(col => {
         const locked = M_LOCKED_COLS.includes(col);
         return `<td>
