@@ -355,50 +355,6 @@
         <div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--font);letter-spacing:0.4px">
           430 × 932 · iPhone 14 Pro Max</div>
       </div>
-
-      <div style="position: sticky; bottom: 0; width: 100%; height: 0; display: flex; justify-content: center; z-index: 1000; pointer-events: none; overflow: visible;">
-        
-        <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
-          
-          <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <div class="gal-ai-sparkle">✨</div>
-              <span style="font-weight: 600; font-size: 13.5px;">Gal AI</span>
-            </div>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="18 15 12 9 6 15"/></svg>
-          </div>
-
-          <div class="gal-ai-box" id="galAiBox">
-            
-            <div class="gal-ai-resizer" id="galAiResizer">
-              <div class="gal-ai-resizer-line"></div>
-            </div>
-            
-            <div class="gal-ai-header">
-              <div style="display:flex; align-items:center; gap:8px;">
-                <div class="gal-ai-sparkle">✨</div>
-                <span style="font-weight: 700; font-size: 14px; color:var(--text);">Gal AI</span>
-              </div>
-              <button class="gal-ai-close" onclick="closeGalAi()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            
-            <div class="gal-ai-history" id="galAiHistory">
-              <div class="gal-ai-msg bot">Hello! I'm Gal AI. What would you like to build today?</div>
-            </div>
-
-            <div class="gal-ai-input-area">
-              <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to build or edit..." autocomplete="off" />
-              <button class="gal-ai-send">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-      
     </main>
 
     <!-- ═══════════════════════════════════════════════════════
@@ -538,6 +494,46 @@
       </div>
 
     </aside>
+
+  </div>
+
+  <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
+    
+    <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="gal-ai-sparkle">✨</div>
+        <span style="font-weight: 600; font-size: 13.5px; letter-spacing: 0.3px;">Gal AI</span>
+      </div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+
+    <div class="gal-ai-box" id="galAiBox">
+      
+      <div class="gal-ai-resizer" id="galAiResizer">
+        <div class="gal-ai-resizer-line"></div>
+      </div>
+      
+      <div class="gal-ai-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="gal-ai-sparkle">✨</div>
+          <span style="font-weight: 700; font-size: 14px; color:var(--text); letter-spacing: 0.3px;">Gal AI</span>
+        </div>
+        <button class="gal-ai-close" onclick="closeGalAi()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      
+      <div class="gal-ai-history" id="galAiHistory">
+        <div class="gal-ai-msg bot">Hello! I'm Gal AI. What would you like to build today?</div>
+      </div>
+
+      <div class="gal-ai-input-area">
+        <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to build or edit..." autocomplete="off" />
+        <button class="gal-ai-send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
 
   </div>
 
@@ -1815,7 +1811,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
 
   <!-- ═══ Glass hover + Resize — injected last ═══ -->
   <style>
-    <style>
+    
     /* ── Account Settings Dock ── */
     .mse-account-dock { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: rgba(255, 255, 255, 0.02); border-top: 1px solid var(--glass-border); cursor: pointer; transition: all 0.2s; margin-top: auto; }
     .mse-account-dock:hover { background: rgba(255, 255, 255, 0.05); }
@@ -1828,12 +1824,12 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     .mse-account-dock:hover .mse-acct-arrow { opacity: 1; transform: translateX(0); color: var(--text); }
 
     /* ── Gal AI (Google AI Studio Style) ── */
-    .gal-ai-wrapper { position: absolute; bottom: 0; width: 480px; max-width: 90%; pointer-events: none; display: flex; justify-content: center; align-items: flex-end; }
+    .gal-ai-wrapper { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 720px; max-width: 95vw; z-index: 9999; pointer-events: none; display: flex; justify-content: center; align-items: flex-end; }
     
-    .gal-ai-tab { background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.12); border-bottom: none; border-radius: 12px 12px 0 0; padding: 10px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 220px; box-shadow: 0 -4px 16px rgba(0,0,0,0.3); pointer-events: auto; transition: all 0.2s; color: var(--text); }
-    .gal-ai-tab:hover { background: rgba(25, 30, 45, 0.98); color: var(--cyan); }
+    .gal-ai-tab { background: linear-gradient(#0c1120, #0c1120) padding-box, linear-gradient(135deg, rgba(0,212,255,0.8), rgba(124,58,237,0.8)) border-box; border: 1.5px solid transparent; border-bottom: none; border-radius: 14px 14px 0 0; padding: 10px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 220px; box-shadow: 0 -4px 16px rgba(0,0,0,0.4), 0 0 16px rgba(0, 212, 255, 0.2); pointer-events: auto; transition: all 0.2s; color: var(--text); }
+    .gal-ai-tab:hover { filter: brightness(1.15); box-shadow: 0 -6px 20px rgba(0,0,0,0.5), 0 0 24px rgba(0, 212, 255, 0.4); }
     
-    .gal-ai-box { position: absolute; bottom: 0; width: 100%; height: 320px; background: rgba(15, 20, 35, 0.98); border: 1px solid rgba(255,255,255,0.12); border-bottom: none; border-radius: 16px 16px 0 0; display: flex; flex-direction: column; pointer-events: auto; box-shadow: 0 -12px 48px rgba(0,0,0,0.6); opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 2; }
+    .gal-ai-box { position: absolute; bottom: 0; width: 100%; height: 320px; background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(135deg, rgba(0,212,255,0.9), rgba(124,58,237,0.9), rgba(244,63,94,0.9)) border-box; border: 1.5px solid transparent; border-bottom: none; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; pointer-events: auto; box-shadow: 0 -12px 48px rgba(0,0,0,0.8), 0 0 28px rgba(0, 212, 255, 0.25); opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 2; }
     .gal-ai-wrapper.open .gal-ai-box { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .gal-ai-wrapper.open .gal-ai-tab { opacity: 0; pointer-events: none; transform: translateY(10px); }
     
