@@ -207,28 +207,41 @@ function mShowSheetPreview() {
   `;
   el.style.display = 'block';
 }
+function showFilePreview(name) {
+  const preview = CS.rows; // FIX: Show all rows
+  document.getElementById('fileResult').innerHTML = `
+    <div class="notice notice-green" style="margin-bottom:12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>${name}</strong> — ${CS.rows.length} rows, ${CS.headers.length} columns</span>
+    </div>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse">
+        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
+        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  document.getElementById('fileResult').style.display = 'block';
+  toast(`Loaded ${CS.rows.length} participants from file`, 'success');
+}
 
-function mHandleFile(e) {
+function handleFile(e) {
   const file = e.target.files[0];
   if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
   if (ext === 'csv') {
-    Papa.parse(file, {
-      header: true, skipEmptyLines: true,
-      complete: r => { MS.headers = r.meta.fields; MS.rows = r.data; mShowFileMsg(file.name); mPopulateDropdowns(); }
-    });
-  } else if (ext === 'xlsx' || ext === 'xls') {
+    Papa.parse(file, { header: true, skipEmptyLines: true, complete: r => {
+      CS.headers = r.meta.fields; CS.rows = r.data; showFilePreview(file.name);
+    }});
+  } else if (['xlsx', 'xls'].includes(ext)) {
     const reader = new FileReader();
-    reader.onload = ev => {
-      const wb  = XLSX.read(ev.target.result, { type: 'array' });
+    reader.onload = e2 => {
+      const wb  = XLSX.read(e2.target.result, { type: 'array' });
       const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
-      MS.headers = Object.keys(arr[0] || {}); MS.rows = arr;
-      mShowFileMsg(file.name); mPopulateDropdowns();
+      CS.headers = Object.keys(arr[0] || {}); CS.rows = arr; showFilePreview(file.name);
     };
     reader.readAsArrayBuffer(file);
   } else { toast('Use .csv, .xlsx or .xls', 'error'); }
 }
-
 function mShowFileMsg(name) {
   const el = document.getElementById('mFileResult');
   el.innerHTML = `
