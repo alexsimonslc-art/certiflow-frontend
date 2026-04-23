@@ -500,11 +500,16 @@
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
     
     <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <div class="gal-ai-sparkle">✨</div>
-        <span style="font-weight: 600; font-size: 13.5px; letter-spacing: 0.3px;">Gal AI</span>
+      <div style="display:flex; align-items:center; gap:12px; flex:1; overflow:hidden;">
+        <div class="gal-ai-sparkle" style="font-size:16px;">✨</div>
+        <span style="font-weight: 700; font-size: 14.5px; letter-spacing: 0.3px; color:#fff;">Gal AI</span>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.15);"></div>
+        <span class="gal-ai-typewriter" id="galAiTypewriter">I can help you write, design, and build blocks...</span>
       </div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="18 15 12 9 6 15"/></svg>
+      <div class="gal-ai-tab-btn">
+        <span>Open AI</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px;"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
     </div>
 
     <div class="gal-ai-box" id="galAiBox">
@@ -528,7 +533,7 @@
       </div>
 
       <div class="gal-ai-input-area">
-        <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to build or edit..." autocomplete="off" />
+        <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to generate a block, draft text, or change themes..." autocomplete="off" />
         <button class="gal-ai-send">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
@@ -1752,6 +1757,27 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       }
     });
 
+    // ── Gal AI Rotating "Calling Lines" ──
+    const galCatchyLines = [
+      "I can help you write, design, and build blocks...",
+      "Need a speaker section? I can generate one...",
+      "Want to change themes? Just ask me to make it Cyberpunk...",
+      "I can instantly draft a professional 'About' section...",
+      "Ask me to generate a complete FAQ section for your event..."
+    ];
+    let galLineIdx = 0;
+    setInterval(() => {
+      const tw = document.getElementById('galAiTypewriter');
+      if (tw) {
+        tw.style.opacity = 0; // Fade out
+        setTimeout(() => {
+          galLineIdx = (galLineIdx + 1) % galCatchyLines.length;
+          tw.textContent = galCatchyLines[galLineIdx];
+          tw.style.opacity = 1; // Fade in
+        }, 300);
+      }
+    }, 4500); // Rotates every 4.5 seconds
+
     // Handle Drag-to-Resize
     let _aiResizing = false, _aiStartY, _aiStartH;
     document.addEventListener('DOMContentLoaded', () => {
@@ -1826,10 +1852,31 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     /* ── Gal AI (Google AI Studio Style) ── */
     .gal-ai-wrapper { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 720px; max-width: 95vw; z-index: 9999; pointer-events: none; display: flex; justify-content: center; align-items: flex-end; }
     
-    .gal-ai-tab { background: linear-gradient(#0c1120, #0c1120) padding-box, linear-gradient(135deg, rgba(0,212,255,0.8), rgba(124,58,237,0.8)) border-box; border: 1.5px solid transparent; border-bottom: none; border-radius: 14px 14px 0 0; padding: 10px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 220px; box-shadow: 0 -4px 16px rgba(0,0,0,0.4), 0 0 16px rgba(0, 212, 255, 0.2); pointer-events: auto; transition: all 0.2s; color: var(--text); }
-    .gal-ai-tab:hover { filter: brightness(1.15); box-shadow: 0 -6px 20px rgba(0,0,0,0.5), 0 0 24px rgba(0, 212, 255, 0.4); }
+    @keyframes gal-glow-border {
+        0% { background-position: 0% 0%, 0% 50%; }
+        50% { background-position: 0% 0%, 100% 50%; }
+        100% { background-position: 0% 0%, 0% 50%; }
+    }
+
+    .gal-ai-tab { 
+      width: 100%; /* Make the closed state full width */
+      background: linear-gradient(#0c1120, #0c1120) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #f43f5e, #00d4ff) border-box; 
+      background-size: 100% 100%, 300% 100%;
+      animation: gal-glow-border 6s ease-in-out infinite;
+      border: 1.5px solid transparent; border-bottom: none; border-radius: 16px 16px 0 0; padding: 12px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 24px rgba(0,0,0,0.5), 0 0 16px rgba(0, 212, 255, 0.15); pointer-events: auto; transition: all 0.2s; color: var(--text); 
+    }
+    .gal-ai-tab:hover { filter: brightness(1.2); box-shadow: 0 -6px 32px rgba(0,0,0,0.6), 0 0 24px rgba(124, 58, 237, 0.3); padding-bottom: 16px; }
     
-    .gal-ai-box { position: absolute; bottom: 0; width: 100%; height: 320px; background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(135deg, rgba(0,212,255,0.9), rgba(124,58,237,0.9), rgba(244,63,94,0.9)) border-box; border: 1.5px solid transparent; border-bottom: none; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; pointer-events: auto; box-shadow: 0 -12px 48px rgba(0,0,0,0.8), 0 0 28px rgba(0, 212, 255, 0.25); opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 2; }
+    .gal-ai-typewriter { font-size: 13.5px; color: var(--text-2); white-space: nowrap; transition: opacity 0.3s; }
+    .gal-ai-tab-btn { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--cyan); background: rgba(0, 212, 255, 0.1); padding: 6px 12px; border-radius: 20px; transition: all 0.2s; }
+    .gal-ai-tab:hover .gal-ai-tab-btn { background: rgba(0, 212, 255, 0.2); }
+    
+    .gal-ai-box { position: absolute; bottom: 0; width: 100%; height: 320px; 
+      background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #f43f5e, #00d4ff) border-box; 
+      background-size: 100% 100%, 300% 100%;
+      animation: gal-glow-border 6s ease-in-out infinite;
+      border: 1.5px solid transparent; border-bottom: none; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; pointer-events: auto; box-shadow: 0 -12px 48px rgba(0,0,0,0.8), 0 0 28px rgba(0, 212, 255, 0.15); opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 2; 
+    }
     .gal-ai-wrapper.open .gal-ai-box { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .gal-ai-wrapper.open .gal-ai-tab { opacity: 0; pointer-events: none; transform: translateY(10px); }
     
