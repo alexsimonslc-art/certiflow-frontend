@@ -1803,3 +1803,194 @@ function mManualApplyData() {
   msg.style.display = 'block';
   toast(validRows.length + ' recipients applied', 'success');
 }
+
+/* ══════════════════════════════════════════════════════
+   GAL AI SIDE PANEL
+══════════════════════════════════════════════════════ */
+const GEMINI_KEY = 'AIzaSyB1z7xnCmFncvhhmGLNgGCkbHVn0Z0WwnA'; // ← paste your key here
+let galCurrentHtml = '';
+let galIsOpen = true;
+
+function galTogglePanel() {
+  galIsOpen = !galIsOpen;
+  const layout = document.querySelector('.me-outer-layout');
+  const expandBtn = document.getElementById('galExpandBtn');
+  const collapseIcon = document.querySelector('#galCollapseBtn svg');
+  layout.classList.toggle('gal-collapsed', !galIsOpen);
+  expandBtn.style.display = galIsOpen ? 'none' : 'flex';
+  if (collapseIcon) {
+    collapseIcon.querySelector('polyline').setAttribute('points', galIsOpen ? '15 18 9 12 15 6' : '9 18 15 12 9 6');
+  }
+}
+
+function galInputKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); galSend(); }
+}
+
+function galClearChat() {
+  galCurrentHtml = '';
+  const msgs = document.getElementById('galMessages');
+  msgs.innerHTML = `<div class="gal-msg gal-msg-ai">
+    <div class="gal-msg-bubble">
+      👋 Chat cleared! Describe a new email and I'll design it for you.<br/>
+      <span style="color:rgba(255,255,255,0.4);font-size:12px">Try: "Clean white welcome email for {{name}}"</span>
+    </div>
+  </div>`;
+}
+
+function galBuildTagChips() {
+  const container = document.getElementById('galTagChips');
+  if (!container) return;
+  const tags = (MS && MS.headers ? MS.headers : []).map(h => `{{${h}}}`);
+  const defaults = ['{{name}}','{{email}}','{{certificateName}}','{{certificateLink}}'];
+  const all = [...new Set([...defaults, ...tags])];
+  container.innerHTML = all.map(t =>
+    `<button class="gal-tag-chip" onclick="galInsertTag('${t}')">${t}</button>`
+  ).join('');
+}
+
+function galInsertTag(tag) {
+  const inp = document.getElementById('galInput');
+  if (!inp) return;
+  const s = inp.selectionStart || inp.value.length;
+  inp.value = inp.value.slice(0, s) + tag + inp.value.slice(inp.selectionEnd || s);
+  inp.focus();
+}
+
+function galAddUserMsg(text) {
+  const msgs = document.getElementById('galMessages');
+  const div = document.createElement('div');
+  div.className = 'gal-msg gal-msg-user';
+  div.innerHTML = `<div class="gal-msg-bubble">${text.replace(/</g,'&lt;')}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function galAddLoadingMsg() {
+  const msgs = document.getElementById('galMessages');
+  const div = document.createElement('div');
+  div.className = 'gal-msg gal-msg-ai gal-msg-loading';
+  div.id = 'galLoadingMsg';
+  div.innerHTML = `<div class="gal-msg-bubble">
+    <div class="gal-typing"><span></span><span></span><span></span></div>
+    <div style="font-size:11.5px;color:rgba(255,255,255,0.4);margin-top:6px">Designing your email...</div>
+  </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function galRemoveLoadingMsg() {
+  const el = document.getElementById('galLoadingMsg');
+  if (el) el.remove();
+}
+
+function galAddAiMsg(html, isError) {
+  const msgs = document.getElementById('galMessages');
+  const div = document.createElement('div');
+  div.className = 'gal-msg gal-msg-ai';
+  if (isError) {
+    div.innerHTML = `<div class="gal-msg-bubble" style="border:1px solid rgba(248,113,113,0.3)">
+      ⚠️ ${html}
+    </div>`;
+  } else {
+    div.innerHTML = `<div class="gal-msg-bubble">
+      ✅ Email designed! Click below to use it.
+      <button class="gal-use-btn" onclick="galUseDesign()">✨ Use This Design →</button>
+    </div>`;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function galSend() {
+  const input = document.getElementById('galInput');
+  const prompt = (input.value || '').trim();
+  if (!prompt) {
+    input.style.borderColor = 'rgba(248,113,113,0.6)';
+    setTimeout(() => input.style.borderColor = '', 1000);
+    return;
+  }
+  if (!GEMINI_KEY || GEMINI_KEY === 'YOUR_API_KEY_HERE') {
+    galAddAiMsg('API key not set. Please add your Gemini key in mail-tool.js (GEMINI_KEY variable).', true);
+    return;
+  }
+
+  const btn = document.getElementById('galSendBtn');
+  btn.disabled = true;
+  btn.textContent = 'Designing...';
+
+  galAddUserMsg(prompt);
+  input.value = '';
+  galAddLoadingMsg();
+
+  const tags = (MS && MS.headers ? MS.headers : []).map(h => `{{${h}}}`);
+  const systemPrompt = `You are an expert HTML email designer. Generate a complete, production-ready HTML email.
+
+STRICT RULES — follow every one:
+- Use TABLE-BASED layout only (no divs for structure) — max-width 600px centered
+- ALL CSS must be INLINE only — no <style> blocks, no <link> tags (Gmail strips them)
+- Use ONLY web-safe fonts: Arial, Georgia, Verdana, Trebuchet MS, Tahoma
+- Images must use absolute URLs — no relative paths
+- Return ONLY the raw HTML — no markdown, no code fences, no explanation
+- Must render perfectly in Gmail, Outlook 2016+, Apple Mail
+- Use merge tags exactly as given — do not modify them
+- Available merge tags: ${[...new Set(['{{name}}','{{email}}', ...tags])].join(', ')}
+${galCurrentHtml ? `\nCURRENT EMAIL HTML (modify this based on the user request):\n${galCurrentHtml}\n` : ''}
+USER REQUEST: ${prompt}`;
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: systemPrompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 4096 }
+        })
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'API error ' + res.status);
+    }
+
+    const data = await res.json();
+    let html = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    // Strip markdown code fences if Gemini adds them
+    html = html.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+
+    galCurrentHtml = html;
+    galRemoveLoadingMsg();
+    galAddAiMsg(html, false);
+
+  } catch (e) {
+    galRemoveLoadingMsg();
+    galAddAiMsg(
+      e.message.includes('quota') || e.message.includes('429')
+        ? 'Rate limit reached — wait a moment and try again.'
+        : 'Something went wrong: ' + e.message,
+      true
+    );
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;display:inline;vertical-align:-1px;margin-right:4px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Generate`;
+}
+
+function galUseDesign() {
+  if (!galCurrentHtml) return;
+  const tmpl = document.getElementById('mHtmlTmpl');
+  if (tmpl) tmpl.value = galCurrentHtml;
+  // Also update code editor if open
+  if (ME.cm) ME.cm.setValue(galCurrentHtml);
+  toast('✨ Gal AI design applied! Proceed to Preview →', 'success', 3000);
+}
+
+// Build tag chips whenever data is loaded
+const _origPopulateDropdowns = typeof mPopulateDropdowns === 'function' ? mPopulateDropdowns : null;
+document.addEventListener('DOMContentLoaded', () => {
+  galBuildTagChips();
+});

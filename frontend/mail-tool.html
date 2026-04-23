@@ -293,6 +293,185 @@
 
     @media (max-width:1100px) { .tool-cols { grid-template-columns:1fr; } .me-visual-layout { grid-template-columns:140px 1fr; } .me-props { display:none; } }
     @media (max-width:700px) { .report-row { grid-template-columns:1fr 1fr; } .me-visual-layout { grid-template-columns:1fr; height:auto; } .me-palette { flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid rgba(255,255,255,0.07); } .src-picker { grid-template-columns: 1fr; } }
+    /* ── Gal AI Outer Layout ─────────────────────────────── */
+.me-outer-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
+  align-items: start;
+  transition: grid-template-columns 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.me-outer-layout.gal-collapsed {
+  grid-template-columns: 1fr 0px;
+}
+
+/* ── Gal AI Side Panel ───────────────────────────────── */
+.gal-panel {
+  background: #0f1629;
+  border: 1px solid rgba(139,92,246,0.25);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 600px;
+  max-height: 800px;
+  overflow: hidden;
+  position: sticky;
+  top: 20px;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.gal-collapsed .gal-panel {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
+  overflow: hidden;
+  width: 0;
+  min-width: 0;
+  border: none;
+}
+
+/* Panel header */
+.gal-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(139,92,246,0.2);
+  background: rgba(139,92,246,0.08);
+  flex-shrink: 0;
+}
+.gal-collapse-btn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-3);
+  transition: background 0.15s, color 0.15s;
+}
+.gal-collapse-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-1); }
+
+/* Messages */
+.gal-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139,92,246,0.3) transparent;
+}
+.gal-msg { display: flex; flex-direction: column; }
+.gal-msg-ai  { align-items: flex-start; }
+.gal-msg-user{ align-items: flex-end; }
+.gal-msg-bubble {
+  max-width: 90%;
+  padding: 10px 13px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.gal-msg-ai   .gal-msg-bubble { background: rgba(139,92,246,0.15); color: #e2e8f0; border-radius: 4px 12px 12px 12px; }
+.gal-msg-user .gal-msg-bubble { background: rgba(79,70,229,0.35);  color: #e2e8f0; border-radius: 12px 4px 12px 12px; }
+.gal-msg-loading .gal-msg-bubble { background: rgba(139,92,246,0.1); }
+
+/* Typing indicator */
+.gal-typing { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+.gal-typing span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #a78bfa;
+  animation: galBounce 1.2s infinite;
+}
+.gal-typing span:nth-child(2) { animation-delay: 0.2s; }
+.gal-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes galBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+/* Use Design button inside message */
+.gal-use-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.gal-use-btn:hover { opacity: 0.85; }
+
+/* Tags row */
+.gal-tags-row {
+  padding: 8px 14px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+.gal-tag-chip {
+  font-size: 10.5px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(0,212,255,0.1);
+  color: #00d4ff;
+  border: 1px solid rgba(0,212,255,0.2);
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.gal-tag-chip:hover { background: rgba(0,212,255,0.2); }
+
+/* Input bar */
+.gal-input-bar {
+  padding: 10px 14px 14px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+.gal-input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: var(--text-1);
+  font-size: 13px;
+  padding: 10px 12px;
+  resize: none;
+  line-height: 1.5;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.gal-input:focus {
+  outline: none;
+  border-color: rgba(139,92,246,0.5);
+}
+.gal-input::placeholder { color: var(--text-3); }
+
+/* Expand button (when panel is collapsed) */
+.gal-expand-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  border: none;
+  border-radius: 99px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 100;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.gal-expand-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+/* Responsive — collapse side panel on smaller screens */
+@media (max-width: 1200px) {
+  .me-outer-layout { grid-template-columns: 1fr; }
+  .gal-panel { position: fixed; right: 16px; bottom: 80px; width: 300px; height: 500px; min-height: unset; z-index: 200; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+}
   </style>
 </head>
 <body>
@@ -575,8 +754,11 @@
             </div>
           </div>
 
-          <!-- ── 3-Mode Editor Card ─────────────────────────────── -->
-          <div class="me-card" id="meCard">
+          <!-- ── Editor + Gal AI Side Layout ──────────────────── -->
+          <div class="me-outer-layout">
+
+            <!-- 3-Mode Editor Card -->
+            <div class="me-card" id="meCard">
 
             <!-- Header -->
             <div class="me-head">
@@ -605,10 +787,7 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   Preview
                 </button>
-                <button class="me-tab me-tab-gal" id="meTabGalAI" onclick="meSwitchTab('galai')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                  ✨ Gal AI
-                </button>
+                
               </div>
               </div>
             </div>
@@ -744,6 +923,60 @@
             </div>
 
           </div><!-- /me-card -->
+
+  <!-- ✨ Gal AI Side Panel -->
+  <div class="gal-panel" id="galPanel">
+
+    <!-- Header -->
+    <div class="gal-panel-head">
+      <div style="display:flex;align-items:center;gap:8px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:#a78bfa"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span style="font-size:13.5px;font-weight:700;color:#c4b5fd">Gal AI</span>
+        <span style="font-size:10px;background:rgba(139,92,246,0.2);color:#a78bfa;padding:1px 6px;border-radius:99px;font-weight:600">BETA</span>
+      </div>
+      <button class="gal-collapse-btn" id="galCollapseBtn" onclick="galTogglePanel()" title="Collapse">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+    </div>
+
+    <!-- Chat messages -->
+    <div class="gal-messages" id="galMessages">
+      <div class="gal-msg gal-msg-ai">
+        <div class="gal-msg-bubble">
+          👋 Hi! I'm <strong>Gal</strong> — your AI email designer.<br/><br/>
+          Tell me what kind of email you want and I'll build it for you instantly.<br/><br/>
+          <span style="color:rgba(255,255,255,0.5);font-size:12px">Try: "Design a certificate congratulations email with a blue theme for {{name}}"</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Merge tag chips -->
+    <div class="gal-tags-row" id="galTagsRow">
+      <span style="font-size:10.5px;color:var(--text-3);font-weight:600">INSERT TAG:</span>
+      <div id="galTagChips" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px"></div>
+    </div>
+
+    <!-- Input bar -->
+    <div class="gal-input-bar">
+      <textarea class="gal-input" id="galInput" placeholder="Describe your email... (e.g. blue congratulations email for {{name}})" rows="3" onkeydown="galInputKeydown(event)"></textarea>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-ghost btn-sm" style="flex:1;font-size:12px" onclick="galClearChat()">Clear</button>
+        <button class="btn btn-primary btn-sm" style="flex:2;font-size:12px;background:linear-gradient(135deg,#7c3aed,#4f46e5)" id="galSendBtn" onclick="galSend()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;display:inline;vertical-align:-1px;margin-right:4px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Generate
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /gal-panel -->
+
+</div><!-- /me-outer-layout -->
+
+<!-- Gal AI expand button (shown when panel collapsed) -->
+<button class="gal-expand-btn" id="galExpandBtn" onclick="galTogglePanel()" style="display:none" title="Open Gal AI">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+  ✨ Gal AI
+</button>
 
           <!-- Hidden textarea — source of truth for send logic -->
           <textarea id="mHtmlTmpl" style="display:none"></textarea>
