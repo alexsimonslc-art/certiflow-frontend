@@ -967,7 +967,35 @@
 
 
           <!-- Hidden textarea — source of truth for send logic -->
-          <textarea id="mHtmlTmpl" style="display:none"></textarea>
+          <!-- Hidden HTML textarea (source of truth) -->
+<textarea id="mHtmlTmpl" style="display:none"></textarea>
+
+<!-- Code Tab Panel -->
+<div id="meCode" style="display:none">
+  <div class="me-code-wrap">
+    <div id="meCmWrap"></div>
+    <div class="me-code-apply-bar">
+      <span>Edit HTML directly — click Apply to sync to visual canvas</span>
+      <button class="btn btn-primary btn-sm" onclick="meApplyCodeToVisual()">Apply to Visual</button>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Tab Panel -->
+<div id="mePreview" style="display:none">
+  <div class="me-preview-wrap">
+    <div class="me-preview-toolbar">
+      <button class="me-device-btn active" id="meBtnDesktop" onclick="meSetDevice('desktop')">🖥 Desktop</button>
+      <button class="me-device-btn" id="meBtnMobile" onclick="meSetDevice('mobile')">📱 Mobile</button>
+    </div>
+    <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
+      <iframe id="mePreviewFrame" style="width:100%;height:480px"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- Gal AI Panel placeholder (for tab switcher JS compatibility) -->
+<div id="meGalAI" style="display:none"></div>
 
           <div class="step-nav">
             <button class="btn btn-secondary btn-lg" onclick="mGoStep(1)">
