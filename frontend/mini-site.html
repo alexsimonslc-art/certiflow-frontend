@@ -696,10 +696,9 @@
     }
 
     let slugCheckTimer = null;
+    let currentSlugCheck = ''; // Tracks the latest word the user typed
 
     async function validateSlug(input) {
-      // NOTE: We removed the 'input._userEdited = !!input.value' line here so auto-typing works perfectly!
-      
       let slug = input.value.trim();
       const status = document.getElementById('slugStatus');
       
@@ -710,6 +709,9 @@
         input.value = clean;
         slug = clean;
       }
+
+      // Update the tracker to the very latest keystroke
+      currentSlugCheck = slug;
 
       // 1. Check local sites first
       const takenLocally = getSites().some(s => s.slug === slug && s.id !== (pendingTemplate?.editId));
@@ -729,7 +731,7 @@
         return;
       }
 
-      // 2. Loading UI (Bright Cyan with Spinner)
+      // 2. Loading UI
       status.innerHTML = `<div style="display:flex; align-items:center; gap:6px; color:var(--cyan); font-size:13px; font-weight:600; margin-top:10px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;animation:spin 1s linear infinite;"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
         Verifying availability...
@@ -738,12 +740,20 @@
       // 3. Check Global Database
       clearTimeout(slugCheckTimer);
       slugCheckTimer = setTimeout(async () => {
+        
+        // Double check: Did the user type a new letter while waiting 500ms?
+        if (currentSlugCheck !== slug) return;
+
         try {
           const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/minisite/check-slug?slug=${encodeURIComponent(slug)}`);
+          
+          // CRITICAL FIX: Did the user type a new letter while the backend was answering?
+          // If yes, throw this old answer in the trash immediately!
+          if (currentSlugCheck !== slug || input.value.trim() !== slug) return;
+
           if (res.ok) {
             const data = await res.json();
             if (!data.available) {
-              // Taken UI (Bright Red with X icon)
               status.innerHTML = `<div style="display:flex; align-items:center; gap:6px; color:var(--red); font-size:13px; font-weight:600; margin-top:10px;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                 Taken by another user
@@ -751,19 +761,23 @@
               return;
             }
           }
-          // Success UI (Bright Green with Check icon)
+          
+          // Success UI
           status.innerHTML = `<div style="display:flex; align-items:center; gap:6px; color:var(--green); font-size:13px; font-weight:600; margin-top:10px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             Available: honourix.app/s/${slug}
           </div>`;
+
         } catch (e) {
-          // Fallback if backend is unreachable
+          // If backend connection fails, ignore outdated responses
+          if (currentSlugCheck !== slug || input.value.trim() !== slug) return;
+          
           status.innerHTML = `<div style="display:flex; align-items:center; gap:6px; color:var(--green); font-size:13px; font-weight:600; margin-top:10px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             Available: honourix.app/s/${slug}
           </div>`;
         }
-      }, 500); // Wait 500ms before checking the backend
+      }, 500); 
     }
 
     async function confirmCreate() {
