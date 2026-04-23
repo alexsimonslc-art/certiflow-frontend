@@ -595,9 +595,14 @@ function meSwitchTab(tab) {
     if (btn) btn.classList.toggle('active', t === tab);
   });
 
-  document.getElementById('meVisual').style.display  = tab === 'visual'  ? 'grid' : 'none';
-  document.getElementById('meCode').style.display    = tab === 'code'    ? 'block' : 'none';
-  document.getElementById('mePreview').style.display = tab === 'preview' ? 'block' : 'none';
+  document.getElementById('meVisual').style.display   = tab === 'visual'  ? '' : 'none';
+  document.getElementById('meCode').style.display     = tab === 'code'    ? '' : 'none';
+  document.getElementById('mePreview').style.display  = tab === 'preview' ? '' : 'none';
+  document.getElementById('meGalAI').style.display    = tab === 'galai'   ? '' : 'none';
+  document.getElementById('meTabVisual').classList.toggle('active',  tab === 'visual');
+  document.getElementById('meTabCode').classList.toggle('active',    tab === 'code');
+  document.getElementById('meTabPreview').classList.toggle('active', tab === 'preview');
+  document.getElementById('meTabGalAI').classList.toggle('active',   tab === 'galai');
 
   if (tab === 'code' && ME.cm) {
     // Sync latest blocks → code when entering code tab

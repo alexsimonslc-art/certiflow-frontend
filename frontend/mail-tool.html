@@ -119,6 +119,17 @@
     .me-tab:hover { color:var(--text); }
     .me-tab.active { background:var(--grad-primary);color:#fff;font-weight:600;box-shadow:0 2px 12px rgba(0,212,255,0.25); }
 
+    .me-tab-gal {
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(0,212,255,0.15)) !important;
+      border-color: rgba(139,92,246,0.3) !important;
+      color: #a78bfa !important;
+    }
+    .me-tab-gal.active,
+    .me-tab-gal:hover {
+      background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(0,212,255,0.25)) !important;
+      color: #c4b5fd !important;
+      border-color: rgba(139,92,246,0.5) !important;
+    }
     /* Template Picker */
     .me-tpl-row { display:flex;gap:14px;padding:18px 22px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.07); }
     .me-tpl-row::-webkit-scrollbar { height:4px; }
@@ -582,19 +593,23 @@
                   Templates
                 </button>
                 <div class="me-tab-bar">
-                  <button class="me-tab active" id="meTabVisual" onclick="meSwitchTab('visual')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                    Visual
-                  </button>
-                  <button class="me-tab" id="meTabCode" onclick="meSwitchTab('code')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                    Code
-                  </button>
-                  <button class="me-tab" id="meTabPreview" onclick="meSwitchTab('preview')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    Preview
-                  </button>
-                </div>
+                <button class="me-tab active" id="meTabVisual" onclick="meSwitchTab('visual')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                  Visual
+                </button>
+                <button class="me-tab" id="meTabCode" onclick="meSwitchTab('code')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  Code
+                </button>
+                <button class="me-tab" id="meTabPreview" onclick="meSwitchTab('preview')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Preview
+                </button>
+                <button class="me-tab me-tab-gal" id="meTabGalAI" onclick="meSwitchTab('galai')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  ✨ Gal AI
+                </button>
+              </div>
               </div>
             </div>
 
@@ -683,7 +698,12 @@
                 </div>
               </div>
             </div>
-
+            <!-- Tab content: Gal AI -->
+            <div id="meGalAI" style="display:none;padding:32px;text-align:center;color:var(--text-3)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin:0 auto 12px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <div style="font-size:15px;font-weight:600;color:var(--text-1)">Gal AI is coming here</div>
+              <div style="font-size:13px;margin-top:6px">Tab switching works ✓</div>
+            </div>
             <!-- Tab content: Code -->
             <!-- Tab content: Code -->
             <div id="meCode" style="display:none;position:relative">
