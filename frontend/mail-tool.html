@@ -745,65 +745,67 @@
            STEP 3 — Preview & Send Config
       ═══════════════════════════════════════════════════════ -->
       <div class="step-panel" id="sp3">
-        <div style="display:flex;flex-direction:column;gap:20px">
-          <div style="display:flex;flex-direction:column;gap:20px">
-
-            <!-- Personalised Preview -->
-            <div class="card" style="padding:0;overflow:hidden">
-              <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-                <div class="card-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Personalized Preview
-                </div>
-                <div class="preview-nav">
-                  <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
-                  <button class="preview-nav-btn" onclick="mNavPrev()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                  </button>
-                  <button class="preview-nav-btn" onclick="mNavNext()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </button>
-                </div>
-              </div>
-              <div style="padding:20px">
-                <div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden">
-                  <div style="background:#e8edf3;padding:12px 18px;border-bottom:1px solid rgba(0,0,0,0.08)">
-                    <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
-                    <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span id="mFinalSubject">—</span></div>
-                  </div>
-                  <iframe id="mPreviewIframe" style="width:100%;border:none;min-height:340px;background:#fff" sandbox="allow-same-origin"></iframe>
-                </div>
-              </div>
-            </div>
-
-            <!-- Send Summary -->
-            <div class="card">
-              <div class="card-title" style="margin-bottom:18px">Send Summary</div>
-              <div class="summary-grid" id="mSummaryGrid"></div>
-            </div>
-
-            <!-- Recipients list — now BELOW preview -->
-      <div class="card card-sm">
-        <div class="card-title" style="margin-bottom:14px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          Recipients
-          <span id="mSendCountLabel" style="margin-left:6px;font-size:12px;color:var(--text-3);font-weight:500"></span>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px;">
+          <div>
+            <h2 class="page-title" style="margin:0; font-size:24px; font-weight:800; color:var(--text); letter-spacing:-0.5px;">Review & Dispatch</h2>
+            <p style="color:var(--text-3); font-size:14px; margin-top:4px;">Review your responsive email output before sending.</p>
+          </div>
+          
+          <div style="font-size:13.5px; color:var(--text-2); background:var(--surface); padding:10px 20px; border-radius:30px; border:1px solid var(--glass-border); display:flex; gap:16px; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+            <div><span style="color:var(--text-3); font-weight:600;">To:</span> <strong id="mFinalTo" style="color:var(--cyan); letter-spacing:0.3px;"></strong></div>
+            <div style="width:1px; height:14px; background:var(--glass-border-2);"></div>
+            <div><span style="color:var(--text-3); font-weight:600;">Subject:</span> <strong id="mFinalSubject" style="color:var(--text);"></strong></div>
+          </div>
         </div>
-        <div id="mRecipientList" style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;font-size:13.5px;scrollbar-width:thin"></div>
-      </div>
 
-      <div class="step-nav">
-        <button class="btn btn-secondary btn-lg" onclick="mGoStep(2)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-          Back
-        </button>
-        <button class="btn btn-primary btn-xl" id="mSendBtn" onclick="mStartSend()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          Send to All
-        </button>
+        <div style="background:var(--surface); border-radius:12px; padding:24px; border:1px solid var(--glass-border); margin-bottom:24px; box-shadow:0 8px 32px rgba(0,0,0,0.15);">
+          <div style="background:#f1f5f9; border-radius:8px; height:600px; border:1px solid var(--glass-border); overflow:hidden; position:relative;">
+            <div style="height:32px; background:#e2e8f0; border-bottom:1px solid #cbd5e1; display:flex; align-items:center; padding:0 12px; gap:6px;">
+               <div style="width:10px; height:10px; border-radius:50%; background:#f87171;"></div>
+               <div style="width:10px; height:10px; border-radius:50%; background:#fbbf24;"></div>
+               <div style="width:10px; height:10px; border-radius:50%; background:#34d399;"></div>
+            </div>
+            <iframe id="mPreviewIframe" style="width:100%; height:calc(100% - 32px); border:none; background:#ffffff;" sandbox="allow-same-origin"></iframe>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface); padding:24px; border-radius:12px; border:1px solid var(--glass-border); box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+          
+          <div style="display:flex; gap: 24px; align-items: center;">
+            <button class="btn btn-secondary btn-lg" onclick="mGoStep(2)" style="height:44px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:6px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Back
+            </button>
+            <div style="width:1px; height:40px; background:var(--glass-border-2);"></div>
+            <div style="width: 260px;">
+              <div style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; display:flex; justify-content:space-between;">
+                 <span>Recipient List</span>
+                 <span id="mPrvNav" style="color:var(--cyan); font-family:var(--font-mono);">1 / 1</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                 <button class="btn btn-secondary" style="flex:1; padding:10px;" onclick="mNavPrev()">
+                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px; height:16px; margin-right:4px;"><polyline points="15 18 9 12 15 6"/></svg> Prev
+                 </button>
+                 <button class="btn btn-secondary" style="flex:1; padding:10px;" onclick="mNavNext()">
+                   Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px; height:16px; margin-left:4px;"><polyline points="9 18 15 12 9 6"/></svg>
+                 </button>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1; display:flex; gap:20px; align-items:flex-end; justify-content: flex-end; margin-left: 40px;">
+            <div class="form-group" style="width:280px; margin-bottom:0;">
+               <label class="form-label" style="font-size:12px; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-3);">Campaign Name <span class="req">*</span></label>
+               <input type="text" id="mCampName" class="form-input" style="padding:12px 16px; font-size:15px; border-color:var(--glass-border-2);" placeholder="e.g. Q1 Newsletter">
+            </div>
+            <button class="btn btn-primary" id="mSendBtn" style="padding:14px 32px; font-size:16px; font-weight:700; background:linear-gradient(135deg, var(--cyan), #3b82f6); box-shadow:0 4px 16px rgba(0, 212, 255, 0.25); border:none; transition:all 0.2s; height: 48px;" onclick="mStartSend()" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 212, 255, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(0, 212, 255, 0.25)';">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px; height:18px; margin-right:8px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Dispatch Mails
+            </button>
+          </div>
+
+        </div>
       </div>
-    </div>
-  </div>
 
       <!-- ══════════════════════════════════════════════════════
            STEP 4 — Sending
