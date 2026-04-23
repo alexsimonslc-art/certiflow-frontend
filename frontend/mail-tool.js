@@ -128,8 +128,14 @@ function mValidate(n) {
 }
 function mSwitchSrc(type) {
   MS.srcType = type;
-  document.querySelectorAll('.src-tab').forEach(t => t.classList.toggle('active', t.dataset.src === type));
-  document.querySelectorAll('.src-panel').forEach(p => p.style.display = p.id === 'mSrc_' + type ? 'block' : 'none');
+  // Use src-opt (the actual card class in HTML) and match by ID
+  document.querySelectorAll('.src-opt').forEach(t => {
+    const srcId = t.id.replace('mSrc','').replace('Opt','').toLowerCase();
+    t.classList.toggle('active', srcId === type);
+  });
+  document.querySelectorAll('.src-panel').forEach(p => {
+    p.style.display = p.id === 'mSrc_' + type ? 'block' : 'none';
+  });
 }
 /* ══════════════════════════════════════════════════════════════
    DATA SOURCE — Step 1
@@ -400,7 +406,7 @@ const ME_DEFS = {
 ══════════════════════════════════════════════════════════════ */
 function meBlockToHtml(block) {
   const p = block.props;
-  const fontStack =  "'Montserrat','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
+  const fontStack = block.props.fontFamily || "Arial,Helvetica,sans-serif";
 
   switch (block.type) {
     case 'logo':
@@ -538,11 +544,13 @@ ${brandingBar}
    EDITOR INIT
 ══════════════════════════════════════════════════════════════ */
 function meOnStepEnter() {
-  // Build merge tags row from loaded headers
   meBuildMergeTagsRow();
 
+  if (!ME.blocks.length && !ME.initialized) {
+    meShowTemplatePicker();
+  }                               // ← ADDED closing brace here
+
   if (ME.initialized) {
-    // Refresh CM if already initialized
     if (ME.cm) ME.cm.refresh();
     return;
   }
@@ -595,10 +603,7 @@ function meSwitchTab(tab) {
     if (btn) btn.classList.toggle('active', t === tab);
   });
 
-  document.getElementById('meVisual').style.display   = tab === 'visual'  ? '' : 'none';
-  document.getElementById('meCode').style.display     = tab === 'code'    ? '' : 'none';
-  document.getElementById('mePreview').style.display  = tab === 'preview' ? '' : 'none';
-  document.getElementById('meGalAI').style.display    = tab === 'galai'   ? '' : 'none';
+  
   document.getElementById('meTabVisual').classList.toggle('active',  tab === 'visual');
   document.getElementById('meTabCode').classList.toggle('active',    tab === 'code');
   document.getElementById('meTabPreview').classList.toggle('active', tab === 'preview');
@@ -767,30 +772,30 @@ function meRenderProps(block) {
     rows.push(meFieldTextarea('Text', block.id, 'text', p.text));
     if (['header','text','footer'].includes(block.type)) {
       rows.push(`<div class="me-field">
-        <div class="me-field-label">Formatting</div>
-        <div class="me-align-btns">
-          <button class="me-align-btn ${p.fontWeight>=700?'active':''}" title="Bold"
-            onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight>=700?400:700});this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach((b,i)=>{if(i===0)b.classList.toggle('active',${p.fontWeight<700})})">
-            <strong style="font-size:13px">B</strong>
-          </button>
-          <button class="me-align-btn ${p.fontWeight===600?'active':''}" title="Semi-Bold"
-            onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight===600?400:600});this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach((b,i)=>{if(i===1)b.classList.toggle('active',${p.fontWeight!==600})})">
-            <span style="font-size:13px;font-weight:600">S</span>
-          </button>
-          <button class="me-align-btn ${p.fontStyle==='italic'?'active':''}" title="Italic"
-            onclick="meUpdateProp('${block.id}','fontStyle',${p.fontStyle==='italic'?"'normal'":"'italic'"})">
-            <em style="font-size:13px">I</em>
-          </button>
-        </div>
-      </div>`);
+  <div class="me-field-label">Formatting</div>
+  <div class="me-align-btns">
+    <button class="me-align-btn ${p.fontWeight >= 700 ? 'active' : ''}" title="Bold"
+      onclick="meUpdateProp('${block.id}','fontWeight', ${p.fontWeight >= 700 ? 400 : 700}); meSelectBlock('${block.id}')">
+      <strong style="font-size:13px">B</strong>
+    </button>
+    <button class="me-align-btn ${p.fontWeight === 600 ? 'active' : ''}" title="Semi-Bold"
+      onclick="meUpdateProp('${block.id}','fontWeight', ${p.fontWeight === 600 ? 400 : 600}); meSelectBlock('${block.id}')">
+      <span style="font-size:13px;font-weight:600">SB</span>
+    </button>
+    <button class="me-align-btn ${p.fontStyle === 'italic' ? 'active' : ''}" title="Italic"
+      onclick="meUpdateProp('${block.id}','fontStyle', '${p.fontStyle === 'italic' ? 'normal' : 'italic'}'); meSelectBlock('${block.id}')">
+      <em style="font-size:13px">I</em>
+    </button>
+  </div>
+</div>`);
     }
   }
   if (block.type === 'logo') {
     rows.push(meFieldText('Tagline', block.id, 'tagline', p.tagline || ''));
   }
   if (block.type === 'button') {
-    rows.push(meFieldText('Button Text', block.id, 'text', p.text));
-    rows.push(meFieldText('Link / URL', block.id, 'link', p.link));
+    rows.push(meFieldTextTracked('Button Text', block.id, 'text', p.text, 'btnText'));
+rows.push(meFieldTextTracked('Link / URL',  block.id, 'link', p.link, 'btnLink'));
     rows.push(meFieldColor('Button Color', block.id, 'btnBg', p.btnBg && p.btnBg.startsWith('linear') ? '#00d4ff' : p.btnBg));
     rows.push(meFieldColor('Button Text Color', block.id, 'btnColor', p.btnColor));
     rows.push(meFieldRange('Border Radius', block.id, 'borderRadius', p.borderRadius, 0, 40));
@@ -886,6 +891,23 @@ function meRenderProps(block) {
     if (['header','text','footer'].includes(block.type)) {
       rows.push(meFieldColor('Text Color', block.id, 'color', p.color));
       rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 48));
+      rows.push(`<div class="me-field">
+  <div class="me-field-label">Font Family</div>
+  <select class="me-input" style="padding:7px 10px" onchange="meUpdateProp('${block.id}','fontFamily',this.value)">
+    ${[
+      ['Arial (default)',       'Arial,Helvetica,sans-serif'],
+      ['Georgia',               "Georgia,'Times New Roman',serif"],
+      ['Trebuchet MS',          "'Trebuchet MS',sans-serif"],
+      ['Verdana',               'Verdana,Geneva,sans-serif'],
+      ['Tahoma',                'Tahoma,Geneva,sans-serif'],
+      ['Times New Roman',       "'Times New Roman',Times,serif"],
+      ['Courier New (Mono)',    "'Courier New',Courier,monospace"],
+      ['Palatino',              "Palatino,'Book Antiqua',serif"],
+    ].map(([name, val]) =>
+      `<option value="${val}" ${(p.fontFamily||'').includes(val.split(',')[0].replace(/'/g,''))?'selected':''}>${name}</option>`
+    ).join('')}
+  </select>
+</div>`);
     }
     if (['logo'].includes(block.type)) {
       rows.push(meFieldColor('Text Color', block.id, 'color', p.color));
@@ -907,7 +929,14 @@ function meRenderProps(block) {
     ${rows.join('')}
   </div>`;
 }
-
+function meFieldTextTracked(label, id, key, val, trackKey) {
+  return `<div class="me-field">
+    <div class="me-field-label">${label}</div>
+    <input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}"
+      onfocus="meLastFocusedField={id:'${id}',key:'${key}',trackKey:'${trackKey}',el:this}"
+      oninput="meUpdateProp('${id}','${key}',this.value)"/>
+  </div>`;
+}
 // Field builders
 function meFieldText(label, id, key, val) {
   return `<div class="me-field">
@@ -1034,19 +1063,23 @@ function meTableResize(blockId, dim, val) {
 ══════════════════════════════════════════════════════════════ */
 function meSyncToCode() {
   const html = meGetHtml();
-  document.getElementById('mHtmlTmpl').value = html;
-  if (ME.cm) {
+  // Sync to hidden textarea (used by mValidate)
+  const ta = document.getElementById('mHtmlTmpl');
+  if (ta) ta.value = html;
+  // Sync to CodeMirror if initialized and not currently being edited
+  if (ME.cm && ME.activeTab !== 'code') {
     const cursor = ME.cm.getCursor();
     ME.cm.setValue(html);
-    try { ME.cm.setCursor(cursor); } catch(e) {}
+    ME.cm.setCursor(cursor);
   }
 }
-
 function meSyncTextarea() {
-  if (ME.cm && ME.activeTab === 'code') {
-    document.getElementById('mHtmlTmpl').value = ME.cm.getValue();
+  const ta = document.getElementById('mHtmlTmpl');
+  if (!ta) return;
+  if (ME.activeTab === 'code' && ME.cm) {
+    ta.value = ME.cm.getValue();
   } else if (ME.blocks.length) {
-    document.getElementById('mHtmlTmpl').value = meGetHtml();
+    ta.value = meGetHtml();
   }
 }
 
@@ -1056,32 +1089,53 @@ function meSyncVisualFromCode() {
 }
 
 function meApplyCodeToVisual() {
-  if (!ME.cm) return;
-  const html = ME.cm.getValue().trim();
-  if (!html) { toast('Code editor is empty', 'warn'); return; }
+  const rawHtml = ME.cm ? ME.cm.getValue() : (document.getElementById('mHtmlTmpl').value || '');
+  if (!rawHtml.trim()) { toast('Code editor is empty', 'warn'); return; }
 
-  // Save raw HTML to textarea
-  document.getElementById('mHtmlTmpl').value = html;
+  // Put into a raw block so it renders faithfully in canvas
+  ME.blocks = [{
+    id: 'b' + (ME.nextId++),
+    type: 'raw',
+    props: { html: rawHtml }
+  }];
 
-  // Try to parse known block patterns back into ME.blocks
-  const parsed = meParseHtmlToBlocks(html);
-  if (parsed && parsed.length) {
-    ME.blocks = parsed;
-    ME.selectedId = null;
-    meRenderCanvas();
-    meRenderProps(null);
-    toast('✓ Visual canvas updated from code (' + parsed.length + ' blocks detected)', 'success', 2500);
-  } else {
-    // Unknown/external HTML — store as raw passthrough block
-    ME.blocks = [{
-      id: 'b' + (ME.nextId++),
-      type: 'raw',
-      props: { html: html }
-    }];
-    meRenderCanvas();
-    meRenderProps(null);
-    toast('External HTML applied. Editing in visual mode may be limited.', 'info', 3000);
+  // Sync to hidden textarea
+  const ta = document.getElementById('mHtmlTmpl');
+  if (ta) ta.value = rawHtml;
+
+  meRenderCanvas();
+  toast('Applied to visual canvas ✓', 'success');
+}
+// Parse raw HTML back into block array (best-effort)
+function meParseHtmlToBlocks(html) {
+  // If it's a full email wrapper, extract inner content
+  const bodyMatch = html.match(/<td[^>]*>\s*([\s\S]+?)\s*<\/td>\s*<\/tr>\s*<\/table>\s*<\/td>/i);
+  const inner = bodyMatch ? bodyMatch[1] : html;
+
+  // Each block is a <div style="padding:..."> — split on top-level divs
+  const divs = [];
+  let depth = 0, start = -1;
+  for (let i = 0; i < inner.length; i++) {
+    if (inner.slice(i).match(/^<div/i)) {
+      if (depth === 0) start = i;
+      depth++;
+    }
+    if (inner.slice(i).match(/^<\/div>/i)) {
+      depth--;
+      if (depth === 0 && start >= 0) {
+        divs.push(inner.slice(start, i + 6));
+        start = -1;
+      }
+    }
   }
+
+  if (!divs.length) return null;
+
+  return divs.map(div => ({
+    id: 'b' + (ME.nextId++),
+    type: 'raw',
+    props: { html: div }
+  }));
 }
 
 // Parse full email HTML back into blocks array (best-effort)
@@ -1177,12 +1231,22 @@ function meParseHtmlToBlocks(html) {
 }
 
 function meRefreshPreviewIframe() {
-  const iframe = document.getElementById('mePreviewFrame');
-  if (!iframe) return;
-  let html = document.getElementById('mHtmlTmpl').value || meGetHtml();
-  // Apply first recipient data for preview
-  if (MS.rows.length) html = mPersonalise(html, MS.rows[0]);
-  iframe.srcdoc = html;
+  const frame = document.getElementById('mePreviewFrame');
+  if (!frame) return;
+  meSyncTextarea();
+  const html = document.getElementById('mHtmlTmpl').value;
+  frame.srcdoc = html || '<p style="color:#94a3b8;font-family:Arial;text-align:center;padding:40px">No template yet</p>';
+  const wrap = document.getElementById('mePreviewFrameWrap');
+  if (wrap) {
+    if (ME.previewDevice === 'mobile') {
+      frame.style.width = '390px';
+      wrap.classList.add('mobile');
+    } else {
+      frame.style.width = '100%';
+      frame.style.maxWidth = '600px';
+      wrap.classList.remove('mobile');
+    }
+  }
 }
 
 function meSetDevice(device) {
@@ -1215,50 +1279,39 @@ function meFormatCode() {
 const ME_DEFAULT_TAGS = ['{{name}}','{{email}}','{{course}}','{{date}}','{{score}}','{{org}}','{{certificateLink}}'];
 
 function meBuildMergeTagsRow() {
-  const wrap = document.getElementById('meMergeTags');
-  if (!wrap) return;
-  const tags = MS.headers.length
-    ? MS.headers.map(h => '{{' + h.toLowerCase().replace(/\s+/g,'_') + '}}')
-    : ME_DEFAULT_TAGS;
-  wrap.innerHTML = tags.map(t =>
-    `<div class="me-tag" onclick="meInsertTag('${t}')" title="Insert ${t}">${t}</div>`
-  ).join('');
+  const container = document.getElementById('meMergeTags');
+  if (!container) return;
+  if (!MS.headers.length) {
+    container.innerHTML = '<span style="font-size:12px;color:var(--text-3);font-style:italic">Load recipient data in Step 1 to see tags</span>';
+    return;
+  }
+  container.innerHTML = MS.headers.map(h => {
+    const tag = '{{' + h.toLowerCase().replace(/\s+/g, '_') + '}}';
+    return `<div class="me-tag" onclick="meInsertTag('${tag}')">${tag}</div>`;
+  }).join('');
 }
 
 function meInsertTag(tag) {
-  if (ME.activeTab === 'code' && ME.cm) {
-    ME.cm.replaceSelection(tag);
-    ME.cm.focus();
-    toast('Inserted ' + tag, 'success', 1200);
-  } else if (ME.activeTab === 'visual') {
-    // If a specific field had focus, insert there
-    if (meLastFocusedField && meLastFocusedField.el) {
-      const el  = meLastFocusedField.el;
-      const s   = el.selectionStart || el.value.length;
-      const e   = el.selectionEnd   || el.value.length;
-      el.value  = el.value.slice(0, s) + tag + el.value.slice(e);
-      el.selectionStart = el.selectionEnd = s + tag.length;
-      meUpdateProp(meLastFocusedField.id, meLastFocusedField.key, el.value);
-      el.focus();
-      toast('Inserted ' + tag, 'success', 1200);
-      return;
-    }
-    // Fallback: append to selected block's text
-    const block = ME.blocks.find(b => b.id === ME.selectedId);
-    if (block && block.props.text !== undefined) {
-      block.props.text = (block.props.text || '') + tag;
-      meRenderCanvas();
-      meRenderProps(block);
-      meSyncToCode();
-      toast('Inserted ' + tag + ' into selected block', 'success', 1500);
-    } else {
-      toast('Select a text block first, or switch to Code tab to insert tags freely', 'info', 3000);
-    }
-  } else {
-    toast('Switch to Code or Visual tab to insert tags', 'info', 2000);
+  // Use last focused field if available and still in DOM
+  if (meLastFocusedField && meLastFocusedField.el && document.contains(meLastFocusedField.el)) {
+    const el = meLastFocusedField.el;
+    const s = el.selectionStart || 0, e = el.selectionEnd || 0;
+    el.value = el.value.slice(0, s) + tag + el.value.slice(e);
+    el.selectionStart = el.selectionEnd = s + tag.length;
+    meUpdateProp(meLastFocusedField.id, meLastFocusedField.key, el.value);
+    el.focus();
+    return;
+  }
+  // Fallback: insert into active textarea
+  const body = document.getElementById('mePropsBody');
+  const ta = body && body.querySelector('textarea.me-textarea');
+  if (ta) {
+    const s = ta.selectionStart, e = ta.selectionEnd;
+    ta.value = ta.value.slice(0, s) + tag + ta.value.slice(e);
+    ta.selectionStart = ta.selectionEnd = s + tag.length;
+    ta.dispatchEvent(new Event('input'));
   }
 }
-
 /* ══════════════════════════════════════════════════════════════
    TEMPLATE PICKER
 ══════════════════════════════════════════════════════════════ */
@@ -1333,37 +1386,42 @@ function meBuildTemplatePicker() {
   const row = document.getElementById('meTplRow');
   if (!row) return;
 
-  // Blank template entry
-  const blankCard = `
-    <div class="me-tpl-card" onclick="meLoadTemplate('blank')">
-      <div class="me-tpl-thumb" style="background:#f8fafc;display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" style="width:36px;height:36px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
-      </div>
+  const templates = [
+    { key: 'blank',  name: 'Blank',       html: '' },
+    { key: 'cert',   name: 'Certificate', html: meGetTemplateCert() },
+    { key: 'promo',  name: 'Promotion',   html: meGetTemplatePromo() },
+    { key: 'notify', name: 'Notification',html: meGetTemplateNotify() },
+  ];
+
+  row.innerHTML = templates.map(t => {
+    const escapedHtml = (t.html || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const thumbContent = t.key === 'blank'
+      ? `<div style="height:110px;background:#f8fafc;display:flex;align-items:center;justify-content:center">
+           <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" style="width:36px;height:36px">
+             <rect x="3" y="3" width="18" height="18" rx="2"/>
+             <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+           </svg>
+         </div>`
+      : `<div class="me-tpl-thumb">
+           <iframe srcdoc="${escapedHtml}" style="width:500%;height:500%;transform:scale(0.2);transform-origin:top left;pointer-events:none;border:none;background:#fff" sandbox="allow-same-origin"></iframe>
+           <div class="me-tpl-thumb-overlay"></div>
+         </div>`;
+
+    return `<div class="me-tpl-card">
+      ${thumbContent}
       <div class="me-tpl-info">
-        <div class="me-tpl-name">Blank Template</div>
-        <button class="me-tpl-btn">Start Fresh</button>
+        <div class="me-tpl-name">${t.name}</div>
+        <button class="me-tpl-btn" onclick="event.stopPropagation();meLoadTemplate('${t.key}');meHideTemplatePicker()">
+          ${t.key === 'blank' ? 'Start Blank' : 'Use Template'}
+        </button>
       </div>
     </div>`;
-
-  const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
-    // Generate mini preview HTML for the iframe thumbnail
-    const previewHtml = meGetHtmlFromBlocks(tpl.blocks);
-    return `
-      <div class="me-tpl-card" onclick="meLoadTemplate('${key}')">
-        <div class="me-tpl-thumb">
-          <iframe srcdoc="${previewHtml.replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" scrolling="no" tabindex="-1"></iframe>
-          <div class="me-tpl-thumb-overlay"></div>
-        </div>
-        <div class="me-tpl-info">
-          <div class="me-tpl-name">${tpl.name.slice(tpl.name.indexOf(' ')+1)}</div>
-          <button class="me-tpl-btn">Use This</button>
-        </div>
-      </div>`;
-  });
-
-  row.innerHTML = blankCard + cards.join('');
+  }).join('');
 }
 
+function escapeForAttr(str) {
+  return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 // Generate HTML from a blocks array (without assigning IDs)
 function meGetHtmlFromBlocks(blocks) {
   const inner = blocks.map(b => meBlockToHtml({ type: b.type, props: b.props })).join('\n');
@@ -1380,38 +1438,49 @@ function meGetHtmlFromBlocks(blocks) {
 function meLoadTemplate(key) {
   if (key === 'blank') {
     ME.blocks = [];
-    ME.selectedId = null;
     meRenderCanvas();
     meSyncToCode();
-    meHideTemplatePicker();
-    if (ME.activeTab !== 'visual') meSwitchTab('visual');
-    toast('Blank canvas ready', 'success', 1500);
     return;
   }
-  const tpl = ME_TEMPLATES[key];
-  if (!tpl) return;
-  ME.blocks = tpl.blocks.map(b => ({
-    id: 'b' + (ME.nextId++),
-    type: b.type,
-    props: JSON.parse(JSON.stringify(b.props)),
-  }));
-  ME.selectedId = null;
+  // For other templates, create a default block set
+  const tplBlocks = {
+    cert: [
+      { id:'b'+(ME.nextId++), type:'logo',   props: ME_DEFS.logo.defaults() },
+      { id:'b'+(ME.nextId++), type:'header', props: { ...ME_DEFS.header.defaults(), text:'Your Certificate is Ready 🎓' }},
+      { id:'b'+(ME.nextId++), type:'text',   props: { ...ME_DEFS.text.defaults(),   text:'Dear {{name}},\n\nCongratulations! Your certificate for {{course}} is ready for download.' }},
+      { id:'b'+(ME.nextId++), type:'button', props: ME_DEFS.button.defaults() },
+      { id:'b'+(ME.nextId++), type:'footer', props: ME_DEFS.footer.defaults() },
+    ],
+    promo: [
+      { id:'b'+(ME.nextId++), type:'logo',   props: ME_DEFS.logo.defaults() },
+      { id:'b'+(ME.nextId++), type:'header', props: { ...ME_DEFS.header.defaults(), text:'Special Offer for {{name}} 🎉' }},
+      { id:'b'+(ME.nextId++), type:'text',   props: ME_DEFS.text.defaults() },
+      { id:'b'+(ME.nextId++), type:'image',  props: ME_DEFS.image.defaults() },
+      { id:'b'+(ME.nextId++), type:'button', props: { ...ME_DEFS.button.defaults(), text:'Claim Offer' }},
+      { id:'b'+(ME.nextId++), type:'footer', props: ME_DEFS.footer.defaults() },
+    ],
+    notify: [
+      { id:'b'+(ME.nextId++), type:'logo',   props: ME_DEFS.logo.defaults() },
+      { id:'b'+(ME.nextId++), type:'header', props: { ...ME_DEFS.header.defaults(), text:'Important Update' }},
+      { id:'b'+(ME.nextId++), type:'text',   props: ME_DEFS.text.defaults() },
+      { id:'b'+(ME.nextId++), type:'divider',props: ME_DEFS.divider.defaults() },
+      { id:'b'+(ME.nextId++), type:'footer', props: ME_DEFS.footer.defaults() },
+    ],
+  };
+  ME.blocks = tplBlocks[key] || [];
   meRenderCanvas();
   meSyncToCode();
-  meHideTemplatePicker();
-  if (ME.activeTab !== 'visual') meSwitchTab('visual');
-  toast('Template loaded: ' + tpl.name, 'success', 2000);
 }
 
 function meShowTemplatePicker() {
   const wrap = document.getElementById('meTplPickerWrap');
-  if (wrap) wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+  if (wrap) wrap.style.display = 'block';
 }
+
 function meHideTemplatePicker() {
   const wrap = document.getElementById('meTplPickerWrap');
   if (wrap) wrap.style.display = 'none';
 }
-
 /* ══════════════════════════════════════════════════════════════
    PREVIEW (Step 3)
 ══════════════════════════════════════════════════════════════ */
@@ -1471,19 +1540,16 @@ function mRenderAt(idx) {
 
 function mNavPrev() { if (MS.prevIdx > 0)                  { MS.prevIdx--; mRenderAt(MS.prevIdx); } }
 function mNavNext() { if (MS.prevIdx < MS.rows.length - 1) { MS.prevIdx++; mRenderAt(MS.prevIdx); } }
-function mAppendLog(msg, type) {
+function mAppendLog(msg, type = 'info') {
   const log = document.getElementById('mSendLog');
   if (!log) return;
-  const now = new Date();
-  const ts  = now.toTimeString().slice(0,8);
-  const colors = { success:'#4ade80', error:'#f87171', warn:'#fbbf24', info:'var(--text-2)' };
-  const icons  = { success:'✓', error:'✗', warn:'⚠', info:'·' };
-  const color  = colors[type] || colors.info;
-  const icon   = icons[type]  || '·';
-  const entry  = document.createElement('div');
-  entry.style.cssText = `color:${color};padding:1px 0;display:flex;gap:8px;align-items:baseline`;
-  entry.innerHTML = `<span style="color:var(--text-3);flex-shrink:0">[${ts}]</span><span style="flex-shrink:0">${icon}</span><span>${msg}</span>`;
-  log.appendChild(entry);
+  const color = type === 'success' ? '#10b981' : type === 'error' ? '#f43f5e' : type === 'warn' ? '#f59e0b' : '#94a3b8';
+  const icon  = type === 'success' ? '✓' : type === 'error' ? '✗' : type === 'warn' ? '⚠' : '·';
+  const now   = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const line  = document.createElement('div');
+  line.style.cssText = `color:${color};padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.03)`;
+  line.innerHTML = `<span style="color:#475569;margin-right:8px">${now}</span><span style="margin-right:6px">${icon}</span>${msg}`;
+  log.appendChild(line);
   log.scrollTop = log.scrollHeight;
 }
 /* ══════════════════════════════════════════════════════════════
@@ -2010,3 +2076,21 @@ const _origPopulateDropdowns = typeof mPopulateDropdowns === 'function' ? mPopul
 document.addEventListener('DOMContentLoaded', () => {
   galBuildTagChips();
 });
+
+let mSendPaused = false;
+let mSendCancelled = false;
+
+function mTogglePause() {
+  mSendPaused = !mSendPaused;
+  const btn = document.getElementById('mPauseBtn');
+  if (btn) btn.innerHTML = mSendPaused
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polygon points="5 3 19 12 5 21 5 3"/></svg> Resume'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause';
+  mAppendLog(mSendPaused ? 'Campaign paused' : 'Campaign resumed', 'warn');
+}
+function mCancelSend() {
+  mSendCancelled = true;
+  mSendPaused = false;
+  mAppendLog('Campaign cancelled by user', 'error');
+  document.getElementById('mSendStatus').textContent = 'Cancelled';
+}

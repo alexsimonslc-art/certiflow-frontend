@@ -194,18 +194,30 @@
     .me-block-wrap:hover { outline-color:rgba(0,212,255,0.3); }
     .me-block-wrap.selected { outline-color:var(--cyan);outline-style:solid; }
 
-    .me-block-controls { position:absolute;top:4px;right:4px;display:flex;gap:4px;z-index:10;opacity:0;transition:opacity 0.15s; }
-    .me-block-wrap:hover .me-block-controls,
-    .me-block-wrap.selected .me-block-controls { opacity:1; }
+    .me-block-controls {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  gap: 4px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: all !important;
+}
+/* Single parent hover zone — moving mouse to buttons keeps parent :hover active */
+.me-block-wrap:hover .me-block-controls,
+.me-block-wrap.selected .me-block-controls,
+.me-block-controls:hover { opacity: 1 !important; }
+
+/* Ensure inner content never intercepts mouse, only controls do */
+.me-block-inner { pointer-events: none; }
     .me-ctrl-btn { width:26px;height:26px;border-radius:6px;border:none;background:rgba(8,14,28,0.92);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-family:var(--font);transition:all 0.15s; }
     .me-ctrl-btn:hover { color:var(--text);background:rgba(255,255,255,0.15); }
     .me-ctrl-btn.del:hover { color:var(--red);background:rgba(244,63,94,0.15); }
     .me-ctrl-btn svg { width:12px;height:12px; }
 
-    .me-block-inner { pointer-events:none; }
-.me-block-controls { pointer-events:all !important; }
-.me-block-wrap:hover .me-block-controls,
-.me-block-wrap.selected .me-block-controls { opacity:1 !important; }
+    
 
     /* Properties Panel */
     .me-props { border-left:1px solid rgba(255,255,255,0.07);overflow-y:auto;background:rgba(255,255,255,0.01); }
@@ -456,6 +468,11 @@
 @media (max-width: 1200px) {
   .me-outer-layout { grid-template-columns: 1fr; }
   .gal-panel { position: fixed; right: 16px; bottom: 80px; width: 300px; height: 500px; min-height: unset; z-index: 200; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+}
+/* Step 3 — full width preview */
+#sp3 .card iframe#mPreviewIframe {
+  min-height: 500px;
+  width: 100%;
 }
   </style>
 </head>
@@ -877,47 +894,7 @@
             </div>
             <!-- Tab content: Code -->
             <!-- Tab content: Code -->
-            <div id="meCode" style="display:none;position:relative">
-              <div class="me-code-actions">
-                <button class="btn btn-secondary btn-sm" onclick="meFormatCode()" title="Format HTML">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-                  Format
-                </button>
-              </div>
-              <div class="me-code-wrap" id="meCmWrap"></div>
-              <div class="me-code-apply-bar">
-                <span>⚡ Edit HTML directly — click Apply to update the visual canvas</span>
-                <button class="btn btn-primary btn-sm" onclick="meApplyCodeToVisual()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                  Apply to Visual
-                </button>
-              </div>
-            </div>
-
-            <!-- Tab content: Preview -->
-            <div id="mePreview" style="display:none">
-              <div class="me-preview-wrap">
-                <div class="me-preview-toolbar">
-                  <button class="me-device-btn active" id="meBtnDesktop" onclick="meSetDevice('desktop')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                    Desktop
-                  </button>
-                  <button class="me-device-btn" id="meBtnMobile" onclick="meSetDevice('mobile')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                    Mobile
-                  </button>
-                  <div style="margin-left:auto;font-size:12.5px;color:var(--text-3)" id="mePreviewNote">Showing live preview with first recipient's data</div>
-                </div>
-                <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
-                  <iframe id="mePreviewFrame" style="width:100%;height:480px"sandbox="allow-same-origin allow-scripts"></iframe>
-                </div>
-              </div>
-            </div>
-
-          </div><!-- /me-card -->
-
-  <!-- ✨ Gal AI Side Panel -->
-  <div class="gal-panel" id="galPanel">
+            
 
     <!-- Header -->
     <div class="gal-panel-head">
@@ -970,32 +947,9 @@
           <!-- Hidden HTML textarea (source of truth) -->
 <textarea id="mHtmlTmpl" style="display:none"></textarea>
 
-<!-- Code Tab Panel -->
-<div id="meCode" style="display:none">
-  <div class="me-code-wrap">
-    <div id="meCmWrap"></div>
-    <div class="me-code-apply-bar">
-      <span>Edit HTML directly — click Apply to sync to visual canvas</span>
-      <button class="btn btn-primary btn-sm" onclick="meApplyCodeToVisual()">Apply to Visual</button>
-    </div>
-  </div>
-</div>
 
-<!-- Preview Tab Panel -->
-<div id="mePreview" style="display:none">
-  <div class="me-preview-wrap">
-    <div class="me-preview-toolbar">
-      <button class="me-device-btn active" id="meBtnDesktop" onclick="meSetDevice('desktop')">🖥 Desktop</button>
-      <button class="me-device-btn" id="meBtnMobile" onclick="meSetDevice('mobile')">📱 Mobile</button>
-    </div>
-    <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
-      <iframe id="mePreviewFrame" style="width:100%;height:480px"></iframe>
-    </div>
-  </div>
-</div>
 
-<!-- Gal AI Panel placeholder (for tab switcher JS compatibility) -->
-<div id="meGalAI" style="display:none"></div>
+
 
           <div class="step-nav">
             <button class="btn btn-secondary btn-lg" onclick="mGoStep(1)">
@@ -1040,7 +994,7 @@
                     <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
                     <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span id="mFinalSubject">—</span></div>
                   </div>
-                  <iframe id="mPreviewIframe" style="width:100%;border:none;min-height:340px;background:#fff" sandbox="allow-same-origin"></iframe>
+                  <iframe id="mPreviewIframe" style="width:100%;border:none;min-height:480px;background:#fff" sandbox="allow-same-origin"></iframe>
                 </div>
               </div>
             </div>
@@ -1087,6 +1041,16 @@
               </div>
               <div class="send-counter" id="mSendCounter">0 / 0</div>
               <div style="font-size:15px;color:var(--text-2);margin-top:6px" id="mSendStatus">Preparing…</div>
+              <div style="display:flex;gap:10px;justify-content:center;margin-top:16px">
+  <button class="btn btn-secondary btn-sm" id="mPauseBtn" onclick="mTogglePause()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+    Pause
+  </button>
+  <button class="btn btn-outline btn-sm" id="mCancelBtn" onclick="mCancelSend()" style="color:var(--red);border-color:var(--red)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    Cancel
+  </button>
+</div>
             </div>
             <div style="margin-bottom:24px">
               <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:8px">
