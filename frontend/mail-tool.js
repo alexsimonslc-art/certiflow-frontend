@@ -184,10 +184,29 @@ async function mLoadSheet() {
 }
 
 function mShowSheetPreview() {
-  const notice = `Sheet loaded — <strong>${MS.rows.length} recipients</strong>, ${MS.headers.length} columns detected`;
-  mRenderPremiumTable('mSheetResult', notice);
+  const el = document.getElementById('mSheetResult');
+  el.innerHTML = `
+    <div class="notice notice-green" style="margin-bottom:16px;padding:14px 18px;border-radius:10px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style="font-size:14px">Sheet loaded — <strong>${MS.rows.length} recipients</strong>, ${MS.headers.length} columns detected</span>
+    </div>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left">
+        <thead>
+          <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">
+            ${MS.headers.map(h => `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${MS.rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+            ${MS.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h]||'').toString().replace(/</g,'&lt;')}</td>`).join('')}
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+  el.style.display = 'block';
 }
-
 
 function mHandleFile(e) {
   const file = e.target.files[0];
@@ -211,8 +230,28 @@ function mHandleFile(e) {
 }
 
 function mShowFileMsg(name) {
-  const notice = `<strong>${name}</strong> — ${MS.rows.length} recipients loaded`;
-  mRenderPremiumTable('mFileResult', notice);
+  const el = document.getElementById('mFileResult');
+  el.innerHTML = `
+    <div class="notice notice-green" style="margin-bottom:16px;padding:14px 18px;border-radius:10px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style="font-size:14px"><strong>${name}</strong> — ${MS.rows.length} recipients loaded</span>
+    </div>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left">
+        <thead>
+          <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">
+            ${MS.headers.map(h => `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${MS.rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+            ${MS.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h]||'').toString().replace(/</g,'&lt;')}</td>`).join('')}
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+  el.style.display = 'block';
   toast('Loaded ' + MS.rows.length + ' recipients', 'success');
 }
 function mPopulateDropdowns() {
@@ -1642,9 +1681,11 @@ async function mLoadHxFormData(formId) {
     if (!res.ok) throw new Error((await res.json()).error || 'Failed');
     const data = await res.json();
     if (!data.rows?.length) { toast('No submissions in this form yet', 'warning'); return; }
+    
     MS.headers = data.headers;
     MS.rows    = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
     mPopulateDropdowns();
+    
     // Force-set Name/Email if those columns exist
     const nameEl  = document.getElementById('mNameCol');
     const emailEl = document.getElementById('mEmailCol');
@@ -1652,12 +1693,37 @@ async function mLoadHxFormData(formId) {
     const emailH  = data.headers.find(h => /email/i.test(h));
     if (nameH && nameEl)   nameEl.value  = nameH;
     if (emailH && emailEl) emailEl.value = emailH;
-    const notice = `<strong>${MS.rows.length} responses</strong> imported from <strong>${data.formName}</strong>`;
-    mRenderPremiumTable('mHxFormResult', notice);
+    
+    // ─── PREMIUM UI INJECTION ───
+    const el = document.getElementById('mHxFormResult');
+    el.innerHTML = `
+      <div class="notice notice-green" style="margin-bottom:16px;padding:14px 18px;border-radius:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
+        <span style="font-size:14px"><strong>${MS.rows.length} responses</strong> imported from <strong>${data.formName}</strong></span>
+      </div>
+      <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+        <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left">
+          <thead>
+            <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">
+              ${MS.headers.map(h => `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${MS.rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+              ${MS.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h]||'').toString().replace(/</g,'&lt;')}</td>`).join('')}
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+    el.style.display = 'block';
     toast(`${MS.rows.length} recipients ready`, 'success');
+
   } catch(e) {
     toast('Could not load form: ' + e.message, 'error');
-  } finally { sel.disabled = false; }
+  } finally { 
+    sel.disabled = false; 
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
