@@ -1858,27 +1858,70 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         100% { background-position: 0% 0%, 0% 50%; }
     }
 
+    /* ── The Opening Flare Animation ── */
+    @keyframes gal-flare {
+        0%   { box-shadow: 0 -12px 48px rgba(0,0,0,0.8), 0 0 10px rgba(0, 212, 255, 0.2); }
+        40%  { box-shadow: 0 -12px 50px rgba(0,0,0,0.9), 0 0 60px rgba(124, 58, 237, 0.7), 0 0 30px rgba(0, 212, 255, 0.9); }
+        100% { box-shadow: 0 -12px 48px rgba(0,0,0,0.8), 0 0 28px rgba(0, 212, 255, 0.25); }
+    }
+
     .gal-ai-tab { 
-      width: 100%; /* Make the closed state full width */
+      width: 100%; 
       background: linear-gradient(#0c1120, #0c1120) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #f43f5e, #00d4ff) border-box; 
       background-size: 100% 100%, 300% 100%;
       animation: gal-glow-border 6s ease-in-out infinite;
-      border: 1.5px solid transparent; border-bottom: none; border-radius: 16px 16px 0 0; padding: 12px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 24px rgba(0,0,0,0.5), 0 0 16px rgba(0, 212, 255, 0.15); pointer-events: auto; transition: all 0.2s; color: var(--text); 
+      border: 1.5px solid transparent; border-bottom: none; border-radius: 16px 16px 0 0; padding: 12px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 24px rgba(0,0,0,0.5), 0 0 16px rgba(0, 212, 255, 0.15); pointer-events: auto; color: var(--text); 
+      /* Buttery smooth ease-out curve */
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
     }
-    .gal-ai-tab:hover { filter: brightness(1.2); box-shadow: 0 -6px 32px rgba(0,0,0,0.6), 0 0 24px rgba(124, 58, 237, 0.3); padding-bottom: 16px; }
+    
+    /* Extreme hover glow */
+    .gal-ai-tab:hover { 
+      filter: brightness(1.25); 
+      box-shadow: 0 -6px 32px rgba(0,0,0,0.7), 0 0 40px rgba(0, 212, 255, 0.5), 0 0 20px rgba(244, 63, 94, 0.3); 
+      padding-bottom: 18px; 
+    }
+    
+    /* Tactile "Snap" when clicked */
+    .gal-ai-tab:active {
+      transform: scale(0.98) translateY(4px);
+      filter: brightness(1.5);
+      box-shadow: 0 0 50px rgba(124, 58, 237, 0.9);
+      transition: all 0.1s ease-out; /* Super fast snap down */
+    }
     
     .gal-ai-typewriter { font-size: 13.5px; color: var(--text-2); white-space: nowrap; transition: opacity 0.3s; }
     .gal-ai-tab-btn { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--cyan); background: rgba(0, 212, 255, 0.1); padding: 6px 12px; border-radius: 20px; transition: all 0.2s; }
-    .gal-ai-tab:hover .gal-ai-tab-btn { background: rgba(0, 212, 255, 0.2); }
+    .gal-ai-tab:hover .gal-ai-tab-btn { background: rgba(0, 212, 255, 0.25); box-shadow: 0 0 12px rgba(0, 212, 255, 0.4); }
     
-    .gal-ai-box { position: absolute; bottom: 0; width: 100%; height: 320px; 
+    .gal-ai-box { 
+      position: absolute; bottom: 0; width: 100%; height: 320px; 
       background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #f43f5e, #00d4ff) border-box; 
       background-size: 100% 100%, 300% 100%;
       animation: gal-glow-border 6s ease-in-out infinite;
-      border: 1.5px solid transparent; border-bottom: none; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; pointer-events: auto; box-shadow: 0 -12px 48px rgba(0,0,0,0.8), 0 0 28px rgba(0, 212, 255, 0.15); opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 2; 
+      border: 1.5px solid transparent; border-bottom: none; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; box-shadow: 0 -12px 48px rgba(0,0,0,0.8), 0 0 28px rgba(0, 212, 255, 0.15); z-index: 2; 
+      
+      /* Closed State */
+      opacity: 0; 
+      transform: translateY(40px) scale(0.96); 
+      pointer-events: none; 
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
     }
-    .gal-ai-wrapper.open .gal-ai-box { opacity: 1; transform: translateY(0); pointer-events: auto; }
-    .gal-ai-wrapper.open .gal-ai-tab { opacity: 0; pointer-events: none; transform: translateY(10px); }
+    
+    /* Open State + Flare */
+    .gal-ai-wrapper.open .gal-ai-box { 
+      opacity: 1; 
+      transform: translateY(0) scale(1); 
+      pointer-events: auto; 
+      animation: gal-glow-border 6s ease-in-out infinite, gal-flare 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+    }
+    
+    /* Tab sinking away smoothly */
+    .gal-ai-wrapper.open .gal-ai-tab { 
+      opacity: 0; 
+      pointer-events: none; 
+      transform: translateY(30px) scale(0.92); 
+    }
     
     .gal-ai-resizer { height: 16px; width: 100%; cursor: ns-resize; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: transparent; }
     .gal-ai-resizer:hover .gal-ai-resizer-line { background: rgba(255,255,255,0.4); }
