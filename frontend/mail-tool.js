@@ -1813,13 +1813,29 @@ let galIsOpen = true;
 
 function galTogglePanel() {
   galIsOpen = !galIsOpen;
-  const layout = document.querySelector('.me-outer-layout');
+  const layout   = document.querySelector('.me-outer-layout');
   const expandBtn = document.getElementById('galExpandBtn');
-  const collapseIcon = document.querySelector('#galCollapseBtn svg');
+  const collapseBtn = document.getElementById('galCollapseBtn');
+
   layout.classList.toggle('gal-collapsed', !galIsOpen);
-  expandBtn.style.display = galIsOpen ? 'none' : 'flex';
-  if (collapseIcon) {
-    collapseIcon.querySelector('polyline').setAttribute('points', galIsOpen ? '15 18 9 12 15 6' : '9 18 15 12 9 6');
+
+  // Show/hide the tab-bar expand button with smooth pop
+  if (expandBtn) {
+    if (!galIsOpen) {
+      expandBtn.style.display = 'inline-flex';
+      // Trigger animation by forcing reflow
+      expandBtn.classList.remove('me-tab-gal');
+      void expandBtn.offsetWidth;
+      expandBtn.classList.add('me-tab-gal');
+    } else {
+      expandBtn.style.display = 'none';
+    }
+  }
+
+  // Flip collapse arrow direction
+  if (collapseBtn) {
+    const poly = collapseBtn.querySelector('polyline');
+    if (poly) poly.setAttribute('points', galIsOpen ? '15 18 9 12 15 6' : '9 18 15 12 9 6');
   }
 }
 
