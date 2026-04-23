@@ -498,7 +498,12 @@
   </div>
 
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
-    
+    <div class="gal-ai-waves">
+      <div class="gal-ai-wave w1"></div>
+      <div class="gal-ai-wave w2"></div>
+      <div class="gal-ai-wave w3"></div>
+      <div class="gal-ai-wave w4"></div>
+    </div>
     <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
       <div style="display:flex; align-items:center; gap:12px; flex:1; overflow:hidden;">
         <div class="gal-ai-sparkle" style="font-size:16px;">✨</div>
@@ -1491,7 +1496,32 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
 
     /* ── Gal AI (Google AI Studio Style) ── */
     .gal-ai-wrapper { position: absolute; bottom: 0; width: 480px; max-width: 90%; pointer-events: none; display: flex; justify-content: center; align-items: flex-end; }
+    /* ── Gal AI (Google AI Studio Style) ── */
+    .gal-ai-wrapper { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 720px; max-width: 95vw; z-index: 9999; pointer-events: none; display: flex; justify-content: center; align-items: flex-end; }
     
+    /* ── Sea Wave Glow Effect (4 Layers) ── */
+    .gal-ai-waves { position: absolute; bottom: 10px; left: 50%; width: 0; height: 0; z-index: 1; pointer-events: none; }
+    .gal-ai-wave { position: absolute; bottom: -50px; left: -50px; width: 100px; height: 100px; border-radius: 50%; opacity: 0; transform: scale(0.5); pointer-events: none; }
+    
+    /* Wave Colors */
+    .gal-ai-wave.w1 { box-shadow: 0 0 100px 30px rgba(0, 212, 255, 0.4); border: 2px solid rgba(0, 212, 255, 0.8); } /* Cyan */
+    .gal-ai-wave.w2 { box-shadow: 0 0 100px 30px rgba(124, 58, 237, 0.4); border: 2px solid rgba(124, 58, 237, 0.8); } /* Purple */
+    .gal-ai-wave.w3 { box-shadow: 0 0 100px 30px rgba(244, 63, 94, 0.4); border: 2px solid rgba(244, 63, 94, 0.8); } /* Pink */
+    .gal-ai-wave.w4 { box-shadow: 0 0 100px 40px rgba(0, 212, 255, 0.5); border: 2px solid rgba(255, 255, 255, 0.9); } /* White Flash */
+
+    /* The Massive Expansion */
+    @keyframes gal-tsunami {
+        0%   { transform: scale(0.5); opacity: 1; }
+        100% { transform: scale(40); opacity: 0; }
+    }
+
+    /* Trigger the waves when opened, with staggered delays for the ripple effect */
+    .gal-ai-wrapper.open .gal-ai-wave.w1 { animation: gal-tsunami 2.0s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.0s; }
+    .gal-ai-wrapper.open .gal-ai-wave.w2 { animation: gal-tsunami 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.1s; }
+    .gal-ai-wrapper.open .gal-ai-wave.w3 { animation: gal-tsunami 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.2s; }
+    .gal-ai-wrapper.open .gal-ai-wave.w4 { animation: gal-tsunami 2.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.3s; }
+
+    /* ── The Opening Flare Animation ── */
     .gal-ai-tab { background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.12); border-bottom: none; border-radius: 12px 12px 0 0; padding: 10px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 220px; box-shadow: 0 -4px 16px rgba(0,0,0,0.3); pointer-events: auto; transition: all 0.2s; color: var(--text); }
     .gal-ai-tab:hover { background: rgba(25, 30, 45, 0.98); color: var(--cyan); }
     
