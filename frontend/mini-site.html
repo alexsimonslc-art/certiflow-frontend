@@ -695,38 +695,94 @@
       validateSlug(slugInput);
     }
 
-    function validateSlug(input) {
+    let slugCheckTimer = null;
+
+    async function validateSlug(input) {
       input._userEdited = !!input.value;
-      const slug = input.value.trim();
+      let slug = input.value.trim();
       const status = document.getElementById('slugStatus');
+      
       if (!slug) { status.textContent = ''; return; }
 
       const clean = slug.replace(/[^a-z0-9-]/g, '');
       if (clean !== slug) {
         input.value = clean;
+        slug = clean;
       }
-      const taken = getSites().some(s => s.slug === clean && s.id !== (pendingTemplate?.editId));
-      if (taken) {
+
+      // 1. Check local sites first (Instant)
+      const takenLocally = getSites().some(s => s.slug === slug && s.id !== (pendingTemplate?.editId));
+      if (takenLocally) {
         status.className = 'ms-slug-status ms-slug-taken';
-        status.textContent = '✕ Already in use — try adding a year or number';
-      } else if (clean.length < 3) {
+        status.textContent = '✕ Already in use by one of your sites';
+        return;
+      }
+
+      if (slug.length < 3) {
         status.className = 'ms-slug-status ms-slug-warn';
         status.textContent = 'Slug should be at least 3 characters';
-      } else {
-        status.className = 'ms-slug-status ms-slug-ok';
-        status.textContent = `✓ honourix.app/s/${clean}`;
+        return;
       }
+
+      // 2. Check Global Database (Async)
+      status.className = 'ms-slug-status';
+      status.style.color = 'var(--text-3)';
+      status.textContent = 'Checking global availability...';
+
+      clearTimeout(slugCheckTimer);
+      slugCheckTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/minisite/check-slug?slug=${encodeURIComponent(slug)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (!data.available) {
+              status.className = 'ms-slug-status ms-slug-taken';
+              status.textContent = '✕ Taken by another user';
+              return;
+            }
+          }
+          status.className = 'ms-slug-status ms-slug-ok';
+          status.textContent = `✓ honourix.app/s/${slug}`;
+        } catch (e) {
+          // Fallback if backend route isn't set up yet
+          status.className = 'ms-slug-status ms-slug-ok';
+          status.textContent = `✓ honourix.app/s/${slug}`;
+        }
+      }, 500); // 500ms debounce to prevent spamming the backend
     }
 
-    function confirmCreate() {
+    async function confirmCreate() {
       const name = document.getElementById('newSiteName').value.trim();
       let slug = document.getElementById('newSiteSlug').value.trim() || slugify(name);
 
       if (!name) { toast('Enter a site name', 'error'); return; }
       if (!slug || slug.length < 3) { toast('Slug must be at least 3 characters', 'error'); return; }
 
-      slug = ensureUniqueSlug(slug);
+      const btn = document.getElementById('confirmCreateBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;animation:spin 1s linear infinite;"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Verifying...`;
+      btn.disabled = true;
 
+      try {
+        // Final Global Verification before saving
+        const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/minisite/check-slug?slug=${encodeURIComponent(slug)}`);
+        if (res.ok) {
+           const data = await res.json();
+           if (!data.available) {
+              toast('This URL slug is taken by someone else. Please choose another.', 'error');
+              document.getElementById('slugStatus').className = 'ms-slug-status ms-slug-taken';
+              document.getElementById('slugStatus').textContent = '✕ Taken by another user';
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+              return;
+           }
+        }
+      } catch(e) {
+         console.warn("Global check failed, falling back to local check.", e);
+         slug = ensureUniqueSlug(slug);
+      }
+
+      // Safe to create!
       const site = {
         id: 'ms_' + Date.now(),
         name,
