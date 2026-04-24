@@ -1805,35 +1805,20 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       document.getElementById('galAiWrapper').classList.remove('open');
     }
 
+    // ── SHIELD FLAG: Prevents closing right after dragging ──
+    let _justFinishedResizing = false; 
+
     document.addEventListener('click', (e) => {
+      // If we just dropped the resize handle, IGNORE this click!
+      if (_justFinishedResizing) return;
+      
       const wrapper = document.getElementById('galAiWrapper');
       if (wrapper && wrapper.classList.contains('open') && !wrapper.contains(e.target)) {
         closeGalAi();
       }
     });
 
-    // ── Gal AI Rotating "Calling Lines" ──
-    const galCatchyLines = [
-      "I can help you write, design, and build blocks...",
-      "Need a speaker section? I can generate one...",
-      "Want to change themes? Just ask me to make it Cyberpunk...",
-      "I can instantly draft a professional 'About' section...",
-      "Ask me to generate a complete FAQ section for your event..."
-    ];
-    let galLineIdx = 0;
-    setInterval(() => {
-      const tw = document.getElementById('galAiTypewriter');
-      if (tw) {
-        tw.style.opacity = 0; // Fade out
-        setTimeout(() => {
-          galLineIdx = (galLineIdx + 1) % galCatchyLines.length;
-          tw.textContent = galCatchyLines[galLineIdx];
-          tw.style.opacity = 1; // Fade in
-        }, 300);
-      }
-    }, 4500); // Rotates every 4.5 seconds
-
-    // Handle Drag-to-Resize
+    // ── Handle Drag-to-Resize ──
     let _aiResizing = false, _aiStartY, _aiStartH;
     document.addEventListener('DOMContentLoaded', () => {
       const resizer = document.getElementById('galAiResizer');
@@ -1857,11 +1842,17 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         box.style.height = newH + 'px';
       });
 
-      document.addEventListener('mouseup', () => {
+      document.addEventListener('mouseup', (e) => {
         if (_aiResizing) {
           _aiResizing = false;
           document.body.style.cursor = '';
           document.body.style.userSelect = '';
+          
+          // Activate the shield for 100 milliseconds
+          _justFinishedResizing = true;
+          setTimeout(() => {
+            _justFinishedResizing = false;
+          }, 100);
         }
       });
     });
