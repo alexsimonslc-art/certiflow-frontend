@@ -1803,3 +1803,118 @@ select optgroup {
 .sidebar.collapsed .user-avatar {
   margin: 0 auto !important;
 }
+/* ═══════════════════════════════════════════════════════════════
+   Sticky Shrinking Tool Header — shared across all tool pages
+   ═══════════════════════════════════════════════════════════════ */
+.tool-sticky-bar {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  margin-bottom: 28px;
+  transition: background 0.35s cubic-bezier(0.16,1,0.3,1),
+              backdrop-filter 0.35s, box-shadow 0.35s, padding 0.35s;
+}
+.tool-sticky-bar.tsb-shrunk {
+  background: rgba(4,8,15,0.88);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.06);
+  padding: 0;
+  margin-bottom: 0;
+}
+/* Normal content: title + subtitle */
+.tsb-normal {
+  transition: opacity 0.25s, max-height 0.35s cubic-bezier(0.16,1,0.3,1);
+  max-height: 200px;
+  overflow: hidden;
+}
+.tool-sticky-bar.tsb-shrunk .tsb-normal {
+  opacity: 0;
+  max-height: 0;
+  pointer-events: none;
+}
+/* Stepper in normal mode: no change */
+.tool-sticky-bar .stepper {
+  transition: opacity 0.25s, max-height 0.35s;
+  max-height: 100px;
+}
+.tool-sticky-bar.tsb-shrunk .stepper {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  margin: 0;
+}
+/* Compact bar: slides in when shrunk */
+.tsb-compact {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.25s;
+}
+.tool-sticky-bar.tsb-shrunk .tsb-compact {
+  max-height: 60px;
+  opacity: 1;
+}
+.tsb-compact-inner {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 11px 0;
+  width: 100%;
+}
+.tsb-compact-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  padding-right: 18px;
+  flex-shrink: 0;
+}
+.tsb-compact-sep {
+  width: 1px;
+  height: 22px;
+  background: rgba(255,255,255,0.14);
+  flex-shrink: 0;
+}
+.tsb-compact-steps {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding-left: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tsb-compact-steps::-webkit-scrollbar { display: none; }
+.tsb-compact-step {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.tsb-compact-step:hover { color: var(--text-2); }
+.tsb-compact-step.tsb-active {
+  background: rgba(0,212,255,0.12);
+  color: var(--cyan);
+  border-color: rgba(0,212,255,0.25);
+  font-weight: 600;
+}
+.tsb-compact-step.tsb-done { color: var(--text-3); }
+.tsb-compact-step-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}

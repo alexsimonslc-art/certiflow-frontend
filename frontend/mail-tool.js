@@ -2490,3 +2490,218 @@ mNewCampaign = function() {
   const panel = document.getElementById('meAiPanel');
   if (panel) panel.classList.remove('open');
 };
+/* ════════════════════════════════════════════════════════════════
+   STICKY SHRINKING HEADER
+════════════════════════════════════════════════════════════════ */
+(function tsbInit() {
+  const bar = document.getElementById('toolStickyBar');
+  if (!bar) return;
+
+  // Scroll-based shrink
+  window.addEventListener('scroll', function() {
+    bar.classList.toggle('tsb-shrunk', window.scrollY > 72);
+    tsbSyncActive();
+  }, { passive: true });
+
+  // Build compact step pills from MSTEPS after stepper renders
+  function tsbBuild() {
+    const stepsEl = document.getElementById('tsbCompactSteps');
+    if (!stepsEl || !window.MSTEPS) return;
+    stepsEl.innerHTML = MSTEPS.map((s, i) => {
+      const n = i + 1;
+      return `<div class="tsb-compact-step" id="tsbStep${n}" onclick="mGoStep(${n})">
+        <div class="tsb-compact-step-dot"></div>${s.label}
+      </div>`;
+    }).join('');
+  }
+
+  function tsbSyncActive() {
+    if (!window.MS) return;
+    MSTEPS.forEach((_, i) => {
+      const n = i + 1;
+      const el = document.getElementById('tsbStep' + n);
+      if (!el) return;
+      el.className = 'tsb-compact-step' +
+        (n === MS.step ? ' tsb-active' : n < MS.step ? ' tsb-done' : '');
+    });
+  }
+
+  // Hook into mBuildStepper and mUpdateStepper
+  const _origBuild = window.mBuildStepper;
+  window.mBuildStepper = function() {
+    if (_origBuild) _origBuild.apply(this, arguments);
+    tsbBuild();
+    tsbSyncActive();
+  };
+  const _origUpdate = window.mUpdateStepper;
+  window.mUpdateStepper = function() {
+    if (_origUpdate) _origUpdate.apply(this, arguments);
+    tsbSyncActive();
+  };
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   GAL AI — Fixed Panel, Resize, Greeting, Cycling Suggestions
+════════════════════════════════════════════════════════════════ */
+(function galAiInit() {
+  const GAL_SUGGESTIONS = [
+    'Generate a professional welcome email',
+    'Create a dark-themed SaaS onboarding email',
+    'Make the header gradient blue and bold',
+    'Add a two-column image + text section',
+    'Suggest 5 subject lines for this email',
+    'Design a premium certificate completion email',
+    'Create a bold promotional email with a CTA',
+    'Add a footer with social media links',
+    'Make this email look like a luxury brand',
+    'Rewrite the body text in a friendly tone',
+  ];
+  let galCycleIdx = 0;
+  let galCycleTimer = null;
+
+  // Start cycling suggestions in the greeting screen
+  window.galAiStartCycle = function() {
+    const el = document.getElementById('galAiCycleText');
+    if (!el) return;
+    if (galCycleTimer) clearInterval(galCycleTimer);
+    galCycleTimer = setInterval(() => {
+      el.style.opacity = '0';
+      setTimeout(() => {
+        galCycleIdx = (galCycleIdx + 1) % GAL_SUGGESTIONS.length;
+        el.textContent = GAL_SUGGESTIONS[galCycleIdx];
+        el.style.opacity = '1';
+      }, 400);
+    }, 3000);
+  };
+
+  // Set greeting name from JWT token
+  window.galAiSetGreetName = function() {
+    try {
+      const token = localStorage.getItem('Honourix_token');
+      if (!token) return;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const firstName = (payload.name || '').split(' ')[0] || 'there';
+      const el = document.getElementById('galAiGreetName');
+      if (el) el.textContent = `Hi, ${firstName}! 👋`;
+    } catch(e) {}
+  };
+
+  // Toggle panel open/close
+  window.galAiToggle = function() {
+    const panel = document.getElementById('galAiPanel');
+    const fab   = document.getElementById('galAiFab');
+    const main  = document.querySelector('.main-area');
+    if (!panel) return;
+    const isOpen = panel.classList.toggle('open');
+    if (fab) fab.classList.toggle('panel-open', isOpen);
+    if (main) main.classList.toggle('gal-open', isOpen);
+    if (isOpen) {
+      galAiStartCycle();
+      galAiSetGreetName();
+    } else {
+      if (galCycleTimer) { clearInterval(galCycleTimer); galCycleTimer = null; }
+    }
+  };
+  // Old name still used by AI JS below
+  window.meToggleAiPanel = window.galAiToggle;
+
+  // Show greeting / hide greeting based on chat messages
+  window.galAiSyncGreeting = function() {
+    const chat  = document.getElementById('meAiChat');
+    const greet = document.getElementById('galAiGreeting');
+    if (!chat || !greet) return;
+    const hasMessages = chat.children.length > 0;
+    greet.style.display = hasMessages ? 'none' : '';
+    chat.style.display  = hasMessages ? 'flex' : 'none';
+  };
+
+  // ── Resize handle ──
+  const resizeHandle = document.getElementById('galAiResize');
+  const panel = document.getElementById('galAiPanel');
+  if (resizeHandle && panel) {
+    let startX, startW;
+    resizeHandle.addEventListener('mousedown', (e) => {
+      startX = e.clientX;
+      startW = parseInt(getComputedStyle(panel).width, 10);
+      resizeHandle.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      const onMove = (e) => {
+        const delta = startX - e.clientX;
+        const newW  = Math.min(640, Math.max(300, startW + delta));
+        panel.style.width = newW + 'px';
+        document.documentElement.style.setProperty('--gal-width', newW + 'px');
+        const main = document.querySelector('.main-area');
+        if (main && main.classList.contains('gal-open')) main.style.marginRight = newW + 'px';
+      };
+      const onUp = () => {
+        resizeHandle.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  }
+
+  // Show FAB when template is selected (editor becomes visible)
+  const _origOpen = window.meLoadTemplateAndOpenEditor;
+  window.meLoadTemplateAndOpenEditor = function(key) {
+    if (_origOpen) _origOpen.apply(this, arguments);
+    const fab = document.getElementById('galAiFab');
+    if (fab) fab.classList.add('visible');
+  };
+
+  // Patch meAiAppendBubble to use new Gal AI classes + sync greeting
+  const _origAppend = window.meAiAppendBubble;
+  window.meAiAppendBubble = function(role, content, isTyping) {
+    const chat = document.getElementById('meAiChat');
+    if (!chat) return null;
+    const wrap = document.createElement('div');
+    wrap.className = 'gal-ai-bubble ' + (role === 'user' ? 'user' : 'ai');
+    if (role === 'ai') {
+      if (isTyping) {
+        wrap.innerHTML = `<div class="gal-ai-bubble-label">✨ Gal AI</div>
+          <div class="gal-ai-thinking">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <div class="gal-ai-status">Thinking…</div>`;
+      } else {
+        wrap.innerHTML = `<div class="gal-ai-bubble-label">✨ Gal AI</div>${content}`;
+      }
+    } else {
+      wrap.textContent = content;
+    }
+    chat.appendChild(wrap);
+    chat.scrollTop = chat.scrollHeight;
+    galAiSyncGreeting();
+    return wrap;
+  };
+
+  // Patch meAiApplySuggestions to use Gal AI suggestion button style
+  const _origSugg = window.meAiApplySuggestions;
+  window.meAiApplySuggestions = function(suggestions) {
+    const chat = document.getElementById('meAiChat');
+    if (!chat || !suggestions?.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'gal-ai-sugg-list';
+    suggestions.forEach(s => {
+      const btn = document.createElement('button');
+      btn.className = 'gal-ai-sugg-btn';
+      btn.textContent = s;
+      btn.onclick = () => window.meAiApplySubject && window.meAiApplySubject(btn, s);
+      wrap.appendChild(btn);
+    });
+    chat.appendChild(wrap);
+    chat.scrollTop = chat.scrollHeight;
+  };
+
+  // Init on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    galAiSyncGreeting();
+    galAiStartCycle();
+    galAiSetGreetName();
+  });
+})();

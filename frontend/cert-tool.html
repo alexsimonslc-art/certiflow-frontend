@@ -584,28 +584,29 @@
   <div id="sidebarMount"></div>
 
   <div class="main-area">
-    <header class="top-header">
-      <div class="page-breadcrumb">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--text-3)"><polyline points="9 18 15 12 9 6"/></svg>
-        <span>Certificate Generator</span>
-      </div>
-      <div class="header-actions">
-        
-      </div>
+    <header class="top-header" style="display:none">
+      <div class="header-actions"></div>
     </header>
 
     <main class="page-content fade-in">
 
-      <!-- Page Header -->
-      <div style="margin-bottom:28px">
-        <h1 class="page-title">Certificate Generator</h1>
-        <p class="page-subtitle">Design your certificate template visually, connect participant data, and generate PDFs — all in one place.</p>
-      </div>
-
-      <!-- ═══ STEPPER ═══ -->
-      <div class="stepper" id="stepper">
-        <!-- Step nodes injected by JS -->
+      <!-- ── Sticky shrinking header ─────────────────────────── -->
+      <div class="tool-sticky-bar" id="toolStickyBar">
+        <div class="tsb-normal">
+          <div style="margin-bottom:24px">
+            <h1 class="page-title">Certificate Generator</h1>
+            <p class="page-subtitle">Design your certificate template visually, connect participant data, and generate PDFs — all in one place.</p>
+          </div>
+        </div>
+        <!-- ═══ STEPPER ═══ -->
+        <div class="stepper" id="stepper"></div>
+        <div class="tsb-compact" id="tsbCompact">
+          <div class="tsb-compact-inner">
+            <span class="tsb-compact-name">Certificate Generator</span>
+            <div class="tsb-compact-sep"></div>
+            <div class="tsb-compact-steps" id="tsbCompactSteps"></div>
+          </div>
+        </div>
       </div>
 
       <!-- ═══ STEP 1: DATA SOURCE ═══ -->

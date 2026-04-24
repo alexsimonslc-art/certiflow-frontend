@@ -481,12 +481,7 @@
   <div id="sidebarMount"></div>
 
   <div class="main-area">
-    <header class="top-header">
-      <div class="page-breadcrumb">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><polyline points="9 18 15 12 9 6"/></svg>
-        <span>Combined Pipeline</span>
-      </div>
+    <header class="top-header" style="display:none">
       <div class="header-actions">
         <button class="header-btn" id="sidebarToggle">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -496,12 +491,23 @@
 
     <main class="page-content fade-in">
 
-      <div style="margin-bottom:28px">
-        <h1 class="page-title">Combined Pipeline</h1>
-        <p class="page-subtitle">Design a certificate, connect participants, build an email — run the full workflow in one shot.</p>
+      <!-- ── Sticky shrinking header ─────────────────────────── -->
+      <div class="tool-sticky-bar" id="toolStickyBar">
+        <div class="tsb-normal">
+          <div style="margin-bottom:24px">
+            <h1 class="page-title">Combined Pipeline</h1>
+            <p class="page-subtitle">Design a certificate, connect participants, build an email — run the full workflow in one shot.</p>
+          </div>
+        </div>
+        <div class="stepper" id="stepper"></div>
+        <div class="tsb-compact" id="tsbCompact">
+          <div class="tsb-compact-inner">
+            <span class="tsb-compact-name">Combined Pipeline</span>
+            <div class="tsb-compact-sep"></div>
+            <div class="tsb-compact-steps" id="tsbCompactSteps"></div>
+          </div>
+        </div>
       </div>
-
-      <div class="stepper" id="stepper" style="margin-bottom:32px"></div>
 
       <!-- ════════════════════════════ STEP 1 ════════════════════════════ -->
       <div class="step-panel active" id="sp1">

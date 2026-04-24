@@ -847,3 +847,45 @@ function resetAll() {
   if (ME.cm) ME.cm.setValue('');
   goStep(1, true);
 }
+/* ════════════════════════════════════════════════════════════════
+   STICKY SHRINKING HEADER
+════════════════════════════════════════════════════════════════ */
+(function tsbInit() {
+  const bar = document.getElementById('toolStickyBar');
+  if (!bar) return;
+  window.addEventListener('scroll', function() {
+    bar.classList.toggle('tsb-shrunk', window.scrollY > 72);
+    tsbSyncActive();
+  }, { passive: true });
+  function tsbBuild() {
+    const stepsEl = document.getElementById('tsbCompactSteps');
+    if (!stepsEl || !window.STEPS) return;
+    stepsEl.innerHTML = STEPS.map((s, i) => {
+      const n = i + 1;
+      const label = typeof s === 'string' ? s : s.label;
+      return `<div class="tsb-compact-step" id="tsbStep${n}">
+        <div class="tsb-compact-step-dot"></div>${label}
+      </div>`;
+    }).join('');
+  }
+  function tsbSyncActive() {
+    if (!window.CP) return;
+    STEPS.forEach((_, i) => {
+      const n = i + 1;
+      const el = document.getElementById('tsbStep' + n);
+      if (!el) return;
+      el.className = 'tsb-compact-step' +
+        (n === CP.step ? ' tsb-active' : n < CP.step ? ' tsb-done' : '');
+    });
+  }
+  const _origBuild = window.buildStepper;
+  window.buildStepper = function() {
+    if (_origBuild) _origBuild.apply(this, arguments);
+    tsbBuild(); tsbSyncActive();
+  };
+  const _origUpdate = window.updateStepper;
+  window.updateStepper = function() {
+    if (_origUpdate) _origUpdate.apply(this, arguments);
+    tsbSyncActive();
+  };
+})();

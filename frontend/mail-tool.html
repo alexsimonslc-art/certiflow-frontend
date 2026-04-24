@@ -295,16 +295,19 @@
     .me-tpl-cat-btn { padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:var(--text-2);font-size:13px;cursor:pointer;transition:all 0.15s;font-family:var(--font); }
     .me-tpl-cat-btn:hover { border-color:rgba(0,212,255,0.3);color:var(--text); }
     .me-tpl-cat-btn.active { background:var(--cyan-dim);color:var(--cyan);border-color:rgba(0,212,255,0.35); }
-    .me-tpl-gate-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;max-height:460px;overflow-y:auto;padding-bottom:4px;scrollbar-width:thin; }
-    .me-tpl-gate-card { border:1px solid rgba(255,255,255,0.09);border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.03); }
-    .me-tpl-gate-card:hover { border-color:rgba(0,212,255,0.45);transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,0.35); }
-    .me-tpl-gate-card.selected { border-color:var(--cyan);box-shadow:0 0 0 2px rgba(0,212,255,0.2); }
-    .me-tpl-gate-thumb { height:120px;overflow:hidden;position:relative;background:#f1f5f9; }
+    .me-tpl-gate-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;max-height:540px;overflow-y:auto;padding:12px 6px 10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent; }
+    .me-tpl-gate-grid::-webkit-scrollbar { width:5px; }
+    .me-tpl-gate-grid::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1);border-radius:4px; }
+    .me-tpl-gate-card { border:1.5px solid rgba(255,255,255,0.09);border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.22s;background:rgba(255,255,255,0.03);position:relative;z-index:1; }
+    .me-tpl-gate-card:hover { border-color:rgba(0,212,255,0.5);transform:translateY(-5px);box-shadow:0 14px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(0,212,255,0.15);z-index:10; }
+    .me-tpl-gate-card.selected { border-color:var(--cyan);border-width:2px;box-shadow:0 0 0 3px rgba(0,212,255,0.3),0 10px 36px rgba(0,0,0,0.5);background:rgba(0,212,255,0.07);transform:translateY(-3px);z-index:5; }
+    .me-tpl-gate-card.selected::after { content:'✓';position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--grad-primary);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,212,255,0.5);z-index:20; }
+    .me-tpl-gate-thumb { height:152px;overflow:hidden;position:relative;background:#f1f5f9; }
     .me-tpl-gate-thumb iframe { width:500%;height:500%;transform:scale(0.2);transform-origin:top left;pointer-events:none;border:none;background:#fff; }
     .me-tpl-gate-thumb-overlay { position:absolute;inset:0;background:transparent;cursor:pointer; }
-    .me-tpl-gate-info { padding:12px; }
-    .me-tpl-gate-name { font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px; }
-    .me-tpl-gate-desc { font-size:11.5px;color:var(--text-3);line-height:1.4; }
+    .me-tpl-gate-info { padding:14px; }
+    .me-tpl-gate-name { font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:5px; }
+    .me-tpl-gate-desc { font-size:12px;color:var(--text-3);line-height:1.45; }
     .me-tpl-gate-actions { padding:20px 28px 28px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.06); }
 
     /* ─── Editor wrapper (hidden until template chosen) ─────────── */
@@ -315,47 +318,200 @@
     .me-editor-with-ai { display:flex;gap:0;min-height:0;overflow:hidden; }
     .me-editor-main { flex:1;min-width:0;display:flex;flex-direction:column; }
 
-    /* ─── AI Chat Panel ──────────────────────────────────────────── */
-    .me-ai-panel { width:0;overflow:hidden;transition:width 0.28s cubic-bezier(0.16,1,0.3,1);flex-shrink:0;border-left:1px solid rgba(255,255,255,0.07);background:rgba(0,0,0,0.18);display:flex;flex-direction:column; }
-    .me-ai-panel.open { width:320px; }
-    .me-ai-panel-head { padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(255,255,255,0.02); }
-    .me-ai-panel-title { display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--text); }
-    .me-ai-panel-title-icon { width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:14px; }
-    .me-ai-close { width:26px;height:26px;border-radius:6px;background:rgba(255,255,255,0.06);border:none;color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.15s; }
-    .me-ai-close:hover { background:rgba(255,255,255,0.12);color:var(--text); }
+    /* ─── Gal AI — Fixed Full-Height Right Panel ─────────────────── */
+    .gal-ai-panel {
+      position:fixed; top:0; right:0; height:100vh; width:0;
+      overflow:hidden;
+      transition:width 0.32s cubic-bezier(0.16,1,0.3,1);
+      z-index:500;
+      display:flex; flex-direction:column;
+      background:rgba(4,8,15,0.97);
+      border-left:1px solid rgba(255,255,255,0.09);
+      backdrop-filter:blur(40px);
+      -webkit-backdrop-filter:blur(40px);
+      box-shadow:-12px 0 60px rgba(0,0,0,0.6);
+      font-family:'Plus Jakarta Sans',sans-serif;
+    }
+    .gal-ai-panel.open { width:var(--gal-width,380px); }
+    /* Main area shifts when panel open */
+    .main-area { transition:margin-right 0.32s cubic-bezier(0.16,1,0.3,1); }
+    .main-area.gal-open { margin-right:var(--gal-width,380px); }
 
-    .me-ai-chat { flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent; }
-    .me-ai-chat::-webkit-scrollbar { width:4px; }
-    .me-ai-chat::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.08);border-radius:4px; }
+    /* Resize handle — left edge */
+    .gal-ai-resize { position:absolute;left:0;top:0;width:5px;height:100%;cursor:col-resize;z-index:10;transition:background 0.15s; }
+    .gal-ai-resize:hover, .gal-ai-resize.dragging { background:linear-gradient(180deg,rgba(0,212,255,0.5),rgba(124,58,237,0.5)); }
 
-    .me-ai-bubble { max-width:92%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.55; }
-    .me-ai-bubble.user { align-self:flex-end;background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.25));border:1px solid rgba(139,92,246,0.25);color:var(--text);border-bottom-right-radius:4px; }
-    .me-ai-bubble.ai { align-self:flex-start;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);color:var(--text-2);border-bottom-left-radius:4px; }
-    .me-ai-bubble.ai .ai-avatar { display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--purple-2,#a78bfa);margin-bottom:5px; }
-    .me-ai-bubble.typing .dot { display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--text-3);margin:0 2px;animation:aiDotBounce 1.2s infinite; }
-    .me-ai-bubble.typing .dot:nth-child(2) { animation-delay:0.2s; }
-    .me-ai-bubble.typing .dot:nth-child(3) { animation-delay:0.4s; }
-    @keyframes aiDotBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+    /* Panel inner */
+    .gal-ai-inner { display:flex;flex-direction:column;height:100%;overflow:hidden; }
 
-    .me-ai-suggestions { display:flex;flex-direction:column;gap:5px;margin-top:6px; }
-    .me-ai-suggestion-btn { padding:7px 10px;border-radius:8px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.2);color:var(--text);font-size:12px;cursor:pointer;text-align:left;transition:all 0.15s;font-family:var(--font); }
-    .me-ai-suggestion-btn:hover { background:rgba(99,102,241,0.22);border-color:rgba(99,102,241,0.35); }
+    /* Header */
+    .gal-ai-header {
+      padding:16px 18px 14px;
+      border-bottom:1px solid rgba(255,255,255,0.07);
+      display:flex;align-items:center;justify-content:space-between;
+      flex-shrink:0;
+      background:rgba(255,255,255,0.015);
+    }
+    .gal-ai-header-left { display:flex;align-items:center;gap:10px; }
+    .gal-ai-avatar-icon {
+      width:34px;height:34px;border-radius:10px;
+      background:linear-gradient(135deg,#00d4ff,#7c3aed);
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;flex-shrink:0;
+      box-shadow:0 4px 14px rgba(0,212,255,0.3);
+    }
+    .gal-ai-title { font-size:14.5px;font-weight:800;color:var(--text);letter-spacing:0.2px; }
+    .gal-ai-subtitle { font-size:11px;color:var(--text-3);margin-top:1px; }
+    .gal-ai-close-btn {
+      width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);color:var(--text-2);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+    }
+    .gal-ai-close-btn:hover { background:rgba(255,255,255,0.1);color:var(--text); }
+    .gal-ai-close-btn svg { width:14px;height:14px; }
 
-    .me-ai-input-area { padding:12px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;background:rgba(255,255,255,0.02); }
-    .me-ai-input-row { display:flex;gap:8px;align-items:flex-end; }
-    .me-ai-textarea { flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--text);font-size:13px;font-family:var(--font);padding:9px 12px;resize:none;outline:none;max-height:100px;min-height:38px;line-height:1.5;scrollbar-width:thin;transition:border-color 0.15s; }
-    .me-ai-textarea:focus { border-color:rgba(99,102,241,0.5); }
-    .me-ai-textarea::placeholder { color:var(--text-3); }
-    .me-ai-send { width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.15s; }
-    .me-ai-send:hover { opacity:0.9; }
-    .me-ai-send svg { width:15px;height:15px; }
-    .me-ai-send:disabled { opacity:0.4;cursor:not-allowed; }
+    /* Greeting screen (shown when no messages) */
+    .gal-ai-greeting {
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:36px 24px;text-align:center;gap:16px;
+      flex:1;
+      transition:opacity 0.3s;
+    }
+    .gal-ai-greeting.hidden { display:none; }
+    .gal-ai-greet-avatar {
+      width:64px;height:64px;border-radius:20px;
+      background:linear-gradient(135deg,#00d4ff,#7c3aed);
+      display:flex;align-items:center;justify-content:center;
+      font-size:28px;
+      box-shadow:0 8px 32px rgba(0,212,255,0.35);
+      animation:galAvatarPulse 3s ease-in-out infinite;
+    }
+    @keyframes galAvatarPulse { 0%,100%{box-shadow:0 8px 32px rgba(0,212,255,0.35)} 50%{box-shadow:0 8px 48px rgba(0,212,255,0.55),0 0 0 8px rgba(0,212,255,0.08)} }
+    .gal-ai-greet-name { font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.3px; }
+    .gal-ai-greet-sub { font-size:13.5px;color:var(--text-2);line-height:1.5;max-width:260px; }
+    /* Cycling suggestion */
+    .gal-ai-sugg-cycle {
+      background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.18);
+      border-radius:12px;padding:10px 16px;
+      font-size:13px;color:var(--cyan);font-weight:500;font-style:italic;
+      min-height:42px;display:flex;align-items:center;justify-content:center;
+      width:100%;max-width:300px;text-align:center;line-height:1.4;
+    }
+    .gal-ai-sugg-cycle span { transition:opacity 0.4s; }
+    .gal-ai-sugg-try { font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.8px;font-weight:700; }
 
-    /* AI toggle button in me-head */
-    .me-ai-toggle { display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:9px;background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.15));border:1px solid rgba(139,92,246,0.25);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--font);white-space:nowrap; }
-    .me-ai-toggle:hover { background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.25));border-color:rgba(139,92,246,0.4); }
-    .me-ai-toggle.active { background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent;box-shadow:0 2px 12px rgba(99,102,241,0.35); }
-    .me-ai-toggle svg { width:14px;height:14px; }
+    /* Chat area */
+    .gal-ai-chat {
+      flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(0,212,255,0.12) transparent;
+    }
+    .gal-ai-chat::-webkit-scrollbar { width:5px; }
+    .gal-ai-chat::-webkit-scrollbar-track { background:transparent; }
+    .gal-ai-chat::-webkit-scrollbar-thumb { background:rgba(0,212,255,0.15);border-radius:4px; }
+    .gal-ai-chat::-webkit-scrollbar-thumb:hover { background:rgba(0,212,255,0.3); }
+
+    /* Bubbles */
+    .gal-ai-bubble { max-width:90%;font-size:13.5px;line-height:1.6;font-family:'Plus Jakarta Sans',sans-serif; }
+    .gal-ai-bubble.user {
+      align-self:flex-end;
+      background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(124,58,237,0.2));
+      border:1px solid rgba(0,212,255,0.25);
+      color:var(--text);
+      padding:10px 14px;border-radius:16px;border-bottom-right-radius:4px;
+    }
+    .gal-ai-bubble.ai {
+      align-self:flex-start;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--text-2);
+      padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;
+    }
+    .gal-ai-bubble-label {
+      font-size:11px;font-weight:700;
+      background:linear-gradient(135deg,#00d4ff,#7c3aed);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      margin-bottom:5px;display:flex;align-items:center;gap:4px;letter-spacing:0.3px;
+    }
+    /* Rolling 3 dots thinking animation */
+    .gal-ai-thinking { display:flex;align-items:center;gap:3px;padding:4px 0; }
+    .gal-ai-thinking .dot {
+      width:8px;height:8px;border-radius:50%;
+      background:linear-gradient(135deg,#00d4ff,#7c3aed);
+      animation:galThinkDot 1.4s ease-in-out infinite;
+    }
+    .gal-ai-thinking .dot:nth-child(1) { animation-delay:0s; }
+    .gal-ai-thinking .dot:nth-child(2) { animation-delay:0.2s; }
+    .gal-ai-thinking .dot:nth-child(3) { animation-delay:0.4s; }
+    @keyframes galThinkDot {
+      0%,80%,100% { transform:scale(0.7);opacity:0.4; }
+      40% { transform:scale(1.2);opacity:1; }
+    }
+    /* Thinking status text */
+    .gal-ai-status {
+      font-size:11px;color:var(--cyan);font-weight:600;margin-top:3px;
+      animation:galStatusPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes galStatusPulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
+
+    /* Suggestion buttons */
+    .gal-ai-sugg-list { display:flex;flex-direction:column;gap:5px;margin-top:6px; }
+    .gal-ai-sugg-btn {
+      padding:8px 12px;border-radius:10px;
+      background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.18);
+      color:var(--text);font-size:12.5px;cursor:pointer;text-align:left;
+      transition:all 0.15s;font-family:'Plus Jakarta Sans',sans-serif;
+    }
+    .gal-ai-sugg-btn:hover { background:rgba(0,212,255,0.14);border-color:rgba(0,212,255,0.35); }
+
+    /* Input area */
+    .gal-ai-input-wrap {
+      padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;
+      background:rgba(255,255,255,0.015);
+    }
+    .gal-ai-input-row { display:flex;gap:9px;align-items:flex-end; }
+    .gal-ai-textarea {
+      flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+      border-radius:12px;color:var(--text);font-size:13.5px;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      padding:10px 14px;resize:none;outline:none;
+      max-height:120px;min-height:42px;line-height:1.5;
+      scrollbar-width:thin;transition:border-color 0.2s;
+    }
+    .gal-ai-textarea:focus { border-color:rgba(0,212,255,0.4);box-shadow:0 0 0 3px rgba(0,212,255,0.08); }
+    .gal-ai-textarea::placeholder { color:var(--text-3); }
+    .gal-ai-send-btn {
+      width:40px;height:40px;border-radius:12px;
+      background:linear-gradient(135deg,#00d4ff,#7c3aed);
+      border:none;color:#fff;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+      transition:all 0.2s;box-shadow:0 4px 16px rgba(0,212,255,0.3);
+    }
+    .gal-ai-send-btn:hover { box-shadow:0 6px 22px rgba(0,212,255,0.45);transform:translateY(-1px); }
+    .gal-ai-send-btn svg { width:16px;height:16px; }
+    .gal-ai-send-btn:disabled { opacity:0.4;cursor:not-allowed;box-shadow:none;transform:none; }
+    .gal-ai-input-hint { font-size:11px;color:var(--text-3);margin-top:7px;text-align:center; }
+
+    /* FAB toggle button — fixed top right */
+    .gal-ai-fab {
+      position:fixed;top:16px;right:20px;z-index:501;
+      display:none;
+      align-items:center;gap:8px;
+      padding:9px 18px;border-radius:22px;
+      background:linear-gradient(135deg,#00d4ff,#7c3aed);
+      border:none;color:#fff;
+      font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;
+      cursor:pointer;letter-spacing:0.2px;
+      box-shadow:0 4px 20px rgba(0,212,255,0.35);
+      transition:all 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .gal-ai-fab.visible { display:flex; }
+    .gal-ai-fab:hover { box-shadow:0 6px 28px rgba(0,212,255,0.5);transform:translateY(-2px); }
+    .gal-ai-fab.panel-open { right:calc(var(--gal-width,380px) + 12px); border-radius:10px; }
+    .gal-ai-fab svg { width:15px;height:15px; }
+
+    /* Old toggle button hidden — replaced by FAB */
+    .me-ai-toggle { display:none !important; }
 
     /* ─── Drag handle for sortable blocks ───────────────────────── */
     .me-drag-handle { position:absolute;top:50%;left:-18px;transform:translateY(-50%);width:14px;height:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;opacity:0;transition:opacity 0.15s;cursor:grab;padding:2px; }
@@ -378,12 +534,7 @@
   <div id="sidebarMount"></div>
 
   <div class="main-area">
-    <header class="top-header">
-      <div class="page-breadcrumb">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;opacity:0.4"><polyline points="9 18 15 12 9 6"/></svg>
-        <span>Bulk Mail Sender</span>
-      </div>
+    <header class="top-header" style="display:none">
       <div class="header-actions">
         <button class="header-btn" id="sidebarToggle" title="Toggle sidebar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -392,12 +543,24 @@
     </header>
 
     <main class="page-content fade-in">
-      <div style="margin-bottom:28px">
-        <h1 class="page-title">Bulk Mail Sender</h1>
-        <p class="page-subtitle">Send personalized HTML emails from your own Gmail — design visually, code freely, preview instantly.</p>
-      </div>
 
-      <div class="stepper" id="stepper"></div>
+      <!-- ── Sticky shrinking header ─────────────────────────── -->
+      <div class="tool-sticky-bar" id="toolStickyBar">
+        <div class="tsb-normal">
+          <div style="margin-bottom:24px">
+            <h1 class="page-title">Bulk Mail Sender</h1>
+            <p class="page-subtitle">Send personalized HTML emails from your own Gmail — design visually, code freely, preview instantly.</p>
+          </div>
+        </div>
+        <div class="stepper" id="stepper"></div>
+        <div class="tsb-compact" id="tsbCompact">
+          <div class="tsb-compact-inner">
+            <span class="tsb-compact-name">Bulk Mail Sender</span>
+            <div class="tsb-compact-sep"></div>
+            <div class="tsb-compact-steps" id="tsbCompactSteps"></div>
+          </div>
+        </div>
+      </div>
 
       <!-- ══════════════════════════════════════════════════════
            STEP 1 — Recipients
@@ -835,38 +998,6 @@
 
                 </div><!-- /me-editor-main -->
 
-                <!-- Right: AI Chat Panel -->
-                <div class="me-ai-panel" id="meAiPanel">
-                  <div class="me-ai-panel-head">
-                    <div class="me-ai-panel-title">
-                      <div class="me-ai-panel-title-icon">✨</div>
-                      Gemini AI
-                    </div>
-                    <button class="me-ai-close" onclick="meToggleAiPanel()" title="Close AI panel">✕</button>
-                  </div>
-                  <div class="me-ai-chat" id="meAiChat">
-                    <!-- Welcome message -->
-                    <div class="me-ai-bubble ai">
-                      <div class="ai-avatar">✨ Gemini AI</div>
-                      Hi! I can help you create beautiful email designs. Try asking me:<br><br>
-                      <strong>• "Generate a professional welcome email"</strong><br>
-                      <strong>• "Make the header dark blue and bold"</strong><br>
-                      <strong>• "Suggest 5 subject lines"</strong><br>
-                      <strong>• Paste any HTML to import it</strong>
-                    </div>
-                  </div>
-                  <div class="me-ai-input-area">
-                    <div class="me-ai-input-row">
-                      <textarea class="me-ai-textarea" id="meAiInput" placeholder="Ask AI anything… or paste HTML to import" rows="1"
-                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();meAiSend()}"
-                        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
-                      <button class="me-ai-send" id="meAiSendBtn" onclick="meAiSend()" title="Send">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                </div><!-- /meAiPanel -->
-
               </div><!-- /me-editor-with-ai -->
 
             </div><!-- /meEditorWrap -->
@@ -1028,6 +1159,62 @@
       </div>
 
     </main>
+  </div>
+</div>
+
+<!-- ══ Gal AI — Fixed Right Panel ══ -->
+<button class="gal-ai-fab" id="galAiFab" onclick="galAiToggle()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1H1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/></svg>
+  Gal AI
+</button>
+
+<div class="gal-ai-panel" id="galAiPanel">
+  <div class="gal-ai-resize" id="galAiResize"></div>
+  <div class="gal-ai-inner">
+
+    <!-- Header -->
+    <div class="gal-ai-header">
+      <div class="gal-ai-header-left">
+        <div class="gal-ai-avatar-icon">✨</div>
+        <div>
+          <div class="gal-ai-title">Gal AI</div>
+          <div class="gal-ai-subtitle">Email design assistant</div>
+        </div>
+      </div>
+      <button class="gal-ai-close-btn" onclick="galAiToggle()" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Greeting (shown when chat is empty) -->
+    <div class="gal-ai-greeting" id="galAiGreeting">
+      <div class="gal-ai-greet-avatar">✨</div>
+      <div class="gal-ai-greet-name" id="galAiGreetName">Hi there! 👋</div>
+      <div class="gal-ai-greet-sub">I'm Gal AI — your intelligent email design assistant. Tell me what you need and I'll build it instantly.</div>
+      <div class="gal-ai-sugg-try">Try asking me</div>
+      <div class="gal-ai-sugg-cycle">
+        <span id="galAiCycleText">Generate a professional welcome email</span>
+      </div>
+    </div>
+
+    <!-- Chat history (hidden until first message) -->
+    <div class="gal-ai-chat" id="meAiChat" style="display:none"></div>
+
+    <!-- Input -->
+    <div class="gal-ai-input-wrap">
+      <div class="gal-ai-input-row">
+        <textarea class="gal-ai-textarea" id="meAiInput"
+          placeholder="Ask Gal AI anything — design, generate, improve…"
+          rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();meAiSend()}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+        <button class="gal-ai-send-btn" id="meAiSendBtn" onclick="meAiSend()" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="gal-ai-input-hint">Enter to send · Shift+Enter for new line</div>
+    </div>
+
   </div>
 </div>
 

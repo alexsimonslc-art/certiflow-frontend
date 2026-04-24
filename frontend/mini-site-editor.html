@@ -550,8 +550,9 @@
       </div>
 
       <div class="gal-ai-input-area">
-        <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to generate a block..." autocomplete="off" />
-        <button class="gal-ai-send">
+        <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to help write content, headings, copy…" autocomplete="off"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();galAiMseSend()}" />
+        <button class="gal-ai-send" onclick="galAiMseSend()" id="galAiSendBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
@@ -2294,6 +2295,99 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       </div>
     </div>
   </div>
+
+<script>
+/* ── Gal AI Chat for Mini-Site Editor ── */
+(function() {
+  let mseChatHistory = [];
+  let mseIsLoading = false;
+
+  function mseGetToken() {
+    return localStorage.getItem('Honourix_token') || '';
+  }
+
+  function mseAppendMsg(role, text) {
+    const history = document.getElementById('galAiHistory');
+    if (!history) return;
+    const div = document.createElement('div');
+    div.className = 'gal-ai-msg ' + (role === 'user' ? 'user' : 'bot');
+    div.textContent = text;
+    history.appendChild(div);
+    history.scrollTop = history.scrollHeight;
+  }
+
+  function mseShowTyping() {
+    const history = document.getElementById('galAiHistory');
+    if (!history) return null;
+    const div = document.createElement('div');
+    div.className = 'gal-ai-msg bot';
+    div.id = 'galAiTyping';
+    div.innerHTML = '<span style="opacity:0.5">Gal AI is thinking</span> <span style="animation:galDot 1.2s infinite;display:inline-block">●</span><span style="animation:galDot 1.2s 0.2s infinite;display:inline-block">●</span><span style="animation:galDot 1.2s 0.4s infinite;display:inline-block">●</span>';
+    history.appendChild(div);
+    history.scrollTop = history.scrollHeight;
+    return div;
+  }
+
+  window.galAiMseSend = async function() {
+    if (mseIsLoading) return;
+    const input = document.getElementById('galAiInput');
+    const sendBtn = document.getElementById('galAiSendBtn');
+    const msg = (input?.value || '').trim();
+    if (!msg) return;
+
+    mseIsLoading = true;
+    input.value = '';
+    if (sendBtn) sendBtn.disabled = true;
+    mseAppendMsg('user', msg);
+    const typingEl = mseShowTyping();
+
+    // Build context from current page blocks
+    let context = '';
+    try {
+      const pageTitle = document.getElementById('siteTitle')?.value || '';
+      const blocks = window.MSState?.blocks || [];
+      if (pageTitle) context += `\nMini site title: "${pageTitle}"`;
+      if (blocks.length) context += `\nCurrent page has ${blocks.length} content blocks.`;
+    } catch(e) {}
+
+    mseChatHistory.push({ role: 'user', content: msg });
+
+    try {
+      const resp = await fetch('/api/ai/minisite-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + mseGetToken()
+        },
+        body: JSON.stringify({
+          userMessage: msg + (context ? '\n\nCONTEXT:' + context : ''),
+          chatHistory: mseChatHistory.slice(-8)
+        })
+      });
+
+      if (typingEl) typingEl.remove();
+
+      if (!resp.ok) throw new Error('Request failed: ' + resp.status);
+      const data = await resp.json();
+      const reply = data.message || 'I\'m here to help! Try asking me for copy suggestions or content ideas.';
+      mseChatHistory.push({ role: 'assistant', content: reply });
+      mseAppendMsg('bot', reply);
+    } catch(err) {
+      if (typingEl) typingEl.remove();
+      mseAppendMsg('bot', 'Sorry, something went wrong: ' + err.message);
+    } finally {
+      mseIsLoading = false;
+      if (sendBtn) sendBtn.disabled = false;
+      if (input) input.focus();
+    }
+  };
+
+  // Inject keyframes for typing dots
+  const style = document.createElement('style');
+  style.textContent = `@keyframes galDot{0%,60%,100%{opacity:0.2}30%{opacity:1}}`;
+  document.head.appendChild(style);
+})();
+</script>
 </body>
 
 </html>
