@@ -2491,52 +2491,44 @@ mNewCampaign = function() {
   if (panel) panel.classList.remove('open');
 };
 /* ════════════════════════════════════════════════════════════════
-   STICKY SHRINKING HEADER
+   SCROLL COMPACT BAR
 ════════════════════════════════════════════════════════════════ */
-(function tsbInit() {
-  const bar = document.getElementById('toolStickyBar');
+(function scbInit() {
+  const bar = document.getElementById('scrollCompactBar');
+  const stepsEl = document.getElementById('scbSteps');
   if (!bar) return;
 
-  // Scroll-based shrink
-  window.addEventListener('scroll', function() {
-    bar.classList.toggle('tsb-shrunk', window.scrollY > 72);
-    tsbSyncActive();
-  }, { passive: true });
-
-  // Build compact step pills from MSTEPS after stepper renders
-  function tsbBuild() {
-    const stepsEl = document.getElementById('tsbCompactSteps');
+  function scbBuild() {
     if (!stepsEl || !window.MSTEPS) return;
     stepsEl.innerHTML = MSTEPS.map((s, i) => {
       const n = i + 1;
-      return `<div class="tsb-compact-step" id="tsbStep${n}" onclick="mGoStep(${n})">
-        <div class="tsb-compact-step-dot"></div>${s.label}
-      </div>`;
+      return `<div class="scb-step" id="scbStep${n}"><div class="scb-step-dot"></div>${s.label}</div>`;
     }).join('');
   }
 
-  function tsbSyncActive() {
+  function scbSync() {
+    bar.classList.toggle('scb-visible', window.scrollY > 72);
     if (!window.MS) return;
     MSTEPS.forEach((_, i) => {
       const n = i + 1;
-      const el = document.getElementById('tsbStep' + n);
+      const el = document.getElementById('scbStep' + n);
       if (!el) return;
-      el.className = 'tsb-compact-step' +
-        (n === MS.step ? ' tsb-active' : n < MS.step ? ' tsb-done' : '');
+      el.className = 'scb-step' + (n === MS.step ? ' scb-active' : n < MS.step ? ' scb-done' : '');
     });
   }
 
-  // Hook into mBuildStepper and mUpdateStepper
+  window.addEventListener('scroll', scbSync, { passive: true });
+
   const _origBuild = window.mBuildStepper;
   window.mBuildStepper = function() {
     if (_origBuild) _origBuild.apply(this, arguments);
-    tsbBuild();
-    tsbSyncActive();
+    scbBuild();
+    scbSync();
   };
   const _origUpdate = window.mUpdateStepper;
   window.mUpdateStepper = function() {
     if (_origUpdate) _origUpdate.apply(this, arguments);
-    tsbSyncActive();
+    scbSync();
   };
 })();
 

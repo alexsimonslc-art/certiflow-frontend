@@ -590,24 +590,12 @@
 
     <main class="page-content fade-in">
 
-      <!-- ── Sticky shrinking header ─────────────────────────── -->
-      <div class="tool-sticky-bar" id="toolStickyBar">
-        <div class="tsb-normal">
-          <div style="margin-bottom:24px">
-            <h1 class="page-title">Certificate Generator</h1>
-            <p class="page-subtitle">Design your certificate template visually, connect participant data, and generate PDFs — all in one place.</p>
-          </div>
-        </div>
-        <!-- ═══ STEPPER ═══ -->
-        <div class="stepper" id="stepper"></div>
-        <div class="tsb-compact" id="tsbCompact">
-          <div class="tsb-compact-inner">
-            <span class="tsb-compact-name">Certificate Generator</span>
-            <div class="tsb-compact-sep"></div>
-            <div class="tsb-compact-steps" id="tsbCompactSteps"></div>
-          </div>
-        </div>
+      <div style="margin-bottom:24px">
+        <h1 class="page-title">Certificate Generator</h1>
+        <p class="page-subtitle">Design your certificate template visually, connect participant data, and generate PDFs — all in one place.</p>
       </div>
+      <!-- ═══ STEPPER ═══ -->
+      <div class="stepper" id="stepper"></div>
 
       <!-- ═══ STEP 1: DATA SOURCE ═══ -->
       <div class="step-panel active" id="sp1">
@@ -1331,6 +1319,12 @@
   </div>
 </div>
 <!-- ── File Naming Modal ───────────────────────────── -->
+<!-- ══ Scroll Compact Bar ══ -->
+<div class="scroll-compact-bar" id="scrollCompactBar">
+  <span class="scb-name">Certificate Generator</span>
+  <div class="scb-sep"></div>
+  <div class="scb-steps" id="scbSteps"></div>
+</div>
 <script src="dashboard.js"></script>
 <script src="cert-tool.js"></script>
 </body>

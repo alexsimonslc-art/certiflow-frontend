@@ -1835,44 +1835,39 @@ function nudgeInput(id, step, up) {
   el.dispatchEvent(new Event('change'));
 }
 /* ════════════════════════════════════════════════════════════════
-   STICKY SHRINKING HEADER
+   SCROLL COMPACT BAR
 ════════════════════════════════════════════════════════════════ */
-(function tsbInit() {
-  const bar = document.getElementById('toolStickyBar');
+(function scbInit() {
+  const bar = document.getElementById('scrollCompactBar');
+  const stepsEl = document.getElementById('scbSteps');
   if (!bar) return;
-  window.addEventListener('scroll', function() {
-    bar.classList.toggle('tsb-shrunk', window.scrollY > 72);
-    tsbSyncActive();
-  }, { passive: true });
-  function tsbBuild() {
-    const stepsEl = document.getElementById('tsbCompactSteps');
+  function scbBuild() {
     if (!stepsEl || !window.STEPS) return;
     stepsEl.innerHTML = STEPS.map((s, i) => {
       const n = i + 1;
       const label = typeof s === 'string' ? s : s.label;
-      return `<div class="tsb-compact-step" id="tsbStep${n}">
-        <div class="tsb-compact-step-dot"></div>${label}
-      </div>`;
+      return `<div class="scb-step" id="scbStep${n}"><div class="scb-step-dot"></div>${label}</div>`;
     }).join('');
   }
-  function tsbSyncActive() {
+  function scbSync() {
+    bar.classList.toggle('scb-visible', window.scrollY > 72);
     if (!window.CS) return;
     STEPS.forEach((_, i) => {
       const n = i + 1;
-      const el = document.getElementById('tsbStep' + n);
+      const el = document.getElementById('scbStep' + n);
       if (!el) return;
-      el.className = 'tsb-compact-step' +
-        (n === CS.step ? ' tsb-active' : n < CS.step ? ' tsb-done' : '');
+      el.className = 'scb-step' + (n === CS.step ? ' scb-active' : n < CS.step ? ' scb-done' : '');
     });
   }
+  window.addEventListener('scroll', scbSync, { passive: true });
   const _origBuild = window.buildStepper;
   window.buildStepper = function() {
     if (_origBuild) _origBuild.apply(this, arguments);
-    tsbBuild(); tsbSyncActive();
+    scbBuild(); scbSync();
   };
   const _origUpdate = window.updateStepper;
   window.updateStepper = function() {
     if (_origUpdate) _origUpdate.apply(this, arguments);
-    tsbSyncActive();
+    scbSync();
   };
 })();

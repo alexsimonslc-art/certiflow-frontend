@@ -2353,7 +2353,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     mseChatHistory.push({ role: 'user', content: msg });
 
     try {
-      const resp = await fetch('/api/ai/minisite-chat', {
+      const resp = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/minisite-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

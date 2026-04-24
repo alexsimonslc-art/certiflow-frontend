@@ -491,23 +491,11 @@
 
     <main class="page-content fade-in">
 
-      <!-- ── Sticky shrinking header ─────────────────────────── -->
-      <div class="tool-sticky-bar" id="toolStickyBar">
-        <div class="tsb-normal">
-          <div style="margin-bottom:24px">
-            <h1 class="page-title">Combined Pipeline</h1>
-            <p class="page-subtitle">Design a certificate, connect participants, build an email — run the full workflow in one shot.</p>
-          </div>
-        </div>
-        <div class="stepper" id="stepper"></div>
-        <div class="tsb-compact" id="tsbCompact">
-          <div class="tsb-compact-inner">
-            <span class="tsb-compact-name">Combined Pipeline</span>
-            <div class="tsb-compact-sep"></div>
-            <div class="tsb-compact-steps" id="tsbCompactSteps"></div>
-          </div>
-        </div>
+      <div style="margin-bottom:24px">
+        <h1 class="page-title">Combined Pipeline</h1>
+        <p class="page-subtitle">Design a certificate, connect participants, build an email — run the full workflow in one shot.</p>
       </div>
+      <div class="stepper" id="stepper"></div>
 
       <!-- ════════════════════════════ STEP 1 ════════════════════════════ -->
       <div class="step-panel active" id="sp1">
@@ -1032,6 +1020,12 @@
   </div>
 </div>
 
+<!-- ══ Scroll Compact Bar ══ -->
+<div class="scroll-compact-bar" id="scrollCompactBar">
+  <span class="scb-name">Combined Pipeline</span>
+  <div class="scb-sep"></div>
+  <div class="scb-steps" id="scbSteps"></div>
+</div>
 <script src="dashboard.js"></script>
 <script src="combined-tool.js"></script>
 </body>
