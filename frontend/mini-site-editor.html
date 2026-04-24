@@ -517,8 +517,8 @@
         <stop offset="100%" stop-color="#f43f5e" />
       </linearGradient>
     </defs>
-    <path class="gal-trace-line" d="M 35 99 L 1 99 L 1 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" pathLength="100" stroke-linecap="round" />
-    <path class="gal-trace-line" d="M 65 99 L 99 99 L 99 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" pathLength="100" stroke-linecap="round" />
+    <path class="gal-trace-line" d="M 35 99 L 1 99 L 1 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" stroke-linecap="round" />
+    <path class="gal-trace-line" d="M 65 99 L 99 99 L 99 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" stroke-linecap="round" />
   </svg>
 
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
@@ -2006,20 +2006,21 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     }
     
     .gal-trace-line {
-      /* Dash length is 15. The Gap is 300 (Massive gap guarantees NO repeating lines!) */
-      stroke-dasharray: 15 300;
-      stroke-dashoffset: 15; 
+      /* Dash is exactly 15% of monitor width. Gap is 300% of monitor width (GUARANTEES zero repeats) */
+      stroke-dasharray: 15vw 300vw;
+      stroke-dashoffset: 15vw; 
       opacity: 0;
     }
     
     .gal-ai-screen-trace.scanning .gal-trace-line {
-      animation: gal-laser-trace 1.4s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+      animation: gal-laser-trace 1.5s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
     }
 
     @keyframes gal-laser-trace {
-      0%   { stroke-dashoffset: 15; opacity: 1; }
+      0%   { stroke-dashoffset: 15vw; opacity: 1; }
       80%  { opacity: 1; filter: brightness(1.5); }
-      100% { stroke-dashoffset: -100; opacity: 0; }
+      /* Travel 200% of the monitor width to safely exit the top center */
+      100% { stroke-dashoffset: -200vw; opacity: 0; }
     }
     /* Theme / Font selector layout & base */
     /* Theme / Font selector layout & base */
