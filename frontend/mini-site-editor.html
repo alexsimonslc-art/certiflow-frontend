@@ -2019,13 +2019,14 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     }
     
     .gal-ai-screen-trace.scanning .gal-trace-line {
-      animation: gal-laser-trace 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation: gal-laser-trace 7.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     @keyframes gal-laser-trace {
       /* OPTIMIZED: Removed all animating filters to prevent browser hanging. Pure transform physics. */
       0%   { stroke-dashoffset: 15vw; opacity: 1; }
-      80%  { opacity: 1; }
+      40%  { opacity: 1; filter: brightness(1.5) contrast(0.2); }
+      80%  { opacity: 1; filter: brightness(1.5); }
       100% { stroke-dashoffset: -120vw; opacity: 0; }
     }
     /* Theme / Font selector layout & base */
