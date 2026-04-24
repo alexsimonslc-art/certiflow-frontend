@@ -497,15 +497,10 @@
 
   </div>
 
+  <div class="gal-ai-page-wash" id="galAiWash"></div>
+
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
     
-    <div class="gal-ai-waves">
-      <div class="gal-ai-wave w1"></div>
-      <div class="gal-ai-wave w2"></div>
-      <div class="gal-ai-wave w3"></div>
-      <div class="gal-ai-wave w4"></div>
-    </div>
-
     <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
       <div style="display:flex; align-items:center; gap:12px; flex:1; overflow:hidden;">
         <div class="gal-ai-sparkle" style="font-size:16px;">✨</div>
@@ -513,10 +508,9 @@
         <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.15);"></div>
         <span class="gal-ai-typewriter" id="galAiTypewriter">I can help you write, design, and build blocks...</span>
       </div>
-      </div>
+    </div>
 
     <div class="gal-ai-box" id="galAiBox">
-      
       <div class="gal-ai-resizer" id="galAiResizer">
         <div class="gal-ai-resizer-line"></div>
       </div>
@@ -1496,26 +1490,41 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     .gal-ai-wrapper { position: absolute; bottom: 0; width: 480px; max-width: 90%; pointer-events: none; display: flex; justify-content: center; align-items: flex-end; }
     /* ── Gal AI (Google AI Studio Style) ── */
     /* ── Sea Wave Glow Effect (4 Layers) ── */
-    .gal-ai-waves { position: absolute; bottom: 20px; left: 50%; width: 0; height: 0; z-index: -1; pointer-events: none; }
-    .gal-ai-wave { position: absolute; bottom: -50px; left: -50px; width: 100px; height: 100px; border-radius: 50%; opacity: 0; transform: scale(0.5); pointer-events: none; }
+    /* ── The AI "Page Analysis" Particle Wave ── */
+    .gal-ai-page-wash {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 9998; /* Just below the Gal AI box (9999), but above everything else */
+        pointer-events: none; opacity: 0; mix-blend-mode: screen;
+        
+        /* The glowing aurora + Particle dot matrix */
+        background: 
+            radial-gradient(circle at 50% 100%, rgba(124, 58, 237, 0.25) 0%, transparent 60%),
+            radial-gradient(circle at 50% 100%, rgba(0, 212, 255, 0.25) 20%, transparent 70%),
+            radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+        background-size: 100% 100%, 100% 100%, 24px 24px;
+        background-position: center bottom;
+        clip-path: circle(0% at 50% 100%);
+    }
     
-    /* Wave Colors */
-    .gal-ai-wave.w1 { box-shadow: 0 0 100px 30px rgba(0, 212, 255, 0.4); border: 2px solid rgba(0, 212, 255, 0.8); } /* Cyan */
-    .gal-ai-wave.w2 { box-shadow: 0 0 100px 30px rgba(124, 58, 237, 0.4); border: 2px solid rgba(124, 58, 237, 0.8); } /* Purple */
-    .gal-ai-wave.w3 { box-shadow: 0 0 100px 30px rgba(244, 63, 94, 0.4); border: 2px solid rgba(244, 63, 94, 0.8); } /* Pink */
-    .gal-ai-wave.w4 { box-shadow: 0 0 100px 40px rgba(0, 212, 255, 0.5); border: 2px solid rgba(255, 255, 255, 0.9); } /* White Flash */
-
-    /* The Massive Expansion */
-    @keyframes gal-tsunami {
-        0%   { transform: scale(0.5); opacity: 1; }
-        100% { transform: scale(40); opacity: 0; }
+    .gal-ai-page-wash.scanning {
+        animation: gal-wash-anim 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    /* Trigger the waves when opened, staggered delays */
-    .gal-ai-wrapper.open .gal-ai-wave.w1 { animation: gal-tsunami 2.0s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.0s; }
-    .gal-ai-wrapper.open .gal-ai-wave.w2 { animation: gal-tsunami 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.1s; }
-    .gal-ai-wrapper.open .gal-ai-wave.w3 { animation: gal-tsunami 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.2s; }
-    .gal-ai-wrapper.open .gal-ai-wave.w4 { animation: gal-tsunami 2.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.3s; }
+    @keyframes gal-wash-anim {
+        0% {
+            clip-path: circle(0% at 50% 100%);
+            opacity: 1;
+            filter: brightness(2);
+        }
+        40% {
+            opacity: 1;
+        }
+        100% {
+            clip-path: circle(150% at 50% 100%);
+            opacity: 0;
+            filter: brightness(1);
+        }
+    }
     /* ── The Opening Flare Animation ── */
     .gal-ai-tab { background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.12); border-bottom: none; border-radius: 12px 12px 0 0; padding: 10px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 220px; box-shadow: 0 -4px 16px rgba(0,0,0,0.3); pointer-events: auto; transition: all 0.2s; color: var(--text); }
     .gal-ai-tab:hover { background: rgba(25, 30, 45, 0.98); color: var(--cyan); }
@@ -1769,6 +1778,14 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     function openGalAi() {
       document.getElementById('galAiWrapper').classList.add('open');
       document.getElementById('galAiInput').focus();
+      
+      // Trigger the Full-Page Particle Wash
+      const wash = document.getElementById('galAiWash');
+      if (wash) {
+        wash.classList.remove('scanning');
+        void wash.offsetWidth; // This forces the browser to restart the animation
+        wash.classList.add('scanning');
+      }
     }
     
     function closeGalAi() {
