@@ -2490,47 +2490,6 @@ mNewCampaign = function() {
   const panel = document.getElementById('meAiPanel');
   if (panel) panel.classList.remove('open');
 };
-/* ════════════════════════════════════════════════════════════════
-   SCROLL COMPACT BAR
-════════════════════════════════════════════════════════════════ */
-(function scbInit() {
-  const bar = document.getElementById('scrollCompactBar');
-  const stepsEl = document.getElementById('scbSteps');
-  if (!bar) return;
-
-  function scbBuild() {
-    if (!stepsEl || !window.MSTEPS) return;
-    stepsEl.innerHTML = MSTEPS.map((s, i) => {
-      const n = i + 1;
-      return `<div class="scb-step" id="scbStep${n}"><div class="scb-step-dot"></div>${s.label}</div>`;
-    }).join('');
-  }
-
-  function scbSync() {
-    bar.classList.toggle('scb-visible', window.scrollY > 72);
-    if (!window.MS) return;
-    MSTEPS.forEach((_, i) => {
-      const n = i + 1;
-      const el = document.getElementById('scbStep' + n);
-      if (!el) return;
-      el.className = 'scb-step' + (n === MS.step ? ' scb-active' : n < MS.step ? ' scb-done' : '');
-    });
-  }
-
-  window.addEventListener('scroll', scbSync, { passive: true });
-
-  const _origBuild = window.mBuildStepper;
-  window.mBuildStepper = function() {
-    if (_origBuild) _origBuild.apply(this, arguments);
-    scbBuild();
-    scbSync();
-  };
-  const _origUpdate = window.mUpdateStepper;
-  window.mUpdateStepper = function() {
-    if (_origUpdate) _origUpdate.apply(this, arguments);
-    scbSync();
-  };
-})();
 
 /* ════════════════════════════════════════════════════════════════
    GAL AI — Fixed Panel, Resize, Greeting, Cycling Suggestions
@@ -2646,29 +2605,55 @@ mNewCampaign = function() {
     if (fab) fab.classList.add('visible');
   };
 
-  // Patch meAiAppendBubble to use new Gal AI classes + sync greeting
-  const _origAppend = window.meAiAppendBubble;
+  // Patch meAiAppendBubble for Gemini Layout (Right align User, Center AI, Custom Statuses)
   window.meAiAppendBubble = function(role, content, isTyping) {
     const chat = document.getElementById('meAiChat');
     if (!chat) return null;
     const wrap = document.createElement('div');
-    wrap.className = 'gal-ai-bubble ' + (role === 'user' ? 'user' : 'ai');
-    if (role === 'ai') {
-      if (isTyping) {
-        wrap.innerHTML = `<div class="gal-ai-bubble-label">✨ Gal AI</div>
-          <div class="gal-ai-thinking">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div class="gal-ai-status">Thinking…</div>`;
-      } else {
-        wrap.innerHTML = `<div class="gal-ai-bubble-label">✨ Gal AI</div>${content}`;
-      }
-    } else {
+    const id = 'msg_' + Date.now();
+    wrap.id = id;
+    
+    if (role === 'user') {
+      // Right Aligned User Bubble
+      wrap.style.cssText = 'background:rgba(255,255,255,0.08); color:var(--text); padding:12px 18px; border-radius:20px 20px 4px 20px; max-width:85%; align-self:flex-end; font-size:14px; line-height:1.5; font-family:"Plus Jakarta Sans"; margin-bottom:12px;';
       wrap.textContent = content;
+    } else {
+      // Centered AI Text with Sparkle Icon
+      wrap.style.cssText = 'display:flex; gap:16px; align-self:flex-start; width:100%; color:var(--text); font-size:14.5px; line-height:1.6; font-family:"Plus Jakarta Sans"; margin-bottom:12px;';
+      
+      if (isTyping) {
+        const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
+        let sIdx = 0;
+        wrap.innerHTML = `
+          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3);">✨</div>
+          <div style="flex:1; padding-top:3px; display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; gap:3px;">
+               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0s;"></div>
+               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0.2s;"></div>
+               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0.4s;"></div>
+            </div>
+            <span id="thinkText_${id}" style="color:var(--cyan); font-weight:600; font-size:13px;">Thinking...</span>
+          </div>`;
+        
+        wrap.dataset.thinkTimer = setInterval(() => {
+           sIdx = (sIdx + 1) % statuses.length;
+           const el = document.getElementById(`thinkText_${id}`);
+           if(el) el.textContent = statuses[sIdx] + '...';
+        }, 1500);
+      } else {
+        wrap.innerHTML = `
+          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3);">✨</div>
+          <div style="flex:1; padding-top:3px;">${content.replace(/\n/g, '<br>')}</div>`;
+      }
     }
+    
     chat.appendChild(wrap);
     chat.scrollTop = chat.scrollHeight;
-    galAiSyncGreeting();
+    
+    // Hide Greeting explicitly
+    const greet = document.getElementById('galAiGreeting');
+    if (greet) greet.style.display = 'none';
+    
     return wrap;
   };
 

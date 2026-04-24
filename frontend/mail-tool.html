@@ -331,6 +331,10 @@
       -webkit-backdrop-filter:blur(40px);
       box-shadow:-12px 0 60px rgba(0,0,0,0.6);
       font-family:'Plus Jakarta Sans',sans-serif;
+      /* FIX: Hardware acceleration to stop slide-in glitch */
+      will-change: width, transform, box-shadow;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .gal-ai-panel.open { width:var(--gal-width,380px); }
     /* Main area shifts when panel open */
@@ -527,6 +531,12 @@
     .me-itb-sep { width:1px;background:rgba(255,255,255,0.1);margin:3px 2px; }
     .me-block-inner[contenteditable="true"] { outline:none;cursor:text; }
     .me-block-inner[contenteditable="true"] * { pointer-events:all !important; }
+    /* Fix: Stop the CSS shadow glitch during slide-in */
+    .me-ai-panel {
+      will-change: transform, opacity, box-shadow;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
   </style>
 </head>
 <body>
@@ -534,13 +544,6 @@
   <div id="sidebarMount"></div>
 
   <div class="main-area">
-    <header class="top-header" style="display:none">
-      <div class="header-actions">
-        <button class="header-btn" id="sidebarToggle" title="Toggle sidebar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
-      </div>
-    </header>
 
     <main class="page-content fade-in">
 
@@ -872,7 +875,7 @@
                   <div style="padding:14px 22px;border-bottom:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.01)">
                     <div style="display:flex;align-items:center;gap:12px">
                       <label style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap">Subject Line:</label>
-                      <input type="text" id="mSubject" class="form-input" placeholder="Enter email subject..." 
+                      <input type="text" id="mSubject" class="form-input" placeholder="e.g. Your certificate is ready, {{name}}!" style="font-size:14px;padding:10px 14px;flex:1" onfocus="meLastFocusedField={id:'mSubject', key:'value', el:this}" /> 
                         onfocus="meLastFocusedField={id:'mSubject', key:'value', el:this}" />
                     </div>
                   </div>
@@ -1151,13 +1154,6 @@
   </div>
 </div>
 
-<!-- ══ Scroll Compact Bar ══ -->
-<div class="scroll-compact-bar" id="scrollCompactBar">
-  <span class="scb-name">Bulk Mail Sender</span>
-  <div class="scb-sep"></div>
-  <div class="scb-steps" id="scbSteps"></div>
-</div>
-
 <!-- ══ Gal AI — Fixed Right Panel ══ -->
 <button class="gal-ai-fab" id="galAiFab" onclick="galAiToggle()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1H1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/></svg>
@@ -1182,33 +1178,24 @@
       </button>
     </div>
 
-    <!-- Greeting (shown when chat is empty) -->
-    <div class="gal-ai-greeting" id="galAiGreeting">
-      <div class="gal-ai-greet-avatar">✨</div>
-      <div class="gal-ai-greet-name" id="galAiGreetName">Hi there! 👋</div>
-      <div class="gal-ai-greet-sub">I'm Gal AI — your intelligent email design assistant. Tell me what you need and I'll build it instantly.</div>
-      <div class="gal-ai-sugg-try">Try asking me</div>
-      <div class="gal-ai-sugg-cycle">
-        <span id="galAiCycleText">Generate a professional welcome email</span>
+    <div class="gal-ai-chat" id="meAiChat" style="display:flex;">
+      <div class="gal-ai-greeting" id="galAiGreeting" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 40px 20px;">
+        <div style="font-size:28px; font-weight:700; background:linear-gradient(90deg, #00d4ff, #7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; letter-spacing:-0.5px;" id="galAiGreetName">Good to see you.</div>
+        <div style="font-size:15px; color:var(--text-2); margin-bottom:24px;">What shall we design today?</div>
+        <div style="display:flex; gap:10px; overflow-x:auto; max-width:100%; padding:4px 0 14px 0; scrollbar-width:none;">
+          <div class="gal-ai-sugg-btn" onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();" style="white-space:nowrap; border-radius:20px;">Design a sleek header block</div>
+          <div class="gal-ai-sugg-btn" onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();" style="white-space:nowrap; border-radius:20px;">Create a 3-column feature grid</div>
+          <div class="gal-ai-sugg-btn" onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();" style="white-space:nowrap; border-radius:20px;">Write 5 catchy subject lines</div>
+        </div>
       </div>
     </div>
 
-    <!-- Chat history (hidden until first message) -->
-    <div class="gal-ai-chat" id="meAiChat" style="display:none"></div>
-
-    <!-- Input -->
-    <div class="gal-ai-input-wrap">
-      <div class="gal-ai-input-row">
-        <textarea class="gal-ai-textarea" id="meAiInput"
-          placeholder="Ask Gal AI anything — design, generate, improve…"
-          rows="1"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();meAiSend()}"
-          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-        <button class="gal-ai-send-btn" id="meAiSendBtn" onclick="meAiSend()" title="Send">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>
-      <div class="gal-ai-input-hint">Enter to send · Shift+Enter for new line</div>
+    <div style="padding:16px 20px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(255,255,255,0.06); display:flex; align-items:flex-end; gap:12px; flex-shrink:0;">
+      <textarea id="meAiInput" style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px 20px; color:var(--text); font-size:15px; font-family:'Plus Jakarta Sans',sans-serif; outline:none; resize:none; min-height:54px; max-height:140px; overflow-y:auto; transition:border-color 0.2s;" rows="1" placeholder="Ask AI to design an email block..." autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();meAiSend()}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"></textarea>
+      
+      <button class="gal-ai-send-btn" id="meAiSendBtn" onclick="meAiSend()" title="Send" style="width:48px; height:48px; border-radius:12px; background:var(--text); color:var(--bg); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
 
   </div>
