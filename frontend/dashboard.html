@@ -175,155 +175,158 @@
 
     <main class="page-content fade-in">
 
-      <div class="dashboard-carousel" id="topCarousel">
-        <video autoplay loop muted playsinline><source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connections-loop-28825-large.mp4" type="video/mp4"></video>
-        <div class="carousel-overlay"></div>
-        <div class="carousel-content">
-          <div class="carousel-title" id="welcomeTitle">Good morning</div>
-          <div class="carousel-subtitle" id="welcomeSubtitle">Here is your workspace overview. Manage campaigns, monitor stats, and launch tools.</div>
-        </div>
+      <div class="dashboard-carousel" style="aspect-ratio: 1700/200; max-height: 200px; min-height: 140px; margin-bottom: 32px; border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+        <video autoplay loop muted playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.6; mix-blend-mode:overlay;"><source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connections-loop-28825-large.mp4" type="video/mp4"></video>
+        <div style="position:absolute; inset:0; background: linear-gradient(90deg, rgba(4,8,15,0.8) 0%, rgba(4,8,15,0.1) 100%);"></div>
       </div>
 
-      <div class="quick-stat-row">
-        <div class="stat-card compact">
-          <div class="stat-top">
-            <div class="stat-icon cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-            <span class="stat-change up" id="certChange" style="display:none">New</span>
+      <div style="margin-bottom:32px;">
+        <h1 id="welcomeTitle" style="font-family: var(--font); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; letter-spacing: -0.3px;">Good morning</h1>
+        <p id="welcomeSubtitle" style="font-size: 15px; color: var(--text-2);">Here is your workspace overview.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 40px;">
+        
+        <div class="card" style="padding: 18px 20px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <div style="width:30px; height:30px; border-radius:8px; background:var(--cyan-dim); color:var(--cyan); display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+            <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Certs Generated</div>
           </div>
-          <div class="stat-num" id="totalCerts">0</div>
-          <div class="stat-label">Certs Generated</div>
+          <div id="totalCerts" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0</div>
         </div>
         
-        <div class="stat-card compact">
-          <div class="stat-top">
-            <div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div class="card" style="padding: 18px 20px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <div style="width:30px; height:30px; border-radius:8px; background:var(--purple-dim); color:#a78bfa; display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+            <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Bulk Mail Sent</div>
           </div>
-          <div class="stat-num" id="mailUsageStat">0 / 500</div>
-          <div class="stat-label">Bulk Mails Sent</div>
+          <div id="mailUsageStat" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0 / 500</div>
         </div>
         
-        <div class="stat-card compact">
-          <div class="stat-top">
-            <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
-            <span class="badge badge-gray" style="font-size:10px;padding:2px 6px">Free Plan</span>
+        <div class="card" style="padding: 18px 20px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:30px; height:30px; border-radius:8px; background:var(--green-dim); color:var(--green); display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+              <div id="storageLabel" style="font-size:12.5px; font-weight:600; color:var(--text-2);">Drive Storage</div>
+            </div>
+            <span class="badge badge-gray" style="font-size:9.5px; padding:2px 6px;">Free Plan</span>
           </div>
-          <div class="stat-num" id="storageUsage">1.2 GB</div>
-          <div class="stat-label">Google Storage (15GB)</div>
+          <div id="storageUsage" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">
+            <span style="font-size:14px; color:var(--text-3); font-weight:500;">Syncing...</span>
+          </div>
         </div>
         
-        <div class="stat-card compact">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:rgba(244,63,94,0.12);color:#f43f5e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+        <div class="card" style="padding: 18px 20px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <div style="width:30px; height:30px; border-radius:8px; background:rgba(244,63,94,0.12); color:#f43f5e; display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+            <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Total Forms</div>
           </div>
-          <div class="stat-num" id="formsUsage">0</div>
-          <div class="stat-label">Forms • <span style="color:var(--text)">0 Responses</span></div>
+          <div id="formsUsage" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0 <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Responses</span></div>
         </div>
         
-        <div class="stat-card compact">
-          <div class="stat-top">
-            <div class="stat-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <span class="stat-change up">↑ 0%</span>
+        <div class="card" style="padding: 18px 20px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <div style="width:30px; height:30px; border-radius:8px; background:var(--gold-dim); color:var(--gold); display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Mini Sites</div>
           </div>
-          <div class="stat-num" id="sitesUsage">0</div>
-          <div class="stat-label">Site • <span style="color:var(--text)">0 Views/wk</span></div>
+          <div id="sitesUsage" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0 <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Views/wk</span></div>
         </div>
+
       </div>
 
       <div>
-        <h2 style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text);margin-bottom:20px;letter-spacing:-0.5px;">Your Workspace Tools</h2>
-        <div class="tool-card-grid">
+        <h2 style="font-family:var(--font); font-size:22px; font-weight:700; color:var(--text); margin-bottom:20px;">Your Workspace Tools</h2>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 36px;">
 
-          <a href="cert-tool.html" class="tool-launch-card">
-            <div class="tool-card-header">
-              <div class="tool-card-icon cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+          <a href="cert-tool.html" class="tool-launch-card card">
+            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+              <div style="width:42px;height:42px;border-radius:11px;background:var(--cyan-dim);color:var(--cyan);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
               <span class="badge badge-cyan">Drive API</span>
             </div>
-            <div>
-              <div class="tool-card-title">Certificate Generator</div>
-              <div class="tool-card-desc">Generate personalized PDF certificates from a Google Sheets roster and Slides template in bulk.</div>
+            <div style="flex:1;">
+              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Certificate Generator</div>
+              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Generate personalized PDF certificates from a Google Sheets roster and Slides template in bulk.</div>
             </div>
-            <div class="tool-card-footer"><span>Open tool</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:var(--cyan);"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="mail-tool.html" class="tool-launch-card">
-            <div class="tool-card-header">
-              <div class="tool-card-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <a href="mail-tool.html" class="tool-launch-card card">
+            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+              <div style="width:42px;height:42px;border-radius:11px;background:var(--purple-dim);color:#a78bfa;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
               <span class="badge badge-purple">Gmail API</span>
             </div>
-            <div>
-              <div class="tool-card-title">Bulk Mail Sender</div>
-              <div class="tool-card-desc">Send personalized HTML emails from your own Gmail to hundreds of recipients with merge fields.</div>
+            <div style="flex:1;">
+              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Bulk Mail Sender</div>
+              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Send personalized HTML emails from your own Gmail to hundreds of recipients with merge fields.</div>
             </div>
-            <div class="tool-card-footer" style="color:#a78bfa;"><span>Open tool</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#a78bfa;"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="combined-tool.html" class="tool-launch-card">
-            <div class="tool-card-header">
-              <div class="tool-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <a href="combined-tool.html" class="tool-launch-card card">
+            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+              <div style="width:42px;height:42px;border-radius:11px;background:var(--green-dim);color:var(--green);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
               <span class="badge badge-green">Full Pipeline</span>
             </div>
-            <div>
-              <div class="tool-card-title">Combined Pipeline</div>
-              <div class="tool-card-desc">Generate certificates AND send them by email in one automated workflow. Perfect for events.</div>
+            <div style="flex:1;">
+              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Combined Pipeline</div>
+              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Generate certificates AND send them by email in one automated workflow. Perfect for events.</div>
             </div>
-            <div class="tool-card-footer" style="color:var(--green);"><span>Open tool</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:var(--green);"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="mini-site.html" class="tool-launch-card" style="position:relative;overflow:hidden">
+          <a href="mini-site.html" class="tool-launch-card card" style="position:relative;">
             <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 90% 20%,rgba(245,158,11,0.06),transparent);pointer-events:none"></div>
-            <div class="tool-card-header">
-              <div class="tool-card-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; position:relative; z-index:2;">
+              <div style="width:42px;height:42px;border-radius:11px;background:rgba(245,158,11,0.12);color:#f59e0b;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
               <span class="badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)">New</span>
             </div>
-            <div>
-              <div class="tool-card-title">Mini Sites</div>
-              <div class="tool-card-desc">Build a beautiful event page in minutes. Collect registrations, share a link, go live instantly.</div>
+            <div style="flex:1; position:relative; z-index:2;">
+              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Mini Sites</div>
+              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Build a beautiful event page in minutes. Collect registrations, share a link, go live instantly.</div>
             </div>
-            <div class="tool-card-footer" style="color:#f59e0b;"><span>Open builder</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#f59e0b; position:relative; z-index:2;"><span>Open builder</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="hx-forms.html" class="tool-launch-card">
-            <div class="tool-card-header">
-              <div class="tool-card-icon" style="background:rgba(244,63,94,0.12);color:#f43f5e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+          <a href="hx-forms.html" class="tool-launch-card card">
+            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+              <div style="width:42px;height:42px;border-radius:11px;background:rgba(244,63,94,0.12);color:#f43f5e;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
               <span class="badge badge-red" style="border:1px solid rgba(244,63,94,0.2)">HX Forms</span>
             </div>
-            <div>
-              <div class="tool-card-title">Form Builder</div>
-              <div class="tool-card-desc">Create dynamic registration forms. Submissions flow directly to your connected database.</div>
+            <div style="flex:1;">
+              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Form Builder</div>
+              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Create dynamic registration forms. Submissions flow directly to your connected database.</div>
             </div>
-            <div class="tool-card-footer" style="color:#f43f5e;"><span>Open tool</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#f43f5e;"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="hx-database.html" class="tool-launch-card">
-            <div class="tool-card-header">
-              <div class="tool-card-icon" style="background:rgba(59,130,246,0.12);color:#3b82f6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+          <a href="hx-database.html" class="tool-launch-card card">
+            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+              <div style="width:42px;height:42px;border-radius:11px;background:rgba(59,130,246,0.12);color:#3b82f6;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
               <span class="badge" style="background:rgba(59,130,246,0.12);color:#3b82f6;border:1px solid rgba(59,130,246,0.2)">HX DB</span>
             </div>
-            <div>
-              <div class="tool-card-title">Database</div>
-              <div class="tool-card-desc">Manage all your contacts, form submissions, and campaign logs in one secure place.</div>
+            <div style="flex:1;">
+              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Database</div>
+              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Manage all your contacts, form submissions, and campaign logs in one secure place.</div>
             </div>
-            <div class="tool-card-footer" style="color:#3b82f6;"><span>Open tool</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#3b82f6;"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
         </div>
       </div>
 
-      <div class="dashboard-carousel" style="aspect-ratio: 24/3; margin-bottom: 32px; background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(0,212,255,0.05)); border: 1px solid rgba(124,58,237,0.3);">
-        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1700&q=80" alt="Pro Banner">
-        <div class="carousel-overlay" style="background: linear-gradient(90deg, rgba(6,10,18,0.95) 0%, rgba(124,58,237,0.4) 100%);"></div>
-        <div class="carousel-content">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
-             <div>
-                <div class="carousel-title" style="font-size:24px; color:#fff;">Upgrade to Honourix Pro</div>
-                <div class="carousel-subtitle" style="color:#e2e8f0; max-width:500px;">Unlock unlimited campaigns, premium templates, custom domains, and 100GB of storage.</div>
-             </div>
-             <a href="settings.html" class="btn btn-primary">Upgrade Now</a>
+      <div style="width: 100%; max-height: 180px; min-height: 120px; border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid rgba(124,58,237,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.2); margin-bottom: 32px;">
+        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1700&q=80" alt="Pro Banner" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.4; mix-blend-mode:overlay;">
+        <div style="position:absolute; inset:0; background: linear-gradient(90deg, rgba(6,10,18,0.95) 0%, rgba(124,58,237,0.3) 100%);"></div>
+        <div style="position:relative; z-index:2; padding: 36px 40px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+          <div>
+            <div style="font-family:var(--font); font-size:24px; font-weight:800; color:#fff; margin-bottom:4px;">Upgrade to Honourix Pro</div>
+            <div style="font-size:14.5px; color:#e2e8f0; max-width:600px; line-height:1.5;">Unlock unlimited campaigns, premium templates, custom domains, and 100GB of storage.</div>
           </div>
+          <a href="settings.html" class="btn btn-primary" style="padding:12px 24px; font-size:14px;">Upgrade Now</a>
         </div>
       </div>
 
-      <div class="content-grid">
+      <div style="display: grid; grid-template-columns: 1fr 320px; gap: 20px;">
 
         <div class="card" style="padding:0; overflow:hidden;">
           <div style="padding:18px 22px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; justify-content:space-between; align-items:center;">
@@ -407,23 +410,57 @@
   }
 
   // ── STEP 4: Stats
+  // ── STEP 4: Map Stats to New Professional Grid
   function renderStats(data) {
     const safe = n => (n >= 0 ? fmtNum(n) : '0');
-    document.getElementById('totalCerts').textContent = safe(data.totalCerts);
     
+    // 1. Certs & Mails
+    document.getElementById('totalCerts').textContent = safe(data.totalCerts);
     const limit = data.monthlyEmailLimit || 500;
-    document.getElementById('mailUsageStat').textContent = `${data.monthMails} / ${limit}`;
+    document.getElementById('mailUsageStat').textContent = `${safe(data.monthMails)} / ${limit}`;
 
-    // Load active DB Stats (Fallback to realistic placeholders if backend not ready)
-    document.getElementById('storageUsage').textContent = '1.2 GB';
-    document.getElementById('formsUsage').innerHTML = `2 Forms • <span style="color:var(--text)">142 Responses</span>`;
-    document.getElementById('sitesUsage').innerHTML = `1 Site • <span style="color:var(--text)">89 Views/wk</span>`;
+    // 2. Forms & Sites (Fallback placeholders if backend properties missing)
+    document.getElementById('formsUsage').innerHTML = `${safe(data.totalForms || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Responses</span>`;
+    document.getElementById('sitesUsage').innerHTML = `${safe(data.totalSites || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Views/wk</span>`;
+  }
 
-    if (data.totalCampaigns > 0) {
-      const cc = document.getElementById('certChange');
-      if(cc) cc.style.display = '';
+  async function loadStats() {
+    const local = getLocalStats();
+    renderStats({ ...local, monthlyEmailLimit: 500 });
+    
+    // Fetch system quota from Honourix Backend
+    try {
+      const data = await apiFetch('/api/quota', { silent: true });
+      if (data) renderStats({
+        ...local,
+        monthlyEmailLimit: data.dailyLimit || 500,
+        monthMails: data.sentToday || local.monthMails,
+        totalForms: data.totalForms || 2, // Example mappings
+        totalSites: data.totalSites || 1
+      });
+    } catch { /* Backend unreachable, using local stats */ }
+
+    // Fetch REAL Google Drive Storage
+    try {
+      // NOTE: We call the backend route which securely fetches Google Drive Quota. 
+      // If your frontend uses the Google Access Token directly, you can swap this for:
+      // fetch('https://www.googleapis.com/drive/v3/about?fields=storageQuota', { headers: { 'Authorization': 'Bearer ' + googleToken }})
+      const driveData = await apiFetch('/api/google/drive-quota', { silent: true });
+      
+      if (driveData && driveData.usage !== undefined) {
+        const usedGB = (driveData.usage / (1024 * 1024 * 1024)).toFixed(2);
+        const limitGB = (driveData.limit / (1024 * 1024 * 1024)).toFixed(0);
+        document.getElementById('storageUsage').textContent = `${usedGB} GB`;
+        document.getElementById('storageLabel').textContent = `Drive Storage (${limitGB}GB)`;
+      } else {
+        document.getElementById('storageUsage').textContent = `—`;
+      }
+    } catch (e) {
+      document.getElementById('storageUsage').innerHTML = `<span style="font-size:14px; color:var(--text-3); font-weight:500;">API Not Connected</span>`;
     }
   }
+  
+  loadStats();
 
   async function loadStats() {
     const local = getLocalStats();
