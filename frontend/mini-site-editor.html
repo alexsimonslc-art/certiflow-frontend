@@ -1796,7 +1796,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         wash.classList.remove('scanning');
         setTimeout(() => {
           wash.classList.add('scanning');
-        }, 5000);
+        }, 10);
       }
     }
 
@@ -2013,14 +2013,15 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     }
     
     .gal-ai-screen-trace.scanning .gal-trace-line {
-      animation: gal-laser-trace 1.5s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+      /* Increased time to 3.5 seconds with a buttery smooth easing curve */
+      animation: gal-laser-trace 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     @keyframes gal-laser-trace {
       0%   { stroke-dashoffset: 15vw; opacity: 1; }
       80%  { opacity: 1; filter: brightness(1.5); }
-      /* Travel 200% of the monitor width to safely exit the top center */
-      100% { stroke-dashoffset: -200vw; opacity: 0; }
+      /* Reduced the exit distance from -200vw to -120vw so it doesn't rush off-screen */
+      100% { stroke-dashoffset: -120vw; opacity: 0; }
     }
     /* Theme / Font selector layout & base */
     /* Theme / Font selector layout & base */
