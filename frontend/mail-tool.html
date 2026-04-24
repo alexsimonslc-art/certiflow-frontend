@@ -872,7 +872,8 @@
                   <div style="padding:14px 22px;border-bottom:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.01)">
                     <div style="display:flex;align-items:center;gap:12px">
                       <label style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap">Subject Line:</label>
-                      <input type="text" id="mSubject" class="form-input" placeholder="e.g. Your certificate is ready, {{name}}!" style="font-size:14px;padding:10px 14px;flex:1"/>
+                      <input type="text" id="mSubject" class="form-input" placeholder="Enter email subject..." 
+                        onfocus="meLastFocusedField={id:'mSubject', key:'value', el:this}" />
                     </div>
                   </div>
 

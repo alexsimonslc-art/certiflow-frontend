@@ -435,3 +435,26 @@ input:focus, select:focus, textarea:focus {
   #ms-scroll-top  { bottom: 20px; right: 16px; }
   .ms-footer      { flex-direction: column; gap: 5px; }
 }
+
+/* ── GLOBAL UI CLEANUP ── */
+/* 1. Remove Breadcrumbs from all pages */
+.page-breadcrumb {
+  display: none !important;
+}
+
+/* 2. Remove the Sticky Scrolling Top Bars from the 3 Tools */
+.tool-header.sticky, 
+header.scrolled, 
+.sticky-top-bar,
+.tool-top-bar.scrolled {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Fix Mail Tool AI Panel Glitch */
+.me-ai-panel, .gal-ai-box {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}

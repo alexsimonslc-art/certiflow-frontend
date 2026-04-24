@@ -546,14 +546,21 @@
       </div>
       
       <div class="gal-ai-history" id="galAiHistory">
-        <div class="gal-ai-msg bot">Hello! I'm Gal AI. What would you like to build today?</div>
+        <div class="gal-ai-greeting" id="galAiGreeting">
+          <div class="gal-ai-greet-title" id="galAiGreetName">Good to see you.</div>
+          <div class="gal-ai-greet-sub">What shall we build today?</div>
+          <div class="gal-ai-suggestions">
+            <div class="gal-ai-sug" onclick="document.getElementById('galAiInput').value=this.textContent; sendGalAiMessage();">Design a sleek speaker section</div>
+            <div class="gal-ai-sug" onclick="document.getElementById('galAiInput').value=this.textContent; sendGalAiMessage();">Add an FAQ for the event</div>
+            <div class="gal-ai-sug" onclick="document.getElementById('galAiInput').value=this.textContent; sendGalAiMessage();">Change the theme to Dark Cyberpunk</div>
+          </div>
+        </div>
       </div>
 
       <div class="gal-ai-input-area">
-        <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to help write content, headings, copy…" autocomplete="off"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();galAiMseSend()}" />
-        <button class="gal-ai-send" onclick="galAiMseSend()" id="galAiSendBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <textarea id="galAiInput" class="gal-ai-input" rows="1" placeholder="Ask Gal AI to generate or edit..." autocomplete="off"></textarea>
+        <button class="gal-ai-send" id="galAiSendBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
     </div>
@@ -1873,6 +1880,122 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       clearTimeout(el._t);
       el._t = setTimeout(() => { el.className = ''; el.style.display = 'none'; }, duration);
     }
+    /* ════════════════════════════════════════════════════════════════
+       GAL AI — GEMINI CHAT ENGINE
+    ════════════════════════════════════════════════════════════════ */
+    let galChatHistory = [];
+
+    // Inject User Name into Greeting & Setup Inputs
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const token = localStorage.getItem('Honourix_token');
+        if (token) {
+          const name = JSON.parse(atob(token.split('.')[1])).name.split(' ')[0];
+          const greet = document.getElementById('galAiGreetName');
+          if (greet) greet.textContent = `Good to see you, ${name}.`;
+        }
+      } catch(e) {}
+
+      // Auto-resize Textarea & Shift+Enter support
+      const input = document.getElementById('galAiInput');
+      if (input) {
+        input.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendGalAiMessage();
+          }
+        });
+      }
+      const sendBtn = document.getElementById('galAiSendBtn');
+      if (sendBtn) sendBtn.addEventListener('click', (e) => { e.preventDefault(); sendGalAiMessage(); });
+    });
+
+    async function sendGalAiMessage() {
+      const inputEl = document.getElementById('galAiInput');
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      inputEl.value = '';
+      inputEl.style.height = 'auto'; // Reset textarea height
+      
+      // Hide greeting forever once chat starts
+      const greeting = document.getElementById('galAiGreeting');
+      if (greeting) greeting.style.display = 'none';
+
+      appendGalMessage(text, 'user');
+      const loadingId = appendGalMessage('', 'bot', true);
+
+      try {
+        const payload = {
+          userMessage: text,
+          chatHistory: galChatHistory,
+          blocks: MSState.blocks,
+          config: { name: MSState.siteName, theme: MSState.theme, accentColor: MSState.accentColor }
+        };
+
+        const res = await apiFetch('/api/minisite-ai/chat', { method: 'POST', body: JSON.stringify(payload) });
+
+        clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
+        document.getElementById(loadingId)?.remove();
+
+        if (res.error) throw new Error(res.error);
+
+        galChatHistory.push({ role: 'user', content: text }, { role: 'model', content: res.message || 'Done!' });
+        appendGalMessage(res.message || 'I have updated the page for you.', 'bot');
+
+        // Execute Actions
+        if (res.action === 'replace_all') {
+          MSState.blocks = (res.blocks || []).map(b => ({ ...b, id: 'b_' + Date.now() + Math.random().toString(36).substr(2,5) }));
+          refreshCanvas(); mseToast('Page generated ✨', 'success');
+        } 
+        else if (res.action === 'add_block') {
+          MSState.blocks.push({ id: 'b_' + Date.now(), type: res.type, props: res.props });
+          refreshCanvas(); mseToast('Block added!', 'success');
+        } 
+        else if (res.action === 'update_block') {
+          const idx = MSState.blocks.findIndex(b => b.id === res.blockId);
+          if (idx >= 0) { MSState.blocks[idx].props = { ...MSState.blocks[idx].props, ...res.props }; refreshCanvas(); }
+        }
+      } catch (err) {
+        clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
+        document.getElementById(loadingId)?.remove();
+        appendGalMessage('Error: ' + err.message, 'bot');
+      }
+    }
+
+    function appendGalMessage(text, sender, isLoading = false) {
+      const history = document.getElementById('galAiHistory');
+      const msg = document.createElement('div');
+      const id = 'msg_' + Date.now();
+      msg.id = id;
+      
+      if (sender === 'user') {
+        msg.className = 'gal-ai-msg user-msg';
+        msg.textContent = text;
+      } else {
+        msg.className = 'gal-ai-msg bot-msg';
+        if (isLoading) {
+          const statuses = ['Thinking', 'Analyzing context', 'Crafting blocks', 'Building layout'];
+          let sIdx = 0;
+          msg.innerHTML = `<div class="gal-ai-thinking"><div class="gal-ai-think-spinner"></div><span id="thinkText_${id}">Thinking...</span></div>`;
+          msg.dataset.thinkTimer = setInterval(() => {
+             sIdx = (sIdx + 1) % statuses.length;
+             const el = document.getElementById(`thinkText_${id}`);
+             if(el) el.textContent = statuses[sIdx] + '...';
+          }, 1500);
+        } else {
+          msg.innerHTML = `<div class="gal-ai-sparkle-icon">✨</div><div class="gal-ai-bot-text">${text.replace(/\n/g, '<br>')}</div>`;
+        }
+      }
+      
+      history.appendChild(msg);
+      history.scrollTop = history.scrollHeight;
+      return id;
+    }
   </script>
   <!-- ═══════════════════════════════════════════════════════
      EXTENSION SCRIPTS — load after inline to allow overrides
@@ -2157,6 +2280,62 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     #mse-resize-handle.dragging {
       background: rgba(0, 212, 255, 0.28);
     }
+    /* ── GEMINI CHAT UI ── */
+    /* The Greeting */
+    .gal-ai-greeting { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; animation: fadeIn 0.5s ease; padding-top: 20px; }
+    .gal-ai-greet-title { font-size: 28px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; letter-spacing: -0.5px; }
+    .gal-ai-greet-sub { font-size: 15px; color: var(--text-2); margin-bottom: 24px; }
+    
+    /* Rolling Suggestions */
+    .gal-ai-suggestions { display: flex; gap: 10px; overflow-x: auto; max-width: 100%; padding-bottom: 10px; scrollbar-width: none; }
+    .gal-ai-suggestions::-webkit-scrollbar { display: none; }
+    .gal-ai-sug { padding: 10px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; font-size: 13px; color: var(--text-2); white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+    .gal-ai-sug:hover { background: rgba(0, 212, 255, 0.1); color: var(--cyan); border-color: rgba(0, 212, 255, 0.3); transform: translateY(-2px); }
+
+    /* Right-Aligned User Bubble */
+    .gal-ai-msg.user-msg {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 20px 20px 4px 20px;
+      max-width: 85%;
+      align-self: flex-end;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Centered AI Text */
+    .gal-ai-msg.bot-msg {
+      display: flex;
+      gap: 16px;
+      align-self: flex-start;
+      width: 100%;
+      color: var(--text);
+      font-size: 14.5px;
+      line-height: 1.6;
+      border: none;
+      background: transparent;
+    }
+    .gal-ai-sparkle-icon { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #7c3aed); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
+    .gal-ai-bot-text { flex: 1; padding-top: 3px; }
+
+    /* Dynamic Thinking Animation */
+    .gal-ai-thinking { display: flex; align-items: center; gap: 12px; color: var(--cyan); font-weight: 500; font-size: 14px; padding-left: 4px; }
+    .gal-ai-think-spinner { width: 16px; height: 16px; border: 2px solid rgba(0,212,255,0.2); border-top-color: var(--cyan); border-radius: 50%; animation: spin 1s linear infinite; }
+
+    /* Auto-Resizing Textarea & Send Button */
+    .gal-ai-input-area { padding: 14px 20px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-end; gap: 12px; }
+    .gal-ai-input {
+      flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+      padding: 12px 16px; color: var(--text); font-size: 14px; font-family: var(--font);
+      outline: none; resize: none; min-height: 44px; max-height: 120px; overflow-y: auto; transition: border-color 0.2s;
+    }
+    .gal-ai-input:focus { border-color: rgba(0, 212, 255, 0.4); background: rgba(0, 212, 255, 0.03); }
+    
+    .gal-ai-send {
+      width: 42px; height: 42px; border-radius: 50%; background: var(--text); color: var(--bg); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .gal-ai-send:hover { transform: scale(1.05); background: var(--cyan); color: #fff; box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3); }
   </style>
 
   <script>
