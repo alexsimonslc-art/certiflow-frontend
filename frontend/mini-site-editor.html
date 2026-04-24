@@ -2328,6 +2328,64 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     return div;
   }
 
+  // Apply a structured action from Gal AI to MSState
+  function mseApplyAction(data) {
+    const st = window.MSState;
+    if (!st) return;
+
+    switch (data.action) {
+      case 'replace_all': {
+        // Replace all blocks with the AI-generated set
+        const newBlocks = (data.blocks || []).map((b, i) => {
+          const reg = window.BLOCK_REG?.[b.type];
+          const defaults = reg ? reg.defaults() : {};
+          return {
+            id:    'bl_' + Date.now() + '_' + i,
+            type:  b.type,
+            props: Object.assign({}, defaults, b.props || {}),
+          };
+        }).filter(b => window.BLOCK_REG?.[b.type]);
+        st.blocks = newBlocks;
+        st.selectedId = newBlocks[0]?.id || null;
+        st._pushHistory();
+        st._notify('add');
+        break;
+      }
+      case 'add_block': {
+        const reg = window.BLOCK_REG?.[data.type];
+        if (!reg) break;
+        const block = {
+          id:    'bl_' + Date.now(),
+          type:  data.type,
+          props: Object.assign({}, reg.defaults(), data.props || {}),
+        };
+        st.blocks.push(block);
+        st.selectedId = block.id;
+        st._pushHistory();
+        st._notify('add');
+        break;
+      }
+      case 'update_block': {
+        const block = st.blocks.find(b => b.id === data.blockId);
+        if (block && data.props) {
+          Object.assign(block.props, data.props);
+          st.dirty = true;
+          st._notify('update');
+        }
+        break;
+      }
+      case 'remove_block': {
+        st.removeBlock(data.blockId);
+        break;
+      }
+      case 'config_update': {
+        if (data.config) st.updateConfig(data.config);
+        break;
+      }
+      // reply_only: no canvas change needed
+    }
+  }
+
   window.galAiMseSend = async function() {
     if (mseIsLoading) return;
     const input = document.getElementById('galAiInput');
@@ -2341,37 +2399,36 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     mseAppendMsg('user', msg);
     const typingEl = mseShowTyping();
 
-    // Build context from current page blocks
-    let context = '';
-    try {
-      const pageTitle = document.getElementById('siteTitle')?.value || '';
-      const blocks = window.MSState?.blocks || [];
-      if (pageTitle) context += `\nMini site title: "${pageTitle}"`;
-      if (blocks.length) context += `\nCurrent page has ${blocks.length} content blocks.`;
-    } catch(e) {}
-
     mseChatHistory.push({ role: 'user', content: msg });
 
     try {
-      const resp = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/minisite-chat', {
+      const st = window.MSState;
+      const resp = await fetch('https://certiflow-backend-73xk.onrender.com/api/minisite-ai/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + mseGetToken()
         },
         body: JSON.stringify({
-          userMessage: msg + (context ? '\n\nCONTEXT:' + context : ''),
-          chatHistory: mseChatHistory.slice(-8)
+          userMessage: msg,
+          chatHistory: mseChatHistory.slice(-8),
+          blocks:  st ? JSON.parse(JSON.stringify(st.blocks)) : [],
+          config:  st ? { ...st.config } : {},
         })
       });
 
       if (typingEl) typingEl.remove();
-
       if (!resp.ok) throw new Error('Request failed: ' + resp.status);
+
       const data = await resp.json();
-      const reply = data.message || 'I\'m here to help! Try asking me for copy suggestions or content ideas.';
+      const reply = data.message || 'Done!';
       mseChatHistory.push({ role: 'assistant', content: reply });
       mseAppendMsg('bot', reply);
+
+      // Apply structural actions to the canvas
+      if (data.action && data.action !== 'reply_only') {
+        mseApplyAction(data);
+      }
     } catch(err) {
       if (typingEl) typingEl.remove();
       mseAppendMsg('bot', 'Sorry, something went wrong: ' + err.message);
