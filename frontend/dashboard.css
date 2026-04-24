@@ -1782,3 +1782,24 @@ select optgroup {
   background-color: #0d1728 !important;
   color: #e8f0fd !important;
 }
+
+/* ── Fix: Center Avatar & Hide Logout in Collapsed Sidebar ── */
+.sidebar.collapsed .logout-btn {
+  display: none !important;
+}
+
+.sidebar.collapsed .user-row {
+  justify-content: center !important;
+  padding: 8px !important;
+}
+
+.sidebar.collapsed .user-row-info {
+  flex: none !important; 
+  justify-content: center !important;
+  padding: 8px !important;
+  width: 100% !important;
+}
+
+.sidebar.collapsed .user-avatar {
+  margin: 0 auto !important;
+}
