@@ -497,7 +497,9 @@
 
   </div>
 
-  <div class="gal-ai-page-wash" id="galAiWash"></div>
+  <div class="gal-ai-page-wash" id="galAiWash">
+    <div class="gal-ai-wash-circle"></div>
+  </div>
 
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
     
@@ -1492,38 +1494,37 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     /* ── Sea Wave Glow Effect (4 Layers) ── */
     /* ── The AI "Page Analysis" Particle Wave ── */
     .gal-ai-page-wash {
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        z-index: 9998; /* Just below the Gal AI box (9999), but above everything else */
-        pointer-events: none; opacity: 0; mix-blend-mode: screen;
-        
-        /* The glowing aurora + Particle dot matrix */
-        background: 
-            radial-gradient(circle at 50% 100%, rgba(124, 58, 237, 0.25) 0%, transparent 60%),
-            radial-gradient(circle at 50% 100%, rgba(0, 212, 255, 0.25) 20%, transparent 70%),
-            radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
-        background-size: 100% 100%, 100% 100%, 24px 24px;
-        background-position: center bottom;
-        clip-path: circle(0% at 50% 100%);
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 9998; pointer-events: none; overflow: hidden;
     }
     
-    .gal-ai-page-wash.scanning {
-        animation: gal-wash-anim 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    .gal-ai-wash-circle {
+      position: absolute; bottom: 0; left: 50%;
+      width: 200vw; height: 200vw;
+      /* Centers the exact middle of the circle at the bottom of the screen */
+      margin-left: -100vw; margin-bottom: -100vw; 
+      border-radius: 50%;
+      
+      /* Glowing Scanner Edge + Dot Matrix Particles */
+      border: 3px solid rgba(0, 212, 255, 0.8);
+      box-shadow: 0 0 100px rgba(0, 212, 255, 0.4) inset, 0 0 120px rgba(124, 58, 237, 0.6);
+      background: 
+        radial-gradient(circle at center, transparent 60%, rgba(0, 212, 255, 0.15) 80%, rgba(124, 58, 237, 0.2) 90%),
+        radial-gradient(rgba(255, 255, 255, 0.3) 1.5px, transparent 1.5px);
+      background-size: 100% 100%, 24px 24px;
+      
+      transform: scale(0);
+      opacity: 0;
+    }
+
+    .gal-ai-page-wash.scanning .gal-ai-wash-circle {
+      animation: gal-wash-anim 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     @keyframes gal-wash-anim {
-        0% {
-            clip-path: circle(0% at 50% 100%);
-            opacity: 1;
-            filter: brightness(2);
-        }
-        40% {
-            opacity: 1;
-        }
-        100% {
-            clip-path: circle(150% at 50% 100%);
-            opacity: 0;
-            filter: brightness(1);
-        }
+      0%   { transform: scale(0); opacity: 1; }
+      50%  { opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
     }
     /* ── The Opening Flare Animation ── */
     .gal-ai-tab { background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.12); border-bottom: none; border-radius: 12px 12px 0 0; padding: 10px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 220px; box-shadow: 0 -4px 16px rgba(0,0,0,0.3); pointer-events: auto; transition: all 0.2s; color: var(--text); }
@@ -1779,12 +1780,14 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       document.getElementById('galAiWrapper').classList.add('open');
       document.getElementById('galAiInput').focus();
       
-      // Trigger the Full-Page Particle Wash
+      // Trigger the Full-Page Particle Wash (Bulletproof Reset)
       const wash = document.getElementById('galAiWash');
       if (wash) {
         wash.classList.remove('scanning');
-        void wash.offsetWidth; // This forces the browser to restart the animation
-        wash.classList.add('scanning');
+        // Wait 10ms to guarantee the browser registers the class removal before adding it back
+        setTimeout(() => {
+          wash.classList.add('scanning');
+        }, 10);
       }
     }
     
