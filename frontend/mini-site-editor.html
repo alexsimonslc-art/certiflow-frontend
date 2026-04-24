@@ -517,8 +517,8 @@
         <stop offset="100%" stop-color="#f43f5e" />
       </linearGradient>
     </defs>
-    <path class="gal-trace-line" d="M 50 99 L 1 99 L 1 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" pathLength="100" />
-    <path class="gal-trace-line" d="M 50 99 L 99 99 L 99 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" pathLength="100" />
+    <path class="gal-trace-line" d="M 35 99 L 1 99 L 1 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" pathLength="100" stroke-linecap="round" />
+    <path class="gal-trace-line" d="M 65 99 L 99 99 L 99 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" pathLength="100" stroke-linecap="round" />
   </svg>
 
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
@@ -2006,9 +2006,9 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     }
     
     .gal-trace-line {
-      /* Dash is 25% of the screen long */
-      stroke-dasharray: 25 150;
-      stroke-dashoffset: 25; 
+      /* Dash length is 15. The Gap is 300 (Massive gap guarantees NO repeating lines!) */
+      stroke-dasharray: 15 300;
+      stroke-dashoffset: 15; 
       opacity: 0;
     }
     
@@ -2017,8 +2017,8 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     }
 
     @keyframes gal-laser-trace {
-      0%   { stroke-dashoffset: 25; opacity: 1; }
-      80%  { opacity: 1; }
+      0%   { stroke-dashoffset: 15; opacity: 1; }
+      80%  { opacity: 1; filter: brightness(1.5); }
       100% { stroke-dashoffset: -100; opacity: 0; }
     }
     /* Theme / Font selector layout & base */
