@@ -1353,6 +1353,74 @@ const ME_TEMPLATES = {
       { type:'footer',  props:{ text:'Sent via Honourix | Unsubscribe', bgColor:'#f8fafc', color:'#9ca3af', fontSize:12, align:'center', paddingV:20, paddingH:40 } },
     ]
   },
+  welcome: {
+    name: '👋 Welcome Email',
+    desc: 'Warm onboarding email',
+    thumb: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+    blocks: [
+      { type:'logo',    props:{ text:'HONOURIX', tagline:'Welcome aboard!', bgColor:'#6366f1', color:'#ffffff', fontSize:20, fontWeight:800, align:'center', paddingV:28, paddingH:40 } },
+      { type:'header',  props:{ text:'Welcome, {{name}}! 🎉', fontSize:28, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:36, paddingH:40 } },
+      { type:'text',    props:{ text:"We're thrilled to have you on board. You've just taken the first step toward something amazing.\n\nHere's what you can do next:", fontSize:16, color:'#475569', bgColor:'#ffffff', align:'left', paddingV:8, paddingH:40, lineHeight:1.75 } },
+      { type:'text',    props:{ text:'✅ Complete your profile\n✅ Explore the dashboard\n✅ Start your first project', fontSize:15, color:'#1e293b', bgColor:'#f5f3ff', align:'left', paddingV:20, paddingH:40, lineHeight:2 } },
+      { type:'button',  props:{ text:'Get Started Now', link:'#', btnBg:'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor:'#ffffff', bgColor:'#ffffff', align:'center', paddingV:28, paddingH:40, borderRadius:10, fontSize:15, fontWeight:700 } },
+      { type:'footer',  props:{ text:'If you have questions, reply to this email or contact our support team.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 } },
+    ]
+  },
+  promo: {
+    name: '🛍️ Promotional',
+    desc: 'Bold offer with CTA',
+    thumb: 'linear-gradient(135deg,#ec4899,#f97316)',
+    blocks: [
+      { type:'logo',    props:{ text:'SALE', tagline:'Limited Time Offer', bgColor:'#1a0533', color:'#ec4899', fontSize:22, fontWeight:800, align:'center', paddingV:28, paddingH:40 } },
+      { type:'header',  props:{ text:'Exclusive Offer for You, {{name}}!', fontSize:28, fontWeight:800, color:'#ffffff', bgColor:'linear-gradient(135deg,#ec4899,#f97316)', align:'center', paddingV:36, paddingH:40 } },
+      { type:'text',    props:{ text:"Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize:16, color:'#475569', bgColor:'#ffffff', align:'center', paddingV:16, paddingH:40, lineHeight:1.75 } },
+      { type:'text',    props:{ text:'🔥 Use code: SAVE30\n⏰ Offer expires in 48 hours', fontSize:16, color:'#1e293b', bgColor:'#fff7ed', align:'center', paddingV:20, paddingH:40, lineHeight:2, fontWeight:700 } },
+      { type:'button',  props:{ text:'Claim Your Offer →', link:'#', btnBg:'linear-gradient(135deg,#ec4899,#f97316)', btnColor:'#ffffff', bgColor:'#ffffff', align:'center', paddingV:28, paddingH:40, borderRadius:30, fontSize:16, fontWeight:700 } },
+      { type:'footer',  props:{ text:'You received this because you opted in to our promotions. Unsubscribe anytime.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 } },
+    ]
+  },
+  newsletter: {
+    name: '📰 Newsletter',
+    desc: 'Clean content digest',
+    thumb: 'linear-gradient(135deg,#0ea5e9,#6366f1)',
+    blocks: [
+      { type:'logo',    props:{ text:'THE DIGEST', tagline:'Weekly Newsletter', bgColor:'#0f172a', color:'#0ea5e9', fontSize:18, fontWeight:800, align:'center', paddingV:24, paddingH:40 } },
+      { type:'header',  props:{ text:"This Week's Highlights", fontSize:24, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'left', paddingV:28, paddingH:40 } },
+      { type:'divider', props:{ color:'#0ea5e9', bgColor:'#ffffff', paddingV:4, thickness:2 } },
+      { type:'text',    props:{ text:'Hi {{name}},\n\nHere\'s what happened this week that you need to know about:', fontSize:15, color:'#475569', bgColor:'#ffffff', align:'left', paddingV:16, paddingH:40, lineHeight:1.75 } },
+      { type:'header',  props:{ text:'📌 Feature Story', fontSize:18, fontWeight:700, color:'#0f172a', bgColor:'#f0f9ff', align:'left', paddingV:16, paddingH:40 } },
+      { type:'text',    props:{ text:'Your feature story body text goes here. Write 2-3 sentences that summarize the key points and draw the reader in.', fontSize:15, color:'#374151', bgColor:'#f0f9ff', align:'left', paddingV:4, paddingH:40, lineHeight:1.7 } },
+      { type:'button',  props:{ text:'Read Full Story', link:'#', btnBg:'#0ea5e9', btnColor:'#ffffff', bgColor:'#f0f9ff', align:'left', paddingV:16, paddingH:40, borderRadius:8, fontSize:14, fontWeight:600 } },
+      { type:'footer',  props:{ text:'You are subscribed to our weekly digest. Unsubscribe | Manage Preferences', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 } },
+    ]
+  },
+  saas: {
+    name: '💻 SaaS Onboarding',
+    desc: 'Modern product email',
+    thumb: 'linear-gradient(135deg,#1e293b,#0d1728)',
+    blocks: [
+      { type:'logo',    props:{ text:'HONOURIX', tagline:'Your workspace is ready', bgColor:'#0d1728', color:'#00d4ff', fontSize:20, fontWeight:800, align:'center', paddingV:28, paddingH:40 } },
+      { type:'header',  props:{ text:"You're all set, {{name}}!", fontSize:28, fontWeight:700, color:'#f8fafc', bgColor:'#1e293b', align:'center', paddingV:36, paddingH:40 } },
+      { type:'text',    props:{ text:'Your account is active and ready to use. Here\'s a quick overview of what you can do:', fontSize:16, color:'#cbd5e1', bgColor:'#1e293b', align:'left', paddingV:8, paddingH:40, lineHeight:1.75 } },
+      { type:'text',    props:{ text:'⚡ Build faster with templates\n🤖 Use AI to generate content\n📊 Track your campaigns\n🎓 Issue certificates at scale', fontSize:15, color:'#94a3b8', bgColor:'#0f172a', align:'left', paddingV:20, paddingH:40, lineHeight:2.1 } },
+      { type:'button',  props:{ text:'Open Dashboard', link:'#', btnBg:'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor:'#ffffff', bgColor:'#1e293b', align:'center', paddingV:28, paddingH:40, borderRadius:10, fontSize:15, fontWeight:700 } },
+      { type:'footer',  props:{ text:'Need help? Visit our docs or chat with support. We\'re here to help.', bgColor:'#0d1728', color:'#64748b', fontSize:12, align:'center', paddingV:24, paddingH:40 } },
+    ]
+  },
+  classic: {
+    name: '📄 Classic Business',
+    desc: 'Formal business email',
+    thumb: 'linear-gradient(135deg,#334155,#475569)',
+    blocks: [
+      { type:'logo',    props:{ text:'HONOURIX', tagline:'Business Communication', bgColor:'#334155', color:'#f8fafc', fontSize:18, fontWeight:700, align:'left', paddingV:24, paddingH:40 } },
+      { type:'header',  props:{ text:'Dear {{name}},', fontSize:22, fontWeight:600, color:'#1e293b', bgColor:'#ffffff', align:'left', paddingV:32, paddingH:40 } },
+      { type:'text',    props:{ text:'I am writing to inform you about an important matter regarding your account with us. Please review the following information carefully.', fontSize:16, color:'#374151', bgColor:'#ffffff', align:'left', paddingV:4, paddingH:40, lineHeight:1.8 } },
+      { type:'text',    props:{ text:'The key details are as follows:\n\n• Item one: description\n• Item two: description\n• Item three: description', fontSize:15, color:'#4b5563', bgColor:'#f8fafc', align:'left', paddingV:20, paddingH:40, lineHeight:1.9 } },
+      { type:'text',    props:{ text:'Should you have any questions, please do not hesitate to reach out.\n\nYours sincerely,\nThe Honourix Team', fontSize:15, color:'#1e293b', bgColor:'#ffffff', align:'left', paddingV:20, paddingH:40, lineHeight:1.7 } },
+      { type:'divider', props:{ color:'#e2e8f0', bgColor:'#ffffff', paddingV:12, thickness:1 } },
+      { type:'footer',  props:{ text:'Honourix | Trusted Certificate & Mail Platform', bgColor:'#f1f5f9', color:'#94a3b8', fontSize:12, align:'center', paddingV:20, paddingH:40 } },
+    ]
+  },
 };
 
 function meBuildTemplatePicker() {
@@ -1625,18 +1693,24 @@ function mNewCampaign() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   SAVE CAMPAIGN HELPER (localStorage)
+   SAVE CAMPAIGN TO SUPABASE
 ══════════════════════════════════════════════════════════════ */
-function saveCampaign(type, name, total, success, folderLink) {
+async function saveCampaign(type, name, total, success, folderLink) {
+  const status = success === total ? 'completed' : (success > 0 ? 'partial' : 'failed');
   try {
-    const campaigns = JSON.parse(localStorage.getItem('cf_campaigns') || '[]');
-    campaigns.push({
-      type, name, total, success,
-      folderLink: folderLink || null,
-      date: new Date().toISOString(),
+    await apiFetch('/api/campaigns', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: name || 'Email Campaign',
+        type: 'mail',
+        total_count: total,
+        sent_count: success,
+        status: status
+      })
     });
-    localStorage.setItem('cf_campaigns', JSON.stringify(campaigns));
-  } catch(e) { /* non-critical */ }
+  } catch(e) { 
+    console.error('Campaign database save failed', e); 
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1850,3 +1924,569 @@ function mManualApplyData() {
   msg.style.display = 'block';
   toast(validRows.length + ' recipients applied', 'success');
 }
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPLATE GATE — Step 2 entry screen
+══════════════════════════════════════════════════════════════ */
+
+// Category mapping for each template key
+const ME_TPL_CATS = {
+  cert: 'certificate', welcome: 'welcome', promo: 'promo',
+  classic: 'welcome', newsletter: 'newsletter', event: 'event',
+  saas: 'welcome', thankyou: 'welcome', announcement: 'promo', plain: 'welcome',
+};
+
+let meTplGateSelected = null; // currently selected template key in gate
+
+function meTplGateBuild() {
+  const grid = document.getElementById('meTplGateGrid');
+  if (!grid) return;
+
+  // Blank card first
+  const blankHtml = `
+    <div class="me-tpl-gate-card" id="meTplGateCard_blank" onclick="meTplGateSelect('blank')" data-cat="all">
+      <div class="me-tpl-gate-thumb" style="background:linear-gradient(135deg,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" style="width:40px;height:40px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+      </div>
+      <div class="me-tpl-gate-info">
+        <div class="me-tpl-gate-name">Blank Canvas</div>
+        <div class="me-tpl-gate-desc">Start from scratch</div>
+      </div>
+    </div>`;
+
+  const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
+    const cat = ME_TPL_CATS[key] || 'all';
+    const previewHtml = meGetHtmlFromBlocks(tpl.blocks);
+    const escapedHtml = previewHtml.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    return `
+      <div class="me-tpl-gate-card" id="meTplGateCard_${key}" onclick="meTplGateSelect('${key}')" data-cat="${cat}">
+        <div class="me-tpl-gate-thumb">
+          <iframe srcdoc="${escapedHtml}" scrolling="no" tabindex="-1"></iframe>
+          <div class="me-tpl-gate-thumb-overlay"></div>
+        </div>
+        <div class="me-tpl-gate-info">
+          <div class="me-tpl-gate-name">${tpl.name}</div>
+          <div class="me-tpl-gate-desc">${tpl.desc||''}</div>
+        </div>
+      </div>`;
+  });
+
+  grid.innerHTML = blankHtml + cards.join('');
+}
+
+function meTplGateFilter(cat, btn) {
+  // Update active button
+  document.querySelectorAll('.me-tpl-cat-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  // Show/hide cards
+  document.querySelectorAll('#meTplGateGrid .me-tpl-gate-card').forEach(card => {
+    const cardCat = card.dataset.cat || 'all';
+    card.style.display = (cat === 'all' || cardCat === cat || card.id === 'meTplGateCard_blank') ? '' : 'none';
+  });
+}
+
+function meTplGateSelect(key) {
+  meTplGateSelected = key;
+  document.querySelectorAll('#meTplGateGrid .me-tpl-gate-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('meTplGateCard_' + key);
+  if (card) card.classList.add('selected');
+  const btn = document.getElementById('meTplGateUseBtn');
+  if (btn) { btn.disabled = false; btn.textContent = key === 'blank' ? 'Start with Blank Canvas →' : 'Use Template — Open Editor →'; }
+}
+
+function meTplGateConfirm() {
+  if (!meTplGateSelected) return;
+  meLoadTemplateAndOpenEditor(meTplGateSelected);
+}
+
+function meLoadTemplateAndOpenEditor(key) {
+  if (key === 'blank') {
+    ME.blocks = [];
+    ME.selectedId = null;
+    meRenderCanvas();
+    meSyncToCode();
+  } else {
+    const tpl = ME_TEMPLATES[key];
+    if (!tpl) return;
+    ME.blocks = tpl.blocks.map(b => ({
+      id: 'b' + (ME.nextId++),
+      type: b.type,
+      props: JSON.parse(JSON.stringify(b.props)),
+    }));
+    ME.selectedId = null;
+    meRenderCanvas();
+    meSyncToCode();
+  }
+
+  // Show editor, hide gate
+  document.getElementById('meTplGate').style.display = 'none';
+  document.getElementById('meEditorWrap').classList.add('visible');
+  document.getElementById('meTabBarWrap').style.display = '';
+  document.getElementById('meAiToggleBtn').style.display = '';
+  document.getElementById('meStep2Nav').style.display = '';
+
+  // Update header sub-text
+  const sub = document.querySelector('#meCard .me-head > div > div[style*="color:var(--text-3)"]');
+  if (sub) sub.textContent = 'Build visually, edit code, preview — all in sync';
+
+  // Init CM if not done yet
+  if (!ME.initialized) meOnStepEnterInternal();
+  else if (ME.cm) ME.cm.refresh();
+  meSwitchTab('visual');
+  meBuildMergeTagsRow();
+  meInitSortable();
+}
+
+function meBackToGate() {
+  document.getElementById('meTplGate').style.display = '';
+  document.getElementById('meEditorWrap').classList.remove('visible');
+  document.getElementById('meTabBarWrap').style.display = 'none';
+  document.getElementById('meAiToggleBtn').style.display = 'none';
+  document.getElementById('meStep2Nav').style.display = 'none';
+  meTplGateSelected = null;
+  document.querySelectorAll('#meTplGateGrid .me-tpl-gate-card').forEach(c => c.classList.remove('selected'));
+  const btn = document.getElementById('meTplGateUseBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Use Template — Open Editor'; }
+}
+
+// Override meOnStepEnter to use the gate
+function meOnStepEnter() {
+  meTplGateBuild();
+  meBuildMergeTagsRow();
+
+  // If already has blocks (returning to step 2), skip gate and show editor directly
+  if (ME.blocks.length > 0) {
+    document.getElementById('meTplGate').style.display = 'none';
+    document.getElementById('meEditorWrap').classList.add('visible');
+    document.getElementById('meTabBarWrap').style.display = '';
+    document.getElementById('meAiToggleBtn').style.display = '';
+    document.getElementById('meStep2Nav').style.display = '';
+    if (!ME.initialized) meOnStepEnterInternal();
+    else if (ME.cm) ME.cm.refresh();
+    return;
+  }
+}
+
+function meOnStepEnterInternal() {
+  if (ME.initialized) {
+    if (ME.cm) ME.cm.refresh();
+    return;
+  }
+  ME.initialized = true;
+
+  const wrapper = document.getElementById('meCmWrap');
+  if (!wrapper) return;
+  ME.cm = CodeMirror(wrapper, {
+    mode: 'htmlmixed',
+    theme: 'dracula',
+    lineNumbers: true,
+    lineWrapping: true,
+    tabSize: 2,
+    indentWithTabs: false,
+    autofocus: false,
+    extraKeys: { 'Ctrl-Space': 'autocomplete' },
+    value: document.getElementById('mHtmlTmpl').value || '',
+  });
+  wrapper.querySelector('.CodeMirror').style.background = '#080f1e';
+  wrapper.querySelector('.CodeMirror').style.color      = '#f8f8f2';
+  ME.cm.on('change', () => {
+    clearTimeout(ME.cmDebounce);
+    ME.cmDebounce = setTimeout(() => {
+      document.getElementById('mHtmlTmpl').value = ME.cm.getValue();
+      if (ME.activeTab === 'preview') meRefreshPreviewIframe();
+    }, 400);
+  });
+  if (ME.blocks.length) meSyncToCode();
+}
+
+// Override meLoadTemplate (old floating picker calls) to use the new approach
+function meLoadTemplate(key) {
+  meTplGateSelect(key);
+  meTplGateConfirm();
+}
+function meShowTemplatePicker() { meBackToGate(); }
+function meHideTemplatePicker() {}
+
+// Override meBuildTemplatePicker to do nothing (gate handles it now)
+function meBuildTemplatePicker() {}
+
+/* ══════════════════════════════════════════════════════════════
+   UNDO / REDO
+══════════════════════════════════════════════════════════════ */
+const ME_HISTORY   = [];
+let   ME_HIST_IDX  = -1;
+const ME_HIST_MAX  = 30;
+
+function mePushHistory() {
+  // Trim forward history if we're not at the end
+  if (ME_HIST_IDX < ME_HISTORY.length - 1) {
+    ME_HISTORY.splice(ME_HIST_IDX + 1);
+  }
+  ME_HISTORY.push(JSON.parse(JSON.stringify(ME.blocks)));
+  if (ME_HISTORY.length > ME_HIST_MAX) ME_HISTORY.shift();
+  ME_HIST_IDX = ME_HISTORY.length - 1;
+}
+
+function meUndo() {
+  if (ME_HIST_IDX <= 0) { toast('Nothing to undo', 'info', 1200); return; }
+  ME_HIST_IDX--;
+  ME.blocks     = JSON.parse(JSON.stringify(ME_HISTORY[ME_HIST_IDX]));
+  ME.selectedId = null;
+  meRenderCanvas();
+  meRenderProps(null);
+  meSyncToCode();
+  toast('Undo', 'info', 900);
+}
+
+function meRedo() {
+  if (ME_HIST_IDX >= ME_HISTORY.length - 1) { toast('Nothing to redo', 'info', 1200); return; }
+  ME_HIST_IDX++;
+  ME.blocks     = JSON.parse(JSON.stringify(ME_HISTORY[ME_HIST_IDX]));
+  ME.selectedId = null;
+  meRenderCanvas();
+  meRenderProps(null);
+  meSyncToCode();
+  toast('Redo', 'info', 900);
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+    if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault(); meUndo();
+    }
+  }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+    if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault(); meRedo();
+    }
+  }
+});
+
+// Patch meAddBlock, meDeleteBlock, meDuplicateBlock, meMoveBlock to push history
+const _meAddBlock_orig     = meAddBlock;
+const _meDeleteBlock_orig  = meDeleteBlock;
+const _meDuplicateBlock_orig = meDuplicateBlock;
+const _meMoveBlock_orig    = meMoveBlock;
+
+meAddBlock = function(type) {
+  mePushHistory();
+  _meAddBlock_orig(type);
+};
+meDeleteBlock = function(id) {
+  mePushHistory();
+  _meDeleteBlock_orig(id);
+};
+meDuplicateBlock = function(id) {
+  mePushHistory();
+  _meDuplicateBlock_orig(id);
+};
+meMoveBlock = function(id, dir) {
+  mePushHistory();
+  _meMoveBlock_orig(id, dir);
+};
+
+/* ══════════════════════════════════════════════════════════════
+   SORTABLEJS — drag to reorder blocks
+══════════════════════════════════════════════════════════════ */
+let meSortableInstance = null;
+
+function meInitSortable() {
+  const canvas = document.getElementById('meCanvas');
+  if (!canvas || typeof Sortable === 'undefined') return;
+  if (meSortableInstance) meSortableInstance.destroy();
+
+  meSortableInstance = Sortable.create(canvas, {
+    animation: 150,
+    handle: '.me-drag-handle',
+    draggable: '.me-block-wrap',
+    ghostClass: 'me-sort-ghost',
+    chosenClass: 'me-sort-chosen',
+    onStart: () => mePushHistory(),
+    onEnd: (evt) => {
+      const oldIdx = evt.oldIndex;
+      const newIdx = evt.newIndex;
+      if (oldIdx === newIdx) return;
+      const moved = ME.blocks.splice(oldIdx, 1)[0];
+      ME.blocks.splice(newIdx, 0, moved);
+      meSyncToCode();
+    },
+  });
+
+  // Add ghost/chosen styles once
+  if (!document.getElementById('me-sortable-style')) {
+    const s = document.createElement('style');
+    s.id = 'me-sortable-style';
+    s.textContent = '.me-sort-ghost{opacity:0.3;background:rgba(0,212,255,0.08)!important}.me-sort-chosen{outline:2px solid var(--cyan)!important}';
+    document.head.appendChild(s);
+  }
+}
+
+// Patch meRenderCanvas to re-init sortable and add drag handles after render
+const _meRenderCanvas_orig = meRenderCanvas;
+meRenderCanvas = function() {
+  _meRenderCanvas_orig();
+  // Add drag handles to each block
+  document.querySelectorAll('.me-block-wrap').forEach(wrap => {
+    if (!wrap.querySelector('.me-drag-handle')) {
+      const handle = document.createElement('div');
+      handle.className = 'me-drag-handle';
+      handle.title = 'Drag to reorder';
+      handle.innerHTML = '<span></span><span></span><span></span><span></span><span></span><span></span>';
+      wrap.appendChild(handle);
+    }
+  });
+  meInitSortable();
+};
+
+/* ══════════════════════════════════════════════════════════════
+   INLINE TEXT EDITING — double-click blocks
+══════════════════════════════════════════════════════════════ */
+let meInlineToolbar = null;
+
+function meEnableInlineEdit(blockId) {
+  const blockEl = document.querySelector(`.me-block-wrap[data-id="${blockId}"]`);
+  const inner   = blockEl && blockEl.querySelector('.me-block-inner');
+  if (!inner) return;
+  const block = ME.blocks.find(b => b.id === blockId);
+  if (!block || !['header','text','footer','logo'].includes(block.type)) return;
+
+  // Remove any existing toolbar
+  meCloseInlineEdit();
+
+  inner.contentEditable = 'true';
+  inner.focus();
+
+  // Create floating toolbar
+  const toolbar = document.createElement('div');
+  toolbar.className = 'me-inline-toolbar';
+  toolbar.id = 'meInlineToolbar';
+  toolbar.innerHTML = `
+    <button class="me-itb-btn" title="Bold" onmousedown="event.preventDefault();document.execCommand('bold')"><strong>B</strong></button>
+    <button class="me-itb-btn" title="Italic" onmousedown="event.preventDefault();document.execCommand('italic')"><em>I</em></button>
+    <button class="me-itb-btn" title="Underline" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+    <div class="me-itb-sep"></div>
+    <button class="me-itb-btn" title="Done editing" onmousedown="event.preventDefault();meCloseInlineEdit()" style="font-size:11px;color:var(--cyan);font-weight:700">Done</button>
+  `;
+  blockEl.style.position = 'relative';
+  blockEl.appendChild(toolbar);
+  meInlineToolbar = toolbar;
+
+  // On blur, save content back to block
+  const saveContent = () => {
+    const text = inner.innerText || inner.textContent || '';
+    block.props.text = text;
+    inner.contentEditable = 'false';
+    inner.blur();
+    toolbar.remove();
+    meInlineToolbar = null;
+    meSyncToCode();
+  };
+
+  inner.addEventListener('blur', saveContent, { once: true });
+}
+
+function meCloseInlineEdit() {
+  if (meInlineToolbar) { meInlineToolbar.remove(); meInlineToolbar = null; }
+  document.querySelectorAll('.me-block-inner[contenteditable="true"]').forEach(el => {
+    el.contentEditable = 'false';
+  });
+}
+
+// Patch meRenderCanvas to add double-click listeners
+const _meRenderCanvas_orig2 = meRenderCanvas;
+meRenderCanvas = function() {
+  _meRenderCanvas_orig2();
+  document.querySelectorAll('.me-block-wrap').forEach(wrap => {
+    const blockId = wrap.dataset.id;
+    const block = ME.blocks.find(b => b.id === blockId);
+    if (!block || !['header','text','footer','logo'].includes(block.type)) return;
+    wrap.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      meEnableInlineEdit(blockId);
+    }, { once: false });
+  });
+};
+
+/* ══════════════════════════════════════════════════════════════
+   AI CHAT PANEL
+══════════════════════════════════════════════════════════════ */
+let meAiChatHistory  = [];
+let meAiIsLoading    = false;
+
+function meToggleAiPanel() {
+  const panel  = document.getElementById('meAiPanel');
+  const toggle = document.getElementById('meAiToggleBtn');
+  if (!panel) return;
+  const isOpen = panel.classList.toggle('open');
+  if (toggle) toggle.classList.toggle('active', isOpen);
+}
+
+function meAiAppendBubble(role, content, isTyping) {
+  const chat = document.getElementById('meAiChat');
+  if (!chat) return null;
+
+  const div = document.createElement('div');
+  div.className = 'me-ai-bubble ' + role;
+
+  if (isTyping) {
+    div.classList.add('typing');
+    div.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+  } else if (role === 'ai') {
+    div.innerHTML = `<div class="ai-avatar">✨ Gemini AI</div>${content.replace(/\n/g,'<br>')}`;
+  } else {
+    div.textContent = content;
+  }
+
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function meAiApplySuggestions(suggestions) {
+  const chat = document.getElementById('meAiChat');
+  if (!chat || !suggestions || !suggestions.length) return;
+
+  const div = document.createElement('div');
+  div.className = 'me-ai-bubble ai';
+  const btns = suggestions.map((s, i) =>
+    `<button class="me-ai-suggestion-btn" onclick="meAiApplySubject(this,'${s.replace(/'/g,"\\'")}')">
+      <span style="color:var(--text-3);font-size:11px;margin-right:5px">${i+1}.</span>${s}
+    </button>`
+  ).join('');
+  div.innerHTML = `<div class="ai-avatar">✨ Gemini AI</div>
+    <div style="margin-bottom:8px">Here are 5 subject line suggestions. Click one to apply:</div>
+    <div class="me-ai-suggestions">${btns}</div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function meAiApplySubject(btn, subject) {
+  const el = document.getElementById('mSubject');
+  if (el) {
+    el.value = subject;
+    el.style.borderColor = 'rgba(0,212,255,0.6)';
+    setTimeout(() => el.style.borderColor = '', 1500);
+    toast('Subject applied: ' + subject.slice(0,40) + '…', 'success', 2000);
+  }
+  btn.style.background = 'rgba(16,185,129,0.2)';
+  btn.style.borderColor = 'rgba(16,185,129,0.35)';
+}
+
+async function meAiSend() {
+  const input = document.getElementById('meAiInput');
+  if (!input || meAiIsLoading) return;
+
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  meAiIsLoading = true;
+  document.getElementById('meAiSendBtn').disabled = true;
+
+  meAiAppendBubble('user', msg);
+  const typingEl = meAiAppendBubble('ai', '', true);
+
+  meAiChatHistory.push({ role: 'user', content: msg });
+
+  try {
+    mePushHistory(); // save undo snapshot before AI modifies canvas
+
+    const body = {
+      userMessage: msg,
+      currentBlocks: ME.blocks,
+      headers: MS.headers,
+      chatHistory: meAiChatHistory.slice(-10),
+      selectedBlockId: ME.selectedId,
+    };
+
+    const res = await apiFetch('/api/ai/generate-email', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+
+    if (typingEl) typingEl.remove();
+
+    const action  = res.action;
+    const message = res.message || '';
+
+    meAiChatHistory.push({ role: 'model', content: message });
+
+    if (action === 'replace_blocks' && res.blocks && res.blocks.length) {
+      ME.blocks = res.blocks.map(b => ({
+        id: b.id || ('b' + (ME.nextId++)),
+        type: b.type,
+        props: b.props || {},
+      }));
+      ME.selectedId = null;
+      meRenderCanvas();
+      meRenderProps(null);
+      meSyncToCode();
+      meAiAppendBubble('ai', message || 'Done! Your email has been updated.');
+      toast('AI updated your email', 'success', 2000);
+
+    } else if (action === 'update_block' && res.blockId && res.props) {
+      const block = ME.blocks.find(b => b.id === res.blockId) || ME.blocks.find(b => b.id === ME.selectedId);
+      if (block) {
+        Object.assign(block.props, res.props);
+        const inner = document.querySelector(`.me-block-wrap[data-id="${block.id}"] .me-block-inner`);
+        if (inner) inner.innerHTML = meBlockToHtml(block);
+        meSyncToCode();
+        meAiAppendBubble('ai', message || 'Block updated!');
+      } else {
+        meAiAppendBubble('ai', message || 'Could not find block to update. Please select a block first.');
+      }
+
+    } else if (action === 'subject_suggestions' && res.suggestions) {
+      meAiApplySuggestions(res.suggestions);
+
+    } else {
+      // reply_only or unknown
+      meAiAppendBubble('ai', message || 'I\'m here to help! Try asking me to generate or modify your email.');
+    }
+
+  } catch (err) {
+    if (typingEl) typingEl.remove();
+    meAiAppendBubble('ai', 'Sorry, something went wrong: ' + (err.message || 'Unknown error'));
+  } finally {
+    meAiIsLoading = false;
+    document.getElementById('meAiSendBtn').disabled = false;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PATCH mNewCampaign to reset gate state
+══════════════════════════════════════════════════════════════ */
+const _mNewCampaign_orig = mNewCampaign;
+mNewCampaign = function() {
+  _mNewCampaign_orig();
+  // Reset gate
+  meTplGateSelected = null;
+  meAiChatHistory = [];
+  ME_HISTORY.length = 0;
+  ME_HIST_IDX = -1;
+  const gate = document.getElementById('meTplGate');
+  const wrap = document.getElementById('meEditorWrap');
+  if (gate) gate.style.display = '';
+  if (wrap) wrap.classList.remove('visible');
+  const tabBar = document.getElementById('meTabBarWrap');
+  const aiBtn  = document.getElementById('meAiToggleBtn');
+  const nav    = document.getElementById('meStep2Nav');
+  if (tabBar) tabBar.style.display = 'none';
+  if (aiBtn)  aiBtn.style.display  = 'none';
+  if (nav)    nav.style.display    = 'none';
+  // Reset AI chat
+  const aiChat = document.getElementById('meAiChat');
+  if (aiChat) aiChat.innerHTML = `<div class="me-ai-bubble ai">
+    <div class="ai-avatar">✨ Gemini AI</div>
+    Hi! I can help you create beautiful email designs. Try asking me:<br><br>
+    <strong>• "Generate a professional welcome email"</strong><br>
+    <strong>• "Make the header dark blue and bold"</strong><br>
+    <strong>• "Suggest 5 subject lines"</strong><br>
+    <strong>• Paste any HTML to import it</strong>
+  </div>`;
+  // Close AI panel
+  const panel = document.getElementById('meAiPanel');
+  if (panel) panel.classList.remove('open');
+};

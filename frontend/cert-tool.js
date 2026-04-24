@@ -1533,17 +1533,48 @@ function showResults() {
   }
   renderResultRows(CS.results);
   
-// After results are received in generateCertificates()
-if (typeof saveCampaign === 'function') {
-  saveCampaign(
-    'cert',
-    document.getElementById('campaignName').value || 'Certificate Run',
-    CS.results.length,
-    CS.results.filter(r => r.status === 'success').length,
-    ''
-  );
-}
+// Connect to Supabase Backend
+  saveCampaignToDatabase();
+
   toast(`${ok} certificates ready!`, 'success', 5000);
+}
+
+// ── Connect Campaign & Backup Sheet to Supabase ──
+async function saveCampaignToDatabase() {
+  const name = document.getElementById('campaignName').value || 'Certificate Run';
+  const total = CS.results.length;
+  const ok = CS.results.filter(r => r.status === 'success').length;
+  const status = ok === total ? 'completed' : (ok > 0 ? 'partial' : 'failed');
+
+  // Build the Backup Sheet Data Payload (S.No, Mapped Fields Only, Cert Link)
+  const backupData = CS.results.map((r, i) => {
+     const original = CS.rows[i] || {};
+     const rowData = { "S.No": i + 1 };
+     
+     // Dynamically add ONLY the fields they placed on the canvas
+     ED.fields.forEach(f => {
+         if (f.column) rowData[f.column] = original[f.column] || '';
+     });
+     
+     rowData["Certificate Link"] = r.link || (r.error ? `ERROR: ${r.error}` : '');
+     return rowData;
+  });
+
+  try {
+    await apiFetch('/api/campaigns', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: name,
+        type: 'cert',
+        total_count: total,
+        sent_count: ok,
+        status: status,
+        backup_data: backupData // Backend will use this to create the Backup Google Sheet!
+      })
+    });
+  } catch(e) {
+    console.error('Campaign database save failed', e);
+  }
 }
 
 function renderResultRows(results) {
