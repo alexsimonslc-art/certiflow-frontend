@@ -497,9 +497,17 @@
 
   </div>
 
-  <div class="gal-ai-page-wash" id="galAiWash">
-    <div class="gal-ai-wash-circle"></div>
-  </div>
+  <svg class="gal-ai-screen-trace" id="galAiWash" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="galGlowTrace" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" stop-color="#00d4ff" />
+        <stop offset="50%" stop-color="#7c3aed" />
+        <stop offset="100%" stop-color="#f43f5e" />
+      </linearGradient>
+    </defs>
+    <path class="gal-trace-line" d="M 50 100 L 0 100 L 0 0 L 50 0" fill="none" stroke="url(#galGlowTrace)" stroke-width="3" vector-effect="non-scaling-stroke" pathLength="100" />
+    <path class="gal-trace-line" d="M 50 100 L 100 100 L 100 0 L 50 0" fill="none" stroke="url(#galGlowTrace)" stroke-width="3" vector-effect="non-scaling-stroke" pathLength="100" />
+  </svg>
 
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
     
@@ -1492,39 +1500,32 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     .gal-ai-wrapper { position: absolute; bottom: 0; width: 480px; max-width: 90%; pointer-events: none; display: flex; justify-content: center; align-items: flex-end; }
     /* ── Gal AI (Google AI Studio Style) ── */
     /* ── Sea Wave Glow Effect (4 Layers) ── */
-    /* ── The AI "Page Analysis" Particle Wave ── */
-    .gal-ai-page-wash {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: 9998; pointer-events: none; overflow: hidden;
+    /* ── The Full Screen Perimeter Glow Trace ── */
+    .gal-ai-screen-trace {
+      position: fixed; inset: 0; width: 100vw; height: 100vh;
+      z-index: 9998; pointer-events: none; overflow: visible;
+      /* Creates the massive neon glow radiating off the trace lines */
+      filter: drop-shadow(0 0 6px rgba(0,212,255,0.8)) drop-shadow(0 0 16px rgba(124,58,237,0.8)) drop-shadow(0 0 30px rgba(244,63,94,0.6));
     }
     
-    .gal-ai-wash-circle {
-      position: absolute; bottom: 0; left: 50%;
-      width: 200vw; height: 200vw;
-      /* Centers the exact middle of the circle at the bottom of the screen */
-      margin-left: -100vw; margin-bottom: -100vw; 
-      border-radius: 50%;
-      
-      /* Glowing Scanner Edge + Dot Matrix Particles */
-      border: 3px solid rgba(0, 212, 255, 0.8);
-      box-shadow: 0 0 100px rgba(0, 212, 255, 0.4) inset, 0 0 120px rgba(124, 58, 237, 0.6);
-      background: 
-        radial-gradient(circle at center, transparent 60%, rgba(0, 212, 255, 0.15) 80%, rgba(124, 58, 237, 0.2) 90%),
-        radial-gradient(rgba(255, 255, 255, 0.3) 1.5px, transparent 1.5px);
-      background-size: 100% 100%, 24px 24px;
-      
-      transform: scale(0);
+    .gal-trace-line {
+      /* Dash is 20 units long, gap is 150 units (covers entire screen) */
+      stroke-dasharray: 20 150;
+      /* Pushes the 20-unit dash just behind the start point (0) */
+      stroke-dashoffset: 20; 
       opacity: 0;
     }
-
-    .gal-ai-page-wash.scanning .gal-ai-wash-circle {
-      animation: gal-wash-anim 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    
+    .gal-ai-screen-trace.scanning .gal-trace-line {
+      /* Smooth ease-out as it races around the screen */
+      animation: gal-perimeter-trace 1.5s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
     }
 
-    @keyframes gal-wash-anim {
-      0%   { transform: scale(0); opacity: 1; }
-      50%  { opacity: 1; }
-      100% { transform: scale(1.5); opacity: 0; }
+    @keyframes gal-perimeter-trace {
+      0%   { stroke-dashoffset: 20; opacity: 1; }
+      80%  { opacity: 1; }
+      /* Dash travels all the way to 100, plus 20 to hide off the end */
+      100% { stroke-dashoffset: -100; opacity: 0; }
     }
     /* ── The Opening Flare Animation ── */
     .gal-ai-tab { background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.12); border-bottom: none; border-radius: 12px 12px 0 0; padding: 10px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 220px; box-shadow: 0 -4px 16px rgba(0,0,0,0.3); pointer-events: auto; transition: all 0.2s; color: var(--text); }
@@ -1791,7 +1792,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       }
     }
 
-    
+
     
     function closeGalAi() {
       document.getElementById('galAiWrapper').classList.remove('open');
