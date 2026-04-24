@@ -1420,33 +1420,6 @@ body::after {
   padding: 0 12px;
 }
 
-/* Tooltip on collapsed nav items */
-.sidebar.collapsed .nav-item {
-  position: relative;
-}
-.sidebar.collapsed .nav-item::after {
-  content: attr(data-tip);
-  position: absolute;
-  left: calc(100% + 14px);
-  top: 50%; transform: translateY(-50%);
-  background: rgba(8,16,32,0.96);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: var(--text);
-  font-size: 12.5px;
-  font-weight: 500;
-  white-space: nowrap;
-  padding: 6px 12px;
-  border-radius: 8px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s, transform 0.15s;
-  transform: translateY(-50%) translateX(-6px);
-  z-index: 100;
-}
-.sidebar.collapsed .nav-item:hover::after {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-}
 
 /* ── Main area adjusts with collapsed sidebar ───────────────────── */
 .main-area.sidebar-collapsed {
