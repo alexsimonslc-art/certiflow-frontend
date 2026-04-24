@@ -509,6 +509,18 @@
     <path class="gal-trace-line" d="M 50 100 L 100 100 L 100 0 L 50 0" fill="none" stroke="url(#galGlowTrace)" stroke-width="3" vector-effect="non-scaling-stroke" pathLength="100" />
   </svg>
 
+  </div> <svg class="gal-ai-screen-trace" id="galAiWash" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="galGlowTrace" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" stop-color="#00d4ff" />
+        <stop offset="50%" stop-color="#7c3aed" />
+        <stop offset="100%" stop-color="#f43f5e" />
+      </linearGradient>
+    </defs>
+    <path class="gal-trace-line" d="M 50 99 L 1 99 L 1 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" pathLength="100" />
+    <path class="gal-trace-line" d="M 50 99 L 99 99 L 99 1 L 50 1" fill="none" stroke="url(#galGlowTrace)" stroke-width="4" vector-effect="non-scaling-stroke" pathLength="100" />
+  </svg>
+
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
     
     <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
@@ -521,14 +533,12 @@
     </div>
 
     <div class="gal-ai-box" id="galAiBox">
-      <div class="gal-ai-resizer" id="galAiResizer">
-        <div class="gal-ai-resizer-line"></div>
-      </div>
+      <div class="gal-ai-resizer" id="galAiResizer"><div class="gal-ai-resizer-line"></div></div>
       
       <div class="gal-ai-header">
         <div style="display:flex; align-items:center; gap:8px;">
           <div class="gal-ai-sparkle">✨</div>
-          <span style="font-weight: 700; font-size: 14px; color:var(--text); letter-spacing: 0.3px;">Gal AI</span>
+          <span style="font-weight: 700; font-size: 14px; color:var(--text);">Gal AI</span>
         </div>
         <button class="gal-ai-close" onclick="closeGalAi()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -540,13 +550,12 @@
       </div>
 
       <div class="gal-ai-input-area">
-        <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to generate a block, draft text, or change themes..." autocomplete="off" />
+        <input type="text" id="galAiInput" class="gal-ai-input" placeholder="Ask Gal AI to generate a block..." autocomplete="off" />
         <button class="gal-ai-send">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
     </div>
-
   </div>
 
   <!-- ═══════════════════════════════════════════════════════
@@ -1781,17 +1790,15 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       document.getElementById('galAiWrapper').classList.add('open');
       document.getElementById('galAiInput').focus();
       
-      // Trigger the Full-Page Particle Wash (Bulletproof Reset)
+      // Trigger the Full-Screen Laser
       const wash = document.getElementById('galAiWash');
       if (wash) {
         wash.classList.remove('scanning');
-        // Wait 10ms to guarantee the browser registers the class removal before adding it back
         setTimeout(() => {
           wash.classList.add('scanning');
         }, 10);
       }
     }
-
 
     
     function closeGalAi() {
@@ -1989,7 +1996,31 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     .gal-ai-send { width: 40px; height: 40px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-2); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
     .gal-ai-send:hover { background: var(--cyan); color: #fff; border-color: var(--cyan); }
     .gal-ai-send svg { width: 16px; height: 16px; transform: translateX(-1px); }
+    /* ── The Full Screen Perimeter Glow Trace ── */
+    .gal-ai-screen-trace {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 99999; /* Unblockable Top Layer */
+      pointer-events: none; overflow: visible;
+      /* Massive Neon Glow */
+      filter: drop-shadow(0 0 8px rgba(0,212,255,0.9)) drop-shadow(0 0 24px rgba(124,58,237,0.8)) drop-shadow(0 0 40px rgba(244,63,94,0.6));
+    }
+    
+    .gal-trace-line {
+      /* Dash is 25% of the screen long */
+      stroke-dasharray: 25 150;
+      stroke-dashoffset: 25; 
+      opacity: 0;
+    }
+    
+    .gal-ai-screen-trace.scanning .gal-trace-line {
+      animation: gal-laser-trace 1.4s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+    }
 
+    @keyframes gal-laser-trace {
+      0%   { stroke-dashoffset: 25; opacity: 1; }
+      80%  { opacity: 1; }
+      100% { stroke-dashoffset: -100; opacity: 0; }
+    }
     /* Theme / Font selector layout & base */
     /* Theme / Font selector layout & base */
     .mse-theme-grid {

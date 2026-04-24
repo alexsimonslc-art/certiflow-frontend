@@ -575,3 +575,4 @@
 
   window.MSForm = { bind: bindForm, boot };
 })();
+
