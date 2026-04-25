@@ -129,14 +129,20 @@ function validateStep(n) {
 /* ════════════════════════════════════════════════════════════════
    STEP 1 — DATA SOURCE
 ════════════════════════════════════════════════════════════════ */
-function switchDataSrc(type) {
+function cpSwitchSrc(type) {
   CP.srcType = type;
-  document.getElementById('panelSheets').style.display = type === 'sheets' ? 'block' : 'none';
-  document.getElementById('panelFile').style.display   = type === 'file'   ? 'block' : 'none';
-  document.getElementById('panelManual').style.display = type === 'manual' ? 'block' : 'none';
-  document.getElementById('srcSheetsBtn').className    = 'src-opt' + (type === 'sheets' ? ' active' : '');
-  document.getElementById('srcFileBtn').className      = 'src-opt' + (type === 'file'   ? ' active' : '');
-  document.getElementById('srcManualBtn').className    = 'src-opt' + (type === 'manual' ? ' active' : '');
+  
+  // Toggle the Content Panels
+  document.getElementById('cpSrcSheets').style.display = type === 'sheets' ? 'block' : 'none';
+  document.getElementById('cpSrcFile').style.display   = type === 'file'   ? 'block' : 'none';
+  document.getElementById('cpSrcManual').style.display = type === 'manual' ? 'block' : 'none';
+  document.getElementById('cpSrcHxForm').style.display = type === 'hxform' ? 'block' : 'none';
+  
+  // Toggle the Active Styling on the Buttons
+  document.getElementById('srcSheetsOpt').className = 'src-opt' + (type === 'sheets' ? ' active' : '');
+  document.getElementById('srcFileOpt').className   = 'src-opt' + (type === 'file'   ? ' active' : '');
+  document.getElementById('srcManualOpt').className = 'src-opt' + (type === 'manual' ? ' active' : '');
+  document.getElementById('srcHxFormOpt').className = 'src-opt' + (type === 'hxform' ? ' active' : '');
 }
 
 async function loadSheetData() {
