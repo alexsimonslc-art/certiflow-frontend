@@ -336,6 +336,10 @@
       border: 1px solid rgba(255, 255, 255, 0.09);
       border-radius: var(--radius-lg);
       overflow: hidden;
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .me-head {
@@ -947,6 +951,7 @@
       background: rgba(0, 0, 0, 0.35);
       border-top: 1px solid rgba(255, 255, 255, 0.07);
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .me-code-apply-bar span {
@@ -1391,6 +1396,10 @@
     /* ─── Editor wrapper (hidden until template chosen) ─────────── */
     .me-editor-wrap {
       display: none;
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .me-editor-wrap.visible {
@@ -1403,6 +1412,10 @@
       gap: 0;
       min-height: 0;
       overflow: hidden;
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .me-editor-main {
@@ -1410,6 +1423,9 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
+      max-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     /* ─── Gal AI — Fixed Full-Height Right Panel ─────────────────── */
