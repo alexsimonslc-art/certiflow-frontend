@@ -2724,34 +2724,34 @@ mNewCampaign = function () {
   };
 
   // Patch meAiAppendBubble for Gemini Layout (Right align User, Center AI, Custom Statuses)
-  window.meAiAppendBubble = function (role, content, isTyping) {
+  // Patch meAiAppendBubble for Gemini Layout (Right align User Box, Center/Unboxed AI)
+  window.meAiAppendBubble = function(role, content, isTyping) {
     const chat = document.getElementById('meAiChat');
     if (!chat) return null;
     const wrap = document.createElement('div');
     const id = 'msg_' + Date.now();
     wrap.id = id;
-
+    
     if (role === 'user') {
-      // Right Aligned User Bubble
-      wrap.style.cssText = 'background:rgba(255,255,255,0.08); color:var(--text); padding:12px 18px; border-radius:20px 20px 4px 20px; max-width:85%; align-self:flex-end; font-size:14px; line-height:1.5; font-family:"Plus Jakarta Sans"; margin-bottom:12px;';
+      // User: Right Aligned, Inside a Box
+      wrap.style.cssText = 'background:rgba(255,255,255,0.08); color:var(--text); padding:14px 20px; border-radius:18px 18px 4px 18px; max-width:85%; align-self:flex-end; font-size:15px; line-height:1.5; font-family:"Plus Jakarta Sans"; margin-bottom:24px; border:1px solid rgba(255,255,255,0.05);';
       wrap.textContent = content;
     } else {
-      // Centered AI Text with Sparkle Icon
-      wrap.style.cssText = 'display:flex; gap:16px; align-self:flex-start; width:100%; color:var(--text); font-size:14.5px; line-height:1.6; font-family:"Plus Jakarta Sans"; margin-bottom:12px;';
+      // AI: Unboxed, slightly wider, centered feel with sparkle
+      wrap.style.cssText = 'display:flex; gap:16px; align-self:flex-start; width:100%; color:var(--text); font-size:15px; line-height:1.7; font-family:"Plus Jakarta Sans"; margin-bottom:24px; background:transparent; border:none; padding:0;';
       
       if (isTyping) {
-        // ... (Keep your existing isTyping logic exactly the same) ...
         const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
         let sIdx = 0;
         wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3);">✨</div>
-          <div style="flex:1; padding-top:3px; display:flex; align-items:center; gap:8px;">
-            <div style="display:flex; gap:3px;">
+          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
+          <div style="flex:1; display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; gap:4px;">
                <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0s;"></div>
                <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0.2s;"></div>
                <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0.4s;"></div>
             </div>
-            <span id="thinkText_${id}" style="color:var(--cyan); font-weight:600; font-size:13px;">Thinking...</span>
+            <span id="thinkText_${id}" style="color:var(--cyan); font-weight:600; font-size:14px;">Thinking...</span>
           </div>`;
         
         wrap.dataset.thinkTimer = setInterval(() => {
@@ -2760,28 +2760,26 @@ mNewCampaign = function () {
            if(el) el.textContent = statuses[sIdx] + '...';
         }, 1500);
       } else {
-        // ── MARKDOWN & CLICKABLE PARSER ──
-        let parsedContent = content.replace(/\n/g, '<br>'); // Newlines
-        parsedContent = parsedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
-        parsedContent = parsedContent.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italic
-
-        // Detect Bullets (- or • or 1.) and turn them into Clickable UI Pills
+        // Parse Markdown & Clickable Options
+        let parsedContent = content.replace(/\n/g, '<br>');
+        parsedContent = parsedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        parsedContent = parsedContent.replace(/\*(.*?)\*/g, '<em>$1</em>');
         parsedContent = parsedContent.replace(/<br>[•\-\*]\s+(.+)/g, '<br><div class="ai-clickable-option" onclick="applyAiOption(this.innerText)">$1</div>');
         parsedContent = parsedContent.replace(/<br>\d+\.\s+(.+)/g, '<br><div class="ai-clickable-option" onclick="applyAiOption(this.innerText)">$1</div>');
 
         wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3);">✨</div>
-          <div style="flex:1; padding-top:3px;">${parsedContent}</div>`;
+          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
+          <div style="flex:1;">${parsedContent}</div>`;
       }
     }
-
+    
     chat.appendChild(wrap);
     chat.scrollTop = chat.scrollHeight;
-
-    // Hide Greeting explicitly
+    
+    // Hide Greeting explicitly when chat begins
     const greet = document.getElementById('galAiGreeting');
     if (greet) greet.style.display = 'none';
-
+    
     return wrap;
   };
 
