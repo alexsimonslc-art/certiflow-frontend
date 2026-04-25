@@ -882,12 +882,18 @@
     }
 
     .CodeMirror {
-      height: 520px !important;
+      position: absolute !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 100% !important;
+      width: 100% !important;
       font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
       font-size: 13.5px !important;
       line-height: 1.7 !important;
-      width: 100% !important;
-      max-width: 100% !important;
+      word-wrap: break-word !important;
+      white-space: pre-wrap !important;
     }
 
     .CodeMirror.cm-s-dracula {
