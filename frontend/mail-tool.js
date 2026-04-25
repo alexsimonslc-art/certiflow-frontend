@@ -1594,7 +1594,11 @@ function mRenderAt(idx) {
 
   // Render in iframe
   const iframe = document.getElementById('mPreviewIframe');
-  if (iframe) iframe.srcdoc = body;
+  if (iframe) {
+    iframe.srcdoc = body;
+    // Guarantee resize triggers after content paints
+    setTimeout(() => { if(window.resizeMailPreview) window.resizeMailPreview(); }, 150);
+  }
 }
 
 function mNavPrev() { if (MS.prevIdx > 0) { MS.prevIdx--; mRenderAt(MS.prevIdx); } }
@@ -2807,6 +2811,39 @@ mNewCampaign = function () {
     galAiStartCycle();
     galAiSetGreetName();
   });
+  /* ════════════════════════════════════════════════════════════════
+   DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
+════════════════════════════════════════════════════════════════ */
+window.resizeMailPreview = function() {
+  const iframe = document.getElementById('mPreviewIframe');
+  if (!iframe) return;
+
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    if (!doc || !doc.body) return;
+    
+    // 1. Inject Sleek Scrollbar into the white email UI
+    if (!doc.getElementById('hx-custom-scrollbar')) {
+      const style = doc.createElement('style');
+      style.id = 'hx-custom-scrollbar';
+      style.textContent = `
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
+        body { overflow-y: hidden !important; margin: 0; padding: 20px; box-sizing: border-box; }
+      `;
+      doc.head.appendChild(style);
+    }
+
+    // 2. Auto-Expand Height
+    iframe.style.height = '0px'; 
+    const newHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 340);
+    iframe.style.height = (newHeight + 40) + 'px'; 
+  } catch (e) {
+    console.warn("Iframe resize blocked:", e);
+  }
+};
 })();
 
 /* ════════════════════════════════════════════════════════════════
@@ -2837,4 +2874,49 @@ window.applyAiOption = function(text) {
   // 3. Fallback: Copy to clipboard
   navigator.clipboard.writeText(text);
   if (typeof meToast === 'function') meToast('Copied to clipboard!', 'info');
+};
+
+/* ════════════════════════════════════════════════════════════════
+   DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
+════════════════════════════════════════════════════════════════ */
+window.resizeMailPreview = function() {
+  // Find the iframe (Update the ID if yours is named differently)
+  const iframe = document.getElementById('previewFrame') || document.getElementById('mailPreviewFrame');
+  if (!iframe) return;
+
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    
+    // 1. Inject the Sleek Platform Scrollbar into the white email UI
+    if (!doc.getElementById('hx-custom-scrollbar')) {
+      const style = doc.createElement('style');
+      style.id = 'hx-custom-scrollbar';
+      style.textContent = `
+        /* Sleek scrollbars for the white email background */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
+        
+        /* Force vertical scrollbar to hide so the iframe can expand */
+        body { 
+          overflow-y: hidden !important; 
+          margin: 0; 
+          padding: 20px; 
+          box-sizing: border-box; 
+        }
+      `;
+      doc.head.appendChild(style);
+    }
+
+    // 2. Auto-Expand Height to push the "Dispatch" button down
+    iframe.style.height = '0px'; // Reset briefly to calculate true height
+    const scrollHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+    
+    // Set the new height (adding a 40px buffer for padding)
+    iframe.style.height = (scrollHeight + 40) + 'px'; 
+
+  } catch (e) {
+    console.warn("Could not resize iframe due to cross-origin or loading state.");
+  }
 };

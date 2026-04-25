@@ -2801,8 +2801,7 @@
                       <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span
                           id="mFinalSubject">—</span></div>
                     </div>
-                    <iframe id="mPreviewIframe" style="width:100%;border:none;min-height:340px;background:#fff"
-                      sandbox="allow-same-origin"></iframe>
+                    <iframe id="mPreviewIframe" scrolling="no" onload="if(window.resizeMailPreview) window.resizeMailPreview()" style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease;" sandbox="allow-same-origin allow-scripts"></iframe>
                   </div>
                 </div>
               </div>
