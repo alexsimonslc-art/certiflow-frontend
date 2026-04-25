@@ -1582,22 +1582,23 @@ function mBuildPreview() {
 function mRenderAt(idx) {
   const row = MS.rows[idx];
   if (!row) return;
-  const name = document.getElementById('mNameCol').value;
+  const name  = document.getElementById('mNameCol').value;
   const email = document.getElementById('mEmailCol').value;
-  const subj = mPersonalise(document.getElementById('mSubject').value, row);
-  const tmpl = document.getElementById('mHtmlTmpl').value;
-  const body = mPersonalise(tmpl, row);
+  const subj  = mPersonalise(document.getElementById('mSubject').value, row);
+  const tmpl  = document.getElementById('mHtmlTmpl').value;
+  const body  = mPersonalise(tmpl, row);
 
-  document.getElementById('mFinalTo').textContent = (row[name] || '?') + ' <' + (row[email] || '?') + '>';
+  document.getElementById('mFinalTo').textContent      = (row[name]||'?') + ' <' + (row[email]||'?') + '>';
   document.getElementById('mFinalSubject').textContent = subj;
-  document.getElementById('mPrvNav').textContent = (idx + 1) + ' / ' + MS.rows.length;
+  document.getElementById('mPrvNav').textContent       = (idx+1) + ' / ' + MS.rows.length;
 
   // Render in iframe
   const iframe = document.getElementById('mPreviewIframe');
   if (iframe) {
     iframe.srcdoc = body;
-    // Guarantee resize triggers after content paints
-    setTimeout(() => { if(window.resizeMailPreview) window.resizeMailPreview(); }, 150);
+    // Trigger auto-resize after a short delay to allow the content to render fully!
+    setTimeout(() => { if (window.resizeMailPreview) window.resizeMailPreview(); }, 150);
+    setTimeout(() => { if (window.resizeMailPreview) window.resizeMailPreview(); }, 500); // Safety net
   }
 }
 
@@ -2811,39 +2812,7 @@ mNewCampaign = function () {
     galAiStartCycle();
     galAiSetGreetName();
   });
-  /* ════════════════════════════════════════════════════════════════
-   DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
-════════════════════════════════════════════════════════════════ */
-window.resizeMailPreview = function() {
-  const iframe = document.getElementById('mPreviewIframe');
-  if (!iframe) return;
-
-  try {
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-    if (!doc || !doc.body) return;
-    
-    // 1. Inject Sleek Scrollbar into the white email UI
-    if (!doc.getElementById('hx-custom-scrollbar')) {
-      const style = doc.createElement('style');
-      style.id = 'hx-custom-scrollbar';
-      style.textContent = `
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
-        body { overflow-y: hidden !important; margin: 0; padding: 20px; box-sizing: border-box; }
-      `;
-      doc.head.appendChild(style);
-    }
-
-    // 2. Auto-Expand Height
-    iframe.style.height = '0px'; 
-    const newHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 340);
-    iframe.style.height = (newHeight + 40) + 'px'; 
-  } catch (e) {
-    console.warn("Iframe resize blocked:", e);
-  }
-};
+ 
 })();
 
 /* ════════════════════════════════════════════════════════════════
@@ -2918,5 +2887,39 @@ window.resizeMailPreview = function() {
 
   } catch (e) {
     console.warn("Could not resize iframe due to cross-origin or loading state.");
+  }
+};
+
+/* ════════════════════════════════════════════════════════════════
+   DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
+════════════════════════════════════════════════════════════════ */
+window.resizeMailPreview = function() {
+  const iframe = document.getElementById('mPreviewIframe');
+  if (!iframe) return;
+
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    if (!doc || !doc.body) return;
+    
+    // 1. Inject Sleek Scrollbar into the white email UI
+    if (!doc.getElementById('hx-custom-scrollbar')) {
+      const style = doc.createElement('style');
+      style.id = 'hx-custom-scrollbar';
+      style.textContent = `
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
+        body { overflow-y: hidden !important; margin: 0; padding: 20px; box-sizing: border-box; }
+      `;
+      doc.head.appendChild(style);
+    }
+
+    // 2. Auto-Expand Height
+    iframe.style.height = '0px'; // Temporarily collapse to get true scrollHeight
+    const newHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 340);
+    iframe.style.height = (newHeight + 40) + 'px'; 
+  } catch (e) {
+    console.warn("Iframe resize blocked:", e);
   }
 };

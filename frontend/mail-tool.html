@@ -2768,43 +2768,31 @@
 
               <!-- Personalised Preview -->
               <div class="card" style="padding:0;overflow:hidden">
-                <div
-                  style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-                  <div class="card-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                    Personalized Preview
-                  </div>
-                  <div class="preview-nav">
-                    <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
-                    <button class="preview-nav-btn" onclick="mNavPrev()">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="19" y1="12" x2="5" y2="12" />
-                        <polyline points="12 19 5 12 12 5" />
-                      </svg>
-                    </button>
-                    <button class="preview-nav-btn" onclick="mNavNext()">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                        <polyline points="12 5 19 12 12 19" />
-                      </svg>
-                    </button>
-                  </div>
+              <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <div class="card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Personalized Preview
                 </div>
-                <div style="padding:20px">
-                  <div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden">
-                    <div style="background:#e8edf3;padding:12px 18px;border-bottom:1px solid rgba(0,0,0,0.08)">
-                      <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong
-                          style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
-                      <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span
-                          id="mFinalSubject">—</span></div>
-                    </div>
-                    <iframe id="mPreviewIframe" scrolling="no" onload="if(window.resizeMailPreview) window.resizeMailPreview()" style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease;" sandbox="allow-same-origin allow-scripts"></iframe>
-                  </div>
+                <div class="preview-nav">
+                  <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
+                  <button class="preview-nav-btn" onclick="mNavPrev()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  </button>
+                  <button class="preview-nav-btn" onclick="mNavNext()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </button>
                 </div>
               </div>
+              <div style="padding:20px">
+                <div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden">
+                  <div style="background:#e8edf3;padding:12px 18px;border-bottom:1px solid rgba(0,0,0,0.08)">
+                    <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
+                    <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span id="mFinalSubject">—</span></div>
+                  </div>
+                  <iframe id="mPreviewIframe" scrolling="no" onload="if(window.resizeMailPreview) window.resizeMailPreview()" style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease;" sandbox="allow-same-origin allow-scripts"></iframe>
+                </div>
+              </div>
+            </div>
 
               <!-- Send Summary -->
               <div class="card">
