@@ -1540,18 +1540,19 @@ function showResults() {
 }
 
 // ── Connect Campaign & Backup Sheet to Supabase ──
+// ── Connect Campaign & Backup Sheet to Supabase ──
 async function saveCampaignToDatabase() {
   const name = document.getElementById('campaignName').value || 'Certificate Run';
   const total = CS.results.length;
   const ok = CS.results.filter(r => r.status === 'success').length;
   const status = ok === total ? 'completed' : (ok > 0 ? 'partial' : 'failed');
 
-  // Build the Backup Sheet Data Payload (S.No, Mapped Fields Only, Cert Link)
+  // Build strictly: S.No, Mapped Fields Only, Cert Link
   const backupData = CS.results.map((r, i) => {
      const original = CS.rows[i] || {};
      const rowData = { "S.No": i + 1 };
      
-     // Dynamically add ONLY the fields they placed on the canvas
+     // Only grab data for fields that were physically placed on the canvas
      ED.fields.forEach(f => {
          if (f.column) rowData[f.column] = original[f.column] || '';
      });
@@ -1561,22 +1562,28 @@ async function saveCampaignToDatabase() {
   });
 
   try {
-    await apiFetch('/api/campaigns', {
+    const token = localStorage.getItem('Honourix_token');
+    await fetch('https://certiflow-backend-73xk.onrender.com/api/campaigns', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
       body: JSON.stringify({
         name: name,
-        type: 'cert',
+        type: 'cert', // Change to 'combined' for the pipeline tool
         total_count: total,
         sent_count: ok,
         status: status,
-        backup_data: backupData // Backend will use this to create the Backup Google Sheet!
+        backup_data: backupData 
+        // 👆 Your backend must intercept 'backup_data', create the Google Sheet in the cert folder, 
+        // and save the resulting URL to the 'backup_sheet_link' column in Supabase!
       })
     });
   } catch(e) {
     console.error('Campaign database save failed', e);
   }
 }
-
 function renderResultRows(results) {
   const container = document.getElementById('resultRows');
 
