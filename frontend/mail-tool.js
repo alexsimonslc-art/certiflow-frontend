@@ -1243,6 +1243,20 @@ function meRefreshPreviewIframe() {
   // Apply first recipient data for preview
   if (MS.rows.length) html = mPersonalise(html, MS.rows[0]);
   iframe.srcdoc = html;
+
+  iframe.onload = () => {
+    // dynamically resize the iframe to fit content to avoid dual scrollbars
+    if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
+      if (document.getElementById('mePreviewFrameWrap')) {
+        document.getElementById('mePreviewFrameWrap').style.overflow = 'visible';
+      }
+      setTimeout(() => {
+        const body = iframe.contentWindow.document.body;
+        const h = iframe.contentWindow.document.documentElement;
+        iframe.style.height = Math.max(body.scrollHeight, body.offsetHeight, h.clientHeight, h.scrollHeight, h.offsetHeight) + 50 + 'px';
+      }, 50);
+    }
+  };
 }
 
 function meSetDevice(device) {
@@ -1254,13 +1268,13 @@ function meSetDevice(device) {
   document.getElementById('meBtnMobile').classList.toggle('active', device === 'mobile');
   if (device === 'mobile') {
     frame.style.width = '375px';
-    frame.style.height = '600px';
     wrap.classList.add('mobile');
   } else {
     frame.style.width = '100%';
-    frame.style.height = '480px';
     wrap.classList.remove('mobile');
   }
+  // Let onload recalculate Height when swapping
+  meRefreshPreviewIframe();
 }
 
 function meFormatCode() {
@@ -1582,15 +1596,15 @@ function mBuildPreview() {
 function mRenderAt(idx) {
   const row = MS.rows[idx];
   if (!row) return;
-  const name  = document.getElementById('mNameCol').value;
+  const name = document.getElementById('mNameCol').value;
   const email = document.getElementById('mEmailCol').value;
-  const subj  = mPersonalise(document.getElementById('mSubject').value, row);
-  const tmpl  = document.getElementById('mHtmlTmpl').value;
-  const body  = mPersonalise(tmpl, row);
+  const subj = mPersonalise(document.getElementById('mSubject').value, row);
+  const tmpl = document.getElementById('mHtmlTmpl').value;
+  const body = mPersonalise(tmpl, row);
 
-  document.getElementById('mFinalTo').textContent      = (row[name]||'?') + ' <' + (row[email]||'?') + '>';
+  document.getElementById('mFinalTo').textContent = (row[name] || '?') + ' <' + (row[email] || '?') + '>';
   document.getElementById('mFinalSubject').textContent = subj;
-  document.getElementById('mPrvNav').textContent       = (idx+1) + ' / ' + MS.rows.length;
+  document.getElementById('mPrvNav').textContent = (idx + 1) + ' / ' + MS.rows.length;
 
   // Render in iframe
   const iframe = document.getElementById('mPreviewIframe');
@@ -2730,13 +2744,13 @@ mNewCampaign = function () {
 
   // Patch meAiAppendBubble for Gemini Layout (Right align User, Center AI, Custom Statuses)
   // Patch meAiAppendBubble for Gemini Layout (Right align User Box, Center/Unboxed AI)
-  window.meAiAppendBubble = function(role, content, isTyping) {
+  window.meAiAppendBubble = function (role, content, isTyping) {
     const chat = document.getElementById('meAiChat');
     if (!chat) return null;
     const wrap = document.createElement('div');
     const id = 'msg_' + Date.now();
     wrap.id = id;
-    
+
     if (role === 'user') {
       // User: Right Aligned, Inside a Box
       wrap.style.cssText = 'background:rgba(255,255,255,0.08); color:var(--text); padding:14px 20px; border-radius:18px 18px 4px 18px; max-width:85%; align-self:flex-end; font-size:15px; line-height:1.5; font-family:"Plus Jakarta Sans"; margin-bottom:24px; border:1px solid rgba(255,255,255,0.05);';
@@ -2744,7 +2758,7 @@ mNewCampaign = function () {
     } else {
       // AI: Unboxed, slightly wider, centered feel with sparkle
       wrap.style.cssText = 'display:flex; gap:16px; align-self:flex-start; width:100%; color:var(--text); font-size:15px; line-height:1.7; font-family:"Plus Jakarta Sans"; margin-bottom:24px; background:transparent; border:none; padding:0;';
-      
+
       if (isTyping) {
         const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
         let sIdx = 0;
@@ -2758,11 +2772,11 @@ mNewCampaign = function () {
             </div>
             <span id="thinkText_${id}" style="color:var(--cyan); font-weight:600; font-size:14px;">Thinking...</span>
           </div>`;
-        
+
         wrap.dataset.thinkTimer = setInterval(() => {
-           sIdx = (sIdx + 1) % statuses.length;
-           const el = document.getElementById(`thinkText_${id}`);
-           if(el) el.textContent = statuses[sIdx] + '...';
+          sIdx = (sIdx + 1) % statuses.length;
+          const el = document.getElementById(`thinkText_${id}`);
+          if (el) el.textContent = statuses[sIdx] + '...';
         }, 1500);
       } else {
         // Parse Markdown & Clickable Options
@@ -2777,14 +2791,14 @@ mNewCampaign = function () {
           <div style="flex:1;">${parsedContent}</div>`;
       }
     }
-    
+
     chat.appendChild(wrap);
     chat.scrollTop = chat.scrollHeight;
-    
+
     // Hide Greeting explicitly when chat begins
     const greet = document.getElementById('galAiGreeting');
     if (greet) greet.style.display = 'none';
-    
+
     return wrap;
   };
 
@@ -2812,13 +2826,13 @@ mNewCampaign = function () {
     galAiStartCycle();
     galAiSetGreetName();
   });
- 
+
 })();
 
 /* ════════════════════════════════════════════════════════════════
    AI CLICKABLE OPTION HANDLER
 ════════════════════════════════════════════════════════════════ */
-window.applyAiOption = function(text) {
+window.applyAiOption = function (text) {
   // 1. If user was last typing in the Subject Field, update the subject!
   if (window.meLastFocusedField && window.meLastFocusedField.id === 'mSubject') {
     const subj = document.getElementById('mSubject');
@@ -2828,7 +2842,7 @@ window.applyAiOption = function(text) {
       return;
     }
   }
-  
+
   // 2. If user has a Text block actively selected on the Canvas, update it!
   if (typeof ME !== 'undefined' && ME.selectedId) {
     const b = ME.blocks.find(x => x.id === ME.selectedId);
@@ -2839,7 +2853,7 @@ window.applyAiOption = function(text) {
       return;
     }
   }
-  
+
   // 3. Fallback: Copy to clipboard
   navigator.clipboard.writeText(text);
   if (typeof meToast === 'function') meToast('Copied to clipboard!', 'info');
@@ -2848,14 +2862,14 @@ window.applyAiOption = function(text) {
 /* ════════════════════════════════════════════════════════════════
    DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
 ════════════════════════════════════════════════════════════════ */
-window.resizeMailPreview = function() {
+window.resizeMailPreview = function () {
   // Find the iframe (Update the ID if yours is named differently)
   const iframe = document.getElementById('previewFrame') || document.getElementById('mailPreviewFrame');
   if (!iframe) return;
 
   try {
     const doc = iframe.contentDocument || iframe.contentWindow.document;
-    
+
     // 1. Inject the Sleek Platform Scrollbar into the white email UI
     if (!doc.getElementById('hx-custom-scrollbar')) {
       const style = doc.createElement('style');
@@ -2881,9 +2895,9 @@ window.resizeMailPreview = function() {
     // 2. Auto-Expand Height to push the "Dispatch" button down
     iframe.style.height = '0px'; // Reset briefly to calculate true height
     const scrollHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
-    
+
     // Set the new height (adding a 40px buffer for padding)
-    iframe.style.height = (scrollHeight + 40) + 'px'; 
+    iframe.style.height = (scrollHeight + 40) + 'px';
 
   } catch (e) {
     console.warn("Could not resize iframe due to cross-origin or loading state.");
@@ -2893,14 +2907,14 @@ window.resizeMailPreview = function() {
 /* ════════════════════════════════════════════════════════════════
    DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
 ════════════════════════════════════════════════════════════════ */
-window.resizeMailPreview = function() {
+window.resizeMailPreview = function () {
   const iframe = document.getElementById('mPreviewIframe');
   if (!iframe) return;
 
   try {
     const doc = iframe.contentDocument || iframe.contentWindow.document;
     if (!doc || !doc.body) return;
-    
+
     // 1. Inject Sleek Scrollbar into the white email UI
     if (!doc.getElementById('hx-custom-scrollbar')) {
       const style = doc.createElement('style');
@@ -2918,7 +2932,7 @@ window.resizeMailPreview = function() {
     // 2. Auto-Expand Height
     iframe.style.height = '0px'; // Temporarily collapse to get true scrollHeight
     const newHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 340);
-    iframe.style.height = (newHeight + 40) + 'px'; 
+    iframe.style.height = (newHeight + 40) + 'px';
   } catch (e) {
     console.warn("Iframe resize blocked:", e);
   }

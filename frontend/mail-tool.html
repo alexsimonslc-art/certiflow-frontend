@@ -2056,11 +2056,24 @@
       transform: translateZ(0);
       backface-visibility: hidden;
     }
+
     /* ── Custom Gemini Input Scrollbar ── */
-    .custom-scroll-input::-webkit-scrollbar { width: 6px; }
-    .custom-scroll-input::-webkit-scrollbar-track { background: transparent; }
-    .custom-scroll-input::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-    .custom-scroll-input::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+    .custom-scroll-input::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scroll-input::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scroll-input::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+
+    .custom-scroll-input::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
 
     /* ── AI Clickable Options ── */
     .ai-clickable-option {
@@ -2077,21 +2090,39 @@
       line-height: 1.4;
       font-weight: 500;
     }
+
     .ai-clickable-option:hover {
       background: rgba(0, 212, 255, 0.15);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0, 212, 255, 0.1);
     }
+
     /* ── 1. Premium Ambient Background ── */
     .gal-ai-panel {
-      background: linear-gradient(180deg, rgba(4,8,15,0.97) 0%, rgba(10,14,25,0.99) 100%),
-                  radial-gradient(circle at 50% 0%, rgba(124,58,237,0.08) 0%, transparent 50%) !important;
+      background: linear-gradient(180deg, rgba(4, 8, 15, 0.97) 0%, rgba(10, 14, 25, 0.99) 100%),
+        radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.08) 0%, transparent 50%) !important;
     }
 
     /* ── 2. Kill the CSS Glass Glitches ── */
-    .gal-ai-close:hover { background: transparent !important; color: var(--cyan) !important; box-shadow: none !important; }
-    .custom-scroll-input:hover, .custom-scroll-input:focus { background: rgba(255,255,255,0.03) !important; border-color: rgba(0, 212, 255, 0.4) !important; box-shadow: none !important; }
-    #meAiSendBtn:hover { background: transparent !important; transform: scale(1.1) !important; color: var(--cyan) !important; box-shadow: none !important; }
+    .gal-ai-close:hover {
+      background: transparent !important;
+      color: var(--cyan) !important;
+      box-shadow: none !important;
+    }
+
+    .custom-scroll-input:hover,
+    .custom-scroll-input:focus {
+      background: rgba(255, 255, 255, 0.03) !important;
+      border-color: rgba(0, 212, 255, 0.4) !important;
+      box-shadow: none !important;
+    }
+
+    #meAiSendBtn:hover {
+      background: transparent !important;
+      transform: scale(1.1) !important;
+      color: var(--cyan) !important;
+      box-shadow: none !important;
+    }
   </style>
 </head>
 
@@ -2768,31 +2799,46 @@
 
               <!-- Personalised Preview -->
               <div class="card" style="padding:0;overflow:hidden">
-              <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-                <div class="card-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Personalized Preview
-                </div>
-                <div class="preview-nav">
-                  <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
-                  <button class="preview-nav-btn" onclick="mNavPrev()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                  </button>
-                  <button class="preview-nav-btn" onclick="mNavNext()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </button>
-                </div>
-              </div>
-              <div style="padding:20px">
-                <div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden">
-                  <div style="background:#e8edf3;padding:12px 18px;border-bottom:1px solid rgba(0,0,0,0.08)">
-                    <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
-                    <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span id="mFinalSubject">—</span></div>
+                <div
+                  style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                  <div class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    Personalized Preview
                   </div>
-                  <iframe id="mPreviewIframe" scrolling="no" onload="if(window.resizeMailPreview) window.resizeMailPreview()" style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease;" sandbox="allow-same-origin allow-scripts"></iframe>
+                  <div class="preview-nav">
+                    <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
+                    <button class="preview-nav-btn" onclick="mNavPrev()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                      </svg>
+                    </button>
+                    <button class="preview-nav-btn" onclick="mNavNext()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div style="padding:20px">
+                  <div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden">
+                    <div style="background:#e8edf3;padding:12px 18px;border-bottom:1px solid rgba(0,0,0,0.08)">
+                      <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong
+                          style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
+                      <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span
+                          id="mFinalSubject">—</span></div>
+                    </div>
+                    <iframe id="mPreviewIframe" scrolling="no"
+                      onload="if(window.resizeMailPreview) window.resizeMailPreview()"
+                      style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease;"
+                      sandbox="allow-same-origin allow-scripts"></iframe>
+                  </div>
                 </div>
               </div>
-            </div>
 
               <!-- Send Summary -->
               <div class="card">
@@ -2978,30 +3024,59 @@
         </button>
       </div>
 
-      <div class="gal-ai-chat" id="meAiChat" style="display:flex; flex-direction:column; flex:1; overflow-y:auto; padding:24px 20px;">
-      
-      <div class="gal-ai-greeting" id="galAiGreeting" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%; margin:auto;">
-        <div style="font-size:32px; font-weight:800; background:linear-gradient(90deg, #ffffff, #a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; letter-spacing:-0.5px;" id="galAiGreetName">Good to see you.</div>
-        <div style="font-size:16px; color:var(--text-2); margin-bottom:32px;">What shall we design today?</div>
-        
-        <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
-          <div class="gal-ai-sugg-btn" onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();" style="padding:12px 18px; border-radius:12px; font-size:14px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">Design a sleek header block</div>
-          <div class="gal-ai-sugg-btn" onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();" style="padding:12px 18px; border-radius:12px; font-size:14px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">Create a 3-column feature grid</div>
-          <div class="gal-ai-sugg-btn" onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();" style="padding:12px 18px; border-radius:12px; font-size:14px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">Write 5 catchy subject lines</div>
+      <div class="gal-ai-chat" id="meAiChat"
+        style="display:flex; flex-direction:column; flex:1; overflow-y:auto; padding:24px 20px;">
+
+        <div class="gal-ai-greeting" id="galAiGreeting"
+          style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%; margin:auto;">
+          <div
+            style="font-size:28px; font-weight:700; background:linear-gradient(90deg, #00d4ff, #7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; letter-spacing:-0.5px;"
+            id="galAiGreetName">Good to see you.</div>
+          <div style="font-size:15px; color:var(--text-2); margin-bottom:24px;">What shall we design today?</div>
+
+          <div
+            style="display:flex; gap:10px; overflow-x:auto; max-width:100%; padding:4px 0 14px 0; scrollbar-width:none; -webkit-overflow-scrolling:touch;">
+            <div class="gal-ai-sugg-btn"
+              onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();"
+              style="padding:10px 16px; border-radius:20px; font-size:13px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-2); white-space:nowrap; cursor:pointer; transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(0, 212, 255, 0.1)';this.style.color='var(--cyan)';this.style.borderColor='rgba(0, 212, 255, 0.3)';this.style.transform='translateY(-2px)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='var(--text-2)';this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
+              Design a sleek header block</div>
+            <div class="gal-ai-sugg-btn"
+              onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();"
+              style="padding:10px 16px; border-radius:20px; font-size:13px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-2); white-space:nowrap; cursor:pointer; transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(0, 212, 255, 0.1)';this.style.color='var(--cyan)';this.style.borderColor='rgba(0, 212, 255, 0.3)';this.style.transform='translateY(-2px)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='var(--text-2)';this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
+              Create a 3-column feature grid</div>
+            <div class="gal-ai-sugg-btn"
+              onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();"
+              style="padding:10px 16px; border-radius:20px; font-size:13px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-2); white-space:nowrap; cursor:pointer; transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(0, 212, 255, 0.1)';this.style.color='var(--cyan)';this.style.borderColor='rgba(0, 212, 255, 0.3)';this.style.transform='translateY(-2px)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='var(--text-2)';this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
+              Write 5 catchy subject lines</div>
+          </div>
+          <style>
+            #galAiGreeting>div:nth-child(3)::-webkit-scrollbar {
+              display: none;
+            }
+          </style>
         </div>
       </div>
-    </div>
 
-    <div style="padding:0 20px 24px 20px; background:transparent; position:relative; flex-shrink:0;">
-      <textarea id="meAiInput" class="custom-scroll-input" rows="2" placeholder="Ask Gal AI to design or write..." autocomplete="off" 
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();meAiSend()}" 
-        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,180)+'px'" 
-        style="width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px 50px 20px 20px; color:var(--text); font-size:15px; font-family:'Plus Jakarta Sans',sans-serif; outline:none; resize:none; min-height:85px; max-height:180px; overflow-y:auto; transition:border-color 0.2s; box-sizing:border-box; line-height:1.6;"></textarea>
-      
-      <button id="meAiSendBtn" onclick="meAiSend()" title="Send" style="position:absolute; right:36px; bottom:42px; width:28px; height:28px; background:transparent; color:var(--text-3); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; z-index:2; padding:0;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>
+      <div style="padding:0 20px 24px 20px; background:transparent; position:relative; flex-shrink:0;">
+        <textarea id="meAiInput" class="custom-scroll-input" rows="2" placeholder="Ask Gal AI to design or write..."
+          autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();meAiSend()}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,180)+'px'"
+          style="width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px 50px 20px 20px; color:var(--text); font-size:15px; font-family:'Plus Jakarta Sans',sans-serif; outline:none; resize:none; min-height:85px; max-height:180px; overflow-y:auto; transition:border-color 0.2s; box-sizing:border-box; line-height:1.6;"></textarea>
+
+        <button id="meAiSendBtn" onclick="meAiSend()" title="Send"
+          style="position:absolute; right:36px; bottom:42px; width:28px; height:28px; background:transparent; color:var(--text-3); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; z-index:2; padding:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;">
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </svg>
+        </button>
+      </div>
 
     </div>
   </div>
