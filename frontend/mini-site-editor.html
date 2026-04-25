@@ -1937,7 +1937,18 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
           config: { name: MSState.siteName, theme: MSState.theme, accentColor: MSState.accentColor }
         };
 
-        const res = await apiFetch('/api/minisite-ai/chat', { method: 'POST', body: JSON.stringify(payload) });
+        // ── FIXED: Native Fetch with Authorization ──
+        const token = localStorage.getItem('Honourix_token');
+        const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/minisite-ai/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(payload)
+        });
+        const res = await response.json();
+        // ──────────────────────────────────────────
 
         clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
         document.getElementById(loadingId)?.remove();

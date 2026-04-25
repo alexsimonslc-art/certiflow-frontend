@@ -2391,23 +2391,30 @@ async function meAiSend() {
   meAiChatHistory.push({ role: 'user', content: msg });
 
   try {
-    mePushHistory(); // save undo snapshot before AI modifies canvas
+      mePushHistory(); // save undo snapshot before AI modifies canvas
 
-    const body = {
-      userMessage: msg,
-      currentBlocks: ME.blocks,
-      headers: MS.headers,
-      chatHistory: meAiChatHistory.slice(-10),
-      selectedBlockId: ME.selectedId,
-    };
+      const body = {
+        userMessage: msg,
+        currentBlocks: ME.blocks,
+        headers: MS.headers,
+        chatHistory: meAiChatHistory.slice(-10),
+        selectedBlockId: ME.selectedId,
+      };
 
-    const res = await apiFetch('/api/ai/generate-email', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
+      // ── FIXED: Native Fetch with Authorization ──
+      const token = localStorage.getItem('Honourix_token');
+      const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/generate-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(body),
+      });
+      const res = await response.json();
+      // ──────────────────────────────────────────
 
-    if (typingEl) typingEl.remove();
-
+      if (typingEl) typingEl.remove();
     const action  = res.action;
     const message = res.message || '';
 
