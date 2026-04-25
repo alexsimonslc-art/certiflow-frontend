@@ -422,7 +422,22 @@
   async function loadStats() {
     const local = getLocalStats();
     renderStats({ ...local, monthlyEmailLimit: 500 });
-    
+
+    // Fetch real cert + mail counts from Supabase via campaigns API
+    try {
+      const campData = await apiFetch('/api/campaigns', { silent: true });
+      if (campData?.campaigns) {
+        const camps = campData.campaigns;
+        local.totalCerts = camps
+          .filter(c => c.type === 'cert' || c.type === 'combined')
+          .reduce((s, c) => s + (c.sent_count || 0), 0);
+        local.totalMails = camps
+          .filter(c => c.type === 'mail' || c.type === 'combined')
+          .reduce((s, c) => s + (c.sent_count || 0), 0);
+        renderStats({ ...local, monthlyEmailLimit: 500 });
+      }
+    } catch { /* use local fallback */ }
+
     // Fetch system quota from Honourix Backend
     try {
       const data = await apiFetch('/api/quota', { silent: true });

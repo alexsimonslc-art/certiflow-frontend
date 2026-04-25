@@ -2738,8 +2738,9 @@ mNewCampaign = function () {
     } else {
       // Centered AI Text with Sparkle Icon
       wrap.style.cssText = 'display:flex; gap:16px; align-self:flex-start; width:100%; color:var(--text); font-size:14.5px; line-height:1.6; font-family:"Plus Jakarta Sans"; margin-bottom:12px;';
-
+      
       if (isTyping) {
+        // ... (Keep your existing isTyping logic exactly the same) ...
         const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
         let sIdx = 0;
         wrap.innerHTML = `
@@ -2752,16 +2753,25 @@ mNewCampaign = function () {
             </div>
             <span id="thinkText_${id}" style="color:var(--cyan); font-weight:600; font-size:13px;">Thinking...</span>
           </div>`;
-
+        
         wrap.dataset.thinkTimer = setInterval(() => {
-          sIdx = (sIdx + 1) % statuses.length;
-          const el = document.getElementById(`thinkText_${id}`);
-          if (el) el.textContent = statuses[sIdx] + '...';
+           sIdx = (sIdx + 1) % statuses.length;
+           const el = document.getElementById(`thinkText_${id}`);
+           if(el) el.textContent = statuses[sIdx] + '...';
         }, 1500);
       } else {
+        // ── MARKDOWN & CLICKABLE PARSER ──
+        let parsedContent = content.replace(/\n/g, '<br>'); // Newlines
+        parsedContent = parsedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+        parsedContent = parsedContent.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italic
+
+        // Detect Bullets (- or • or 1.) and turn them into Clickable UI Pills
+        parsedContent = parsedContent.replace(/<br>[•\-\*]\s+(.+)/g, '<br><div class="ai-clickable-option" onclick="applyAiOption(this.innerText)">$1</div>');
+        parsedContent = parsedContent.replace(/<br>\d+\.\s+(.+)/g, '<br><div class="ai-clickable-option" onclick="applyAiOption(this.innerText)">$1</div>');
+
         wrap.innerHTML = `
           <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3);">✨</div>
-          <div style="flex:1; padding-top:3px;">${content.replace(/\n/g, '<br>')}</div>`;
+          <div style="flex:1; padding-top:3px;">${parsedContent}</div>`;
       }
     }
 
@@ -2800,3 +2810,33 @@ mNewCampaign = function () {
     galAiSetGreetName();
   });
 })();
+
+/* ════════════════════════════════════════════════════════════════
+   AI CLICKABLE OPTION HANDLER
+════════════════════════════════════════════════════════════════ */
+window.applyAiOption = function(text) {
+  // 1. If user was last typing in the Subject Field, update the subject!
+  if (window.meLastFocusedField && window.meLastFocusedField.id === 'mSubject') {
+    const subj = document.getElementById('mSubject');
+    if (subj) {
+      subj.value = text;
+      if (typeof meToast === 'function') meToast('Subject updated!', 'success');
+      return;
+    }
+  }
+  
+  // 2. If user has a Text block actively selected on the Canvas, update it!
+  if (typeof ME !== 'undefined' && ME.selectedId) {
+    const b = ME.blocks.find(x => x.id === ME.selectedId);
+    if (b && (b.type === 'text' || b.type === 'title')) {
+      b.props.text = text;
+      if (typeof meRenderCanvas === 'function') meRenderCanvas();
+      if (typeof meToast === 'function') meToast('Text block updated!', 'success');
+      return;
+    }
+  }
+  
+  // 3. Fallback: Copy to clipboard
+  navigator.clipboard.writeText(text);
+  if (typeof meToast === 'function') meToast('Copied to clipboard!', 'info');
+};

@@ -1577,8 +1577,13 @@ async function saveCampaignToDatabase() {
         backup_data: backupData,
       }),
     });
+    // Keep localStorage in sync so the home-page stat card stays accurate
+    const stored = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
+    stored.push({ type: 'cert', name, total, success: ok, ts: Date.now() });
+    localStorage.setItem('hx_campaigns', JSON.stringify(stored));
   } catch(e) {
     console.error('Campaign database save failed', e);
+    toast('Campaign save failed: ' + e.message, 'error', 6000);
   }
 }
 function renderResultRows(results) {
