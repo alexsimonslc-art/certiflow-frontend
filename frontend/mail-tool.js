@@ -2116,7 +2116,7 @@ function meLoadTemplateAndOpenEditor(key) {
   // Init CM if not done yet
   if (!ME.initialized) meOnStepEnterInternal();
   else if (ME.cm) ME.cm.refresh();
-  meSwitchTab('visual');
+  if (ME.mode !== 'code') meSwitchTab('visual');
   meBuildMergeTagsRow();
   meInitSortable();
 
