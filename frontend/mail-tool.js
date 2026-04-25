@@ -2038,6 +2038,14 @@ function meLoadTemplateAndOpenEditor(key) {
   meSwitchTab('visual');
   meBuildMergeTagsRow();
   meInitSortable();
+
+  // Snap back to top of the card
+  const editorCard = document.getElementById('meCard');
+  if (editorCard) {
+    editorCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function meBackToGate() {
