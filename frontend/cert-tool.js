@@ -1414,6 +1414,7 @@ async function startGeneration() {
 
   const payload = {
     campaignName:  document.getElementById('campaignName').value,
+    eventName:     CS.eventName || '', // <-- Added: Pass the optional event name to the backend!
     template: {
       width: ED.w,
       height: ED.h,
