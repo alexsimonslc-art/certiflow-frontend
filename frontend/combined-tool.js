@@ -803,33 +803,34 @@ function downloadFullReport() { downloadCSV(CP.results.map(r => ({ Name:r.name, 
 async function saveCampaignHistory(rec) { 
   const mappings = getAllMappings();
   
-  // Build Backup Sheet Payload (Serial No, Mapped Fields, Cert Link)
+  // Build Backup Sheet Payload: S.No | Email | mapped cert fields | Certificate Link
   const backupData = CP.results.map((r, i) => {
-     const original = CP.rows[i] || {};
-     const rowData = { "S.No": i + 1 };
-     
-     if (mappings.name) rowData[mappings.name] = r.name || original[mappings.name] || '';
-     if (mappings.email) rowData[mappings.email] = r.email || original[mappings.email] || '';
-     
-     CP.customMappings.forEach(m => {
-         if (m.col) rowData[m.col] = original[m.col] || '';
-     });
-     
-     rowData["Certificate Link"] = r.certLink || '';
-     return rowData;
+    const original = CP.rows[i] || {};
+    const rowData  = { 'S.No': i + 1, 'Email': r.email || '' };
+
+    // Add any extra mapped columns (name + custom mappings, excluding email)
+    if (mappings.name && mappings.name !== mappings.email) {
+      rowData[mappings.name] = r.name || original[mappings.name] || '';
+    }
+    CP.customMappings.forEach(m => {
+      if (m.col && m.col !== mappings.email) rowData[m.col] = original[m.col] || '';
+    });
+
+    rowData['Certificate Link'] = r.certLink || '';
+    return rowData;
   });
 
   try {
     await apiFetch('/api/campaigns', {
       method: 'POST',
       body: JSON.stringify({
-        name: rec.name || 'Combined Campaign',
-        type: 'combined',
+        name:        rec.name || 'Combined Campaign',
+        type:        'combined',
         total_count: rec.total,
-        sent_count: rec.success,
-        status: rec.failed === 0 ? 'completed' : (rec.success > 0 ? 'partial' : 'failed'),
-        backup_data: backupData // Backend uses this to create the Backup Google Sheet!
-      })
+        sent_count:  rec.success,
+        status:      rec.failed === 0 ? 'completed' : (rec.success > 0 ? 'partial' : 'failed'),
+        backup_data: backupData,
+      }),
     });
   } catch(e) {
     console.error('Pipeline database save failed', e);

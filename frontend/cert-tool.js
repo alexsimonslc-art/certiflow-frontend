@@ -1491,6 +1491,8 @@ async function startGeneration() {
             log(event.type === 'success' ? 'ok' : 'err', event.message);
           } 
           else if (event.type === 'done') {
+            CS.folderId   = event.folderId   || null;
+            CS.folderLink = event.folderLink || null;
             log('info', event.message);
             setTimeout(() => showResults(), 800);
           }
@@ -1563,21 +1565,17 @@ async function saveCampaignToDatabase() {
   });
 
   try {
-    const token = localStorage.getItem('Honourix_token');
-    await fetch('https://certiflow-backend-73xk.onrender.com/api/campaigns', {
+    await apiFetch('/api/campaigns', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
       body: JSON.stringify({
-        name: name,
-        type: 'cert', // Note: Change this to 'combined' in combined-tool.js
+        name,
+        type:        'cert',
         total_count: total,
-        sent_count: ok,
-        status: status,
-        backup_data: backupData 
-      })
+        sent_count:  ok,
+        status,
+        folder_id:   CS.folderId || null,
+        backup_data: backupData,
+      }),
     });
   } catch(e) {
     console.error('Campaign database save failed', e);
