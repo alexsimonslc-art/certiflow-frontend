@@ -1541,6 +1541,7 @@ function showResults() {
 
 // ── Connect Campaign & Backup Sheet to Supabase ──
 // ── Connect Campaign & Backup Sheet to Supabase ──
+// ── Connect Campaign & Backup Sheet to Supabase ──
 async function saveCampaignToDatabase() {
   const name = document.getElementById('campaignName').value || 'Certificate Run';
   const total = CS.results.length;
@@ -1571,13 +1572,11 @@ async function saveCampaignToDatabase() {
       },
       body: JSON.stringify({
         name: name,
-        type: 'cert', // Change to 'combined' for the pipeline tool
+        type: 'cert', // Note: Change this to 'combined' in combined-tool.js
         total_count: total,
         sent_count: ok,
         status: status,
         backup_data: backupData 
-        // 👆 Your backend must intercept 'backup_data', create the Google Sheet in the cert folder, 
-        // and save the resulting URL to the 'backup_sheet_link' column in Supabase!
       })
     });
   } catch(e) {
