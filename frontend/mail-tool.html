@@ -860,12 +860,21 @@
 
     /* Code Editor */
     /* Code Editor */
+    #meCode {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+
     .me-code-wrap {
       height: 520px;
       position: relative;
       overflow: hidden;
       border-radius: 0 0 var(--radius-lg) var(--radius-lg);
       min-width: 0;
+      width: 100%;
+      max-width: 100%;
     }
 
     .CodeMirror {
@@ -873,6 +882,8 @@
       font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
       font-size: 13.5px !important;
       line-height: 1.7 !important;
+      width: 100% !important;
+      max-width: 100% !important;
     }
 
     .CodeMirror.cm-s-dracula {
