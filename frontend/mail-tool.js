@@ -521,20 +521,30 @@ function meBlockToHtml(block) {
     }
 
     case 'table': {
-      const d = p.data || [[]];
-      const bw = p.borderWidth || 0;
-      const bst = bw > 0 ? `${bw}px solid ${p.borderColor}` : 'none';
+      const d   = p.data || [[]];
+      const bw  = p.borderWidth || 0;
+      const bst = bw > 0 ? `${bw}px solid ${p.borderColor || '#e2e8f0'}` : 'none';
+      
+      // Strict fallbacks to prevent "undefined" CSS crashes
+      const cBg = p.cellBg || '#ffffff';
+      const cColor = p.cellColor || '#475569';
+      const hBg = p.headerBg || '#f1f5f9';
+      const hColor = p.headerColor || '#1e293b';
+      const fSize = p.fontSize || 14;
+      const pad = p.cellPadding || 10;
+      
       const rows = d.map((row, ri) => {
         const isHeader = p.headerRow && ri === 0;
         const cells = row.map(cell =>
           isHeader
-            ? `<th style="padding:${p.cellPadding}px;background:${p.headerBg};color:${p.headerColor};font-weight:700;font-size:${p.fontSize}px;border:${bst};text-align:left">${cell}</th>`
-            : `<td style="padding:${p.cellPadding}px;background:${p.cellBg};color:${p.cellColor};font-size:${p.fontSize}px;border:${bst}">${cell}</td>`
+            ? `<th style="padding:${pad}px;background:${hBg};color:${hColor};font-family:${fontStack};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cell}</th>`
+            : `<td style="padding:${pad}px;background:${cBg};color:${cColor};font-family:${fontStack};font-size:${fSize}px;border:${bst}">${cell}</td>`
         ).join('');
         return `<tr>${cells}</tr>`;
       }).join('');
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}">
-        <table width="${p.width}" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:${p.width};border:${bst}">
+      
+      return `<div style="padding:${p.paddingV || 20}px ${p.paddingH || 40}px;background:${p.bgColor || '#ffffff'}">
+        <table width="${p.width || '100%'}" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:${p.width || '100%'};border:${bst}">
           ${rows}
         </table>
       </div>`;
