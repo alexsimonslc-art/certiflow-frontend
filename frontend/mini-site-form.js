@@ -383,9 +383,14 @@
         userAgent: navigator.userAgent.slice(0, 120),
       };
 
-      await postWithRetry(payload);
+      const data = await postWithRetry(payload);
       markSubmitted(fp);
-      showSuccessCard(form);
+      if (data.pass?.enabled) {
+        showSuccessCard(form);
+        showPassModal(data.pass);
+      } else {
+        showSuccessCard(form);
+      }
 
     } catch (err) {
       console.error('[MSForm] submit failed:', err.message);
@@ -561,6 +566,170 @@
     if (hidden) hidden.value = items.join(', ');
   }
 
+  /* ─── ENTRY PASS MODAL ───────────────────────────────────────── */
+  function showPassModal(pass) {
+    // Remove existing modal
+    document.getElementById('msf-pass-overlay')?.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'msf-pass-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)';
+    overlay.innerHTML = `
+      <div style="background:#0f1526;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:28px;max-width:520px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,0.7);position:relative">
+        <button onclick="document.getElementById('msf-pass-overlay').remove()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.08);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+        <h2 style="font-family:system-ui,sans-serif;font-size:18px;font-weight:700;color:#fff;margin:0 0 6px">Your Entry Pass</h2>
+        <p style="font-family:system-ui,sans-serif;font-size:13px;color:rgba(255,255,255,0.5);margin:0 0 20px">Show this pass at the event entrance</p>
+        <canvas id="msf-pass-canvas" width="860" height="380" style="width:100%;border-radius:12px;display:block"></canvas>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button id="msf-pass-dl" onclick="msfDownloadPass()" style="flex:1;padding:11px;background:linear-gradient(135deg,#7c6efa,#5b8df6);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:system-ui,sans-serif">⬇ Download Pass</button>
+          <button onclick="document.getElementById('msf-pass-overlay').remove()" style="padding:11px 20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:rgba(255,255,255,0.7);font-size:14px;cursor:pointer;font-family:system-ui,sans-serif">Close</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    const canvas = document.getElementById('msf-pass-canvas');
+    msfRenderPassCanvas(canvas, pass);
+  }
+
+  function msfRenderPassCanvas(canvas, pass) {
+    const ctx = canvas.getContext('2d');
+    const W = 860, H = 380;
+    const cfg = pass.config || {};
+    const bannerColor = cfg.passBannerColor || '#1a1a2e';
+    const textColor   = cfg.passTextColor   || '#ffffff';
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, bannerColor);
+    bg.addColorStop(1, msfDarken(bannerColor, 40));
+    ctx.fillStyle = bg;
+    msfRoundRect(ctx, 0, 0, W, H, 16);
+    ctx.fill();
+
+    // Decorative circle
+    ctx.save();
+    ctx.globalAlpha = 0.06;
+    ctx.beginPath();
+    ctx.arc(W - 120, H / 2, 200, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.restore();
+
+    // Event name
+    ctx.fillStyle = textColor;
+    ctx.font = 'bold 26px system-ui,sans-serif';
+    ctx.fillText(cfg.passEventName || 'Event Pass', 36, 54);
+
+    // Venue + date strip
+    const venue = cfg.passVenue || '';
+    const date  = cfg.passDate  ? new Date(cfg.passDate).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '';
+    const time  = cfg.passTime  || '';
+    const meta  = [venue, date, time].filter(Boolean).join('  •  ');
+    ctx.font = '14px system-ui,sans-serif';
+    ctx.fillStyle = msfAlpha(textColor, 0.65);
+    ctx.fillText(meta, 36, 82);
+
+    // Divider
+    ctx.strokeStyle = msfAlpha(textColor, 0.15);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(36, 100); ctx.lineTo(W - 260, 100); ctx.stroke();
+
+    // Attendee name
+    ctx.font = 'bold 32px system-ui,sans-serif';
+    ctx.fillStyle = textColor;
+    ctx.fillText(pass.attendeeName || 'Guest', 36, 148);
+
+    // Rules
+    const rules = cfg.passRules || '';
+    if (rules) {
+      ctx.font = '13px system-ui,sans-serif';
+      ctx.fillStyle = msfAlpha(textColor, 0.55);
+      msfWrapText(ctx, rules, 36, 180, W - 280, 18, 3);
+    }
+
+    // Token
+    ctx.font = '11px monospace';
+    ctx.fillStyle = msfAlpha(textColor, 0.35);
+    ctx.fillText(`TOKEN: ${pass.token?.slice(0, 8).toUpperCase() || ''}`, 36, H - 24);
+
+    // QR code
+    if (pass.qrDataUrl) {
+      const img = new Image();
+      img.onload = () => {
+        const qrSize = 180;
+        const qrX = W - qrSize - 36;
+        const qrY = (H - qrSize) / 2;
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = 20;
+        ctx.fillStyle = '#ffffff';
+        msfRoundRect(ctx, qrX - 10, qrY - 10, qrSize + 20, qrSize + 20, 10);
+        ctx.fill();
+        ctx.restore();
+        ctx.drawImage(img, qrX, qrY, qrSize, qrSize);
+      };
+      img.src = pass.qrDataUrl;
+    }
+  }
+
+  function msfDownloadPass() {
+    const canvas = document.getElementById('msf-pass-canvas');
+    if (!canvas) return;
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'entry-pass.png';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }, 'image/png');
+  }
+
+  function msfRoundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function msfWrapText(ctx, text, x, y, maxW, lineH, maxLines) {
+    const words = text.split(' ');
+    let line = '', linesDrawn = 0;
+    for (const word of words) {
+      const test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > maxW && line) {
+        if (linesDrawn >= maxLines - 1) { ctx.fillText(line + '…', x, y); return; }
+        ctx.fillText(line, x, y); y += lineH; line = word; linesDrawn++;
+      } else { line = test; }
+    }
+    if (line) ctx.fillText(line, x, y);
+  }
+
+  function msfAlpha(hex, a) {
+    const [r, g, b] = msfHexRgb(hex);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  function msfDarken(hex, amt) {
+    let [r, g, b] = msfHexRgb(hex);
+    r = Math.max(0, r - amt); g = Math.max(0, g - amt); b = Math.max(0, b - amt);
+    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+  }
+
+  function msfHexRgb(hex) {
+    hex = (hex || '#1a1a2e').replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+  }
+
   /* ─── BOOT ───────────────────────────────────────────────────── */
   function boot() {
     injectStyles();
@@ -573,6 +742,7 @@
     boot();
   }
 
+  window.msfDownloadPass = msfDownloadPass;
   window.MSForm = { bind: bindForm, boot };
 })();
 

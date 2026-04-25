@@ -497,6 +497,77 @@
             <div class="mse-prop-hint" id="slugHint">Loading…<span id="slugPreview">—</span></div>
           </div>
         </div>
+
+        <div class="mse-props-section" style="padding-top:14px;padding-bottom:14px">
+          <div class="mse-props-sec-label">Entry Pass</div>
+          <div class="mse-toggle-row">
+            <span>Enable Entry Pass</span>
+            <div class="mse-toggle" id="msPassToggle" onclick="mseTogglePass()"></div>
+          </div>
+          <div id="msPassSettings" style="display:none;margin-top:10px">
+            <div class="mse-prop-row">
+              <div class="mse-prop-label">Event Name (on pass)</div>
+              <input type="text" class="mse-prop-input" id="msPassEventName" placeholder="Annual Tech Summit 2026"
+                oninput="mseUpdatePassConfig({passEventName:this.value})" />
+            </div>
+            <div class="mse-prop-row">
+              <div class="mse-prop-label">Venue</div>
+              <input type="text" class="mse-prop-input" id="msPassVenue" placeholder="City Hall, New Delhi"
+                oninput="mseUpdatePassConfig({passVenue:this.value})" />
+            </div>
+            <div style="display:flex;gap:8px">
+              <div class="mse-prop-row" style="flex:1">
+                <div class="mse-prop-label">Date</div>
+                <input type="date" class="mse-prop-input" id="msPassDate"
+                  oninput="mseUpdatePassConfig({passDate:this.value})" />
+              </div>
+              <div class="mse-prop-row" style="flex:1">
+                <div class="mse-prop-label">Time</div>
+                <input type="time" class="mse-prop-input" id="msPassTime"
+                  oninput="mseUpdatePassConfig({passTime:this.value})" />
+              </div>
+            </div>
+            <div class="mse-prop-row">
+              <div class="mse-prop-label">Rules / Notes (on pass)</div>
+              <textarea class="mse-prop-input" id="msPassRules" rows="2" placeholder="Carry valid ID. No re-entry."
+                style="resize:vertical" oninput="mseUpdatePassConfig({passRules:this.value})"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+              <div style="flex:1">
+                <div class="mse-prop-label">Banner Color</div>
+                <input type="color" id="msPassBannerColor" value="#1a1a2e"
+                  oninput="mseUpdatePassConfig({passBannerColor:this.value})" style="width:100%;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer" />
+              </div>
+              <div style="flex:1">
+                <div class="mse-prop-label">Text Color</div>
+                <input type="color" id="msPassTextColor" value="#ffffff"
+                  oninput="mseUpdatePassConfig({passTextColor:this.value})" style="width:100%;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer" />
+              </div>
+            </div>
+            <div class="mse-prop-row">
+              <div class="mse-prop-label">Name field key (exact form label)</div>
+              <input type="text" class="mse-prop-input" id="msPassNameField" placeholder="Full Name"
+                oninput="mseUpdatePassConfig({passNameField:this.value})" />
+            </div>
+            <div class="mse-prop-row">
+              <div class="mse-prop-label">Email field key (exact form label)</div>
+              <input type="text" class="mse-prop-input" id="msPassEmailField" placeholder="Email Address"
+                oninput="mseUpdatePassConfig({passEmailField:this.value})" />
+            </div>
+            <div class="mse-toggle-row" style="margin-top:6px">
+              <span>Show Attendance Scanner</span>
+              <div class="mse-toggle" id="msPassShowAttendance" onclick="mseTogglePassAttendance()"></div>
+            </div>
+            <div class="mse-prop-hint" style="margin-bottom:6px">Adds a Scanner button to the site list</div>
+            <div id="msPassStaffCodeBox" style="display:none;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.18);border-radius:8px;padding:10px;margin-top:6px">
+              <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">Staff Scanner Code</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span id="msPassStaffCodeDisplay" style="font-family:monospace;font-size:16px;font-weight:700;color:var(--cyan);letter-spacing:3px"></span>
+                <button id="msPassCodeCopyBtn" onclick="mseCopyPassCode()" style="padding:3px 10px;background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.25);color:var(--cyan);border-radius:5px;font-size:11px;cursor:pointer">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </aside>
@@ -1432,6 +1503,8 @@
       const pubReg = document.getElementById('publishRegToggle');
       if (pubReg) pubReg.classList.toggle('on', !!c.registrationOpen);
 
+      mseRefreshPassUI();
+
       // Update status display
       const ss = document.getElementById('saveStatus');
       const ssT = document.getElementById('saveStatusText');
@@ -1482,6 +1555,68 @@
       document.getElementById('publishRegToggle')?.classList.toggle('on', MSState.config.registrationOpen);
     }
     function toggleRegFromPublish() { toggleRegistration(); }
+
+    /* ── Entry Pass Settings ── */
+    function mseTogglePass() {
+      const pc = MSState.config.passConfig || {};
+      const next = !pc.passEnabled;
+      const upd = { ...pc, passEnabled: next };
+      if (next && !pc.passStaffCode) {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        upd.passStaffCode = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+      }
+      MSState.updateConfig({ passConfig: upd });
+      mseRefreshPassUI();
+    }
+
+    function mseTogglePassAttendance() {
+      const pc = MSState.config.passConfig || {};
+      MSState.updateConfig({ passConfig: { ...pc, passShowAttendance: !pc.passShowAttendance } });
+      document.getElementById('msPassShowAttendance')?.classList.toggle('on', !!MSState.config.passConfig?.passShowAttendance);
+      mseRefreshPassStaffCode();
+    }
+
+    function mseUpdatePassConfig(patch) {
+      MSState.updateConfig({ passConfig: { ...(MSState.config.passConfig || {}), ...patch } });
+    }
+
+    function mseCopyPassCode() {
+      const code = MSState.config.passConfig?.passStaffCode || '';
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('msPassCodeCopyBtn');
+        if (btn) { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 2000); }
+      });
+    }
+
+    function mseRefreshPassStaffCode() {
+      const pc = MSState.config.passConfig || {};
+      const box = document.getElementById('msPassStaffCodeBox');
+      if (box) box.style.display = pc.passShowAttendance ? 'block' : 'none';
+      const codeEl = document.getElementById('msPassStaffCodeDisplay');
+      if (codeEl) codeEl.textContent = pc.passStaffCode || '';
+    }
+
+    function mseRefreshPassUI() {
+      const pc = MSState.config.passConfig || {};
+      document.getElementById('msPassToggle')?.classList.toggle('on', !!pc.passEnabled);
+      const settings = document.getElementById('msPassSettings');
+      if (settings) settings.style.display = pc.passEnabled ? 'block' : 'none';
+      // Populate fields (don't override focused inputs)
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el && document.activeElement !== el) el.value = val || ''; };
+      setVal('msPassEventName', pc.passEventName);
+      setVal('msPassVenue',     pc.passVenue);
+      setVal('msPassDate',      pc.passDate);
+      setVal('msPassTime',      pc.passTime);
+      setVal('msPassRules',     pc.passRules);
+      setVal('msPassNameField', pc.passNameField);
+      setVal('msPassEmailField',pc.passEmailField);
+      const bannerEl = document.getElementById('msPassBannerColor');
+      if (bannerEl) bannerEl.value = pc.passBannerColor || '#1a1a2e';
+      const textEl = document.getElementById('msPassTextColor');
+      if (textEl) textEl.value = pc.passTextColor || '#ffffff';
+      document.getElementById('msPassShowAttendance')?.classList.toggle('on', !!pc.passShowAttendance);
+      mseRefreshPassStaffCode();
+    }
 
     function onSlugInput(val) {
       const clean = val.toLowerCase().replace(/[^a-z0-9-]/g, '');

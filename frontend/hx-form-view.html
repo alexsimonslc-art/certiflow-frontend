@@ -832,6 +832,53 @@
         height: 34px;
       }
     }
+
+    /* ── Pass Modal ──────────────────────────────────────────────── */
+    .hxfv-pass-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.82); backdrop-filter: blur(18px);
+      z-index: 9000; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .hxfv-pass-overlay.open { display: flex; }
+    .hxfv-pass-modal {
+      background: #07111f; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px; padding: 24px; max-width: 520px; width: 100%;
+      max-height: 92vh; overflow-y: auto;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+      animation: passModalIn 0.3s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes passModalIn {
+      from { opacity:0; transform:scale(0.94) translateY(12px); }
+      to   { opacity:1; transform:scale(1) translateY(0); }
+    }
+    .hxfv-pass-modal-hdr {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .hxfv-pass-modal-title {
+      font-family: var(--font-display); font-size:18px; font-weight:700; color:var(--text);
+    }
+    .hxfv-pass-modal-close {
+      width:34px; height:34px; border-radius:9px; border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.05); color:var(--text-2); font-size:16px;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+    }
+    .hxfv-pass-canvas-wrap { display:flex; justify-content:center; margin-bottom:16px; }
+    .hxfv-pass-canvas-wrap canvas { border-radius:12px; max-width:100%; }
+    .hxfv-pass-actions { display:flex; gap:10px; justify-content:center; }
+    .hxfv-pass-btn {
+      padding:11px 22px; border-radius:10px; font-size:14px; font-weight:700;
+      cursor:pointer; border:none; font-family:var(--font); transition:all 0.18s;
+    }
+    .hxfv-pass-btn-dl {
+      background:var(--accent-grad); color:#fff;
+      box-shadow:0 4px 18px rgba(0,212,255,0.25);
+    }
+    .hxfv-pass-btn-dl:hover { box-shadow:0 6px 28px rgba(0,212,255,0.4); }
+    .hxfv-pass-btn-close {
+      background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:var(--text-2);
+    }
   </style>
 </head>
 
@@ -940,6 +987,23 @@
   <footer class="hxfv-footer">
     Powered by <a href="/index.html" target="_blank">Honourix</a>
   </footer>
+
+  <!-- ── Entry Pass Modal ──────────────────────────────────────── -->
+  <div class="hxfv-pass-overlay" id="passModal">
+    <div class="hxfv-pass-modal">
+      <div class="hxfv-pass-modal-hdr">
+        <div class="hxfv-pass-modal-title">🎫 Your Entry Pass</div>
+        <button class="hxfv-pass-modal-close" onclick="closePassModal()">✕</button>
+      </div>
+      <div class="hxfv-pass-canvas-wrap">
+        <canvas id="passCanvas" width="900" height="380" style="width:100%;height:auto"></canvas>
+      </div>
+      <div class="hxfv-pass-actions">
+        <button class="hxfv-pass-btn hxfv-pass-btn-dl" onclick="downloadPass()">⬇ Download Pass</button>
+        <button class="hxfv-pass-btn hxfv-pass-btn-close" onclick="closePassModal()">Close</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     /* ════════════════════════════════════════════════════════════════
@@ -1057,7 +1121,8 @@
       // Submit/Next button label + action
       const labelEl = document.getElementById('submitLabel');
       const btn     = document.getElementById('submitBtn');
-      labelEl.textContent = isLast ? (s.submitLabel || 'Submit') : 'Next →';
+      const passLabel = (isLast && s.passEnabled) ? '🎫 ' + (s.submitLabel || 'Submit & Get Pass') : null;
+      labelEl.textContent = passLabel || (isLast ? (s.submitLabel || 'Submit') : 'Next →');
       btn.onclick = isLast ? handleSubmit : nextPage;
       // Style change: next vs submit
       btn.style.background = isLast ? 'var(--accent-grad)' : 'var(--accent-grad)';
@@ -1606,12 +1671,18 @@
         }
 
         const data = await res.json();
-        showThankYou(data.message || formConfig?.config?.settings?.successMessage || 'Thank you for your response!');
 
-        // Redirect if configured
-        const redirectUrl = formConfig?.config?.settings?.redirectUrl;
-        if (redirectUrl) {
-          setTimeout(() => { window.location.href = redirectUrl; }, 2500);
+        // Show entry pass modal if backend returned one
+        if (data.pass?.enabled) {
+          showThankYou(data.message || formConfig?.config?.settings?.successMessage || 'Thank you for your response!');
+          showPassModal(data.pass);
+        } else {
+          showThankYou(data.message || formConfig?.config?.settings?.successMessage || 'Thank you for your response!');
+          // Redirect if configured
+          const redirectUrl = formConfig?.config?.settings?.redirectUrl;
+          if (redirectUrl) {
+            setTimeout(() => { window.location.href = redirectUrl; }, 2500);
+          }
         }
 
       } catch (e) {
@@ -1827,6 +1898,158 @@
     }
     function escAttr(s) {
       return String(s || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       ENTRY PASS MODAL
+    ════════════════════════════════════════════════════════════════ */
+    let _passData = null;
+
+    function showPassModal(pass) {
+      _passData = pass;
+      document.getElementById('passModal').classList.add('open');
+      renderPassCanvas(pass);
+    }
+
+    function closePassModal() {
+      document.getElementById('passModal').classList.remove('open');
+    }
+
+    function renderPassCanvas(pass) {
+      const canvas = document.getElementById('passCanvas');
+      const ctx    = canvas.getContext('2d');
+      const W = 900, H = 380;
+      canvas.width = W; canvas.height = H;
+
+      const cfg         = pass.config || {};
+      const bannerColor = cfg.bannerColor || '#1a1a2e';
+      const textColor   = cfg.textColor   || '#ffffff';
+
+      // Background
+      ctx.fillStyle = bannerColor;
+      ctx.fillRect(0, 0, W, H);
+
+      // Load QR image
+      const qrImg = new Image();
+      qrImg.onload = () => {
+        // Left: white QR box
+        const qrPad  = 20;
+        const qrSize = H - qrPad * 2;
+        const qrX    = qrPad;
+        const qrY    = qrPad;
+        ctx.fillStyle = '#ffffff';
+        roundRect(ctx, qrX, qrY, qrSize, qrSize, 12);
+        ctx.fill();
+        ctx.drawImage(qrImg, qrX + 8, qrY + 8, qrSize - 16, qrSize - 16);
+
+        // "Scan to verify" text below QR
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.font      = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Scan to verify', qrX + qrSize / 2, qrY + qrSize + 18);
+
+        // Vertical divider
+        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+        ctx.lineWidth   = 1;
+        ctx.beginPath(); ctx.moveTo(320, 30); ctx.lineTo(320, H - 30); ctx.stroke();
+
+        // Right section
+        const rx = 344, ry = 36, rw = W - rx - 20;
+        ctx.textAlign = 'left';
+
+        let cy = ry;
+
+        // Logo (optional)
+        if (cfg.logoUrl) {
+          const logoImg = new Image();
+          logoImg.crossOrigin = 'anonymous';
+          logoImg.onload = () => {
+            const lh = Math.min(50, logoImg.naturalHeight || 50);
+            const lw = lh * (logoImg.naturalWidth / (logoImg.naturalHeight || 1));
+            ctx.drawImage(logoImg, W - lw - 20, ry, lw, lh);
+          };
+          logoImg.src = cfg.logoUrl;
+        }
+
+        // Event name
+        ctx.fillStyle = textColor;
+        ctx.font      = 'bold 26px sans-serif';
+        cy += 6;
+        wrapText(ctx, cfg.eventName || 'Event', rx, cy, rw, 32);
+        cy += 38;
+
+        // Attendee name
+        ctx.font      = '19px sans-serif';
+        ctx.fillStyle = textColor;
+        wrapText(ctx, pass.attendeeName || '—', rx, cy, rw, 26);
+        cy += 32;
+
+        // Venue / Date / Time
+        ctx.font      = '14px sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        if (cfg.venue) { ctx.fillText('📍 ' + cfg.venue, rx, cy); cy += 24; }
+        if (cfg.date)  { ctx.fillText('📅 ' + cfg.date,  rx, cy); cy += 24; }
+        if (cfg.time)  { ctx.fillText('🕐 ' + cfg.time,  rx, cy); cy += 24; }
+
+        // Divider
+        cy += 6;
+        ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+        ctx.lineWidth   = 1;
+        ctx.beginPath(); ctx.moveTo(rx, cy); ctx.lineTo(W - 20, cy); ctx.stroke();
+        cy += 14;
+
+        // Rules
+        const rules = (cfg.rules || []).slice(0, 3);
+        if (rules.length) {
+          ctx.fillStyle = 'rgba(255,255,255,0.6)';
+          ctx.font      = 'bold 12px sans-serif';
+          ctx.fillText('ENTRY RULES', rx, cy); cy += 17;
+          ctx.font      = '12px sans-serif';
+          rules.forEach(r => {
+            ctx.fillText('• ' + r, rx, cy); cy += 17;
+          });
+        }
+      };
+      qrImg.src = pass.qrDataUrl;
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function wrapText(ctx, text, x, y, maxW, lineH) {
+      const words = String(text || '').split(' ');
+      let line = '';
+      for (const word of words) {
+        const test = line ? line + ' ' + word : word;
+        if (ctx.measureText(test).width > maxW && line) {
+          ctx.fillText(line, x, y); y += lineH; line = word;
+        } else {
+          line = test;
+        }
+      }
+      if (line) ctx.fillText(line, x, y);
+    }
+
+    function downloadPass() {
+      const canvas = document.getElementById('passCanvas');
+      canvas.toBlob(blob => {
+        const a      = document.createElement('a');
+        a.href       = URL.createObjectURL(blob);
+        a.download   = `entry-pass-${(_passData?.submissionId||'pass').slice(0, 8)}.png`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }, 'image/png');
     }
   </script>
 </body>
