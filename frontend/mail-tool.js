@@ -2415,6 +2415,12 @@ async function meAiSend() {
       // ──────────────────────────────────────────
 
       if (typingEl) typingEl.remove();
+
+      // Plan gate
+      if (response.status === 403 && res.error === 'AI_LOCKED') {
+        meAiAppendBubble('ai', '🔒 AI features require a **Pro plan**. [Upgrade in Settings →](settings.html#billing)');
+        return;
+      }
     const action  = res.action;
     const message = res.message || '';
 

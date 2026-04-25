@@ -2611,6 +2611,15 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       });
 
       if (typingEl) typingEl.remove();
+
+      // Plan gate
+      if (resp.status === 403) {
+        const errData = await resp.json().catch(() => ({}));
+        if (errData.error === 'AI_LOCKED') {
+          mseAppendMsg('bot', '🔒 Gal AI requires a Pro plan. <a href="settings.html#billing" style="color:var(--accent)">Upgrade in Settings →</a>');
+          return;
+        }
+      }
       if (!resp.ok) throw new Error('Request failed: ' + resp.status);
 
       const data = await resp.json();

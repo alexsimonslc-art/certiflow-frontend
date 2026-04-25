@@ -7,6 +7,202 @@
   <link rel="stylesheet" href="dashboard.css"/>
   <link rel="stylesheet" href="dashboard-patch.css"/>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    /* ── Settings layout ─────────────────────────────── */
+    .settings-wrap {
+      display: flex;
+      gap: 0;
+      min-height: calc(100vh - 130px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .settings-nav {
+      width: 200px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      padding: 8px 0;
+      background: var(--surface-2, var(--surface));
+    }
+    .settings-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      color: var(--text-2);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      transition: background .15s, color .15s;
+      border-radius: 0;
+    }
+    .settings-nav-btn:hover { background: var(--hover); color: var(--text); }
+    .settings-nav-btn.active { background: var(--hover); color: var(--accent); font-weight: 600; }
+    .settings-nav-btn i { width: 16px; height: 16px; flex-shrink: 0; }
+    .settings-content { flex: 1; padding: 32px 36px; min-width: 0; }
+    .settings-pane { display: none; }
+    .settings-pane.active { display: block; }
+
+    /* ── Section blocks ──────────────────────────────── */
+    .s-section { margin-bottom: 32px; }
+    .s-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .s-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 16px;
+    }
+    .s-row:last-child { border-bottom: none; }
+    .s-row-info { flex: 1; }
+    .s-row-info strong { display: block; font-size: 14px; color: var(--text); margin-bottom: 2px; }
+    .s-row-info span { font-size: 13px; color: var(--text-3); }
+
+    /* ── Progress bars ───────────────────────────────── */
+    .s-bar-wrap { margin-top: 8px; }
+    .s-bar-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .s-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+    .s-bar-fill.warn { background: #f59e0b; }
+    .s-bar-fill.danger { background: var(--red, #f43f5e); }
+    .s-bar-label { font-size: 12px; color: var(--text-3); margin-top: 5px; }
+
+    /* ── Stat cards (Usage tab) ──────────────────────── */
+    .s-stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .s-stat-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .s-stat-card .s-stat-val { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
+    .s-stat-card .s-stat-label { font-size: 12px; color: var(--text-3); margin-top: 6px; }
+    .s-stat-card .s-stat-icon { font-size: 20px; margin-bottom: 10px; }
+
+    /* ── Plan cards (Billing tab) ────────────────────── */
+    .s-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .s-plan-card {
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+      background: var(--bg);
+    }
+    .s-plan-card.current { border-color: var(--accent); }
+    .s-plan-card.highlighted { border-color: #7c6efa; background: linear-gradient(135deg, rgba(124,110,250,.06), rgba(139,92,246,.04)); }
+    .s-plan-badge {
+      position: absolute;
+      top: -11px;
+      left: 20px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: .04em;
+    }
+    .s-plan-badge.pro { background: linear-gradient(135deg, #7c6efa, #a78bfa); }
+    .s-plan-name { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .s-plan-price { font-size: 32px; font-weight: 800; color: var(--text); line-height: 1; }
+    .s-plan-price span { font-size: 14px; font-weight: 500; color: var(--text-3); }
+    .s-plan-period { font-size: 13px; color: var(--text-3); margin-top: 4px; margin-bottom: 16px; }
+    .s-plan-features { list-style: none; padding: 0; margin: 0 0 20px; }
+    .s-plan-features li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-2);
+      padding: 4px 0;
+    }
+    .s-plan-features li .feat-icon { color: #22c55e; font-size: 14px; }
+    .s-plan-features li .feat-icon.no { color: var(--text-3); }
+
+    /* ── Permissions scopes ──────────────────────────── */
+    .s-scope-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .s-scope-row:last-child { border-bottom: none; }
+    .s-scope-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--hover); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .s-scope-icon i { width: 16px; height: 16px; color: var(--text-2); }
+    .s-scope-info { flex: 1; }
+    .s-scope-info strong { display: block; font-size: 14px; color: var(--text); }
+    .s-scope-info span { font-size: 12px; color: var(--text-3); }
+    .s-scope-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 99px;
+      flex-shrink: 0;
+    }
+    .s-scope-badge.granted { background: rgba(34,197,94,.15); color: #16a34a; }
+    .s-scope-badge.missing  { background: rgba(245,158,11,.12); color: #d97706; }
+
+    /* ── Profile section ─────────────────────────────── */
+    .s-profile-block {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .s-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--grad-primary, #7c6efa);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 700; color: #fff;
+      flex-shrink: 0; overflow: hidden;
+    }
+    .s-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    /* ── Transactions table ──────────────────────────── */
+    .s-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .s-table th { text-align: left; color: var(--text-3); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .s-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-2); }
+    .s-table tr:last-child td { border-bottom: none; }
+
+    /* danger zone */
+    .s-danger { border: 1px solid rgba(244,63,94,.2); border-radius: 10px; padding: 4px 0; }
+    .s-danger .s-row { padding: 10px 16px; }
+
+    @media (max-width: 700px) {
+      .settings-wrap { flex-direction: column; }
+      .settings-nav { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; padding: 4px; }
+      .settings-nav-btn { white-space: nowrap; flex-shrink: 0; }
+      .s-plan-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 <div class="app-layout">
@@ -21,168 +217,290 @@
 
     <div class="page-content">
       <div class="page-title">Settings</div>
-      <div class="page-subtitle">Manage your account, preferences, and quota.</div>
+      <div class="page-subtitle" style="margin-bottom:24px">Manage your account, preferences, and plan.</div>
 
-      <!-- Settings grid -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <div class="settings-wrap">
+        <!-- ── Left nav ── -->
+        <nav class="settings-nav" role="tablist">
+          <button class="settings-nav-btn active" data-tab="general" onclick="switchTab('general')">
+            <i data-lucide="sliders-horizontal"></i> General
+          </button>
+          <button class="settings-nav-btn" data-tab="account" onclick="switchTab('account')">
+            <i data-lucide="user-circle"></i> Account
+          </button>
+          <button class="settings-nav-btn" data-tab="usage" onclick="switchTab('usage')">
+            <i data-lucide="bar-chart-2"></i> Usage
+          </button>
+          <button class="settings-nav-btn" data-tab="billing" onclick="switchTab('billing')">
+            <i data-lucide="credit-card"></i> Billing
+          </button>
+          <button class="settings-nav-btn" data-tab="permissions" onclick="switchTab('permissions')">
+            <i data-lucide="shield-check"></i> Permissions
+          </button>
+        </nav>
 
-        <!-- Profile Card -->
-        <div class="card card-lg" id="profile-card">
-          <div class="card-header">
-            <div>
-              <div class="card-title"><i data-lucide="user-circle"></i> Profile</div>
-              <div class="card-desc">Your Google account connected to Honourix</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px">
-            <div id="settingsAvatar" style="width:64px;height:64px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden"></div>
-            <div>
-              <div id="settingsName" style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px">—</div>
-              <div id="settingsEmail" style="font-size:14px;color:var(--text-2)">—</div>
-              <div id="settingsPlan" style="margin-top:6px"></div>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <strong>Account Type</strong>
-                <span id="settingsType">Detecting…</span>
-              </div>
-            </div>
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <strong>Google Domain</strong>
-                <span id="settingsDomain">—</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- ── Content area ── -->
+        <div class="settings-content">
 
-        <!-- Quota Card -->
-        <div class="card card-lg" id="quota">
-          <div class="card-header">
-            <div>
-              <div class="card-title"><i data-lucide="bar-chart-2"></i> Live Quota</div>
-              <div class="card-desc">Your actual Gmail sending usage for today</div>
+          <!-- ═══ GENERAL ═══ -->
+          <div class="settings-pane active" id="tab-general">
+            <div class="s-section">
+              <div class="s-section-title">Preferences</div>
+              <div class="s-row">
+                <div class="s-row-info">
+                  <strong>Write links back to Sheet</strong>
+                  <span>Auto-add certificate URLs to your Google Sheet after generation</span>
+                </div>
+                <div class="toggle on" id="toggleWriteback" onclick="togglePref('writeback', this)"></div>
+              </div>
+              <div class="s-row">
+                <div class="s-row-info">
+                  <strong>Email delivery confirmation</strong>
+                  <span>Show per-recipient send status in the report</span>
+                </div>
+                <div class="toggle on" id="toggleEmailConf" onclick="togglePref('emailConf', this)"></div>
+              </div>
+              <div class="s-row">
+                <div class="s-row-info">
+                  <strong>Stagger bulk sends</strong>
+                  <span>Add small delays between emails to avoid spam flags</span>
+                </div>
+                <div class="toggle on" id="toggleStagger" onclick="togglePref('stagger', this)"></div>
+              </div>
+              <div class="s-row">
+                <div class="s-row-info">
+                  <strong>Save template on exit</strong>
+                  <span>Auto-save certificate editor template to localStorage</span>
+                </div>
+                <div class="toggle on" id="toggleSaveTemplate" onclick="togglePref('saveTemplate', this)"></div>
+              </div>
             </div>
-            <button class="btn btn-secondary btn-sm" onclick="refreshQuota()">
-              <i data-lucide="refresh-cw"></i> Refresh
-            </button>
+
+            <div class="s-section">
+              <div class="s-section-title">Data</div>
+              <div class="s-danger">
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <strong>Clear saved template</strong>
+                    <span>Removes the saved certificate template from your browser</span>
+                  </div>
+                  <button class="btn btn-danger btn-sm" onclick="clearTemplate()">Clear</button>
+                </div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <strong>Clear campaign history</strong>
+                    <span>Removes all locally stored campaign records</span>
+                  </div>
+                  <button class="btn btn-danger btn-sm" onclick="clearCampaigns()">Clear</button>
+                </div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <strong>Sign out of Honourix</strong>
+                    <span>Revoke session and return to home page</span>
+                  </div>
+                  <button class="btn btn-danger btn-sm" onclick="logout()">Sign Out</button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div id="quotaLoading" style="text-align:center;padding:24px;color:var(--text-3);font-size:14px">
-            <i data-lucide="loader" style="animation:spin 1s linear infinite;width:20px;height:20px"></i>
-            <div style="margin-top:8px">Fetching from Gmail…</div>
+          <!-- ═══ ACCOUNT ═══ -->
+          <div class="settings-pane" id="tab-account">
+            <!-- Profile block -->
+            <div class="s-profile-block">
+              <div class="s-avatar" id="accAvatar"></div>
+              <div>
+                <div id="accName" style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px">—</div>
+                <div id="accEmail" style="font-size:14px;color:var(--text-3);margin-bottom:8px">—</div>
+                <div id="accPlanBadge"></div>
+              </div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-title">Account Details</div>
+              <div class="s-row">
+                <div class="s-row-info"><strong>Account Type</strong></div>
+                <span id="accType" style="font-size:14px;color:var(--text-2)">—</span>
+              </div>
+              <div class="s-row">
+                <div class="s-row-info"><strong>Google Domain</strong></div>
+                <span id="accDomain" style="font-size:14px;color:var(--text-2)">—</span>
+              </div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-title">Mail Quota — Today</div>
+              <div id="accQuotaLoading" style="color:var(--text-3);font-size:13px;padding:8px 0">Loading…</div>
+              <div id="accQuotaContent" style="display:none">
+                <div class="s-row" style="border:none;padding:0 0 8px">
+                  <div class="s-row-info">
+                    <strong>Emails sent today</strong>
+                    <span id="accSentToday">0 / 500</span>
+                  </div>
+                </div>
+                <div class="s-bar-wrap">
+                  <div class="s-bar-track"><div class="s-bar-fill" id="accMailBar" style="width:0%"></div></div>
+                  <div class="s-bar-label" id="accMailLabel"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="s-section">
+              <div class="s-section-title">Google Drive Storage</div>
+              <div id="accDriveLoading" style="color:var(--text-3);font-size:13px;padding:8px 0">Loading…</div>
+              <div id="accDriveContent" style="display:none">
+                <div class="s-row" style="border:none;padding:0 0 8px">
+                  <div class="s-row-info">
+                    <strong>Storage used</strong>
+                    <span id="accDriveLabel">— / —</span>
+                  </div>
+                </div>
+                <div class="s-bar-wrap">
+                  <div class="s-bar-track"><div class="s-bar-fill" id="accDriveBar" style="width:0%"></div></div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div id="quotaContent" style="display:none">
-            <!-- Emails -->
-            <div style="margin-bottom:20px">
-              <div class="quota-row">
-                <span class="quota-label">📧 Emails sent today</span>
-                <span class="quota-count"><span id="sSent">0</span> / <span id="sLimit">500</span></span>
-              </div>
-              <div class="progress-track"><div class="progress-fill" id="sBar" style="width:0%"></div></div>
-              <div style="font-size:12px;color:var(--text-3);margin-top:6px" id="sReset"></div>
-            </div>
-            <!-- Drive -->
-            <div style="margin-bottom:20px">
-              <div class="quota-row">
-                <span class="quota-label">💾 Drive storage used</span>
-                <span class="quota-count"><span id="sDriveUsed">—</span> / <span id="sDriveTotal">—</span></span>
-              </div>
-              <div class="progress-track"><div class="progress-fill" id="sDriveBar" style="width:0%"></div></div>
-            </div>
-            <!-- Cert count -->
-            <div class="toggle-row" style="margin-bottom:10px">
-              <div class="toggle-info">
-                <strong>Certificates generated today</strong>
-                <span id="sCerts">Fetching…</span>
-              </div>
-            </div>
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <strong>Daily email limit</strong>
-                <span id="sLimitType">Free Gmail: 500/day</span>
+          <!-- ═══ USAGE ═══ -->
+          <div class="settings-pane" id="tab-usage">
+            <div class="s-section">
+              <div class="s-section-title">Platform Activity</div>
+              <div class="s-stat-grid" id="usageStatGrid">
+                <div class="s-stat-card">
+                  <div class="s-stat-icon">📄</div>
+                  <div class="s-stat-val" id="uCertsTotal">—</div>
+                  <div class="s-stat-label">Certificates generated</div>
+                </div>
+                <div class="s-stat-card">
+                  <div class="s-stat-icon">📧</div>
+                  <div class="s-stat-val" id="uMailsToday">—</div>
+                  <div class="s-stat-label">Emails sent today</div>
+                </div>
+                <div class="s-stat-card">
+                  <div class="s-stat-icon">🌐</div>
+                  <div class="s-stat-val" id="uSites">—</div>
+                  <div class="s-stat-label">Mini sites (of 10)</div>
+                </div>
+                <div class="s-stat-card">
+                  <div class="s-stat-icon">📋</div>
+                  <div class="s-stat-val" id="uForms">—</div>
+                  <div class="s-stat-label">Forms created</div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Preferences Card -->
-        <div class="card card-lg">
-          <div class="card-header">
-            <div>
-              <div class="card-title"><i data-lucide="sliders-horizontal"></i> Preferences</div>
-              <div class="card-desc">Customize your Honourix experience</div>
+            <div class="s-section">
+              <div class="s-section-title">AI Token Usage</div>
+              <div id="usageTokenSection">
+                <div class="s-row" style="border:none;padding:0 0 8px">
+                  <div class="s-row-info">
+                    <strong>Tokens consumed</strong>
+                    <span id="uTokensLabel" style="font-size:13px;color:var(--text-3)">Loading…</span>
+                  </div>
+                  <span id="uTokensBadge" style="font-size:13px;font-weight:600;color:var(--text-2)"></span>
+                </div>
+                <div class="s-bar-wrap">
+                  <div class="s-bar-track"><div class="s-bar-fill" id="uTokenBar" style="width:0%"></div></div>
+                  <div class="s-bar-label" id="uTokenBarLabel"></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <strong>Write links back to Sheet</strong>
-                <span>Auto-add certificate URLs to your Google Sheet after generation</span>
-              </div>
-              <div class="toggle on" id="toggleWriteback" onclick="togglePref('writeback', this)"></div>
-            </div>
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <strong>Email delivery confirmation</strong>
-                <span>Show per-recipient send status in the report</span>
-              </div>
-              <div class="toggle on" id="toggleEmailConf" onclick="togglePref('emailConf', this)"></div>
-            </div>
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <strong>Stagger bulk sends</strong>
-                <span>Add small delays between emails to avoid spam flags</span>
-              </div>
-              <div class="toggle on" id="toggleStagger" onclick="togglePref('stagger', this)"></div>
-            </div>
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <strong>Save template on exit</strong>
-                <span>Auto-save certificate editor template to localStorage</span>
-              </div>
-              <div class="toggle on" id="toggleSaveTemplate" onclick="togglePref('saveTemplate', this)"></div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Danger Zone -->
-        <div class="card card-lg" style="border-color:rgba(244,63,94,0.2)">
-          <div class="card-header">
-            <div>
-              <div class="card-title" style="color:var(--red)"><i data-lucide="alert-triangle"></i> Danger Zone</div>
-              <div class="card-desc">These actions are irreversible</div>
+          <!-- ═══ BILLING ═══ -->
+          <div class="settings-pane" id="tab-billing">
+            <!-- Current plan status -->
+            <div class="s-section">
+              <div class="s-section-title">Current Plan</div>
+              <div id="billingCurrentPlan" style="padding:4px 0;color:var(--text-3);font-size:13px">Loading…</div>
             </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div class="toggle-row" style="border-color:rgba(244,63,94,0.15)">
-              <div class="toggle-info">
-                <strong>Clear saved template</strong>
-                <span>Removes the saved certificate template from your browser</span>
-              </div>
-              <button class="btn btn-danger btn-sm" onclick="clearTemplate()">Clear</button>
-            </div>
-            <div class="toggle-row" style="border-color:rgba(244,63,94,0.15)">
-              <div class="toggle-info">
-                <strong>Clear campaign history</strong>
-                <span>Removes all locally stored campaign records</span>
-              </div>
-              <button class="btn btn-danger btn-sm" onclick="clearCampaigns()">Clear</button>
-            </div>
-            <div class="toggle-row" style="border-color:rgba(244,63,94,0.15)">
-              <div class="toggle-info">
-                <strong>Sign out of Honourix</strong>
-                <span>Revoke session and return to home page</span>
-              </div>
-              <button class="btn btn-danger btn-sm" onclick="logout()">Sign Out</button>
-            </div>
-          </div>
-        </div>
 
-      </div><!-- /grid -->
+            <!-- Plans grid -->
+            <div class="s-section">
+              <div class="s-section-title">Plans</div>
+              <div class="s-plan-grid">
+                <!-- Free -->
+                <div class="s-plan-card" id="planCardFree">
+                  <div class="s-plan-name">Free</div>
+                  <div class="s-plan-price">₹0 <span>/ forever</span></div>
+                  <div class="s-plan-period">No credit card needed</div>
+                  <ul class="s-plan-features">
+                    <li><span class="feat-icon">✓</span> Unlimited certificates</li>
+                    <li><span class="feat-icon">✓</span> Bulk mail tool</li>
+                    <li><span class="feat-icon">✓</span> Up to 10 mini sites</li>
+                    <li><span class="feat-icon">✓</span> Forms builder</li>
+                    <li><span class="feat-icon no">✗</span> <span style="color:var(--text-3)">Gal AI (locked)</span></li>
+                  </ul>
+                </div>
+                <!-- Pro -->
+                <div class="s-plan-card highlighted" id="planCardPro">
+                  <div class="s-plan-badge pro">PRO</div>
+                  <div class="s-plan-name">Pro</div>
+                  <div class="s-plan-price">₹299 <span>/ 3 months</span></div>
+                  <div class="s-plan-period">~₹100 per month · billed every quarter</div>
+                  <ul class="s-plan-features">
+                    <li><span class="feat-icon">✓</span> Everything in Free</li>
+                    <li><span class="feat-icon">✓</span> <strong>Gal AI — full access</strong></li>
+                    <li><span class="feat-icon">✓</span> AI mail composer</li>
+                    <li><span class="feat-icon">✓</span> AI mini site builder</li>
+                    <li><span class="feat-icon">✓</span> Priority support</li>
+                  </ul>
+                  <div id="upgradeButtonWrap">
+                    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="startUpgrade()">
+                      <i data-lucide="zap"></i> Upgrade to Pro
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Transaction history -->
+            <div class="s-section">
+              <div class="s-section-title">Transaction History</div>
+              <div id="txLoading" style="color:var(--text-3);font-size:13px;padding:8px 0">Loading…</div>
+              <div id="txContent" style="display:none">
+                <table class="s-table">
+                  <thead><tr>
+                    <th>Payment ID</th>
+                    <th>Plan</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                  </tr></thead>
+                  <tbody id="txBody"></tbody>
+                </table>
+                <div id="txEmpty" style="display:none;color:var(--text-3);font-size:13px;padding:16px 0;text-align:center">No transactions yet.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ PERMISSIONS ═══ -->
+          <div class="settings-pane" id="tab-permissions">
+            <div class="s-section">
+              <div class="s-section-title">Google Permissions</div>
+              <p style="font-size:13px;color:var(--text-3);margin-bottom:20px">
+                Honourix requires these Google permissions to function. If any are missing, click Re-authorize to grant them.
+              </p>
+              <div id="permList">
+                <div style="color:var(--text-3);font-size:13px">Loading…</div>
+              </div>
+            </div>
+            <div class="s-section">
+              <div class="s-section-title">Fix Missing Permissions</div>
+              <div class="s-row">
+                <div class="s-row-info">
+                  <strong>Re-authorize with Google</strong>
+                  <span>Redirects you through the Google sign-in flow to grant all required permissions</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="reauthorize()">
+                  <i data-lucide="refresh-cw"></i> Re-authorize
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /settings-content -->
+      </div><!-- /settings-wrap -->
     </div><!-- /page-content -->
   </div><!-- /main-area -->
 </div>
@@ -190,73 +508,46 @@
 <script src="dashboard.js"></script>
 <script>
 // @ts-nocheck
+const BACKEND = 'https://certiflow-backend-73xk.onrender.com';
+
+// Required Google scopes
+const REQUIRED_SCOPES = [
+  { scope: 'https://mail.google.com/', name: 'Gmail (Send & Read)', icon: 'mail', usage: 'Bulk mail & quota check' },
+  { scope: 'https://www.googleapis.com/auth/drive', name: 'Google Drive', icon: 'hard-drive', usage: 'Certificate PDF storage' },
+  { scope: 'https://www.googleapis.com/auth/spreadsheets', name: 'Google Sheets', icon: 'table-2', usage: 'Data import & cert writeback' },
+  { scope: 'openid', name: 'Identity (OpenID)', icon: 'fingerprint', usage: 'Login verification' },
+  { scope: 'profile', name: 'Profile Info', icon: 'user', usage: 'Name & avatar' },
+  { scope: 'email', name: 'Email Address', icon: 'at-sign', usage: 'Account identification' },
+];
+
+let currentUser = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-  const user = requireAuth();
+  currentUser = requireAuth();
   document.getElementById('sidebarMount').outerHTML = renderSidebar('settings.html');
   initSidebar();
   lucide.createIcons();
-  loadSettingsProfile(user);
-  loadSettingsQuota();
   loadPrefs();
+
+  // Check for billing tab hash
+  if (location.hash === '#billing') switchTab('billing');
 });
 
-function loadSettingsProfile(user) {
-  if (!user) return;
-  const av = document.getElementById('settingsAvatar');
-  if (user.picture) {
-    av.innerHTML = '<img src="' + user.picture + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
-  } else {
-    av.textContent = (user.name || 'U').charAt(0).toUpperCase();
-  }
-  document.getElementById('settingsName').textContent   = user.name  || '—';
-  document.getElementById('settingsEmail').textContent  = user.email || '—';
-  document.getElementById('settingsDomain').textContent = user.hd    || 'gmail.com (personal)';
-  document.getElementById('settingsType').textContent   = user.hd    ? 'Google Workspace' : 'Personal Gmail';
-  document.getElementById('settingsPlan').innerHTML     = user.hd
-    ? '<span class="badge badge-cyan">Workspace · 2,000 emails/day</span>'
-    : '<span class="badge badge-gray">Free Gmail · 500 emails/day</span>';
-  document.getElementById('sLimitType').textContent = user.hd
-    ? 'Workspace: 2,000 emails/day'
-    : 'Free Gmail: 500 emails/day';
+/* ──────────────────────────── Tab switching ──── */
+function switchTab(name) {
+  document.querySelectorAll('.settings-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.settings-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name)?.classList.add('active');
+  document.querySelector('[data-tab="' + name + '"]')?.classList.add('active');
+  lucide.createIcons();
+
+  if (name === 'account')     loadAccount();
+  if (name === 'usage')       loadUsage();
+  if (name === 'billing')     loadBilling();
+  if (name === 'permissions') loadPermissions();
 }
 
-async function loadSettingsQuota() {
-  const loading = document.getElementById('quotaLoading');
-  const content = document.getElementById('quotaContent');
-  try {
-    const data = await apiFetch('/api/quota');
-    if (!data) return;
-    loading.style.display = 'none';
-    content.style.display = 'block';
-
-    const limit = data.dailyLimit || 500;
-    const sent  = data.sentToday  || 0;
-    const pct   = Math.min(Math.round(sent / limit * 100), 100);
-
-    document.getElementById('sSent').textContent  = sent;
-    document.getElementById('sLimit').textContent = limit;
-    document.getElementById('sBar').style.width   = pct + '%';
-    document.getElementById('sBar').className     = 'progress-fill' + (pct > 80 ? ' gold' : '');
-    document.getElementById('sReset').textContent = 'Resets at midnight · ' + pct + '% used';
-    document.getElementById('sCerts').textContent = (data.certsToday || 0) + ' PDFs generated';
-
-    // Drive
-    if (data.driveUsed !== undefined) {
-      const usedGB  = (data.driveUsed  / 1e9).toFixed(2);
-      const totalGB = (data.driveTotal / 1e9).toFixed(1);
-      const dPct    = Math.min(Math.round(data.driveUsed / data.driveTotal * 100), 100);
-      document.getElementById('sDriveUsed').textContent = usedGB + ' GB';
-      document.getElementById('sDriveTotal').textContent = totalGB + ' GB';
-      document.getElementById('sDriveBar').style.width = dPct + '%';
-      document.getElementById('sDriveBar').className = 'progress-fill' + (dPct > 80 ? ' gold' : '');
-    }
-  } catch(e) {
-    loading.innerHTML = '<div style="color:var(--red);font-size:13px">Could not load quota: ' + e.message + '</div>';
-  }
-}
-
-function refreshQuota() { loadSettingsQuota(); toast('Quota refreshed', 'success', 2000); }
-
+/* ──────────────────────────── General tab ──── */
 function loadPrefs() {
   const prefs = JSON.parse(localStorage.getItem('hx_prefs') || '{"writeback":true,"emailConf":true,"stagger":true,"saveTemplate":true}');
   Object.keys(prefs).forEach(k => {
@@ -264,7 +555,6 @@ function loadPrefs() {
     if (el) el.classList.toggle('on', prefs[k]);
   });
 }
-
 function togglePref(key, el) {
   el.classList.toggle('on');
   const prefs = JSON.parse(localStorage.getItem('hx_prefs') || '{}');
@@ -272,14 +562,212 @@ function togglePref(key, el) {
   localStorage.setItem('hx_prefs', JSON.stringify(prefs));
   toast('Preference saved', 'success', 1500);
 }
+function clearTemplate() { localStorage.removeItem('hx_template'); toast('Saved template cleared', 'success'); }
+function clearCampaigns() { localStorage.removeItem('hx_campaigns'); toast('Campaign history cleared', 'success'); }
 
-function clearTemplate() {
-  localStorage.removeItem('hx_template');
-  toast('Saved template cleared', 'success');
+/* ──────────────────────────── Account tab ──── */
+async function loadAccount() {
+  const u = currentUser;
+  if (!u) return;
+
+  const av = document.getElementById('accAvatar');
+  if (u.picture) {
+    av.innerHTML = '<img src="' + u.picture + '" alt="avatar">';
+  } else {
+    av.textContent = (u.name || 'U').charAt(0).toUpperCase();
+  }
+  document.getElementById('accName').textContent   = u.name  || '—';
+  document.getElementById('accEmail').textContent  = u.email || '—';
+  document.getElementById('accDomain').textContent = u.hd    || 'gmail.com (personal)';
+  document.getElementById('accType').textContent   = u.hd    ? 'Google Workspace' : 'Personal Gmail';
+
+  // Plan badge — fetch from backend
+  try {
+    const planData = await apiFetch('/api/settings/plan');
+    const isPro = planData?.plan === 'pro';
+    document.getElementById('accPlanBadge').innerHTML = isPro
+      ? '<span class="badge badge-cyan">Pro Plan · Active</span>'
+      : '<span class="badge badge-gray">Free Plan</span>';
+  } catch (_) {
+    document.getElementById('accPlanBadge').innerHTML = '<span class="badge badge-gray">Free Plan</span>';
+  }
+
+  // Quota
+  try {
+    const qData = await apiFetch('/api/quota');
+    if (!qData) return;
+    const limit = qData.dailyLimit || 500;
+    const sent  = qData.sentToday  || 0;
+    const pct   = Math.min(Math.round(sent / limit * 100), 100);
+    document.getElementById('accSentToday').textContent = sent + ' / ' + limit;
+    const mailBar = document.getElementById('accMailBar');
+    mailBar.style.width = pct + '%';
+    mailBar.className = 's-bar-fill' + (pct > 80 ? ' warn' : '') + (pct > 95 ? ' danger' : '');
+    document.getElementById('accMailLabel').textContent = pct + '% of daily limit used · resets at midnight';
+    document.getElementById('accQuotaLoading').style.display = 'none';
+    document.getElementById('accQuotaContent').style.display = 'block';
+
+    if (qData.driveUsed !== undefined) {
+      const usedGB  = (qData.driveUsed  / 1e9).toFixed(2);
+      const totalGB = (qData.driveTotal / 1e9).toFixed(1);
+      const dPct    = Math.min(Math.round(qData.driveUsed / qData.driveTotal * 100), 100);
+      document.getElementById('accDriveLabel').textContent = usedGB + ' GB / ' + totalGB + ' GB';
+      const driveBar = document.getElementById('accDriveBar');
+      driveBar.style.width = dPct + '%';
+      driveBar.className = 's-bar-fill' + (dPct > 80 ? ' warn' : '');
+      document.getElementById('accDriveLoading').style.display = 'none';
+      document.getElementById('accDriveContent').style.display = 'block';
+    }
+  } catch (_) {}
 }
-function clearCampaigns() {
-  localStorage.removeItem('hx_campaigns');
-  toast('Campaign history cleared', 'success');
+
+/* ──────────────────────────── Usage tab ──── */
+async function loadUsage() {
+  try {
+    const d = await apiFetch('/api/settings/usage');
+    if (!d) return;
+    document.getElementById('uCertsTotal').textContent = (d.certsTotal  || 0).toLocaleString();
+    document.getElementById('uMailsToday').textContent = (d.mailsSentToday || 0).toLocaleString();
+    document.getElementById('uSites').textContent      = (d.sitesCount   || 0) + ' / ' + (d.sitesLimit || 10);
+    document.getElementById('uForms').textContent      = (d.formsCount   || 0).toLocaleString();
+
+    // AI tokens
+    const total = d.tokensTotal || 0;
+    const cap   = 500000; // soft display cap
+    const pct   = Math.min(Math.round(total / cap * 100), 100);
+    document.getElementById('uTokensLabel').textContent = total.toLocaleString() + ' tokens consumed';
+    document.getElementById('uTokensBadge').textContent = 'Input: ' + (d.tokensInput||0).toLocaleString() + ' · Output: ' + (d.tokensOutput||0).toLocaleString();
+    document.getElementById('uTokenBar').style.width = pct + '%';
+    document.getElementById('uTokenBar').className = 's-bar-fill' + (pct > 80 ? ' warn' : '');
+    document.getElementById('uTokenBarLabel').textContent = total.toLocaleString() + ' of ~' + cap.toLocaleString() + ' token display cap';
+  } catch (e) {
+    document.getElementById('uTokensLabel').textContent = 'Could not load usage data';
+  }
+}
+
+/* ──────────────────────────── Billing tab ──── */
+async function loadBilling() {
+  try {
+    const [planData, txData] = await Promise.all([
+      apiFetch('/api/settings/plan'),
+      apiFetch('/api/settings/transactions'),
+    ]);
+
+    // Current plan display
+    const isPro = planData?.plan === 'pro';
+    const expiry = planData?.planExpiresAt ? new Date(planData.planExpiresAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : null;
+    document.getElementById('billingCurrentPlan').innerHTML = isPro
+      ? '<span class="badge badge-cyan" style="font-size:13px;padding:5px 12px">Pro Plan · Active' + (expiry ? ' · expires ' + expiry : '') + '</span>'
+      : '<span class="badge badge-gray" style="font-size:13px;padding:5px 12px">Free Plan</span>';
+
+    // Show/hide upgrade button
+    document.getElementById('upgradeButtonWrap').style.display = isPro ? 'none' : 'block';
+    if (isPro) {
+      document.getElementById('planCardPro').querySelector('.s-plan-badge').textContent = '✓ YOUR PLAN';
+      document.getElementById('planCardFree').style.opacity = '0.6';
+    }
+
+    // Transactions
+    document.getElementById('txLoading').style.display = 'none';
+    document.getElementById('txContent').style.display = 'block';
+    const payments = txData?.payments || [];
+    if (!payments.length) {
+      document.getElementById('txEmpty').style.display = 'block';
+    } else {
+      const tbody = document.getElementById('txBody');
+      tbody.innerHTML = payments.map(p => `
+        <tr>
+          <td style="font-family:monospace;font-size:12px">${p.razorpay_payment_id || '—'}</td>
+          <td><span class="badge badge-cyan" style="font-size:11px">${p.plan?.toUpperCase() || 'PRO'}</span></td>
+          <td>₹${((p.amount || 0) / 100).toFixed(2)}</td>
+          <td>${p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN') : '—'}</td>
+        </tr>
+      `).join('');
+    }
+  } catch (e) {
+    document.getElementById('billingCurrentPlan').textContent = 'Could not load plan info';
+  }
+  lucide.createIcons();
+}
+
+/* ──────────────────────────── Upgrade / Razorpay ──── */
+async function startUpgrade() {
+  try {
+    const data = await apiFetch('/api/settings/create-order', { method: 'POST' });
+    if (!data?.orderId) { toast('Could not create order. Payment gateway may not be configured yet.', 'error'); return; }
+
+    const rzp = new Razorpay({
+      key:        data.keyId,
+      amount:     data.amount,
+      currency:   data.currency,
+      order_id:   data.orderId,
+      name:       'Honourix',
+      description:'Pro Plan — 3 months',
+      theme:      { color: '#7C6EFA' },
+      prefill: {
+        email: currentUser?.email || '',
+        name:  currentUser?.name  || '',
+      },
+      handler: function(response) {
+        verifyPayment(response);
+      },
+    });
+    rzp.open();
+  } catch (e) {
+    toast('Payment error: ' + e.message, 'error');
+  }
+}
+
+async function verifyPayment(response) {
+  try {
+    const result = await apiFetch('/api/settings/verify-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        razorpay_order_id:   response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature:  response.razorpay_signature,
+      }),
+    });
+    if (result?.ok) {
+      toast('Upgraded to Pro! AI features are now unlocked.', 'success', 5000);
+      loadBilling();
+    } else {
+      toast('Payment verification failed. Contact support.', 'error');
+    }
+  } catch (e) {
+    toast('Verification error: ' + e.message, 'error');
+  }
+}
+
+/* ──────────────────────────── Permissions tab ──── */
+async function loadPermissions() {
+  try {
+    const data = await apiFetch('/api/settings/permissions');
+    const granted = data?.grantedScopes || [];
+
+    const list = document.getElementById('permList');
+    list.innerHTML = REQUIRED_SCOPES.map(s => {
+      const isGranted = granted.some(g => g === s.scope || g.includes(s.scope));
+      return `
+        <div class="s-scope-row">
+          <div class="s-scope-icon"><i data-lucide="${s.icon}"></i></div>
+          <div class="s-scope-info">
+            <strong>${s.name}</strong>
+            <span>${s.usage}</span>
+          </div>
+          <span class="s-scope-badge ${isGranted ? 'granted' : 'missing'}">${isGranted ? 'Granted' : 'Missing'}</span>
+        </div>
+      `;
+    }).join('');
+    lucide.createIcons();
+  } catch (_) {
+    document.getElementById('permList').innerHTML = '<div style="color:var(--text-3);font-size:13px">Could not load permission data. <a href="#" onclick="loadPermissions();return false">Retry</a></div>';
+  }
+}
+
+function reauthorize() {
+  window.location.href = BACKEND + '/auth/google?force=true';
 }
 </script>
 </body>
