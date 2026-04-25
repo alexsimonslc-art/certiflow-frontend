@@ -522,7 +522,7 @@ function meBlockToHtml(block) {
 
     case 'table': {
       const d   = p.data || [[]];
-      const bw  = p.borderWidth || 0;
+      const bw  = p.borderWidth !== undefined ? p.borderWidth : 1;
       const bst = bw > 0 ? `${bw}px solid ${p.borderColor || '#e2e8f0'}` : 'none';
       
       // Strict fallbacks to prevent "undefined" CSS crashes
@@ -531,7 +531,7 @@ function meBlockToHtml(block) {
       const hBg = p.headerBg || '#f1f5f9';
       const hColor = p.headerColor || '#1e293b';
       const fSize = p.fontSize || 14;
-      const pad = p.cellPadding || 10;
+      const pad = p.cellPadding !== undefined ? p.cellPadding : 10;
       
       const rows = d.map((row, ri) => {
         const isHeader = p.headerRow && ri === 0;
@@ -543,7 +543,7 @@ function meBlockToHtml(block) {
         return `<tr>${cells}</tr>`;
       }).join('');
       
-      return `<div style="padding:${p.paddingV || 20}px ${p.paddingH || 40}px;background:${p.bgColor || '#ffffff'}">
+      return `<div style="padding:${p.paddingV !== undefined ? p.paddingV : 20}px ${p.paddingH !== undefined ? p.paddingH : 40}px;background:${p.bgColor || '#ffffff'}">
         <table width="${p.width || '100%'}" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:${p.width || '100%'};border:${bst}">
           ${rows}
         </table>
@@ -985,10 +985,12 @@ function meFieldColor(label, id, key, val) {
   return `<div class="me-field">
     <div class="me-field-label">${label}</div>
     <div class="me-color-row">
-      <div class="me-color-swatch" style="background:${val || '#ffffff'}">
-        <input type="color" value="${val || '#ffffff'}" oninput="meUpdateProp('${id}','${key}',this.value)" onchange="meUpdateProp('${id}','${key}',this.value)"/>
+      <div class="me-color-swatch" style="background:${val||'#ffffff'}" id="swatch_${id}_${key}">
+        <input type="color" value="${val||'#ffffff'}" 
+          oninput="document.getElementById('swatch_${id}_${key}').style.background=this.value; document.getElementById('hex_${id}_${key}').value=this.value; meUpdateProp('${id}','${key}',this.value)" />
       </div>
-      <input class="me-input" type="text" value="${val || '#ffffff'}" oninput="meUpdateProp('${id}','${key}',this.value)" style="flex:1"/>
+      <input class="me-input" type="text" id="hex_${id}_${key}" value="${val||'#ffffff'}" 
+        oninput="document.getElementById('swatch_${id}_${key}').style.background=this.value; meUpdateProp('${id}','${key}',this.value)" style="flex:1"/>
     </div>
   </div>`;
 }
