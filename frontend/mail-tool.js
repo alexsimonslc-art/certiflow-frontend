@@ -109,6 +109,21 @@ function mGoStep(n, force) {
   document.getElementById('sp' + n).classList.add('active');
   if (n === 2) meOnStepEnter();
   if (n === 3) mBuildPreview();
+
+  // Manage AI Fab Visibility globally: only visible in step 2 if editor is open
+  const fab = document.getElementById('galAiFab');
+  if (fab) {
+    if (n === 2 && document.getElementById('meEditorWrap').classList.contains('visible')) {
+      fab.classList.add('visible');
+    } else {
+      fab.classList.remove('visible');
+      const panel = document.getElementById('galAiPanel');
+      if (panel && panel.classList.contains('open')) {
+        window.galAiToggle(); // Close panel automatically
+      }
+    }
+  }
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -454,7 +469,7 @@ function meBlockToHtml(block) {
 
     case 'button':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
-  <a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fontStack}">${p.text}</a>
+  <a class="me-btn-block" href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fontStack}">${p.text}</a>
 </div>`;
 
     case 'image':
@@ -1163,7 +1178,7 @@ function meParseHtmlToBlocks(html) {
         return;
       }
       // Button
-      const anchor = el.querySelector('a');
+      const anchor = el.querySelector('a.me-btn-block') || (!h1 && !el.querySelector('img') && el.querySelector('a'));
       if (anchor) {
         const s = anchor.getAttribute('style') || '';
         const bg = (s.match(/background:\s*([^;]+)/) || [])[1] || '#00d4ff';
