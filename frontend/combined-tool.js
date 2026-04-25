@@ -848,3 +848,335 @@ function resetAll() {
   if (ME.cm) ME.cm.setValue('');
   goStep(1, true);
 }
+
+/* ════════════════════════════════════════════════════════════════
+   STEP 7 — RESULTS
+════════════════════════════════════════════════════════════════ */
+
+/**
+ * Called by the pipeline runner (step 6 launch) once all jobs finish.
+ * Pass in the results array already stored in CP.results.
+ */
+function cpPopulateResults() {
+  const results = CP.results || [];
+  const total   = results.length;
+  const certOk  = results.filter(r => r.certOk).length;
+  const mailOk  = results.filter(r => r.mailOk).length;
+  const failed  = results.filter(r => !r.certOk && !r.mailOk).length;
+  const certOnly = results.filter(r => r.certOk && !r.mailOk).length;
+  const fullOk   = results.filter(r => r.certOk && r.mailOk).length;
+  const pct      = total > 0 ? Math.round((mailOk / total) * 100) : 0;
+
+  // ── Hero counts
+  _setText('r7TotalNum',  total);
+  _setText('r7CertNum',   certOk);
+  _setText('r7MailNum',   mailOk);
+  _setText('r7FailNum',   failed);
+
+  // ── Ring
+  const circumference = 2 * Math.PI * 55; // r=55
+  const offset = circumference - (pct / 100) * circumference;
+  const ring = document.getElementById('r7RingFg');
+  if (ring) {
+    ring.style.strokeDasharray  = circumference;
+    ring.style.strokeDashoffset = circumference;
+    // Animate after a brief delay
+    setTimeout(() => { ring.style.strokeDashoffset = offset; }, 200);
+  }
+  _setText('r7Pct',  pct + '%');
+  _setText('r7Frac', mailOk + ' / ' + total);
+
+  // ── Title & sub
+  _setText('r7Title', pct === 100 ? 'All Done ✓' : pct > 0 ? 'Partially Complete' : 'Pipeline Finished');
+  _setText('r7Sub',   `${fullOk} fully delivered · ${certOnly} cert-only · ${failed} failed`);
+
+  // ── Breakdown pills
+  _setText('r7OkCount',       fullOk);
+  _setText('r7CertOnlyCount', certOnly);
+  _setText('r7ErrCount',      failed);
+
+  // ── Campaign label
+  const cpName = (document.getElementById('cpName') || {}).value || 'Untitled Campaign';
+  _setText('r7CampaignName', cpName);
+
+  // ── Job info
+  _setText('r7InfoCampaign',   cpName);
+  _setText('r7InfoStarted',    CP._jobStarted  || '—');
+  _setText('r7InfoFinished',   CP._jobFinished || '—');
+  _setText('r7InfoDuration',   CP._jobDuration || '—');
+  _setText('r7InfoSrc',        ({sheets:'Google Sheets', file:'Uploaded File', manual:'Manual Entry', hxform:'HX Form'})[CP.srcType] || '—');
+  _setText('r7InfoWriteback',  CP.writeBack ? 'Enabled' : 'Disabled');
+
+  // ── Copy log from running log (sp6 live log → r7Log)
+  const srcLog = document.getElementById('runLog');
+  const dstLog = document.getElementById('r7Log');
+  if (srcLog && dstLog) dstLog.innerHTML = srcLog.innerHTML;
+
+  // ── Render report
+  _r7AllResults = [...results];
+  cpFilterReport();
+}
+
+// Internal cache for filter/search
+let _r7AllResults = [];
+
+/**
+ * Filter + search the report table.
+ */
+function cpFilterReport() {
+  const query  = (document.getElementById('r7SearchInput')  || {}).value?.toLowerCase() || '';
+  const filter = (document.getElementById('r7FilterSel')    || {}).value || 'all';
+
+  let rows = _r7AllResults;
+
+  if (filter === 'ok')    rows = rows.filter(r => r.certOk && r.mailOk);
+  if (filter === 'cert')  rows = rows.filter(r => r.certOk && !r.mailOk);
+  if (filter === 'error') rows = rows.filter(r => !r.certOk && !r.mailOk);
+
+  if (query) {
+    rows = rows.filter(r => {
+      const name  = (r.name  || '').toLowerCase();
+      const email = (r.email || '').toLowerCase();
+      return name.includes(query) || email.includes(query);
+    });
+  }
+
+  _r7RenderReportRows(rows);
+}
+
+/**
+ * Render filtered result rows into the report table body.
+ */
+function _r7RenderReportRows(rows) {
+  const body = document.getElementById('r7ReportBody');
+  if (!body) return;
+
+  if (!rows.length) {
+    body.innerHTML = `<div style="text-align:center;padding:32px;color:var(--text-3);font-size:13px">No results match the current filter.</div>`;
+    return;
+  }
+
+  body.innerHTML = rows.map((r, i) => {
+    const certBadge = r.certOk
+      ? `<span class="badge badge-green">✓ Generated</span>`
+      : `<span class="badge badge-red">✗ Failed</span>`;
+
+    const mailBadge = r.mailOk
+      ? `<span class="badge badge-green">✓ Sent</span>`
+      : r.mailSkipped
+        ? `<span class="badge" style="background:rgba(245,158,11,0.1);color:var(--gold);border:1px solid rgba(245,158,11,0.25)">— Skipped</span>`
+        : `<span class="badge badge-red">✗ Failed</span>`;
+
+    const certLink = r.certUrl
+      ? `<a href="${r.certUrl}" target="_blank" rel="noopener noreferrer"
+            style="font-size:11.5px;color:var(--cyan);text-decoration:underline;display:block;margin-top:4px;
+                   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px"
+            title="${r.certUrl}">Open PDF ↗</a>`
+      : '';
+
+    const errNote = r.error
+      ? `<div style="font-size:11.5px;color:var(--red);margin-top:3px;font-family:var(--font-mono)">${r.error}</div>`
+      : '';
+
+    return `
+      <div class="report-row" style="border-bottom:1px solid var(--glass-border);
+            background:${i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)'}">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text)">${_esc(r.name || '—')}</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:2px;font-family:var(--font-mono)">${_esc(r.email || '—')}</div>
+        </div>
+        <div>
+          ${certBadge}
+          ${certLink}
+          ${errNote}
+        </div>
+        <div>${mailBadge}</div>
+      </div>`;
+  }).join('');
+}
+
+/**
+ * Build and trigger download of the backup CSV report.
+ */
+function cpDownloadReport() {
+  const results = _r7AllResults.length ? _r7AllResults : (CP.results || []);
+  if (!results.length) {
+    alert('No results to download yet. Run the pipeline first.');
+    return;
+  }
+
+  // Build CSV
+  const headers = ['#', 'Name', 'Email', 'Certificate Generated', 'Certificate URL', 'Email Sent', 'Error'];
+  const lines = [headers.join(',')];
+
+  results.forEach((r, i) => {
+    const cols = [
+      i + 1,
+      _csvCell(r.name  || ''),
+      _csvCell(r.email || ''),
+      r.certOk  ? 'Yes' : 'No',
+      _csvCell(r.certUrl || ''),
+      r.mailOk  ? 'Yes' : r.mailSkipped ? 'Skipped' : 'No',
+      _csvCell(r.error  || ''),
+    ];
+    lines.push(cols.join(','));
+  });
+
+  // Add summary footer
+  lines.push('');
+  const cpName = (document.getElementById('cpName') || {}).value || 'campaign';
+  lines.push(_csvCell('Campaign: ' + cpName));
+  lines.push(_csvCell('Generated: ' + new Date().toLocaleString()));
+  lines.push(_csvCell('Total: '     + results.length));
+  lines.push(_csvCell('Certs OK: '  + results.filter(r => r.certOk).length));
+  lines.push(_csvCell('Emails OK: ' + results.filter(r => r.mailOk).length));
+  lines.push(_csvCell('Failed: '    + results.filter(r => !r.certOk && !r.mailOk).length));
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const slug = cpName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase().slice(0, 40);
+  a.href     = url;
+  a.download = `honourix_report_${slug}_${_dateSlug()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Copy the activity log text to clipboard.
+ */
+function cpCopyLog() {
+  const log = document.getElementById('r7Log');
+  if (!log) return;
+  const text = log.innerText || log.textContent || '';
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Log copied to clipboard');
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Log copied');
+  });
+}
+
+/**
+ * Reset the entire pipeline to start a new campaign.
+ */
+function cpNewCampaign() {
+  if (!confirm('Start a new campaign? All current data and template will be cleared.')) return;
+
+  // Reset state
+  CP.step          = 1;
+  CP.srcType       = 'sheets';
+  CP.headers       = [];
+  CP.rows          = [];
+  CP.sheetId       = null;
+  CP.customMappings = [];
+  CP.results       = [];
+  CP.writeBack     = false;
+  CP._jobStarted   = null;
+  CP._jobFinished  = null;
+  CP._jobDuration  = null;
+  _r7AllResults    = [];
+
+  // Reset canvas / ED
+  ED.fields        = [];
+  ED.selId         = null;
+  ED.bgImg         = null;
+  ED.bgBase64      = null;
+  ED.bgColor       = '#ffffff';
+
+  // Reset email editor
+  ME.blocks        = [];
+  ME.selectedId    = null;
+  ME.nextId        = 1;
+  ME.initialized   = false;
+
+  // Reset form inputs
+  const cpNameEl = document.getElementById('cpName');
+  if (cpNameEl) cpNameEl.value = '';
+  const sheetEl  = document.getElementById('sheetId');
+  if (sheetEl)   sheetEl.value = '';
+
+  // Clear results UI
+  const r7Body = document.getElementById('r7ReportBody');
+  if (r7Body) r7Body.innerHTML = `<div style="text-align:center;padding:32px;color:var(--text-3);font-size:13px">No results yet. Run the pipeline first.</div>`;
+  const r7Log = document.getElementById('r7Log');
+  if (r7Log)  r7Log.innerHTML = '';
+
+  // Clear sheet result
+  const sheetResult = document.getElementById('sheetResult');
+  if (sheetResult) { sheetResult.style.display = 'none'; sheetResult.innerHTML = ''; }
+
+  // Reset stepper
+  buildStepper();
+
+  // Re-render canvas
+  if (typeof renderCanvas === 'function') renderCanvas();
+  if (typeof cpRenderFieldChips === 'function') cpRenderFieldChips();
+
+  // Go back to step 1
+  cpGoStep(1);
+
+  showToast('New campaign started');
+}
+
+/* ── Helpers ─────────────────────────────────────────────────────── */
+
+/** Set text content safely */
+function _setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+/** Escape HTML for display */
+function _esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/** Wrap a value in CSV-safe quotes */
+function _csvCell(val) {
+  const s = String(val).replace(/"/g, '""');
+  return `"${s}"`;
+}
+
+/** YYYY-MM-DD slug for filenames */
+function _dateSlug() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+/** Show a brief toast notification */
+function showToast(msg) {
+  let t = document.getElementById('_hxToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = '_hxToast';
+    t.style.cssText = `
+      position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:rgba(10,20,40,0.97);color:#f0f6ff;padding:11px 22px;border-radius:10px;
+      font-size:14px;font-weight:600;border:1px solid rgba(0,212,255,0.25);
+      box-shadow:0 6px 32px rgba(0,0,0,0.6);z-index:9999;opacity:0;
+      transition:opacity 0.25s ease,transform 0.25s ease;pointer-events:none;
+      font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;`;
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  requestAnimationFrame(() => {
+    t.style.opacity   = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => {
+    t.style.opacity   = '0';
+    t.style.transform = 'translateX(-50%) translateY(10px)';
+  }, 2800);
+}
