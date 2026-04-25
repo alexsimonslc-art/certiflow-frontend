@@ -2689,7 +2689,7 @@ mNewCampaign = function () {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const firstName = (payload.name || '').split(' ')[0] || 'there';
       const el = document.getElementById('galAiGreetName');
-      if (el) el.textContent = `Hi, ${firstName}! 👋`;
+      if (el) el.innerHTML = `How can I help you today,<br>${firstName}`;
     } catch (e) { }
   };
 
@@ -2717,9 +2717,8 @@ mNewCampaign = function () {
     const chat = document.getElementById('meAiChat');
     const greet = document.getElementById('galAiGreeting');
     if (!chat || !greet) return;
-    const hasMessages = chat.children.length > 0;
-    greet.style.display = hasMessages ? 'none' : '';
-    chat.style.display = hasMessages ? 'flex' : 'none';
+    const hasMessages = Array.from(chat.children).some(c => c.id !== 'galAiGreeting' && c.tagName !== 'STYLE');
+    greet.style.display = hasMessages ? 'none' : 'flex';
   };
 
   // ── Resize handle ──
