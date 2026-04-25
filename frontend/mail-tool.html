@@ -900,6 +900,15 @@
       background: #0a1020 !important;
     }
 
+    .CodeMirror-readonly .CodeMirror-scroll {
+      opacity: 0.85;
+      cursor: default;
+    }
+
+    .CodeMirror-readonly .CodeMirror-lines {
+      cursor: default;
+    }
+
     .CodeMirror-scroll {
       padding-bottom: 24px;
     }
@@ -2632,14 +2641,24 @@
                       </div>
                       <div class="me-code-wrap" id="meCmWrap"></div>
                       <div class="me-code-apply-bar">
-                        <span>⚡ Edit HTML directly — click Apply to update the visual canvas</span>
-                        <button class="btn btn-primary btn-sm" onclick="meApplyCodeToVisual()">
+                        <span id="meCodeSaveNotice">Note: To save this template please copy the code and save it in your
+                          local storage. (Visual mode uses code preview only)</span>
+                        <button class="btn btn-primary btn-sm" id="meBtnApplyCode" onclick="meApplyCodeToVisual()"
+                          style="display:none;">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             style="width:13px;height:13px">
                             <polyline points="23 4 23 10 17 10" />
                             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
                           </svg>
                           Apply to Visual
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="meBtnCopyCode" onclick="meCopyCode()">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            style="width:13px;height:13px">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                          </svg>
+                          Copy Code
                         </button>
                       </div>
                     </div>

@@ -606,9 +606,14 @@ function meOnStepEnter() {
     tabSize: 2,
     indentWithTabs: false,
     autofocus: false,
+    readOnly: (ME.mode === 'code' ? false : 'nocursor'),
     extraKeys: { 'Ctrl-Space': 'autocomplete' },
     value: document.getElementById('mHtmlTmpl').value || '',
   });
+
+  if (ME.mode !== 'code') {
+    ME.cm.getWrapperElement().classList.add('CodeMirror-readonly');
+  }
 
   // Override dracula background to match our dark theme
   wrapper.querySelector('.CodeMirror').style.background = '#080f1e';
@@ -1096,6 +1101,18 @@ function meSyncTextarea() {
 function meSyncVisualFromCode() {
   if (ME.cm) document.getElementById('mHtmlTmpl').value = ME.cm.getValue();
   toast('Code saved. Visual builder shows current blocks.', 'info', 2500);
+}
+
+function meCopyCode() {
+  if (ME.cm) {
+    const code = ME.cm.getValue();
+    if (!code.trim()) { toast('No code to copy', 'warn'); return; }
+    navigator.clipboard.writeText(code).then(() => {
+      toast('Code copied to clipboard!', 'success');
+    }).catch(() => {
+      toast('Failed to copy', 'error');
+    });
+  }
 }
 
 function meApplyCodeToVisual() {
@@ -1959,7 +1976,7 @@ function meTplGateBuild() {
   const grid = document.getElementById('meTplGateGrid');
   if (!grid) return;
 
-  // Blank card first
+  // Blank card first + Paste Code card
   const blankHtml = `
     <div class="me-tpl-gate-card" id="meTplGateCard_blank" onclick="meTplGateSelect('blank')" data-cat="all">
       <div class="me-tpl-gate-thumb" style="background:linear-gradient(135deg,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center">
@@ -1968,6 +1985,15 @@ function meTplGateBuild() {
       <div class="me-tpl-gate-info">
         <div class="me-tpl-gate-name">Blank Canvas</div>
         <div class="me-tpl-gate-desc">Start from scratch</div>
+      </div>
+    </div>
+    <div class="me-tpl-gate-card" id="meTplGateCard_paste" onclick="meTplGateSelect('paste')" data-cat="all">
+      <div class="me-tpl-gate-thumb" style="background:linear-gradient(135deg,#0d9488,#0f172a);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" style="width:40px;height:40px"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+      </div>
+      <div class="me-tpl-gate-info">
+        <div class="me-tpl-gate-name">Paste Code</div>
+        <div class="me-tpl-gate-desc">Write or paste pure HTML (Advanced)</div>
       </div>
     </div>`;
 
@@ -1982,7 +2008,7 @@ function meTplGateBuild() {
           <div class="me-tpl-gate-thumb-overlay"></div>
         </div>
         <div class="me-tpl-gate-info">
-          <div class="me-tpl-gate-name">${tpl.name}</div>
+          <div class="me-tpl-gate-name">${tpl.name.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1FA70}-\u{1FAFF}\u{2B50}\u{2B55}\u{1F004}\u{1F0CF}\u{1F18E}\u{23E9}-\u{23F3}\u{23F8}-\u{23FA}]/gu, '').trim()}</div>
           <div class="me-tpl-gate-desc">${tpl.desc || ''}</div>
         </div>
       </div>`;
@@ -2018,12 +2044,23 @@ function meTplGateConfirm() {
 }
 
 function meLoadTemplateAndOpenEditor(key) {
-  if (key === 'blank') {
+  if (key === 'paste') {
+    ME.mode = 'code';
+    ME.blocks = [];
+    ME.selectedId = null;
+    document.getElementById('mHtmlTmpl').value = '';
+    if (ME.cm) {
+      ME.cm.setValue('');
+      ME.cm.setOption('readOnly', false);
+    }
+  } else if (key === 'blank') {
+    ME.mode = 'visual';
     ME.blocks = [];
     ME.selectedId = null;
     meRenderCanvas();
     meSyncToCode();
   } else {
+    ME.mode = 'visual';
     const tpl = ME_TEMPLATES[key];
     if (!tpl) return;
     ME.blocks = tpl.blocks.map(b => ({
@@ -2042,6 +2079,35 @@ function meLoadTemplateAndOpenEditor(key) {
   document.getElementById('meTabBarWrap').style.display = '';
   document.getElementById('meAiToggleBtn').style.display = '';
   document.getElementById('meStep2Nav').style.display = '';
+
+  // Conditionally display Visual tab and Sync functionality
+  const tabVisual = document.getElementById('meTabVisual');
+  const btnApplyCode = document.getElementById('meBtnApplyCode');
+  const btnCopyCode = document.getElementById('meBtnCopyCode');
+  const codeSaveNotice = document.getElementById('meCodeSaveNotice');
+
+  if (ME.mode === 'code') {
+    if (tabVisual) tabVisual.style.display = 'none';
+    if (btnApplyCode) btnApplyCode.style.display = 'none';
+    if (btnCopyCode) btnCopyCode.style.display = 'none';
+    if (codeSaveNotice) codeSaveNotice.style.display = 'none';
+    meSwitchTab('code');       // Force switch to code view
+    if (ME.cm) {
+      ME.cm.setOption('readOnly', false);
+      ME.cm.getWrapperElement().classList.remove('CodeMirror-readonly');
+    }
+  } else {
+    if (tabVisual) tabVisual.style.display = '';
+    if (btnApplyCode) btnApplyCode.style.display = 'none';
+    if (btnCopyCode) btnCopyCode.style.display = '';
+    if (codeSaveNotice) codeSaveNotice.style.display = 'block';
+    if (ME.cm) {
+      ME.cm.setOption('readOnly', 'nocursor');
+      // Adding purely visually helpful readOnly class
+      ME.cm.getWrapperElement().classList.add('CodeMirror-readonly');
+    }
+    meSwitchTab('visual');
+  }
 
   // Update header sub-text
   const sub = document.querySelector('#meCard .me-head > div > div[style*="color:var(--text-3)"]');
@@ -2110,9 +2176,15 @@ function meOnStepEnterInternal() {
     tabSize: 2,
     indentWithTabs: false,
     autofocus: false,
+    readOnly: (ME.mode === 'code' ? false : 'nocursor'),
     extraKeys: { 'Ctrl-Space': 'autocomplete' },
     value: document.getElementById('mHtmlTmpl').value || '',
   });
+
+  if (ME.mode !== 'code') {
+    ME.cm.getWrapperElement().classList.add('CodeMirror-readonly');
+  }
+
   wrapper.querySelector('.CodeMirror').style.background = '#080f1e';
   wrapper.querySelector('.CodeMirror').style.color = '#f8f8f2';
   ME.cm.on('change', () => {
@@ -2420,6 +2492,8 @@ async function meAiSend() {
 
     const body = {
       userMessage: msg,
+      mode: ME.mode || 'visual',
+      htmlModeText: (ME.mode === 'code' && ME.cm) ? ME.cm.getValue() : '',
       currentBlocks: ME.blocks,
       headers: MS.headers,
       chatHistory: meAiChatHistory.slice(-10),
@@ -2451,7 +2525,16 @@ async function meAiSend() {
 
     meAiChatHistory.push({ role: 'model', content: message });
 
-    if (action === 'replace_blocks' && res.blocks && res.blocks.length) {
+    if (action === 'replace_html' && res.html && ME.mode === 'code') {
+      if (typeof res.html === 'string' && ME.cm) {
+        ME.cm.setValue(res.html);
+        document.getElementById('mHtmlTmpl').value = res.html;
+        meRefreshPreviewIframe();
+      }
+      meAiAppendBubble('ai', message || 'Your HTML code has been updated directly!');
+      toast('AI updated your HTML', 'success', 2000);
+
+    } else if (action === 'replace_blocks' && res.blocks && res.blocks.length) {
       ME.blocks = res.blocks.map(b => ({
         id: b.id || ('b' + (ME.nextId++)),
         type: b.type,
