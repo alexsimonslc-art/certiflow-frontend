@@ -1018,6 +1018,24 @@
       padding: 20px;
     }
 
+    .me-preview-frame-wrap::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .me-preview-frame-wrap::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .me-preview-frame-wrap::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+    }
+
+    .me-preview-frame-wrap::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
     .me-preview-frame-wrap.mobile {
       align-items: flex-start;
     }
@@ -2808,24 +2826,51 @@
                     </svg>
                     Personalized Preview
                   </div>
-                  <div class="preview-nav">
-                    <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
-                    <button class="preview-nav-btn" onclick="mNavPrev()">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="19" y1="12" x2="5" y2="12" />
-                        <polyline points="12 19 5 12 12 5" />
-                      </svg>
-                    </button>
-                    <button class="preview-nav-btn" onclick="mNavNext()">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                        <polyline points="12 5 19 12 12 19" />
-                      </svg>
-                    </button>
+
+                  <div style="display:flex;align-items:center;gap:12px;margin-left:auto">
+                    <div
+                      style="display:flex;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;overflow:hidden">
+                      <button class="me-device-btn active" id="mBtnDesktopS3" onclick="mSetDeviceS3('desktop')"
+                        style="border:none;background:transparent;padding:6px 12px;font-size:12px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;transition:all 0.2s;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                          style="width:13px;height:13px;margin-right:5px">
+                          <rect x="2" y="3" width="20" height="14" rx="2" />
+                          <path d="M8 21h8M12 17v4" />
+                        </svg>
+                        Desktop
+                      </button>
+                      <button class="me-device-btn" id="mBtnMobileS3" onclick="mSetDeviceS3('mobile')"
+                        style="border:none;background:transparent;padding:6px 12px;font-size:12px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;transition:all 0.2s;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                          style="width:13px;height:13px;margin-right:5px">
+                          <rect x="5" y="2" width="14" height="20" rx="2" />
+                          <line x1="12" y1="18" x2="12.01" y2="18" />
+                        </svg>
+                        Mobile
+                      </button>
+                    </div>
+
+                    <div class="preview-nav">
+                      <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
+                      <button class="preview-nav-btn" onclick="mNavPrev()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="19" y1="12" x2="5" y2="12" />
+                          <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                      </button>
+                      <button class="preview-nav-btn" onclick="mNavNext()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="5" y1="12" x2="19" y2="12" />
+                          <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div style="padding:20px">
-                  <div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden">
+                <div style="padding:40px 20px; background:rgba(0,0,0,0.15); display:flex; justify-content:center;">
+                  <div
+                    style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;width:100%;transition:width 0.3s ease;margin:0 auto;"
+                    id="mPrvBoxS3">
                     <div style="background:#e8edf3;padding:12px 18px;border-bottom:1px solid rgba(0,0,0,0.08)">
                       <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong
                           style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
@@ -2834,7 +2879,7 @@
                     </div>
                     <iframe id="mPreviewIframe" scrolling="no"
                       onload="if(window.resizeMailPreview) window.resizeMailPreview()"
-                      style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease;"
+                      style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease, width 0.3s ease;"
                       sandbox="allow-same-origin allow-scripts"></iframe>
                   </div>
                 </div>

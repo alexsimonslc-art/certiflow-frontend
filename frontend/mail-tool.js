@@ -2879,77 +2879,50 @@ window.applyAiOption = function (text) {
    DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
 ════════════════════════════════════════════════════════════════ */
 window.resizeMailPreview = function () {
-  // Find the iframe (Update the ID if yours is named differently)
-  const iframe = document.getElementById('previewFrame') || document.getElementById('mailPreviewFrame');
+  const iframe = document.getElementById('mPreviewIframe');
   if (!iframe) return;
 
   try {
     const doc = iframe.contentDocument || iframe.contentWindow.document;
 
-    // 1. Inject the Sleek Platform Scrollbar into the white email UI
-    if (!doc.getElementById('hx-custom-scrollbar')) {
-      const style = doc.createElement('style');
-      style.id = 'hx-custom-scrollbar';
-      style.textContent = `
-        /* Sleek scrollbars for the white email background */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
-        
-        /* Force vertical scrollbar to hide so the iframe can expand */
-        body { 
-          overflow-y: hidden !important; 
-          margin: 0; 
-          padding: 20px; 
-          box-sizing: border-box; 
-        }
-      `;
-      doc.head.appendChild(style);
-    }
+    // Auto-Expand Height with precisely no artificial gap
+    setTimeout(() => {
+      const body = doc.body;
+      const h = doc.documentElement;
 
-    // 2. Auto-Expand Height to push the "Dispatch" button down
-    iframe.style.height = '0px'; // Reset briefly to calculate true height
-    const scrollHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+      // Clear out artificial margin/padding to eliminate gap at the bottom
+      if (body) {
+        body.style.margin = '0';
+        body.style.padding = '0';
+        body.style.overflow = 'hidden'; // Hide internal scrollbar to prevent gliching
+      }
 
-    // Set the new height (adding a 40px buffer for padding)
-    iframe.style.height = (scrollHeight + 40) + 'px';
+      // Calculate perfect height bounding entirely on actual content 
+      const realHeight = Math.max(
+        body.scrollHeight, body.offsetHeight,
+        h.clientHeight, h.scrollHeight, h.offsetHeight, 340
+      );
+
+      iframe.style.height = realHeight + 'px';
+    }, 50);
 
   } catch (e) {
     console.warn("Could not resize iframe due to cross-origin or loading state.");
   }
 };
 
-/* ════════════════════════════════════════════════════════════════
-   DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
-════════════════════════════════════════════════════════════════ */
-window.resizeMailPreview = function () {
-  const iframe = document.getElementById('mPreviewIframe');
-  if (!iframe) return;
+window.mSetDeviceS3 = function (device) {
+  const frame = document.getElementById('mPrvBoxS3');
+  if (!frame) return;
+  document.getElementById('mBtnDesktopS3').classList.toggle('active', device === 'desktop');
+  document.getElementById('mBtnMobileS3').classList.toggle('active', device === 'mobile');
 
-  try {
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-    if (!doc || !doc.body) return;
-
-    // 1. Inject Sleek Scrollbar into the white email UI
-    if (!doc.getElementById('hx-custom-scrollbar')) {
-      const style = doc.createElement('style');
-      style.id = 'hx-custom-scrollbar';
-      style.textContent = `
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
-        body { overflow-y: hidden !important; margin: 0; padding: 20px; box-sizing: border-box; }
-      `;
-      doc.head.appendChild(style);
-    }
-
-    // 2. Auto-Expand Height
-    iframe.style.height = '0px'; // Temporarily collapse to get true scrollHeight
-    const newHeight = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 340);
-    iframe.style.height = (newHeight + 40) + 'px';
-  } catch (e) {
-    console.warn("Iframe resize blocked:", e);
+  if (device === 'mobile') {
+    frame.style.width = '375px';
+  } else {
+    frame.style.width = '100%';
   }
+
+  // Automatically trigger height recalculation for the new width
+  if (window.resizeMailPreview) window.resizeMailPreview();
 };
