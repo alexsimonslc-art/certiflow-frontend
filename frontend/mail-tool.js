@@ -535,11 +535,13 @@ function meBlockToHtml(block) {
       
       const rows = d.map((row, ri) => {
         const isHeader = p.headerRow && ri === 0;
-        const cells = row.map(cell =>
-          isHeader
-            ? `<th style="padding:${pad}px;background:${hBg};color:${hColor};font-family:${fontStack};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cell}</th>`
-            : `<td style="padding:${pad}px;background:${cBg};color:${cColor};font-family:${fontStack};font-size:${fSize}px;border:${bst}">${cell}</td>`
-        ).join('');
+        const cells = row.map(cell => {
+          // Force-clean rogue styles and apply !important to strictly enforce user colors
+          let cleanCell = typeof cell === 'string' ? cell.replace(/color\s*:\s*[^;"]+;?/gi, '') : cell;
+          return isHeader
+            ? `<th style="padding:${pad}px;background:${hBg};color:${hColor} !important;font-family:${fontStack};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cleanCell}</th>`
+            : `<td style="padding:${pad}px;background:${cBg};color:${cColor} !important;font-family:${fontStack};font-size:${fSize}px;border:${bst}">${cleanCell}</td>`;
+        }).join('');
         return `<tr>${cells}</tr>`;
       }).join('');
       
