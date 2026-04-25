@@ -680,345 +680,551 @@ body { font-family:var(--font);background:var(--bg);color:var(--text);font-size:
           </div>
         </div>
 
-        <div class="step-nav" style="margin-top:18px">
-          <button class="btn btn-outline" onclick="cpGoStep(1)">← Back</button>
-          <button class="btn btn-primary" style="padding:13px 28px" onclick="cpGoStep(3)">
-            Continue to Field Mapping
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                <div class="step-nav" style="margin-top:18px">
+          <button class="btn btn-outline" onclick="cpGoStep(1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back
           </button>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-outline btn-sm" onclick="cpSaveTemplate()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Template
+            </button>
+            <button class="btn btn-primary" onclick="cpGoStep(3)">
+              Continue to Field Mapping
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Canvas Size Modal -->
+<div id="cpSizeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(6px)">
+  <div style="background:#0d1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;width:400px;max-width:calc(100vw - 40px)">
+    <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);margin-bottom:18px">Canvas Size</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+      <div class="form-group">
+        <label class="form-label">Width (px)</label>
+        <input type="number" id="csW" class="form-input" value="1122"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Height (px)</label>
+        <input type="number" id="csH" class="form-input" value="794"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+      <button class="btn btn-outline btn-sm" onclick="cpSizePreset(1122,794)">A4 Landscape</button>
+      <button class="btn btn-outline btn-sm" onclick="cpSizePreset(794,1122)">A4 Portrait</button>
+      <button class="btn btn-outline btn-sm" onclick="cpSizePreset(1200,900)">1200×900</button>
+      <button class="btn btn-outline btn-sm" onclick="cpSizePreset(1056,816)">Letter</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button class="btn btn-outline" onclick="document.getElementById('cpSizeModal').style.display='none'">Cancel</button>
+      <button class="btn btn-primary" onclick="cpApplySize()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Field Modal -->
+<div id="afOverlay">
+  <div class="af-modal">
+    <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);margin-bottom:18px">Add Field</div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label class="form-label">Placeholder <span style="color:var(--red)">*</span></label>
+      <input type="text" id="afPh" class="form-input" placeholder="e.g. {{name}}" />
+      <span class="form-hint">Use double curly braces — will be replaced with real data per participant.</span>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label class="form-label">Preview Text</label>
+      <input type="text" id="afPrev" class="form-input" placeholder="e.g. Alexandra Johnson" />
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="form-group">
+        <label class="form-label">Font Family</label>
+        <select id="afFont" class="form-input">
+          <option>Helvetica</option><option>Montserrat</option><option>Raleway</option>
+          <option>Plus Jakarta Sans</option><option>Playfair Display</option>
+          <option>EB Garamond</option><option>Cormorant Garamond</option>
+          <option>Dancing Script</option><option>Cinzel</option>
+          <option>Times New Roman</option><option>Courier New</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Font Size (px)</label>
+        <input type="number" id="afSize" class="form-input" value="36" min="8" max="120"/>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="form-group">
+        <label class="form-label">Color</label>
+        <input type="color" id="afColor" value="#1a1a1a" style="width:100%;height:38px;border-radius:8px;border:1px solid var(--glass-border);cursor:pointer;background:none"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Alignment</label>
+        <select id="afAlign" class="form-input">
+          <option value="center">Center</option>
+          <option value="left">Left</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px">
+      <button class="btn btn-outline" onclick="closeAFModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="cpAddField()">Add Field</button>
+    </div>
+  </div>
+</div>
 
       <!-- ═══ STEP 3 — FIELD MAPPING ═══ -->
-      <div class="step-panel" id="sp3">
-        <div class="two-cols">
-          <div style="display:flex;flex-direction:column;gap:20px">
-            <div class="card">
-              <div class="card-title" style="margin-bottom:18px">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                Map Columns → Placeholders
-              </div>
-              <div style="font-size:13.5px;color:var(--text-2);margin-bottom:18px">
-                For each placeholder field, select which spreadsheet column it should pull from. Star ★ one field as <strong style="color:var(--gold)">Primary</strong> — it names the PDF file.
-              </div>
-              <div id="mappingRows"></div>
+<div class="step-panel" id="sp3">
+  <div style="margin-bottom:20px">
+    <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text)">Field Mapping</div>
+    <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Connect each certificate placeholder to a column from your data.</div>
+  </div>
 
-              <!-- Event name + file naming -->
-              <div style="margin-top:20px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px">
-                <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);margin-bottom:10px">File Naming</div>
-                <div style="font-size:13px;color:var(--text-2);margin-bottom:10px">
-                  PDF filename: <code style="color:var(--cyan);background:rgba(0,212,255,.08);padding:2px 7px;border-radius:4px" id="fnNamePill">participant_name</code>
-                  <span id="fnSepNum" style="color:var(--text-3)"> + _01.pdf</span>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Event / Suffix (optional)</label>
-                  <input type="text" class="form-input" id="fnEventInput" placeholder="e.g. ReactBootcamp2025" oninput="cpFnUpdatePreview()" style="font-size:14px"/>
-                </div>
-                <div style="font-size:12.5px;color:var(--text-3)">Preview: <span id="fnPreviewText" style="color:var(--cyan);font-family:var(--font-mono)">Name_01.pdf</span></div>
-              </div>
+  <div class="two-cols">
+    <div style="display:flex;flex-direction:column;gap:16px">
 
-              <!-- Write-back card -->
-              <div style="margin-top:16px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-                  <div style="font-size:13px;font-weight:700;color:var(--text)">Write Links Back to Sheet</div>
-                  <span id="s3WritebackBadge"></span>
-                </div>
-                <div id="s3WritebackDesc" style="font-size:13px;color:var(--text-2);margin-bottom:10px"></div>
-                <div id="s3WritebackOptions" style="display:none">
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <div class="toggle-track" id="writeBackToggle" onclick="this.classList.toggle('on')">
-                      <div class="toggle-thumb"></div>
-                    </div>
-                    <span style="font-size:13px;color:var(--text-2)">Automatically write certificate links to a new column in your Google Sheet after generation.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="step-nav">
-              <button class="btn btn-outline" onclick="cpGoStep(2)">← Back</button>
-              <button class="btn btn-primary" style="padding:13px 28px" onclick="cpValidateStep3()">
-                Preview Certificates
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </button>
-            </div>
+      <!-- Mappings -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:18px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          Placeholder → Column Mappings
+        </div>
+        <div id="mappingRows">
+          <div style="text-align:center;padding:24px;color:var(--text-3);font-size:13px">
+            Add fields on the certificate canvas first.
           </div>
-
-          <!-- Sidebar: column hint -->
-          <div class="card card-sm">
-            <div class="card-title" style="margin-bottom:12px">Available Columns</div>
-            <div id="colsListHint" style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px"></div>
-          </div>
+        </div>
+        <div style="margin-top:6px;font-size:12.5px;color:var(--text-3);display:flex;align-items:center;gap:6px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--gold)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Star ★ marks the column used for PDF file naming.
         </div>
       </div>
 
-      <!-- ═══ STEP 4 — PREVIEW ═══ -->
-      <div class="step-panel" id="sp4">
-        <div class="two-cols">
-          <div style="display:flex;flex-direction:column;gap:20px">
-
-            <div class="card">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-                <div class="card-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Certificate Preview
-                  <span id="participantBadge" style="margin-left:8px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(0,212,255,.2)"></span>
-                </div>
-                <div class="preview-nav">
-                  <button class="preview-nav-btn" onclick="cpCertPrevNav(-1)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-                  </button>
-                  <span id="certNavLabel" style="font-size:14px;color:var(--text-2);min-width:50px;text-align:center">1 / 1</span>
-                  <button class="preview-nav-btn" onclick="cpCertPrevNav(1)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                  </button>
-                </div>
-              </div>
-
-              <div class="cert-prev-outer">
-                <div class="cert-prev-inner">
-                  <canvas id="certPrevCanvas"></canvas>
-                </div>
-                <div class="cert-prev-strip" id="certPrevStrip"></div>
-              </div>
-            </div>
-
-            <div class="step-nav">
-              <button class="btn btn-outline" onclick="cpGoStep(3)">← Back</button>
-              <button class="btn btn-primary" style="padding:13px 28px" onclick="cpGoStep(5)">
-                Design Email Template →
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="card card-sm">
-            <div class="card-title" style="margin-bottom:14px">Field Mappings</div>
-            <div id="mappingsReview" style="display:flex;flex-direction:column;gap:6px"></div>
-            <div style="margin-top:16px" id="previewSummaryGrid"></div>
-          </div>
+      <!-- Output naming -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Output File Naming
+        </div>
+        <div style="font-size:13.5px;color:var(--text-2);margin-bottom:14px">Each PDF is named using the starred column + a sequence number.</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="fn-name-pill" id="namePillPrimary">participant_name</span>
+          <span style="color:var(--text-3)">_</span>
+          <span class="fn-name-pill">01</span>
+          <span style="color:var(--text-3)">.pdf</span>
+        </div>
+        <div style="margin-top:10px;font-size:13px;color:var(--text-3)">
+          Preview: <span id="namingPreview" style="color:var(--cyan);font-family:var(--font-mono)">Alex_01.pdf</span>
         </div>
       </div>
+
+      <!-- Sheet write-back -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div class="card-title" style="margin-bottom:4px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+              Google Sheets Write-back
+            </div>
+            <div style="font-size:13px;color:var(--text-2)">Adds a column with each certificate PDF URL back to your Sheet.</div>
+          </div>
+          <div id="writeBackToggle" class="toggle-track" onclick="cpToggleWriteback()" title="Toggle write-back"></div>
+        </div>
+        <div id="writeBackNote" style="display:none;margin-top:12px" class="notice notice-cyan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="20 6 9 17 4 12"/></svg>
+          Certificate links will be written to column <strong id="writeBackColName">Certificate Link</strong> in your Sheet.
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-outline" onclick="cpGoStep(2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back
+        </button>
+        <button class="btn btn-primary" onclick="cpGoStep(4)">
+          Preview Certificates
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: column list -->
+    <div class="card card-sm">
+      <div class="card-title" style="margin-bottom:14px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        Your Sheet Columns
+      </div>
+      <div id="sheetColList" style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-2)">
+        <div style="color:var(--text-3)">Columns will appear here after loading data.</div>
+      </div>
+      <div style="margin-top:18px;border-top:1px solid var(--glass-border);padding-top:14px">
+        <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-3);margin-bottom:10px">Placeholder Guide</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-3);font-family:var(--font-mono)">
+          <div>&#123;&#123;name&#125;&#125; → Participant name</div>
+          <div>&#123;&#123;course&#125;&#125; → Course / event</div>
+          <div>&#123;&#123;date&#125;&#125; → Any date column</div>
+          <div>&#123;&#123;score&#125;&#125; → Score / grade</div>
+          <div>&#123;&#123;cert_link&#125;&#125; → PDF URL in email</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- ═══ STEP 4 — CERTIFICATE PREVIEW ═══ -->
+<div class="step-panel" id="sp4">
+  <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text)">Preview Certificates</div>
+      <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Check how each certificate will look before generating.</div>
+    </div>
+    <div class="preview-nav">
+      <button class="preview-nav-btn" onclick="cpPrevRow()" title="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span id="prevRowLabel" style="font-size:14px;font-weight:600;color:var(--text);min-width:80px;text-align:center">1 / 1</span>
+      <button class="preview-nav-btn" onclick="cpNextRow()" title="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Current row info strip -->
+  <div id="prevRowStrip" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;padding:12px 16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;font-size:13px"></div>
+
+  <!-- Canvas preview -->
+  <div class="cert-prev-outer" style="margin-bottom:20px">
+    <div class="cert-prev-inner">
+      <canvas id="certPrevCanvas"></canvas>
+    </div>
+  </div>
+
+  <div class="step-nav">
+    <button class="btn btn-outline" onclick="cpGoStep(3)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back
+    </button>
+    <button class="btn btn-primary" onclick="cpGoStep(5)">
+      Continue to Email Template
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</div>
+
 
       <!-- ═══ STEP 5 — EMAIL TEMPLATE ═══ -->
-      <div class="step-panel" id="sp5">
-        <!-- Subject line -->
-        <div class="card" style="margin-bottom:18px">
-          <div class="card-title" style="margin-bottom:14px">
+<div class="step-panel" id="sp5">
+
+  <!-- Template Gate (shown first, hidden after pick) -->
+  <div id="meTemplateGate">
+    <div class="me-tpl-gate">
+      <div class="me-tpl-gate-title">Choose an Email Template</div>
+      <div class="me-tpl-gate-sub">Pick a starting point — you can customise everything in the editor.</div>
+
+      <div class="me-tpl-gate-cats" id="meTplGateCats"></div>
+      <div class="me-tpl-gate-grid" id="meTplGateGrid"></div>
+    </div>
+    <div class="me-tpl-gate-actions">
+      <button class="btn btn-outline" onclick="cpGoStep(4)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back
+      </button>
+      <button class="btn btn-outline" onclick="meSkipTemplate()">Start Blank</button>
+      <button class="btn btn-primary" id="meTplGateUseBtn" onclick="meUseSelectedTemplate()" disabled>
+        Use Template
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Editor (hidden until template picked) -->
+  <div class="me-editor-wrap" id="meEditorWrap">
+
+    <!-- Subject line -->
+    <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.07);background:rgba(0,0,0,0.2)">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <label style="font-size:13px;font-weight:600;color:var(--text-2);white-space:nowrap;min-width:80px">Subject Line</label>
+        <input type="text" id="meSubject" class="form-input"
+          placeholder="e.g. Your Certificate is Ready, {{name}}! 🎓"
+          style="flex:1;min-width:200px;padding:9px 14px"/>
+        <button class="btn btn-outline btn-sm" style="white-space:nowrap" onclick="document.getElementById('meTagsRow').style.display=document.getElementById('meTagsRow').style.display==='none'?'flex':'none'">
+          &#123;&#123;&#125;&#125; Tags
+        </button>
+      </div>
+      <!-- Merge tags row -->
+      <div id="meTagsRow" class="me-tags-row" style="display:none;margin-top:10px;padding:8px 0 0">
+        <span style="font-size:12px;color:var(--text-3);white-space:nowrap">Insert tag:</span>
+        <span class="me-tag" onclick="meInsertSubjectTag('{{name}}')">{{name}}</span>
+        <span class="me-tag" onclick="meInsertSubjectTag('{{email}}')">{{email}}</span>
+        <span class="me-tag" onclick="meInsertSubjectTag('{{course}}')">{{course}}</span>
+        <span class="me-tag" onclick="meInsertSubjectTag('{{date}}')">{{date}}</span>
+        <span class="me-tag" onclick="meInsertSubjectTag('{{cert_link}}')">{{cert_link}}</span>
+      </div>
+    </div>
+
+    <!-- Editor tabs -->
+    <div class="me-editor-with-ai">
+      <div class="me-editor-main">
+        <div class="me-tabs">
+          <div class="me-tab active" id="meTab_visual" onclick="meSwitchTab('visual')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;margin-right:5px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            Visual
+          </div>
+          <div class="me-tab" id="meTab_code" onclick="meSwitchTab('code')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;margin-right:5px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Code
+          </div>
+          <div class="me-tab" id="meTab_preview" onclick="meSwitchTab('preview')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;margin-right:5px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Preview
+          </div>
+        </div>
+
+        <!-- Visual tab -->
+        <div class="me-tab-panel active" id="mePanel_visual">
+          <div class="me-visual-layout">
+            <!-- Block palette -->
+            <div class="me-palette">
+              <div class="me-palette-title">Blocks</div>
+              <button class="me-palette-btn" onclick="meAddBlock('header')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h8"/></svg> Header
+              </button>
+              <button class="me-palette-btn" onclick="meAddBlock('text')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg> Text
+              </button>
+              <button class="me-palette-btn" onclick="meAddBlock('button')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="5"/></svg> Button
+              </button>
+              <button class="me-palette-btn" onclick="meAddBlock('image')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Image
+              </button>
+              <button class="me-palette-btn" onclick="meAddBlock('divider')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg> Divider
+              </button>
+              <button class="me-palette-btn" onclick="meAddBlock('spacer')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="8 7 12 3 16 7"/><polyline points="8 17 12 21 16 17"/></svg> Spacer
+              </button>
+              <button class="me-palette-btn" onclick="meAddBlock('social')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Social
+              </button>
+              <button class="me-palette-btn" onclick="meAddBlock('footer')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18h16M4 14h8"/></svg> Footer
+              </button>
+            </div>
+
+            <!-- Canvas -->
+            <div class="me-canvas-wrap" id="meCanvasWrap">
+              <div class="me-canvas-inner" id="meBlocksContainer">
+                <div class="me-empty-canvas" id="meEmptyState">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                  <div style="font-size:14px;font-weight:600;color:var(--text-2)">Start building your email</div>
+                  <div style="font-size:13px">Click a block type on the left</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Props panel -->
+            <div class="me-props" id="mePropsPanel">
+              <div class="me-props-header">Properties</div>
+              <div id="mePropsBody">
+                <div class="me-props-empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  Click any block to edit its properties
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code tab -->
+        <div class="me-tab-panel" id="mePanel_code">
+          <div class="me-code-wrap">
+            <div class="me-code-actions">
+              <button class="btn btn-outline btn-sm" onclick="meFormatCode()" style="font-size:12px;padding:5px 12px">Format</button>
+              <button class="btn btn-primary btn-sm" onclick="meSyncFromCode()" style="font-size:12px;padding:5px 12px">Apply</button>
+            </div>
+            <textarea id="meCodeArea" style="display:none"></textarea>
+          </div>
+        </div>
+
+        <!-- Preview tab -->
+        <div class="me-tab-panel" id="mePanel_preview">
+          <div class="me-preview-wrap">
+            <div class="me-preview-toolbar">
+              <span style="font-size:13px;font-weight:600;color:var(--text-2)">Preview as:</span>
+              <button class="me-device-btn active" id="meDevDesktop" onclick="meSetDevice('desktop')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;margin-right:4px"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Desktop
+              </button>
+              <button class="me-device-btn" id="meDevMobile" onclick="meSetDevice('mobile')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;margin-right:4px"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                Mobile
+              </button>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+                <span style="font-size:12px;color:var(--text-3)">Personalise for:</span>
+                <select id="mePreviewRowSel" class="form-input" style="font-size:12.5px;padding:5px 10px;width:auto" onchange="meRefreshPreview()">
+                  <option value="0">Row 1</option>
+                </select>
+              </div>
+            </div>
+            <div class="me-preview-frame-wrap">
+              <iframe id="mePreviewFrame" style="width:100%;height:500px"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-nav" style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.07);background:rgba(0,0,0,0.1)">
+      <button class="btn btn-outline" onclick="document.getElementById('meEditorWrap').classList.remove('visible');document.getElementById('meTemplateGate').style.display='block'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Change Template
+      </button>
+      <button class="btn btn-primary" onclick="cpGoStep(6)">
+        Review &amp; Launch
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+     <!-- ═══ STEP 6 — REVIEW & LAUNCH ═══ -->
+<div class="step-panel" id="sp6">
+  <div style="margin-bottom:20px">
+    <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text)">Review &amp; Launch</div>
+    <div style="font-size:13.5px;color:var(--text-2);margin-top:3px">Final check before generating certificates and sending emails.</div>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="review-stats">
+    <div class="rv-stat">
+      <div class="rv-num" id="rv7Total">0</div>
+      <div class="rv-label">Participants</div>
+    </div>
+    <div class="rv-stat">
+      <div class="rv-num" id="rv7Certs" style="color:#c4b5fd">0</div>
+      <div class="rv-label">Certificates</div>
+    </div>
+    <div class="rv-stat">
+      <div class="rv-num" id="rv7Emails" style="color:var(--green)">0</div>
+      <div class="rv-label">Emails</div>
+    </div>
+  </div>
+
+  <div class="two-cols">
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- Email preview -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+          <div class="card-title" style="margin:0">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Email Subject
+            Personalised Email Preview
           </div>
-          <input type="text" id="emailSubject" class="form-input" placeholder="e.g. Your Certificate is Ready, {{name}}! 🎓" style="font-size:15px"/>
-          <div class="me-tags-row" style="padding:10px 0 0;border-bottom:none">
-            <span style="font-size:12px;color:var(--text-3);margin-right:4px">Insert tag:</span>
-            <div id="subjectTagsRow"></div>
+          <div class="preview-nav">
+            <button class="preview-nav-btn" onclick="cpPrevPreview()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span id="rvPreviewLabel" style="font-size:13px;font-weight:600;color:var(--text);min-width:60px;text-align:center">1 / 1</span>
+            <button class="preview-nav-btn" onclick="cpNextPreview()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
           </div>
         </div>
 
-        <!-- Template gate OR editor -->
-        <div id="meTplGateWrap" class="card" style="padding:0;overflow:hidden">
-          <!-- Template Picker Gate -->
-          <div id="meTplGate">
-            <div class="me-tpl-gate">
-              <div class="me-tpl-gate-title">Choose a Starting Template</div>
-              <div class="me-tpl-gate-sub">Pick a template then customise every block in the visual editor.</div>
-              <div class="me-tpl-gate-cats" id="meTplCats"></div>
-              <div class="me-tpl-gate-grid" id="meTplGrid"></div>
-            </div>
-            <div class="me-tpl-gate-actions">
-              <button class="btn btn-outline" onclick="cpGoStep(4)">← Back</button>
-              <button class="btn btn-primary" id="meTplUseBtn" onclick="meTplConfirm()" disabled>
-                Use Template →
-              </button>
-            </div>
+        <div class="email-preview-wrap">
+          <div class="email-preview-header">
+            <div><strong>To:</strong> <span id="rvTo">—</span></div>
+            <div><strong>From:</strong> <span id="rvFrom">—</span></div>
+            <div><strong>Subject:</strong> <span id="rvSubject">—</span></div>
           </div>
-
-          <!-- Editor (shown after template chosen) -->
-          <div id="meEditorWrap" class="me-editor-wrap">
-            <!-- Tab bar -->
-            <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.2)">
-              <div class="me-tabs" style="border-bottom:none">
-                <div class="me-tab active" id="meTab_visual" onclick="meSwitchTab('visual')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:5px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                  Visual
-                </div>
-                <div class="me-tab" id="meTab_code" onclick="meSwitchTab('code')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:5px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                  Code
-                </div>
-                <div class="me-tab" id="meTab_preview" onclick="meSwitchTab('preview')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:5px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Preview
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:0 14px">
-                <button class="btn btn-outline btn-sm" onclick="meTplGateReset()" style="font-size:12px">Change Template</button>
-              </div>
-            </div>
-
-            <!-- Visual tab -->
-            <div class="me-tab-panel active" id="meTabPanel_visual">
-              <div class="me-visual-layout">
-                <div class="me-palette">
-                  <div class="me-palette-title">Blocks</div>
-                  <button class="me-palette-btn" onclick="meAddBlock('logo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/></svg>Logo</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('header')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"/></svg>Heading</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('text')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>Text</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('button')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="3"/></svg>Button</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('image')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Image</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('divider')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg>Divider</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('spacer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>Spacer</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('social')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Social</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('table')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>Table</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('footer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="16" width="18" height="5" rx="1"/><line x1="3" y1="12" x2="21" y2="12"/></svg>Footer</button>
-                </div>
-                <div class="me-canvas-wrap" id="meCanvas">
-                  <div class="me-canvas-inner" id="meCanvasInner">
-                    <div class="me-empty-canvas" id="meEmptyCanvas">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                      <div style="font-size:14px;font-weight:600">Your email canvas is empty</div>
-                      <div style="font-size:13px">Click a block on the left to add it</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="me-props" id="mePropsPanel">
-                  <div class="me-props-header">Block Properties</div>
-                  <div class="me-props-body" id="mePropsBdy">
-                    <div class="me-props-empty" id="mePropsEmpty">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                      Select a block to edit properties
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Code tab -->
-            <div class="me-tab-panel" id="meTabPanel_code">
-              <div class="me-code-wrap">
-                <div class="me-code-actions">
-                  <button class="btn btn-outline btn-sm" onclick="meCopyCode()">Copy</button>
-                  <button class="btn btn-primary btn-sm" onclick="meApplyCodeToVisual()">Apply to Visual</button>
-                </div>
-                <textarea id="mHtmlTmpl" style="display:none"></textarea>
-              </div>
-            </div>
-
-            <!-- Preview tab -->
-            <div class="me-tab-panel" id="meTabPanel_preview">
-              <div class="me-preview-wrap">
-                <div class="me-preview-toolbar">
-                  <button class="me-device-btn active" id="meDevBtnDesktop" onclick="meSetDevice('desktop')">Desktop</button>
-                  <button class="me-device-btn" id="meDevBtnMobile" onclick="meSetDevice('mobile')">Mobile</button>
-                  <button class="btn btn-outline btn-sm" onclick="meRefreshPreview()" style="margin-left:auto">Refresh</button>
-                </div>
-                <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
-                  <iframe id="mePreviewFrame" style="width:560px;height:100%"></iframe>
-                </div>
-              </div>
-            </div>
+          <div class="email-preview-body">
+            <iframe id="rvEmailFrame" style="width:100%;min-height:300px;border:none;border-radius:0 0 10px 10px" scrolling="no"></iframe>
           </div>
-
-          <input type="hidden" id="emailTemplate"/>
-        </div>
-
-        <div class="step-nav" style="margin-top:18px">
-          <button class="btn btn-outline" onclick="cpGoStep(4)">← Back</button>
-          <button class="btn btn-primary" style="padding:13px 28px" onclick="cpGoStep(6)">
-            Review &amp; Launch →
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
         </div>
       </div>
 
-      <!-- ═══ STEP 6 — REVIEW & LAUNCH ═══ -->
-      <div class="step-panel" id="sp6">
-        <div class="two-cols">
-          <div style="display:flex;flex-direction:column;gap:20px">
+      <!-- Launch warning + button -->
+      <div class="notice notice-gold" style="margin-bottom:4px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span><strong>This will:</strong> Generate individual PDFs for every participant and save them to your Google Drive, then send personalised emails from your Gmail. <strong>This cannot be reversed.</strong></span>
+      </div>
 
-            <!-- Stats row -->
-            <div class="review-stats">
-              <div class="rv-stat"><div class="rv-num" id="rvParticipants">—</div><div class="rv-label">Participants</div></div>
-              <div class="rv-stat"><div class="rv-num" style="color:var(--cyan)" id="rvCertFields">—</div><div class="rv-label">Cert Fields</div></div>
-              <div class="rv-stat"><div class="rv-num" style="color:var(--purple)" id="rvEmailBlocks">—</div><div class="rv-label">Email Blocks</div></div>
-            </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn-outline" onclick="cpGoStep(5)" style="flex-shrink:0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back
+        </button>
+        <button class="btn btn-primary" id="launchBtn" onclick="cpLaunch()"
+          style="flex:1;padding:16px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#00d4ff,#7c3aed)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Launch Pipeline
+        </button>
+      </div>
+    </div>
 
-            <!-- Email preview -->
-            <div class="card">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-                <div class="card-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                  Email Preview
-                </div>
-                <div class="preview-nav">
-                  <button class="preview-nav-btn" onclick="cpPreviewNav(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-                  <span id="reviewNavLabel" style="font-size:13px;color:var(--text-2);min-width:52px;text-align:center">1 / 1</span>
-                  <button class="preview-nav-btn" onclick="cpPreviewNav(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-                </div>
-              </div>
-              <div class="email-preview-wrap">
-                <div class="email-preview-header" id="rvEmailHeader"></div>
-                <div class="email-preview-body" id="rvEmailBody"></div>
-              </div>
-            </div>
-
-            <!-- Launch -->
-            <div class="card">
-              <div class="card-title" style="margin-bottom:14px">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                Launch Pipeline
-              </div>
-              <div style="font-size:14px;color:var(--text-2);margin-bottom:16px">
-                This will generate <strong style="color:var(--text)" id="rvLaunchCount">—</strong> certificates on Google Drive, then send personalised emails from your connected Gmail account.
-              </div>
-              <button class="btn btn-primary" style="width:100%;padding:16px;font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--cyan),var(--purple))" onclick="cpLaunch()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                Generate Certificates &amp; Send Emails
-              </button>
-            </div>
-
-            <!-- Running log (shown during execution) -->
-            <div class="card" id="runningCard" style="display:none">
-              <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap">
-                <div class="run-ring-wrap" style="width:80px;height:80px;flex-shrink:0">
-                  <svg width="80" height="80" style="transform:rotate(-90deg)">
-                    <defs><linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
-                    <circle class="rr-bg" cx="40" cy="40" r="33"/>
-                    <circle class="rr-fg" id="runRingFg" cx="40" cy="40" r="33" style="stroke-dasharray:207;stroke-dashoffset:207"/>
-                  </svg>
-                  <div class="run-ring-inner"><div class="run-pct" id="runPct" style="font-size:16px">0%</div></div>
-                </div>
-                <div>
-                  <div class="run-title" id="runTitle" style="font-size:17px">Starting…</div>
-                  <div class="run-sub" id="runSub">Connecting to server</div>
-                </div>
-              </div>
-              <div class="gen-bar-track"><div class="gen-bar" id="genBar"></div></div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);margin-bottom:12px">
-                <span id="runPhase">Certificates</span>
-                <span id="genCounter">0 / 0</span>
-              </div>
-              <div class="live-log" id="runLog"></div>
-            </div>
-          </div>
-
-          <!-- Right sidebar -->
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:14px">Campaign Summary</div>
-              <div id="reviewSummaryGrid" class="summary-grid"></div>
-            </div>
-            <div class="card card-sm">
-              <div class="card-title" style="margin-bottom:12px">Field Mappings</div>
-              <div id="reviewMappingsPanel" style="display:flex;flex-direction:column;gap:6px"></div>
-            </div>
-          </div>
+    <!-- Right: campaign summary -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card card-sm">
+        <div class="card-title" style="margin-bottom:14px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Campaign Summary
         </div>
-
-        <div class="step-nav" style="margin-top:18px">
-          <button class="btn btn-outline" onclick="cpGoStep(5)">← Back</button>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-key">Campaign</div>
+            <div class="summary-val" id="rvSumName">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-key">Data Source</div>
+            <div class="summary-val" id="rvSumSrc">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-key">Cert Fields</div>
+            <div class="summary-val" id="rvSumFields">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-key">Write-back</div>
+            <div class="summary-val" id="rvSumWriteback">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-key">Subject</div>
+            <div class="summary-val" id="rvSumSubject" style="font-size:12.5px">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-key">Quota Left</div>
+            <div class="summary-val" id="rvSumQuota" style="color:var(--cyan)">—</div>
+          </div>
         </div>
       </div>
+
+      <!-- Live log during run -->
+      <div class="card card-sm" id="runLogCard" style="display:none">
+        <div class="card-title" style="margin-bottom:10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          Live Log
+        </div>
+        <div class="live-log" id="runLog"></div>
+        <div style="margin-top:10px">
+          <div class="gen-bar-track"><div class="gen-bar" id="runBar"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);margin-top:4px">
+            <span id="runBarLabel">Preparing…</span>
+            <span id="runBarPct">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
       <!-- ═══ STEP 7 — RESULTS ═══ -->
       <div class="step-panel" id="sp7">
 
