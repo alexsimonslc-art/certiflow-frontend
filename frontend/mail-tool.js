@@ -1242,18 +1242,34 @@ function meRefreshPreviewIframe() {
   let html = document.getElementById('mHtmlTmpl').value || meGetHtml();
   // Apply first recipient data for preview
   if (MS.rows.length) html = mPersonalise(html, MS.rows[0]);
+
+  // Inject style block into HTML to visually remove iframe scrollbar completely
+  const noScrollCss = `<style>
+    /* Hide internal scrollbars */
+    ::-webkit-scrollbar { display: none !important; }
+    html, body { scrollbar-width: none !important; -ms-overflow-style: none !important; margin: 0; padding: 0; }
+  </style>`;
+  if (html.includes('</head>')) {
+    html = html.replace('</head>', noScrollCss + '</head>');
+  } else {
+    html = noScrollCss + html;
+  }
+
   iframe.srcdoc = html;
 
   iframe.onload = () => {
-    // dynamically resize the iframe to fit content to avoid dual scrollbars
+    // dynamically resize the iframe to fit content to avoid dual scrollbars cleanly
     if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
-      if (document.getElementById('mePreviewFrameWrap')) {
-        document.getElementById('mePreviewFrameWrap').style.overflow = 'visible';
-      }
       setTimeout(() => {
-        const body = iframe.contentWindow.document.body;
-        const h = iframe.contentWindow.document.documentElement;
-        iframe.style.height = Math.max(body.scrollHeight, body.offsetHeight, h.clientHeight, h.scrollHeight, h.offsetHeight) + 50 + 'px';
+        const doc = iframe.contentWindow.document;
+        const body = doc.body;
+        const h = doc.documentElement;
+        // Accurate pixel height matching child content
+        const realHeight = Math.max(
+          body.scrollHeight, body.offsetHeight,
+          h.clientHeight, h.scrollHeight, h.offsetHeight
+        );
+        iframe.style.height = realHeight + 'px';
       }, 50);
     }
   };
