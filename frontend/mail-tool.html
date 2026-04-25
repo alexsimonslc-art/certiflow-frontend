@@ -883,6 +883,37 @@
       padding-bottom: 24px;
     }
 
+    .CodeMirror-vscrollbar::-webkit-scrollbar,
+    .CodeMirror-hscrollbar::-webkit-scrollbar,
+    .CodeMirror-scroll::-webkit-scrollbar,
+    .CodeMirror::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    .CodeMirror-vscrollbar::-webkit-scrollbar-track,
+    .CodeMirror-hscrollbar::-webkit-scrollbar-track,
+    .CodeMirror-scroll::-webkit-scrollbar-track,
+    .CodeMirror::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 4px;
+    }
+
+    .CodeMirror-vscrollbar::-webkit-scrollbar-thumb,
+    .CodeMirror-hscrollbar::-webkit-scrollbar-thumb,
+    .CodeMirror-scroll::-webkit-scrollbar-thumb,
+    .CodeMirror::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    .CodeMirror-vscrollbar::-webkit-scrollbar-thumb:hover,
+    .CodeMirror-hscrollbar::-webkit-scrollbar-thumb:hover,
+    .CodeMirror-scroll::-webkit-scrollbar-thumb:hover,
+    .CodeMirror::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 212, 255, 0.4);
+    }
+
     .CodeMirror-vscrollbar,
     .CodeMirror-hscrollbar {
       z-index: 5;
