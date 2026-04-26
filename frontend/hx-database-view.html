@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="dashboard.css"/> 
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/gridstack@8.2.3/dist/gridstack.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/gridstack@8.2.3/dist/gridstack-all.js"></script>
   <style>
     /* ════════════════════════════════════════════════════════
        DATABASE VIEW — Local Styles
@@ -376,6 +378,66 @@
     @media (max-width:600px) {
       .dbv-stats-row { grid-template-columns:1fr 1fr; }
     }
+    /* ══════════════════════════════════════════════════════
+       GRIDSTACK & DASHBOARD BUILDER STYLES
+    ══════════════════════════════════════════════════════ */
+    .grid-stack { 
+      background: rgba(255,255,255,0.01); border-radius: 16px; 
+      border: 1px dashed transparent; min-height: 400px; transition: var(--transition);
+    }
+    .grid-stack.grid-edit-mode {
+      border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02);
+    }
+    
+    .grid-stack-item-content {
+      background: rgba(255,255,255,0.035) !important; backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px;
+      padding: 20px 22px; overflow: hidden; display: flex; flex-direction: column;
+      position: relative;
+    }
+    .grid-stack-item-content:hover { border-color: rgba(255,255,255,0.16) !important; }
+    
+    /* Edit Mode Toolbar */
+    .dbv-edit-toolbar { 
+      display: none; align-items: center; gap: 10px; margin-bottom: 20px; 
+      padding: 12px 18px; background: var(--glass); 
+      border: 1px solid var(--glass-border-2); border-radius: 12px; 
+    }
+    .dbv-edit-toolbar.active { display: flex; animation: slideUp 0.3s var(--ease) both; }
+    
+    /* Widget controls (Delete button inside widgets when editing) */
+    .widget-remove { 
+      display: none; position: absolute; top: 12px; right: 12px; 
+      width: 26px; height: 26px; background: var(--red-dim); color: var(--red); 
+      border: 1px solid rgba(244,63,94,0.2); border-radius: 8px; cursor: pointer; 
+      z-index: 10; align-items: center; justify-content: center; font-size: 14px;
+      transition: var(--transition);
+    }
+    .widget-remove:hover { background: var(--red); color: #fff; }
+    .grid-stack.grid-edit-mode .widget-remove { display: flex; }
+
+    /* Builder Modal */
+    .builder-modal { 
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); 
+      z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(16px); 
+    }
+    .builder-modal.open { display: flex; }
+    .builder-content { 
+      background: #080f1e; border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; 
+      padding: 28px; width: 420px; max-width: 90%; display: flex; flex-direction: column; 
+      gap: 16px; box-shadow: 0 40px 100px rgba(0,0,0,0.7); animation: slideUp 0.22s var(--ease) both;
+    }
+    .builder-content h3 { color: var(--text); font-family: var(--font-display); font-size: 18px; margin-bottom: 4px; }
+    .builder-field-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .builder-label { font-size: 11.5px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
+    .builder-input, .builder-select { 
+      width: 100%; padding: 10px 14px; border-radius: 9px; font-size: 13.5px;
+      background: var(--glass); border: 1px solid var(--glass-border-2); color: var(--text);
+      font-family: var(--font); outline: none; transition: var(--transition);
+    }
+    .builder-input:focus, .builder-select:focus { border-color: rgba(0,212,255,0.4); }
+    .builder-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%22 height=%2212%22 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%235a7394%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+    .builder-select option { background: #0d1728; }
   </style>
 </head>
 <body>
@@ -479,8 +541,31 @@
 
         <!-- DASHBOARD TAB -->
         <div id="panelDashboard">
-          <div class="dbv-stats-row" id="dashStats"></div>
-          <div id="dashCharts"></div>
+          
+          <div class="dbv-edit-toolbar" id="editToolbar">
+            <div style="flex: 1; display: flex; align-items: center; gap: 8px; color: var(--cyan); font-weight: 600; font-size: 14px;">
+              <div class="dbv-live-dot" style="animation: none; background: var(--cyan);"></div>
+              Dashboard Edit Mode
+            </div>
+            <button class="dbv-btn" onclick="openWidgetBuilder()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Widget
+            </button>
+            <button class="dbv-btn green" onclick="saveLayout()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Layout
+            </button>
+            <button class="dbv-btn" onclick="toggleEditMode()">Cancel</button>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 14px;" id="btnEditDashWrap">
+             <button class="dbv-btn" id="btnEditDash" onclick="toggleEditMode()">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+               Customize Dashboard
+             </button>
+          </div>
+
+          <div class="grid-stack" id="dashGrid"></div>
         </div>
 
         <!-- DATABASE TAB -->
@@ -582,13 +667,36 @@
 </div>
 
 <!-- Row detail modal -->
-<div class="dbv-row-modal-overlay" id="rowModal" onclick="if(event.target===this)closeRowModal()">
-  <div class="dbv-row-modal">
-    <div class="dbv-row-modal-title">
-      <span>Response Details</span>
-      <button class="dbv-row-modal-close" onclick="closeRowModal()">✕</button>
+<div class="builder-modal" id="widgetModal" onclick="if(event.target===this)closeWidgetBuilder()">
+  <div class="builder-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+      <h3>Add New Widget</h3>
+      <button class="dbv-row-modal-close" onclick="closeWidgetBuilder()">✕</button>
     </div>
-    <div id="rowModalContent"></div>
+    
+    <div class="builder-field-wrap">
+      <label class="builder-label">Widget Type</label>
+      <select class="builder-select" id="bwType">
+        <option value="stat">Number Stat Card (Count/Total)</option>
+        <option value="bar">Bar Chart (Categorical)</option>
+        <option value="doughnut">Doughnut Chart (Categorical)</option>
+        <option value="timeline">Timeline (Submissions over time)</option>
+      </select>
+    </div>
+
+    <div class="builder-field-wrap">
+      <label class="builder-label">Data Field to Analyze</label>
+      <select class="builder-select" id="bwField"></select>
+    </div>
+
+    <div class="builder-field-wrap">
+      <label class="builder-label">Widget Title</label>
+      <input type="text" class="builder-input" id="bwTitle" placeholder="e.g., Department Breakdown" />
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <button class="dbv-btn-primary" style="flex: 1; justify-content:center; padding: 12px; font-size: 14px;" onclick="createWidget()">Add to Dashboard</button>
+    </div>
   </div>
 </div>
 
@@ -807,180 +915,177 @@ function switchSubTab(sub) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   DASHBOARD TAB — Stat cards + Auto-charts
+   DASHBOARD TAB — Drag & Drop Grid + Chart Logic
 ════════════════════════════════════════════════════════════════ */
-function renderDashboard() {
-  const rows    = _data?.rows    || [];
-  const headers = _data?.headers || [];
-  if (!rows.length) { renderEmptyDashboard(); return; }
-
-  // ── Stat cards ────────────────────────────────────────────────
-  const total    = rows.length;
-  const tsIdx    = headers.indexOf('Submitted At');
-  const today    = rows.filter(r => {
-    if (tsIdx < 0) return false;
-    return new Date(r[tsIdx]).toDateString() === new Date().toDateString();
-  }).length;
-  const thisWeek = rows.filter(r => {
-    if (tsIdx < 0) return false;
-    const diff = Date.now() - new Date(r[tsIdx]).getTime();
-    return diff < 7 * 86400000;
-  }).length;
-  const lastTs   = tsIdx >= 0 ? rows.map(r => r[tsIdx]).filter(Boolean).sort().pop() : null;
-  const lastStr  = lastTs ? timeAgo(lastTs) : '—';
-
-  document.getElementById('dashStats').innerHTML = `
-    <div class="dbv-stat-card">
-      <div class="dbv-stat-label">Total Responses</div>
-      <div class="dbv-stat-num">${total.toLocaleString()}</div>
-      <div class="dbv-stat-sub">All time</div>
-      <div class="dbv-stat-icon cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
-    </div>
-    <div class="dbv-stat-card">
-      <div class="dbv-stat-label">Today</div>
-      <div class="dbv-stat-num">${today}</div>
-      <div class="dbv-stat-sub">Since midnight</div>
-      <div class="dbv-stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-    </div>
-    <div class="dbv-stat-card">
-      <div class="dbv-stat-label">This Week</div>
-      <div class="dbv-stat-num">${thisWeek}</div>
-      <div class="dbv-stat-sub">Last 7 days</div>
-      <div class="dbv-stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-    </div>
-    <div class="dbv-stat-card">
-      <div class="dbv-stat-label">Last Response</div>
-      <div class="dbv-stat-num" style="font-size:20px;letter-spacing:-0.3px;margin-top:4px">${lastStr}</div>
-      <div class="dbv-stat-sub">${lastTs ? new Date(lastTs).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
-      <div class="dbv-stat-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12"/></svg></div>
-    </div>`;
-
-  // ── Charts ────────────────────────────────────────────────────
-  // Destroy existing charts first
-  Object.values(_charts).forEach(c => c.destroy());
-  _charts = {};
-
-  const chartsContainer = document.getElementById('dashCharts');
-  const chartFields = (_data.fields || []).filter(f =>
-    ['radio','dropdown','checkbox','number','linear_scale'].includes(f.type)
-  );
-
-  let html = `<div class="dbv-chart-grid${tsIdx >= 0 ? ' has-timeline' : ''}">`;
-
-  // Timeline chart (always first if we have timestamps)
-  if (tsIdx >= 0) {
-    html += `
-      <div class="dbv-chart-card timeline-card">
-        <div class="dbv-chart-header">
-          <div>
-            <div class="dbv-chart-title">Submissions Over Time</div>
-            <div class="dbv-chart-sub">Daily response count</div>
-          </div>
-          <div class="dbv-period-pills">
-            <button class="dbv-period-pill${_timePeriod==='day'?' active':''}" onclick="setTimePeriod('day')">Day</button>
-            <button class="dbv-period-pill${_timePeriod==='week'?' active':''}" onclick="setTimePeriod('week')">Week</button>
-            <button class="dbv-period-pill${_timePeriod==='month'?' active':''}" onclick="setTimePeriod('month')">Month</button>
-          </div>
-        </div>
-        <div class="dbv-chart-wrap"><canvas id="chartTimeline"></canvas></div>
-      </div>`;
-  }
-
-  // Field charts
-  chartFields.forEach(f => {
-    html += `
-      <div class="dbv-chart-card">
-        <div class="dbv-chart-header">
-          <div>
-            <div class="dbv-chart-title">${escHtml(f.label)}</div>
-            <div class="dbv-chart-sub">${CHART_TYPE_LABEL[f.type] || ''}</div>
-          </div>
-        </div>
-        <div id="chartWrap_${f.id}"></div>
-      </div>`;
-  });
-
-  if (!chartFields.length && tsIdx < 0) {
-    html += `
-      <div class="dbv-no-charts" style="grid-column:1/-1">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <h3>No chart-worthy fields</h3>
-        <p>Add Multiple Choice, Dropdown, Checkbox, Number, or Rating Scale fields to your form to see analytics here.</p>
-      </div>`;
-  }
-
-  html += '</div>';
-  chartsContainer.innerHTML = html;
-
-  // Now render charts
-  if (tsIdx >= 0) renderTimelineChart(rows, tsIdx);
-  chartFields.forEach(f => renderFieldChart(f, rows, headers));
-}
-
-const CHART_TYPE_LABEL = {
-  radio: 'Multiple choice distribution',
-  dropdown: 'Response distribution',
-  checkbox: 'Selection breakdown',
-  number: 'Numeric statistics',
-  linear_scale: 'Rating distribution',
-};
-
+let _grid = null;
+let _isEditing = false;
 const CHART_COLORS = [
   'rgba(0,212,255,0.85)', 'rgba(124,58,237,0.85)', 'rgba(16,185,129,0.85)',
-  'rgba(245,158,11,0.85)', 'rgba(244,63,94,0.85)', 'rgba(99,102,241,0.85)',
-  'rgba(236,72,153,0.85)', 'rgba(6,182,212,0.85)',
+  'rgba(245,158,11,0.85)', 'rgba(244,63,94,0.85)', 'rgba(99,102,241,0.85)'
 ];
 
 Chart.defaults.color = '#7a90b0';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
 Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
-/* ── Timeline chart ─────────────────────────────────────────────── */
-function renderTimelineChart(rows, tsIdx) {
-  const canvas = document.getElementById('chartTimeline');
+function renderDashboard() {
+  const rows    = _data?.rows    || [];
+  const headers = _data?.headers || [];
+  
+  // 1. Initialize GridStack if not already done
+  if (!_grid) {
+    _grid = GridStack.init({
+      column: 12,
+      cellHeight: 80,
+      margin: 14,
+      staticGrid: true, // Locked by default
+      animate: true
+    }, '#dashGrid');
+
+    // Make charts resize seamlessly when a widget is stretched
+    _grid.on('resizestop', function(event, el) {
+      const chartId = el.getAttribute('data-chart-id');
+      if (chartId && _charts[chartId]) {
+         _charts[chartId].resize();
+      }
+    });
+  }
+
+  // 2. Load Layout (From Backend or Generate Default)
+  let layout = _data.layout || _data.config?.dashboard_layout;
+  
+  if (!layout || layout.length === 0) {
+    const tsIdx = headers.indexOf('Submitted At');
+    layout = [
+      { id: 'stat_1', type: 'stat', field: 'total', title: 'Total Responses', x: 0, y: 0, w: 3, h: 2, locked: true },
+      ...(tsIdx >= 0 ? [{ id: 'chart_tl', type: 'timeline', field: 'Submitted At', title: 'Submissions Over Time', x: 3, y: 0, w: 9, h: 4, locked: true }] : [])
+    ];
+  }
+
+  // 3. Render Grid Elements
+  _grid.removeAll();
+  _grid.load(layout);
+
+  // Destroy old chart instances to prevent memory leaks
+  Object.values(_charts).forEach(c => c.destroy());
+  _charts = {};
+
+  // 4. Fill Widgets with Content
+  layout.forEach(widget => renderWidgetContent(widget, rows, headers));
+}
+
+/* ── Widget Content Renderer ─────────────────────────────── */
+function renderWidgetContent(widget, rows, headers) {
+  const itemEl = document.querySelector(`.grid-stack-item[gs-id="${widget.id}"]`);
+  if (!itemEl) return;
+  const contentEl = itemEl.querySelector('.grid-stack-item-content');
+  
+  const removeBtn = `<button class="widget-remove" onclick="removeWidget('${widget.id}')" title="Remove Widget">✕</button>`;
+
+  if (widget.type === 'stat') {
+    const val = widget.field === 'total' ? rows.length : calculateFieldStat(widget.field, rows, headers);
+    contentEl.innerHTML = `
+      ${removeBtn}
+      <div style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">${escHtml(widget.title)}</div>
+      <div style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>
+    `;
+  } else {
+    // It's a Chart
+    const canvasId = `chart_${widget.id}`;
+    itemEl.setAttribute('data-chart-id', canvasId);
+    
+    contentEl.innerHTML = `
+      ${removeBtn}
+      <div style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(widget.title)}</div>
+      <div style="flex:1; position:relative; min-height:0;">
+         <canvas id="${canvasId}"></canvas>
+      </div>
+    `;
+    
+    if (widget.type === 'timeline') {
+       renderTimelineChartDirect(canvasId, rows, headers.indexOf(widget.field));
+    } else {
+       renderCustomChart(canvasId, widget.type, widget.field, rows, headers);
+    }
+  }
+}
+
+/* ── Chart Generation Logic ──────────────────────────────── */
+function renderCustomChart(canvasId, type, fieldLabel, rows, headers) {
+  const canvas = document.getElementById(canvasId);
   if (!canvas) return;
+  
+  const hIdx = headers.indexOf(fieldLabel);
+  if (hIdx < 0) return;
+  
+  const vals = rows.map(r => r[hIdx]).filter(Boolean);
+  if (!vals.length) return;
 
-  // Group by period
+  // Count occurrences
   const counts = {};
-  rows.forEach(r => {
-    const raw = r[tsIdx];
-    if (!raw) return;
-    const d   = new Date(raw);
-    let key;
-    if (_timePeriod === 'day')   key = d.toISOString().slice(0,10);
-    if (_timePeriod === 'week')  key = weekKey(d);
-    if (_timePeriod === 'month') key = d.toISOString().slice(0,7);
-    counts[key] = (counts[key]||0) + 1;
+  vals.forEach(v => {
+    const parts = v.includes(',') ? v.split(', ') : [v];
+    parts.forEach(p => { counts[p.trim()] = (counts[p.trim()]||0) + 1; });
   });
+  
+  const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+  const labels = sorted.map(([l]) => l.length > 25 ? l.substring(0, 25) + '...' : l);
+  const values = sorted.map(([,v]) => v);
 
-  const labels  = Object.keys(counts).sort();
-  const values  = labels.map(k => counts[k]);
-  const display = labels.map(l => {
-    if (_timePeriod === 'month') return new Date(l+'-01').toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
-    if (_timePeriod === 'week')  return 'W/o ' + l.slice(5);
-    return new Date(l).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-  });
-
-  if (_charts.timeline) _charts.timeline.destroy();
-  _charts.timeline = new Chart(canvas, {
-    type: 'line',
+  _charts[canvasId] = new Chart(canvas, {
+    type: type, // 'bar' or 'doughnut'
     data: {
-      labels: display,
+      labels,
       datasets: [{
-        label: 'Responses',
         data: values,
-        borderColor: '#00d4ff',
-        backgroundColor: 'rgba(0,212,255,0.08)',
-        borderWidth: 2.5,
-        pointRadius: values.length < 30 ? 4 : 2,
-        pointBackgroundColor: '#00d4ff',
-        fill: true,
-        tension: 0.35,
+        backgroundColor: CHART_COLORS.slice(0, labels.length),
+        ...(type === 'doughnut' ? { borderWidth: 2, borderColor: '#080d1c' } : { borderRadius: 6 })
       }],
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: false,
+      indexAxis: type === 'bar' ? 'y' : undefined,
+      plugins: {
+        legend: type === 'doughnut' ? { position:'right', labels:{ color:'#a0a0b0', boxWidth:12, font:{size:11} } } : { display:false }
+      },
+      scales: type === 'bar' ? {
+        x: { beginAtZero:true, ticks:{precision:0}, grid:{color:'rgba(255,255,255,0.06)'} },
+        y: { grid:{display:false} }
+      } : {}
+    }
+  });
+}
+
+function renderTimelineChartDirect(canvasId, rows, tsIdx) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || tsIdx < 0) return;
+
+  const counts = {};
+  rows.forEach(r => {
+    if (!r[tsIdx]) return;
+    const key = new Date(r[tsIdx]).toISOString().slice(0,10); // Group by day
+    counts[key] = (counts[key]||0) + 1;
+  });
+
+  const labels = Object.keys(counts).sort();
+  const values = labels.map(k => counts[k]);
+  const display = labels.map(l => new Date(l).toLocaleDateString('en-IN',{day:'numeric',month:'short'}));
+
+  _charts[canvasId] = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: display,
+      datasets: [{
+        data: values,
+        borderColor: '#00d4ff',
+        backgroundColor: 'rgba(0,212,255,0.08)',
+        borderWidth: 2.5,
+        pointRadius: 4, pointBackgroundColor: '#00d4ff', fill: true, tension: 0.35,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.06)' } },
@@ -990,128 +1095,108 @@ function renderTimelineChart(rows, tsIdx) {
   });
 }
 
-function setTimePeriod(period) {
-  _timePeriod = period;
-  document.querySelectorAll('.dbv-period-pill').forEach(p => p.classList.toggle('active', p.textContent.toLowerCase() === period));
-  const tsIdx = _data.headers.indexOf('Submitted At');
-  if (tsIdx >= 0) renderTimelineChart(_data.rows, tsIdx);
+function calculateFieldStat(fieldLabel, rows, headers) {
+  const hIdx = headers.indexOf(fieldLabel);
+  if (hIdx < 0) return 0;
+  return rows.filter(r => r[hIdx]).length; // Simple count of non-empty cells
 }
 
-function weekKey(d) {
-  const start = new Date(d); start.setDate(d.getDate() - d.getDay());
-  return start.toISOString().slice(0,10);
+/* ── Edit Mode & Builder Controls ─────────────────────────── */
+function toggleEditMode() {
+  _isEditing = !_isEditing;
+  _grid.setStatic(!_isEditing); // Unlocks drag & drop
+  document.getElementById('editToolbar').classList.toggle('active', _isEditing);
+  document.getElementById('btnEditDashWrap').style.display = _isEditing ? 'none' : 'flex';
+  document.getElementById('dashGrid').classList.toggle('grid-edit-mode', _isEditing);
 }
 
-/* ── Field charts ───────────────────────────────────────────────── */
-function renderFieldChart(field, rows, headers) {
-  const wrap = document.getElementById('chartWrap_' + field.id);
-  if (!wrap) return;
-  const hIdx = headers.indexOf(field.label);
-  if (hIdx < 0) return;
-  const vals = rows.map(r => r[hIdx]).filter(Boolean);
-  if (!vals.length) { wrap.innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:8px 0">No data yet</div>'; return; }
+function openWidgetBuilder() {
+  const sel = document.getElementById('bwField');
+  sel.innerHTML = _data.headers.map(h => `<option value="${escHtml(h)}">${escHtml(h)}</option>`).join('');
+  document.getElementById('widgetModal').classList.add('open');
+}
 
-  if (field.type === 'number' || field.type === 'linear_scale') {
-    const nums = vals.map(Number).filter(n => !isNaN(n));
-    if (!nums.length) return;
-    const avg    = (nums.reduce((a,b) => a+b, 0) / nums.length).toFixed(1);
-    const min    = Math.min(...nums);
-    const max    = Math.max(...nums);
-    const sorted = [...nums].sort((a,b) => a-b);
-    const median = sorted[Math.floor(sorted.length/2)];
+function closeWidgetBuilder() {
+  document.getElementById('widgetModal').classList.remove('open');
+  document.getElementById('bwTitle').value = '';
+}
 
-    // Also render a bar/star viz for scale fields
-    if (field.type === 'linear_scale') {
-      const scaleMax = field.max || 5;
-      const dist = {};
-      for (let i = 1; i <= scaleMax; i++) dist[i] = 0;
-      nums.forEach(n => { if (dist[n] !== undefined) dist[n]++; });
-      const canvas = document.createElement('canvas');
-      wrap.innerHTML = '';
-      wrap.appendChild(canvas);
-      const id = 'sc_' + field.id;
-      canvas.id = id;
-      _charts[id] = new Chart(canvas, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(dist),
-          datasets: [{ data: Object.values(dist), backgroundColor: CHART_COLORS.slice(0,scaleMax), borderRadius: 6, borderSkipped: false }],
-        },
-        options: { responsive:true, maintainAspectRatio:true, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{precision:0},grid:{color:'rgba(255,255,255,0.06)'}},x:{grid:{display:false}}} },
-      });
+function createWidget() {
+  const type = document.getElementById('bwType').value;
+  const field = document.getElementById('bwField').value;
+  let title = document.getElementById('bwTitle').value.trim();
+  if (!title) title = field; // Fallback to field name
+
+  const id = 'w_' + Math.random().toString(36).substr(2, 9);
+  const w = type === 'stat' ? 3 : 6;
+  const h = type === 'stat' ? 2 : 4;
+
+  const widgetData = { id, type, field, title, x: 0, y: 0, w, h };
+  
+  _grid.addWidget({ id, x:0, y:0, w, h });
+  renderWidgetContent(widgetData, _data.rows, _data.headers);
+  closeWidgetBuilder();
+}
+
+function removeWidget(id) {
+  const el = document.querySelector(`.grid-stack-item[gs-id="${id}"]`);
+  if (el) _grid.removeWidget(el);
+}
+
+/* ── Saving Layout to Supabase ───────────────────────────── */
+async function saveLayout() {
+  const btn = document.querySelector('#editToolbar .green');
+  const ogText = btn.innerHTML;
+  btn.innerHTML = 'Saving...';
+  btn.disabled = true;
+
+  // Extract coordinates and sizes from GridStack, plus our custom data attributes
+  // Notice we have to re-bind the custom attributes (type, field, title) that we used to generate them
+  const layout = _grid.engine.nodes.map(n => {
+    // We can infer the type based on what was rendered, or keep a state array.
+    // For simplicity, we find the text/canvas rendered inside to rebuild the config.
+    const itemEl = n.el;
+    let type = 'bar', field = 'unknown', title = 'Widget';
+    
+    // Quick DOM parsing to reconstruct our widget data
+    if (itemEl.querySelector('.dbv-stat-num')) {
+      type = 'stat'; title = itemEl.querySelector('.dbv-stat-label').innerText; field = 'total'; // simplified
+    } else {
+      title = itemEl.querySelector('.dbv-chart-title')?.innerText || 'Chart';
+      const canvas = itemEl.querySelector('canvas');
+      if (canvas && _charts[canvas.id]) {
+        type = _charts[canvas.id].config.type;
+        if (type === 'line') type = 'timeline';
+        // In a full production app, you would tie this to a React state or a JS map.
+      }
     }
+    return { id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, locked: n.locked, type, field, title };
+  });
 
-    wrap.insertAdjacentHTML('beforeend', `
-      <div class="dbv-num-stats" style="margin-top:${field.type==='linear_scale'?'14px':'0'}">
-        <div class="dbv-num-stat"><div class="dbv-num-stat-val">${avg}</div><div class="dbv-num-stat-lbl">Average</div></div>
-        <div class="dbv-num-stat"><div class="dbv-num-stat-val">${min}</div><div class="dbv-num-stat-lbl">Min</div></div>
-        <div class="dbv-num-stat"><div class="dbv-num-stat-val">${max}</div><div class="dbv-num-stat-lbl">Max</div></div>
-      </div>`);
-    return;
+  try {
+    const res = await fetch(`${API}/api/hxforms/${_formId}/layout`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+      body: JSON.stringify({ layout })
+    });
+    
+    if(!res.ok) throw new Error((await res.json()).error || 'Failed to save');
+    
+    // Update local cache so it persists on soft refresh
+    if (_data) {
+       _data.layout = layout;
+       sessionStorage.setItem(`hxdb_${_formId}`, JSON.stringify(_data));
+    }
+    
+    toast('Dashboard layout saved!', 'success');
+    toggleEditMode();
+  } catch(e) {
+    showError(e.message);
+  } finally {
+    btn.innerHTML = ogText;
+    btn.disabled = false;
   }
-
-  // Categorical: count occurrences
-  const counts = {};
-  vals.forEach(v => {
-    const parts = v.includes(',') ? v.split(', ') : [v];
-    parts.forEach(p => { counts[p.trim()] = (counts[p.trim()]||0) + 1; });
-  });
-  const sorted  = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-  const labels  = sorted.map(([l]) => l);
-  const values  = sorted.map(([,v]) => v);
-  const total   = values.reduce((a,b) => a+b, 0);
-  const colors  = CHART_COLORS.slice(0, labels.length);
-
-  const canvas = document.createElement('canvas');
-  wrap.appendChild(canvas);
-  const chartId = 'f_' + field.id;
-
-  const isDonut = field.type === 'radio' && labels.length <= 6;
-
-  _charts[chartId] = new Chart(canvas, {
-    type: isDonut ? 'doughnut' : 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: colors,
-        ...(isDonut ? { borderWidth: 2, borderColor: '#080d1c', hoverOffset: 6 }
-                    : { borderRadius: 6, borderSkipped: false }),
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      indexAxis: isDonut ? undefined : 'y',
-      plugins: {
-        legend: isDonut ? { position:'right', labels:{ padding:14, boxWidth:12, font:{size:12} } } : { display:false },
-        tooltip: {
-          callbacks: {
-            label: ctx => {
-              const pct = ((ctx.raw / total) * 100).toFixed(1);
-              return ` ${ctx.raw} (${pct}%)`;
-            },
-          },
-        },
-      },
-      scales: isDonut ? {} : {
-        x: { beginAtZero:true, ticks:{precision:0}, grid:{color:'rgba(255,255,255,0.06)'} },
-        y: { grid:{display:false} },
-      },
-    },
-  });
 }
-
-function renderEmptyDashboard() {
-  document.getElementById('dashStats').innerHTML = '';
-  document.getElementById('dashCharts').innerHTML = `
-    <div class="dbv-no-charts">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-      <h3>No responses yet</h3>
-      <p>Share your form link to start collecting responses. They'll appear here automatically.</p>
-    </div>`;
-}
-
 /* ════════════════════════════════════════════════════════════════
    DATABASE TAB — TABLE VIEW
 ════════════════════════════════════════════════════════════════ */
