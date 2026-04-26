@@ -1665,10 +1665,11 @@
         display: none;
       }
     }
+
     /* ── WYSIWYG Canvas Cards ── */
     .hxfb-canvas-card {
       background: var(--glass);
-      border: 1px solid var(--glass-b);
+      border: 1px solid var(--glass-border);
       border-radius: 12px;
       padding: 32px 28px;
       margin-bottom: 16px;
@@ -1677,9 +1678,7 @@
       transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
-    .hxfb-canvas-card:hover {
-      border-color: rgba(0, 212, 255, 0.3);
-    }
+    .hxfb-canvas-card:hover { border-color: rgba(0, 212, 255, 0.3); }
     .hxfb-canvas-card.active {
       border-color: var(--cyan);
       background: rgba(0, 212, 255, 0.03);
@@ -1694,7 +1693,7 @@
     .hxfb-canvas-card-top-accent {
       position: absolute;
       top: 0; left: 0; right: 0; height: 10px;
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      background: var(--grad-primary);
     }
     .hxfb-canvas-title {
       font-family: var(--font-display);
@@ -1703,13 +1702,21 @@
       color: var(--text);
       margin: 8px 0 12px;
       line-height: 1.2;
+      outline: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
     }
+    .hxfb-canvas-title:focus { border-color: var(--cyan); }
     .hxfb-canvas-desc {
       font-size: 14.5px;
       color: var(--text-2);
       margin: 0;
       line-height: 1.6;
+      outline: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
     }
+    .hxfb-canvas-desc:focus { border-color: var(--cyan); }
   </style>
 </head>
 
@@ -1893,18 +1900,17 @@
       </aside>
 
       <!-- CENTER: Interactive Preview -->
-      <main class="hxfb-center">
-        <div style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;">
-          <div style="width:100%;max-width:680px;margin:0 auto;flex-shrink:1;min-width:0;padding-top:20px;padding-bottom:80px;overflow-y:auto;" id="hxfbCanvas">
-            
+      <main class="hxfb-center" id="hxfbCenterPanel" onclick="if(event.target.id==='hxfbCenterPanel'){selectedId=null;renderRightPanel();renderPreview();}">
+        <div style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;pointer-events:none;">
+          
+          <div style="width:100%;max-width:680px;flex-shrink:1;min-width:0;pointer-events:auto;" id="hxfbCanvas">
             <div class="hxfb-canvas-card header-card" id="canvasHeaderCard" onclick="switchRTab('settings')">
-              <div class="hxfb-canvas-card-top-accent"></div>
-              <h1 class="hxfb-canvas-title" id="canvasFormTitle">Form Title</h1>
-              <p class="hxfb-canvas-desc" id="canvasFormDesc">Form description goes here...</p>
+              <div class="hxfb-canvas-card-top-accent" id="canvasTopAccent"></div>
+              <h1 class="hxfb-canvas-title" id="canvasFormTitle" contenteditable="true" spellcheck="false" onblur="updateSetting('title', this.innerText)">Untitled Form</h1>
+              <div class="hxfb-canvas-desc" id="canvasFormDesc" contenteditable="true" spellcheck="false" onblur="updateSetting('description', this.innerText)">Form description...</div>
             </div>
             
             <div id="canvasFieldsWrap"></div>
-
           </div>
           <!-- Pass preview (visible when passEnabled) -->
           <div id="pvPassCol" style="display:none;flex-shrink:0;">
@@ -2217,6 +2223,7 @@
       renderLayers();
       switchRTab('field');
       renderRightPanel();
+      renderPreview(); // Instantly highlight the active Canvas Card!
     }
 
     /* â”€â”€ Drag & Drop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -2960,26 +2967,83 @@
     function renderPreview() {
       if (!_S.config) return;
       
-      // 1. Sync the Header Card instantly
+      // 1. Sync Header Card
       const titleEl = document.getElementById('canvasFormTitle');
       const descEl = document.getElementById('canvasFormDesc');
-      if (titleEl) titleEl.innerText = _S.config.title || 'Untitled Form';
-      if (descEl) descEl.innerText = _S.config.description || 'Form description';
+      const accentEl = document.getElementById('canvasTopAccent');
       
-      // 2. Prepare the Canvas Fields Wrapper (We will build the Field Cards in Batch 4)
-      const fieldsWrap = document.getElementById('canvasFieldsWrap');
-      if (fieldsWrap) {
-        if (!_S.config.fields || _S.config.fields.length === 0) {
-          fieldsWrap.innerHTML = `
+      const titleText = _S.config.settings?.title || _S.name || 'Untitled Form';
+      const descText = _S.config.settings?.description || 'Form description...';
+
+      if (titleEl && document.activeElement !== titleEl) titleEl.innerText = titleText;
+      if (descEl && document.activeElement !== descEl) descEl.innerText = descText;
+      
+      if (accentEl) {
+         const th = _S.config.theme || {};
+         accentEl.style.background = ACCENT[th.color] || ACCENT.cyan;
+      }
+
+      // 2. Render Field Cards
+      const wrap = document.getElementById('canvasFieldsWrap');
+      if (wrap) {
+        const fields = _S.config.fields || [];
+        if (!fields.length) {
+          wrap.innerHTML = `
             <div style="text-align:center; padding: 50px 20px; color: var(--text-3); font-size: 14.5px; border: 2px dashed var(--glass-b); border-radius: 12px; background: rgba(255,255,255,0.01);">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:32px;height:32px;margin-bottom:12px;opacity:0.5;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><br>
               Field cards will appear here.<br>Click a tool on the left to add one!
             </div>`;
         } else {
-          // Temporarily just show a count until Batch 4 is applied
-          fieldsWrap.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--cyan); border: 1px solid var(--glass-b); border-radius: 12px; background: var(--glass);">[ Canvas Mode Active : ${_S.config.fields.length} Fields Ready for Batch 4 ]</div>`;
+          wrap.innerHTML = fields.map((f, i) => renderCanvasCard(f, i)).join('');
         }
       }
+      
+      renderBuilderPass();
+    }
+
+    function renderCanvasCard(f, idx) {
+      const isSel = (f.id === selectedId);
+      const req = f.required ? `<span style="color:var(--red);margin-left:4px;">*</span>` : '';
+      
+      let inputUI = '';
+      if (['text', 'email', 'phone', 'number', 'date', 'time'].includes(f.type)) {
+        inputUI = `<div style="border-bottom: 1px dotted var(--text-3); padding-bottom: 6px; color: var(--text-3); width: 60%; font-size:14px;">${f.placeholder || 'Short answer text'}</div>`;
+      } else if (f.type === 'textarea') {
+        inputUI = `<div style="border-bottom: 1px dotted var(--text-3); padding-bottom: 6px; color: var(--text-3); width: 100%; font-size:14px;">${f.placeholder || 'Long answer text'}</div>`;
+      } else if (['radio', 'checkbox'].includes(f.type)) {
+        const icon = f.type === 'radio' ? '<circle cx="12" cy="12" r="10"/>' : '<rect x="3" y="3" width="18" height="18" rx="2"/>';
+        inputUI = (f.options || ['Option 1']).map((opt, i) => `
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; color:var(--text-2);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;opacity:0.4">${icon}</svg>
+            <div contenteditable="true" spellcheck="false" onblur="updateOpt('${f.id}', ${i}, this.innerText)" style="outline:none; border-bottom: 1px solid transparent; font-size:14px; padding:2px 0;" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(opt)}</div>
+          </div>
+        `).join('');
+      } else if (f.type === 'dropdown') {
+        inputUI = `<div style="padding:10px 16px; background:rgba(255,255,255,0.04); border-radius:6px; display:inline-block; color:var(--text-3); font-size:14px; border:1px solid rgba(255,255,255,0.1);">1. ${escHtml((f.options||[])[0] || 'Option 1')} &nbsp; ▼</div>`;
+      } else if (f.type === 'file_upload') {
+        inputUI = `<div style="padding:16px; border:1px dashed rgba(255,255,255,0.2); border-radius:6px; text-align:center; color:var(--text-3); font-size:13px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;margin-bottom:6px"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg><br>Upload File (Max ${f.maxMB||10}MB)</div>`;
+      } else if (f.type === 'linear_scale') {
+        inputUI = `<div style="display:flex; gap:16px; align-items:flex-end;">
+          <span style="font-size:13px; color:var(--text-3); padding-bottom:6px">${escHtml(f.minLabel || 'Poor')}</span>
+          <div style="display:flex; gap:10px;">${Array.from({length: f.max||5}, (_, i) => `<div style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(255,255,255,0.03);">${i+1}</div>`).join('')}</div>
+          <span style="font-size:13px; color:var(--text-3); padding-bottom:6px">${escHtml(f.maxLabel || 'Excellent')}</span>
+        </div>`;
+      } else if (f.type === 'section_break') {
+        return `<div class="hxfb-canvas-card ${isSel ? 'active' : ''}" onclick="selectLayer('${f.id}')" style="padding:0; overflow:hidden;">
+          <div style="background:rgba(124,58,237,0.15); padding:10px 24px; border-bottom:1px solid rgba(124,58,237,0.3); color:#a78bfa; font-size:11px; font-weight:700; letter-spacing:1px">PAGE BREAK</div>
+          <div style="padding:28px;">
+            <div style="font-size:20px; font-weight:700; color:var(--text); outline:none; margin-bottom:8px; border-bottom:1px solid transparent;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'label', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.label || 'Untitled Page')}</div>
+            <div style="font-size:13px; color:var(--text-2); outline:none; border-bottom:1px solid transparent;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'description', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.description || 'Description (optional)')}</div>
+          </div>
+        </div>`;
+      }
+
+      return `
+        <div class="hxfb-canvas-card ${isSel ? 'active' : ''}" onclick="selectLayer('${f.id}')" id="canvas-card-${f.id}">
+          <div style="font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--text); margin-bottom:20px; outline:none; border-bottom: 1px solid transparent; display:inline-block;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'label', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.label || 'Untitled Question')}${req}</div>
+          ${inputUI}
+        </div>
+      `;
     }
 
     function pvShowPage(n, animate = true) {
