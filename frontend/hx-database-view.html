@@ -385,8 +385,14 @@
       background: rgba(255,255,255,0.01); border-radius: 16px; 
       border: 1px dashed transparent; min-height: 400px; transition: var(--transition);
     }
+    
+    /* The visible grid background and extra bottom space for editing */
     .grid-stack.grid-edit-mode {
-      border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02);
+      border-color: rgba(255,255,255,0.1); 
+      background-color: rgba(255,255,255,0.02);
+      background-image: radial-gradient(rgba(255,255,255,0.15) 1.5px, transparent 1.5px);
+      background-size: 40px 40px; /* Adjust size of grid dots */
+      padding-bottom: 300px; /* Gives you empty space at the bottom to drag charts down */
     }
     
     .grid-stack-item-content {
@@ -928,49 +934,90 @@ Chart.defaults.color = '#7a90b0';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
 Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
+/* ── DASHBOARD RENDERING & AUTO-GEN LOGIC ─────────────────────────────── */
 function renderDashboard() {
   const rows    = _data?.rows    || [];
   const headers = _data?.headers || [];
   
-  // 1. Initialize GridStack if not already done
+  // 1. Initialize GridStack
   if (!_grid) {
     _grid = GridStack.init({
       column: 12,
       cellHeight: 80,
       margin: 14,
-      staticGrid: true, // Locked by default
+      staticGrid: true, 
       animate: true
     }, '#dashGrid');
 
-    // Make charts resize seamlessly when a widget is stretched
     _grid.on('resizestop', function(event, el) {
       const chartId = el.getAttribute('data-chart-id');
-      if (chartId && _charts[chartId]) {
-         _charts[chartId].resize();
+      if (chartId && _charts[chartId]) _charts[chartId].resize();
+    });
+  }
+
+  // 2. Load Layout safely (Parse JSON if it comes back as a string from Supabase)
+  let rawLayout = _data.layout || _data.config?.dashboard_layout;
+  let layout = [];
+  try {
+    layout = typeof rawLayout === 'string' ? JSON.parse(rawLayout) : rawLayout;
+  } catch(e) { console.warn("Layout parse error", e); }
+  
+  // 3. AUTO-GENERATE LAYOUT (If no layout is saved in database)
+  if (!layout || layout.length === 0) {
+    layout = [];
+    let currentY = 0;
+
+    // A. Always add the Total Responses Stat Card
+    layout.push({ id: 'stat_1', type: 'stat', field: 'total', title: 'Total Responses', x: 0, y: currentY, w: 3, h: 2 });
+    
+    // B. Always add Timeline if timestamps exist
+    const tsIdx = headers.indexOf('Submitted At');
+    if (tsIdx >= 0) {
+      layout.push({ id: 'chart_tl', type: 'timeline', field: 'Submitted At', title: 'Submissions Over Time', x: 3, y: currentY, w: 9, h: 4 });
+      currentY += 4;
+    } else {
+      currentY += 2; // Just offset for the stat card
+    }
+
+    // C. Auto-generate charts for all chartable fields
+    const chartFields = (_data.fields || []).filter(f => 
+      ['radio','dropdown','checkbox','number','linear_scale'].includes(f.type)
+    );
+
+    let currentX = 0;
+    chartFields.forEach((field, index) => {
+      // Determine best chart type based on field type
+      let defaultType = 'bar';
+      if (field.type === 'radio' || field.type === 'dropdown') defaultType = 'doughnut';
+      
+      layout.push({
+        id: 'auto_' + field.id, 
+        type: defaultType, 
+        field: field.label, 
+        title: field.label, 
+        x: currentX, 
+        y: currentY, 
+        w: 6, 
+        h: 4 
+      });
+
+      // Simple grid math to place them side-by-side
+      currentX += 6;
+      if (currentX >= 12) {
+        currentX = 0;
+        currentY += 4;
       }
     });
   }
 
-  // 2. Load Layout (From Backend or Generate Default)
-  let layout = _data.layout || _data.config?.dashboard_layout;
-  
-  if (!layout || layout.length === 0) {
-    const tsIdx = headers.indexOf('Submitted At');
-    layout = [
-      { id: 'stat_1', type: 'stat', field: 'total', title: 'Total Responses', x: 0, y: 0, w: 3, h: 2, locked: true },
-      ...(tsIdx >= 0 ? [{ id: 'chart_tl', type: 'timeline', field: 'Submitted At', title: 'Submissions Over Time', x: 3, y: 0, w: 9, h: 4, locked: true }] : [])
-    ];
-  }
-
-  // 3. Render Grid Elements
+  // 4. Render Grid Elements
   _grid.removeAll();
   _grid.load(layout);
 
-  // Destroy old chart instances to prevent memory leaks
   Object.values(_charts).forEach(c => c.destroy());
   _charts = {};
 
-  // 4. Fill Widgets with Content
+  // 5. Fill Widgets
   layout.forEach(widget => renderWidgetContent(widget, rows, headers));
 }
 
@@ -1101,15 +1148,19 @@ function calculateFieldStat(fieldLabel, rows, headers) {
   return rows.filter(r => r[hIdx]).length; // Simple count of non-empty cells
 }
 
-/* ── Edit Mode & Builder Controls ─────────────────────────── */
+/* ── EDIT MODE CONTROLS ─────────────────────────── */
 function toggleEditMode() {
   _isEditing = !_isEditing;
+  
   _grid.setStatic(!_isEditing); // Unlocks drag & drop
+  
+  // Float true allows you to drag items down into empty space without them bouncing to the top
+  _grid.float(_isEditing); 
+
   document.getElementById('editToolbar').classList.toggle('active', _isEditing);
   document.getElementById('btnEditDashWrap').style.display = _isEditing ? 'none' : 'flex';
   document.getElementById('dashGrid').classList.toggle('grid-edit-mode', _isEditing);
 }
-
 function openWidgetBuilder() {
   const sel = document.getElementById('bwField');
   sel.innerHTML = _data.headers.map(h => `<option value="${escHtml(h)}">${escHtml(h)}</option>`).join('');
@@ -1143,34 +1194,32 @@ function removeWidget(id) {
   if (el) _grid.removeWidget(el);
 }
 
-/* ── Saving Layout to Supabase ───────────────────────────── */
+/* ── SAVING LOGIC ───────────────────────────── */
 async function saveLayout() {
   const btn = document.querySelector('#editToolbar .green');
   const ogText = btn.innerHTML;
   btn.innerHTML = 'Saving...';
   btn.disabled = true;
 
-  // Extract coordinates and sizes from GridStack, plus our custom data attributes
-  // Notice we have to re-bind the custom attributes (type, field, title) that we used to generate them
   const layout = _grid.engine.nodes.map(n => {
-    // We can infer the type based on what was rendered, or keep a state array.
-    // For simplicity, we find the text/canvas rendered inside to rebuild the config.
     const itemEl = n.el;
     let type = 'bar', field = 'unknown', title = 'Widget';
     
-    // Quick DOM parsing to reconstruct our widget data
     if (itemEl.querySelector('.dbv-stat-num')) {
-      type = 'stat'; title = itemEl.querySelector('.dbv-stat-label').innerText; field = 'total'; // simplified
+      type = 'stat'; title = itemEl.querySelector('.dbv-stat-label').innerText; field = 'total'; 
     } else {
       title = itemEl.querySelector('.dbv-chart-title')?.innerText || 'Chart';
       const canvas = itemEl.querySelector('canvas');
       if (canvas && _charts[canvas.id]) {
         type = _charts[canvas.id].config.type;
         if (type === 'line') type = 'timeline';
-        // In a full production app, you would tie this to a React state or a JS map.
+        
+        // Retrieve the field name. In a real React app, this is in state.
+        // Here, we stored it during render or we grab it from a data attribute we need to add.
+        field = itemEl.getAttribute('data-field') || title; 
       }
     }
-    return { id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, locked: n.locked, type, field, title };
+    return { id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, type, field, title };
   });
 
   try {
@@ -1182,9 +1231,9 @@ async function saveLayout() {
     
     if(!res.ok) throw new Error((await res.json()).error || 'Failed to save');
     
-    // Update local cache so it persists on soft refresh
+    // Update local cache properly!
     if (_data) {
-       _data.layout = layout;
+       _data.layout = layout; // Ensure the live variable is updated
        sessionStorage.setItem(`hxdb_${_formId}`, JSON.stringify(_data));
     }
     

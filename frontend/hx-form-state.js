@@ -40,6 +40,24 @@ const HXF_FIELD_DEFAULTS = {
   file_upload:   () => ({ label: 'File Upload',      placeholder: 'Upload a file',        required: false, accept: '*', maxMB: 10 }),
   linear_scale:  () => ({ label: 'Rating',           placeholder: '',                     required: false, min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars' }),
   section_break: () => ({ label: 'Section Title',    description: 'Add a description for this section.', required: false }),
+  event_pass:    () => ({
+    label: 'Entry Pass',
+    passEventName: '',
+    passSubtitle: 'Present this pass at the venue entrance',
+    passVenue: '',
+    passDate: '',
+    passTime: '',
+    passRules: [],
+    passBannerColor: '#12172a',
+    passTextColor: '#ffffff',
+    passAccentColor: '#00d4ff',
+    passQrSize: 140,
+    passNameField: '',
+    passEmailField: '',
+    passStaffCode: '',
+    passShowAttendance: false,
+    required: false,
+  }),
 };
 
 /* ── Form config templates ──────────────────────────────────────── */
