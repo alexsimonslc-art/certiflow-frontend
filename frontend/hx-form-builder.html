@@ -1260,6 +1260,13 @@ function updateThemeFont(type, value) {
   setSaveStatus('unsaved');
   renderPreview();
 }
+function updateThemeLightMode() {
+  const current = _S.config?.theme?.lightMode || false;
+  _S.updateTheme({ lightMode: !current });
+  setSaveStatus('unsaved');
+  renderSettings();
+  renderPreview();
+}
 
 /* ════════════════════════════════════════════════════════════════
    SETTINGS (renders in right settings tab)
@@ -1362,6 +1369,13 @@ function renderSettings() {
       <div class="hxfb-settings-sec-title">Theme Colour</div>
       <div class="hxfb-color-grid">
         ${COLORS.map(c => `<div class="hxfb-color-pill${th.color===c.key?' selected':''}" style="background:${c.hex}" title="${c.key}" onclick="updateThemeColor('${c.key}')"></div>`).join('')}
+      </div>
+      <div class="hxfb-toggle-row" style="margin-top:12px">
+        <div>
+          <div style="font-size:13px;color:var(--text)">Light mode</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px">White background, dark text</div>
+        </div>
+        <div class="hxfb-toggle${th.lightMode?' on':''}" onclick="updateThemeLightMode()"></div>
       </div>
     </div>
 
@@ -1661,6 +1675,17 @@ function pvShowPage(n, animate = true) {
 
   const body = document.getElementById('pvBody');
   body.innerHTML = html;
+  // Apply light mode to preview card
+  const card = document.querySelector('.hxfb-pv-card');
+  if (card) {
+    if (th.lightMode) {
+      card.style.background = '#fff';
+      card.style.color = '#111827';
+    } else {
+      card.style.background = '';
+      card.style.color = '';
+    }
+  }
   if (animate) { body.style.opacity = '0'; requestAnimationFrame(() => { body.style.transition = 'opacity 0.22s'; body.style.opacity = '1'; }); }
   pvEvalConditions();
 }

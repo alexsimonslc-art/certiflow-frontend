@@ -879,6 +879,37 @@
     .hxfv-pass-btn-close {
       background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:var(--text-2);
     }
+
+    /* ── Light mode overrides ──────────────────────────────────── */
+    body.hxfv-light {
+      --bg: #f0f4f8;
+      --surface: rgba(255,255,255,0.95);
+      --glass: rgba(0,0,0,0.02);
+      --glass-b: rgba(0,0,0,0.10);
+      --glass-b2: rgba(0,0,0,0.18);
+      --text: #111827;
+      --text-2: #374151;
+      --text-3: #6b7280;
+      --red-dim: rgba(244,63,94,0.08);
+    }
+    body.hxfv-light::before { display: none; }
+    body.hxfv-light .hxfv-input,
+    body.hxfv-light .hxfv-textarea,
+    body.hxfv-light .hxfv-select {
+      background: rgba(0,0,0,0.03);
+      color: var(--text);
+    }
+    body.hxfv-light .hxfv-select { background-color: rgba(0,0,0,0.03); }
+    body.hxfv-light .hxfv-select option { background: #fff; color: #111827; }
+    body.hxfv-light .hxfv-option-label { background: rgba(0,0,0,0.02); }
+    body.hxfv-light .hxfv-option-label:hover { background: rgba(0,0,0,0.04); }
+    body.hxfv-light .hxfv-nav-row { border-top-color: rgba(0,0,0,0.08); }
+    body.hxfv-light .hxfv-back-btn { color: var(--text-3); }
+    body.hxfv-light .hxfv-cover-image { filter: none; }
+    body.hxfv-light .hxfv-section-block {
+      background: rgba(0,0,0,0.03);
+      border-color: rgba(0,0,0,0.08);
+    }
   </style>
 </head>
 
@@ -933,6 +964,9 @@
       </div>
     </div>
  
+    <!-- Cover image (shown when set) -->
+    <div id="formCoverImage" style="display:none;width:100%;height:160px;border-radius:16px;background-size:cover;background-position:center;background-repeat:no-repeat;margin-bottom:22px"></div>
+
     <!-- Form title header (page 1 only) -->
     <div class="hxfv-header" id="formMainHeader">
       <div class="hxfv-org-badge">
@@ -1224,10 +1258,20 @@
       const title = s.title || form.name || 'Form';
       document.title = `${title} — HX Forms`;
     
+      // Light mode
+      if (th.lightMode) document.body.classList.add('hxfv-light');
+
+      // Cover image
+      if (s.coverImage) {
+        const coverEl = document.getElementById('formCoverImage');
+        coverEl.style.backgroundImage = `url(${JSON.stringify(s.coverImage)})`;
+        coverEl.style.display = '';
+      }
+
       // Header (page 1)
       document.getElementById('formTitle').textContent = title;
       const descEl = document.getElementById('formDesc');
-      if (s.description) { descEl.textContent = s.description; descEl.style.display = ''; }
+      if (s.description) { descEl.innerHTML = s.description; descEl.style.display = ''; }
     
       // Allow multiple → show "submit another" after
       if (s.allowMultiple) document.getElementById('tyAnotherBtn').style.display = '';
