@@ -988,6 +988,8 @@ let _pv = { page: 0, pages: [], vals: {}, selOpts: {} };
   document.getElementById('formNameEl').textContent = state.name || 'Untitled Form';
   updateTopBar();
   renderLayers();
+  renderCards();
+  renderSettings();
   renderRightPanel();
   renderPreview();
 
@@ -1258,10 +1260,33 @@ function buildQCard(f, idx) {
   </div>`;
 }
 
+function renderCards() {
+  const fields = S.config?.fields || [];
+  const container = document.getElementById('gfCards');
+  if (!container) return;
+  if (!fields.length) {
+    container.innerHTML = `<div class="hxfb-gf-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+      Click <strong>"+ Add Field"</strong> on the left to start building your form</div>`;
+    return;
+  }
+  container.innerHTML = fields.map((f, idx) => buildQCard(f, idx)).join('');
+  // re-attach live option inputs
+  container.querySelectorAll('[data-opt-input]').forEach(inp => {
+    const fid = inp.closest('[data-fid]')?.dataset?.fid;
+    const idx = parseInt(inp.dataset.optInput);
+    if (fid != null && !isNaN(idx)) {
+      inp.addEventListener('input', () => updateOpt(fid, idx, inp.value));
+    }
+  });
+  if (window.lucide) lucide.createIcons();
+}
+
 function selectCard(id) {
-  if (selectedId === id) return;
   selectedId = id;
   renderCards();
+  renderLayers();
+  switchRTab('field');
   renderRightPanel();
 }
 
@@ -1400,13 +1425,14 @@ function addField(type) {
 ════════════════════════════════════════════════════════════════ */
 function switchRTab(tab) {
   rightTab = tab;
-  document.getElementById('rtabField').classList.toggle('active',    tab === 'field');
+  document.getElementById('rtabField').classList.toggle('active', tab === 'field');
   document.getElementById('rtabSettings').classList.toggle('active', tab === 'settings');
-  document.getElementById('rtabFieldBody').style.display    = tab === 'field'    ? '' : 'none';
-  document.getElementById('rtabSettingsBody').style.display = tab === 'settings' ? '' : 'none';
+  document.getElementById('rtabFieldBody').style.display = tab === 'field' ? 'block' : 'none';
+  document.getElementById('rtabSettingsBody').style.display = tab === 'settings' ? 'block' : 'none';
 }
 
 function renderRightPanel() {
+  if (rightTab === 'settings') { renderSettings(); return; }
   const body = document.getElementById('rtabFieldBody');
   if (!selectedId) {
     body.innerHTML = `
@@ -1621,20 +1647,22 @@ function removeOpt(id, idx) {
   renderPreview();
 }
 function updateOpt(id, idx, value) {
-  const field = _S.config.fields.find(f => f.id === id);
+  const field = S.config.fields.find(f => f.id === id);
   if (!field) return;
-  const opts = [...(field.options||[])]; opts[idx] = value;
-  _S.updateField(id, { options: opts });
+  const opts = [...field.options];
+  opts[idx] = value;
+  S.updateField(id, { options: opts });
+  S.dirty = true;
   setSaveStatus('unsaved');
-  renderPreview();
 }
+
 function updateOptCap(id, idx, value) {
-  const field = _S.config.fields.find(f => f.id === id);
+  const field = S.config.fields.find(f => f.id === id);
   if (!field) return;
-  const caps = [...(field.optionCaps||[])];
-  while (caps.length <= idx) caps.push(null);
-  caps[idx] = value;
-  _S.updateField(id, { optionCaps: caps });
+  const caps = [...(field.optionCaps || [])];
+  caps[idx] = value ? parseInt(value) : null;
+  S.updateField(id, { optionCaps: caps });
+  S.dirty = true;
   setSaveStatus('unsaved');
 }
 function moveFP(id, dir) {
@@ -2054,6 +2082,10 @@ function buildPvPages() {
 function renderPreview() {
   renderCards();
   renderBuilderPass();
+  buildPvPages();
+  if (pv.pages.length) pvShowPage(pv.page, false);
+}
+function _renderPreview_noop() { // placeholder — do not delete
 }
 
 function pvShowPage(n, animate = true) {
