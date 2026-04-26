@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="stylesheet" href="dashboard.css"/>
-  <link rel="stylesheet" href="dashboard-patch.css"/>
+  
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
     /* ── Page-specific ───────────────────────────────────────────── */
@@ -981,8 +981,7 @@
   function closeQR() {
     document.getElementById('qrModal').classList.remove('open');
   }
- 
-  function downloadQR() {
+ function downloadQR() {
   const wrap   = document.getElementById('qrCanvas');
   const canvas = wrap.querySelector('canvas');
   if (!canvas) return;
@@ -991,7 +990,6 @@
   a.href     = canvas.toDataURL('image/png');
   a.click();
 }
-  
   /* ── Helpers ───────────────────────────────────────────────────────── */
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
