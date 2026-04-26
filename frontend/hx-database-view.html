@@ -620,6 +620,8 @@ let _timePeriod = 'day';
 let _charts     = {};    // Chart.js instances — destroyed on re-render
 let _liveCount  = 0;
 let _liveTimer  = null;
+let _progTimer = null;
+let _progVal   = 0;
 
 /* ════════════════════════════════════════════════════════════════
    BOOT
@@ -634,25 +636,6 @@ let _liveTimer  = null;
   await loadData(true);
   startLiveWatcher();
 })();
-
-/* ── Load data from backend ─────────────────────────────────────── */
-/* ── Progress bar helpers ───────────────────────────────────────── */
-let _progTimer = null;
-let _progVal   = 0;
-
-function setProgress(pct, titleText, subText) {
-  _progVal = pct;
-  const bar  = document.getElementById('loadingBar');
-  const pctEl = document.getElementById('loadingPct');
-  const titleEl = document.getElementById('loadingTitle');
-  const subEl   = document.getElementById('loadingSubtitle');
-  const stepEl  = document.getElementById('loadingStepText');
-  if (bar)   bar.style.width = pct + '%';
-  if (pctEl) pctEl.textContent = Math.round(pct) + '%';
-  if (titleText && titleEl) titleEl.textContent = titleText;
-  if (subText && subEl)     subEl.textContent   = subText;
-  if (stepEl && titleText)  stepEl.textContent  = titleText;
-}
 
 function startFakeProgress() {
   // Slowly creep from 0 → 85% while waiting for the real fetch
@@ -674,6 +657,25 @@ function startFakeProgress() {
     }
   }, 900);
 }
+/* ── Load data from backend ─────────────────────────────────────── */
+/* ── Progress bar helpers ───────────────────────────────────────── */
+
+
+function setProgress(pct, titleText, subText) {
+  _progVal = pct;
+  const bar  = document.getElementById('loadingBar');
+  const pctEl = document.getElementById('loadingPct');
+  const titleEl = document.getElementById('loadingTitle');
+  const subEl   = document.getElementById('loadingSubtitle');
+  const stepEl  = document.getElementById('loadingStepText');
+  if (bar)   bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+  if (titleText && titleEl) titleEl.textContent = titleText;
+  if (subText && subEl)     subEl.textContent   = subText;
+  if (stepEl && titleText)  stepEl.textContent  = titleText;
+}
+
+
 
 function finishProgress(cb) {
   clearInterval(_progTimer);
