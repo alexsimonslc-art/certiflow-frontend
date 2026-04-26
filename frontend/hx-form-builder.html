@@ -528,52 +528,47 @@
     }
 
     .hxfb-type-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-      padding: 10px 8px 12px;
-      overflow-y: auto;
-      max-height: 308px;
-    }
-
-    .hxfb-type-grid::-webkit-scrollbar {
-      width: 3px;
-    }
-
-    .hxfb-type-grid::-webkit-scrollbar-thumb {
-      background: var(--glass-border);
-      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
     }
 
     .hxfb-type-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      padding: 9px 5px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--text-3);
-      cursor: pointer;
-      font-size: 10.5px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-b);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: var(--text-2);
+      font-size: 13.5px;
       font-weight: 600;
-      transition: all 0.15s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       font-family: var(--font);
+      text-align: left;
     }
 
     .hxfb-type-btn:hover {
-      background: var(--cyan-dim);
-      color: var(--cyan);
-      border-color: rgba(0, 212, 255, 0.25);
+      background: rgba(0, 212, 255, 0.06);
+      border-color: rgba(0, 212, 255, 0.3);
+      color: var(--text);
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     .hxfb-type-btn svg {
-      width: 14px;
-      height: 14px;
+      width: 18px;
+      height: 18px;
+      color: var(--cyan);
+      opacity: 0.9;
+      flex-shrink: 0;
     }
 
-    /* â”€â”€ CENTER: Interactive Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /*  CENTER: Interactive Preview  */
     .hxfb-center {
       overflow-y: auto;
       overflow-x: hidden;
