@@ -209,16 +209,26 @@ async function loadHxFormData(formId) {
     window.allCols = CS.headers;
     const el       = document.getElementById('hxFormResult');
     const preview  = CS.rows; // FIX: Show all rows
-    el.innerHTML = `<div class="notice notice-green" style="margin-bottom:12px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-      <span><strong>${CS.rows.length} submissions</strong> loaded from <strong>${data.formName}</strong> — ${CS.headers.length} columns</span>
-    </div>
-    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
-      <table style="width:max-content;min-width:100%;border-collapse:collapse">
-        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
-        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
-      </table>
-    </div>`;
+        el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);margin-bottom:16px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
+        <span style="font-size:14px"><strong>${CP.rows.length} responses</strong> imported from <strong>${data.formName}</strong></span>
+      </div>
+      <div style="width:100%;max-width:100%;box-sizing:border-box;overflow-x:auto;overflow-y:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;display:block">
+        <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left;table-layout:auto">
+          <thead>
+            <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">
+              ${data.headers.map(h => `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${CP.rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+              ${data.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g,'&lt;')}</td>`).join('')}
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
     el.style.display = 'block';
     toast(`${CS.rows.length} responses ready`, 'success');
     } catch(e) {
@@ -247,19 +257,22 @@ async function loadSheet() {
 function renderSheetPreview() {
   const el = document.getElementById('sheetResult');
   const preview = CS.rows; // FIX: Show all rows
+    el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
+  el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
   el.innerHTML = `
-    <div class="notice notice-green" style="margin-bottom:12px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-      <span>Sheet loaded — <strong>${CS.rows.length} participants</strong>, ${CS.headers.length} columns detected</span>
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);margin-bottom:16px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style="font-size:14px"><strong>Data loaded</strong> — ${msg}</span>
     </div>
-    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
-      <table style="width:max-content;min-width:100%;border-collapse:collapse">
-        <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
-        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+    <div style="width:100%;max-width:100%;box-sizing:border-box;overflow-x:auto;overflow-y:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;display:block">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left;table-layout:auto">
+        <thead>
+          <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">${theadHtml}</tr>
+        </thead>
+        <tbody>${tbodyHtml}</tbody>
       </table>
-    </div>
-  `;
-  el.style.display = 'block';
+    </div>`;
+
 }
 
 function handleFile(e) {
