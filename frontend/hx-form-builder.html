@@ -1738,11 +1738,10 @@
         <!-- View Live -->
         <button class="hxfb-tb-btn" id="viewLiveBtn" style="display:none" onclick="viewLive()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
           </svg>
-          View Live
+          Preview
         </button>
         <!-- Close Form -->
         <button class="hxfb-tb-btn" id="closeFmBtn" style="display:none" onclick="toggleClose()"></button>
@@ -2054,7 +2053,7 @@
       sheetBtn.style.display = _S.config?.sheetId ? '' : 'none';
       const scBtn = document.getElementById('scannerBtn');
       if (scBtn) scBtn.style.display = _S.config?.settings?.passEnabled ? '' : 'none';
-      viewBtn.style.display = isLive ? '' : 'none';
+      viewBtn.style.display = ''; // Preview should always be accessible!
       closeBtn.style.display = isLive ? '' : 'none';
 
       if (isLive) {
@@ -2073,7 +2072,10 @@
     }
 
     /* Topbar button actions */
-    function viewLive() { if (_S.slug) window.open('hx-form-view.html?f=' + _S.slug, '_blank'); }
+    function viewLive() { 
+      if (_S.slug) window.open('hx-form-view.html?f=' + _S.slug, '_blank'); 
+      else toast('Please publish the form once to generate the preview link.', 'warn');
+    }
     function tbOpenSheet() { const sid = _S.config?.sheetId; if (sid) window.open('https://docs.google.com/spreadsheets/d/' + sid, '_blank'); }
 
     function tbCopyLink() {
@@ -2250,15 +2252,19 @@
       setTimeout(() => document.getElementById('li-' + field.id)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
     }
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    /*=======================================================
        RIGHT PANEL â€” Field Editor + Settings
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ========================================================= */
     function switchRTab(tab) {
       rightTab = tab;
       document.getElementById('rtabField').classList.toggle('active', tab === 'field');
       document.getElementById('rtabSettings').classList.toggle('active', tab === 'settings');
       document.getElementById('rtabFieldBody').style.display = tab === 'field' ? '' : 'none';
       document.getElementById('rtabSettingsBody').style.display = tab === 'settings' ? '' : 'none';
+      
+      // Guarantee fresh data rendering when switching tabs!
+      if (tab === 'settings') renderSettings();
+      if (tab === 'field') renderRightPanel();
     }
 
     function renderRightPanel() {
@@ -2515,11 +2521,13 @@
       renderPreview();
     }
     function updateSetting(key, value) {
+      if(!_S.config.settings) _S.config.settings = {}; // Fallback protection
       _S.updateSettings({ [key]: value });
       setSaveStatus('unsaved');
       renderPreview();
     }
     function toggleSetting(key) {
+      if(!_S.config.settings) _S.config.settings = {}; // Fallback protection
       _S.updateSettings({ [key]: !_S.config.settings[key] });
       setSaveStatus('unsaved');
       renderSettings();
