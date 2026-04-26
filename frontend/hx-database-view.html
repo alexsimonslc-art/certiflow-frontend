@@ -398,7 +398,9 @@
     .grid-stack-item-content {
       background: rgba(255,255,255,0.035) !important; backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px;
-      padding: 20px 22px; overflow: hidden; display: flex; flex-direction: column;
+      padding: 20px 22px; 
+      overflow: hidden !important; /* <--- This forces scrollbars to disappear */
+      display: flex; flex-direction: column;
       position: relative;
     }
     .grid-stack-item-content:hover { border-color: rgba(255,255,255,0.16) !important; }
@@ -778,7 +780,7 @@
     </div>
 
     <div style="display: flex; gap: 10px; margin-top: 10px;">
-      <button class="dbv-btn-primary" style="flex: 1; justify-content:center; padding: 12px; font-size: 14px;" onclick="createWidget()">Add to Dashboard</button>
+      <button class="dbv-btn-primary" style="flex: 1; justify-content:center; padding: 12px; font-size: 14px; border-radius: 9px;" onclick="createWidget()">Add to Dashboard</button>
     </div>
   </div>
 </div>
@@ -1113,25 +1115,32 @@ function renderWidgetContent(widget, rows, headers) {
   if (!itemEl) return;
   const contentEl = itemEl.querySelector('.grid-stack-item-content');
   
+  // 1. Lock the exact widget configuration into HTML data attributes
+  itemEl.setAttribute('data-widget-type', widget.type);
+  itemEl.setAttribute('data-field', widget.field);
+  if (widget.secondaryField) {
+    itemEl.setAttribute('data-secfield', widget.secondaryField);
+  } else {
+    itemEl.removeAttribute('data-secfield'); // Clear it if not needed
+  }
+
   const removeBtn = `<button class="widget-remove" onclick="removeWidget('${widget.id}')" title="Remove Widget">✕</button>`;
 
   if (widget.type === 'stat') {
-    const val = widget.field === 'total' ? rows.length : calculateFieldStat(widget.field, rows, headers);
-    contentEl.innerHTML = `
-      ${removeBtn}
-      <div style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">${escHtml(widget.title)}</div>
-      <div style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>
-    `;
-  } else {
-    // Attach data attributes so the save function remembers the exact fields used
-    itemEl.setAttribute('data-chart-id', `chart_${widget.id}`);
-    itemEl.setAttribute('data-field', widget.field);
-    if (widget.secondaryField) itemEl.setAttribute('data-secfield', widget.secondaryField);
+    let val = widget.field === 'total' ? rows.length : calculateFieldStat(widget.field, rows, headers);
+    if (isNaN(val)) val = 0; // Fallback to prevent NaN text
     
     contentEl.innerHTML = `
       ${removeBtn}
-      <div style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(widget.title)}</div>
-      <div style="flex:1; position:relative; min-height:0;">
+      <div class="dbv-stat-label" style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">${escHtml(widget.title)}</div>
+      <div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>
+    `;
+  } else {
+    itemEl.setAttribute('data-chart-id', `chart_${widget.id}`);
+    contentEl.innerHTML = `
+      ${removeBtn}
+      <div class="dbv-chart-title" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(widget.title)}</div>
+      <div style="flex:1; position:relative; min-height:0; width:100%;">
          <canvas id="chart_${widget.id}"></canvas>
       </div>
     `;
@@ -1139,9 +1148,58 @@ function renderWidgetContent(widget, rows, headers) {
     if (widget.type === 'timeline') {
        renderTimelineChartDirect(`chart_${widget.id}`, rows, headers.indexOf(widget.field));
     } else {
-       // Pass the secondaryField into the chart generator!
        renderCustomChart(`chart_${widget.id}`, widget.type, widget.field, rows, headers, widget.secondaryField);
     }
+  }
+}
+
+/* ── SAVING LOGIC ───────────────────────────── */
+async function saveLayout() {
+  const btn = document.querySelector('#editToolbar .green');
+  const ogText = btn.innerHTML;
+  btn.innerHTML = 'Saving...';
+  btn.disabled = true;
+
+  // 2. Safely extract configurations directly from the data attributes
+  const layout = _grid.engine.nodes.map(n => {
+    const itemEl = n.el;
+    
+    const type = itemEl.getAttribute('data-widget-type') || 'bar';
+    const field = itemEl.getAttribute('data-field') || 'total';
+    const secondaryField = itemEl.getAttribute('data-secfield') || null;
+    
+    let title = 'Widget';
+    if (type === 'stat') {
+      title = itemEl.querySelector('.dbv-stat-label')?.innerText || field;
+    } else {
+      title = itemEl.querySelector('.dbv-chart-title')?.innerText || field;
+    }
+
+    return { id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, type, field, secondaryField, title };
+  });
+
+  try {
+    const res = await fetch(`${API}/api/hxforms/${_formId}/layout`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+      body: JSON.stringify({ layout })
+    });
+    
+    if(!res.ok) throw new Error((await res.json()).error || 'Failed to save');
+    
+    // Update local cache so it survives a soft-refresh
+    if (_data) {
+       _data.layout = layout; 
+       sessionStorage.setItem(`hxdb_${_formId}`, JSON.stringify(_data));
+    }
+    
+    toast('Dashboard layout saved!', 'success');
+    toggleEditMode();
+  } catch(e) {
+    showError(e.message);
+  } finally {
+    btn.innerHTML = ogText;
+    btn.disabled = false;
   }
 }
 
