@@ -588,14 +588,24 @@
 
     <!-- CENTER: Interactive Preview -->
     <main class="hxfb-center">
-      <div style="width:100%;max-width:520px;">
-        <div class="hxfb-pv-label">
-          <span>Live Preview</span>
-          <span class="hxfb-pv-page-info" id="pvPageInfo"></span>
+      <div style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;">
+        <div style="width:100%;max-width:520px;flex-shrink:1;min-width:0;">
+          <div class="hxfb-pv-label">
+            <span>Live Preview</span>
+            <span class="hxfb-pv-page-info" id="pvPageInfo"></span>
+          </div>
+          <div class="hxfb-pv-card">
+            <div class="hxfb-pv-accent" id="pvAccent"></div>
+            <div class="hxfb-pv-body" id="pvBody"></div>
+          </div>
         </div>
-        <div class="hxfb-pv-card">
-          <div class="hxfb-pv-accent" id="pvAccent"></div>
-          <div class="hxfb-pv-body" id="pvBody"></div>
+        <!-- Pass preview (visible when passEnabled) -->
+        <div id="pvPassCol" style="display:none;flex-shrink:0;">
+          <div class="hxfb-pv-label" style="width:260px;max-width:260px;margin-bottom:14px">
+            <span>Pass Preview</span>
+          </div>
+          <canvas id="pvPassCanvas" width="520" height="693"
+            style="width:260px;height:347px;border-radius:20px;box-shadow:0 16px 48px rgba(0,0,0,0.55);display:block"></canvas>
         </div>
       </div>
     </main>
@@ -1613,6 +1623,7 @@ function buildPvPages() {
 function renderPreview() {
   buildPvPages();
   pvShowPage(_pv.page, false);
+  renderBuilderPass();
 }
 
 function pvShowPage(n, animate = true) {
@@ -1925,6 +1936,169 @@ window.addEventListener('beforeunload', e => { if (_S?._backendDirty) { e.preven
 function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s) { return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 lucide.createIcons();
+
+/* ════════════════════════════════════════════════════════════════
+   PASS PREVIEW CANVAS  — rendered in builder when passEnabled
+════════════════════════════════════════════════════════════════ */
+function renderBuilderPass() {
+  const s      = _S.config?.settings || {};
+  const passCol = document.getElementById('pvPassCol');
+  if (!passCol) return;
+
+  if (!s.passEnabled) { passCol.style.display = 'none'; return; }
+  passCol.style.display = '';
+
+  const canvas = document.getElementById('pvPassCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 520, H = 693;
+
+  const banner = s.passBannerColor || '#12172a';
+  const tcol   = s.passTextColor   || '#ffffff';
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, banner);
+  bg.addColorStop(1, _pbDarken(banner, 0.4));
+  ctx.fillStyle = bg;
+  _pbRoundRect(ctx, 0, 0, W, H, 28); ctx.fill();
+
+  // Subtle dot texture
+  ctx.fillStyle = 'rgba(255,255,255,0.018)';
+  for (let r = 0; r < H; r += 18)
+    for (let c = 0; c < W; c += 18)
+      ctx.fillRect(c, r, 2, 2);
+
+  // Top accent stripe
+  const stripe = ctx.createLinearGradient(0, 0, W, 0);
+  stripe.addColorStop(0, '#00d4ff'); stripe.addColorStop(1, '#7c3aed');
+  ctx.fillStyle = stripe;
+  _pbRoundRect(ctx, 0, 0, W, 9, { tl: 28, tr: 28, bl: 0, br: 0 }); ctx.fill();
+
+  // "ENTRY PASS" badge
+  ctx.fillStyle = 'rgba(255,255,255,0.10)';
+  _pbRoundRect(ctx, 24, 26, 140, 30, 15); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.60)';
+  ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('ENTRY PASS', 40, 47);
+
+  // Event name (large bold Montserrat)
+  ctx.fillStyle = tcol;
+  ctx.font = 'bold 36px "Montserrat", "Plus Jakarta Sans", sans-serif';
+  const eventName = s.passEventName || 'Event Name';
+  _pbWrapText(ctx, eventName, 24, 102, W - 48, 44);
+
+  // Venue + time
+  let cy = 165;
+  ctx.font = '18px "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.72)';
+  if (s.passVenue)              { ctx.fillText('📍 ' + s.passVenue, 24, cy); cy += 28; }
+  if (s.passDate || s.passTime) {
+    const dt = [s.passDate, s.passTime].filter(Boolean).join('  ·  ');
+    ctx.fillText('📅 ' + dt, 24, cy); cy += 28;
+  }
+
+  // Dashed divider
+  cy += 10;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 5]);
+  ctx.beginPath(); ctx.moveTo(24, cy); ctx.lineTo(W - 24, cy); ctx.stroke();
+  ctx.restore();
+  cy += 18;
+
+  // QR placeholder (portrait center)
+  const qrS = 160, qrX = (W - qrS) / 2, qrY = cy;
+  ctx.fillStyle = 'rgba(255,255,255,0.10)';
+  _pbRoundRect(ctx, qrX - 12, qrY - 12, qrS + 24, qrS + 24, 18); ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  _pbRoundRect(ctx, qrX, qrY, qrS, qrS, 12); ctx.fill();
+
+  // QR pixel pattern
+  ctx.fillStyle = '#000000';
+  const cell = Math.floor(qrS / 9);
+  const pat  = [
+    [1,1,1,1,1,1,1,0,0],[1,0,0,0,0,0,1,0,1],
+    [1,0,1,1,1,0,1,0,0],[1,0,1,1,1,0,1,0,1],
+    [1,0,1,1,1,0,1,0,0],[1,0,0,0,0,0,1,0,1],
+    [1,1,1,1,1,1,1,0,0],[0,0,1,0,0,0,0,0,0],
+    [0,1,0,0,1,0,1,0,1],
+  ];
+  const pad = 6;
+  for (let r = 0; r < 9; r++)
+    for (let c = 0; c < 9; c++)
+      if (pat[r][c]) ctx.fillRect(qrX + pad + c * cell, qrY + pad + r * cell, cell - 1, cell - 1);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '14px "Plus Jakarta Sans", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Scan to verify', W / 2, qrY + qrS + 22);
+  cy = qrY + qrS + 42;
+
+  // Rules
+  const rules = (s.passRules || []).filter(Boolean).slice(0, 3);
+  if (rules.length) {
+    ctx.textAlign = 'left';
+    ctx.font = 'bold 14px "Plus Jakarta Sans", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('ENTRY RULES', 24, cy); cy += 20;
+    ctx.font = '14px "Plus Jakarta Sans", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    rules.forEach(r => { ctx.fillText('• ' + r, 24, cy); cy += 20; });
+  }
+
+  // Bottom attendee strip
+  const stripY = H - 66;
+  ctx.fillStyle = 'rgba(255,255,255,0.05)';
+  _pbRoundRect(ctx, 0, stripY, W, 66, { tl: 0, tr: 0, bl: 28, br: 28 }); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.30)';
+  ctx.font = '15px "Plus Jakarta Sans", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Attendee Name', 24, stripY + 26);
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.50)';
+  ctx.fillText('Honourix', W - 24, stripY + 26);
+  ctx.textAlign = 'left';
+  ctx.font = '13px "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  ctx.fillText('attendee@example.com', 24, stripY + 47);
+}
+
+/* ── Pass canvas helpers ──────────────────────────────────────── */
+function _pbRoundRect(ctx, x, y, w, h, r) {
+  const tl = typeof r === 'object' ? (r.tl || 0) : r;
+  const tr = typeof r === 'object' ? (r.tr || 0) : r;
+  const br = typeof r === 'object' ? (r.br || 0) : r;
+  const bl = typeof r === 'object' ? (r.bl || 0) : r;
+  ctx.beginPath();
+  ctx.moveTo(x + tl, y);
+  ctx.lineTo(x + w - tr, y); ctx.quadraticCurveTo(x + w, y, x + w, y + tr);
+  ctx.lineTo(x + w, y + h - br); ctx.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+  ctx.lineTo(x + bl, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - bl);
+  ctx.lineTo(x, y + tl); ctx.quadraticCurveTo(x, y, x + tl, y);
+  ctx.closePath();
+}
+function _pbWrapText(ctx, text, x, y, maxW, lineH) {
+  const words = String(text || '').split(' ');
+  let line = '';
+  for (const word of words) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && line) { ctx.fillText(line, x, y); y += lineH; line = word; }
+    else line = test;
+  }
+  if (line) ctx.fillText(line, x, y);
+}
+function _pbDarken(hex, amt) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  const r = Math.max(0, parseInt(hex.slice(0,2),16) - Math.round(255*amt));
+  const g = Math.max(0, parseInt(hex.slice(2,4),16) - Math.round(255*amt));
+  const b = Math.max(0, parseInt(hex.slice(4,6),16) - Math.round(255*amt));
+  return `rgb(${r},${g},${b})`;
+}
 </script>
 </body>
 </html>
