@@ -188,8 +188,8 @@ async function cpLoadHxFormData(formId) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
         <span style="font-size:14px"><strong>${CP.rows.length} responses</strong> imported from <strong>${data.formName}</strong></span>
       </div>
-      <div style="width:100%;max-width:100%;box-sizing:border-box;overflow-x:auto;overflow-y:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;display:block">
-        <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left;table-layout:auto">
+      <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+        <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left">
           <thead>
             <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">
               ${data.headers.map(h => `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`).join('')}
@@ -265,8 +265,8 @@ function showDataOK(id, msg) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
       <span style="font-size:14px"><strong>Data loaded</strong> — ${msg}</span>
     </div>
-    <div style="width:100%;max-width:100%;box-sizing:border-box;overflow-x:auto;overflow-y:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;display:block">
-      <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left;table-layout:auto">
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left">
         <thead>
           <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">${theadHtml}</tr>
         </thead>
