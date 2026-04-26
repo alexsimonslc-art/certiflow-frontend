@@ -1114,69 +1114,130 @@ function renderWidgetContent(widget, rows, headers) {
       <div style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>
     `;
   } else {
-    // It's a Chart
-    const canvasId = `chart_${widget.id}`;
-    itemEl.setAttribute('data-chart-id', canvasId);
+    // Attach data attributes so the save function remembers the exact fields used
+    itemEl.setAttribute('data-chart-id', `chart_${widget.id}`);
     itemEl.setAttribute('data-field', widget.field);
+    if (widget.secondaryField) itemEl.setAttribute('data-secfield', widget.secondaryField);
+    
     contentEl.innerHTML = `
       ${removeBtn}
       <div style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(widget.title)}</div>
       <div style="flex:1; position:relative; min-height:0;">
-         <canvas id="${canvasId}"></canvas>
+         <canvas id="chart_${widget.id}"></canvas>
       </div>
     `;
     
     if (widget.type === 'timeline') {
-       renderTimelineChartDirect(canvasId, rows, headers.indexOf(widget.field));
+       renderTimelineChartDirect(`chart_${widget.id}`, rows, headers.indexOf(widget.field));
     } else {
-       renderCustomChart(canvasId, widget.type, widget.field, rows, headers);
+       // Pass the secondaryField into the chart generator!
+       renderCustomChart(`chart_${widget.id}`, widget.type, widget.field, rows, headers, widget.secondaryField);
     }
   }
 }
 
-/* ── Chart Generation Logic ──────────────────────────────── */
-function renderCustomChart(canvasId, type, fieldLabel, rows, headers) {
+/* ── Chart Generation Logic (Dynamic Matrix Engine) ──────────────────────────────── */
+function renderCustomChart(canvasId, type, fieldLabel, rows, headers, secondaryFieldLabel = null) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   
   const hIdx = headers.indexOf(fieldLabel);
   if (hIdx < 0) return;
-  
-  const vals = rows.map(r => r[hIdx]).filter(Boolean);
-  if (!vals.length) return;
 
-  // Count occurrences
-  const counts = {};
-  vals.forEach(v => {
-    const parts = v.includes(',') ? v.split(', ') : [v];
-    parts.forEach(p => { counts[p.trim()] = (counts[p.trim()]||0) + 1; });
+  // ==========================================
+  // SCENARIO 1: STANDARD ANALYSIS (Single Field)
+  // ==========================================
+  if (!secondaryFieldLabel) {
+    const vals = rows.map(r => r[hIdx]).filter(Boolean);
+    if (!vals.length) return;
+
+    const counts = {};
+    vals.forEach(v => {
+      const parts = String(v).includes(',') ? String(v).split(',') : [String(v)];
+      parts.forEach(p => { const k = p.trim(); counts[k] = (counts[k]||0) + 1; });
+    });
+    
+    const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+    const labels = sorted.map(([l]) => l.length > 25 ? l.substring(0, 25) + '...' : l);
+    const values = sorted.map(([,v]) => v);
+
+    _charts[canvasId] = new Chart(canvas, {
+      type: type,
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: CHART_COLORS.slice(0, labels.length),
+          ...(type === 'doughnut' ? { borderWidth: 2, borderColor: '#080d1c' } : { borderRadius: 6 })
+        }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        indexAxis: type === 'bar' ? 'y' : undefined,
+        plugins: {
+          legend: type === 'doughnut' ? { position:'right', labels:{ color:'#a0a0b0', boxWidth:12, font:{size:11} } } : { display:false }
+        },
+        scales: type === 'bar' ? {
+          x: { beginAtZero:true, ticks:{precision:0}, grid:{color:'rgba(255,255,255,0.06)'} },
+          y: { grid:{display:false} }
+        } : {}
+      }
+    });
+    return;
+  }
+
+  // ==========================================
+  // SCENARIO 2: CROSS ANALYSIS (Two Fields)
+  // ==========================================
+  const hIdx2 = headers.indexOf(secondaryFieldLabel);
+  if (hIdx2 < 0) return;
+
+  const matrix = {};
+  const secLabelsSet = new Set();
+
+  // Build a 2D Matrix of occurrences
+  rows.forEach(r => {
+    const primVal = r[hIdx] ? String(r[hIdx]).trim() : '(blank)';
+    const secVal = r[hIdx2] ? String(r[hIdx2]).trim() : '(blank)';
+    
+    if (!matrix[primVal]) matrix[primVal] = {};
+    matrix[primVal][secVal] = (matrix[primVal][secVal] || 0) + 1;
+    secLabelsSet.add(secVal);
   });
-  
-  const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-  const labels = sorted.map(([l]) => l.length > 25 ? l.substring(0, 25) + '...' : l);
-  const values = sorted.map(([,v]) => v);
+
+  const primaryLabels = Object.keys(matrix).sort();
+  const secondaryLabels = Array.from(secLabelsSet).sort();
+
+  // Create a dataset for every unique secondary field value
+  const datasets = secondaryLabels.map((secLabel, i) => {
+    return {
+      label: secLabel,
+      data: primaryLabels.map(primLabel => matrix[primLabel][secLabel] || 0),
+      backgroundColor: CHART_COLORS[i % CHART_COLORS.length],
+      borderRadius: 4
+    };
+  });
+
+  // Force stacked bar chart for cross-analysis (Doughnuts don't cross-analyze well visually)
+  const actualType = 'bar';
 
   _charts[canvasId] = new Chart(canvas, {
-    type: type, // 'bar' or 'doughnut'
+    type: actualType,
     data: {
-      labels,
-      datasets: [{
-        data: values,
-        backgroundColor: CHART_COLORS.slice(0, labels.length),
-        ...(type === 'doughnut' ? { borderWidth: 2, borderColor: '#080d1c' } : { borderRadius: 6 })
-      }],
+      labels: primaryLabels.map(l => l.length > 20 ? l.substring(0, 20) + '...' : l),
+      datasets: datasets
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      indexAxis: type === 'bar' ? 'y' : undefined,
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y', // Horizontal bars
       plugins: {
-        legend: type === 'doughnut' ? { position:'right', labels:{ color:'#a0a0b0', boxWidth:12, font:{size:11} } } : { display:false }
+        legend: { position: 'top', labels: { color: '#a0a0b0', boxWidth: 12, font: { size: 11 } } },
+        tooltip: { mode: 'index', intersect: false } // Shows all stacked values in tooltip
       },
-      scales: type === 'bar' ? {
-        x: { beginAtZero:true, ticks:{precision:0}, grid:{color:'rgba(255,255,255,0.06)'} },
-        y: { grid:{display:false} }
-      } : {}
+      scales: {
+        x: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+        y: { stacked: true, grid: { display: false } }
+      }
     }
   });
 }
@@ -1322,7 +1383,7 @@ async function saveLayout() {
 
   const layout = _grid.engine.nodes.map(n => {
     const itemEl = n.el;
-    let type = 'bar', field = 'unknown', title = 'Widget';
+    let type = 'bar', field = 'unknown', secondaryField = null, title = 'Widget';
     
     if (itemEl.querySelector('.dbv-stat-num')) {
       type = 'stat'; title = itemEl.querySelector('.dbv-stat-label').innerText; field = 'total'; 
@@ -1333,12 +1394,12 @@ async function saveLayout() {
         type = _charts[canvas.id].config.type;
         if (type === 'line') type = 'timeline';
         
-        // Retrieve the field name. In a real React app, this is in state.
-        // Here, we stored it during render or we grab it from a data attribute we need to add.
+        // Grab the exact fields we saved as data attributes in renderWidgetContent
         field = itemEl.getAttribute('data-field') || title; 
+        secondaryField = itemEl.getAttribute('data-secfield') || null;
       }
     }
-    return { id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, type, field, title };
+    return { id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, type, field, secondaryField, title };
   });
 
   try {
