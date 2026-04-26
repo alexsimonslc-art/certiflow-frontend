@@ -131,12 +131,81 @@ function validateStep(n) {
 ════════════════════════════════════════════════════════════════ */
 function switchDataSrc(type) {
   CP.srcType = type;
-  document.getElementById('panelSheets').style.display = type === 'sheets' ? 'block' : 'none';
-  document.getElementById('panelFile').style.display   = type === 'file'   ? 'block' : 'none';
-  document.getElementById('panelManual').style.display = type === 'manual' ? 'block' : 'none';
-  document.getElementById('srcSheetsBtn').className    = 'src-opt' + (type === 'sheets' ? ' active' : '');
-  document.getElementById('srcFileBtn').className      = 'src-opt' + (type === 'file'   ? ' active' : '');
-  document.getElementById('srcManualBtn').className    = 'src-opt' + (type === 'manual' ? ' active' : '');
+  document.getElementById('panelSheets').style.display  = type === 'sheets' ? 'block' : 'none';
+  document.getElementById('panelFile').style.display    = type === 'file'   ? 'block' : 'none';
+  document.getElementById('panelManual').style.display  = type === 'manual' ? 'block' : 'none';
+  document.getElementById('panelHxForm').style.display  = type === 'hxform' ? 'block' : 'none';
+  document.getElementById('srcSheetsBtn').className     = 'src-opt' + (type === 'sheets' ? ' active' : '');
+  document.getElementById('srcFileBtn').className       = 'src-opt' + (type === 'file'   ? ' active' : '');
+  document.getElementById('srcManualBtn').className     = 'src-opt' + (type === 'manual' ? ' active' : '');
+  document.getElementById('srcHxFormBtn').className     = 'src-opt' + (type === 'hxform' ? ' active' : '');
+  if (type === 'hxform') cpLoadHxFormList();
+}
+async function cpLoadHxFormList() {
+  const sel = document.getElementById('cpHxFormSelect');
+  if (!sel || sel.dataset.loaded) return;
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const { forms } = await res.json();
+    const eligible = (forms || []).filter(f => f.submissionCount > 0);
+    sel.innerHTML = '<option value="">Select a form…</option>' +
+      eligible.map(f => `<option value="${f.id}">${f.name} (${f.submissionCount} responses)</option>`).join('');
+    if (!eligible.length) sel.innerHTML = '<option value="">No forms with submissions found</option>';
+    sel.dataset.loaded = '1';
+  } catch { sel.innerHTML = '<option value="">Could not load forms</option>'; }
+}
+
+async function cpLoadHxFormData(formId) {
+  if (!formId) return;
+  const sel = document.getElementById('cpHxFormSelect');
+  const el  = document.getElementById('hxFormLoadedMsg');
+  sel.disabled = true;
+
+  el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--glass);font-size:14px;color:var(--text-2)">
+    <svg style="flex-shrink:0;animation:spin 0.9s linear infinite" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+    Loading form data…
+  </div>`;
+  el.style.display = 'block';
+
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+    const data = await res.json();
+    if (!data.rows?.length) { toast('No submissions in this form yet', 'warning'); el.style.display = 'none'; return; }
+
+    CP.headers = data.headers;
+    CP.rows    = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
+    CP.sheetId = null;
+
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);margin-bottom:16px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
+        <span style="font-size:14px"><strong>${CP.rows.length} responses</strong> imported from <strong>${data.formName}</strong></span>
+      </div>
+      <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+        <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left">
+          <thead>
+            <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">
+              ${data.headers.map(h => `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${CP.rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+              ${data.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g,'&lt;')}</td>`).join('')}
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+    el.style.display = 'block';
+    toast(`${CP.rows.length} participants imported`, 'success');
+  } catch(e) { toast('Could not load form: ' + e.message, 'error'); el.style.display = 'none'; }
+  finally { sel.disabled = false; }
 }
 
 async function loadSheetData() {
@@ -180,7 +249,30 @@ function handleFileUpload(e) {
 
 function showDataOK(id, msg) {
   const el = document.getElementById(id);
-  el.innerHTML = `<div class="data-ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span><strong style="color:#34d399">Data loaded</strong> — ${msg}</span></div>`;
+  // Build preview table from current CP data
+  const headers = CP.headers || [];
+  const rows    = CP.rows    || [];
+  const theadHtml = headers.map(h =>
+    `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`
+  ).join('');
+  const tbodyHtml = rows.map(r =>
+    `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+      ${headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g,'&lt;')}</td>`).join('')}
+    </tr>`
+  ).join('');
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);margin-bottom:16px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style="font-size:14px"><strong>Data loaded</strong> — ${msg}</span>
+    </div>
+    <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
+      <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left">
+        <thead>
+          <tr style="position:sticky;top:0;z-index:10;background:var(--surface);box-shadow:0 1px 0 var(--glass-border)">${theadHtml}</tr>
+        </thead>
+        <tbody>${tbodyHtml}</tbody>
+      </table>
+    </div>`;
   el.style.display = 'block';
 }
 
@@ -843,7 +935,7 @@ function resetAll() {
   ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null; ED.ready = false;
   ME.blocks = []; ME.selectedId = null; ME.initialized = false;
   ['cpName','sheetId','emailSubject','emailTemplate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  ['sheetLoadedMsg','fileLoadedMsg','manualLoadedMsg'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  ['sheetLoadedMsg','fileLoadedMsg','manualLoadedMsg','hxFormLoadedMsg'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
   document.getElementById('customMappings').innerHTML = '';
   if (ME.cm) ME.cm.setValue('');
   goStep(1, true);
