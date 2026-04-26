@@ -1293,74 +1293,136 @@ const ME_DEFS = {
     label: 'Custom HTML',
     defaults: () => ({ html: '<div style="padding:16px;text-align:center;color:#475569">Custom HTML block</div>' }),
   },
+  spacer: {
+    label: 'Spacer',
+    defaults: () => ({ height: 20, bg: 'transparent' }),
+  },
+  attachment: {
+    label: 'Attachment Notice',
+    defaults: () => ({
+      label: 'Your Certificate is Attached',
+      filename: '{{name}}_Certificate.pdf',
+      bg: '#fff7ed',
+      iconColor: '#f97316',
+    }),
+  },
+  cert_preview: {
+    label: 'Certificate Preview',
+    defaults: () => ({
+      caption: 'Your Certificate of Completion',
+      bg: '#f8fafc',
+      imgWidth: 90,
+      radius: 8,
+    }),
+  },
 };
 
 /* ── Block to HTML ─────────────────────────────────────────────── */
-function meBlockToHtml(block) {
+function meBlockToHtml(block, rowIdx = null) {
   const p = block.props;
+  const ps = s => (rowIdx !== null && s) ? mPersonalise(String(s), rowIdx) : (s || '');
   switch (block.type) {
     case 'logo':
-      return `<div style="background:${p.bg};padding:20px 32px;text-align:center">
-        <div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:2px;font-family:sans-serif">${p.text}</div>
-        ${p.tagline ? `<div style="font-size:12px;color:${p.color};opacity:0.7;margin-top:4px">${p.tagline}</div>` : ''}
+      return `<div style="background:${p.bg||'#1a1a2e'};padding:20px 32px;text-align:center">
+        <div style="font-size:${p.fontSize||22}px;font-weight:${p.fontWeight||800};color:${p.color||'#00d4ff'};letter-spacing:2px;font-family:sans-serif">${ps(p.text)}</div>
+        ${p.tagline ? `<div style="font-size:12px;color:${p.color||'#00d4ff'};opacity:0.7;margin-top:4px">${ps(p.tagline)}</div>` : ''}
       </div>`;
     case 'header':
-      return `<div style="background:${p.bg};padding:24px 32px;text-align:${p.align}">
-        <div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};font-style:${p.fontStyle};color:${p.color};font-family:sans-serif;line-height:1.3">${p.text}</div>
+      return `<div style="background:${p.bg||'transparent'};padding:24px 32px;text-align:${p.align||'center'}">
+        <div style="font-size:${p.fontSize||28}px;font-weight:${p.fontWeight||700};font-style:${p.fontStyle||'normal'};color:${p.color||'#1e293b'};font-family:sans-serif;line-height:1.3">${ps(p.text)}</div>
       </div>`;
     case 'text':
-      return `<div style="background:${p.bg};padding:12px 32px;text-align:${p.align}">
-        <div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};font-style:${p.fontStyle};color:${p.color};font-family:sans-serif;line-height:1.7">${p.text}</div>
+      return `<div style="background:${p.bg||'transparent'};padding:12px 32px;text-align:${p.align||'center'}">
+        <div style="font-size:${p.fontSize||15}px;font-weight:${p.fontWeight||400};font-style:${p.fontStyle||'normal'};color:${p.color||'#475569'};font-family:sans-serif;line-height:1.7">${ps(p.text)}</div>
       </div>`;
-    case 'button': {
-      const wrap = p.align === 'center' ? 'margin:0 auto' : p.align === 'right' ? 'margin-left:auto' : '';
-      return `<div style="padding:16px 32px;text-align:${p.align}">
-        <a href="${p.link}" style="display:inline-block;padding:12px 28px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-size:${p.fontSize}px;font-weight:700;font-family:sans-serif">${p.text}</a>
+    case 'button':
+      return `<div style="padding:16px 32px;text-align:${p.align||'center'}">
+        <a href="${ps(p.link)||'#'}" style="display:inline-block;padding:12px 28px;background:${p.btnBg||'#00d4ff'};color:${p.btnColor||'#fff'};text-decoration:none;border-radius:${p.borderRadius||8}px;font-size:${p.fontSize||15}px;font-weight:700;font-family:sans-serif">${ps(p.text)}</a>
       </div>`;
-    }
     case 'image':
       return `<div style="padding:12px 0;text-align:center">
-        <img src="${p.src}" alt="${p.alt}" width="${p.width}%" style="border-radius:${p.borderRadius}px;max-width:100%;display:inline-block"/>
+        <img src="${ps(p.src)}" alt="${p.alt||''}" width="${p.width||100}%" style="border-radius:${p.borderRadius||0}px;max-width:100%;display:inline-block"/>
       </div>`;
     case 'divider':
-      return `<div style="padding:8px 32px"><hr style="border:none;border-top:${p.thickness}px solid ${p.color};margin:0"/></div>`;
+      return `<div style="padding:8px 32px"><hr style="border:none;border-top:${p.thickness||1}px solid ${p.color||'#e2e8f0'};margin:0"/></div>`;
+    case 'spacer':
+      return `<div style="height:${p.height||20}px;background:${p.bg||'transparent'}"></div>`;
     case 'social': {
       const plats = (p.platforms || []).filter(pl => pl.url);
-      const icons = { LinkedIn:'in', 'Twitter/X':'𝕏', Instagram:'ig', Facebook:'fb', YouTube:'yt', GitHub:'gh', WhatsApp:'wa', Telegram:'tg', Discord:'dc', TikTok:'tt' };
-      const btns  = plats.map(pl => {
-        const lbl = icons[pl.name] || pl.name.slice(0,2).toLowerCase();
-        const style = p.style === 'circle'
-          ? `display:inline-flex;align-items:center;justify-content:center;width:${p.iconSize}px;height:${p.iconSize}px;border-radius:50%;background:${p.color};color:#fff;font-size:${Math.round(p.iconSize*0.4)}px;text-decoration:none;font-weight:700;font-family:sans-serif;margin:0 4px`
+      const iconMap = { LinkedIn:'in', 'Twitter/X':'𝕏', Instagram:'ig', Facebook:'fb', YouTube:'yt', GitHub:'gh', WhatsApp:'wa', Telegram:'tg', Discord:'dc', TikTok:'tt', Website:'🌐' };
+      const sz = p.iconSize || 28;
+      const btns = plats.map(pl => {
+        const lbl = iconMap[pl.name] || pl.name.slice(0,2).toLowerCase();
+        const st = p.style === 'circle'
+          ? `display:inline-flex;align-items:center;justify-content:center;width:${sz}px;height:${sz}px;border-radius:50%;background:${p.color||'#475569'};color:#fff;font-size:${Math.round(sz*0.4)}px;text-decoration:none;font-weight:700;font-family:sans-serif;margin:0 4px`
           : p.style === 'square'
-          ? `display:inline-flex;align-items:center;justify-content:center;width:${p.iconSize}px;height:${p.iconSize}px;border-radius:4px;background:${p.color};color:#fff;font-size:${Math.round(p.iconSize*0.4)}px;text-decoration:none;font-weight:700;font-family:sans-serif;margin:0 4px`
-          : `display:inline-block;font-size:${Math.round(p.iconSize*0.5)}px;color:${p.color};text-decoration:none;font-family:sans-serif;margin:0 6px;font-weight:700`;
-        return `<a href="${pl.url}" style="${style}">${lbl}</a>`;
+          ? `display:inline-flex;align-items:center;justify-content:center;width:${sz}px;height:${sz}px;border-radius:4px;background:${p.color||'#475569'};color:#fff;font-size:${Math.round(sz*0.4)}px;text-decoration:none;font-weight:700;font-family:sans-serif;margin:0 4px`
+          : `display:inline-block;font-size:${Math.round(sz*0.5)}px;color:${p.color||'#475569'};text-decoration:none;font-family:sans-serif;margin:0 6px;font-weight:700`;
+        return `<a href="${pl.url}" style="${st}">${lbl}</a>`;
       }).join('');
-      return `<div style="padding:12px 32px;text-align:${p.align}">${btns}</div>`;
+      return `<div style="padding:12px 32px;text-align:${p.align||'center'}">${btns}</div>`;
     }
     case 'footer':
-      return `<div style="background:${p.bg};padding:16px 32px;text-align:${p.align}">
-        <div style="font-size:${p.fontSize}px;color:${p.color};font-family:sans-serif;font-weight:${p.fontWeight};font-style:${p.fontStyle};line-height:1.6">${p.text}</div>
+      return `<div style="background:${p.bg||'#f8fafc'};padding:16px 32px;text-align:${p.align||'center'}">
+        <div style="font-size:${p.fontSize||12}px;color:${p.color||'#94a3b8'};font-family:sans-serif;font-weight:${p.fontWeight||400};font-style:${p.fontStyle||'normal'};line-height:1.6">${ps(p.text)}</div>
       </div>`;
+    case 'attachment':
+      return `<div style="background:${p.bg||'#fff7ed'};padding:16px 32px">
+        <table cellpadding="0" cellspacing="0" width="100%"><tr>
+          <td width="44" valign="middle">
+            <div style="width:40px;height:40px;border-radius:8px;background:${p.iconColor||'#f97316'};display:inline-flex;align-items:center;justify-content:center;font-size:20px">📎</div>
+          </td>
+          <td style="padding-left:14px;vertical-align:middle">
+            <div style="font-size:14px;font-weight:700;color:#1e293b">${ps(p.label||'Your Certificate is Attached')}</div>
+            <div style="font-size:12px;color:#64748b;margin-top:2px">${ps(p.filename||'certificate.pdf')} · Attached to this email</div>
+          </td>
+        </tr></table>
+      </div>`;
+    case 'cert_preview': {
+      let imgContent;
+      if (rowIdx !== null) {
+        try {
+          const tc = renderCertForRow(rowIdx);
+          const dataUrl = tc.toDataURL('image/png');
+          imgContent = `<img src="${dataUrl}" alt="${ps(p.caption||'Certificate')}" style="border-radius:${p.radius||8}px;width:${p.imgWidth||90}%;max-width:100%;display:block;margin:0 auto;box-shadow:0 4px 20px rgba(0,0,0,0.12)"/>`;
+        } catch(e) {
+          imgContent = `<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">Certificate preview unavailable</div>`;
+        }
+      } else {
+        imgContent = `<div style="padding:32px;text-align:center;background:#f1f5f9;border-radius:${p.radius||8}px;color:#94a3b8;font-size:13px;border:2px dashed #e2e8f0">[ Certificate thumbnail renders per-recipient ]</div>`;
+      }
+      return `<div style="background:${p.bg||'#f8fafc'};padding:20px 32px;text-align:center">
+        ${imgContent}
+        ${p.caption ? `<div style="font-size:13px;color:#64748b;margin-top:10px">${ps(p.caption)}</div>` : ''}
+      </div>`;
+    }
     case 'raw':
-      return p.html || '';
+      return ps(p.html || '');
     default:
       return `<div style="padding:12px;color:#475569">[${block.type}]</div>`;
   }
 }
 
 /* ── Full Email HTML ───────────────────────────────────────────── */
-function meGetFullHtml() {
-  const body = ME.blocks.map(b => meBlockToHtml(b)).join('\n');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f3f4f6;font-family:sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:20px 0">
+function meGetFullHtml(rowIdx = null) {
+  const body = ME.blocks.map(b => meBlockToHtml(b, rowIdx)).join('\n');
+  const subject = document.getElementById('mSubject')?.value || 'Your Certificate';
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${subject}</title>
+<style>body{margin:0;padding:0;background:#f4f7fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}img{border:0;display:block;max-width:100%}table{border-collapse:collapse}a{color:inherit}</style>
+</head>
+<body style="margin:0;padding:0;background:#f4f7fb">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:20px 0">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:600px;width:100%">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);max-width:600px;width:100%">
 <tr><td>${body}</td></tr>
 </table>
 </td></tr></table>
 </body></html>`;
+}
+
+function meGenerateHTML(rowIdx = null) {
+  return meGetFullHtml(rowIdx);
 }
 
 /* ── Template Picker ───────────────────────────────────────────── */
@@ -1369,14 +1431,44 @@ const ME_TEMPLATES = [
     id: 'cert-clean', name: 'Certificate Delivery', category: 'certificate',
     html: () => {
       ME.blocks = [
-        { id:'b1', type:'logo',   props:{ ...ME_DEFS.logo.defaults(),   text:'HONOURIX', bg:'#0f172a', color:'#00d4ff' } },
-        { id:'b2', type:'header', props:{ ...ME_DEFS.header.defaults(), text:'Congratulations, {{name}}!' } },
-        { id:'b3', type:'text',   props:{ ...ME_DEFS.text.defaults(),   text:'We are delighted to present your certificate for <strong>{{event}}</strong>. Your dedication and hard work have earned this recognition.' } },
-        { id:'b4', type:'button', props:{ ...ME_DEFS.button.defaults(), text:'Download Your Certificate', link:'#', btnBg:'#00d4ff', btnColor:'#0f172a' } },
-        { id:'b5', type:'divider',props:ME_DEFS.divider.defaults() },
-        { id:'b6', type:'footer', props:ME_DEFS.footer.defaults() },
+        { id:'b1', type:'logo',         props:{ ...ME_DEFS.logo.defaults(),         text:'HONOURIX', bg:'#0f172a', color:'#00d4ff' } },
+        { id:'b2', type:'header',       props:{ ...ME_DEFS.header.defaults(),       text:'Congratulations, {{name}}!' } },
+        { id:'b3', type:'text',         props:{ ...ME_DEFS.text.defaults(),         text:'We are delighted to present your certificate for <strong>{{event}}</strong>. Your dedication and hard work have earned this recognition.' } },
+        { id:'b4', type:'cert_preview', props:ME_DEFS.cert_preview.defaults() },
+        { id:'b5', type:'attachment',   props:ME_DEFS.attachment.defaults() },
+        { id:'b6', type:'button',       props:{ ...ME_DEFS.button.defaults(),       text:'Download Your Certificate', link:'#', btnBg:'#00d4ff', btnColor:'#0f172a' } },
+        { id:'b7', type:'divider',      props:ME_DEFS.divider.defaults() },
+        { id:'b8', type:'footer',       props:ME_DEFS.footer.defaults() },
       ];
-      ME.nextId = 7;
+      ME.nextId = 9;
+    }
+  },
+  {
+    id: 'cert-minimal', name: 'Minimal Certificate', category: 'certificate',
+    html: () => {
+      ME.blocks = [
+        { id:'b1', type:'logo',         props:{ ...ME_DEFS.logo.defaults(),         bg:'#18181b', color:'#a78bfa' } },
+        { id:'b2', type:'header',       props:{ ...ME_DEFS.header.defaults(),       text:'🎓 Congratulations, {{name}}!' } },
+        { id:'b3', type:'cert_preview', props:{ ...ME_DEFS.cert_preview.defaults(), bg:'#ffffff', imgWidth:92 } },
+        { id:'b4', type:'attachment',   props:{ ...ME_DEFS.attachment.defaults(),   bg:'#fafafa', iconColor:'#a78bfa' } },
+        { id:'b5', type:'footer',       props:ME_DEFS.footer.defaults() },
+      ];
+      ME.nextId = 6;
+    }
+  },
+  {
+    id: 'workshop', name: 'Workshop Participation', category: 'certificate',
+    html: () => {
+      ME.blocks = [
+        { id:'b1', type:'logo',         props:{ ...ME_DEFS.logo.defaults(),         text:'{{event}}', bg:'#1e3a5f', color:'#fbbf24' } },
+        { id:'b2', type:'header',       props:{ ...ME_DEFS.header.defaults(),       text:'Hello {{name}},' } },
+        { id:'b3', type:'text',         props:{ ...ME_DEFS.text.defaults(),         text:'Thank you for participating in <strong>{{event}}</strong>. Please find your certificate of participation attached.' } },
+        { id:'b4', type:'cert_preview', props:{ ...ME_DEFS.cert_preview.defaults(), bg:'#fffbeb' } },
+        { id:'b5', type:'attachment',   props:{ ...ME_DEFS.attachment.defaults(),   bg:'#fffbeb', iconColor:'#f59e0b' } },
+        { id:'b6', type:'divider',      props:{ ...ME_DEFS.divider.defaults(),      color:'#fde68a' } },
+        { id:'b7', type:'footer',       props:ME_DEFS.footer.defaults() },
+      ];
+      ME.nextId = 8;
     }
   },
   {
@@ -1396,7 +1488,7 @@ const ME_TEMPLATES = [
     id: 'event-invite', name: 'Event Invitation', category: 'event',
     html: () => {
       ME.blocks = [
-        { id:'b1', type:'image',  props:{ ...ME_DEFS.image.defaults(), src:'https://via.placeholder.com/600x200/1e293b/00d4ff?text=EVENT+2025' } },
+        { id:'b1', type:'image',  props:{ ...ME_DEFS.image.defaults(),  src:'https://via.placeholder.com/600x200/1e293b/00d4ff?text=EVENT+2025' } },
         { id:'b2', type:'header', props:{ ...ME_DEFS.header.defaults(), text:'You\'re Invited, {{name}}!' } },
         { id:'b3', type:'text',   props:{ ...ME_DEFS.text.defaults(),   text:'Join us for an unforgettable event. Reserve your spot today.' } },
         { id:'b4', type:'button', props:{ ...ME_DEFS.button.defaults(), text:'Register Now', btnBg:'#7c3aed' } },
@@ -1410,7 +1502,7 @@ const ME_TEMPLATES = [
     id: 'promo', name: 'Promotional', category: 'promo',
     html: () => {
       ME.blocks = [
-        { id:'b1', type:'logo',   props:{ ...ME_DEFS.logo.defaults(), bg:'#7c3aed', color:'#fff' } },
+        { id:'b1', type:'logo',   props:{ ...ME_DEFS.logo.defaults(),   bg:'#7c3aed', color:'#fff' } },
         { id:'b2', type:'header', props:{ ...ME_DEFS.header.defaults(), text:'Exclusive Offer for {{name}} 🎉', color:'#7c3aed' } },
         { id:'b3', type:'text',   props:ME_DEFS.text.defaults() },
         { id:'b4', type:'button', props:{ ...ME_DEFS.button.defaults(), btnBg:'#7c3aed', text:'Claim Offer' } },
@@ -1427,7 +1519,7 @@ const ME_TEMPLATES = [
         { id:'b2', type:'header', props:{ ...ME_DEFS.header.defaults(), text:'Monthly Update — {{name}}', fontSize:22 } },
         { id:'b3', type:'text',   props:ME_DEFS.text.defaults() },
         { id:'b4', type:'divider',props:ME_DEFS.divider.defaults() },
-        { id:'b5', type:'text',   props:{ ...ME_DEFS.text.defaults(), text:'Section 2: More updates and news here.' } },
+        { id:'b5', type:'text',   props:{ ...ME_DEFS.text.defaults(),   text:'Section 2: More updates and news here.' } },
         { id:'b6', type:'social', props:ME_DEFS.social.defaults() },
         { id:'b7', type:'footer', props:ME_DEFS.footer.defaults() },
       ];
@@ -1529,13 +1621,25 @@ function meSwitchTab(tab) {
 
 /* ── Block Operations ──────────────────────────────────────────── */
 function meRenderCanvas() {
-  const canvas = document.getElementById('meCanvasWrap');
+  // Target inner canvas div so drag handles have left-padding room
+  const canvas = document.getElementById('meCanvas') || document.getElementById('meCanvasWrap');
   if (!canvas) return;
   canvas.innerHTML = '';
+
+  // Empty state
+  const emptyEl = document.getElementById('meEmptyCanvas');
+  if (emptyEl) emptyEl.style.display = ME.blocks.length ? 'none' : '';
+
   ME.blocks.forEach((block, idx) => {
     const wrap = document.createElement('div');
     wrap.className = `me-block-wrap${ME.selectedId === block.id ? ' selected' : ''}`;
     wrap.dataset.id = block.id;
+
+    // Drag handle (SortableJS grip)
+    const drag = document.createElement('div');
+    drag.className = 'me-drag-handle';
+    drag.innerHTML = '<span></span><span></span><span></span><span></span><span></span><span></span>';
+
     // Controls
     const ctrl = document.createElement('div');
     ctrl.className = 'me-block-controls';
@@ -1545,6 +1649,7 @@ function meRenderCanvas() {
       `<button class="me-ctrl-btn" onclick="event.stopPropagation();meDuplicateBlock('${block.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>` +
       `<button class="me-ctrl-btn del" onclick="event.stopPropagation();meDeleteBlock('${block.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`;
 
+    // Block type label
     const label = document.createElement('div');
     label.className = 'me-block-label';
     label.style.cssText = 'position:absolute;top:4px;left:8px;font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:rgba(0,212,255,0.7);opacity:0;transition:opacity 0.15s;pointer-events:none;z-index:5';
@@ -1554,23 +1659,27 @@ function meRenderCanvas() {
     inner.className = 'me-block-inner';
     inner.innerHTML = meBlockToHtml(block);
 
-    wrap.appendChild(ctrl); wrap.appendChild(label); wrap.appendChild(inner);
+    wrap.appendChild(drag);
+    wrap.appendChild(ctrl);
+    wrap.appendChild(label);
+    wrap.appendChild(inner);
     wrap.addEventListener('click', () => meSelectBlock(block.id));
-
     canvas.appendChild(wrap);
   });
-  // Hover label via CSS (injected once)
+
+  // Inject label-hover CSS once
   if (!document.getElementById('me-label-css')) {
     const s = document.createElement('style');
     s.id = 'me-label-css';
     s.textContent = '.me-block-wrap:hover .me-block-label,.me-block-wrap.selected .me-block-label{opacity:1!important}';
     document.head.appendChild(s);
   }
-  // Re-init SortableJS
+
+  // Re-init SortableJS (drag-to-reorder via grip handle)
   if (typeof Sortable !== 'undefined') {
     Sortable.create(canvas, {
       animation: 150,
-      handle: '.me-block-inner',
+      handle: '.me-drag-handle',
       onEnd: ev => {
         const [removed] = ME.blocks.splice(ev.oldIndex, 1);
         ME.blocks.splice(ev.newIndex, 0, removed);
@@ -1595,8 +1704,10 @@ function meAddBlock(type) {
 
 function meDeleteBlock(id) {
   ME.blocks = ME.blocks.filter(b => b.id !== id);
-  if (ME.selectedId === id) { ME.selectedId = null; meRenderProps(null); }
-  meRenderCanvas(); meSyncToCode();
+  if (ME.selectedId === id) ME.selectedId = null;
+  meRenderCanvas();
+  meRenderProps();
+  meSyncToCode();
 }
 
 function meDuplicateBlock(id) {
@@ -1605,9 +1716,9 @@ function meDuplicateBlock(id) {
   const copy = JSON.parse(JSON.stringify(ME.blocks[idx]));
   copy.id = 'b' + (ME.nextId++);
   ME.blocks.splice(idx + 1, 0, copy);
-  meRenderBlocks();
+  meRenderCanvas();
   meSelectBlock(copy.id);
-  meSyncToPreview();
+  meSyncToCode();
   toast('Block duplicated', 'success', 1200);
 }
 
@@ -1617,177 +1728,36 @@ function meMoveBlock(id, dir) {
   const target = idx + dir;
   if (target < 0 || target >= ME.blocks.length) return;
   [ME.blocks[idx], ME.blocks[target]] = [ME.blocks[target], ME.blocks[idx]];
-  meRenderBlocks();
+  meRenderCanvas();
   meSelectBlock(id);
-  meSyncToPreview();
+  meSyncToCode();
 }
 
-function meDeleteBlock(id) {
-  ME.blocks = ME.blocks.filter(b => b.id !== id);
-  if (ME.selectedId === id) ME.selectedId = null;
-  meRenderBlocks();
-  meRenderProps();
-  meSyncToPreview();
-  toast('Block removed', 'success', 1200);
-}
-
-/* ── Block Renderer ────────────────────────────────────────────── */
-function meRenderBlocks() {
-  const list = document.getElementById('meBlockList');
-  if (!list) return;
-
-  if (!ME.blocks.length) {
-    list.innerHTML = `
-      <div class="me-empty-state">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:36px;height:36px;color:var(--text-3);margin-bottom:10px">
-          <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12h6M12 9v6"/>
-        </svg>
-        <div style="font-size:14px;font-weight:600;color:var(--text-2);margin-bottom:6px">No blocks yet</div>
-        <div style="font-size:12px;color:var(--text-3)">Click a block type above to get started</div>
-      </div>`;
-    return;
-  }
-
-  list.innerHTML = ME.blocks.map((b, i) => {
-    const def     = ME_DEFS[b.type];
-    const isFirst = i === 0;
-    const isLast  = i === ME.blocks.length - 1;
-    const isSel   = ME.selectedId === b.id;
-
-    return `
-    <div class="me-block-row ${isSel ? 'selected' : ''}" id="mbr_${b.id}"
-         draggable="true"
-         ondragstart="meDragStart(event,'${b.id}')"
-         ondragover="meDragOver(event,'${b.id}')"
-         ondrop="meDrop(event,'${b.id}')"
-         onclick="meSelectBlock('${b.id}')">
-      <div class="me-block-drag-handle" title="Drag to reorder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
-          <circle cx="9" cy="5" r="1" fill="currentColor"/><circle cx="15" cy="5" r="1" fill="currentColor"/>
-          <circle cx="9" cy="12" r="1" fill="currentColor"/><circle cx="15" cy="12" r="1" fill="currentColor"/>
-          <circle cx="9" cy="19" r="1" fill="currentColor"/><circle cx="15" cy="19" r="1" fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="me-block-thumb">${meBlockThumb(b)}</div>
-      <div class="me-block-meta">
-        <div class="me-block-meta-title">${def ? def.label : b.type}</div>
-        <div class="me-block-meta-sub">${meBlockSubtitle(b)}</div>
-      </div>
-      <div class="me-block-actions">
-        <button class="me-block-btn" title="Move up" onclick="event.stopPropagation();meMoveBlock('${b.id}',-1)" ${isFirst?'disabled':''}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
-        </button>
-        <button class="me-block-btn" title="Move down" onclick="event.stopPropagation();meMoveBlock('${b.id}',1)" ${isLast?'disabled':''}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <button class="me-block-btn" title="Duplicate" onclick="event.stopPropagation();meDuplicateBlock('${b.id}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        </button>
-        <button class="me-block-btn danger" title="Delete" onclick="event.stopPropagation();meDeleteBlock('${b.id}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        </button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function meBlockThumb(b) {
-  const colors = {
-    logo:       '#00d4ff', text: '#a78bfa', image: '#10b981',
-    button:     '#f59e0b', divider: '#64748b', spacer: '#334155',
-    social:     '#3b82f6', attachment: '#f97316', cert_preview: '#00d4ff',
-  };
-  const col = colors[b.type] || '#6b7280';
-  const icons = {
-    logo:        '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>',
-    text:        '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>',
-    image:       '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
-    button:      '<rect x="3" y="8" width="18" height="8" rx="4"/>',
-    divider:     '<line x1="3" y1="12" x2="21" y2="12"/>',
-    spacer:      '<path d="M8 6l4-4 4 4M8 18l4 4 4-4M4 12h16"/>',
-    social:      '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
-    attachment:  '<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
-    cert_preview:'<rect x="3" y="5" width="18" height="14" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/>',
-  };
-  return `<div style="width:32px;height:32px;border-radius:8px;background:${col}22;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-    <svg viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="1.8" style="width:15px;height:15px"><${icons[b.type] ? '' : ''}path d="M12 12h.01" fill="${col}"/>${icons[b.type] ? `<path d="${''}" /><g>${icons[b.type]}</g>` : ''}</svg>
-  </div>`;
-}
-
-function meBlockSubtitle(b) {
-  const truncate = (s, n = 32) => s && s.length > n ? s.slice(0, n) + '…' : (s || '');
-  switch (b.type) {
-    case 'logo':        return truncate(b.data.text);
-    case 'text':        return truncate(b.data.body?.replace(/<[^>]+>/g, '') || '');
-    case 'image':       return b.data.src ? 'Custom image' : 'No image set';
-    case 'button':      return truncate(b.data.label);
-    case 'divider':     return `${b.data.style || 'solid'} · ${b.data.color || '#e2e8f0'}`;
-    case 'spacer':      return `${b.data.height || 20}px height`;
-    case 'social':      return (b.data.links || []).map(l => l.platform).filter(Boolean).join(', ') || 'No links';
-    case 'attachment':  return truncate(b.data.label || b.data.filename);
-    case 'cert_preview':return 'Certificate attachment block';
-    default:            return b.type;
-  }
-}
-
-/* ── Block Drag & Drop ─────────────────────────────────────────── */
-let meDragId = null;
-
-function meDragStart(e, id) {
-  meDragId = id;
-  e.dataTransfer.effectAllowed = 'move';
-}
-
-function meDragOver(e, id) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  document.querySelectorAll('.me-block-row').forEach(r => r.classList.remove('drag-over'));
-  const el = document.getElementById('mbr_' + id);
-  if (el && id !== meDragId) el.classList.add('drag-over');
-}
-
-function meDrop(e, targetId) {
-  e.preventDefault();
-  document.querySelectorAll('.me-block-row').forEach(r => r.classList.remove('drag-over'));
-  if (!meDragId || meDragId === targetId) return;
-  const fromIdx = ME.blocks.findIndex(b => b.id === meDragId);
-  const toIdx   = ME.blocks.findIndex(b => b.id === targetId);
-  if (fromIdx < 0 || toIdx < 0) return;
-  const [moved] = ME.blocks.splice(fromIdx, 1);
-  ME.blocks.splice(toIdx, 0, moved);
-  meDragId = null;
-  meRenderBlocks();
-  meSyncToPreview();
-}
-
-/* ── Select Block & Properties Panel ──────────────────────────── */
 function meSelectBlock(id) {
   ME.selectedId = id;
-  meRenderBlocks();
+  meRenderCanvas();
   meRenderProps();
 }
 
+/* ── Block Properties Panel ────────────────────────────────────── */
 function meRenderProps() {
-  const panel = document.getElementById('mePropsPanel');
-  const empty = document.getElementById('mePropEmpty');
-  if (!panel) return;
+  const body = document.getElementById('mePropsBody');
+  if (!body) return;
+
+  const existing = body.querySelector('.me-props-content');
+  if (existing) existing.remove();
+  const empty = body.querySelector('.me-props-empty');
 
   const b = ME.blocks.find(b => b.id === ME.selectedId);
   if (!b) {
-    empty.style.display = 'flex';
-    const existing = panel.querySelector('.me-props-content');
-    if (existing) existing.remove();
+    if (empty) empty.style.display = '';
     return;
   }
-  empty.style.display = 'none';
-
-  const existing = panel.querySelector('.me-props-content');
-  if (existing) existing.remove();
-
-  const wrap = document.createElement('div');
-  wrap.className = 'me-props-content';
+  if (empty) empty.style.display = 'none';
 
   const def = ME_DEFS[b.type];
+  const wrap = document.createElement('div');
+  wrap.className = 'me-props-content';
   wrap.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--glass-border)">
       <div style="font-size:13px;font-weight:700;color:var(--text)">${def ? def.label : b.type} Properties</div>
@@ -1798,386 +1768,285 @@ function meRenderProps() {
     <div style="padding:14px 16px;display:flex;flex-direction:column;gap:14px">
       ${mePropFields(b)}
     </div>`;
-
-  // Wire up live inputs after rendering
-  panel.appendChild(wrap);
+  body.appendChild(wrap);
   mePropWire(b);
 }
 
 function mePropFields(b) {
-  const row = (label, content) => `
-    <div class="pr-row">
-      <div class="pr-label">${label}</div>
-      ${content}
-    </div>`;
-  const input = (key, val, type = 'text', extra = '') =>
-    `<input class="me-input prop-live" data-key="${key}" type="${type}" value="${(val || '').toString().replace(/"/g, '&quot;')}" ${extra}/>`;
-  const textarea = (key, val) =>
-    `<textarea class="me-textarea prop-live" data-key="${key}" style="min-height:80px">${val || ''}</textarea>`;
+  const p = b.props;
+  const row = (label, content) =>
+    `<div class="pr-row"><div class="pr-label">${label}</div>${content}</div>`;
+  const inp = (key, val, type = 'text') =>
+    `<input class="me-input prop-live" data-key="${key}" type="${type}" value="${(val||'').toString().replace(/"/g,'&quot;')}"/>`;
   const colorRow = (key, val) =>
     `<div style="display:flex;align-items:center;gap:8px">
-      <input type="color" class="prop-live" data-key="${key}" value="${val || '#000000'}" style="width:32px;height:32px;border:1px solid var(--glass-border);border-radius:7px;padding:3px;background:var(--glass);cursor:pointer"/>
-      <span class="prop-hex-label" style="font-family:var(--font-mono);font-size:11px;color:var(--text-2)">${val || '#000000'}</span>
+      <input type="color" class="prop-live" data-key="${key}" value="${val||'#000000'}" style="width:32px;height:32px;border:1px solid var(--glass-border);border-radius:7px;padding:3px;background:var(--glass);cursor:pointer"/>
+      <span class="prop-hex-label" style="font-family:var(--font-mono);font-size:11px;color:var(--text-2)">${val||'#000000'}</span>
     </div>`;
   const rangeRow = (key, val, min, max, step = 1, unit = '') =>
     `<div class="range-row">
       <div class="range-hdr"><span></span><span class="range-val">${val}${unit}</span></div>
       <input type="range" class="pr-range prop-live" data-key="${key}" min="${min}" max="${max}" step="${step}" value="${val}"/>
     </div>`;
-  const selectRow = (key, val, options) =>
+  const selRow = (key, val, opts) =>
     `<select class="form-select prop-live" data-key="${key}" style="font-size:13px;padding:8px 30px 8px 10px">
-      ${options.map(([v, l]) => `<option value="${v}" ${val===v?'selected':''}>${l}</option>`).join('')}
+      ${opts.map(([v,l]) => `<option value="${v}" ${val===v?'selected':''}>${l}</option>`).join('')}
     </select>`;
 
   switch (b.type) {
     case 'logo':
-      return row('Brand Text', input('text', b.data.text))
-           + row('Tagline',    input('tagline', b.data.tagline))
-           + row('Background', colorRow('bg', b.data.bg))
-           + row('Text Color', colorRow('color', b.data.color))
-           + row('Font Size',  rangeRow('fontSize', b.data.fontSize || 28, 14, 60, 1, 'px'));
+      return row('Brand Text',  inp('text', p.text))
+           + row('Tagline',     inp('tagline', p.tagline))
+           + row('Background',  colorRow('bg', p.bg))
+           + row('Text Color',  colorRow('color', p.color))
+           + row('Font Size',   rangeRow('fontSize', p.fontSize||22, 14, 60, 1, 'px'))
+           + row('Font Weight', rangeRow('fontWeight', p.fontWeight||800, 100, 900, 100));
+
+    case 'header':
+      return row('Heading Text', `<textarea class="me-textarea prop-live" data-key="text" style="min-height:70px">${p.text||''}</textarea>`)
+           + row('Font Size',    rangeRow('fontSize', p.fontSize||28, 14, 72, 1, 'px'))
+           + row('Font Weight',  selRow('fontWeight', p.fontWeight||700, [[400,'Regular'],[600,'Semi Bold'],[700,'Bold'],[800,'Extra Bold']]))
+           + row('Font Style',   selRow('fontStyle',  p.fontStyle||'normal', [['normal','Normal'],['italic','Italic']]))
+           + row('Color',        colorRow('color', p.color))
+           + row('Align',        selRow('align', p.align||'center', [['left','Left'],['center','Center'],['right','Right']]))
+           + row('Background',   colorRow('bg', p.bg||'transparent'));
 
     case 'text':
       return `<div class="pr-label" style="margin-bottom:4px">Content (HTML supported)</div>
-              <textarea class="me-textarea prop-live" data-key="body" style="min-height:120px">${b.data.body || ''}</textarea>
-              ${row('Background', colorRow('bg', b.data.bg))}
-              ${row('Text Color', colorRow('color', b.data.color))}
-              ${row('Padding',    rangeRow('padding', b.data.padding || 20, 0, 60, 4, 'px'))}
-              ${row('Font Size',  rangeRow('fontSize', b.data.fontSize || 15, 10, 32, 1, 'px'))}
-              ${row('Align',      selectRow('align', b.data.align || 'left', [['left','Left'],['center','Center'],['right','Right']]))}`;
-
-    case 'image':
-      return row('Image URL', input('src', b.data.src))
-           + row('Alt Text',  input('alt', b.data.alt))
-           + row('Link URL',  input('link', b.data.link))
-           + row('Width',     rangeRow('width', b.data.width || 100, 20, 100, 5, '%'))
-           + row('Border Radius', rangeRow('radius', b.data.radius || 0, 0, 32, 2, 'px'))
-           + row('Background',colorRow('bg', b.data.bg));
+              <textarea class="me-textarea prop-live" data-key="text" style="min-height:120px">${p.text||''}</textarea>`
+           + row('Font Size',   rangeRow('fontSize', p.fontSize||15, 10, 32, 1, 'px'))
+           + row('Font Weight', selRow('fontWeight', p.fontWeight||400, [[400,'Regular'],[600,'Semi Bold'],[700,'Bold']]))
+           + row('Font Style',  selRow('fontStyle',  p.fontStyle||'normal', [['normal','Normal'],['italic','Italic']]))
+           + row('Color',       colorRow('color', p.color))
+           + row('Align',       selRow('align', p.align||'center', [['left','Left'],['center','Center'],['right','Right']]))
+           + row('Background',  colorRow('bg', p.bg||'transparent'));
 
     case 'button':
-      return row('Button Text', input('label', b.data.label))
-           + row('Link URL',    input('href', b.data.href))
-           + row('Background',  colorRow('bg', b.data.bg))
-           + row('Text Color',  colorRow('color', b.data.color))
-           + row('Border Radius', rangeRow('radius', b.data.radius || 6, 0, 40, 2, 'px'))
-           + row('Font Size',   rangeRow('fontSize', b.data.fontSize || 15, 11, 24, 1, 'px'))
-           + row('Padding X',   rangeRow('padX', b.data.padX || 24, 8, 60, 4, 'px'))
-           + row('Padding Y',   rangeRow('padY', b.data.padY || 12, 4, 30, 2, 'px'))
-           + row('Align',       selectRow('align', b.data.align || 'center', [['left','Left'],['center','Center'],['right','Right']]));
+      return row('Button Text',   inp('text', p.text))
+           + row('Link URL',      inp('link', p.link))
+           + row('Button BG',     colorRow('btnBg', p.btnBg))
+           + row('Button Color',  colorRow('btnColor', p.btnColor))
+           + row('Font Size',     rangeRow('fontSize', p.fontSize||15, 11, 24, 1, 'px'))
+           + row('Border Radius', rangeRow('borderRadius', p.borderRadius||8, 0, 40, 2, 'px'))
+           + row('Align',         selRow('align', p.align||'center', [['left','Left'],['center','Center'],['right','Right']]));
+
+    case 'image':
+      return row('Image URL',     inp('src', p.src))
+           + row('Alt Text',      inp('alt', p.alt))
+           + row('Width',         rangeRow('width', p.width||100, 20, 100, 5, '%'))
+           + row('Border Radius', rangeRow('borderRadius', p.borderRadius||0, 0, 32, 2, 'px'));
 
     case 'divider':
-      return row('Style',      selectRow('style', b.data.style || 'solid', [['solid','Solid'],['dashed','Dashed'],['dotted','Dotted']]))
-           + row('Color',      colorRow('color', b.data.color))
-           + row('Thickness',  rangeRow('thickness', b.data.thickness || 1, 1, 8, 1, 'px'))
-           + row('Margin Y',   rangeRow('marginY', b.data.marginY || 16, 0, 60, 4, 'px'));
+      return row('Color',     colorRow('color', p.color))
+           + row('Thickness', rangeRow('thickness', p.thickness||1, 1, 8, 1, 'px'));
 
     case 'spacer':
-      return row('Height', rangeRow('height', b.data.height || 20, 4, 120, 4, 'px'))
-           + row('Background', colorRow('bg', b.data.bg));
+      return row('Height',     rangeRow('height', p.height||20, 4, 120, 4, 'px'))
+           + row('Background', colorRow('bg', p.bg||'transparent'));
 
     case 'social':
       return `<div class="pr-label" style="margin-bottom:8px">Social Links</div>
-        ${(b.data.links || []).map((l, i) => `
+        ${(p.platforms || []).map((pl, i) => `
           <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
-            <select class="form-select prop-social-platform" data-idx="${i}" style="font-size:12px;flex:0 0 100px;padding:6px 22px 6px 8px">
-              ${['facebook','twitter','instagram','linkedin','youtube','tiktok','github','website']
-                .map(p => `<option value="${p}" ${l.platform===p?'selected':''}>${p}</option>`).join('')}
+            <select class="form-select prop-social-platform" data-idx="${i}" style="font-size:12px;flex:0 0 120px;padding:6px 22px 6px 8px">
+              ${['LinkedIn','Twitter/X','Instagram','Facebook','YouTube','GitHub','WhatsApp','Telegram','Discord','TikTok','Website']
+                .map(n => `<option value="${n}" ${pl.name===n?'selected':''}>${n}</option>`).join('')}
             </select>
-            <input class="me-input prop-social-url" data-idx="${i}" placeholder="URL" value="${l.url || ''}" style="flex:1;font-size:12px"/>
+            <input class="me-input prop-social-url" data-idx="${i}" placeholder="URL" value="${pl.url||''}" style="flex:1;font-size:12px"/>
             <button class="me-block-btn danger" onclick="meSocialDelLink(${i},'${b.id}')">×</button>
           </div>`).join('')}
-        <button class="btn btn-outline btn-sm" style="margin-top:4px" onclick="meSocialAddLink('${b.id}')">+ Add Link</button>
-        ${row('Icon Color', colorRow('iconColor', b.data.iconColor))}
-        ${row('Background', colorRow('bg', b.data.bg))}
-        ${row('Icon Size',  rangeRow('iconSize', b.data.iconSize || 28, 16, 56, 2, 'px'))}`;
+        <button class="btn btn-outline btn-sm" style="margin-top:4px" onclick="meSocialAddLink('${b.id}')">+ Add Link</button>`
+      + row('Style',     selRow('style', p.style||'circle', [['circle','Circle'],['square','Square'],['text','Text']]))
+      + row('Icon Size', rangeRow('iconSize', p.iconSize||28, 16, 56, 2, 'px'))
+      + row('Color',     colorRow('color', p.color))
+      + row('Align',     selRow('align', p.align||'center', [['left','Left'],['center','Center'],['right','Right']]));
+
+    case 'footer':
+      return `<div class="pr-label" style="margin-bottom:4px">Footer Text</div>
+              <textarea class="me-textarea prop-live" data-key="text" style="min-height:70px">${p.text||''}</textarea>`
+           + row('Font Size',  rangeRow('fontSize', p.fontSize||12, 10, 20, 1, 'px'))
+           + row('Color',      colorRow('color', p.color))
+           + row('Align',      selRow('align', p.align||'center', [['left','Left'],['center','Center'],['right','Right']]))
+           + row('Background', colorRow('bg', p.bg));
 
     case 'attachment':
-      return `<div style="padding:10px;background:rgba(249,115,22,0.07);border:1px solid rgba(249,115,22,0.2);border-radius:8px;margin-bottom:6px;font-size:12px;color:var(--text-2)">
-                The generated certificate PDF will be automatically attached. These settings style the in-email announcement block.
-              </div>`
-           + row('Block Label',   input('label',    b.data.label))
-           + row('Filename Text', input('filename', b.data.filename))
-           + row('Background',    colorRow('bg',    b.data.bg))
-           + row('Icon Color',    colorRow('iconColor', b.data.iconColor));
+      return row('Label Text',  inp('label', p.label))
+           + row('Filename',    inp('filename', p.filename))
+           + row('Background',  colorRow('bg', p.bg))
+           + row('Icon Color',  colorRow('iconColor', p.iconColor));
 
     case 'cert_preview':
-      return `<div style="padding:10px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);border-radius:8px;margin-bottom:6px;font-size:12px;color:var(--text-2)">
-                This block renders a live thumbnail of the participant's certificate inside the email.
-              </div>`
-           + row('Caption',     input('caption', b.data.caption))
-           + row('Background',  colorRow('bg',    b.data.bg))
-           + row('Img Width',   rangeRow('imgWidth', b.data.imgWidth || 90, 40, 100, 5, '%'))
-           + row('Border Radius', rangeRow('radius', b.data.radius || 8, 0, 32, 2, 'px'));
+      return row('Caption',       inp('caption', p.caption))
+           + row('Background',    colorRow('bg', p.bg))
+           + row('Image Width',   rangeRow('imgWidth', p.imgWidth||90, 40, 100, 5, '%'))
+           + row('Border Radius', rangeRow('radius', p.radius||8, 0, 32, 2, 'px'));
+
+    case 'raw':
+      return `<div class="pr-label" style="margin-bottom:4px">Custom HTML</div>
+              <textarea class="me-textarea prop-live" data-key="html" style="min-height:160px;font-family:var(--font-mono);font-size:12px">${p.html||''}</textarea>`;
 
     default:
-      return textarea('body', b.data.body || '');
+      return '<div style="padding:12px;color:var(--text-3)">No editable properties.</div>';
   }
 }
 
 function mePropWire(b) {
-  const panel = document.getElementById('mePropsPanel');
-  if (!panel) return;
-
-  // Standard prop-live inputs
-  panel.querySelectorAll('.prop-live').forEach(el => {
+  const body = document.getElementById('mePropsBody');
+  if (!body) return;
+  body.querySelectorAll('.prop-live').forEach(el => {
     const key = el.dataset.key;
     if (!key) return;
     const update = () => {
-      b.data[key] = el.type === 'range' || el.type === 'number' ? +el.value : el.value;
-      // Update hex label next to color inputs
+      b.props[key] = (el.type === 'range' || el.type === 'number') ? +el.value : el.value;
       if (el.type === 'color') {
         const lbl = el.parentElement?.querySelector('.prop-hex-label');
         if (lbl) lbl.textContent = el.value;
       }
-      // Update range value display
       if (el.type === 'range') {
         const valEl = el.closest('.range-row')?.querySelector('.range-val');
         if (valEl) {
-          const unit = ['fontSize','padding','padX','padY','radius','thickness','marginY','height','iconSize','imgWidth','width'].includes(key)
-            ? (key === 'width' || key === 'imgWidth' ? '%' : 'px') : '';
-          valEl.textContent = el.value + unit;
+          const pctKeys = ['width', 'imgWidth'];
+          const noUnit  = ['fontWeight'];
+          valEl.textContent = el.value + (pctKeys.includes(key) ? '%' : noUnit.includes(key) ? '' : 'px');
         }
       }
-      meRenderBlockThumbOnly(b.id);
-      meSyncToPreview();
+      meRenderCanvas();
+      meSyncToCode();
     };
     el.addEventListener('input',  update);
     el.addEventListener('change', update);
   });
-
-  // Social links
-  panel.querySelectorAll('.prop-social-platform').forEach(el => {
+  body.querySelectorAll('.prop-social-platform').forEach(el => {
     el.addEventListener('change', () => {
       const i = +el.dataset.idx;
-      if (b.data.links[i]) b.data.links[i].platform = el.value;
-      meSyncToPreview();
+      if (b.props.platforms && b.props.platforms[i]) b.props.platforms[i].name = el.value;
+      meRenderCanvas(); meSyncToCode();
     });
   });
-  panel.querySelectorAll('.prop-social-url').forEach(el => {
+  body.querySelectorAll('.prop-social-url').forEach(el => {
     el.addEventListener('input', () => {
       const i = +el.dataset.idx;
-      if (b.data.links[i]) b.data.links[i].url = el.value;
-      meSyncToPreview();
+      if (b.props.platforms && b.props.platforms[i]) b.props.platforms[i].url = el.value;
+      meRenderCanvas(); meSyncToCode();
     });
   });
 }
 
-function meRenderBlockThumbOnly(id) {
-  const row = document.getElementById('mbr_' + id);
-  if (!row) return;
-  const b = ME.blocks.find(b => b.id === id);
-  if (!b) return;
-  const sub = row.querySelector('.me-block-meta-sub');
-  if (sub) sub.textContent = meBlockSubtitle(b);
+function meBlockSubtitle(b) {
+  const p = b.props || {};
+  const tr = (s, n = 32) => s && s.length > n ? s.slice(0, n) + '…' : (s || '');
+  switch (b.type) {
+    case 'logo':        return tr(p.text);
+    case 'header':      return tr((p.text || '').replace(/<[^>]+>/g, ''));
+    case 'text':        return tr((p.text || '').replace(/<[^>]+>/g, ''));
+    case 'image':       return p.src ? 'Custom image' : 'No image set';
+    case 'button':      return tr(p.text);
+    case 'divider':     return `${p.thickness||1}px · ${p.color||'#e2e8f0'}`;
+    case 'spacer':      return `${p.height||20}px height`;
+    case 'social':      return (p.platforms || []).map(pl => pl.name).filter(Boolean).join(', ') || 'No links';
+    case 'footer':      return tr((p.text || '').replace(/<[^>]+>/g, ''));
+    case 'attachment':  return tr(p.filename || '');
+    case 'cert_preview':return p.caption || 'Certificate thumbnail';
+    case 'raw':         return 'Custom HTML block';
+    default:            return b.type;
+  }
 }
 
 function meSocialAddLink(blockId) {
   const b = ME.blocks.find(b => b.id === blockId);
-  if (!b || !b.data.links) return;
-  b.data.links.push({ platform: 'website', url: '' });
-  meRenderProps();
-  meSyncToPreview();
+  if (!b) return;
+  if (!b.props.platforms) b.props.platforms = [];
+  b.props.platforms.push({ name: 'LinkedIn', url: '' });
+  meSelectBlock(blockId);
+  meSyncToCode();
 }
 
 function meSocialDelLink(idx, blockId) {
   const b = ME.blocks.find(b => b.id === blockId);
-  if (!b || !b.data.links) return;
-  b.data.links.splice(idx, 1);
-  meRenderProps();
-  meSyncToPreview();
+  if (!b || !b.props.platforms) return;
+  b.props.platforms.splice(idx, 1);
+  meSelectBlock(blockId);
+  meSyncToCode();
 }
 
-/* ── Tab Switching ─────────────────────────────────────────────── */
-function meSetTab(tab) {
-  ME.activeTab = tab;
-  ['visual', 'code', 'preview'].forEach(t => {
-    document.getElementById(`meTab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('active', t === tab);
-    document.getElementById(`mePane${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('active', t === tab);
-  });
-  if (tab === 'code') {
-    meSyncToCode();
-    if (ME.cm) setTimeout(() => ME.cm.refresh(), 50);
-  }
-  if (tab === 'preview') {
-    meSyncToPreview();
-  }
-}
-
-function meSyncToCode() {
-  const html = meGenerateHTML();
-  if (ME.cm) { ME.cm.setValue(html); return; }
-  // Init CodeMirror if available
-  const ta = document.getElementById('meCodeArea');
-  if (!ta) return;
+/* ── Code Editor ───────────────────────────────────────────────── */
+function meInitCodeMirror() {
+  const ta = document.getElementById('meCodeEditor');
+  if (!ta || ME.cm) return;
   if (typeof CodeMirror !== 'undefined') {
     ME.cm = CodeMirror.fromTextArea(ta, {
-      mode: 'htmlmixed', theme: 'dracula', lineNumbers: true,
-      lineWrapping: true, tabSize: 2, indentWithTabs: false,
+      mode: 'htmlmixed',
+      lineNumbers: true,
+      lineWrapping: true,
+      tabSize: 2,
+      indentWithTabs: false,
     });
-    ME.cm.setValue(html);
     ME.cm.on('change', () => {
       clearTimeout(ME.cmDebounce);
       ME.cmDebounce = setTimeout(meSyncFromCode, 800);
     });
-  } else {
-    ta.value = html;
-    ta.style.display = 'block';
   }
+}
+
+function meSyncToCode() {
+  const html = meGetFullHtml();
+  if (ME.cm) { ME.cm.setValue(html); return; }
+  const ta = document.getElementById('meCodeEditor');
+  if (ta) ta.value = html;
 }
 
 function meSyncFromCode() {
-  const html = ME.cm ? ME.cm.getValue() : (document.getElementById('meCodeArea')?.value || '');
-  // Store raw HTML in a special raw-html block
-  ME.blocks = [{ id: 'raw', type: 'raw_html', data: { html } }];
-  meSyncToPreview();
+  const html = ME.cm ? ME.cm.getValue() : (document.getElementById('meCodeEditor')?.value || '');
+  ME.blocks = [{ id: 'raw', type: 'raw', props: { html } }];
+  meRenderCanvas();
+  meRenderProps();
 }
 
-/* ── HTML Generator ────────────────────────────────────────────── */
-function meGenerateHTML(rowIdx = null) {
-  // If raw html, return it directly
-  if (ME.blocks.length === 1 && ME.blocks[0].type === 'raw_html') {
-    let html = ME.blocks[0].data.html;
-    if (rowIdx !== null) html = mPersonalise(html, rowIdx);
-    return html;
-  }
-
-  const subject = document.getElementById('mSubject')?.value || 'Your Certificate';
-  const bodyBg  = '#f4f7fb';
-  let body = ME.blocks.map(b => meBlockToHTML(b, rowIdx)).join('\n');
-
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>${subject}</title>
-<style>
-  body { margin:0; padding:0; background:${bodyBg}; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
-  img  { border:0; display:block; max-width:100%; }
-  table{ border-collapse:collapse; }
-  a    { color:inherit; }
-  @media only screen and (max-width:600px){
-    .email-wrap { width:100%!important; }
-    .mob-hide   { display:none!important; }
-    .mob-full   { width:100%!important; display:block!important; }
-  }
-</style>
-</head>
-<body>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${bodyBg};min-height:100vh">
-  <tr><td align="center" style="padding:32px 16px">
-    <table class="email-wrap" role="presentation" width="600" cellpadding="0" cellspacing="0"
-      style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)">
-      ${body}
-    </table>
-  </td></tr>
-</table>
-</body>
-</html>`;
+function meFormatCode() {
+  if (!ME.cm) return;
+  const raw = ME.cm.getValue();
+  try {
+    const formatted = raw
+      .replace(/>\s*</g, '>\n<')
+      .split('\n')
+      .map(l => l.trim())
+      .filter(Boolean)
+      .join('\n');
+    ME.cm.setValue(formatted);
+  } catch(e) {}
 }
 
-function meBlockToHTML(b, rowIdx = null) {
-  const d = b.data;
-  const personalize = s => rowIdx !== null ? mPersonalise(s, rowIdx) : s;
+function meCopyCode() {
+  const html = ME.cm ? ME.cm.getValue() : (document.getElementById('meCodeEditor')?.value || '');
+  navigator.clipboard?.writeText(html).then(() => toast('HTML copied', 'success', 1500))
+    .catch(() => toast('Copy failed', 'error'));
+}
 
-  switch (b.type) {
-    case 'logo': {
-      return `<tr><td style="background:${d.bg || '#1a1a2e'};padding:28px 32px;text-align:center">
-        <div style="font-size:${d.fontSize || 28}px;font-weight:900;color:${d.color || '#00d4ff'};letter-spacing:-0.5px;font-family:'Helvetica Neue',sans-serif">
-          ${personalize(d.text || 'YOUR BRAND')}
-        </div>
-        ${d.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:2px;text-transform:uppercase">${personalize(d.tagline)}</div>` : ''}
-      </td></tr>`;
-    }
-    case 'text': {
-      const pad = d.padding || 20;
-      return `<tr><td style="background:${d.bg || '#ffffff'};padding:${pad}px ${pad + 12}px;font-size:${d.fontSize || 15}px;line-height:1.7;color:${d.color || '#334155'};text-align:${d.align || 'left'}">
-        ${personalize(d.body || '')}
-      </td></tr>`;
-    }
-    case 'image': {
-      const img = `<img src="${d.src || ''}" alt="${d.alt || ''}" width="${Math.round((d.width || 100) / 100 * 600)}" style="border-radius:${d.radius || 0}px;width:${d.width || 100}%;max-width:100%;display:block;margin:0 auto"/>`;
-      return `<tr><td style="background:${d.bg || '#ffffff'};padding:12px">
-        ${d.link ? `<a href="${d.link}" target="_blank">${img}</a>` : img}
-      </td></tr>`;
-    }
-    case 'button': {
-      const label = personalize(d.label || 'Click Here');
-      const href  = personalize(d.href  || '#');
-      const align = d.align || 'center';
-      return `<tr><td style="background:#ffffff;padding:${d.padY || 12}px ${d.padX || 24}px;text-align:${align}">
-        <a href="${href}" target="_blank"
-          style="display:inline-block;background:${d.bg || '#0ea5e9'};color:${d.color || '#ffffff'};
-            font-size:${d.fontSize || 15}px;font-weight:700;padding:${d.padY || 12}px ${d.padX || 24}px;
-            border-radius:${d.radius || 6}px;text-decoration:none;font-family:'Helvetica Neue',sans-serif;
-            letter-spacing:-0.2px">
-          ${label}
-        </a>
-      </td></tr>`;
-    }
-    case 'divider': {
-      const my = d.marginY || 16;
-      return `<tr><td style="padding:${my}px 32px">
-        <hr style="border:none;border-top:${d.thickness || 1}px ${d.style || 'solid'} ${d.color || '#e2e8f0'};margin:0"/>
-      </td></tr>`;
-    }
-    case 'spacer': {
-      return `<tr><td style="height:${d.height || 20}px;background:${d.bg || 'transparent'}"></td></tr>`;
-    }
-    case 'social': {
-      const links = (d.links || []).filter(l => l.url);
-      const icons = {
-        facebook: '🅕', twitter: '🐦', instagram: '📷', linkedin: '🔗',
-        youtube: '▶', tiktok: '🎵', github: '⚙', website: '🌐',
-      };
-      const size = d.iconSize || 28;
-      return `<tr><td style="background:${d.bg || '#f8fafc'};padding:20px;text-align:center">
-        ${links.map(l => `<a href="${l.url}" target="_blank" style="display:inline-block;margin:0 6px;font-size:${size}px;text-decoration:none">${icons[l.platform] || '🌐'}</a>`).join('')}
-      </td></tr>`;
-    }
-    case 'attachment': {
-      return `<tr><td style="background:${d.bg || '#fff7ed'};padding:16px 32px">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td width="44">
-              <div style="width:40px;height:40px;border-radius:8px;background:${d.iconColor || '#f97316'};display:flex;align-items:center;justify-content:center;font-size:20px">📎</div>
-            </td>
-            <td style="padding-left:14px">
-              <div style="font-size:14px;font-weight:700;color:#1e293b">${personalize(d.label || 'Your Certificate')}</div>
-              <div style="font-size:12px;color:#64748b;margin-top:2px">${personalize(d.filename || 'certificate.pdf')} · Attached to this email</div>
-            </td>
-          </tr>
-        </table>
-      </td></tr>`;
-    }
-    case 'cert_preview': {
-      // Render certificate as data URL for embedding
-      let imgTag = '';
-      if (rowIdx !== null) {
-        try {
-          const tc = renderCertForRow(rowIdx);
-          const dataUrl = tc.toDataURL('image/png');
-          imgTag = `<img src="${dataUrl}" alt="${personalize(d.caption || 'Your Certificate')}"
-            width="${Math.round((d.imgWidth || 90) / 100 * 600)}"
-            style="border-radius:${d.radius || 8}px;width:${d.imgWidth || 90}%;max-width:100%;display:block;margin:0 auto;box-shadow:0 4px 20px rgba(0,0,0,0.12)"/>`;
-        } catch(e) {
-          imgTag = `<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">Certificate preview</div>`;
-        }
-      } else {
-        imgTag = `<div style="padding:32px;text-align:center;background:#f1f5f9;border-radius:${d.radius || 8}px;color:#94a3b8;font-size:13px;border:2px dashed #e2e8f0">[ Certificate thumbnail renders per-recipient ]</div>`;
-      }
-      return `<tr><td style="background:${d.bg || '#ffffff'};padding:20px 32px;text-align:center">
-        ${imgTag}
-        ${d.caption ? `<div style="font-size:13px;color:#64748b;margin-top:10px">${personalize(d.caption)}</div>` : ''}
-      </td></tr>`;
-    }
-    case 'raw_html': {
-      return rowIdx !== null ? mPersonalise(d.html || '', rowIdx) : (d.html || '');
-    }
-    default:
-      return '';
-  }
+/* ── Merge Tags ─────────────────────────────────────────────────── */
+function meRenderMergeTags() {
+  const wrap = document.getElementById('meMergeTags');
+  if (!wrap) return;
+  wrap.innerHTML = CP.headers.map(h =>
+    `<button class="merge-tag-chip" onclick="meInsertMergeTag('{{${h}}}')">{{${h}}}</button>`
+  ).join('');
+}
+
+/* ── AI & Preview ───────────────────────────────────────────────── */
+function meToggleAiPanel() {
+  const panel = document.getElementById('meAiPanel');
+  if (panel) panel.classList.toggle('open');
+}
+
+function meUpdatePreview() {
+  const iframe = document.getElementById('mePreviewIframe');
+  if (!iframe) return;
+  const html = meGetFullHtml();
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+    doc.open(); doc.write(html); doc.close();
+  } catch(e) {}
+  setTimeout(resizeMailPreview, 200);
 }
 
 /* ── Preview Sync ──────────────────────────────────────────────── */
@@ -2214,8 +2083,10 @@ function resizeMailPreview() {
 /* ── Device Toggle ─────────────────────────────────────────────── */
 function meSetDevice(d) {
   ME.previewDevice = d;
-  const box = document.getElementById('mePreviewBox');
-  if (box) box.style.width = d === 'mobile' ? '375px' : '100%';
+  const wrap = document.getElementById('mePreviewBox');
+  if (wrap) wrap.classList.toggle('mobile', d === 'mobile');
+  const sizer = document.getElementById('mePreviewSizer');
+  if (sizer) sizer.style.maxWidth = d === 'mobile' ? '375px' : '600px';
   document.getElementById('mBtnDesktop')?.classList.toggle('active', d === 'desktop');
   document.getElementById('mBtnMobile')?.classList.toggle('active', d === 'mobile');
   setTimeout(resizeMailPreview, 350);
@@ -2231,11 +2102,7 @@ function mSetDeviceS6(d) {
 
 /* ── Merge Tags ────────────────────────────────────────────────── */
 function populateStep5MergeTags() {
-  const wrap = document.getElementById('meMergeTagList');
-  if (!wrap) return;
-  wrap.innerHTML = CP.headers.map(h =>
-    `<button class="merge-tag-chip" onclick="meInsertMergeTag('{{${h}}}')">{{${h}}}</button>`
-  ).join('');
+  meRenderMergeTags();
 }
 
 function meInsertMergeTag(tag) {
@@ -2255,86 +2122,16 @@ function meInsertMergeTag(tag) {
   // Visual mode: insert into selected text block
   const sel = ME.blocks.find(b => b.id === ME.selectedId && (b.type === 'text' || b.type === 'button'));
   if (sel) {
-    if (sel.type === 'text')   sel.data.body   = (sel.data.body   || '') + tag;
-    if (sel.type === 'button') sel.data.label  = (sel.data.label  || '') + tag;
+    if (sel.type === 'text')   sel.props.text   = (sel.props.text   || '') + tag;
+    if (sel.type === 'button') sel.props.label  = (sel.props.label  || '') + tag;
     meRenderProps();
-    meSyncToPreview();
+    meSyncToCode();
     toast(`Inserted ${tag}`, 'success', 1000);
     return;
   }
   toast('Select a text or button block first, then click a tag', 'warn');
 }
 
-/* ── Template Gate ─────────────────────────────────────────────── */
-function meBuildTemplatePicker() {
-  const grid = document.getElementById('meTemplateGrid');
-  if (!grid) return;
-
-  const cats  = [...new Set(ME_TEMPLATES.map(t => t.category))];
-  let catHtml = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
-    <button class="me-cat-btn active" data-cat="all" onclick="meFilterTemplates(this,'all')">All</button>
-    ${cats.map(c => `<button class="me-cat-btn" data-cat="${c}" onclick="meFilterTemplates(this,'${c}')">${c}</button>`).join('')}
-  </div>`;
-
-  const cards = ME_TEMPLATES.map(t => `
-    <div class="me-tpl-card" data-cat="${t.category}" onclick="mePickTemplate('${t.id}')">
-      <div class="me-tpl-thumb">
-        <iframe srcdoc="${t.html.replace(/"/g, '&quot;')}" scrolling="no"
-          style="width:600px;height:400px;border:none;transform:scale(0.33);transform-origin:top left;pointer-events:none"></iframe>
-      </div>
-      <div class="me-tpl-meta">
-        <div class="me-tpl-name">${t.name}</div>
-        <div class="me-tpl-cat">${t.category}</div>
-      </div>
-    </div>`).join('');
-
-  grid.innerHTML = catHtml + `<div class="me-tpl-grid" id="meTplInnerGrid">${cards}</div>`;
-}
-
-function meFilterTemplates(btn, cat) {
-  document.querySelectorAll('.me-cat-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.me-tpl-card').forEach(card => {
-    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
-  });
-}
-
-function mePickTemplate(id) {
-  const tpl = ME_TEMPLATES.find(t => t.id === id);
-  if (!tpl) return;
-  ME.selectedTemplate = tpl;
-
-  // Load template blocks if defined, else raw HTML
-  if (tpl.blocks) {
-    ME.blocks  = JSON.parse(JSON.stringify(tpl.blocks));
-    ME.nextId  = ME.blocks.reduce((m, b) => Math.max(m, parseInt(b.id.replace('b','')) || 0), 0) + 1;
-  } else {
-    ME.blocks  = [{ id: 'raw', type: 'raw_html', data: { html: tpl.html } }];
-  }
-
-  // Switch to editor
-  document.getElementById('meTemplateGate').style.display = 'none';
-  const wrap = document.getElementById('meEditorWrap');
-  wrap.style.display = 'block';
-  wrap.classList.add('visible');
-
-  meRenderBlocks();
-  meRenderProps();
-  meSyncToPreview();
-  toast(`Template "${tpl.name}" loaded`, 'success');
-}
-
-function meBackToGate() {
-  document.getElementById('meEditorWrap').style.display = 'none';
-  document.getElementById('meEditorWrap').classList.remove('visible');
-  document.getElementById('meTemplateGate').style.display = 'block';
-}
-
-/* ── AI Panel ──────────────────────────────────────────────────── */
-function meToggleAi() {
-  const panel = document.getElementById('meAiPanel');
-  panel.classList.toggle('open');
-}
 
 async function meRunAi() {
   const prompt = document.getElementById('meAiPrompt').value.trim();
@@ -2351,8 +2148,8 @@ async function meRunAi() {
     if (error) throw error;
     const html = data?.html || '';
     if (html) {
-      ME.blocks = [{ id: 'raw', type: 'raw_html', data: { html } }];
-      meSyncToPreview();
+      ME.blocks = [{ id: 'raw', type: 'raw_html', props: { html } }];
+      meSyncToCode();
       result.textContent = '✅ Applied! Switched to AI-generated HTML.';
       toast('AI email generated', 'success');
     } else {
@@ -2669,7 +2466,7 @@ function mNewCampaign() {
   document.getElementById('mSubject').value = '';
   document.getElementById('meEditorWrap').style.display = 'none';
   document.getElementById('meEditorWrap').classList.remove('visible');
-  document.getElementById('meTemplateGate').style.display = 'block';
+  document.getElementById('meTplGate').style.display = 'block';
   drawCanvas(); drawOverlay();
   renderFieldChips();
   ['sheetsResult','fileResult','manualResult','hxFormResult','colMapCard'].forEach(id => {
@@ -2733,118 +2530,6 @@ function toast(msg, type = 'info', dur = 3200) {
   container.appendChild(t);
   requestAnimationFrame(() => t.classList.add('show'));
   setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 350); }, dur);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   EMAIL TEMPLATES DATA
-════════════════════════════════════════════════════════════════ */
-const ME_TEMPLATES = [
-  {
-    id: 'cert_elegant',
-    name: 'Certificate of Completion',
-    category: 'Certificate',
-    blocks: [
-      { id: 'b1', type: 'logo',    data: { text: '{{OrganizationName}}', tagline: 'CERTIFICATE OF ACHIEVEMENT', bg: '#0f172a', color: '#00d4ff', fontSize: 26 } },
-      { id: 'b2', type: 'spacer',  data: { height: 12, bg: '#ffffff' } },
-      { id: 'b3', type: 'text',    data: { body: '<p style="font-size:18px;font-weight:700;color:#1e293b;margin:0 0 6px">Dear <strong>{{Name}}</strong>,</p><p style="color:#475569;margin:0">Congratulations! We are delighted to present you with your official certificate of completion for <strong>{{CourseName}}</strong>. Your dedication and commitment are truly commendable.</p>', bg: '#ffffff', color: '#334155', padding: 28, fontSize: 15, align: 'left' } },
-      { id: 'b4', type: 'cert_preview', data: { caption: 'Your Certificate of Completion', bg: '#f8fafc', imgWidth: 88, radius: 10 } },
-      { id: 'b5', type: 'attachment', data: { label: '📄 Your Certificate is Attached', filename: '{{Name}}_Certificate.pdf', bg: '#f0fdf4', iconColor: '#10b981' } },
-      { id: 'b6', type: 'button',  data: { label: 'View Certificate Online', href: '#', bg: '#0ea5e9', color: '#ffffff', radius: 8, fontSize: 15, padX: 28, padY: 13, align: 'center' } },
-      { id: 'b7', type: 'divider', data: { style: 'solid', color: '#e2e8f0', thickness: 1, marginY: 8 } },
-      { id: 'b8', type: 'text',    data: { body: '<p style="font-size:12px;color:#94a3b8;text-align:center;margin:0">© {{Year}} {{OrganizationName}} · All rights reserved<br>This is an automated email. Please do not reply.</p>', bg: '#ffffff', color: '#94a3b8', padding: 16, fontSize: 12, align: 'center' } },
-    ],
-  },
-  {
-    id: 'cert_minimal',
-    name: 'Minimal Dark Certificate',
-    category: 'Certificate',
-    blocks: [
-      { id: 'b1', type: 'logo',    data: { text: '{{OrganizationName}}', tagline: '', bg: '#18181b', color: '#a78bfa', fontSize: 24 } },
-      { id: 'b2', type: 'text',    data: { body: '<p style="font-size:22px;font-weight:800;color:#1e293b;text-align:center;margin:0 0 8px">🎓 Congratulations, {{Name}}!</p><p style="color:#64748b;text-align:center;font-size:15px;margin:0">You have successfully completed <strong>{{CourseName}}</strong>.</p>', bg: '#ffffff', color: '#334155', padding: 32, fontSize: 15, align: 'center' } },
-      { id: 'b3', type: 'cert_preview', data: { caption: '', bg: '#ffffff', imgWidth: 92, radius: 8 } },
-      { id: 'b4', type: 'attachment', data: { label: 'Your certificate is attached as a PDF', filename: '{{Name}}_Certificate.pdf', bg: '#fafafa', iconColor: '#a78bfa' } },
-      { id: 'b5', type: 'spacer',  data: { height: 8, bg: '#ffffff' } },
-      { id: 'b6', type: 'text',    data: { body: '<p style="font-size:11px;color:#94a3b8;text-align:center;margin:0">Sent by {{OrganizationName}} · Automated Certificate System</p>', bg: '#f8fafc', color: '#94a3b8', padding: 14, fontSize: 11, align: 'center' } },
-    ],
-  },
-  {
-    id: 'workshop_cert',
-    name: 'Workshop Participation',
-    category: 'Certificate',
-    blocks: [
-      { id: 'b1', type: 'logo',    data: { text: '{{WorkshopName}}', tagline: 'PARTICIPATION CERTIFICATE', bg: '#1e3a5f', color: '#fbbf24', fontSize: 22 } },
-      { id: 'b2', type: 'text',    data: { body: '<p style="font-size:16px;font-weight:700;color:#1e293b;margin:0 0 8px">Hello {{Name}},</p><p style="color:#475569;font-size:14px;margin:0 0 10px">Thank you for participating in <strong>{{WorkshopName}}</strong> held on <strong>{{Date}}</strong>. We appreciate your active involvement and hope the experience was valuable.</p><p style="color:#475569;font-size:14px;margin:0">Please find your participation certificate attached to this email.</p>', bg: '#ffffff', color: '#334155', padding: 28, fontSize: 14, align: 'left' } },
-      { id: 'b3', type: 'cert_preview', data: { caption: 'Certificate of Participation', bg: '#fffbeb', imgWidth: 85, radius: 8 } },
-      { id: 'b4', type: 'attachment', data: { label: '🏆 Certificate of Participation', filename: '{{Name}}_Workshop_Certificate.pdf', bg: '#fffbeb', iconColor: '#f59e0b' } },
-      { id: 'b5', type: 'divider', data: { style: 'dashed', color: '#fde68a', thickness: 1, marginY: 6 } },
-      { id: 'b6', type: 'text',    data: { body: '<p style="font-size:12px;color:#92400e;text-align:center;margin:0">{{WorkshopName}} · {{Date}} · {{OrganizationName}}</p>', bg: '#fffbeb', color: '#92400e', padding: 14, fontSize: 12, align: 'center' } },
-    ],
-  },
-  {
-    id: 'general_announcement',
-    name: 'General Announcement',
-    category: 'General',
-    blocks: [
-      { id: 'b1', type: 'logo',    data: { text: '{{OrganizationName}}', tagline: '', bg: '#1a1a2e', color: '#00d4ff', fontSize: 26 } },
-      { id: 'b2', type: 'text',    data: { body: '<p style="font-size:20px;font-weight:800;color:#1e293b;margin:0 0 10px">Hello {{Name}},</p><p style="color:#475569;font-size:15px;line-height:1.7;margin:0">We have an important update to share with you. Please read this message carefully as it contains information relevant to you.</p>', bg: '#ffffff', color: '#334155', padding: 28, fontSize: 15, align: 'left' } },
-      { id: 'b3', type: 'button',  data: { label: 'Learn More', href: '#', bg: '#0ea5e9', color: '#ffffff', radius: 6, fontSize: 14, padX: 24, padY: 12, align: 'center' } },
-      { id: 'b4', type: 'divider', data: { style: 'solid', color: '#e2e8f0', thickness: 1, marginY: 8 } },
-      { id: 'b5', type: 'text',    data: { body: '<p style="font-size:12px;color:#94a3b8;text-align:center;margin:0">© {{Year}} {{OrganizationName}} · All rights reserved</p>', bg: '#f8fafc', color: '#94a3b8', padding: 14, fontSize: 12, align: 'center' } },
-    ],
-  },
-  {
-    id: 'event_invite',
-    name: 'Event Invitation',
-    category: 'Events',
-    blocks: [
-      { id: 'b1', type: 'logo',    data: { text: '{{EventName}}', tagline: 'YOU ARE INVITED', bg: '#4c1d95', color: '#c4b5fd', fontSize: 26 } },
-      { id: 'b2', type: 'text',    data: { body: '<p style="font-size:18px;font-weight:700;color:#1e293b;margin:0 0 8px">Dear {{Name}},</p><p style="color:#475569;font-size:14px;margin:0 0 10px">We are pleased to invite you to <strong>{{EventName}}</strong> scheduled for <strong>{{Date}}</strong> at <strong>{{Venue}}</strong>.</p><p style="color:#475569;font-size:14px;margin:0">We look forward to your presence at this special occasion.</p>', bg: '#ffffff', color: '#334155', padding: 28, fontSize: 14, align: 'left' } },
-      { id: 'b3', type: 'button',  data: { label: 'RSVP Now', href: '#', bg: '#7c3aed', color: '#ffffff', radius: 8, fontSize: 15, padX: 32, padY: 14, align: 'center' } },
-      { id: 'b4', type: 'spacer',  data: { height: 8, bg: '#ffffff' } },
-      { id: 'b5', type: 'text',    data: { body: '<p style="font-size:12px;color:#94a3b8;text-align:center;margin:0">{{EventName}} · {{Date}} · {{Venue}}</p>', bg: '#f5f3ff', color: '#94a3b8', padding: 14, fontSize: 12, align: 'center' } },
-    ],
-  },
-];
-
-/* ════════════════════════════════════════════════════════════════
-   BLOCK TYPE DEFINITIONS (ME_DEFS — referenced in meRenderProps)
-════════════════════════════════════════════════════════════════ */
-const ME_DEFS = {
-  logo:        { label: 'Logo / Header'      },
-  text:        { label: 'Text Block'         },
-  image:       { label: 'Image'              },
-  button:      { label: 'Button'             },
-  divider:     { label: 'Divider'            },
-  spacer:      { label: 'Spacer'             },
-  social:      { label: 'Social Links'       },
-  attachment:  { label: 'Attachment Notice'  },
-  cert_preview:{ label: 'Certificate Preview'},
-  raw_html:    { label: 'Custom HTML'        },
-};
-
-function meAddBlock(type) {
-  const defs = {
-    logo:        { text: '{{OrganizationName}}', tagline: '', bg: '#1a1a2e', color: '#00d4ff', fontSize: 26 },
-    text:        { body: '<p>Enter your text here. Use <strong>merge tags</strong> like {{Name}} to personalise.</p>', bg: '#ffffff', color: '#334155', padding: 20, fontSize: 15, align: 'left' },
-    image:       { src: '', alt: '', link: '', width: 100, radius: 0, bg: '#ffffff' },
-    button:      { label: 'Click Here', href: '#', bg: '#0ea5e9', color: '#ffffff', radius: 6, fontSize: 15, padX: 24, padY: 12, align: 'center' },
-    divider:     { style: 'solid', color: '#e2e8f0', thickness: 1, marginY: 16 },
-    spacer:      { height: 20, bg: 'transparent' },
-    social:      { links: [{ platform: 'website', url: '#' }], iconColor: '#64748b', bg: '#f8fafc', iconSize: 28 },
-    attachment:  { label: 'Your Certificate is Attached', filename: '{{Name}}_Certificate.pdf', bg: '#fff7ed', iconColor: '#f97316' },
-    cert_preview:{ caption: 'Your Certificate of Completion', bg: '#f8fafc', imgWidth: 90, radius: 8 },
-  };
-  const block = { id: 'b' + (ME.nextId++), type, data: { ...(defs[type] || {}) } };
-  ME.blocks.push(block);
-  meRenderBlocks();
-  meSelectBlock(block.id);
-  meSyncToPreview();
-  // Scroll to new block
-  setTimeout(() => {
-    const el = document.getElementById('mbr_' + block.id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 100);
-  toast(`${ME_DEFS[type]?.label || type} added`, 'success', 1200);
 }
 
 /* ════════════════════════════════════════════════════════════════

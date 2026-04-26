@@ -657,10 +657,8 @@ function startFakeProgress() {
     }
   }, 900);
 }
-/* ── Load data from backend ─────────────────────────────────────── */
+
 /* ── Progress bar helpers ───────────────────────────────────────── */
-
-
 function setProgress(pct, titleText, subText) {
   _progVal = pct;
   const bar  = document.getElementById('loadingBar');
@@ -674,8 +672,6 @@ function setProgress(pct, titleText, subText) {
   if (subText && subEl)     subEl.textContent   = subText;
   if (stepEl && titleText)  stepEl.textContent  = titleText;
 }
-
-
 
 function finishProgress(cb) {
   clearInterval(_progTimer);
@@ -1045,12 +1041,12 @@ function renderFieldChart(field, rows, headers) {
       });
     }
 
-    wrap.innerHTML += `
+    wrap.insertAdjacentHTML('beforeend', `
       <div class="dbv-num-stats" style="margin-top:${field.type==='linear_scale'?'14px':'0'}">
         <div class="dbv-num-stat"><div class="dbv-num-stat-val">${avg}</div><div class="dbv-num-stat-lbl">Average</div></div>
         <div class="dbv-num-stat"><div class="dbv-num-stat-val">${min}</div><div class="dbv-num-stat-lbl">Min</div></div>
         <div class="dbv-num-stat"><div class="dbv-num-stat-val">${max}</div><div class="dbv-num-stat-lbl">Max</div></div>
-      </div>`;
+      </div>`);
     return;
   }
 
