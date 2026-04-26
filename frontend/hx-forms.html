@@ -6,7 +6,7 @@
   <title>HX Forms — Honourix</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="stylesheet" href="dashboard.css"/>
   <link rel="stylesheet" href="dashboard-patch.css"/>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -507,7 +507,7 @@
     <div class="hxf-qr-title" id="qrTitle">Form QR Code</div>
     <div class="hxf-qr-sub">Scan to open the form on any device</div>
     <div class="hxf-qr-canvas-wrap">
-      <canvas id="qrCanvas"></canvas>
+      <div id="qrCanvas"></div>
     </div>
     <div class="hxf-qr-url" id="qrUrl"></div>
     <div class="hxf-qr-btns">
@@ -961,20 +961,21 @@
     document.getElementById('qrTitle').textContent = name;
     document.getElementById('qrUrl').textContent   = url;
     document.getElementById('qrModal').classList.add('open');
-    const canvas = document.getElementById('qrCanvas');
-    // Clear previous QR
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (typeof QRCode !== 'undefined') {
-      QRCode.toCanvas(canvas, url, { width: 220, margin: 1, color: { dark: '#000000', light: '#ffffff' } },
-        err => { if (err) console.error('QR error:', err); });
-    } else {
-      // Fallback: show URL only
-      canvas.width = 220; canvas.height = 60;
-      ctx.fillStyle = '#fff'; ctx.fillRect(0,0,220,60);
-      ctx.fillStyle = '#333'; ctx.font = '11px monospace';
-      ctx.fillText('QR library not loaded', 10, 30);
-    }
+    const qrWrap = document.getElementById('qrCanvas');
+      // Destroy previous instance and clear container
+      qrWrap.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrWrap, {
+          text:           url,
+          width:          220,
+          height:         220,
+          colorDark:      '#000000',
+          colorLight:     '#ffffff',
+          correctLevel:   QRCode.CorrectLevel.H
+        });
+      } else {
+        qrWrap.innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;background:#fff;color:#333;font-size:12px;font-family:monospace;text-align:center;padding:12px">QR library not loaded</div>';
+      }
   }
  
   function closeQR() {
@@ -982,12 +983,14 @@
   }
  
   function downloadQR() {
-    const canvas = document.getElementById('qrCanvas');
-    const a      = document.createElement('a');
-    a.download   = 'form-qr.png';
-    a.href       = canvas.toDataURL('image/png');
-    a.click();
-  }
+  const wrap   = document.getElementById('qrCanvas');
+  const canvas = wrap.querySelector('canvas');
+  if (!canvas) return;
+  const a    = document.createElement('a');
+  a.download = 'form-qr.png';
+  a.href     = canvas.toDataURL('image/png');
+  a.click();
+}
   
   /* ── Helpers ───────────────────────────────────────────────────────── */
   function escHtml(str) {
