@@ -767,8 +767,7 @@ function renderAll() {
   // Breadcrumb + title + status
   const name = _data.formName || 'Form';
   document.title = `${name} — Database`;
-  document.getElementById('breadcrumbForm').textContent = name;
-  document.getElementById('formTitle').textContent      = name;
+  document.getElementById('formTitle').textContent = name;
 
   const statusEl = document.getElementById('formStatus');
   statusEl.className = 'dbv-status ' + (_data.status || 'draft');
