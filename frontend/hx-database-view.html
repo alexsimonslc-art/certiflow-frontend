@@ -1298,10 +1298,16 @@ function calculateFieldStat(fieldLabel, rows, headers) {
 /* ── EDIT MODE CONTROLS ─────────────────────────── */
 let _selectedChartType = 'bar'
 
+/* ── EDIT MODE CONTROLS ─────────────────────────── */
 function toggleEditMode() {
   _isEditing = !_isEditing;
-  _grid.setStatic(!_isEditing);
-  _grid.float(_isEditing); 
+  
+  _grid.setStatic(!_isEditing); // Unlocks drag & drop
+  
+  // BY REMOVING THE "FLOAT" COMMAND HERE, WE TURN GRAVITY BACK ON!
+  // Now, when you drag a chart down, the chart below it will jump UP 
+  // into the empty space, allowing you to easily swap their positions.
+
   document.getElementById('editToolbar').classList.toggle('active', _isEditing);
   document.getElementById('btnEditDashWrap').style.display = _isEditing ? 'none' : 'flex';
   document.getElementById('dashGrid').classList.toggle('grid-edit-mode', _isEditing);
