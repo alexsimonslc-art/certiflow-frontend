@@ -444,6 +444,40 @@
     .builder-input:focus, .builder-select:focus { border-color: rgba(0,212,255,0.4); }
     .builder-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%22 height=%2212%22 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%235a7394%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
     .builder-select option { background: #0d1728; }
+    /* ── Pro Builder Visual Chart Cards ── */
+    .builder-chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 6px; }
+    .chart-card-option { 
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); 
+      border-radius: 12px; padding: 14px; cursor: pointer; display: flex; flex-direction: column; 
+      align-items: center; gap: 8px; transition: var(--transition); text-align: center;
+    }
+    .chart-card-option:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+    .chart-card-option.selected { 
+      background: rgba(0,212,255,0.08); border-color: var(--cyan); 
+      box-shadow: 0 0 15px rgba(0,212,255,0.1); 
+    }
+    .chart-card-icon { width: 32px; height: 32px; color: var(--text-3); transition: var(--transition); }
+    .chart-card-option.selected .chart-card-icon { color: var(--cyan); }
+    .chart-card-label { font-size: 13px; font-weight: 600; color: var(--text-2); }
+    .chart-card-sub { font-size: 11px; color: var(--text-3); line-height: 1.3; }
+
+    /* ── Advanced Mode Toggle Switch ── */
+    .adv-toggle-wrap { 
+      display: flex; align-items: center; justify-content: space-between; 
+      margin-top: 8px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); 
+    }
+    .adv-toggle-label { font-size: 13px; font-weight: 600; color: var(--text-2); display: flex; align-items: center; gap: 6px; }
+    .adv-badge { background: var(--purple-dim); color: #a78bfa; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+    
+    .switch { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 20px; }
+    .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: var(--text-3); transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--cyan); }
+    input:checked + .slider:before { transform: translateX(16px); background-color: #fff; }
+
+    #secondaryFieldWrap { display: none; animation: slideUp 0.2s ease both; margin-top: 12px; }
+    #secondaryFieldWrap.visible { display: flex; }
   </style>
 </head>
 <body>
@@ -674,30 +708,73 @@
 
 <!-- Row detail modal -->
 <div class="builder-modal" id="widgetModal" onclick="if(event.target===this)closeWidgetBuilder()">
-  <div class="builder-content">
+  <div class="builder-content" style="width: 480px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
       <h3>Add New Widget</h3>
       <button class="dbv-row-modal-close" onclick="closeWidgetBuilder()">✕</button>
     </div>
     
     <div class="builder-field-wrap">
-      <label class="builder-label">Widget Type</label>
-      <select class="builder-select" id="bwType">
-        <option value="stat">Number Stat Card (Count/Total)</option>
-        <option value="bar">Bar Chart (Categorical)</option>
-        <option value="doughnut">Doughnut Chart (Categorical)</option>
-        <option value="timeline">Timeline (Submissions over time)</option>
-      </select>
+      <label class="builder-label">1. Choose Visualization</label>
+      <div class="builder-chart-grid">
+        <div class="chart-card-option" onclick="selectChartType('stat', this)">
+          <svg class="chart-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M16 8h-8"/><path d="M16 16h-8"/><path d="M16 12h-8"/></svg>
+          <div>
+            <div class="chart-card-label">Stat Card</div>
+            <div class="chart-card-sub">Big number summaries</div>
+          </div>
+        </div>
+        <div class="chart-card-option selected" onclick="selectChartType('bar', this)">
+          <svg class="chart-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <div>
+            <div class="chart-card-label">Bar Chart</div>
+            <div class="chart-card-sub">Compare categories</div>
+          </div>
+        </div>
+        <div class="chart-card-option" onclick="selectChartType('doughnut', this)">
+          <svg class="chart-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          <div>
+            <div class="chart-card-label">Doughnut</div>
+            <div class="chart-card-sub">Part-to-whole ratios</div>
+          </div>
+        </div>
+        <div class="chart-card-option" onclick="selectChartType('timeline', this)">
+          <svg class="chart-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <div>
+            <div class="chart-card-label">Timeline</div>
+            <div class="chart-card-sub">Trends over time</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="builder-field-wrap">
-      <label class="builder-label">Data Field to Analyze</label>
+    <div class="builder-field-wrap" style="margin-top: 8px;">
+      <label class="builder-label">2. Primary Data Field (X-Axis)</label>
       <select class="builder-select" id="bwField"></select>
     </div>
 
+    <div>
+      <div class="adv-toggle-wrap">
+        <div class="adv-toggle-label">
+          Cross Analysis (Group By)
+          <span class="adv-badge">Pro</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="advToggle" onchange="toggleAdvanced()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="builder-field-wrap" id="secondaryFieldWrap">
+        <label class="builder-label" style="color: var(--cyan);">Secondary Data Field (Legend / Color)</label>
+        <select class="builder-select" id="bwField2" style="border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.03);">
+          <option value="">— Select field —</option>
+        </select>
+      </div>
+    </div>
+
     <div class="builder-field-wrap">
-      <label class="builder-label">Widget Title</label>
-      <input type="text" class="builder-input" id="bwTitle" placeholder="e.g., Department Breakdown" />
+      <label class="builder-label">3. Widget Title</label>
+      <input type="text" class="builder-input" id="bwTitle" placeholder="Leave blank to use field name..." />
     </div>
 
     <div style="display: flex; gap: 10px; margin-top: 10px;">
@@ -1040,7 +1117,7 @@ function renderWidgetContent(widget, rows, headers) {
     // It's a Chart
     const canvasId = `chart_${widget.id}`;
     itemEl.setAttribute('data-chart-id', canvasId);
-    
+    itemEl.setAttribute('data-field', widget.field);
     contentEl.innerHTML = `
       ${removeBtn}
       <div style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(widget.title)}</div>
@@ -1149,40 +1226,82 @@ function calculateFieldStat(fieldLabel, rows, headers) {
 }
 
 /* ── EDIT MODE CONTROLS ─────────────────────────── */
+let _selectedChartType = 'bar'
+
 function toggleEditMode() {
   _isEditing = !_isEditing;
-  
-  _grid.setStatic(!_isEditing); // Unlocks drag & drop
-  
-  // Float true allows you to drag items down into empty space without them bouncing to the top
+  _grid.setStatic(!_isEditing);
   _grid.float(_isEditing); 
-
   document.getElementById('editToolbar').classList.toggle('active', _isEditing);
   document.getElementById('btnEditDashWrap').style.display = _isEditing ? 'none' : 'flex';
   document.getElementById('dashGrid').classList.toggle('grid-edit-mode', _isEditing);
 }
 function openWidgetBuilder() {
-  const sel = document.getElementById('bwField');
-  sel.innerHTML = _data.headers.map(h => `<option value="${escHtml(h)}">${escHtml(h)}</option>`).join('');
+  // Populate the primary dropdown
+  const opts = _data.headers.map(h => `<option value="${escHtml(h)}">${escHtml(h)}</option>`).join('');
+  document.getElementById('bwField').innerHTML = opts;
+  
+  // Populate the secondary dropdown (excluding timestamps/emails if possible)
+  document.getElementById('bwField2').innerHTML = `<option value="">— Select field —</option>` + opts;
+
   document.getElementById('widgetModal').classList.add('open');
 }
 
 function closeWidgetBuilder() {
   document.getElementById('widgetModal').classList.remove('open');
   document.getElementById('bwTitle').value = '';
+  document.getElementById('advToggle').checked = false;
+  toggleAdvanced();
+}
+function selectChartType(type, el) {
+  _selectedChartType = type;
+  
+  // Visual update
+  document.querySelectorAll('.chart-card-option').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+
+  // Disable cross-analysis for Stat Cards and Timelines
+  const advToggle = document.getElementById('advToggle');
+  if (type === 'stat' || type === 'timeline') {
+    advToggle.checked = false;
+    advToggle.disabled = true;
+    advToggle.parentElement.style.opacity = '0.4';
+    toggleAdvanced();
+  } else {
+    advToggle.disabled = false;
+    advToggle.parentElement.style.opacity = '1';
+  }
 }
 
+function toggleAdvanced() {
+  const isChecked = document.getElementById('advToggle').checked;
+  const wrap = document.getElementById('secondaryFieldWrap');
+  if (isChecked) {
+      wrap.classList.add('visible');
+  } else {
+      wrap.classList.remove('visible');
+      document.getElementById('bwField2').value = '';
+  }
+}
 function createWidget() {
-  const type = document.getElementById('bwType').value;
+  const type = _selectedChartType;
   const field = document.getElementById('bwField').value;
+  const secondaryField = document.getElementById('bwField2').value;
   let title = document.getElementById('bwTitle').value.trim();
-  if (!title) title = field; // Fallback to field name
+  
+  if (!title) {
+    title = secondaryField ? `${field} by ${secondaryField}` : field;
+  }
 
   const id = 'w_' + Math.random().toString(36).substr(2, 9);
-  const w = type === 'stat' ? 3 : 6;
-  const h = type === 'stat' ? 2 : 4;
+  
+  // Set sizes based on type
+  let w = 6, h = 4;
+  if (type === 'stat') { w = 3; h = 2; }
+  if (type === 'timeline') { w = 9; h = 4; }
 
-  const widgetData = { id, type, field, title, x: 0, y: 0, w, h };
+  // We are now saving the secondaryField to the widgetData object!
+  const widgetData = { id, type, field, secondaryField, title, x: 0, y: 0, w, h };
   
   _grid.addWidget({ id, x:0, y:0, w, h });
   renderWidgetContent(widgetData, _data.rows, _data.headers);
