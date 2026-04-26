@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Form Builder â€” Honourix</title>
+  <title>Form Builder — Honourix</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -22,7 +22,7 @@
       height: 100vh;
     }
 
-    /* â”€â”€ Shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Shell ───────────────────────────────────────────────────── */
     .hxfb-shell {
       display: flex;
       flex-direction: column;
@@ -30,7 +30,7 @@
       overflow: hidden;
     }
 
-    /* â”€â”€ Topbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Topbar ──────────────────────────────────────────────────── */
     .hxfb-topbar {
       height: 54px;
       flex-shrink: 0;
@@ -257,7 +257,7 @@
       height: 13px;
     }
 
-    /* â”€â”€ 3-column layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── 3-column layout ─────────────────────────────────────────── */
     .hxfb-layout {
       display: grid;
       grid-template-columns: 240px 1fr 340px;
@@ -265,7 +265,7 @@
       overflow: hidden;
     }
 
-    /* â”€â”€ LEFT: Field Layers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── LEFT: Field Layers ──────────────────────────────────────── */
     .hxfb-left {
       border-right: 1px solid rgba(255, 255, 255, 0.08);
       background: rgba(4, 8, 18, 0.65);
@@ -974,7 +974,7 @@
       opacity: 0.3;
     }
 
-    /* â”€â”€ RIGHT PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── RIGHT PANEL ─────────────────────────────────────────────── */
     .hxfb-right {
       border-left: 1px solid rgba(255, 255, 255, 0.08);
       background: rgba(4, 8, 18, 0.65);
@@ -1689,6 +1689,11 @@
       border-top-left-radius: 12px;
       border-top-right-radius: 12px;
       margin-bottom: 24px;
+      padding-top: 18px; /* space below accent bar */
+    }
+    #canvasHeaderCover {
+      border-radius: 0;
+      margin-top: -18px; /* pull up to sit right below accent bar */
     }
     .hxfb-canvas-card-top-accent {
       position: absolute;
@@ -1696,7 +1701,7 @@
       background: var(--grad-primary);
     }
     .hxfb-canvas-title {
-      font-family: var(--canvas-heading-font, var(--font-display));
+      font-family: var(--font-display);
       font-size: 32px;
       font-weight: 700;
       color: var(--text);
@@ -1717,133 +1722,14 @@
       transition: border-color 0.2s;
     }
     .hxfb-canvas-desc:focus { border-color: var(--cyan); }
-
-    /* ── Light-mode builder shell ─────────────────────────────────── */
-    .hxfb-shell.light-mode .hxfb-topbar,
-    .hxfb-shell.light-mode .hxfb-left,
-    .hxfb-shell.light-mode .hxfb-right {
-      background: rgba(255,255,255,0.97);
-      border-color: rgba(0,0,0,0.09);
-    }
-    .hxfb-shell.light-mode .hxfb-center {
-      background: repeating-conic-gradient(rgba(0,0,0,0.025) 0% 25%,transparent 0% 50%) 0 0/24px 24px, #edf0f8;
-    }
-    .hxfb-shell.light-mode .hxfb-canvas-card {
-      background: #fff;
-      border-color: rgba(0,0,0,0.09);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-    }
-    .hxfb-shell.light-mode .hxfb-canvas-title { color: #111827; }
-    .hxfb-shell.light-mode .hxfb-canvas-desc  { color: #6b7280; }
-    .hxfb-shell.light-mode .hxfb-type-btn {
-      background: rgba(0,0,0,0.02);
-      border-color: rgba(0,0,0,0.09);
-      color: #374151;
-    }
-    .hxfb-shell.light-mode .hxfb-type-btn:hover {
-      background: rgba(0,212,255,0.06);
-      color: #111827;
-    }
-    .hxfb-shell.light-mode .hxfb-layer-item .hxfb-layer-lbl { color: #111827; }
-    .hxfb-shell.light-mode .hxfb-input,
-    .hxfb-shell.light-mode .hxfb-select,
-    .hxfb-shell.light-mode .hxfb-option-input {
-      background: rgba(0,0,0,0.04);
-      border-color: rgba(0,0,0,0.12);
-      color: #111827;
-    }
-    .hxfb-shell.light-mode .hxfb-toggle-row {
-      background: rgba(0,0,0,0.03);
-      border-color: rgba(0,0,0,0.08);
-      color: #374151;
-    }
-    .hxfb-shell.light-mode .hxfb-prop-label { color: #6b7280; }
-    .hxfb-shell.light-mode .hxfb-right-tabs,
-    .hxfb-shell.light-mode .hxfb-rtab { color: #6b7280; }
-    .hxfb-shell.light-mode .hxfb-rtab.active { color: var(--cyan); }
-    .hxfb-shell.light-mode .hxfb-layers-hdr { color: #6b7280; border-color: rgba(0,0,0,0.08); }
-    .hxfb-shell.light-mode .hxfb-save-status { color: #6b7280; }
-    .hxfb-shell.light-mode .hxfb-layer-item:hover { background: rgba(0,0,0,0.04); }
-    .hxfb-shell.light-mode .hxfb-layer-item.selected { background: var(--cyan-dim); }
-
-    /* ── Add panel compact type buttons (2-col grid) ──────────────── */
-    #addFieldPanel .hxfb-type-btn {
-      flex-direction: column;
-      padding: 10px 6px;
-      font-size: 11px;
-      gap: 5px;
-      border-radius: 8px;
-      align-items: center;
-      text-align: center;
-      justify-content: center;
-      transform: none !important;
-    }
-    #addFieldPanel .hxfb-type-btn svg {
-      width: 15px;
-      height: 15px;
-    }
-    #addFieldPanel .hxfb-type-btn:hover { transform: none !important; }
-
-    /* ── Page-break separator in canvas ───────────────────────────── */
-    .hxfb-canvas-page-sep {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 8px 0 4px;
-      color: #a78bfa;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: .8px;
-      text-transform: uppercase;
-    }
-    .hxfb-canvas-page-sep::before,
-    .hxfb-canvas-page-sep::after {
-      content: '';
-      flex: 1;
-      height: 2px;
-      background: rgba(124,58,237,0.3);
-      border-radius: 2px;
-    }
-
-    /* ── QR placeholder (resizable) ───────────────────────────────── */
-    .hxfb-qr-placeholder {
-      resize: both;
-      overflow: hidden;
-      min-width: 60px;
-      min-height: 60px;
-      max-width: 260px;
-      position: relative;
-      cursor: nwse-resize;
-    }
-    .hxfb-qr-placeholder::after {
-      content: '';
-      position: absolute;
-      bottom: 4px;
-      right: 4px;
-      width: 8px;
-      height: 8px;
-      border-right: 2px solid rgba(255,255,255,0.5);
-      border-bottom: 2px solid rgba(255,255,255,0.5);
-      pointer-events: none;
-    }
-
-    /* ── Pass canvas card ─────────────────────────────────────────── */
-    .hxfb-canvas-card.pass-card {
-      padding: 0;
-      overflow: hidden;
-    }
-    .hxfb-canvas-card.pass-card [contenteditable]:focus {
-      outline: none;
-      border-bottom-color: rgba(255,255,255,0.4) !important;
-    }
   </style>
 </head>
 
 <body>
-  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">ðŸ–¥ï¸</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
   <div class="hxfb-shell">
 
-    <!-- â”€â”€ Topbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <!-- ── Topbar ────────────────────────────────────────────────── -->
     <header class="hxfb-topbar">
       <button class="hxfb-back" onclick="confirmLeave(event)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1924,85 +1810,96 @@
       </div>
     </header>
 
-    <!-- â”€â”€ 3-column layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <!-- ── 3-column layout ──────────────────────────────────────── -->
     <div class="hxfb-layout">
 
-      <!-- LEFT: Field List + Add Field -->
+      <!-- LEFT: Add Tools -->
       <aside class="hxfb-left">
-        <!-- Field list header -->
-        <div class="hxfb-layers-hdr">
-          <span>Fields</span>
-          <span class="hxfb-layer-count" id="layerCount">0</span>
+        <div class="hxfb-layers-hdr" style="border-bottom:none;">
+          <span style="font-size:12px">Add Tools</span>
         </div>
-        <!-- Draggable field list (rendered by renderLayers) -->
-        <div class="hxfb-layer-list" id="layerList"></div>
-        <!-- Add Field section -->
-        <div class="hxfb-add-section">
-          <button class="hxfb-add-trigger" id="addTriggerBtn" onclick="toggleAddPanel()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Field
-          </button>
-          <div class="hxfb-add-panel" id="addFieldPanel">
-            <div style="padding:6px 8px 10px;overflow-y:auto;max-height:320px;">
-              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">
-                <button class="hxfb-type-btn" onclick="addField('text')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-                  Short Text
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('textarea')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-                  Paragraph
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('email')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
-                  Email
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('phone')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                  Phone
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('number')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
-                  Number
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('date')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  Date
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('time')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  Time
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('dropdown')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18"/><path d="M3 15h18"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
-                  Dropdown
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('radio')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-                  Multiple Choice
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('checkbox')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                  Checkboxes
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('file_upload')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-                  File Upload
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('linear_scale')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  Rating Scale
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('event_pass')" style="grid-column:1/-1;flex-direction:row;justify-content:center;gap:8px;color:#f59e0b;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
-                  Event Entry Pass
-                </button>
-                <button class="hxfb-type-btn" onclick="addField('section_break')" style="grid-column:1/-1;flex-direction:row;justify-content:center;gap:8px;color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg>
-                  Add New Page
-                </button>
-              </div>
-            </div>
+        <div class="hxfb-add-panel open" id="addFieldPanel"
+          style="max-height: none; overflow-y: auto; flex:1; display:flex;">
+          <div class="hxfb-type-grid" style="grid-template-columns: repeat(2, 1fr); padding: 14px 10px;">
+            <button class="hxfb-type-btn" onclick="addField('text')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="4 7 4 4 20 4 20 7" />
+                <line x1="9" y1="20" x2="15" y2="20" />
+                <line x1="12" y1="4" x2="12" y2="20" />
+              </svg>Short Text</button>
+            <button class="hxfb-type-btn" onclick="addField('textarea')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="17" y1="10" x2="3" y2="10" />
+                <line x1="21" y1="6" x2="3" y2="6" />
+                <line x1="21" y1="14" x2="3" y2="14" />
+                <line x1="17" y1="18" x2="3" y2="18" />
+              </svg>Paragraph</button>
+            <button class="hxfb-type-btn" onclick="addField('email')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94" />
+              </svg>Email</button>
+            <button class="hxfb-type-btn" onclick="addField('phone')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>Phone</button>
+            <button class="hxfb-type-btn" onclick="addField('number')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="4" y1="9" x2="20" y2="9" />
+                <line x1="4" y1="15" x2="20" y2="15" />
+                <line x1="10" y1="3" x2="8" y2="21" />
+                <line x1="16" y1="3" x2="14" y2="21" />
+              </svg>Number</button>
+            <button class="hxfb-type-btn" onclick="addField('date')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>Date</button>
+            <button class="hxfb-type-btn" onclick="addField('time')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>Time</button>
+            <button class="hxfb-type-btn" onclick="addField('dropdown')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M3 9h18" />
+                <path d="M3 15h18" />
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>Dropdown</button>
+            <button class="hxfb-type-btn" onclick="addField('radio')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>Multiple Choice</button>
+            <button class="hxfb-type-btn" onclick="addField('checkbox')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>Checkboxes</button>
+            <button class="hxfb-type-btn" onclick="addField('file_upload')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="16 16 12 12 8 16" />
+                <line x1="12" y1="12" x2="12" y2="21" />
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+              </svg>File Upload</button>
+            <button class="hxfb-type-btn" onclick="addField('linear_scale')"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>Rating Scale</button>
+            <button class="hxfb-type-btn" onclick="addField('section_break')"
+              style="grid-column:1/-1;flex-direction:row;justify-content:center;gap:7px;color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:13px;height:13px">
+                <rect x="3" y="3" width="18" height="7" rx="1" />
+                <rect x="3" y="14" width="18" height="7" rx="1" />
+              </svg>
+              Add New Page
+            </button>
           </div>
         </div>
       </aside>
@@ -2014,6 +1911,7 @@
           <div style="width:100%;max-width:680px;flex-shrink:1;min-width:0;pointer-events:auto;" id="hxfbCanvas">
             <div class="hxfb-canvas-card header-card" id="canvasHeaderCard" onclick="switchRTab('settings')">
               <div class="hxfb-canvas-card-top-accent" id="canvasTopAccent"></div>
+              <div id="canvasHeaderCover" style="display:none;margin:-8px -28px 20px;height:160px;background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
               <h1 class="hxfb-canvas-title" id="canvasFormTitle" contenteditable="true" spellcheck="false" onblur="updateSetting('title', this.innerText)">Untitled Form</h1>
               <div class="hxfb-canvas-desc" id="canvasFormDesc" contenteditable="true" spellcheck="false" onblur="updateSetting('description', this.innerText)">Form description...</div>
             </div>
@@ -2110,7 +2008,7 @@
   <script>
     requireAuth();
 
-    /* â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Constants ──────────────────────────────────────────────────── */
     const ACCENT = {
       cyan: 'linear-gradient(135deg,#00d4ff,#7c3aed)',
       purple: 'linear-gradient(135deg,#7c3aed,#a855f7)',
@@ -2124,16 +2022,16 @@
       text: 'type', textarea: 'align-left', email: 'at-sign', phone: 'phone',
       number: 'hash', date: 'calendar', time: 'clock', dropdown: 'chevrons-up-down',
       radio: 'circle-dot', checkbox: 'check-square', file_upload: 'upload-cloud',
-      linear_scale: 'star', section_break: 'layout-template', event_pass: 'ticket',
+      linear_scale: 'star', section_break: 'layout-template',
     };
     const FIELD_LABELS = {
       text: 'Short Text', textarea: 'Paragraph', email: 'Email', phone: 'Phone',
       number: 'Number', date: 'Date', time: 'Time', dropdown: 'Dropdown',
       radio: 'Multiple Choice', checkbox: 'Checkboxes', file_upload: 'File Upload',
-      linear_scale: 'Rating Scale', section_break: 'Page Break', event_pass: 'Entry Pass',
+      linear_scale: 'Rating Scale', section_break: 'Page Break',
     };
 
-    /* â”€â”€ Runtime state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Runtime state ──────────────────────────────────────────────── */
     let selectedId = null;   // selected field id in layers
     let addPanelOpen = false;
     let publishedUrl = null;
@@ -2142,9 +2040,21 @@
     // Preview page state
     let _pv = { page: 0, pages: [], vals: {}, selOpts: {} };
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    /* ════════════════════════════════════════════════════════════════
        BOOT
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    ════════════════════════════════════════════════════════════════ */
+    /* ── Keyboard shortcuts ─────────────────────────────────────────── */
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (_S && _S.save) {
+          setSaveStatus('saving');
+          _S.save();
+          setTimeout(() => setSaveStatus('saved'), 600);
+        }
+      }
+    });
+
     (async function init() {
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
@@ -2154,18 +2064,27 @@
 
       document.getElementById('formNameEl').textContent = state.name || 'Untitled Form';
       updateTopBar();
+      // Render everything after state is loaded
       renderLayers();
-      renderRightPanel();
-      renderPreview();
       renderSettings();
-
-      if (!state.config.fields.length) toggleAddPanel();
-      setSaveStatus('saved');
+      renderRightPanel();
+      // Defer preview render to next frame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        renderPreview();
+        setSaveStatus('saved');
+        // If no fields yet, open the add panel
+        if (!state.config.fields || !state.config.fields.length) {
+          // Don't toggle - just open it
+          addPanelOpen = true;
+          document.getElementById('addFieldPanel').classList.add('open');
+          document.getElementById('addTriggerBtn').classList.add('open');
+        }
+      });
     })();
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    /* ════════════════════════════════════════════════════════════════
        TOPBAR
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    ════════════════════════════════════════════════════════════════ */
     function onNameBlur() {
       const el = document.getElementById('formNameEl');
       const val = el.textContent.trim();
@@ -2183,7 +2102,7 @@
       const dot = document.getElementById('saveDot');
       const txt = document.getElementById('saveStatusTxt');
       dot.className = 'hxfb-save-dot' + (s === 'unsaved' ? ' unsaved' : s === 'saving' ? ' saving' : '');
-      txt.textContent = s === 'saved' ? 'Saved' : s === 'saving' ? 'Savingâ€¦' : 'Unsaved';
+      txt.textContent = s === 'saved' ? 'Saved' : s === 'saving' ? 'Saving…' : 'Unsaved';
     }
 
     function updateTopBar() {
@@ -2199,7 +2118,7 @@
 
       badge.style.display = isLive ? '' : 'none';
       if (isLive) {
-        badge.textContent = status === 'published' ? 'â— Published' : 'â— Closed';
+        badge.textContent = status === 'published' ? '● Published' : '● Closed';
         badge.className = 'hxfb-status-badge ' + status;
       }
 
@@ -2278,16 +2197,14 @@
       btn.disabled = false;
     }
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       LEFT PANEL â€” Draggable Layers
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ════════════════════════════════════════════════════════════════
+       LEFT PANEL — Draggable Layers
+    ════════════════════════════════════════════════════════════════ */
     function renderLayers() {
       const fields = _S.config?.fields || [];
       const list = document.getElementById('layerList');
-      const countEl = document.getElementById('layerCount');
-      if (countEl) countEl.textContent = fields.filter(f => f.type !== 'section_break' && f.type !== 'event_pass').length;
+      document.getElementById('layerCount').textContent = fields.filter(f => f.type !== 'section_break').length;
 
-      if (!list) return;
       if (!fields.length) {
         list.innerHTML = `
       <div class="hxfb-layers-empty">
@@ -2312,13 +2229,13 @@
            ondragover="onDragOver(event,'${f.id}')"
            ondragleave="onDragLeave(event,'${f.id}')"
            ondrop="onDrop(event,'${f.id}')">
-        <span class="hxfb-drag-handle" ondragstart="event.stopPropagation()" onclick="event.stopPropagation()">â ¿</span>
+        <span class="hxfb-drag-handle" ondragstart="event.stopPropagation()" onclick="event.stopPropagation()">⠿</span>
         <div class="hxfb-layer-icon ${f.type}">
           <i data-lucide="${icon}"></i>
         </div>
         <div class="hxfb-layer-info">
           <div class="hxfb-layer-lbl">
-            ${f.required ? '<span class="hxfb-layer-req">*</span>' : ''}${f.label || (isPB ? 'â€” New Page â€”' : 'Untitled')}
+            ${f.required ? '<span class="hxfb-layer-req">*</span>' : ''}${f.label || (isPB ? '— New Page —' : 'Untitled')}
           </div>
           <div class="hxfb-layer-sub">${label}</div>
         </div>
@@ -2333,10 +2250,16 @@
       renderLayers();
       switchRTab('field');
       renderRightPanel();
-      renderPreview(); // Instantly highlight the active Canvas Card!
+      // Update active state on canvas cards without full re-render
+      document.querySelectorAll('.hxfb-canvas-card').forEach(card => {
+        const cid = card.id?.replace('canvas-card-', '');
+        card.classList.toggle('active', cid === id);
+      });
+      // Scroll the selected card into view
+      document.getElementById('canvas-card-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    /* â”€â”€ Drag & Drop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Drag & Drop ────────────────────────────────────────────────── */
     let _dragId = null;
 
     function onDragStart(e, id) {
@@ -2372,8 +2295,12 @@
       const toIdx = fields.findIndex(f => f.id === targetId);
       if (fromIdx < 0 || toIdx < 0) { cleanDrag(); return; }
       const item = fields.splice(fromIdx, 1)[0];
-      const newIdx = toIdx + (isTop ? 0 : 1) - (fromIdx < toIdx ? 0 : 0);
-      fields.splice(fromIdx < toIdx ? (isTop ? toIdx : toIdx + 1) - 1 : (isTop ? toIdx : toIdx + 1), 0, item);
+      // After removing fromIdx, the toIdx shifts if fromIdx < toIdx
+      let insertAt = toIdx;
+      if (fromIdx < toIdx) insertAt = isTop ? toIdx - 1 : toIdx;
+      else insertAt = isTop ? toIdx : toIdx + 1;
+      insertAt = Math.max(0, Math.min(insertAt, fields.length));
+      fields.splice(insertAt, 0, item);
       _S.dirty = true; _S.save();
       setSaveStatus('unsaved');
       cleanDrag();
@@ -2388,7 +2315,7 @@
       });
     }
 
-    /* â”€â”€ Add field panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Add field panel ─────────────────────────────────────────────── */
     function toggleAddPanel() {
       addPanelOpen = !addPanelOpen;
       document.getElementById('addFieldPanel').classList.toggle('open', addPanelOpen);
@@ -2396,37 +2323,28 @@
     }
 
     function addField(type) {
-      // Prevent duplicate event_pass
-      if (type === 'event_pass' && (_S.config.fields || []).some(f => f.type === 'event_pass')) {
-        toast('Only one Entry Pass per form is allowed.', 'warn'); return;
-      }
       const field = _S.addField(type);
       if (!field) return;
       selectedId = field.id;
       setSaveStatus('unsaved');
       addPanelOpen = false;
-      const ap = document.getElementById('addFieldPanel');
-      if (ap) ap.classList.remove('open');
-      const tb = document.getElementById('addTriggerBtn');
-      if (tb) tb.classList.remove('open');
-      // If adding event_pass, enable pass in settings
-      if (type === 'event_pass') {
-        if (!_S.config.settings) _S.config.settings = {};
-        _S.config.settings.passEnabled = true;
-        _S.save();
-      }
+      document.getElementById('addFieldPanel').classList.remove('open');
+      document.getElementById('addTriggerBtn').classList.remove('open');
       renderLayers();
       switchRTab('field');
       renderRightPanel();
-      renderPreview();
-      setTimeout(() => {
-        document.getElementById('li-' + field.id)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        document.getElementById('canvas-card-' + field.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 80);
+      renderPreview(); // Full render since this is a structural add
+      // Smoothly scroll both the left layers list and the center canvas to the new field
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          document.getElementById('li-' + field.id)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          document.getElementById('canvas-card-' + field.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 60);
+      });
     }
 
     /*=======================================================
-       RIGHT PANEL â€” Field Editor + Settings
+       RIGHT PANEL — Field Editor + Settings
    ========================================================= */
     function switchRTab(tab) {
       rightTab = tab;
@@ -2458,15 +2376,11 @@
       lucide.createIcons();
     }
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    /* ════════════════════════════════════════════════════════════════
        FIELD EDITOR (renders inside right panel)
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    ════════════════════════════════════════════════════════════════ */
     function fieldEditor(f, idx, total) {
       const id = f.id;
-
-      // event_pass has its own full editor
-      if (f.type === 'event_pass') return renderPassFieldEditor(f, idx, total);
-
       let html = `
       <div class="hxfb-prop" >
       <label class="hxfb-prop-label">Field Label</label>
@@ -2510,7 +2424,7 @@
       <div class="hxfb-prop" >
           <label class="hxfb-prop-label" style="display:flex;justify-content:space-between;align-items:center">
             Options
-            <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);font-size:10.5px">Label &nbsp;Â·&nbsp; Cap (seats)</span>
+            <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);font-size:10.5px">Label &nbsp;·&nbsp; Cap (seats)</span>
           </label>
           <div class="hxfb-options-list">
             ${opts.map((o, i) => `
@@ -2519,8 +2433,8 @@
                        oninput="updateOpt('${id}',${i},this.value)" placeholder="Option ${i + 1}"/>
                 <input class="hxfb-option-input" type="number" min="1"
                        style="width:66px;flex-shrink:0;text-align:center"
-                       value="${(f.optionCaps || [])[i] || ''}" placeholder="âˆž"
-                       title="Seat cap â€” leave blank for unlimited"
+                       value="${(f.optionCaps || [])[i] || ''}" placeholder="∞"
+                       title="Seat cap — leave blank for unlimited"
                        oninput="updateOptCap('${id}',${i},this.value?+this.value:null)"/>
                 <button class="hxfb-option-del" onclick="removeOpt('${id}',${i})" ${opts.length <= 1 ? 'disabled style="opacity:.3"' : ''}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -2557,8 +2471,8 @@
         <div class="hxfb-prop">
           <label class="hxfb-prop-label">Display Style</label>
           <select class="hxfb-select" onchange="updateFP('${id}','style',this.value)">
-            <option value="stars"   ${f.style === 'stars' ? 'selected' : ''}>â˜… Stars</option>
-            <option value="numbers" ${f.style === 'numbers' ? 'selected' : ''}>1â€“${f.max || 5} Numbers</option>
+            <option value="stars"   ${f.style === 'stars' ? 'selected' : ''}>★ Stars</option>
+            <option value="numbers" ${f.style === 'numbers' ? 'selected' : ''}>1–${f.max || 5} Numbers</option>
           </select>
         </div>`;
         }
@@ -2619,20 +2533,100 @@
       return html;
     }
 
+    /* ── Targeted canvas update helpers (avoid full re-render while editing) ── */
+    function renderLayersLabels() {
+      // Update only the layer list labels without full re-render
+      const fields = _S.config?.fields || [];
+      document.getElementById('layerCount').textContent = fields.filter(f => f.type !== 'section_break').length;
+      fields.forEach(f => {
+        const el = document.getElementById('li-' + f.id);
+        if (el) {
+          const lbl = el.querySelector('.hxfb-layer-lbl');
+          if (lbl) lbl.innerHTML = (f.required ? '<span class="hxfb-layer-req">*</span>' : '') + (f.label || (f.type === 'section_break' ? '— New Page —' : 'Untitled'));
+        }
+      });
+    }
+    function renderCanvasCardById(id) {
+      const fields = _S.config?.fields || [];
+      const f = fields.find(x => x.id === id);
+      if (!f) return;
+      const idx = fields.indexOf(f);
+      const card = document.getElementById('canvas-card-' + id);
+      if (!card) {
+        // Card doesn't exist yet, do full render
+        renderPreview(); return;
+      }
+      // Only replace this one card (avoid disturbing others being edited)
+      const newHtml = renderCanvasCard(f, idx);
+      const tmp = document.createElement('div');
+      tmp.innerHTML = newHtml;
+      const newCard = tmp.firstElementChild;
+      if (newCard) {
+        card.replaceWith(newCard);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    }
+    function renderPreviewHeader() {
+      // Update only the header portion of the canvas
+      const s = _S.config?.settings || {};
+      const th = _S.config?.theme || {};
+      const titleEl = document.getElementById('canvasFormTitle');
+      const descEl = document.getElementById('canvasFormDesc');
+      const accentEl = document.getElementById('canvasTopAccent');
+      const coverEl = document.getElementById('canvasHeaderCover');
+      if (titleEl && document.activeElement !== titleEl) titleEl.innerText = s.title || _S.name || 'Untitled Form';
+      if (descEl && document.activeElement !== descEl) {
+        if (s.description) {
+          descEl.innerHTML = s.description;
+        } else {
+          descEl.innerText = 'Form description...';
+        }
+      }
+      if (accentEl) accentEl.style.background = ACCENT[th.color] || ACCENT.cyan;
+      // Cover image — uses the static placeholder div in the header card HTML
+      if (coverEl) {
+        if (s.coverImage) {
+          coverEl.style.backgroundImage = 'url(' + JSON.stringify(s.coverImage) + ')';
+          coverEl.style.display = 'block';
+        } else {
+          coverEl.style.display = 'none';
+        }
+      }
+    }
+
+    /* ── Cover image upload helper ─────────────────────────────────── */
+    function handleCoverImageUpload(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        updateSetting('coverImage', dataUrl);
+        // Update URL input if visible
+        const urlInput = document.getElementById('coverImageInput');
+        if (urlInput) urlInput.value = '(Uploaded image)';
+        // Re-render settings to show the Remove button
+        renderSettings();
+      };
+      reader.readAsDataURL(file);
+    }
+
     /* ── Field update helpers ───────────────────────────────────────── */
     function updateFP(id, prop, value) {
       _S.updateField(id, { [prop]: value });
       setSaveStatus('unsaved');
-      renderLayers();
-      if (selectedId === id) renderRightPanel(); // TWO-WAY SYNC SIDEBAR
-      renderPreview();
+      // Don't call renderRightPanel() here - it would reset input cursor while typing
+      // Instead, just update the layers count and canvas card directly
+      renderLayersLabels();
+      renderCanvasCardById(id);
     }
     function updateFPNested(id, obj, prop, value) {
       const field = _S.config.fields.find(f => f.id === id);
       if (!field) return;
       _S.updateField(id, { [obj]: { ...(field[obj] || {}), [prop]: value } });
       setSaveStatus('unsaved');
-      renderPreview();
+      renderCanvasCardById(id);
     }
     function toggleReq(id) {
       const field = _S.config.fields.find(f => f.id === id);
@@ -2665,8 +2659,8 @@
       const opts = [...(field.options || [])]; opts[idx] = value;
       _S.updateField(id, { options: opts });
       setSaveStatus('unsaved');
-      if (selectedId === id) renderRightPanel(); // TWO-WAY SYNC SIDEBAR
-      renderPreview();
+      // Don't re-render right panel while user is typing - causes cursor loss
+      renderCanvasCardById(id);
     }
     function updateOptCap(id, idx, value) {
       const field = _S.config.fields.find(f => f.id === id);
@@ -2692,13 +2686,8 @@
       renderPreview();
     }
     function delFP(id) {
-      const field = _S.config.fields.find(f => f.id === id);
       _S.deleteField(id);
       if (selectedId === id) selectedId = null;
-      // Disable pass in settings when event_pass field is removed
-      if (field?.type === 'event_pass') {
-        _S.updateSettings({ passEnabled: false });
-      }
       setSaveStatus('unsaved');
       renderLayers();
       renderRightPanel();
@@ -2708,8 +2697,9 @@
       if(!_S.config.settings) _S.config.settings = {}; // Fallback protection
       _S.updateSettings({ [key]: value });
       setSaveStatus('unsaved');
-      renderSettings(); // TWO-WAY SYNC SIDEBAR
-      renderPreview();
+      // Don't call renderSettings() here - it would reset input cursor while typing
+      // Only update the canvas preview
+      renderPreviewHeader();
       
       // LIVE SYNC TOP BAR DOCUMENT TITLE
       if (key === 'title') {
@@ -2765,9 +2755,9 @@
       renderPreview();
     }
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    /* ════════════════════════════════════════════════════════════════
        SETTINGS (renders in right settings tab)
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    ════════════════════════════════════════════════════════════════ */
     function renderSettings() {
       const s = _S.config?.settings || {};
       const th = _S.config?.theme || {};
@@ -2790,8 +2780,8 @@
           <div class="hxfb-rte-bar">
             <button class="hxfb-rte-btn" title="Bold"          onmousedown="event.preventDefault();document.execCommand('bold')"><strong>B</strong></button>
             <button class="hxfb-rte-btn" title="Italic"        onmousedown="event.preventDefault();document.execCommand('italic')"><em>I</em></button>
-            <button class="hxfb-rte-btn" title="Bullet list"   onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">â‰¡</button>
-            <button class="hxfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">â‘ </button>
+            <button class="hxfb-rte-btn" title="Bullet list"   onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">≡</button>
+            <button class="hxfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">①</button>
           </div>
           <div class="hxfb-rte-body" contenteditable="true" id="descRTE"
                oninput="updateSetting('description', this.innerHTML)"
@@ -2808,8 +2798,16 @@
       <div class="hxfb-settings-sec-title">Appearance</div>
       <div class="hxfb-prop">
         <label class="hxfb-prop-label">Cover Image URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
-        <input class="hxfb-input" type="url" value="${escAttr(s.coverImage || '')}"
-               oninput="updateSetting('coverImage',this.value)" placeholder="https://â€¦ displayed above form title"/>
+        <input class="hxfb-input" type="url" id="coverImageInput" value="${escAttr(s.coverImage || '')}"
+               oninput="updateSetting('coverImage',this.value)" placeholder="https://… or upload below"/>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+          <label style="cursor:pointer;padding:6px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:6px;font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            Upload Image
+            <input type="file" accept="image/*" style="display:none" onchange="handleCoverImageUpload(event)">
+          </label>
+          ${s.coverImage ? `<button onclick="updateSetting('coverImage','');document.getElementById('coverImageInput').value=''" style="padding:6px 10px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);border-radius:6px;color:var(--red);font-size:12px;cursor:pointer;">Remove</button>` : ''}
+        </div>
       </div>
       <div class="hxfb-prop">
         <label class="hxfb-prop-label">Heading Font</label>
@@ -2837,7 +2835,7 @@
       </div>
       <div class="hxfb-prop">
         <label class="hxfb-prop-label">Redirect URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
-        <input class="hxfb-input" type="url" value="${escAttr(s.redirectUrl || '')}" oninput="updateSetting('redirectUrl',this.value)" placeholder="https://â€¦"/>
+        <input class="hxfb-input" type="url" value="${escAttr(s.redirectUrl || '')}" oninput="updateSetting('redirectUrl',this.value)" placeholder="https://…"/>
       </div>
     </div>
 
@@ -2879,8 +2877,8 @@
     <div class="hxfb-settings-section">
       <details${s.passEnabled ? ' open' : ''}>
         <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:4px 0;user-select:none">
-          <div class="hxfb-settings-sec-title" style="margin-bottom:0">ðŸŽ« Entry Pass &amp; Attendance</div>
-          <span style="font-size:11px;color:var(--text-3)">${s.passEnabled ? 'â–²' : 'â–¼'}</span>
+          <div class="hxfb-settings-sec-title" style="margin-bottom:0">🎫 Entry Pass &amp; Attendance</div>
+          <span style="font-size:11px;color:var(--text-3)">${s.passEnabled ? '▲' : '▼'}</span>
         </summary>
         <div style="padding-top:14px">
           <div class="hxfb-prop">
@@ -2937,19 +2935,19 @@
           </div>
           <div class="hxfb-prop">
             <label class="hxfb-prop-label">Logo URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
-            <input class="hxfb-input" type="url" value="${escAttr(s.passLogoUrl || '')}" oninput="updateSetting('passLogoUrl',this.value)" placeholder="https://â€¦"/>
+            <input class="hxfb-input" type="url" value="${escAttr(s.passLogoUrl || '')}" oninput="updateSetting('passLogoUrl',this.value)" placeholder="https://…"/>
           </div>
           <div class="hxfb-prop">
             <label class="hxfb-prop-label">Name Field</label>
             <select class="hxfb-select" onchange="updateSetting('passNameField',this.value)">
-              <option value="">â€” Select field â€”</option>
+              <option value="">— Select field —</option>
               ${(_S.config?.fields || []).filter(f => f.type !== 'section_break').map(f => `<option value="${escAttr(f.id)}"${s.passNameField === f.id ? ' selected' : ''}>${escAttr(f.label || f.id)}</option>`).join('')}
             </select>
           </div>
           <div class="hxfb-prop">
             <label class="hxfb-prop-label">Email Field</label>
             <select class="hxfb-select" onchange="updateSetting('passEmailField',this.value)">
-              <option value="">â€” Select field â€”</option>
+              <option value="">— Select field —</option>
               ${(_S.config?.fields || []).filter(f => f.type !== 'section_break').map(f => `<option value="${escAttr(f.id)}"${s.passEmailField === f.id ? ' selected' : ''}>${escAttr(f.label || f.id)}</option>`).join('')}
             </select>
           </div>
@@ -2965,7 +2963,7 @@
           ${s.passStaffCode ? `
           <div class="hxfb-prop">
             <label class="hxfb-prop-label">Staff Scanner Code</label>
-            <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">Share with event volunteers â€” they enter this to access the scanner</div>
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">Share with event volunteers — they enter this to access the scanner</div>
             <div style="display:flex;align-items:center;gap:8px">
               <div style="flex:1;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-radius:8px;padding:10px 14px;font-family:var(--font-mono,monospace);font-size:20px;font-weight:700;letter-spacing:5px;color:var(--cyan);text-align:center">${escAttr(s.passStaffCode)}</div>
               <button id="passCodeCopyBtn" class="hxfb-tb-btn" onclick="copyPassCode()" style="padding:10px 14px">Copy</button>
@@ -2978,141 +2976,9 @@
     </div>`;
     }
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    /* ════════════════════════════════════════════════════════════════
        CONDITION LOGIC EDITOR
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-    function renderPassFieldEditor(f, idx, total) {
-      const fields = _S.config?.fields || [];
-      const nonPass = fields.filter(ff => ff.type !== 'section_break' && ff.type !== 'event_pass');
-      const sc = f.passStaffCode || '';
-      return `
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Field Label</label>
-        <input class="hxfb-input" value="${escAttr(f.label || 'Entry Pass')}" oninput="updateFP('${f.id}','label',this.value)" placeholder="Entry Pass"/>
-      </div>
-
-      <div class="hxfb-settings-sec-title" style="margin-top:18px;margin-bottom:10px">🎟 Event Details</div>
-
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Event Name</label>
-        <input class="hxfb-input" value="${escAttr(f.passEventName || '')}" oninput="updateFP('${f.id}','passEventName',this.value)" placeholder="e.g. Tech Fest 2026"/>
-      </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Subtitle / Instruction</label>
-        <input class="hxfb-input" value="${escAttr(f.passSubtitle || 'Present this pass at the venue entrance')}" oninput="updateFP('${f.id}','passSubtitle',this.value)"/>
-      </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Venue</label>
-        <input class="hxfb-input" value="${escAttr(f.passVenue || '')}" oninput="updateFP('${f.id}','passVenue',this.value)" placeholder="e.g. Auditorium Block A"/>
-      </div>
-      <div class="hxfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div>
-          <label class="hxfb-prop-label">Date</label>
-          <input class="hxfb-input" type="date" value="${escAttr(f.passDate || '')}" oninput="updateFP('${f.id}','passDate',this.value)"/>
-        </div>
-        <div>
-          <label class="hxfb-prop-label">Time</label>
-          <input class="hxfb-input" type="time" value="${escAttr(f.passTime || '')}" oninput="updateFP('${f.id}','passTime',this.value)"/>
-        </div>
-      </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Entry Rules <span style="color:var(--text-3);font-weight:400;text-transform:none">(one per line)</span></label>
-        <textarea class="hxfb-input" rows="3" style="resize:vertical;font-family:var(--font);font-size:12.5px"
-          placeholder="No outside food&#10;Carry valid ID&#10;One entry per pass"
-          oninput="updateFP('${f.id}','passRules',this.value.split('\\n').filter(l=>l.trim()))">${escAttr((f.passRules || []).join('\n'))}</textarea>
-      </div>
-
-      <div class="hxfb-settings-sec-title" style="margin-top:18px;margin-bottom:10px">🎨 Pass Styling</div>
-
-      <div class="hxfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div>
-          <label class="hxfb-prop-label">Banner BG</label>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-            <input type="color" value="${escAttr(f.passBannerColor || '#12172a')}"
-              onchange="updateFP('${f.id}','passBannerColor',this.value)"
-              style="width:32px;height:32px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-            <span style="font-size:10px;color:var(--text-3)">${escAttr(f.passBannerColor || '#12172a')}</span>
-          </div>
-        </div>
-        <div>
-          <label class="hxfb-prop-label">Text Color</label>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-            <input type="color" value="${escAttr(f.passTextColor || '#ffffff')}"
-              onchange="updateFP('${f.id}','passTextColor',this.value)"
-              style="width:32px;height:32px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-            <span style="font-size:10px;color:var(--text-3)">${escAttr(f.passTextColor || '#ffffff')}</span>
-          </div>
-        </div>
-      </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Accent Color</label>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-          <input type="color" value="${escAttr(f.passAccentColor || '#00d4ff')}"
-            onchange="updateFP('${f.id}','passAccentColor',this.value)"
-            style="width:32px;height:32px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-          <span style="font-size:10px;color:var(--text-3)">${escAttr(f.passAccentColor || '#00d4ff')}</span>
-        </div>
-      </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">QR Code Size — ${f.passQrSize || 140}px</label>
-        <input type="range" min="80" max="240" step="10" value="${f.passQrSize || 140}"
-          style="width:100%;margin-top:6px;accent-color:var(--cyan)"
-          oninput="updateFP('${f.id}','passQrSize',+this.value);this.previousElementSibling.textContent='QR Code Size — '+this.value+'px'"/>
-      </div>
-
-      <div class="hxfb-settings-sec-title" style="margin-top:18px;margin-bottom:10px">🔗 Attendee Data Mapping</div>
-
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Name Field</label>
-        <select class="hxfb-select" onchange="updateFP('${f.id}','passNameField',this.value)">
-          <option value="">— Select field —</option>
-          ${nonPass.map(ff => `<option value="${escAttr(ff.id)}"${f.passNameField === ff.id ? ' selected' : ''}>${escAttr(ff.label || ff.id)}</option>`).join('')}
-        </select>
-      </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Email Field</label>
-        <select class="hxfb-select" onchange="updateFP('${f.id}','passEmailField',this.value)">
-          <option value="">— Select field —</option>
-          ${nonPass.map(ff => `<option value="${escAttr(ff.id)}"${f.passEmailField === ff.id ? ' selected' : ''}>${escAttr(ff.label || ff.id)}</option>`).join('')}
-        </select>
-      </div>
-
-      <div class="hxfb-settings-sec-title" style="margin-top:18px;margin-bottom:10px">🏟 Attendance Tracking</div>
-
-      <div class="hxfb-prop">
-        <div class="hxfb-toggle-row">
-          <div>
-            <div style="font-size:13px;color:var(--text)">Show Attendance Columns in Sheet</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px">Adds Pass Token, Status, Check-in columns</div>
-          </div>
-          <div class="hxfb-toggle${f.passShowAttendance ? ' on' : ''}" onclick="togglePassAttendance('${f.id}',${!f.passShowAttendance})"></div>
-        </div>
-      </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Staff Scanner Code</label>
-        <div style="font-size:11px;color:var(--text-3);margin-bottom:8px">Share with event volunteers — they enter this to access the scanner</div>
-        ${sc ? `
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div style="flex:1;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:20px;font-weight:700;letter-spacing:5px;color:var(--cyan);text-align:center">${escAttr(sc)}</div>
-          <button class="hxfb-tb-btn" onclick="copyPassCode2('${f.id}')" style="padding:10px 14px">Copy</button>
-        </div>` : ''}
-        <button class="hxfb-tb-btn" onclick="genPassCode('${f.id}')" style="width:100%;justify-content:center">${sc ? '🔄 Regenerate Code' : '⚡ Generate Code'}</button>
-      </div>`;
-    }
-
-    function togglePassAttendance(id, val) {
-      updateFP(id, 'passShowAttendance', val);
-    }
-    function genPassCode(id) {
-      const code = Math.random().toString(36).substring(2,8).toUpperCase();
-      updateFP(id, 'passStaffCode', code);
-    }
-    function copyPassCode2(id) {
-      const f = (_S.config?.fields || []).find(ff => ff.id === id);
-      if (!f?.passStaffCode) return;
-      navigator.clipboard.writeText(f.passStaffCode).then(() => toast('Code copied!', 'ok')).catch(() => toast('Copy failed', 'err'));
-    }
-
+    ════════════════════════════════════════════════════════════════ */
     function renderConditionsEditor(field, allFields) {
       const idx = allFields.findIndex(f => f.id === field.id);
       const prevFields = allFields.slice(0, idx).filter(f => f.type !== 'section_break');
@@ -3136,7 +3002,7 @@
         </div>
       ${
       conditions.length === 0
-      ? `<div class="hxfb-cond-always">Always visible â€” no conditions set.</div>`
+      ? `<div class="hxfb-cond-always">Always visible — no conditions set.</div>`
       : `<div id="condlist-${field.id}">
             ${conditions.map(c => renderCondRow(c, field.id, prevFields)).join('')}
           </div>
@@ -3173,7 +3039,7 @@
       ${needsVal
               ? srcOpts.length
                 ? `<select class="hxfb-select" onchange="updateCond('${fieldId}','${cond.id}','value',this.value)">
-               <option value="">â€” pick â€”</option>
+               <option value="">— pick —</option>
                ${srcOpts.map(o => `<option value="${escAttr(o)}" ${o === cond.value ? 'selected' : ''}>${escHtml(o)}</option>`).join('')}
              </select>`
                 : `<input class="hxfb-input" value="${escAttr(cond.value || '')}" placeholder="value"
@@ -3221,9 +3087,9 @@
       setSaveStatus('unsaved');
     }
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       CENTER â€” Interactive Preview with Pages
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ════════════════════════════════════════════════════════════════
+       CENTER — Interactive Preview with Pages
+    ════════════════════════════════════════════════════════════════ */
     function buildPvPages() {
       const fields = _S.config?.fields || [];
       _pv.pages = [];
@@ -3241,71 +3107,48 @@
       if (_pv.page >= _pv.pages.length) _pv.page = 0;
     }
 
-    function applyFonts(th) {
-      th = th || _S.config?.theme || {};
-      const fonts = [th.headingFont, th.bodyFont].filter(f => f && f !== 'inherit' && f !== 'Plus Jakarta Sans');
-      if (fonts.length) {
-        const id = 'hxfb-gfont-' + fonts.join('-').replace(/\s+/g,'');
-        if (!document.getElementById(id)) {
-          const link = document.createElement('link');
-          link.id = id; link.rel = 'stylesheet';
-          link.href = 'https://fonts.googleapis.com/css2?family=' + fonts.map(f => encodeURIComponent(f) + ':wght@400;600;700').join('&family=') + '&display=swap';
-          document.head.appendChild(link);
-        }
-      }
-      const canvasEl = document.getElementById('hxfbCanvas');
-      if (!canvasEl) return;
-      if (th.headingFont) canvasEl.style.setProperty('--canvas-heading-font', `"${th.headingFont}", sans-serif`);
-      else canvasEl.style.removeProperty('--canvas-heading-font');
-      if (th.bodyFont) canvasEl.style.setProperty('--canvas-body-font', `"${th.bodyFont}", sans-serif`);
-      else canvasEl.style.removeProperty('--canvas-body-font');
-    }
-
     function renderPreview() {
       if (!_S.config) return;
-
-      // Apply light-mode class to builder shell
-      const shell = document.querySelector('.hxfb-shell');
-      if (shell) {
-        const isLight = !!_S.config.theme?.lightMode;
-        shell.classList.toggle('light-mode', isLight);
-      }
-
-      // Apply fonts
-      applyFonts(_S.config.theme || {});
-
-      // 1. Sync Header Card
-      const titleEl = document.getElementById('canvasFormTitle');
-      const descEl = document.getElementById('canvasFormDesc');
-      const accentEl = document.getElementById('canvasTopAccent');
       
-      const titleText = _S.config.settings?.title || _S.name || 'Untitled Form';
-      const descText = _S.config.settings?.description || 'Form description...';
+      // 1. Sync Header Card (title, description, accent, cover image)
+      renderPreviewHeader();
 
-      if (titleEl && document.activeElement !== titleEl) titleEl.innerText = titleText;
-      if (descEl && document.activeElement !== descEl) descEl.innerText = descText;
-      
-      if (accentEl) {
-         const th = _S.config.theme || {};
-         accentEl.style.background = ACCENT[th.color] || ACCENT.cyan;
-      }
-
-      // 2. Render Field Cards
+      // 2. Render Field Cards (guard: don't destroy active contenteditable)
       const wrap = document.getElementById('canvasFieldsWrap');
       if (wrap) {
-        const fields = _S.config.fields || [];
-        if (!fields.length) {
-          wrap.innerHTML = `
-            <div style="text-align:center; padding: 50px 20px; color: var(--text-3); font-size: 14.5px; border: 2px dashed var(--glass-b); border-radius: 12px; background: rgba(255,255,255,0.01);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:32px;height:32px;margin-bottom:12px;opacity:0.5;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><br>
-              Field cards will appear here.<br>Click a tool on the left to add one!
-            </div>`;
+        // Check if any canvas card element is currently being edited
+        const activeEl = document.activeElement;
+        const isEditingCanvas = wrap.contains(activeEl) && activeEl !== wrap;
+        
+        if (isEditingCanvas) {
+          // Only update non-focused cards to avoid cursor loss
+          const fields = _S.config.fields || [];
+          fields.forEach((f, i) => {
+            const card = document.getElementById('canvas-card-' + f.id);
+            if (card && !card.contains(activeEl)) {
+              const tmp = document.createElement('div');
+              tmp.innerHTML = renderCanvasCard(f, i);
+              const newCard = tmp.firstElementChild;
+              if (newCard) card.replaceWith(newCard);
+            }
+          });
         } else {
-          wrap.innerHTML = fields.map((f, i) => renderCanvasCard(f, i)).join('');
+          const fields = _S.config.fields || [];
+          if (!fields.length) {
+            wrap.innerHTML = `
+              <div style="text-align:center; padding: 50px 20px; color: var(--text-3); font-size: 14.5px; border: 2px dashed rgba(255,255,255,0.08); border-radius: 12px; background: rgba(255,255,255,0.01);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:32px;height:32px;margin-bottom:12px;opacity:0.5;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><br>
+                Field cards will appear here.<br>Click a tool on the left to add one!
+              </div>`;
+          } else {
+            wrap.innerHTML = fields.map((f, i) => renderCanvasCard(f, i)).join('');
+          }
         }
       }
       
       renderBuilderPass();
+      // Re-initialize any lucide icons that may have been added
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     function renderCanvasCard(f, idx) {
@@ -3335,99 +3178,22 @@
           <div style="display:flex; gap:10px;">${Array.from({length: f.max||5}, (_, i) => `<div style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(255,255,255,0.03);">${i+1}</div>`).join('')}</div>
           <span style="font-size:13px; color:var(--text-3); padding-bottom:6px">${escHtml(f.maxLabel || 'Excellent')}</span>
         </div>`;
-      } else if (f.type === 'event_pass') {
-        return renderPassCanvasCard(f, isSel);
       } else if (f.type === 'section_break') {
-        return `
-        <div class="hxfb-canvas-page-sep">New Page</div>
-        <div class="hxfb-canvas-card ${isSel ? 'active' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')" style="padding:0;overflow:hidden;border-color:rgba(124,58,237,0.3);background:rgba(124,58,237,0.04)">
-          <div style="background:rgba(124,58,237,0.12);padding:9px 24px;border-bottom:1px solid rgba(124,58,237,0.25);color:#a78bfa;font-size:10px;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg>
-            PAGE BREAK — NEW SECTION
-          </div>
-          <div style="padding:24px 28px;">
-            <div style="font-size:20px;font-weight:700;color:var(--text);outline:none;margin-bottom:8px;border-bottom:1px solid transparent;min-height:28px"
-                 contenteditable="true" spellcheck="false" onclick="event.stopPropagation()"
-                 onfocus="this.style.borderBottomColor='var(--cyan)'"
-                 onblur="this.style.borderBottomColor='transparent';updateFP('${f.id}','label',this.innerText)">${escHtml(f.label || 'New Section Title')}</div>
-            <div style="font-size:13px;color:var(--text-2);outline:none;border-bottom:1px solid transparent;min-height:20px"
-                 contenteditable="true" spellcheck="false" onclick="event.stopPropagation()"
-                 onfocus="this.style.borderBottomColor='var(--cyan)'"
-                 onblur="this.style.borderBottomColor='transparent';updateFP('${f.id}','description',this.innerText)">${escHtml(f.description || 'Section description (optional)')}</div>
+        return `<div class="hxfb-canvas-card ${isSel ? 'active' : ''}" onclick="selectLayer('${f.id}')" id="canvas-card-${f.id}" style="padding:0; overflow:hidden;">
+          <div style="background:rgba(124,58,237,0.15); padding:10px 24px; border-bottom:1px solid rgba(124,58,237,0.3); color:#a78bfa; font-size:11px; font-weight:700; letter-spacing:1px">PAGE BREAK</div>
+          <div style="padding:28px;">
+            <div style="font-size:20px; font-weight:700; color:var(--text); outline:none; margin-bottom:8px; border-bottom:1px solid transparent;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'label', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.label || 'Untitled Page')}</div>
+            <div style="font-size:13px; color:var(--text-2); outline:none; border-bottom:1px solid transparent;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'description', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.description || 'Description (optional)')}</div>
           </div>
         </div>`;
       }
 
       return `
         <div class="hxfb-canvas-card ${isSel ? 'active' : ''}" onclick="selectLayer('${f.id}')" id="canvas-card-${f.id}">
-          <div style="font-family:var(--canvas-heading-font,var(--font-display)); font-size:17px; font-weight:600; color:var(--text); margin-bottom:20px; outline:none; border-bottom: 1px solid transparent; display:inline-block;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'label', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.label || 'Untitled Question')}${req}</div>
+          <div style="font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--text); margin-bottom:20px; outline:none; border-bottom: 1px solid transparent; display:inline-block;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'label', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.label || 'Untitled Question')}${req}</div>
           ${inputUI}
         </div>
       `;
-    }
-
-    /* ── Pass canvas card ─────────────────────────────────────────── */
-    function renderPassCanvasCard(f, isSel) {
-      const bg  = f.passBannerColor || '#12172a';
-      const tc  = f.passTextColor   || '#ffffff';
-      const ac  = f.passAccentColor || '#00d4ff';
-      const qrS = f.passQrSize || 140;
-      const id  = f.id;
-      return `
-      <div class="hxfb-canvas-card pass-card ${isSel ? 'active' : ''}"
-           id="canvas-card-${id}" onclick="selectLayer('${id}')"
-           style="background:${escAttr(bg)};border-color:rgba(255,255,255,0.15)">
-        <!-- Accent stripe -->
-        <div style="height:8px;background:linear-gradient(90deg,${escAttr(ac)},#7c3aed);margin:-32px -28px 24px;"></div>
-        <!-- Badge -->
-        <div style="background:rgba(255,255,255,0.1);border-radius:20px;padding:3px 13px;display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:${escAttr(tc)};opacity:.8;margin-bottom:14px">ENTRY PASS</div>
-        <!-- Event name (editable on canvas) -->
-        <div style="font-size:26px;font-weight:700;color:${escAttr(tc)};outline:none;margin-bottom:8px;line-height:1.2;border-bottom:1px solid transparent;min-height:32px"
-             contenteditable="true" spellcheck="false" onclick="event.stopPropagation()"
-             onfocus="this.style.borderBottomColor='rgba(255,255,255,0.3)'"
-             onblur="this.style.borderBottomColor='transparent';updateFP('${id}','passEventName',this.innerText)">${escHtml(f.passEventName || 'Event Name')}</div>
-        <!-- Venue + date row -->
-        <div style="color:${escAttr(tc)};opacity:.75;font-size:13px;margin-bottom:4px;min-height:18px"
-             contenteditable="true" spellcheck="false" onclick="event.stopPropagation()"
-             onblur="updateFP('${id}','passVenue',this.innerText)">${escHtml(f.passVenue || '📍 Venue')}</div>
-        <div style="color:${escAttr(tc)};opacity:.75;font-size:13px;margin-bottom:18px;min-height:18px"
-             contenteditable="true" spellcheck="false" onclick="event.stopPropagation()"
-             onblur="updateFP('${id}','passDate',this.innerText)">${escHtml(f.passDate ? '📅 ' + f.passDate + (f.passTime ? ' · ' + f.passTime : '') : '📅 Date & Time')}</div>
-        <!-- Divider -->
-        <div style="border-top:1px dashed rgba(255,255,255,0.2);margin-bottom:20px"></div>
-        <!-- QR Placeholder (resizable) -->
-        <div style="display:flex;justify-content:center;margin-bottom:16px">
-          <div class="hxfb-qr-placeholder" id="qrph-${id}"
-               style="width:${qrS}px;height:${qrS}px;background:rgba(255,255,255,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;border:2px dashed rgba(255,255,255,0.3)"
-               onmouseup="saveQrSize('${id}',this)" onclick="event.stopPropagation()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" style="width:32px;height:32px;pointer-events:none"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="10" y="10" width="2" height="2"/><rect x="14" y="14" width="7" height="7"/></svg>
-            <span style="font-size:10px;color:rgba(255,255,255,0.35);pointer-events:none">QR Code</span>
-          </div>
-        </div>
-        <!-- Subtitle / instructions (editable) -->
-        <div style="font-size:12px;color:${escAttr(tc)};opacity:.55;outline:none;text-align:center;min-height:16px;border-bottom:1px solid transparent"
-             contenteditable="true" spellcheck="false" onclick="event.stopPropagation()"
-             onfocus="this.style.borderBottomColor='rgba(255,255,255,0.2)'"
-             onblur="this.style.borderBottomColor='transparent';updateFP('${id}','passSubtitle',this.innerText)">${escHtml(f.passSubtitle || 'Present this pass at the venue entrance')}</div>
-        <!-- Inline color editors -->
-        <div style="margin-top:18px;padding-top:14px;border-top:1px dashed rgba(255,255,255,0.12);display:flex;gap:14px;align-items:center;justify-content:center" onclick="event.stopPropagation()">
-          <label style="font-size:11px;color:${escAttr(tc)};opacity:.6;display:flex;align-items:center;gap:5px;cursor:pointer">
-            BG<input type="color" value="${escAttr(f.passBannerColor||'#12172a')}" onchange="updateFP('${id}','passBannerColor',this.value)" style="width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;border-radius:4px"/>
-          </label>
-          <label style="font-size:11px;color:${escAttr(tc)};opacity:.6;display:flex;align-items:center;gap:5px;cursor:pointer">
-            Text<input type="color" value="${escAttr(f.passTextColor||'#ffffff')}" onchange="updateFP('${id}','passTextColor',this.value)" style="width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;border-radius:4px"/>
-          </label>
-          <label style="font-size:11px;color:${escAttr(tc)};opacity:.6;display:flex;align-items:center;gap:5px;cursor:pointer">
-            Accent<input type="color" value="${escAttr(f.passAccentColor||'#00d4ff')}" onchange="updateFP('${id}','passAccentColor',this.value)" style="width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;border-radius:4px"/>
-          </label>
-        </div>
-      </div>`;
-    }
-
-    /* ── QR size save helper ──────────────────────────────────────── */
-    function saveQrSize(id, el) {
-      const size = Math.max(60, Math.min(260, Math.round((el.offsetWidth + el.offsetHeight) / 2)));
-      updateFP(id, 'passQrSize', size);
     }
 
     function pvShowPage(n, animate = true) {
@@ -3476,10 +3242,10 @@
       }
 
       // Nav
-      const submitLabel = isLast ? (s.submitLabel || 'Submit') : 'Next â†’';
+      const submitLabel = isLast ? (s.submitLabel || 'Submit') : 'Next →';
       const backVisible = !isFirst;
       html += `<div class="hxfb-pv-nav">
-    ${backVisible ? `<button class="hxfb-pv-back" onclick="pvShowPage(${_pv.page - 1})">â† Back</button>` : ''}
+    ${backVisible ? `<button class="hxfb-pv-back" onclick="pvShowPage(${_pv.page - 1})">← Back</button>` : ''}
     <button class="hxfb-pv-submit" style="background:${accent}"
             onclick="${isLast ? 'pvFakeSubmit()' : `pvShowPage(${_pv.page + 1})`}">
       ${isLast
@@ -3534,7 +3300,7 @@
           break;
         case 'dropdown':
           const dOpts = (f.options || []).map(o => `<option value="${escAttr(o)}">${escHtml(o)}</option>`).join('');
-          body = `<select class="hxfb-pv-select" id="${fid}" onchange="pvSetVal('${f.id}',this.value)"><option value="">â€” Select â€”</option>${dOpts}</select>`;
+          body = `<select class="hxfb-pv-select" id="${fid}" onchange="pvSetVal('${f.id}',this.value)"><option value="">— Select —</option>${dOpts}</select>`;
           break;
         case 'radio':
           body = (f.options || []).map((o, i) => {
@@ -3562,7 +3328,7 @@
           if (styl === 'stars') {
             body = `<div class="hxfb-pv-stars" id="${fid}">
           ${Array.from({ length: max }, (_, i) =>
-              `<span class="hxfb-pv-star${i < curS ? ' on' : ''}" onclick="pvPickStar('${f.id}',${i + 1},${max})">â˜…</span>`
+              `<span class="hxfb-pv-star${i < curS ? ' on' : ''}" onclick="pvPickStar('${f.id}',${i + 1},${max})">★</span>`
             ).join('')}
         </div>
         <div class="hxfb-pv-scale-labels"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
@@ -3576,36 +3342,16 @@
           }
           break;
         case 'file_upload':
-          body = `<div class=”hxfb-pv-upload”>📎 Click to upload ${f.accept && f.accept !== '*' ? `(${f.accept})` : ''}<div style=”font-size:11px;margin-top:3px”>Max ${f.maxMB || 10} MB</div></div>`;
+          body = `<div class="hxfb-pv-upload">📎 Click to upload ${f.accept && f.accept !== '*' ? `(${f.accept})` : ''}<div style="font-size:11px;margin-top:3px">Max ${f.maxMB || 10} MB</div></div>`;
           break;
-        case 'event_pass': {
-          const bg = f.passBannerColor || '#12172a';
-          const tc = f.passTextColor || '#ffffff';
-          const ac = f.passAccentColor || '#00d4ff';
-          body = `<div style=”border-radius:12px;overflow:hidden;background:${escAttr(bg)};color:${escAttr(tc)};font-size:13px;margin-top:6px”>
-            <div style=”height:6px;background:linear-gradient(90deg,${escAttr(ac)},#7c3aed)”></div>
-            <div style=”padding:16px 18px”>
-              <div style=”font-size:10px;font-weight:700;letter-spacing:2px;opacity:0.6;margin-bottom:8px”>ENTRY PASS</div>
-              <div style=”font-size:17px;font-weight:700;margin-bottom:6px”>${escHtml(f.passEventName || 'Event Name')}</div>
-              ${f.passVenue ? `<div style=”font-size:12px;opacity:0.7;margin-bottom:2px”>📍 ${escHtml(f.passVenue)}</div>` : ''}
-              ${f.passDate || f.passTime ? `<div style=”font-size:12px;opacity:0.7;margin-bottom:2px”>📅 ${escHtml([f.passDate,f.passTime].filter(Boolean).join(' · '))}</div>` : ''}
-              <div style=”border-top:1px solid rgba(255,255,255,0.12);margin:12px 0;padding-top:12px;display:flex;align-items:center;gap:14px”>
-                <div style=”width:64px;height:64px;background:rgba(255,255,255,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px”>▦</div>
-                <div style=”font-size:11px;opacity:0.6”>${escHtml(f.passSubtitle || 'Present this pass at the venue entrance')}</div>
-              </div>
-            </div>
-          </div>
-          <div style=”font-size:11px;color:var(--text-3);margin-top:6px;text-align:center”>✔ Your unique QR pass will be sent after submission</div>`;
-          return `<div class=”hxfb-pv-field” id=”pvf-${f.id}”>${body}</div>`;
-        }
         default:
-          body = `<input class=”hxfb-pv-input” id=”${fid}” type=”text” placeholder=”${escAttr(f.placeholder || '')}”/>`;
+          body = `<input class="hxfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
       }
 
-      return `<div class=”hxfb-pv-field” id=”pvf-${f.id}”><div class=”hxfb-pv-label” contenteditable=”true” onblur=”updateFP('${f.id}', 'label', this.innerText)”>${f.label || 'Untitled'} ${req}</div>${body}</div>`;
+      return `<div class="hxfb-pv-field" id="pvf-${f.id}"><div class="hxfb-pv-label" contenteditable="true" onblur="updateFP('${f.id}', 'label', this.innerText)">${f.label || 'Untitled'} ${req}</div>${body}</div>`;
     }
 
-    /* â”€â”€ Preview interaction handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Preview interaction handlers ──────────────────────────────── */
     function pvSetVal(fid, val) {
       _pv.vals[fid] = val;
       pvEvalConditions();
@@ -3654,7 +3400,7 @@
       renderPreview();
     }
 
-    /* â”€â”€ Condition evaluation for preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Condition evaluation for preview ────────────────────────── */
     function pvEvalConditions() {
       const allFields = _S.config?.fields || [];
       const page = _pv.pages[_pv.page] || { fields: [] };
@@ -3690,9 +3436,9 @@
       }
     }
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    /* ════════════════════════════════════════════════════════════════
        PUBLISH & MODALS
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    ════════════════════════════════════════════════════════════════ */
     async function doPublish() {
       const btn = document.getElementById('publishBtn');
       if (!_S.config.fields.length && _S.status !== 'published') {
@@ -3700,13 +3446,13 @@
         return;
       }
       if (_S.status === 'closed') {
-        btn.disabled = true; btn.textContent = 'Reopeningâ€¦';
+        btn.disabled = true; btn.textContent = 'Reopening…';
         try { await _S.reopen(); updateTopBar(); toast('Form is live again!', 'success'); }
         catch (e) { toast(e.message, 'error'); }
         btn.disabled = false; return;
       }
       btn.disabled = true;
-      btn.textContent = _S.status === 'published' ? 'Savingâ€¦' : 'Publishingâ€¦';
+      btn.textContent = _S.status === 'published' ? 'Saving…' : 'Publishing…';
       try {
         setSaveStatus('saving');
         const result = await _S.publish();
@@ -3738,7 +3484,7 @@
       });
     }
 
-    /* â”€â”€ Leave warning â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Leave warning ───────────────────────────────────────────────── */
     function confirmLeave(e) {
       if (!_S._backendDirty) { window.location.href = leaveTarget; return; }
       e.preventDefault();
@@ -3748,7 +3494,7 @@
     function leaveNow() { closeLeaveModal(); window.location.href = leaveTarget; }
     async function saveAndLeave() {
       const btn = document.querySelector('#leaveModal .btn-primary');
-      btn.textContent = 'Savingâ€¦'; btn.disabled = true;
+      btn.textContent = 'Saving…'; btn.disabled = true;
       setSaveStatus('saving');
       await _S.saveToBackendNow();
       setSaveStatus('saved');
@@ -3756,22 +3502,20 @@
     }
     window.addEventListener('beforeunload', e => { if (_S?._backendDirty) { e.preventDefault(); e.returnValue = ''; } });
 
-    /* â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Helpers ─────────────────────────────────────────────────────── */
     function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function escAttr(s) { return String(s || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     lucide.createIcons();
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       PASS PREVIEW CANVAS  â€” rendered in builder when passEnabled
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ════════════════════════════════════════════════════════════════
+       PASS PREVIEW CANVAS  — rendered in builder when passEnabled
+    ════════════════════════════════════════════════════════════════ */
     function renderBuilderPass() {
       const s = _S.config?.settings || {};
       const passCol = document.getElementById('pvPassCol');
       if (!passCol) return;
 
-      // hide the legacy pass column if a field-type event_pass already renders in the canvas
-      const hasPassField = (_S.config?.fields || []).some(f => f.type === 'event_pass');
-      if (!s.passEnabled || hasPassField) { passCol.style.display = 'none'; return; }
+      if (!s.passEnabled) { passCol.style.display = 'none'; return; }
       passCol.style.display = '';
 
       const canvas = document.getElementById('pvPassCanvas');
@@ -3819,10 +3563,10 @@
       let cy = 165;
       ctx.font = '18px "Plus Jakarta Sans", sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
-      if (s.passVenue) { ctx.fillText('ðŸ“ ' + s.passVenue, 24, cy); cy += 28; }
+      if (s.passVenue) { ctx.fillText('📍 ' + s.passVenue, 24, cy); cy += 28; }
       if (s.passDate || s.passTime) {
-        const dt = [s.passDate, s.passTime].filter(Boolean).join('  Â·  ');
-        ctx.fillText('ðŸ“… ' + dt, 24, cy); cy += 28;
+        const dt = [s.passDate, s.passTime].filter(Boolean).join('  ·  ');
+        ctx.fillText('📅 ' + dt, 24, cy); cy += 28;
       }
 
       // Dashed divider
@@ -3872,7 +3616,7 @@
         ctx.fillText('ENTRY RULES', 24, cy); cy += 20;
         ctx.font = '14px "Plus Jakarta Sans", sans-serif';
         ctx.fillStyle = 'rgba(255,255,255,0.65)';
-        rules.forEach(r => { ctx.fillText('â€¢ ' + r, 24, cy); cy += 20; });
+        rules.forEach(r => { ctx.fillText('• ' + r, 24, cy); cy += 20; });
       }
 
       // Bottom attendee strip
@@ -3893,7 +3637,7 @@
       ctx.fillText('attendee@example.com', 24, stripY + 47);
     }
 
-    /* â”€â”€ Pass canvas helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    /* ── Pass canvas helpers ──────────────────────────────────────── */
     function _pbRoundRect(ctx, x, y, w, h, r) {
       const tl = typeof r === 'object' ? (r.tl || 0) : r;
       const tr = typeof r === 'object' ? (r.tr || 0) : r;
