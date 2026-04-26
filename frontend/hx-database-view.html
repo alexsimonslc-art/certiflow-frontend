@@ -1017,7 +1017,6 @@ function renderDashboard() {
   const headers = _data?.headers || [];
   
   // 1. Initialize GridStack
-  // 1. Initialize GridStack
   if (!_grid) {
     _grid = GridStack.init({
       column: 12,
@@ -1025,7 +1024,7 @@ function renderDashboard() {
       margin: 14,
       staticGrid: true, 
       animate: true,
-      minRow: 20 // <--- THIS ADDS BLANK DRAG SPACE AT THE BOTTOM
+      minRow: 20 
     }, '#dashGrid');
 
     _grid.on('resizestop', function(event, el) {
@@ -1034,15 +1033,23 @@ function renderDashboard() {
     });
   }
 
-  // 2. Load Layout safely (Parse JSON if it comes back as a string from Supabase)
+  // 2. Load Layout safely (Bulletproof JSON parsing)
   let rawLayout = _data.layout || _data.config?.dashboard_layout;
-  let layout = [];
+  let layout = null;
+  
   try {
-    layout = typeof rawLayout === 'string' ? JSON.parse(rawLayout) : rawLayout;
+    let parsed = typeof rawLayout === 'string' ? JSON.parse(rawLayout) : rawLayout;
+    
+    // Ensure we explicitly extract the array, regardless of how Supabase wrapped it
+    if (Array.isArray(parsed)) {
+      layout = parsed;
+    } else if (parsed && Array.isArray(parsed.layout)) {
+      layout = parsed.layout;
+    }
   } catch(e) { console.warn("Layout parse error", e); }
   
-  // 3. AUTO-GENERATE LAYOUT (If no layout is saved in database)
-  if (!layout || layout.length === 0) {
+  // 3. AUTO-GENERATE LAYOUT (Strict check to guarantee an array)
+  if (!Array.isArray(layout) || layout.length === 0) {
     layout = [];
     let currentY = 0;
 
@@ -1055,7 +1062,7 @@ function renderDashboard() {
       layout.push({ id: 'chart_tl', type: 'timeline', field: 'Submitted At', title: 'Submissions Over Time', x: 3, y: currentY, w: 9, h: 4 });
       currentY += 4;
     } else {
-      currentY += 2; // Just offset for the stat card
+      currentY += 2; 
     }
 
     // C. Auto-generate charts for all chartable fields
