@@ -527,6 +527,7 @@
       <!-- QR Code -->
       <button class="hxfb-tb-btn" id="qrBtn" style="display:none" onclick="tbOpenQR()" title="QR Code">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="10" y="10" width="2" height="2"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span id="qrBtnTxt">QR Code</span>
       </button>
       <!-- Sheet -->
       <button class="hxfb-tb-btn green" id="sheetBtn" style="display:none" onclick="tbOpenSheet()" title="Open responses in Google Sheets">
@@ -813,7 +814,14 @@ function tbOpenQR() {
   document.getElementById('qrModalTitle').textContent = _S.name;
   document.getElementById('qrUrlDisplay').textContent = url;
   document.getElementById('qrModal').classList.add('open');
-  QRCode.toCanvas(document.getElementById('qrCanvas'), url, { width: 200, margin: 1, color: { dark:'#000', light:'#fff' } }, () => {});
+  // Delay so the modal overlay is visible before canvas rendering
+  setTimeout(() => {
+    const canvas = document.getElementById('qrCanvas');
+    canvas.width = 200; canvas.height = 200;
+    QRCode.toCanvas(canvas, url, { width: 200, margin: 1, color: { dark: '#000', light: '#fff' } }, (err) => {
+      if (err) console.error('QR generation failed:', err);
+    });
+  }, 60);
 }
 function closeQR() { document.getElementById('qrModal').classList.remove('open'); }
 function downloadQR() {
