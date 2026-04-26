@@ -75,12 +75,12 @@
   .hxfb-publish-btn svg { width: 13px; height: 13px; }
 
   /* ── 3-column layout ─────────────────────────────────────────── */
-  .hxfb-layout {
-    display: grid;
-    grid-template-columns: 240px 1fr 340px;
-    height: calc(100vh - 54px);
-    overflow: hidden;
-  }
+.hxfb-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  height: calc(100vh - 54px);
+  overflow: hidden;
+}
 
   /* ── LEFT: Field Layers ──────────────────────────────────────── */
   .hxfb-left {
@@ -494,6 +494,263 @@
     .hxfb-layout { grid-template-columns: 1fr; }
     .hxfb-center, .hxfb-right { display: none; }
   }
+  /* ── Hide old left panel ── */
+.hxfb-left { display: none !important; }
+
+/* ── Center: Google Forms light bg ── */
+.hxfb-center {
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #f0f4f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 100px;
+}
+.hxfb-center::-webkit-scrollbar { width: 4px; }
+.hxfb-center::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+
+/* ── Form header card ── */
+.hxfb-gf-header {
+  width: 100%; max-width: 640px;
+  background: #fff;
+  border-radius: 12px;
+  border-top: 8px solid #00d4ff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  padding: 24px 24px 20px;
+  margin-bottom: 12px;
+}
+.hxfb-gf-title-input {
+  font-size: 26px; font-weight: 700; color: #202124;
+  border: none; border-bottom: 1px solid transparent;
+  outline: none; width: 100%; background: transparent;
+  font-family: var(--font-display); padding: 2px 0 6px;
+  transition: border-color 0.15s;
+}
+.hxfb-gf-title-input:focus { border-bottom-color: #00d4ff; }
+.hxfb-gf-desc-input {
+  font-size: 13.5px; color: #5f6368;
+  border: none; border-bottom: 1px solid transparent;
+  outline: none; width: 100%; resize: none;
+  background: transparent; font-family: var(--font);
+  min-height: 28px; line-height: 1.6; padding: 2px 0;
+  transition: border-color 0.15s;
+}
+.hxfb-gf-desc-input:focus { border-bottom-color: #00d4ff; }
+
+/* ── Question card ── */
+.hxfb-qcard {
+  width: 100%; max-width: 640px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  padding: 20px 20px 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: box-shadow 0.18s;
+  border-left: 4px solid transparent;
+  position: relative;
+}
+.hxfb-qcard:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.16); }
+.hxfb-qcard.selected {
+  border-left-color: #00d4ff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  cursor: default;
+}
+.hxfb-qcard.page-break-card {
+  background: rgba(124,58,237,0.04);
+  border: 2px dashed rgba(124,58,237,0.3);
+  border-left: 2px dashed rgba(124,58,237,0.3);
+  padding: 14px 20px;
+}
+
+/* Card header row */
+.hxfb-qcard-hdr {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 14px;
+}
+.hxfb-qcard-label {
+  flex: 1; font-size: 15px; font-weight: 500; color: #202124;
+  border: none; border-bottom: 1px solid transparent;
+  outline: none; background: transparent; width: 100%;
+  font-family: var(--font); padding: 2px 0;
+  transition: border-color 0.15s;
+}
+.hxfb-qcard.selected .hxfb-qcard-label { border-bottom-color: #9e9e9e; }
+.hxfb-qcard-label:focus { border-bottom-color: #00d4ff !important; }
+.hxfb-qcard-req-star { color: #d93025; font-size: 13px; margin-left: 2px; }
+.hxfb-qcard-type-sel {
+  font-size: 12px; color: #5f6368; background: #f8f9fa;
+  border: 1px solid #e0e0e0; border-radius: 6px;
+  padding: 5px 10px; cursor: pointer; font-family: var(--font);
+  appearance: none; outline: none; flex-shrink: 0;
+  display: none;
+}
+.hxfb-qcard.selected .hxfb-qcard-type-sel { display: block; }
+.hxfb-qcard-type-sel:focus { border-color: #00d4ff; }
+.hxfb-qcard-type-sel option { background: #fff; color: #202124; }
+
+/* Input previews */
+.hxfb-qcard-input {
+  width: 100%; padding: 8px 0;
+  border: none; border-bottom: 1px solid #9e9e9e;
+  font-size: 14px; color: #202124; font-family: var(--font);
+  outline: none; background: transparent;
+}
+.hxfb-qcard-input::placeholder { color: #9e9e9e; }
+.hxfb-qcard-input:focus { border-bottom-color: #00d4ff; }
+
+.hxfb-qcard-textarea {
+  width: 100%; padding: 8px 0;
+  border: none; border-bottom: 1px solid #9e9e9e;
+  font-size: 14px; color: #202124; font-family: var(--font);
+  outline: none; background: transparent; resize: none; min-height: 52px;
+}
+.hxfb-qcard-select-fake {
+  width: 50%; padding: 8px 0;
+  border: none; border-bottom: 1px solid #9e9e9e;
+  font-size: 14px; color: #9e9e9e; font-family: var(--font);
+  background: transparent; cursor: default;
+}
+
+/* Options (radio/checkbox) */
+.hxfb-qcard-opt {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+}
+.hxfb-qcard-opt-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid #9e9e9e; flex-shrink: 0;
+}
+.hxfb-qcard-opt-box {
+  width: 16px; height: 16px; border-radius: 3px;
+  border: 2px solid #9e9e9e; flex-shrink: 0;
+}
+.hxfb-qcard-opt-text {
+  flex: 1; font-size: 14px; color: #202124;
+  padding: 4px 0; border: none;
+  border-bottom: 1px solid transparent;
+  outline: none; background: transparent; font-family: var(--font);
+}
+.hxfb-qcard.selected .hxfb-qcard-opt-text { border-bottom-color: #e0e0e0; }
+.hxfb-qcard-opt-text:focus { border-bottom-color: #00d4ff; }
+.hxfb-qcard-opt-del {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: none; border: none; cursor: pointer;
+  color: #9e9e9e; display: none; align-items: center; justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+.hxfb-qcard.selected .hxfb-qcard-opt-del { display: flex; }
+.hxfb-qcard-opt-del:hover { color: #d93025; background: #fce8e6; }
+.hxfb-qcard-opt-del svg { width: 13px; height: 13px; }
+.hxfb-qcard-add-opt {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13.5px; color: #5f6368;
+  cursor: pointer; padding: 4px 0; margin-top: 2px;
+  background: none; border: none; font-family: var(--font);
+}
+.hxfb-qcard-add-opt:hover { color: #202124; }
+
+/* Stars / scale */
+.hxfb-qcard-stars { display: flex; gap: 8px; margin: 8px 0 4px; }
+.hxfb-qcard-star { font-size: 26px; color: #e0e0e0; }
+.hxfb-qcard-numscale { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 4px; }
+.hxfb-qcard-numbox {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1px solid #d0d0d0; background: transparent;
+  font-size: 13px; font-weight: 500; color: #5f6368;
+  display: flex; align-items: center; justify-content: center;
+}
+.hxfb-qcard-scale-lbl {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: #9e9e9e; margin-top: 4px;
+}
+
+/* Upload zone */
+.hxfb-qcard-upload {
+  border: 2px dashed #d0d0d0; border-radius: 8px;
+  padding: 18px; text-align: center;
+  font-size: 13px; color: #9e9e9e;
+}
+
+/* Card footer */
+.hxfb-qcard-footer {
+  display: none; align-items: center; gap: 6px;
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid #f1f3f4; flex-wrap: wrap;
+}
+.hxfb-qcard.selected .hxfb-qcard-footer { display: flex; }
+.hxfb-qcard-foot-spacer { flex: 1; }
+.hxfb-qcard-foot-btn {
+  width: 32px; height: 32px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer;
+  color: #5f6368; transition: background 0.15s, color 0.15s;
+}
+.hxfb-qcard-foot-btn:hover { background: #f1f3f4; color: #202124; }
+.hxfb-qcard-foot-btn.danger:hover { background: #fce8e6; color: #d93025; }
+.hxfb-qcard-foot-btn svg { width: 14px; height: 14px; }
+.hxfb-qcard-req-row {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12.5px; color: #5f6368;
+}
+.hxfb-qcard-req-tog {
+  width: 34px; height: 18px; border-radius: 99px;
+  background: #bdbdbd; border: none; position: relative;
+  cursor: pointer; transition: background 0.18s; flex-shrink: 0;
+}
+.hxfb-qcard-req-tog.on { background: #00d4ff; }
+.hxfb-qcard-req-tog::after {
+  content: ''; position: absolute; left: 2px; top: 1px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; transition: transform 0.18s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.hxfb-qcard-req-tog.on::after { transform: translateX(16px); }
+
+/* Empty state */
+.hxfb-gf-empty {
+  width: 100%; max-width: 640px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 48px 16px; text-align: center;
+  color: #5f6368; font-size: 13.5px; gap: 10px;
+  border: 2px dashed #d0d0d0; border-radius: 12px;
+  background: rgba(255,255,255,0.6);
+}
+.hxfb-gf-empty svg { width: 36px; height: 36px; color: #9e9e9e; }
+
+/* ── Bottom tray ── */
+.hxfb-tray {
+  position: fixed; bottom: 0; left: 0;
+  right: 340px; z-index: 50;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+}
+@media (max-width: 1100px) { .hxfb-tray { right: 300px; } }
+@media (max-width: 900px) { .hxfb-tray { right: 0; } }
+.hxfb-tray-inner {
+  display: flex; align-items: center; gap: 4px;
+  padding: 8px 16px; overflow-x: auto; scrollbar-width: none;
+}
+.hxfb-tray-inner::-webkit-scrollbar { display: none; }
+.hxfb-tray-lbl {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.6px;
+  text-transform: uppercase; color: #9e9e9e;
+  white-space: nowrap; margin-right: 4px; flex-shrink: 0;
+}
+.hxfb-tray-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; padding: 8px 12px; border-radius: 10px;
+  border: 1px solid transparent; background: transparent;
+  color: #5f6368; cursor: pointer; font-size: 10.5px; font-weight: 600;
+  font-family: var(--font); transition: all 0.15s;
+  white-space: nowrap; flex-shrink: 0; min-width: 58px;
+}
+.hxfb-tray-btn svg { width: 18px; height: 18px; }
+.hxfb-tray-btn:hover { background: #e8f0fe; color: #1a73e8; border-color: #c5d8fc; }
+.hxfb-tray-btn.pb { color: #7c3aed; }
+.hxfb-tray-btn.pb:hover { background: rgba(124,58,237,0.08); border-color: rgba(124,58,237,0.3); }
+.hxfb-tray-sep { width: 1px; height: 32px; background: #e0e0e0; flex-shrink: 0; margin: 0 4px; }
   </style>
 </head>
 <body>
@@ -553,63 +810,35 @@
   <div class="hxfb-layout">
 
     <!-- LEFT: Field Layers -->
-    <aside class="hxfb-left">
-      <div class="hxfb-layers-hdr">
-        <span>Fields</span>
-        <span class="hxfb-layer-count" id="layerCount">0</span>
-      </div>
-      <div class="hxfb-layer-list" id="layerList"></div>
-      <div class="hxfb-add-section">
-        <button class="hxfb-add-trigger" id="addTriggerBtn" onclick="toggleAddPanel()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add Field
-        </button>
-        <div class="hxfb-add-panel" id="addFieldPanel">
-          <div class="hxfb-type-grid">
-            <button class="hxfb-type-btn" onclick="addField('text')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>Short Text</button>
-            <button class="hxfb-type-btn" onclick="addField('textarea')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>Paragraph</button>
-            <button class="hxfb-type-btn" onclick="addField('email')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>Email</button>
-            <button class="hxfb-type-btn" onclick="addField('phone')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Phone</button>
-            <button class="hxfb-type-btn" onclick="addField('number')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>Number</button>
-            <button class="hxfb-type-btn" onclick="addField('date')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Date</button>
-            <button class="hxfb-type-btn" onclick="addField('time')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Time</button>
-            <button class="hxfb-type-btn" onclick="addField('dropdown')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18"/><path d="M3 15h18"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>Dropdown</button>
-            <button class="hxfb-type-btn" onclick="addField('radio')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>Multiple Choice</button>
-            <button class="hxfb-type-btn" onclick="addField('checkbox')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Checkboxes</button>
-            <button class="hxfb-type-btn" onclick="addField('file_upload')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>File Upload</button>
-            <button class="hxfb-type-btn" onclick="addField('linear_scale')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Rating Scale</button>
-            <button class="hxfb-type-btn" onclick="addField('section_break')" style="grid-column:1/-1;flex-direction:row;justify-content:center;gap:7px;color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg>
-              Add New Page
-            </button>
-          </div>
-        </div>
-      </div>
-    </aside>
+    <!-- LEFT panel removed: fields rendered inline as cards -->
 
     <!-- CENTER: Interactive Preview -->
-    <main class="hxfb-center">
-      <div style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;">
-        <div style="width:100%;max-width:520px;flex-shrink:1;min-width:0;">
-          <div class="hxfb-pv-label">
-            <span>Live Preview</span>
-            <span class="hxfb-pv-page-info" id="pvPageInfo"></span>
-          </div>
-          <div class="hxfb-pv-card">
-            <div class="hxfb-pv-accent" id="pvAccent"></div>
-            <div class="hxfb-pv-body" id="pvBody"></div>
-          </div>
-        </div>
-        <!-- Pass preview (visible when passEnabled) -->
-        <div id="pvPassCol" style="display:none;flex-shrink:0;">
-          <div class="hxfb-pv-label" style="width:260px;max-width:260px;margin-bottom:14px">
-            <span>Pass Preview</span>
-          </div>
-          <canvas id="pvPassCanvas" width="520" height="693"
-            style="width:260px;height:347px;border-radius:20px;box-shadow:0 16px 48px rgba(0,0,0,0.55);display:block"></canvas>
-        </div>
+    <main class="hxfb-center" id="gfCenter">
+  <div style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;max-width:960px;">
+    <div style="width:100%;max-width:640px;flex-shrink:1;min-width:0;">
+
+      <!-- Form Header Card -->
+      <div class="hxfb-gf-header" id="gfHeaderCard">
+        <input class="hxfb-gf-title-input" id="gfTitleInput" type="text"
+          placeholder="Form title"
+          oninput="onGfTitleChange(this.value)">
+        <textarea class="hxfb-gf-desc-input" id="gfDescInput"
+          placeholder="Form description (optional)" rows="2"
+          oninput="onGfDescChange(this.value)"></textarea>
       </div>
-    </main>
+
+      <!-- Question cards rendered here by renderCards() -->
+      <div id="gfCards"></div>
+
+    </div>
+    <!-- Pass preview -->
+    <div id="pvPassCol" style="display:none;flex-shrink:0;margin-top:52px;">
+      <div style="font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#5f6368;margin-bottom:10px;">Pass Preview</div>
+      <canvas id="pvPassCanvas" width="520" height="693"
+        style="width:260px;height:347px;border-radius:20px;box-shadow:0 16px 48px rgba(0,0,0,0.25);display:block"></canvas>
+    </div>
+  </div>
+</main>
 
     <!-- RIGHT: Field Editor + Settings -->
     <aside class="hxfb-right">
@@ -623,7 +852,54 @@
 
   </div>
 </div>
-
+<!-- Bottom Add-Field Tray -->
+<div class="hxfb-tray" id="hxfbTray">
+  <div class="hxfb-tray-inner">
+    <span class="hxfb-tray-lbl">Add Field</span>
+    <button class="hxfb-tray-btn" onclick="addField('text')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>Short Text
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('textarea')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>Paragraph
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('email')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>Email
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('phone')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Phone
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('number')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>Number
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('date')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Date
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('time')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Time
+    </button>
+    <div class="hxfb-tray-sep"></div>
+    <button class="hxfb-tray-btn" onclick="addField('dropdown')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18M3 15h18"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>Dropdown
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('radio')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>Multiple Choice
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('checkbox')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Checkboxes
+    </button>
+    <div class="hxfb-tray-sep"></div>
+    <button class="hxfb-tray-btn" onclick="addField('fileupload')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>File Upload
+    </button>
+    <button class="hxfb-tray-btn" onclick="addField('linearscale')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Rating Scale
+    </button>
+    <div class="hxfb-tray-sep"></div>
+    <button class="hxfb-tray-btn pb" onclick="addField('sectionbreak')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg>New Page
+    </button>
+  </div>
+</div>
 <!-- Publish Modal -->
 <div class="hxfb-modal-overlay" id="publishModal">
   <div class="hxfb-pub-modal">
@@ -727,6 +1003,16 @@ let _pv = { page: 0, pages: [], vals: {}, selOpts: {} };
   renderLayers();
   renderRightPanel();
   renderPreview();
+
+    // Sync GF header inputs from loaded state
+    const _ti = document.getElementById('gfTitleInput');
+    const _di = document.getElementById('gfDescInput');
+    if (_ti) _ti.value = S.config?.settings?.title || S.name || '';
+    if (_di) _di.value = S.config?.settings?.description || '';
+
+    renderSettings();
+    if (!state.config.fields.length) toggleAddPanel();
+    setSaveStatus('saved');
   renderSettings();
 
   if (!state.config.fields.length) toggleAddPanel();
@@ -846,49 +1132,218 @@ async function toggleClose() {
 /* ════════════════════════════════════════════════════════════════
    LEFT PANEL — Draggable Layers
 ════════════════════════════════════════════════════════════════ */
-function renderLayers() {
+/* ── Google-Forms inline card renderer ── */
+function renderCards() {
   const fields = _S.config?.fields || [];
-  const list   = document.getElementById('layerList');
-  document.getElementById('layerCount').textContent = fields.filter(f => f.type !== 'section_break').length;
+  const wrap = document.getElementById('gfCards');
+  if (!wrap) return;
+
+  // Sync header inputs
+  const ti = document.getElementById('gfTitleInput');
+  const di = document.getElementById('gfDescInput');
+  if (ti && ti.value !== (_S.config?.settings?.title || _S.name || ''))
+    ti.value = _S.config?.settings?.title || _S.name || '';
+  if (di && di.value !== (_S.config?.settings?.description || ''))
+    di.value = _S.config?.settings?.description || '';
+
+  // Update header accent color
+  const hdr = document.getElementById('gfHeaderCard');
+  if (hdr) {
+    const acc = ACCENTSOLID[_S.config?.settings?.accent || 'cyan'] || '#00d4ff';
+    hdr.style.borderTopColor = acc;
+  }
 
   if (!fields.length) {
-    list.innerHTML = `
-      <div class="hxfb-layers-empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <p>No fields yet.<br>Click <strong style="color:var(--cyan)">Add Field</strong> below.</p>
+    wrap.innerHTML = `
+      <div class="hxfb-gf-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <line x1="9" y1="12" x2="15" y2="12"/>
+          <line x1="9" y1="16" x2="13" y2="16"/>
+        </svg>
+        <strong style="color:#202124">No questions yet</strong>
+        <span>Use the bar below to add your first field</span>
       </div>`;
     return;
   }
 
-  list.innerHTML = fields.map((f, i) => {
-    const isSel  = f.id === selectedId;
-    const isPB   = f.type === 'section_break';
-    const icon   = FIELD_ICONS[f.type] || 'file';
-    const label  = FIELD_LABELS[f.type] || f.type;
+  wrap.innerHTML = fields.map((f, idx) => buildQCard(f, idx)).join('');
 
-    return `
-      <div class="hxfb-layer-item${isSel?' selected':''}${isPB?' is-page-break':''}"
-           id="li-${f.id}" draggable="true"
-           data-id="${f.id}" data-idx="${i}"
-           onclick="selectLayer('${f.id}')"
-           ondragstart="onDragStart(event,'${f.id}')"
-           ondragover="onDragOver(event,'${f.id}')"
-           ondragleave="onDragLeave(event,'${f.id}')"
-           ondrop="onDrop(event,'${f.id}')">
-        <span class="hxfb-drag-handle" ondragstart="event.stopPropagation()" onclick="event.stopPropagation()">⠿</span>
-        <div class="hxfb-layer-icon ${f.type}">
-          <i data-lucide="${icon}"></i>
-        </div>
-        <div class="hxfb-layer-info">
-          <div class="hxfb-layer-lbl">
-            ${f.required ? '<span class="hxfb-layer-req">*</span>' : ''}${escHtml(f.label || (isPB ? '— New Page —' : 'Untitled'))}
-          </div>
-          <div class="hxfb-layer-sub">${label}</div>
-        </div>
-      </div>`;
-  }).join('');
+  // Attach option-edit listeners
+  wrap.querySelectorAll('[data-opt-input]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const fid = e.target.closest('[data-fid]')?.dataset.fid;
+      const oi  = +e.target.dataset.optInput;
+      const field = _S.config.fields.find(x => x.id === fid);
+      if (field?.options) { field.options[oi] = e.target.value; _S.dirty = true; setSaveStatus('unsaved'); }
+    });
+  });
 
-  lucide.createIcons();
+  // Re-run lucide
+  if (window.lucide) lucide.createIcons();
+}
+
+function buildQCard(f, idx) {
+  const sel = selectedId === f.id;
+  const acc = ACCENTSOLID[_S.config?.settings?.accent || 'cyan'] || '#00d4ff';
+
+  if (f.type === 'sectionbreak') {
+    return `<div class="hxfb-qcard page-break-card${sel ? ' selected' : ''}"
+      data-fid="${f.id}" onclick="selectCard('${f.id}')">
+      <span style="font-size:11px;font-weight:700;color:#7c3aed;letter-spacing:.6px;text-transform:uppercase;">
+        ── Page Break ──
+      </span>
+      <span style="flex:1;font-size:13px;color:#5f6368;margin-left:8px;">
+        ${f.label || 'New Section'}
+      </span>
+      ${sel ? `<button class="hxfb-qcard-foot-btn danger" onclick="event.stopPropagation();deleteField('${f.id}')" title="Delete">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>` : ''}
+    </div>`;
+  }
+
+  const optTypes = ['radio','checkbox','dropdown'];
+  const isOpt = optTypes.includes(f.type);
+  const opts = f.options || ['Option 1'];
+
+  let preview = '';
+  if (f.type === 'text' || f.type === 'email' || f.type === 'phone' || f.type === 'number' || f.type === 'date' || f.type === 'time') {
+    const ph = f.type === 'email' ? 'Email address' : f.type === 'phone' ? 'Phone number' : f.type === 'date' ? 'MM/DD/YYYY' : f.type === 'time' ? 'HH:MM' : f.type === 'number' ? '0' : 'Short answer text';
+    preview = `<input class="hxfb-qcard-input" placeholder="${ph}" disabled>`;
+  } else if (f.type === 'textarea') {
+    preview = `<textarea class="hxfb-qcard-textarea" placeholder="Long answer text" disabled></textarea>`;
+  } else if (f.type === 'dropdown') {
+    preview = `<div class="hxfb-qcard-select-fake">Choose ▾</div>`;
+    if (sel) preview += `<div style="margin-top:10px;">${opts.map((o,i) => `
+      <div class="hxfb-qcard-opt">
+        <div class="hxfb-qcard-opt-dot" style="border-radius:2px;"></div>
+        <input class="hxfb-qcard-opt-text" value="${o}" data-opt-input="${i}" placeholder="Option ${i+1}">
+        <button class="hxfb-qcard-opt-del" onclick="event.stopPropagation();deleteOption('${f.id}',${i})" title="Remove">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`).join('')}
+      <button class="hxfb-qcard-add-opt" onclick="event.stopPropagation();addOption('${f.id}')">
+        <div class="hxfb-qcard-opt-dot" style="border-radius:2px;opacity:0.4;"></div>
+        Add option
+      </button></div>`;
+  } else if (f.type === 'radio' || f.type === 'checkbox') {
+    const dotClass = f.type === 'radio' ? 'hxfb-qcard-opt-dot' : 'hxfb-qcard-opt-box';
+    preview = opts.map((o,i) => `
+      <div class="hxfb-qcard-opt">
+        <div class="${dotClass}"></div>
+        ${sel
+          ? `<input class="hxfb-qcard-opt-text" value="${o}" data-opt-input="${i}" placeholder="Option ${i+1}">
+             <button class="hxfb-qcard-opt-del" onclick="event.stopPropagation();deleteOption('${f.id}',${i})" title="Remove">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+             </button>`
+          : `<span style="font-size:14px;color:#202124">${o}</span>`}
+      </div>`).join('') +
+      (sel ? `<button class="hxfb-qcard-add-opt" onclick="event.stopPropagation();addOption('${f.id}')">
+        <div class="${dotClass}" style="opacity:0.4;"></div>Add option
+      </button>` : '');
+  } else if (f.type === 'linearscale') {
+    const max = f.scaleMax || 5;
+    const isRating = (f.scaleType !== 'number');
+    if (isRating) {
+      preview = `<div class="hxfb-qcard-stars">${Array.from({length:max},(_,i)=>`<span class="hxfb-qcard-star">★</span>`).join('')}</div>`;
+    } else {
+      preview = `<div class="hxfb-qcard-numscale">${Array.from({length:max-( f.scaleMin||1)+1},(_,i)=>`<div class="hxfb-qcard-numbox">${(f.scaleMin||1)+i}</div>`).join('')}</div>
+        <div class="hxfb-qcard-scale-lbl"><span>${f.labelMin||''}</span><span>${f.labelMax||''}</span></div>`;
+    }
+  } else if (f.type === 'fileupload') {
+    preview = `<div class="hxfb-qcard-upload">📎 Add file</div>`;
+  }
+
+  const typeOptions = [
+    ['text','Short Text'],['textarea','Paragraph'],['email','Email'],
+    ['phone','Phone'],['number','Number'],['date','Date'],['time','Time'],
+    ['dropdown','Dropdown'],['radio','Multiple Choice'],['checkbox','Checkboxes'],
+    ['fileupload','File Upload'],['linearscale','Rating Scale']
+  ].map(([v,l]) => `<option value="${v}"${f.type===v?' selected':''}>${l}</option>`).join('');
+
+  return `<div class="hxfb-qcard${sel?' selected':''}" data-fid="${f.id}" onclick="selectCard('${f.id}')">
+    <div class="hxfb-qcard-hdr">
+      <input class="hxfb-qcard-label" value="${(f.label||'').replace(/"/g,'&quot;')}"
+        placeholder="Question"
+        onclick="event.stopPropagation()"
+        oninput="onCardLabelChange('${f.id}',this.value)">
+      ${f.required ? '<span class="hxfb-qcard-req-star">*</span>' : ''}
+      <select class="hxfb-qcard-type-sel" onclick="event.stopPropagation()"
+        onchange="onCardTypeChange('${f.id}',this.value)">${typeOptions}</select>
+    </div>
+    <div class="hxfb-qcard-preview">${preview}</div>
+    <div class="hxfb-qcard-footer">
+      <div class="hxfb-qcard-req-row">
+        <button class="hxfb-qcard-req-tog${f.required?' on':''}"
+          onclick="event.stopPropagation();toggleRequired('${f.id}')" title="Required"></button>
+        Required
+      </div>
+      <div class="hxfb-qcard-foot-spacer"></div>
+      <button class="hxfb-qcard-foot-btn" onclick="event.stopPropagation();duplicateField('${f.id}')" title="Duplicate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>
+      <button class="hxfb-qcard-foot-btn danger" onclick="event.stopPropagation();deleteField('${f.id}')" title="Delete">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function selectCard(id) {
+  if (selectedId === id) return;
+  selectedId = id;
+  renderCards();
+  renderRightPanel();
+}
+
+function onGfTitleChange(val) {
+  _S.name = val;
+  if (_S.config.settings) _S.config.settings.title = val;
+  document.getElementById('formNameEl').textContent = val || 'Untitled Form';
+  _S.dirty = true; setSaveStatus('unsaved');
+}
+
+function onGfDescChange(val) {
+  if (_S.config.settings) _S.config.settings.description = val;
+  _S.dirty = true; setSaveStatus('unsaved');
+}
+
+function onCardLabelChange(id, val) {
+  const f = _S.config.fields.find(x => x.id === id);
+  if (f) { f.label = val; _S.dirty = true; setSaveStatus('unsaved'); }
+  // Update layer list label live
+  const li = document.querySelector(`[data-lid="${id}"] .hxfb-layer-lbl`);
+  if (li) li.textContent = val || '(no label)';
+}
+
+function onCardTypeChange(id, newType) {
+  const f = _S.config.fields.find(x => x.id === id);
+  if (!f) return;
+  f.type = newType;
+  if (['radio','checkbox','dropdown'].includes(newType) && !f.options?.length)
+    f.options = ['Option 1', 'Option 2'];
+  _S.dirty = true; setSaveStatus('unsaved');
+  renderCards();
+  renderRightPanel();
+}
+
+function toggleRequired(id) {
+  const f = _S.config.fields.find(x => x.id === id);
+  if (f) { f.required = !f.required; _S.dirty = true; setSaveStatus('unsaved'); renderCards(); renderRightPanel(); }
+}
+
+function addOption(id) {
+  const f = _S.config.fields.find(x => x.id === id);
+  if (!f) return;
+  f.options = f.options || [];
+  f.options.push(`Option ${f.options.length + 1}`);
+  _S.dirty = true; setSaveStatus('unsaved'); renderCards();
+}
+
+function deleteOption(id, idx) {
+  const f = _S.config.fields.find(x => x.id === id);
+  if (f?.options?.length > 1) { f.options.splice(idx, 1); _S.dirty = true; setSaveStatus('unsaved'); renderCards(); }
 }
 
 function selectLayer(id) {
@@ -1629,8 +2084,7 @@ function buildPvPages() {
 }
 
 function renderPreview() {
-  buildPvPages();
-  pvShowPage(_pv.page, false);
+  renderCards();
   renderBuilderPass();
 }
 
