@@ -1017,13 +1017,15 @@ function renderDashboard() {
   const headers = _data?.headers || [];
   
   // 1. Initialize GridStack
+  // 1. Initialize GridStack
   if (!_grid) {
     _grid = GridStack.init({
       column: 12,
       cellHeight: 80,
       margin: 14,
       staticGrid: true, 
-      animate: true
+      animate: true,
+      minRow: 20 // <--- THIS ADDS BLANK DRAG SPACE AT THE BOTTOM
     }, '#dashGrid');
 
     _grid.on('resizestop', function(event, el) {
