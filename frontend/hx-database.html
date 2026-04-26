@@ -830,8 +830,10 @@
     }
 
     /* ── Boot ─────────────────────────────────────────────────────── */
-    loadForms();
-    lucide.createIcons();
+    document.addEventListener("DOMContentLoaded", () => {
+      loadForms();
+      lucide.createIcons();
+    });
   </script>
   <style>
     @keyframes spin {
