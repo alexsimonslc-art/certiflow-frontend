@@ -415,42 +415,131 @@ function initCanvas() {
 }
 
 function resizeCanvas() {
-  if (!canvas) return;
-  const container = document.getElementById('canvasContainer');
-  const wrap = document.getElementById('canvasWrap');
+  const zone = document.getElementById('canvasWrap');
+  if (!zone) return;
+
+  const zw = zone.clientWidth;
+  const zh = zone.clientHeight;
+  if (zw < 10) { setTimeout(resizeCanvas, 50); return; }
+
+  // Base fit calculation
+  const baseScale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
   
-  // Calculate base scale to fit the wrap area
-  const padding = 40;
-  const availW = wrap.clientWidth - padding;
-  const availH = wrap.clientHeight - padding;
-  
-  const scaleW = availW / ED.w;
-  const scaleH = availH / ED.h;
-  ED.scale = Math.min(scaleW, scaleH);
-  
-  // Apply Zoom
-  const finalScale = ED.scale * ED.zoom;
-  
-  canvas.width = ED.w;
-  canvas.height = ED.h;
-  container.style.width = (ED.w * finalScale) + 'px';
-  container.style.height = (ED.h * finalScale) + 'px';
-  
-  redrawCanvas();
+  // Apply zoom multiplier
+  ED.scale = baseScale * (ED.zoom || 1);
+
+  const cw = Math.round(ED.w * ED.scale);
+  const ch = Math.round(ED.h * ED.scale);
+  const dpr = window.devicePixelRatio || 1;
+
+  const cont = document.getElementById('canvasContainer');
+  if (cont) {
+    cont.style.width = cw + 'px';
+    cont.style.height = ch + 'px';
+  }
+
+  canvas.style.width = cw + 'px';
+  canvas.style.height = ch + 'px';
+  canvas.width = Math.round(cw * dpr);
+  canvas.height = Math.round(ch * dpr);
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+
+  ED.ready = true;
+  redraw();
 }
 
 function redrawCanvas() {
-  if (!ctx) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+  const w = Math.round(ED.w * ED.scale);
+  const h = Math.round(ED.h * ED.scale);
+
+  ctx.clearRect(0, 0, w, h);
+
   if (ED.bgImg) {
-    ctx.drawImage(ED.bgImg, 0, 0, ED.w, ED.h);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(ED.bgImg, 0, 0, w, h);
   } else {
     ctx.fillStyle = ED.bgColor;
-    ctx.fillRect(0, 0, ED.w, ED.h);
+    ctx.fillRect(0, 0, w, h);
   }
-  
-  renderHandles();
+
+  ED.fields.forEach(f => {
+    const boxX = (f.x / 100) * w;
+    const boxY = (f.y / 100) * h;
+    const boxW = (f.width / 100) * w;
+    const fs   = Math.max(4, f.fontSize * ED.scale);
+    const ls   = (f.letterSpacing || 0) * ED.scale;
+    const fw   = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
+    const fi   = f.italic ? 'italic' : 'normal';
+    const ff   = getFontCSS(f.fontFamily || 'Helvetica');
+
+    // Use CP.rows for the Combined Pipeline data connection
+    const value = (f.column && CP.rows && CP.rows[0])
+      ? (CP.rows[0][f.column] || f.previewText || f.placeholder)
+      : (f.previewText || f.placeholder);
+
+    ctx.save();
+    ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
+    ctx.fillStyle = f.color || '#1a1a1a';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+
+    // Advanced Text Wrapper Engine
+    const words = String(value).split(' ');
+    const lines = [];
+    let currentLine = words[0] || '';
+    for (let j = 1; j < words.length; j++) {
+      const word = words[j];
+      const testLine = currentLine + ' ' + word;
+      let testWidth = ctx.measureText(testLine).width;
+      if (ls > 0 && testLine.length > 1) testWidth += ls * (testLine.length - 1);
+      if (testWidth > boxW && currentLine !== '') {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    if (currentLine !== '') lines.push(currentLine);
+    if (lines.length === 0) lines.push('');
+
+    const numLines = lines.length;
+
+    // Apply exact center rotation based on total line height
+    const cx = boxX + boxW / 2;
+    const cy = boxY + (fs * 1.3 * numLines) / 2;
+    ctx.translate(cx, cy);
+    ctx.rotate((f.rotation || 0) * Math.PI / 180);
+    ctx.translate(-cx, -cy);
+
+    lines.forEach((line, i) => {
+      const drawY = boxY + (i * fs * 1.3);
+      let textW = ctx.measureText(line).width;
+      if (ls > 0 && line.length > 1) textW += ls * (line.length - 1);
+      
+      let drawX = boxX;
+      if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
+      else if (f.align === 'right') drawX = boxX + boxW - textW;
+
+      if (ls > 0 && line.length > 1) {
+        let drawCx = drawX;
+        for (const ch of line) {
+          ctx.fillText(ch, drawCx, drawY);
+          drawCx += ctx.measureText(ch).width + ls;
+        }
+      } else {
+        ctx.fillText(line, drawX, drawY);
+      }
+    });
+    ctx.restore();
+  });
+}
+
+function redraw() {
+  redrawCanvas();
+  if (typeof renderHandles === 'function') renderHandles();
 }
 
 function renderHandles() {
