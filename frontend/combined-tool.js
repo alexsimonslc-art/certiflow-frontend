@@ -1020,10 +1020,17 @@ function changeBgColor() { ED.bgColor = document.getElementById('bgColor').value
 function clearBackground() { ED.bgImg = null; ED.bgBase64 = null; document.getElementById('bgUpload').value = ''; redrawCanvas(); toast('Background cleared', 'info', 1800); }
 function changeCanvasSize() { const [w, h] = document.getElementById('canvasSize').value.split(',').map(Number); ED.w = w; ED.h = h; resizeCanvas(); }
 function clearAll() { ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null; const pe = document.getElementById('propsEmpty'), pf = document.getElementById('propsForm'); if (pe) pe.style.display = ''; if (pf) pf.style.display = 'none'; redrawCanvas(); toast('Canvas cleared', 'info', 1800); }
-function saveTemplate() { localStorage.setItem('cf_cp_tmpl', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, bgBase64: ED.bgBase64, fields: ED.fields })); }
+/* ── Save / Load Template (FIXED: Session Memory Only) ────────────────── */
+function saveTemplate() {
+  // Intentionally blank! We no longer save to localStorage. 
+  // The ED (Editor) object in memory will keep your fields safe 
+  // while you navigate between Steps 1 to 5 during an active session.
+}
+
 function loadSavedTemplate() {
-  const raw = localStorage.getItem('cf_cp_tmpl'); if (!raw) return;
-  try { const t = JSON.parse(raw); ED.w = t.w || 1122; ED.h = t.h || 794; ED.bgColor = t.bgColor || '#ffffff'; ED.fields = (t.fields || []).map(f => ({ bold: false, italic: false, letterSpacing: 0, ...f })); if (t.bgBase64) { const img = new Image(); img.onload = () => { ED.bgImg = img; }; img.src = t.bgBase64; ED.bgBase64 = t.bgBase64; } if (t.fields?.length) toast('Previous template restored', 'info', 2200); } catch {}
+  // Intentionally blank! 
+  // Now, every time you come back to this tool from the Home Page, 
+  // you will get a 100% fresh, blank canvas. No ghost fields!
 }
 /* ── Aliases so existing HTML onclick= still resolves ── */
 const uploadBG          = uploadBackground;
@@ -1053,7 +1060,6 @@ function buildStep3() {
     emailSel.innerHTML = '<option value="">— Select Email Column —</option>' + 
       CP.headers.map(h => `<option value="${h}" ${currentEmail === h ? 'selected' : ''}>${h}</option>`).join('');
       
-    // Auto-select if we find a likely email column
     if (!currentEmail) {
         const likelyEmail = CP.headers.find(h => h.toLowerCase().includes('email'));
         if (likelyEmail) emailSel.value = likelyEmail;
@@ -1083,9 +1089,12 @@ function buildStep3() {
 
   rows.innerHTML = ED.fields.map((f, i) => {
     const isLast = i === ED.fields.length - 1;
-    const colOpts = `<option value="">— choose column —</option>${(CP.headers || []).map(h =>
-      `<option value="${h}" ${f.column === h ? 'selected' : ''}>${h}</option>`
-    ).join('')}`;
+    
+    // FIX: Strict whitespace trimming to guarantee the dropdown auto-populates!
+    const colOpts = `<option value="">— choose column —</option>${(CP.headers || []).map(h => {
+      const match = (f.column && f.column.trim() === h.trim()) ? 'selected' : '';
+      return `<option value="${h}" ${match}>${h}</option>`;
+    }).join('')}`;
 
     return `
     <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:12px;padding:14px 18px;${!isLast ? 'border-bottom:1px solid var(--glass-border)' : ''}">
