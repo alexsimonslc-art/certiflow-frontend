@@ -1056,7 +1056,6 @@ const clearCanvas       = clearAll;
    STEP 3 — FIELD MAPPING
 ════════════════════════════════════════════════════════════════ */
 function populateStep3() {
-  saveTemplate();
   buildStep3();
   fnRefreshNamePill();
 }
@@ -1067,7 +1066,6 @@ function buildStep3() {
   const count = document.getElementById('s3FieldCount');
   const emailSel = document.getElementById('s3EmailCol');
 
-  // Populate Email Column Dropdown (Crucial for Combined Pipeline)
   if (emailSel && CP.headers) {
     const currentEmail = emailSel.value;
     emailSel.innerHTML = '<option value="">— Select Email Column —</option>' + 
@@ -1079,7 +1077,6 @@ function buildStep3() {
     }
   }
 
-  // Rebuild the column hint list on the right panel
   const hints = (CP.headers || []).map(h => `
     <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--glass-border)">
       <span style="width:7px;height:7px;background:var(--cyan);border-radius:50%;flex-shrink:0"></span>
@@ -1102,8 +1099,6 @@ function buildStep3() {
 
   rows.innerHTML = ED.fields.map((f, i) => {
     const isLast = i === ED.fields.length - 1;
-    
-    // FIX: Strict whitespace trimming to guarantee the dropdown auto-populates!
     const colOpts = `<option value="">— choose column —</option>${(CP.headers || []).map(h => {
       const match = (f.column && f.column.trim() === h.trim()) ? 'selected' : '';
       return `<option value="${h}" ${match}>${h}</option>`;
@@ -1120,9 +1115,7 @@ function buildStep3() {
       <select class="form-select" style="font-size:13.5px;padding:9px 32px 9px 12px" onchange="s3ColChanged('${f.id}', this.value)">
         ${colOpts}
       </select>
-      <div title="Set as primary field (used for PDF filename)"
-        onclick="s3SetPrimary('${f.id}')"
-        style="width:32px;height:32px;border-radius:8px;border:1px solid ${f.isPrimary ? 'rgba(0,212,255,0.4)' : 'var(--glass-border)'};background:${f.isPrimary ? 'rgba(0,212,255,0.08)' : 'var(--glass)'};display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s;flex-shrink:0">
+      <div title="Set as primary field" onclick="s3SetPrimary('${f.id}')" style="width:32px;height:32px;border-radius:8px;border:1px solid ${f.isPrimary ? 'rgba(0,212,255,0.4)' : 'var(--glass-border)'};background:${f.isPrimary ? 'rgba(0,212,255,0.08)' : 'var(--glass)'};display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s;flex-shrink:0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="${f.isPrimary ? 'var(--cyan)' : 'none'}" stroke="${f.isPrimary ? 'var(--cyan)' : 'var(--text-3)'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
     </div>`;
@@ -1131,7 +1124,6 @@ function buildStep3() {
   buildStep3Writeback();
 }
 
-
 function s3ColChanged(fieldId, colValue) {
   const f = ED.fields.find(x => x.id === fieldId);
   if (f) { f.column = colValue; if (typeof redraw === 'function') redraw(); }
@@ -1139,63 +1131,37 @@ function s3ColChanged(fieldId, colValue) {
 
 function s3SetPrimary(fieldId) {
   ED.fields.forEach(f => f.isPrimary = (f.id === fieldId));
-  buildStep3();
-  fnRefreshNamePill();
+  buildStep3(); fnRefreshNamePill();
 }
 
 function buildStep3Writeback() {
-  const badge   = document.getElementById('s3WritebackBadge');
-  const desc    = document.getElementById('s3WritebackDesc');
-  const options = document.getElementById('s3WritebackOptions');
-  const isGS    = CP.srcType === 'sheets';
-
+  const badge = document.getElementById('s3WritebackBadge'), desc = document.getElementById('s3WritebackDesc'), options = document.getElementById('s3WritebackOptions');
   if (!badge || !desc) return;
-
-  if (isGS) {
-    badge.textContent = 'Active';
-    badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.25)';
-    desc.textContent = 'After generation, certificate links will be written back to your Google Sheet as a new column at the end of your data.';
+  if (CP.srcType === 'sheets') {
+    badge.textContent = 'Active'; badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.25)';
+    desc.textContent = 'After generation, certificate links will be written back to your Google Sheet.';
     if (options) options.style.display = 'block';
   } else {
-    const srcLabel = CP.srcType === 'file' ? 'CSV/Excel upload' : CP.srcType === 'manual' ? 'manual entry' : CP.srcType === 'hxform' ? 'HX Form' : 'this source';
-    badge.textContent = 'N/A for this source';
-    badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--glass-border)';
-    desc.textContent = `Write-back is only available when data is imported via Google Sheets ID. You imported data via ${srcLabel}, so this option is not applicable.`;
+    badge.textContent = 'N/A for this source'; badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--glass-border)';
+    desc.textContent = 'Write-back is only available when data is imported via Google Sheets ID.';
     if (options) options.style.display = 'none';
   }
 }
 
 function validateStep3() {
   const emailCol = document.getElementById('s3EmailCol')?.value;
-  if (!emailCol) {
-    toast('Please select the Email Delivery column.', 'error');
-    return;
-  }
+  if (!emailCol) { toast('Please select the Email Delivery column.', 'error'); return; }
   CP.emailCol = emailCol;
-
   const unmapped = ED.fields.filter(f => !f.column);
-  if (unmapped.length) {
-    toast(`Please map a column for: ${unmapped.map(f => f.placeholder).join(', ')}`, 'error');
-    return;
-  }
-  const hasPrimary = ED.fields.some(f => f.isPrimary);
-  if (ED.fields.length > 0 && !hasPrimary) {
-    toast('Please star (★) one field as Primary — it will be used for the PDF filename.', 'error');
-    return;
-  }
-  
-  // ... inside validateStep3() ...
-    CP.eventName = (document.getElementById('fnEventInput')?.value || '').trim();
-    
-    // THE FIX: Add 'true' to force the pipeline forward into Step 4
-    goStep(4, true); 
+  if (unmapped.length) { toast(`Please map a column for: ${unmapped.map(f => f.placeholder).join(', ')}`, 'error'); return; }
+  if (ED.fields.length > 0 && !ED.fields.some(f => f.isPrimary)) { toast('Please star (★) one field as Primary.', 'error'); return; }
+  CP.eventName = (document.getElementById('fnEventInput')?.value || '').trim();
+  goStep(4, true); 
 }
-/* ── File Naming Logic ─────────────────────────────── */
+
 function fnRefreshNamePill() {
   const primary = ED.fields.find(f => f.isPrimary);
-  const sampleName = primary && CP.rows && CP.rows[0]
-    ? (CP.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g,''))
-    : 'participant_name';
+  const sampleName = primary && CP.rows && CP.rows[0] ? (CP.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g,'')) : 'participant_name';
   const pill = document.getElementById('fnNamePill');
   if (pill) pill.textContent = sampleName;
   fnUpdatePreview();
@@ -1203,43 +1169,30 @@ function fnRefreshNamePill() {
 
 function fnUpdatePreview() {
   const primary = ED.fields.find(f => f.isPrimary);
-  const sampleName = primary && CP.rows && CP.rows[0]
-    ? sanitizeFilename(CP.rows[0][primary.column] || 'Name')
-    : 'Name';
-  const eventInput = document.getElementById('fnEventInput');
-  const event = eventInput ? eventInput.value.trim() : '';
-  const eventPart = event ? '_' + sanitizeFilename(event) : '';
+  const sampleName = primary && CP.rows && CP.rows[0] ? sanitizeFilename(CP.rows[0][primary.column] || 'Name') : 'Name';
+  const event = (document.getElementById('fnEventInput')?.value || '').trim();
   const preview = document.getElementById('fnPreviewText');
-  if (preview) preview.textContent = sampleName + eventPart + '_01.pdf';
-  const sep = document.getElementById('fnSepNum');
-  if (sep) sep.style.display = event ? 'none' : '';
+  if (preview) preview.textContent = sampleName + (event ? '_' + sanitizeFilename(event) : '') + '_01.pdf';
+  const sep = document.getElementById('fnSepNum'); if (sep) sep.style.display = event ? 'none' : '';
 }
 
-function sanitizeFilename(str) {
-  return String(str).replace(/[^a-zA-Z0-9_\-\u0900-\u097F\u00C0-\u024F]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,'');
-}
+function sanitizeFilename(str) { return String(str).replace(/[^a-zA-Z0-9_\-\u0900-\u097F\u00C0-\u024F]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,''); }
 
 function buildOutputFilename(rowData, index) {
   const primary = ED.fields.find(f => f.isPrimary);
   const name = primary ? sanitizeFilename(rowData[primary.column] || 'cert') : 'cert';
-  const event = CP.eventName ? '_' + sanitizeFilename(CP.eventName) : '';
-  const num = String(index + 1).padStart(2, '0');
-  return `${name}${event}_${num}.pdf`;
+  return `${name}${CP.eventName ? '_' + sanitizeFilename(CP.eventName) : ''}_${String(index + 1).padStart(2, '0')}.pdf`;
 }
+
 /* ════════════════════════════════════════════════════════════════
    STEP 4 — EMAIL TEMPLATE (AI ENGINE)
 ════════════════════════════════════════════════════════════════ */
-/* ── EMAIL EDITOR STATE ── */
-const ME = {
-  blocks: [],
-  selectedId: null,
-  nextId: 1,
-  cm: null,
-  cmDebounce: null,
-  initialized: false,
-  templateSelected: false
-};
-/* ── TEMPLATES & ROUTING ── */
+
+// Protect ME declaration so it never duplicates and crashes
+if (typeof window.ME === 'undefined') {
+  window.ME = { blocks: [], selectedId: null, nextId: 1, cm: null, cmDebounce: null, initialized: false, templateSelected: false };
+}
+
 const ME_TEMPLATES = {
   cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
   event: { name: 'Event Invitation', desc: 'Banner + date + RSVP', blocks: [ { type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } }, { type: 'footer', props: { text: "If you're unable to attend, please let us know at your earliest convenience.", bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
@@ -1270,8 +1223,8 @@ function initStep4() {
   }
 
   mPopulateTags();
-  
   meTplGateBuild();
+  
   ME.templateSelected = false;
   document.getElementById('mTemplateSelectorS3').style.display = 'flex';
   document.getElementById('mEditorShellS3').style.display = 'none';
@@ -1308,7 +1261,6 @@ function meTplGateBuild() {
       </div>
     </div>`;
 
-  // Removed the crash-causing Emoji Regex!
   const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
     const cat = ME_TPL_CATS[key] || 'all';
     const previewHtml = meGetHtmlFromBlocks(tpl.blocks).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -1345,10 +1297,14 @@ function meTplGateSelect(key) {
   if (btn) { btn.disabled = false; btn.innerHTML = (key === 'blank' || key === 'code') ? 'Start ' + (key==='blank'?'Visual':'Code') + ' Editor →' : 'Use Template — Open Editor →'; }
 }
 
+function meTplGateConfirm() {
+  if (!meTplGateSelected) return;
+  mSelectTemplate(meTplGateSelected);
+}
+
 function mSelectTemplate(type) {
   if (type === 'reset') {
-    ME.templateSelected = false;
-    meTplGateSelected = null;
+    ME.templateSelected = false; meTplGateSelected = null;
     document.getElementById('meTplGateUseBtn').disabled = true;
     document.querySelectorAll('#meTplGateGrid .me-tpl-gate-card').forEach(c => c.classList.remove('selected'));
     document.getElementById('mTemplateSelectorS3').style.display = 'flex';
@@ -1358,17 +1314,15 @@ function mSelectTemplate(type) {
 
   ME.templateSelected = true;
   document.getElementById('mTemplateSelectorS3').style.display = 'none';
-  document.getElementById('mEditorShellS3').style.display = 'flex'; // This reveals the Editor AND Subject Line!
+  document.getElementById('mEditorShellS3').style.display = 'flex';
 
   if (type === 'blank') {
-    ME.blocks = [];
-    ME.selectedId = null;
+    ME.blocks = []; ME.selectedId = null;
     document.getElementById('mLeftSidebarS3').style.display = 'flex';
     document.getElementById('mBtnVisual').style.display = 'inline-block';
     document.getElementById('mVisualToolbarBtns').style.display = 'flex';
     mAddBlock('logo'); mAddBlock('header'); mAddBlock('text'); mAddBlock('button'); 
-    mSwitchView('visual');
-    switchLeftTab('ai');
+    mSwitchView('visual'); switchLeftTab('ai');
   } else if (type === 'code') {
     ME.blocks = [];
     document.getElementById('mLeftSidebarS3').style.display = 'none';
@@ -1381,17 +1335,12 @@ function mSelectTemplate(type) {
     mSwitchView('code');
   } else if (ME_TEMPLATES[type]) {
     const tpl = ME_TEMPLATES[type];
-    ME.blocks = tpl.blocks.map(b => ({
-      id: 'b' + (ME.nextId++), type: b.type, props: JSON.parse(JSON.stringify(b.props)),
-    }));
+    ME.blocks = tpl.blocks.map(b => ({ id: 'b' + (ME.nextId++), type: b.type, props: JSON.parse(JSON.stringify(b.props)) }));
     ME.selectedId = null;
     document.getElementById('mLeftSidebarS3').style.display = 'flex';
     document.getElementById('mBtnVisual').style.display = 'inline-block';
     document.getElementById('mVisualToolbarBtns').style.display = 'flex';
-    mRenderVisual();
-    mSyncToCode();
-    mSwitchView('visual');
-    switchLeftTab('ai');
+    mRenderVisual(); mSyncToCode(); mSwitchView('visual'); switchLeftTab('ai');
   }
 }
 
@@ -1402,9 +1351,7 @@ function mPopulateTags() {
     list.innerHTML = '<div style="font-style:italic; color:var(--text-3); font-size:12px;">No data loaded. Go back to Step 1.</div>';
     return;
   }
-  let html = CP.headers.map(h => 
-    `<div onclick="mInsertTag('{{${h}}}')" style="padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--glass-border); border-radius:6px; cursor:pointer; font-family:var(--font-mono); font-size:12px; color:var(--cyan); transition:0.2s;" onmouseover="this.style.background='rgba(0,212,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">{{${h}}}</div>`
-  ).join('');
+  let html = CP.headers.map(h => `<div onclick="mInsertTag('{{${h}}}')" style="padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--glass-border); border-radius:6px; cursor:pointer; font-family:var(--font-mono); font-size:12px; color:var(--cyan); transition:0.2s;" onmouseover="this.style.background='rgba(0,212,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">{{${h}}}</div>`).join('');
   html += `<div onclick="mInsertTag('{{Certificate Link}}')" style="padding:8px 12px; margin-top:8px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:6px; cursor:pointer; font-family:var(--font-mono); font-size:12px; color:var(--green); transition:0.2s;" onmouseover="this.style.background='rgba(16,185,129,0.15)'" onmouseout="this.style.background='rgba(16,185,129,0.08)'">★ {{Certificate Link}}</div>`;
   list.innerHTML = html;
 }
@@ -1415,8 +1362,7 @@ function mInsertTag(tag) {
   } else {
     const block = ME.blocks.find(b => b.id === ME.selectedId);
     if (block && block.props.text !== undefined) {
-      block.props.text += tag;
-      mRenderVisual(); mRenderProps(block); mSyncToCode();
+      block.props.text += tag; mRenderVisual(); mRenderProps(block); mSyncToCode();
     } else {
       toast('Select a text block to insert tag, or use Code View', 'info');
     }
@@ -1429,15 +1375,11 @@ function switchLeftTab(tab) {
   document.getElementById('mPanel_ai').style.display = tab === 'ai' ? 'flex' : 'none';
   document.getElementById('mPanel_props').style.display = tab === 'props' ? 'flex' : 'none';
   if (tab === 'ai') {
-    document.getElementById('mTab_ai').style.color = 'var(--cyan)';
-    document.getElementById('mTab_ai').style.borderBottomColor = 'var(--cyan)';
-    document.getElementById('mTab_props').style.color = 'var(--text-3)';
-    document.getElementById('mTab_props').style.borderBottomColor = 'transparent';
+    document.getElementById('mTab_ai').style.color = 'var(--cyan)'; document.getElementById('mTab_ai').style.borderBottomColor = 'var(--cyan)';
+    document.getElementById('mTab_props').style.color = 'var(--text-3)'; document.getElementById('mTab_props').style.borderBottomColor = 'transparent';
   } else {
-    document.getElementById('mTab_props').style.color = 'var(--cyan)';
-    document.getElementById('mTab_props').style.borderBottomColor = 'var(--cyan)';
-    document.getElementById('mTab_ai').style.color = 'var(--text-3)';
-    document.getElementById('mTab_ai').style.borderBottomColor = 'transparent';
+    document.getElementById('mTab_props').style.color = 'var(--cyan)'; document.getElementById('mTab_props').style.borderBottomColor = 'var(--cyan)';
+    document.getElementById('mTab_ai').style.color = 'var(--text-3)'; document.getElementById('mTab_ai').style.borderBottomColor = 'transparent';
   }
 }
 
@@ -1446,10 +1388,7 @@ function mSwitchView(view) {
   document.getElementById('mBtnCode').className = 'btn btn-ghost btn-sm ' + (view === 'code' ? 'active' : '');
   document.getElementById('mVisualCol').style.display = view === 'visual' ? 'flex' : 'none';
   document.getElementById('mCodeWrapS3').style.display = view === 'code' ? 'block' : 'none';
-  if (view === 'code' && ME.cm) {
-    mSyncToCode();
-    setTimeout(() => ME.cm.refresh(), 50);
-  }
+  if (view === 'code' && ME.cm) { mSyncToCode(); setTimeout(() => ME.cm.refresh(), 50); }
 }
 
 function mSetDeviceS3(dev) {
@@ -1458,112 +1397,27 @@ function mSetDeviceS3(dev) {
   document.getElementById('mPrvBoxS3').style.width = dev === 'mobile' ? '375px' : '600px';
 }
 
-function mClearAll() {
-  ME.blocks = []; ME.selectedId = null;
-  mRenderVisual(); mRenderProps(null); mSyncToCode();
-}
+function mClearAll() { ME.blocks = []; ME.selectedId = null; mRenderVisual(); mRenderProps(null); mSyncToCode(); }
 
 function mAddBlock(type) {
   const def = ME_DEFS[type]; if (!def) return;
   const block = { id: 'b' + (ME.nextId++), type, props: def.defaults() };
-  ME.blocks.push(block);
-  mRenderVisual(); mSelectBlock(block.id); mSyncToCode();
-  const list = document.getElementById('mVisualListS3');
-  if (list) list.scrollTop = list.scrollHeight;
+  ME.blocks.push(block); mRenderVisual(); mSelectBlock(block.id); mSyncToCode();
+  const list = document.getElementById('mVisualListS3'); if (list) list.scrollTop = list.scrollHeight;
 }
 
-function mDeleteBlock(id) {
-  ME.blocks = ME.blocks.filter(b => b.id !== id);
-  if (ME.selectedId === id) { ME.selectedId = null; mRenderProps(null); }
-  mRenderVisual(); mSyncToCode();
-}
-
-function mDuplicateBlock(id) {
-  const idx = ME.blocks.findIndex(b => b.id === id); if (idx < 0) return;
-  const copy = { id: 'b' + (ME.nextId++), type: ME.blocks[idx].type, props: JSON.parse(JSON.stringify(ME.blocks[idx].props)) };
-  ME.blocks.splice(idx + 1, 0, copy);
-  mRenderVisual(); mSelectBlock(copy.id); mSyncToCode();
-}
+function mDeleteBlock(id) { ME.blocks = ME.blocks.filter(b => b.id !== id); if (ME.selectedId === id) { ME.selectedId = null; mRenderProps(null); } mRenderVisual(); mSyncToCode(); }
+function mDuplicateBlock(id) { const idx = ME.blocks.findIndex(b => b.id === id); if (idx < 0) return; const copy = { id: 'b' + (ME.nextId++), type: ME.blocks[idx].type, props: JSON.parse(JSON.stringify(ME.blocks[idx].props)) }; ME.blocks.splice(idx + 1, 0, copy); mRenderVisual(); mSelectBlock(copy.id); mSyncToCode(); }
 
 function mSelectBlock(id) {
   ME.selectedId = id;
   document.querySelectorAll('.m-block-wrap').forEach(el => el.style.borderColor = el.dataset.id === id ? 'var(--cyan)' : 'transparent');
-  const block = ME.blocks.find(b => b.id === id);
-  mRenderProps(block);
-  switchLeftTab('props');
+  mRenderProps(ME.blocks.find(b => b.id === id)); switchLeftTab('props');
 }
 
 function mRenderVisual() {
   const list = document.getElementById('mVisualListS3'); if (!list) return;
-  list.innerHTML = ME.blocks.map(b => {
-    return `<div class="m-block-wrap" data-id="${b.id}" onclick="mSelectBlock('${b.id}')" style="background:rgba(255,255,255,0.03); border:1px solid ${b.id === ME.selectedId ? 'var(--cyan)' : 'transparent'}; border-radius:8px; padding:12px; cursor:pointer; position:relative; margin-bottom:8px;">
-      <div class="m-drag-handle" style="position:absolute; top:12px; left:8px; cursor:grab; color:var(--text-3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
-      <div style="margin-left:24px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase;">${(ME_DEFS[b.type]||{}).label||b.type}</div>
-      <div style="position:absolute; top:8px; right:8px; display:flex; gap:4px;">
-        <button onclick="event.stopPropagation();mDuplicateBlock('${b.id}')" style="background:var(--glass); border:1px solid var(--glass-border); border-radius:4px; color:var(--text-2); cursor:pointer; padding:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
-        <button onclick="event.stopPropagation();mDeleteBlock('${b.id}')" style="background:var(--glass); border:1px solid var(--glass-border); border-radius:4px; color:#f43f5e; cursor:pointer; padding:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function mRenderProps(block) {
-  const form = document.getElementById('mPropsForm');
-  const empty = document.getElementById('mPropsEmpty');
-  if (!block) { form.style.display = 'none'; empty.style.display = 'block'; return; }
-  form.style.display = 'flex'; empty.style.display = 'none';
-  
-  const p = block.props, rows = [];
-  if (['logo','header','text','footer'].includes(block.type)) rows.push(mPropTextarea('Text Content', block.id, 'text', p.text));
-  if (block.type === 'logo') rows.push(mPropText('Tagline', block.id, 'tagline', p.tagline));
-  if (block.type === 'button') { rows.push(mPropText('Button Text', block.id, 'text', p.text)); rows.push(mPropText('Link URL', block.id, 'link', p.link)); rows.push(mPropColor('Button BG', block.id, 'btnBg', p.btnBg?.startsWith('linear')?'#00d4ff':p.btnBg)); rows.push(mPropColor('Text Color', block.id, 'btnColor', p.btnColor)); rows.push(mPropRange('Radius', block.id, 'borderRadius', p.borderRadius, 0, 40)); }
-  if (block.type === 'image') { rows.push(mPropText('Image URL', block.id, 'src', p.src)); rows.push(mPropRange('Width %', block.id, 'width', p.width, 20, 100)); }
-  if (block.type === 'divider') { rows.push(mPropColor('Color', block.id, 'color', p.color)); rows.push(mPropRange('Thickness', block.id, 'thickness', p.thickness, 1, 10)); }
-  if (block.type === 'spacer') rows.push(mPropRange('Height', block.id, 'height', p.height, 10, 100));
-  
-  if (['logo','header','text','button','footer'].includes(block.type)) {
-      if(block.type !== 'button') rows.push(mPropColor('Text Color', block.id, 'color', p.color));
-      if(block.type !== 'logo') rows.push(mPropRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 40));
-  }
-  rows.push(mPropColor('Background', block.id, 'bgColor', p.bgColor));
-  rows.push(mPropRange('Padding V', block.id, 'paddingV', p.paddingV, 0, 80));
-  
-  form.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;">${(ME_DEFS[block.type]||{}).label||block.type} Settings</div>${rows.join('')}`;
-}
-
-function mPropText(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><input type="text" class="pr-input" value="${(val||'').replace(/"/g,'&quot;')}" oninput="mUpdateProp('${id}','${key}',this.value)"/></div>`; }
-function mPropTextarea(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><textarea class="pr-input" style="min-height:80px;resize:vertical;" oninput="mUpdateProp('${id}','${key}',this.value)">${(val||'').replace(/</g,'&lt;')}</textarea></div>`; }
-function mPropColor(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><div style="display:flex;gap:8px;"><input type="color" value="${val||'#ffffff'}" style="width:34px;height:34px;padding:2px;background:var(--glass);border:1px solid var(--glass-border);border-radius:6px;cursor:pointer;" oninput="mUpdateProp('${id}','${key}',this.value)"/><input type="text" class="pr-input" value="${val||'#ffffff'}" oninput="mUpdateProp('${id}','${key}',this.value)"/></div></div>`; }
-function mPropRange(label, id, key, val, min, max) { return `<div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;justify-content:space-between;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><span id="mrv_${id}_${key}" style="font-size:11px;color:var(--cyan);font-family:var(--font-mono);">${val}</span></div><input type="range" class="pr-range" min="${min}" max="${max}" value="${val}" oninput="document.getElementById('mrv_${id}_${key}').textContent=this.value;mUpdateProp('${id}','${key}',Number(this.value))"/></div>`; }
-
-function mUpdateProp(id, key, val) {
-  const block = ME.blocks.find(b => b.id === id); if (!block) return;
-  block.props[key] = val;
-  mSyncToCode();
-}
-
-function mSyncToCode() {
-  const html = meGetHtml();
-  if (ME.cm && document.getElementById('mCodeWrapS3').style.display !== 'none') {
-      const c = ME.cm.getCursor(); ME.cm.setValue(html); try{ME.cm.setCursor(c);}catch(e){}
-  }
-  mUpdatePreview(html);
-}
-
-function mUpdatePreview(htmlOverride) {
-  const frame = document.getElementById('mPrvBoxS3'); if (!frame) return;
-  let html = htmlOverride || (ME.cm && document.getElementById('mCodeWrapS3').style.display === 'block' ? ME.cm.getValue() : meGetHtml());
-  
-  if (CP.rows && CP.rows.length) {
-    html = html.replace(/\{\{(\w+)\}\}/g, function (_, key) {
-      const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key);
-      return col ? (CP.rows[0][col] || '') : (CP.rows[0][key] || '{{' + key + '}}');
-    });
-  }
-  const noScrollCss = `<style>::-webkit-scrollbar { display: none !important; } html, body { scrollbar-width: none !important; margin: 0; padding: 0; }</style>`;
-  html = html.includes('</head>') ? html.replace('</head>', noScrollCss + '</head>') : noScrollCss + html;
-  
-  frame.srcdoc = html;
+  list.innerHTML = ME.blocks.map(b => `<div class="m-block-wrap" data-id="${b.id}" onclick="mSelectBlock('${b.id}')" style="background:rgba(255,255,255,0.03); border:1px solid ${b.id === ME.selectedId ? 'var(--cyan)' : 'transparent'}; border-radius:8px; padding:12px; cursor:pointer; position:relative; margin-bottom:8px;"><div class="m-drag-handle" style="position:absolute; top:12px; left:8px; cursor:grab; color:var(--text-3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><div style="margin-left:24px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase;">${(ME_DEFS[b.type]||{}).label||b.type}</div><div style="position:absolute; top:8px; right:8px; display:flex; gap:4px;"><button onclick="event.stopPropagation();mDuplicateBlock('${b.id}')" style="background:var(--glass); border:1px solid var(--glass-border); border-radius:4px; color:var(--text-2); cursor:pointer; padding:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button onclick="event.stopPropagation();mDeleteBlock('${b.id}')" style="background:var(--glass); border:1px solid var(--glass-border); border-radius:4px; color:#f43f5e; cursor:pointer; padding:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div>`).join('');
 }
 
 const ME_DEFS = {
@@ -1576,6 +1430,44 @@ const ME_DEFS = {
   spacer:  { label:'Spacer',  defaults:()=>({ height:40, bgColor:'#ffffff' }) },
   footer:  { label:'Footer',  defaults:()=>({ text:'Sent via Honourix. Contact the organiser for questions.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 }) },
 };
+
+function mRenderProps(block) {
+  const form = document.getElementById('mPropsForm'), empty = document.getElementById('mPropsEmpty');
+  if (!block) { form.style.display = 'none'; empty.style.display = 'block'; return; }
+  form.style.display = 'flex'; empty.style.display = 'none';
+  const p = block.props, rows = [];
+  if (['logo','header','text','footer'].includes(block.type)) rows.push(mPropTextarea('Text Content', block.id, 'text', p.text));
+  if (block.type === 'logo') rows.push(mPropText('Tagline', block.id, 'tagline', p.tagline));
+  if (block.type === 'button') { rows.push(mPropText('Button Text', block.id, 'text', p.text)); rows.push(mPropText('Link URL', block.id, 'link', p.link)); rows.push(mPropColor('Button BG', block.id, 'btnBg', p.btnBg?.startsWith('linear')?'#00d4ff':p.btnBg)); rows.push(mPropColor('Text Color', block.id, 'btnColor', p.btnColor)); rows.push(mPropRange('Radius', block.id, 'borderRadius', p.borderRadius, 0, 40)); }
+  if (block.type === 'image') { rows.push(mPropText('Image URL', block.id, 'src', p.src)); rows.push(mPropRange('Width %', block.id, 'width', p.width, 20, 100)); }
+  if (block.type === 'divider') { rows.push(mPropColor('Color', block.id, 'color', p.color)); rows.push(mPropRange('Thickness', block.id, 'thickness', p.thickness, 1, 10)); }
+  if (block.type === 'spacer') rows.push(mPropRange('Height', block.id, 'height', p.height, 10, 100));
+  if (['logo','header','text','button','footer'].includes(block.type)) { if(block.type !== 'button') rows.push(mPropColor('Text Color', block.id, 'color', p.color)); if(block.type !== 'logo') rows.push(mPropRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 40)); }
+  rows.push(mPropColor('Background', block.id, 'bgColor', p.bgColor)); rows.push(mPropRange('Padding V', block.id, 'paddingV', p.paddingV, 0, 80));
+  form.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;">${(ME_DEFS[block.type]||{}).label||block.type} Settings</div>${rows.join('')}`;
+}
+
+function mPropText(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><input type="text" class="pr-input" value="${(val||'').replace(/"/g,'&quot;')}" oninput="mUpdateProp('${id}','${key}',this.value)"/></div>`; }
+function mPropTextarea(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><textarea class="pr-input" style="min-height:80px;resize:vertical;" oninput="mUpdateProp('${id}','${key}',this.value)">${(val||'').replace(/</g,'&lt;')}</textarea></div>`; }
+function mPropColor(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><div style="display:flex;gap:8px;"><input type="color" value="${val||'#ffffff'}" style="width:34px;height:34px;padding:2px;background:var(--glass);border:1px solid var(--glass-border);border-radius:6px;cursor:pointer;" oninput="mUpdateProp('${id}','${key}',this.value)"/><input type="text" class="pr-input" value="${val||'#ffffff'}" oninput="mUpdateProp('${id}','${key}',this.value)"/></div></div>`; }
+function mPropRange(label, id, key, val, min, max) { return `<div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;justify-content:space-between;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><span id="mrv_${id}_${key}" style="font-size:11px;color:var(--cyan);font-family:var(--font-mono);">${val}</span></div><input type="range" class="pr-range" min="${min}" max="${max}" value="${val}" oninput="document.getElementById('mrv_${id}_${key}').textContent=this.value;mUpdateProp('${id}','${key}',Number(this.value))"/></div>`; }
+
+function mUpdateProp(id, key, val) { const block = ME.blocks.find(b => b.id === id); if (!block) return; block.props[key] = val; mSyncToCode(); }
+
+function mSyncToCode() {
+  const html = meGetHtml();
+  if (ME.cm && document.getElementById('mCodeWrapS3').style.display !== 'none') { const c = ME.cm.getCursor(); ME.cm.setValue(html); try{ME.cm.setCursor(c);}catch(e){} }
+  mUpdatePreview(html);
+}
+
+function mUpdatePreview(htmlOverride) {
+  const frame = document.getElementById('mPrvBoxS3'); if (!frame) return;
+  let html = htmlOverride || (ME.cm && document.getElementById('mCodeWrapS3').style.display === 'block' ? ME.cm.getValue() : meGetHtml());
+  if (CP.rows && CP.rows.length) { html = html.replace(/\{\{(\w+)\}\}/g, function (_, key) { const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key); return col ? (CP.rows[0][col] || '') : (CP.rows[0][key] || '{{' + key + '}}'); }); }
+  const noScrollCss = `<style>::-webkit-scrollbar { display: none !important; } html, body { scrollbar-width: none !important; margin: 0; padding: 0; }</style>`;
+  html = html.includes('</head>') ? html.replace('</head>', noScrollCss + '</head>') : noScrollCss + html;
+  frame.srcdoc = html;
+}
 
 function meBlockToHtml(block) {
   const p = block.props, fs = "'Plus Jakarta Sans',sans-serif";
@@ -1601,25 +1493,10 @@ function meGetHtml() {
 /* ── AI CHAT ENGINE ── */
 let meAiChatHistory = [];
 let meAiIsLoading = false;
-let _galAiIsPro = null;
-async function _galAiCheckPro() {
-  if (_galAiIsPro !== null) return _galAiIsPro;
-  try {
-    const token = localStorage.getItem('Honourix_token');
-    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    const data = await res.json();
-    _galAiIsPro = data?.plan === 'pro';
-  } catch (_) { _galAiIsPro = false; }
-  return _galAiIsPro;
-}
 
 function meAiAppendBubble(role, content) {
-  const chat = document.getElementById('meAiChatBox');
-  if (!chat) return null;
-  const div = document.createElement('div');
-  div.style.display = 'flex'; div.style.gap = '12px';
+  const chat = document.getElementById('meAiChatBox'); if (!chat) return null;
+  const div = document.createElement('div'); div.style.display = 'flex'; div.style.gap = '12px';
   if (role === 'ai') {
     div.innerHTML = `<div style="width:28px;height:28px;border-radius:50%;background:rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;color:var(--cyan);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 7.1"/><path d="M12 12l9.9 4.9"/></svg></div>
     <div style="background:var(--glass); border:1px solid var(--glass-border); padding:12px 14px; border-radius:12px; border-top-left-radius:0; font-size:13.5px; color:var(--text); line-height:1.5;">${content.replace(/\n/g, '<br>')}</div>`;
@@ -1627,120 +1504,34 @@ function meAiAppendBubble(role, content) {
     div.style.justifyContent = 'flex-end';
     div.innerHTML = `<div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); padding:12px 14px; border-radius:12px; border-top-right-radius:0; font-size:13.5px; color:var(--text); line-height:1.5; max-width:85%;">${content}</div>`;
   }
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-  return div;
-}
-
-function meAiShowUpgrade() {
-  const chat = document.getElementById('meAiChatBox');
-  if (!chat) return;
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'display:flex;gap:12px;margin-top:4px';
-  wrap.innerHTML = `
-    <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;color:var(--cyan);flex-shrink:0;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 7.1"/><path d="M12 12l9.9 4.9"/></svg>
-    </div>
-    <div style="background:var(--glass);border:1px solid var(--glass-border);padding:12px 14px;border-radius:12px;border-top-left-radius:0;font-size:13.5px;color:var(--text);line-height:1.5;">
-      <div style="margin-bottom:10px">Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered email generation, design suggestions, and unlimited assistance.</div>
-      <div style="display:flex;flex-wrap:wrap;gap:7px">
-        <a href="settings.html#billing" style="padding:7px 13px;border-radius:9px;background:linear-gradient(90deg,rgba(0,212,255,0.18),rgba(124,58,237,0.18));border:1px solid rgba(0,212,255,0.3);color:var(--cyan);font-size:12.5px;font-weight:600;text-decoration:none;">🚀 Upgrade to Pro →</a>
-        <button onclick="meAiShowProDetails(this)" style="padding:7px 13px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:12.5px;cursor:pointer;font-family:inherit;">What's included?</button>
-      </div>
-    </div>`;
-  chat.appendChild(wrap);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-function meAiShowProDetails(btn) {
-  const chat = document.getElementById('meAiChatBox');
-  btn.closest('div[style*="display:flex"]')?.insertAdjacentHTML('afterend',
-    `<div style="display:flex;gap:12px;margin-top:8px">
-      <div style="width:28px;flex-shrink:0"></div>
-      <div style="background:var(--glass);border:1px solid var(--glass-border);padding:12px 14px;border-radius:12px;font-size:13px;color:var(--text-2);line-height:1.7">
-        ✦ Unlimited AI email generation<br>
-        ✦ Smart design suggestions<br>
-        ✦ Block-level AI edits<br>
-        ✦ Subject line brainstorming<br>
-        ✦ Priority sending quota
-      </div>
-    </div>`
-  );
-  btn.remove();
-  if (chat) chat.scrollTop = chat.scrollHeight;
+  chat.appendChild(div); chat.scrollTop = chat.scrollHeight; return div;
 }
 
 async function meAiSend() {
-  const input = document.getElementById('meAiInput');
-  if (!input || meAiIsLoading) return;
+  const input = document.getElementById('meAiInput'); if (!input || meAiIsLoading) return;
   const msg = input.value.trim(); if (!msg) return;
+  input.value = ''; meAiIsLoading = true; document.getElementById('meAiSendBtn').style.opacity = '0.5';
 
-  const isPro = await _galAiCheckPro();
-  if (!isPro) {
-    input.value = '';
-    meAiAppendBubble('user', msg);
-    meAiShowUpgrade();
-    return;
-  }
-
-  input.value = ''; meAiIsLoading = true;
-  document.getElementById('meAiSendBtn').style.opacity = '0.5';
-
-  meAiAppendBubble('user', msg);
-  const typingEl = meAiAppendBubble('ai', 'Thinking...');
+  meAiAppendBubble('user', msg); const typingEl = meAiAppendBubble('ai', 'Thinking...');
   meAiChatHistory.push({ role: 'user', content: msg });
 
   try {
     const token = localStorage.getItem('Honourix_token');
     const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/generate-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({
-        userMessage: msg,
-        mode: document.getElementById('mCodeWrapS3').style.display === 'block' ? 'code' : 'visual',
-        htmlModeText: ME.cm ? ME.cm.getValue() : '',
-        currentBlocks: ME.blocks,
-        headers: CP.headers,
-        chatHistory: meAiChatHistory.slice(-10),
-        selectedBlockId: ME.selectedId,
-      }),
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ userMessage: msg, mode: document.getElementById('mCodeWrapS3').style.display === 'block' ? 'code' : 'visual', htmlModeText: ME.cm ? ME.cm.getValue() : '', currentBlocks: ME.blocks, headers: CP.headers, chatHistory: meAiChatHistory.slice(-10), selectedBlockId: ME.selectedId }),
     });
-    const res = await response.json();
-    typingEl.remove();
-
+    const res = await response.json(); typingEl.remove();
+    if (response.status === 403 && res.error === 'AI_LOCKED') { meAiAppendBubble('ai', '🔒 AI features require a Pro plan.'); return; }
     meAiChatHistory.push({ role: 'model', content: res.message || '' });
 
-    if (res.action === 'replace_blocks' && res.blocks) {
-      ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} }));
-      ME.selectedId = null; mRenderVisual(); mRenderProps(null); mSyncToCode();
-      meAiAppendBubble('ai', res.message || 'Done! Canvas updated.');
-    } else if (res.action === 'replace_html' && res.html && ME.cm) {
-      ME.cm.setValue(res.html);
-      meAiAppendBubble('ai', res.message || 'Code updated.');
-    } else if (res.action === 'update_block' && res.blockId && res.props) {
-      const b = ME.blocks.find(x => x.id === res.blockId);
-      if (b) { Object.assign(b.props, res.props); mSyncToCode(); mRenderVisual(); if(ME.selectedId===b.id)mRenderProps(b); }
-      meAiAppendBubble('ai', res.message || 'Block updated.');
-    } else {
-      meAiAppendBubble('ai', res.message || 'How else can I help?');
-    }
-  } catch (err) {
-    if (typingEl) typingEl.remove();
-    meAiAppendBubble('ai', 'Error: ' + err.message);
-  } finally {
-    meAiIsLoading = false; document.getElementById('meAiSendBtn').style.opacity = '1';
-  }
+    if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; mRenderVisual(); mRenderProps(null); mSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); } 
+    else if (res.action === 'replace_html' && res.html && ME.cm) { ME.cm.setValue(res.html); meAiAppendBubble('ai', res.message || 'Code updated.'); } 
+    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); mSyncToCode(); mRenderVisual(); if(ME.selectedId===b.id)mRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); } 
+    else { meAiAppendBubble('ai', res.message || 'How else can I help?'); }
+  } catch (err) { if (typingEl) typingEl.remove(); meAiAppendBubble('ai', 'Error: ' + err.message); } 
+  finally { meAiIsLoading = false; document.getElementById('meAiSendBtn').style.opacity = '1'; }
 }
-
-/* ── TEMPLATE HELPER ── */
-function personalise(tmpl, row, mappings) {
-  let out = tmpl;
-  out = out.replace(/\{\{name\}\}/gi, row[mappings.name] || '');
-  out = out.replace(/\{\{email\}\}/gi, row[mappings.email] || '');
-  Object.entries(mappings).forEach(([ph, col]) => { out = out.replace(new RegExp(`\\{\\{${ph}\\}\\}`, 'gi'), row[col] || ''); });
-  return out;
-}
-
 /* ════════════════════════════════════════════════════════════════
    STEP 5 — REVIEW
 ════════════════════════════════════════════════════════════════ */
