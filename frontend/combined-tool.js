@@ -1118,6 +1118,7 @@ function buildStep3() {
   buildStep3Writeback();
 }
 
+
 function s3ColChanged(fieldId, colValue) {
   const f = ED.fields.find(x => x.id === fieldId);
   if (f) { f.column = colValue; if (typeof redraw === 'function') redraw(); }
