@@ -436,7 +436,7 @@ function resizeCanvas() {
   if (!zone) return;
   const zw = zone.clientWidth, zh = zone.clientHeight;
   if (zw < 10) { setTimeout(resizeCanvas, 50); return; }
-  const baseScale = Math.min((zw - 48) / ED.w, Math.max((zh - 48) / 200, 1 / ED.h));
+  const baseScale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
   ED.scale = baseScale * ED.zoom;
   const cw = Math.round(ED.w * ED.scale), ch = Math.round(ED.h * ED.scale);
   const dpr  = window.devicePixelRatio || 1;
@@ -735,38 +735,71 @@ function getUsedFontUrls() {
 function openAFModal() {
   const sel = document.getElementById('afColSelect');
   if (sel) {
-    sel.innerHTML = '<option value="">— no column —</option>';
+    sel.innerHTML = '<option value="">— Select a column —</option>';
     (CP.headers || []).forEach(h => {
       const o = document.createElement('option'); o.value = h; o.textContent = h; sel.appendChild(o);
     });
   }
+  const phInner = document.getElementById('afPhInner');
+  if (phInner) phInner.value = '';
+  const hint = document.getElementById('afColHint');
+  if (hint) hint.style.display = 'none';
+  const sizeEl = document.getElementById('newFieldSize');
+  if (sizeEl) sizeEl.value = 36;
   const afPrimary = document.getElementById('afPrimary');
   if (afPrimary) afPrimary.checked = ED.fields.length === 0;
+  const preview = document.getElementById('afFilePreview');
+  if (preview) preview.textContent = 'Alex_01.pdf';
   document.getElementById('afOverlay').classList.add('open');
 }
 function closeAFModal() { document.getElementById('afOverlay').classList.remove('open'); }
 function openAddFieldModal()  { openAFModal(); }
 function closeAddFieldModal() { closeAFModal(); }
 
-function addCanvasField() {
-  const colSel   = document.getElementById('afColSelect');
-  const phInput  = document.getElementById('afPh');
-  const col      = colSel ? colSel.value : '';
-  let   ph       = phInput ? phInput.value.trim() : '';
-  if (!ph && col) ph = col.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-  if (!ph) {
-    const custom = document.getElementById('afCustom');
-    if (custom) ph = custom.value.trim().replace(/\s+/g,'_');
+function afColumnChanged(col) {
+  if (!col) return;
+  const suggested = col.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+  const phInner = document.getElementById('afPhInner');
+  if (phInner) phInner.value = suggested;
+  const sample = CP.rows && CP.rows[0] ? (CP.rows[0][col] || '') : '';
+  const hint = document.getElementById('afColHint');
+  if (hint) {
+    if (sample) { hint.textContent = 'Sample value from row 1: "' + sample + '"'; hint.style.display = 'block'; }
+    else { hint.style.display = 'none'; }
   }
-  if (!ph) { toast('Enter a placeholder name', 'error'); return; }
-  const size      = parseInt(document.getElementById('afSize')?.value || document.getElementById('newFieldSize')?.value || '48', 10);
+  afPhInput(suggested);
+}
+
+function afPhInput(val) {
+  const clean = val.replace(/[{}]/g, '').trim();
+  const colSel = document.getElementById('afColSelect');
+  const col = colSel ? colSel.value : '';
+  const sample = col && CP.rows && CP.rows[0] ? (CP.rows[0][col] || clean || 'Alex') : (clean || 'Alex');
+  const preview = document.getElementById('afFilePreview');
+  if (preview) preview.textContent = (sample || 'Alex') + '_01.pdf';
+}
+
+function addField() {
+  const colSel  = document.getElementById('afColSelect');
+  const phInner = document.getElementById('afPhInner').value.trim().replace(/[{}]/g, '');
+  const col     = colSel ? colSel.value : '';
+  const size    = parseInt(document.getElementById('newFieldSize')?.value || '36', 10);
   const isPrimary = document.getElementById('afPrimary')?.checked || false;
-  const previewText = (col && CP.rows && CP.rows[0]) ? CP.rows[0][col] : ph;
-  if (isPrimary) ED.fields.forEach(f => f.isPrimary = false);
+
+  if (!phInner) { toast('Enter a placeholder name', 'error'); return; }
+
+  const ph = '{{' + phInner + '}}';
+  const previewText = col && CP.rows && CP.rows[0] ? (CP.rows[0][col] || phInner) : phInner;
+
+  if (isPrimary) ED.fields.forEach(f => { f.isPrimary = false; });
+
   const field = {
-    id: 'f' + Date.now(), placeholder: ph, previewText, column: col || '',
-    isPrimary, x: 10, y: 10 + ED.fields.length * 15, width: 80,
-    fontSize: size, fontFamily: 'Helvetica', color: '#111111',
+    id: 'f_' + Date.now(),
+    placeholder: ph, previewText, column: col,
+    isPrimary,
+    x: 10, y: 35 + ED.fields.length * 14,
+    width: 80, fontSize: size,
+    fontFamily: 'Helvetica', color: '#1a1a1a',
     align: 'center', bold: false, italic: false, letterSpacing: 0, rotation: 0,
   };
   ED.fields.push(field);
@@ -776,6 +809,8 @@ function addCanvasField() {
   redraw();
   toast(`Added "${ph}" field`, 'success', 1800);
 }
+
+function addCanvasField() { addField(); }
 
 function selectField(id) {
   ED.selId = id;

@@ -94,27 +94,31 @@
   background: var(--surface);
   height: 580px;
 }
-.cert-canvas-col { display:flex;flex-direction:column;min-height:560px;border-right:1px solid var(--glass-border); }
+.cert-canvas-col { display:flex;flex-direction:column;min-height:0;min-width:0;border-right:1px solid var(--glass-border); }
 .cert-toolbar    { display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,0,0,.30);border-bottom:1px solid var(--glass-border);flex-shrink:0;flex-wrap:wrap; }
 .cert-toolbar .tb-sep { width:1px;height:18px;background:var(--glass-border);margin:0 4px;flex-shrink:0; }
 
 /* Canvas wrap — scroll + pan zone */
-#canvasWrap {
-  flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;
-  padding:24px;cursor:grab;
-  background: repeating-conic-gradient(rgba(255,255,255,.018) 0 25%, transparent 0 50%) 0 0/18px 18px;
-  min-height:480px;
+.canvas-scroll-zone {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  padding: 20px;
+  background: repeating-conic-gradient(rgba(255,255,255,0.018) 0% 25%, transparent 0% 50%) 0 0 / 20px 20px;
+  min-width: 0;
+  min-height: 0;
+  cursor: grab;
 }
-#canvasWrap:active { cursor:grabbing; }
-#canvasContainer  { position:relative;flex-shrink:0;box-shadow:0 12px 60px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.06);border-radius:3px; }
+.canvas-scroll-zone:active { cursor: grabbing; }
+.canvas-scroll-zone::-webkit-scrollbar { width: 9px; height: 9px; }
+.canvas-scroll-zone::-webkit-scrollbar-track { background: transparent; }
+.canvas-scroll-zone::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.45); border-radius: 99px; }
+.canvas-scroll-zone::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.78); }
+.canvas-scroll-zone::-webkit-scrollbar-corner { background: transparent; }
+.canvas-scroll-zone { scrollbar-width: thin; scrollbar-color: rgba(0,212,255,0.45) transparent; }
+#canvasContainer  { position:relative;flex-shrink:0;box-shadow:0 12px 60px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.06);border-radius:3px;margin:auto; }
 #certCanvas       { display:block; }
 #fieldOverlay     { position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2; }
-
-/* Zoom bar row */
-.zoom-bar-row { display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(0,0,0,.25);border-top:1px solid var(--glass-border);flex-shrink:0; }
-.zoom-bar-row label { font-size:11px;color:var(--text-3);white-space:nowrap; }
-#canvasZoom { flex:1;accent-color:var(--cyan);cursor:pointer;height:4px; }
-#zoomLabel  { font-size:12px;font-weight:700;color:var(--cyan);min-width:36px;text-align:right; }
 
 /* Field handles */
 .tf-handle { position:absolute;cursor:move;pointer-events:all;user-select:none;border:2px dashed transparent;border-radius:4px;box-sizing:border-box; }
@@ -122,28 +126,28 @@
 .tf-handle.sel   { border-color:var(--cyan);border-style:solid;box-shadow:0 0 0 3px rgba(0,212,255,.15); }
 
 /* Action bar (top) */
-.tf-action-bar { display:none;position:absolute;top:-34px;left:50%;transform:translateX(-50%);background:#0d1728;border:1px solid var(--glass-border-2);border-radius:8px;padding:3px 4px;gap:3px;flex-direction:row;z-index:10;white-space:nowrap; }
+.tf-action-bar { display:none;position:absolute;top:-46px;left:50%;transform:translateX(-50%);background:#0d1728;border:1px solid var(--glass-border-2);border-radius:8px;padding:3px 4px;gap:3px;flex-direction:row;z-index:10;white-space:nowrap; }
 .tf-handle.sel .tf-action-bar { display:flex; }
 .tf-action-btn { display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;cursor:pointer;color:var(--text-2);transition:var(--transition); }
 .tf-action-btn:hover { background:rgba(0,212,255,.12);color:var(--cyan); }
 .tf-action-btn.del:hover { background:var(--red-dim);color:var(--red); }
 
 /* Ctrl pill (bottom) */
-.tf-ctrl-pill { display:none;position:absolute;bottom:-34px;left:50%;transform:translateX(-50%);background:#0d1728;border:1px solid var(--glass-border-2);border-radius:20px;padding:3px 6px;gap:3px;flex-direction:row;z-index:10; }
+.tf-ctrl-pill { display:none;position:absolute;bottom:-44px;left:50%;transform:translateX(-50%);background:#0d1728;border:1px solid var(--glass-border-2);border-radius:20px;padding:3px 6px;gap:3px;flex-direction:row;z-index:10; }
 .tf-handle.sel .tf-ctrl-pill { display:flex; }
 .tf-ctrl-btn { display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;cursor:pointer;color:var(--text-2);transition:var(--transition); }
 .tf-ctrl-btn:hover { background:rgba(0,212,255,.12);color:var(--cyan); }
 .tf-ctrl-btn.rot:hover { background:rgba(124,58,237,.15);color:#a78bfa; }
 
 /* Corner resizers */
-.tf-resizer-corner { position:absolute;width:10px;height:10px;background:var(--cyan);border:2px solid #0d1728;border-radius:2px;z-index:5;pointer-events:all; }
+.tf-resizer-corner { position:absolute;width:12px;height:12px;background:#fff;border:1.5px solid var(--cyan);border-radius:50%;z-index:5;pointer-events:all; }
 .tf-resizer-corner.tl { top:-5px;left:-5px;cursor:nw-resize; }
 .tf-resizer-corner.tr { top:-5px;right:-5px;cursor:ne-resize; }
 .tf-resizer-corner.bl { bottom:-5px;left:-5px;cursor:sw-resize; }
 .tf-resizer-corner.br { bottom:-5px;right:-5px;cursor:se-resize; }
 
 /* Side width resizers */
-.tf-resizer-width { position:absolute;top:50%;width:8px;height:20px;margin-top:-10px;background:var(--cyan);border:2px solid #0d1728;border-radius:3px;z-index:5;pointer-events:all;opacity:.7; }
+.tf-resizer-width { position:absolute;top:50%;width:8px;height:20px;margin-top:-10px;background:#fff;border:1.5px solid var(--cyan);border-radius:3px;z-index:5;pointer-events:all;opacity:.85; }
 .tf-resizer-width.left  { left:-4px;cursor:w-resize; }
 .tf-resizer-width.right { right:-4px;cursor:e-resize; }
 
@@ -560,18 +564,21 @@
                 </div>
               </div>
 
-              <div id="canvasWrap">
+              <div class="canvas-scroll-zone" id="canvasWrap">
                 <div id="canvasContainer" class="cert-canvas-container">
                   <canvas id="certCanvas"></canvas>
                   <div id="fieldOverlay"></div>
                 </div>
               </div>
-              <div class="zoom-bar-row">
-                <label>Zoom</label>
-                <input type="range" id="canvasZoom" min="0.1" max="3" step="0.05" value="1"
-                      oninput="setZoom(this.value)">
-                <span id="zoomLabel">100%</span>
-                <button class="tb-btn" onclick="setZoom(1)" title="Reset zoom" style="margin-left:4px;font-size:11px;padding:3px 8px;">Reset</button>
+              <div style="display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 16px;background:var(--surface);border-top:1px solid var(--glass-border);border-bottom-left-radius:var(--radius-lg);">
+                <button class="btn btn-ghost btn-sm" style="padding:4px 8px" onclick="setZoom((ED.zoom||1)-0.1)" title="Zoom Out (Ctrl -)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <input type="range" id="canvasZoom" min="0.1" max="3" step="0.05" value="1" oninput="setZoom(this.value)" style="width:140px;accent-color:var(--cyan)">
+                <button class="btn btn-ghost btn-sm" style="padding:4px 8px" onclick="setZoom((ED.zoom||1)+0.1)" title="Zoom In (Ctrl +)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <span id="zoomLabel" style="font-size:12.5px;font-family:var(--font-mono);color:var(--text-3);min-width:44px;text-align:right">100%</span>
               </div>
             </div>
 
@@ -881,43 +888,55 @@
 <!-- ADD FIELD MODAL -->
 <div class="af-overlay" id="afOverlay">
   <div class="af-box">
-    <div class="af-title">Add Text Field <button class="af-close-btn" onclick="closeAFModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-    <div style="display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <h3 style="font-family:var(--font-display);font-size:19px;font-weight:700">Add Text Field</h3>
+      <button onclick="closeAFModal()" style="width:32px;height:32px;border-radius:8px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <!-- Column picker -->
       <div class="form-group">
-        <label class="form-label">Field Placeholder</label>
-        <div class="af-row">
-          <label class="af-label">Data Column <span style="color:var(--text-3);font-weight:400">(optional)</span></label>
-          <select id="afColSelect" class="form-select" onchange="
-            const ph=document.getElementById('afPh');
-            if(this.value && ph && !ph.value) ph.value=this.value.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-          ">
-            <option value="">— no column —</option>
-          </select>
-        </div>
-        <div class="af-row" style="margin-top:10px">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-2)">
-            <input type="checkbox" id="afPrimary" style="accent-color:var(--cyan);width:14px;height:14px;">
-            <span>Mark as <strong style="color:var(--cyan)">Primary</strong> field <span style="color:var(--text-3)">(used for PDF filename)</span></span>
-          </label>
-        </div>
-        <select id="afPh" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="document.getElementById('afCustomRow').style.display=this.value==='custom'?'flex':'none'">
-          <option value="{{name}}">{{name}} — Participant Name</option>
-          <option value="{{course}}">{{course}} — Course / Event Name</option>
-          <option value="{{date}}">{{date}} — Date</option>
-          <option value="{{score}}">{{score}} — Score / Grade</option>
-          <option value="{{org}}">{{org}} — Organisation</option>
-          <option value="{{email}}">{{email}} — Email Address</option>
-          <option value="custom">Custom placeholder…</option>
+        <label class="form-label">Data Column <span class="opt">(from your imported data)</span></label>
+        <select id="afColSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px" onchange="afColumnChanged(this.value)">
+          <option value="">— Select a column —</option>
         </select>
+        <span class="form-hint" id="afColHint" style="display:none;color:var(--cyan)"></span>
       </div>
-      <div id="afCustomRow" class="form-group" style="display:none"><label class="form-label">Custom placeholder (without braces)</label><input type="text" id="afCustom" class="form-input" placeholder="e.g. venue" style="font-family:var(--font-mono)"/></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="form-group"><label class="form-label">Preview Text</label><input type="text" id="afPreview" class="form-input" placeholder="e.g. John Smith"/></div>
-        <div class="form-group"><label class="form-label">Font Size (px)</label><input type="number" id="afSize" class="form-input" value="48" min="8" max="200"/></div>
+
+      <!-- Placeholder tag -->
+      <div class="form-group">
+        <label class="form-label">Placeholder Tag</label>
+        <div style="display:flex;align-items:center;gap:0;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;overflow:hidden;transition:border-color 0.18s" id="afPhWrap">
+          <span style="padding:0 10px;font-family:var(--font-mono);font-size:14px;color:var(--cyan);border-right:1px solid var(--glass-border);height:46px;display:flex;align-items:center;user-select:none">{{</span>
+          <input type="text" id="afPhInner" class="form-input" placeholder="fieldname" style="border:none;border-radius:0;background:transparent;font-family:var(--font-mono);font-size:14px;flex:1;height:46px" oninput="afPhInput(this.value)" onfocus="document.getElementById('afPhWrap').style.borderColor='var(--cyan)'" onblur="document.getElementById('afPhWrap').style.borderColor='var(--glass-border)'"/>
+          <span style="padding:0 10px;font-family:var(--font-mono);font-size:14px;color:var(--cyan);border-left:1px solid var(--glass-border);height:46px;display:flex;align-items:center;user-select:none">}}</span>
+        </div>
+        <span class="form-hint">Eg. Name column → <code style="font-family:var(--font-mono);color:var(--cyan)">{{name}}</code> &nbsp;|&nbsp; Course → <code style="font-family:var(--font-mono);color:var(--cyan)">{{course}}</code></span>
       </div>
+
+      <!-- Font size -->
+      <div class="form-group">
+        <label class="form-label">Font Size (px)</label>
+        <input type="number" id="newFieldSize" class="form-input" value="36" min="8" max="200"/>
+      </div>
+
+      <!-- Primary field toggle -->
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px">
+        <input type="checkbox" id="afPrimary" style="width:16px;height:16px;accent-color:var(--cyan);cursor:pointer"/>
+        <div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--text)">Primary field <span style="font-size:11.5px;font-weight:400;color:var(--text-3)">(used for PDF filename)</span></div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:2px">Only one field can be primary. Output: <code id="afFilePreview" style="font-family:var(--font-mono);color:var(--cyan);font-size:12px">Alex_01.pdf</code></div>
+        </div>
+      </div>
+
       <div style="display:flex;gap:10px">
         <button class="btn btn-secondary btn-full" onclick="closeAFModal()">Cancel</button>
-        <button class="btn btn-primary btn-full" style="padding:13px;font-size:15px" onclick="addCanvasField()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add to Canvas</button>
+        <button class="btn btn-primary btn-full btn-lg" onclick="addField()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add to Canvas
+        </button>
       </div>
     </div>
   </div>
