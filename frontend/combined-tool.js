@@ -1231,16 +1231,12 @@ function buildOutputFilename(rowData, index) {
 ════════════════════════════════════════════════════════════════ */
 /* ── TEMPLATES & ROUTING ── */
 const ME_TEMPLATES = {
-  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready 🎉', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
+  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
   event: { name: 'Event Invitation', desc: 'Banner + date + RSVP', blocks: [ { type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } }, { type: 'footer', props: { text: "If you're unable to attend, please let us know at your earliest convenience.", bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
-  thankyou: { name: 'Thank You', desc: 'Warm appreciation note', blocks: [ { type: 'logo', props: { text: 'THANK YOU', tagline: '', bgColor: '#10b981', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Thank You, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#d1fae5', bgColor: '#ffffff', paddingV: 16, thickness: 2 } }, { type: 'footer', props: { text: 'With gratitude,\nThe Honourix Team', bgColor: '#f0fdf4', color: '#6b7280', fontSize: 13, align: 'center', paddingV: 24, paddingH: 40 } } ] },
-  announcement: { name: 'Announcement', desc: 'Bold headline + CTA', blocks: [ { type: 'logo', props: { text: 'ANNOUNCEMENT', tagline: '', bgColor: '#0f172a', color: '#f59e0b', fontSize: 16, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Important Update', fontSize: 30, fontWeight: 800, color: '#0f172a', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nWe have an important announcement to share with you. Please read the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Learn More', link: '#', btnBg: '#f59e0b', btnColor: '#000000', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } } ] },
-  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}! 🎉', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] },
-  promo: { name: 'Promotional', desc: 'Bold offer with CTA', blocks: [ { type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } } ] },
-  newsletter: { name: 'Newsletter', desc: 'Clean content digest', blocks: [ { type: 'logo', props: { text: 'THE DIGEST', tagline: 'Weekly Newsletter', bgColor: '#0f172a', color: '#0ea5e9', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "This Week's Highlights", fontSize: 24, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 28, paddingH: 40 } }, { type: 'divider', props: { color: '#0ea5e9', bgColor: '#ffffff', paddingV: 4, thickness: 2 } }, { type: 'text', props: { text: 'Hi {{name}},\n\nHere\'s what happened this week that you need to know about:', fontSize: 15, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 16, paddingH: 40, lineHeight: 1.75 } } ] },
-  plain: { name: 'Plain Professional', desc: 'Clean text-only email', blocks: [ { type: 'text', props: { text: 'Hi {{name}},', fontSize: 18, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 24, paddingH: 40, lineHeight: 1.6 } }, { type: 'text', props: { text: 'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point. Let the reader know exactly what you need them to do.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.8 } }, { type: 'text', props: { text: 'Best regards,\nThe Honourix Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.7 } } ] }
+  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] },
+  promo: { name: 'Promotional', desc: 'Bold offer with CTA', blocks: [ { type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } } ] }
 };
-const ME_TPL_CATS = { cert: 'certificate', welcome: 'welcome', promo: 'promo', newsletter: 'newsletter', event: 'event', thankyou: 'welcome', announcement: 'promo', plain: 'welcome' };
+const ME_TPL_CATS = { cert: 'certificate', welcome: 'welcome', promo: 'promo', event: 'event' };
 let meTplGateSelected = null;
 
 function initStep4() {
@@ -1265,7 +1261,6 @@ function initStep4() {
 
   mPopulateTags();
   
-  // Build Grid & Show Template Selector
   meTplGateBuild();
   ME.templateSelected = false;
   document.getElementById('mTemplateSelectorS3').style.display = 'flex';
@@ -1299,10 +1294,11 @@ function meTplGateBuild() {
       </div>
       <div class="me-tpl-gate-info">
         <div class="me-tpl-gate-name">Paste Code</div>
-        <div class="me-tpl-gate-desc">Write or paste pure HTML (Advanced)</div>
+        <div class="me-tpl-gate-desc">Write or paste pure HTML</div>
       </div>
     </div>`;
 
+  // Removed the crash-causing Emoji Regex!
   const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
     const cat = ME_TPL_CATS[key] || 'all';
     const previewHtml = meGetHtmlFromBlocks(tpl.blocks).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -1313,7 +1309,7 @@ function meTplGateBuild() {
           <div class="me-tpl-gate-thumb-overlay"></div>
         </div>
         <div class="me-tpl-gate-info">
-          <div class="me-tpl-gate-name">${tpl.name.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1FA70}-\u{1FAFF}\u{2B50}\u{2B55}\u{1F004}\u{1F0CF}\u{1F18E}\u{23E9}-\u{23F3}\u{23F8}-\u{23FA}]/gu, '').trim()}</div>
+          <div class="me-tpl-gate-name">${tpl.name}</div>
           <div class="me-tpl-gate-desc">${tpl.desc || ''}</div>
         </div>
       </div>`;
@@ -1339,11 +1335,6 @@ function meTplGateSelect(key) {
   if (btn) { btn.disabled = false; btn.innerHTML = (key === 'blank' || key === 'code') ? 'Start ' + (key==='blank'?'Visual':'Code') + ' Editor →' : 'Use Template — Open Editor →'; }
 }
 
-function meTplGateConfirm() {
-  if (!meTplGateSelected) return;
-  mSelectTemplate(meTplGateSelected);
-}
-
 function mSelectTemplate(type) {
   if (type === 'reset') {
     ME.templateSelected = false;
@@ -1357,6 +1348,8 @@ function mSelectTemplate(type) {
 
   ME.templateSelected = true;
   document.getElementById('mTemplateSelectorS3').style.display = 'none';
+  
+  // Notice we use flex here so the Subject card and Editor shell stack nicely!
   document.getElementById('mEditorShellS3').style.display = 'flex';
 
   if (type === 'blank') {

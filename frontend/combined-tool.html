@@ -474,7 +474,7 @@
           <div style="display:flex;flex-direction:column;gap:20px;min-width:0;overflow:hidden;height:100%;justify-content:space-between;">
             
             <div>
-              <div class="card">
+              <div class="card" style="margin-bottom: 24px;">
                 <div class="card-title" style="margin-bottom:20px">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   Campaign Details
@@ -931,127 +931,110 @@
       </div>
 
       <div id="mTemplateSelectorS3" style="display:flex; flex-direction:column; padding:10px;">
-            <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px">Choose a Starting Template</div>
-            <div style="font-size:14px;color:var(--text-2);margin-bottom:24px">Select a template to open the editor, or start with a blank canvas.</div>
-            
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="meTplGateCats">
-              <button class="me-tpl-cat-btn active" onclick="meTplGateFilter('all',this)">All</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('certificate',this)">Certificate</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('welcome',this)">Welcome</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('promo',this)">Promotional</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('newsletter',this)">Newsletter</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('event',this)">Event</button>
-            </div>
-            
-            <div class="me-tpl-gate-grid" id="meTplGateGrid"></div>
-            
-            <div style="padding-top:20px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.06);margin-top:10px">
-              <button class="btn btn-primary btn-lg" id="meTplGateUseBtn" onclick="meTplGateConfirm()" disabled>
-                Use Template — Open Editor
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </button>
-            </div>
-          </div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px">Choose a Starting Template</div>
+        <div style="font-size:14px;color:var(--text-2);margin-bottom:24px">Select a template to open the editor, or start with a blank canvas.</div>
+        
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="meTplGateCats">
+          <button class="me-tpl-cat-btn active" onclick="meTplGateFilter('all',this)">All</button>
+          <button class="me-tpl-cat-btn" onclick="meTplGateFilter('certificate',this)">Certificate</button>
+          <button class="me-tpl-cat-btn" onclick="meTplGateFilter('welcome',this)">Welcome</button>
+          <button class="me-tpl-cat-btn" onclick="meTplGateFilter('promo',this)">Promotional</button>
+          <button class="me-tpl-cat-btn" onclick="meTplGateFilter('newsletter',this)">Newsletter</button>
+          <button class="me-tpl-cat-btn" onclick="meTplGateFilter('event',this)">Event</button>
+        </div>
+        
+        <div class="me-tpl-gate-grid" id="meTplGateGrid"></div>
+        
+        <div style="padding-top:20px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.06);margin-top:10px">
+          <button class="btn btn-secondary btn-lg" style="margin-right:auto" onclick="goStep(3)">← Back</button>
+          <button class="btn btn-primary btn-lg" id="meTplGateUseBtn" onclick="meTplGateConfirm()" disabled>
+            Use Template — Open Editor
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
 
-          <div id="mEditorShellS3" style="display:none; height:750px; border:1px solid var(--glass-border); border-radius:var(--radius-lg); overflow:hidden; background:var(--surface);">
-            
-            <div id="mLeftSidebarS3" style="width:340px; border-right:1px solid var(--glass-border); display:flex; flex-direction:column; background:rgba(0,0,0,0.2);">  
-          <div style="display:flex; border-bottom:1px solid var(--glass-border);">
-            <div class="ep-tab active" id="mTab_ai" onclick="switchLeftTab('ai')" style="flex:1;text-align:center;padding:14px;cursor:pointer;font-weight:600;font-size:13px;border-bottom:2px solid var(--cyan);color:var(--cyan)">Gal AI</div>
-            <div class="ep-tab" id="mTab_props" onclick="switchLeftTab('props')" style="flex:1;text-align:center;padding:14px;cursor:pointer;font-weight:600;font-size:13px;border-bottom:2px solid transparent;color:var(--text-3)">Properties</div>
+      <div id="mEditorShellS3" style="display:none; flex-direction:column; gap:20px;">
+        
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title" style="margin-bottom:16px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email Subject Line
           </div>
-
-          <div id="mPanel_ai" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
-            <div id="meAiChatBox" style="flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:16px; scrollbar-width:thin;">
-              <div style="display:flex; gap:12px;">
-                <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;color:var(--cyan);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 7.1"/><path d="M12 12l9.9 4.9"/></svg></div>
-                <div style="background:var(--glass); border:1px solid var(--glass-border); padding:12px 14px; border-radius:12px; border-top-left-radius:0; font-size:13.5px; color:var(--text-2); line-height:1.5;">
-                  Hi! I'm Gal. I can design this email for you. Try asking:<br/><br/>
-                  <span style="color:var(--cyan);cursor:pointer;" onclick="document.getElementById('meAiInput').value=this.textContent">"Create a professional certificate delivery email"</span>
-                </div>
-              </div>
-            </div>
-            <div style="padding:16px; border-top:1px solid var(--glass-border); position:relative;">
-              <textarea id="meAiInput" rows="2" placeholder="Ask Gal AI to design..." autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();if(typeof meAiSend==='function') meAiSend();}" style="width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:14px 44px 14px 14px; color:var(--text); font-size:14px; font-family:var(--font-sans); outline:none; resize:none; box-sizing:border-box;"></textarea>
-              <button id="meAiSendBtn" onclick="if(typeof meAiSend==='function') meAiSend()" style="position:absolute; right:28px; bottom:26px; background:transparent; border:none; color:var(--text-3); cursor:pointer; transition:0.2s;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-            </div>
-          </div>
-
-          <div id="mPanel_props" style="display:none; flex:1; overflow-y:auto; padding:16px;">
-            <div id="mPropsEmpty" style="text-align:center; padding:40px 20px; color:var(--text-3); font-size:13px;">Select a block on the canvas to edit its properties.</div>
-            <div id="mPropsForm" style="display:none; flex-direction:column; gap:16px;"></div>
-          </div>
+          <input type="text" id="emailSubject" class="form-input" placeholder="e.g. Your Certificate is Ready!" style="font-size:16px;padding:14px 16px"/>
         </div>
 
-        <div style="flex:1; display:flex; flex-direction:column; min-width:0;">
+        <div style="display:flex; height:750px; border:1px solid var(--glass-border); border-radius:var(--radius-lg); overflow:hidden; background:var(--surface);">
           
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--glass-border); background:rgba(0,0,0,0.2);">
-            <div style="display:flex; background:rgba(0,0,0,0.3); border-radius:6px; padding:4px;">
-              <button class="btn btn-ghost btn-sm active" id="mBtnVisual" onclick="mSwitchView('visual')">Visual</button>
-              <button class="btn btn-ghost btn-sm" id="mBtnCode" onclick="mSwitchView('code')">Code</button>
+          <div id="mLeftSidebarS3" style="width:340px; border-right:1px solid var(--glass-border); display:flex; flex-direction:column; background:rgba(0,0,0,0.2);">
+            <div style="display:flex; border-bottom:1px solid var(--glass-border);">
+              <div class="ep-tab active" id="mTab_ai" onclick="switchLeftTab('ai')" style="flex:1;text-align:center;padding:14px;cursor:pointer;font-weight:600;font-size:13px;border-bottom:2px solid var(--cyan);color:var(--cyan)">Gal AI</div>
+              <div class="ep-tab" id="mTab_props" onclick="switchLeftTab('props')" style="flex:1;text-align:center;padding:14px;cursor:pointer;font-weight:600;font-size:13px;border-bottom:2px solid transparent;color:var(--text-3)">Properties</div>
             </div>
-            <div style="display:flex; gap:8px;">
-              <button class="btn btn-ghost btn-sm" onclick="mClearAll()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Clear</button>
-              <button class="btn btn-outline btn-sm" onclick="document.getElementById('addBlockModal').classList.add('open')">+ Add Block</button>
-            </div>
-          </div>
 
-          <div style="flex:1; display:flex; overflow:hidden;">
-            <div id="mVisualCol" style="width:320px; border-right:1px solid var(--glass-border); display:flex; flex-direction:column; background:var(--surface);">
-              <div id="mVisualListS3" style="flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:8px;">
+            <div id="mPanel_ai" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+              <div id="meAiChatBox" style="flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:16px; scrollbar-width:thin;">
+                <div style="display:flex; gap:12px;">
+                  <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;color:var(--cyan);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 7.1"/><path d="M12 12l9.9 4.9"/></svg></div>
+                  <div style="background:var(--glass); border:1px solid var(--glass-border); padding:12px 14px; border-radius:12px; border-top-left-radius:0; font-size:13.5px; color:var(--text-2); line-height:1.5;">
+                    Hi! I'm Gal. I can design this email for you. Try asking:<br/><br/>
+                    <span style="color:var(--cyan);cursor:pointer;" onclick="document.getElementById('meAiInput').value=this.textContent">"Create a professional certificate delivery email"</span>
+                  </div>
                 </div>
+              </div>
+              <div style="padding:16px; border-top:1px solid var(--glass-border); position:relative;">
+                <textarea id="meAiInput" rows="2" placeholder="Ask Gal AI to design..." autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();if(typeof meAiSend==='function') meAiSend();}" style="width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:14px 44px 14px 14px; color:var(--text); font-size:14px; font-family:var(--font-sans); outline:none; resize:none; box-sizing:border-box;"></textarea>
+                <button id="meAiSendBtn" onclick="if(typeof meAiSend==='function') meAiSend()" style="position:absolute; right:28px; bottom:26px; background:transparent; border:none; color:var(--text-3); cursor:pointer; transition:0.2s;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+              </div>
             </div>
 
-            <div style="flex:1; display:flex; flex-direction:column; position:relative; background:#1e293b;">
-              
-              <div id="mCodeWrapS3" style="display:none; position:absolute; inset:0;">
-                <textarea id="mCodeEditorS3"></textarea>
-              </div>
+            <div id="mPanel_props" style="display:none; flex:1; overflow-y:auto; padding:16px;">
+              <div id="mPropsEmpty" style="text-align:center; padding:40px 20px; color:var(--text-3); font-size:13px;">Select a block on the canvas to edit its properties.</div>
+              <div id="mPropsForm" style="display:none; flex-direction:column; gap:16px;"></div>
+            </div>
+          </div>
 
-              <div id="mPreviewWrapS3" style="flex:1; display:flex; justify-content:center; overflow-y:auto; padding:20px 0;">
-                <iframe id="mPrvBoxS3" style="width:600px; height:400px; background:#fff; border:none; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.3); transition:width 0.3s ease;"></iframe>
+          <div style="flex:1; display:flex; flex-direction:column; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--glass-border); background:rgba(0,0,0,0.2);">
+              <div style="display:flex; background:rgba(0,0,0,0.3); border-radius:6px; padding:4px;">
+                <button class="btn btn-ghost btn-sm active" id="mBtnVisual" onclick="mSwitchView('visual')">Visual</button>
+                <button class="btn btn-ghost btn-sm" id="mBtnCode" onclick="mSwitchView('code')">Code</button>
               </div>
+              <div id="mVisualToolbarBtns" style="display:flex; gap:8px;">
+                <button class="btn btn-ghost btn-sm" onclick="mSelectTemplate('reset')" style="margin-right:auto; color:var(--text-3)">← Change Template</button>
+                <button class="btn btn-ghost btn-sm" onclick="mClearAll()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Clear</button>
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('addBlockModal').classList.add('open')">+ Add Block</button>
+              </div>
+            </div>
 
-              <div id="mDeviceToggles" style="position:absolute; bottom:16px; left:50%; transform:translateX(-50%); display:flex; background:var(--surface); border:1px solid var(--glass-border); border-radius:20px; padding:4px; box-shadow:0 4px 12px rgba(0,0,0,0.5); z-index:10;">
-                <button class="btn btn-ghost btn-sm active" id="mBtnDesktopS3" onclick="mSetDeviceS3('desktop')" style="border-radius:16px; padding:4px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></button>
-                <button class="btn btn-ghost btn-sm" id="mBtnMobileS3" onclick="mSetDeviceS3('mobile')" style="border-radius:16px; padding:4px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></button>
+            <div style="flex:1; display:flex; overflow:hidden;">
+              <div id="mVisualCol" style="width:320px; border-right:1px solid var(--glass-border); display:flex; flex-direction:column; background:var(--surface);">
+                <div id="mVisualListS3" style="flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:8px;"></div>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; position:relative; background:#1e293b;">
+                <div id="mCodeWrapS3" style="display:none; position:absolute; inset:0;"><textarea id="mCodeEditorS3"></textarea></div>
+                <div id="mPreviewWrapS3" style="flex:1; display:flex; justify-content:center; overflow-y:auto; padding:20px 0;">
+                  <iframe id="mPrvBoxS3" style="width:600px; height:400px; background:#fff; border:none; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.3); transition:width 0.3s ease;"></iframe>
+                </div>
+                <div id="mDeviceToggles" style="position:absolute; bottom:16px; left:50%; transform:translateX(-50%); display:flex; background:var(--surface); border:1px solid var(--glass-border); border-radius:20px; padding:4px; box-shadow:0 4px 12px rgba(0,0,0,0.5); z-index:10;">
+                  <button class="btn btn-ghost btn-sm active" id="mBtnDesktopS3" onclick="mSetDeviceS3('desktop')" style="border-radius:16px; padding:4px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></button>
+                  <button class="btn btn-ghost btn-sm" id="mBtnMobileS3" onclick="mSetDeviceS3('mobile')" style="border-radius:16px; padding:4px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div style="width:240px; border-left:1px solid var(--glass-border); background:var(--surface); display:flex; flex-direction:column;">
-          <div style="padding:14px 16px; border-bottom:1px solid var(--glass-border); font-size:13px; font-weight:600; color:var(--text);">Dynamic Tags</div>
-          <div style="padding:16px; font-size:12px; color:var(--text-3); line-height:1.5;">Click a tag to insert it into the active text field. The system will auto-replace it.</div>
-          <div id="mTagsList" style="flex:1; overflow-y:auto; padding:0 16px 16px; display:flex; flex-direction:column; gap:8px;">
-            <div style="font-style:italic; color:var(--text-3); font-size:12px;">Load data in Step 1 to see tags.</div>
+          <div style="width:240px; border-left:1px solid var(--glass-border); background:var(--surface); display:flex; flex-direction:column;">
+            <div style="padding:14px 16px; border-bottom:1px solid var(--glass-border); font-size:13px; font-weight:600; color:var(--text);">Dynamic Tags</div>
+            <div style="padding:16px; font-size:12px; color:var(--text-3); line-height:1.5;">Click a tag to insert it.</div>
+            <div id="mTagsList" style="flex:1; overflow-y:auto; padding:0 16px 16px; display:flex; flex-direction:column; gap:8px;"></div>
           </div>
+
         </div>
-
-      </div>
-      
-      <div style="display:flex;justify-content:space-between;gap:12px;margin-top:10px">
-        <button class="btn btn-secondary btn-lg" onclick="goStep(3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Back</button>
-        <button class="btn btn-primary btn-xl" onclick="goStep(5)">Continue to Review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-      </div>
-    </div>
-  </div>
-
-  <div id="addBlockModal" class="af-overlay">
-    <div class="af-box" style="width:500px">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <div style="font-size:18px; font-weight:700; color:var(--text);">Add Content Block</div>
-        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('addBlockModal').classList.remove('open')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-        <button class="btn btn-outline" style="justify-content:flex-start" onclick="mAddBlock('logo'); document.getElementById('addBlockModal').classList.remove('open')">🎨 Logo</button>
-        <button class="btn btn-outline" style="justify-content:flex-start" onclick="mAddBlock('header'); document.getElementById('addBlockModal').classList.remove('open')">📌 Header</button>
-        <button class="btn btn-outline" style="justify-content:flex-start" onclick="mAddBlock('text'); document.getElementById('addBlockModal').classList.remove('open')">📝 Text Paragraph</button>
-        <button class="btn btn-outline" style="justify-content:flex-start" onclick="mAddBlock('button'); document.getElementById('addBlockModal').classList.remove('open')">🎯 Call to Action</button>
-        <button class="btn btn-outline" style="justify-content:flex-start" onclick="mAddBlock('image'); document.getElementById('addBlockModal').classList.remove('open')">🖼️ Image</button>
-        <button class="btn btn-outline" style="justify-content:flex-start" onclick="mAddBlock('divider'); document.getElementById('addBlockModal').classList.remove('open')">➖ Divider</button>
-        <button class="btn btn-outline" style="justify-content:flex-start" onclick="mAddBlock('spacer'); document.getElementById('addBlockModal').classList.remove('open')">↕️ Spacer</button>
-        <button class="btn btn-outline" style="justify-content:flex-start" onclick="mAddBlock('footer'); document.getElementById('addBlockModal').classList.remove('open')">📋 Footer</button>
+        
+        <div style="display:flex;justify-content:flex-end;margin-top:10px">
+          <button class="btn btn-primary btn-xl" onclick="goStep(5)">Continue to Review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        </div>
       </div>
     </div>
   </div>
