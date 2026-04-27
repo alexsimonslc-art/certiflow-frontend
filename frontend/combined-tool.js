@@ -1188,92 +1188,96 @@ function buildOutputFilename(rowData, index) {
    STEP 4 — EMAIL TEMPLATE (AI ENGINE)
 ════════════════════════════════════════════════════════════════ */
 
-// Protect ME declaration so it never duplicates and crashes
+// Initialize ME state if it doesn't exist
 if (typeof window.ME === 'undefined') {
-  window.ME = { blocks: [], selectedId: null, nextId: 1, cm: null, cmDebounce: null, initialized: false, templateSelected: false };
+  window.ME = { blocks: [], selectedId: null, nextId: 1, activeTab: 'visual', cm: null, cmDebounce: null, previewDevice: 'desktop', initialized: false };
 }
 
-const ME_TEMPLATES = {
-  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
-  event: { name: 'Event Invitation', desc: 'Banner + date + RSVP', blocks: [ { type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } }, { type: 'footer', props: { text: "If you're unable to attend, please let us know at your earliest convenience.", bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
-  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] },
-  promo: { name: 'Promotional', desc: 'Bold offer with CTA', blocks: [ { type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } } ] }
-};
-const ME_TPL_CATS = { cert: 'certificate', welcome: 'welcome', promo: 'promo', event: 'event' };
-let meTplGateSelected = null;
-
 function initStep4() {
-  if (ME.initialized) {
-    if (!ME.templateSelected) {
-      document.getElementById('mTemplateSelectorS3').style.display = 'flex';
-      document.getElementById('mEditorShellS3').style.display = 'none';
-    }
-    return;
-  }
-  
-  const el = document.getElementById('mVisualListS3');
-  if (el && typeof Sortable !== 'undefined') {
-    Sortable.create(el, { animation: 150, handle: '.m-drag-handle', ghostClass: 'm-ghost', onEnd: e => { const item = ME.blocks.splice(e.oldIndex, 1)[0]; ME.blocks.splice(e.newIndex, 0, item); mSyncToCode(); } });
-  }
+  if (ME.initialized) return;
 
-  const cmEl = document.getElementById('mCodeEditorS3');
+  const cmEl = document.getElementById('meCmWrap');
   if (cmEl && typeof CodeMirror !== 'undefined') {
-    ME.cm = CodeMirror.fromTextArea(cmEl, { mode: 'xml', theme: 'dracula', lineNumbers: true, lineWrapping: true });
-    ME.cm.on('change', () => { clearTimeout(ME.cmDebounce); ME.cmDebounce = setTimeout(() => { mUpdatePreview(); }, 500); });
+    cmEl.innerHTML = ''; 
+    const txt = document.createElement('textarea');
+    cmEl.appendChild(txt);
+    ME.cm = CodeMirror.fromTextArea(txt, { mode: 'xml', theme: 'dracula', lineNumbers: true, lineWrapping: true });
+    ME.cm.on('change', () => {
+      clearTimeout(ME.cmDebounce);
+      ME.cmDebounce = setTimeout(() => {
+        if (ME.activeTab === 'code') meUpdatePreview();
+        const btn = document.getElementById('meBtnApplyCode');
+        if (btn) btn.style.display = 'inline-flex';
+      }, 500);
+    });
   }
 
-  mPopulateTags();
+  const canvasEl = document.getElementById('meCanvas');
+  if (canvasEl && typeof Sortable !== 'undefined') {
+    Sortable.create(canvasEl, {
+      animation: 150, handle: '.me-drag-handle', ghostClass: 'm-ghost',
+      onEnd: e => {
+        if(e.oldIndex === e.newIndex) return;
+        const item = ME.blocks.splice(e.oldIndex, 1)[0];
+        ME.blocks.splice(e.newIndex, 0, item);
+        meSyncToCode();
+      }
+    });
+  }
+
   meTplGateBuild();
+  mePopulateTags();
   
-  ME.templateSelected = false;
-  document.getElementById('mTemplateSelectorS3').style.display = 'flex';
-  document.getElementById('mEditorShellS3').style.display = 'none';
+  document.getElementById('meTplGate').style.display = 'block';
+  document.getElementById('meEditorWrap').style.display = 'none';
+  document.getElementById('meStep2Nav').style.display = 'none';
+  document.getElementById('meHeadActions').style.display = 'none';
   
   ME.initialized = true;
 }
 
-function meGetHtmlFromBlocks(blocks) {
-  const inner = blocks.map(b => meBlockToHtml({ type: b.type, props: b.props })).join('\n');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#f1f5f9;font-family:Arial,sans-serif}</style></head><body><table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:16px 8px"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:12px;overflow:hidden"><tr><td>${inner}</td></tr></table></td></tr></table></body></html>`;
-}
+const ME_DEFS = {
+  logo: { label: 'Logo', defaults: () => ({ text: 'HONOURIX', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }) },
+  header: { label: 'Heading', defaults: () => ({ text: 'Your Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }) },
+  text: { label: 'Text', defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }) },
+  button: { label: 'Button', defaults: () => ({ text: 'Click Here', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 }) },
+  image: { label: 'Image', defaults: () => ({ src: '', alt: 'Image', width: 100, bgColor: '#f8fafc', paddingV: 20, paddingH: 40, borderRadius: 8 }) },
+  divider: { label: 'Divider', defaults: () => ({ color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 }) },
+  spacer: { label: 'Spacer', defaults: () => ({ height: 40, bgColor: '#ffffff' }) },
+  footer: { label: 'Footer', defaults: () => ({ text: 'Sent via Honourix.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) }
+};
+
+const ME_TEMPLATES = {
+  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations! We are delighted to share your personalized certificate.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'Sent via Honourix. Contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
+  event: { name: 'Event Invitation', desc: 'Banner + date + RSVP', blocks: [ { type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } } ] },
+  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] }
+};
+const ME_TPL_CATS = { cert: 'certificate', event: 'event', welcome: 'welcome' };
+let meTplGateSelected = null;
 
 function meTplGateBuild() {
   const grid = document.getElementById('meTplGateGrid');
   if (!grid) return;
-
   const blankHtml = `
     <div class="me-tpl-gate-card" id="meTplGateCard_blank" onclick="meTplGateSelect('blank')" data-cat="all">
       <div class="me-tpl-gate-thumb" style="background:linear-gradient(135deg,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" style="width:40px;height:40px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
       </div>
-      <div class="me-tpl-gate-info">
-        <div class="me-tpl-gate-name">Blank Canvas</div>
-        <div class="me-tpl-gate-desc">Start from scratch</div>
-      </div>
+      <div class="me-tpl-gate-info"><div class="me-tpl-gate-name">Blank Canvas</div><div class="me-tpl-gate-desc">Start from scratch</div></div>
     </div>
     <div class="me-tpl-gate-card" id="meTplGateCard_code" onclick="meTplGateSelect('code')" data-cat="all">
       <div class="me-tpl-gate-thumb" style="background:linear-gradient(135deg,#0d9488,#0f172a);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" style="width:40px;height:40px"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" style="width:40px;height:40px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       </div>
-      <div class="me-tpl-gate-info">
-        <div class="me-tpl-gate-name">Paste Code</div>
-        <div class="me-tpl-gate-desc">Write or paste pure HTML</div>
-      </div>
+      <div class="me-tpl-gate-info"><div class="me-tpl-gate-name">Paste Code</div><div class="me-tpl-gate-desc">Write or paste pure HTML</div></div>
     </div>`;
 
   const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
     const cat = ME_TPL_CATS[key] || 'all';
     const previewHtml = meGetHtmlFromBlocks(tpl.blocks).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    return `
-      <div class="me-tpl-gate-card" id="meTplGateCard_${key}" onclick="meTplGateSelect('${key}')" data-cat="${cat}">
-        <div class="me-tpl-gate-thumb">
-          <iframe srcdoc="${previewHtml}" scrolling="no" tabindex="-1"></iframe>
-          <div class="me-tpl-gate-thumb-overlay"></div>
-        </div>
-        <div class="me-tpl-gate-info">
-          <div class="me-tpl-gate-name">${tpl.name}</div>
-          <div class="me-tpl-gate-desc">${tpl.desc || ''}</div>
-        </div>
+    return `<div class="me-tpl-gate-card" id="meTplGateCard_${key}" onclick="meTplGateSelect('${key}')" data-cat="${cat}">
+        <div class="me-tpl-gate-thumb"><iframe srcdoc="${previewHtml}" scrolling="no" tabindex="-1"></iframe><div class="me-tpl-gate-thumb-overlay"></div></div>
+        <div class="me-tpl-gate-info"><div class="me-tpl-gate-name">${tpl.name}</div><div class="me-tpl-gate-desc">${tpl.desc || ''}</div></div>
       </div>`;
   });
   grid.innerHTML = blankHtml + cards.join('');
@@ -1294,244 +1298,294 @@ function meTplGateSelect(key) {
   const card = document.getElementById('meTplGateCard_' + key);
   if (card) card.classList.add('selected');
   const btn = document.getElementById('meTplGateUseBtn');
-  if (btn) { btn.disabled = false; btn.innerHTML = (key === 'blank' || key === 'code') ? 'Start ' + (key==='blank'?'Visual':'Code') + ' Editor →' : 'Use Template — Open Editor →'; }
+  if (btn) { btn.disabled = false; btn.innerHTML = (key === 'blank' || key === 'code') ? `Start ${(key==='blank'?'Visual':'Code')} Editor →` : 'Use Template — Open Editor →'; }
 }
 
 function meTplGateConfirm() {
   if (!meTplGateSelected) return;
-  mSelectTemplate(meTplGateSelected);
+  meSelectTemplate(meTplGateSelected);
 }
 
-function mSelectTemplate(type) {
-  if (type === 'reset') {
-    ME.templateSelected = false; meTplGateSelected = null;
-    document.getElementById('meTplGateUseBtn').disabled = true;
-    document.querySelectorAll('#meTplGateGrid .me-tpl-gate-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById('mTemplateSelectorS3').style.display = 'flex';
-    document.getElementById('mEditorShellS3').style.display = 'none';
-    return;
+function meBackToGate() {
+  document.getElementById('meTplGate').style.display = 'block';
+  document.getElementById('meEditorWrap').style.display = 'none';
+  document.getElementById('meStep2Nav').style.display = 'none';
+  document.getElementById('meHeadActions').style.display = 'none';
+  
+  // Close AI sidebar if open
+  const panel = document.getElementById('galAiPanel');
+  const fab = document.getElementById('galAiFab');
+  if (panel && panel.classList.contains('open')) {
+    panel.classList.remove('open');
+    if (fab) fab.classList.remove('panel-open');
+    const mainArea = document.querySelector('.main-area');
+    if (mainArea) mainArea.classList.remove('gal-open');
   }
+}
 
-  ME.templateSelected = true;
-  document.getElementById('mTemplateSelectorS3').style.display = 'none';
-  document.getElementById('mEditorShellS3').style.display = 'flex';
+function meSelectTemplate(type) {
+  document.getElementById('meTplGate').style.display = 'none';
+  document.getElementById('meEditorWrap').style.display = 'block';
+  document.getElementById('meStep2Nav').style.display = 'flex';
+  document.getElementById('meHeadActions').style.display = 'flex';
+  document.getElementById('meAiToggleBtn').style.display = (type === 'code') ? 'none' : 'flex';
+  document.getElementById('galAiFab').style.display = (type === 'code') ? 'none' : 'flex';
 
   if (type === 'blank') {
     ME.blocks = []; ME.selectedId = null;
-    document.getElementById('mLeftSidebarS3').style.display = 'flex';
-    document.getElementById('mBtnVisual').style.display = 'inline-block';
-    document.getElementById('mVisualToolbarBtns').style.display = 'flex';
-    mAddBlock('logo'); mAddBlock('header'); mAddBlock('text'); mAddBlock('button'); 
-    mSwitchView('visual'); switchLeftTab('ai');
+    meAddBlock('logo'); meAddBlock('header'); meAddBlock('text'); meAddBlock('button');
+    meSwitchTab('visual');
   } else if (type === 'code') {
     ME.blocks = [];
-    document.getElementById('mLeftSidebarS3').style.display = 'none';
-    document.getElementById('mBtnVisual').style.display = 'none';
-    document.getElementById('mVisualToolbarBtns').style.display = 'none';
-    if (!document.getElementById('codeBackBtn')) {
-      document.getElementById('mBtnCode').insertAdjacentHTML('beforebegin', `<button class="btn btn-ghost btn-sm" onclick="mSelectTemplate('reset')" style="margin-right:12px; color:var(--text-3)" id="codeBackBtn">← Change Template</button>`);
-    }
-    if (ME.cm && !ME.cm.getValue().trim()) { ME.cm.setValue('\n\n'); }
-    mSwitchView('code');
+    if (ME.cm && !ME.cm.getValue().trim()) ME.cm.setValue('\n\n');
+    meSwitchTab('code');
   } else if (ME_TEMPLATES[type]) {
-    const tpl = ME_TEMPLATES[type];
-    ME.blocks = tpl.blocks.map(b => ({ id: 'b' + (ME.nextId++), type: b.type, props: JSON.parse(JSON.stringify(b.props)) }));
-    ME.selectedId = null;
-    document.getElementById('mLeftSidebarS3').style.display = 'flex';
-    document.getElementById('mBtnVisual').style.display = 'inline-block';
-    document.getElementById('mVisualToolbarBtns').style.display = 'flex';
-    mRenderVisual(); mSyncToCode(); mSwitchView('visual'); switchLeftTab('ai');
+    ME.blocks = ME_TEMPLATES[type].blocks.map(b => ({ id: 'b' + (ME.nextId++), type: b.type, props: JSON.parse(JSON.stringify(b.props)) }));
+    ME.selectedId = null; meSwitchTab('visual');
   }
+  meRenderVisual(); meSyncToCode();
 }
 
-function mPopulateTags() {
-  const list = document.getElementById('mTagsList');
-  if (!list) return;
+function mePopulateTags() {
+  const cont = document.getElementById('meMergeTags');
+  if (!cont) return;
   if (!CP.headers || CP.headers.length === 0) {
-    list.innerHTML = '<div style="font-style:italic; color:var(--text-3); font-size:12px;">No data loaded. Go back to Step 1.</div>';
+    cont.innerHTML = '<span style="font-size:12px;color:var(--text-3);font-style:italic">No headers loaded yet.</span>';
     return;
   }
-  let html = CP.headers.map(h => `<div onclick="mInsertTag('{{${h}}}')" style="padding:8px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--glass-border); border-radius:6px; cursor:pointer; font-family:var(--font-mono); font-size:12px; color:var(--cyan); transition:0.2s;" onmouseover="this.style.background='rgba(0,212,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">{{${h}}}</div>`).join('');
-  html += `<div onclick="mInsertTag('{{Certificate Link}}')" style="padding:8px 12px; margin-top:8px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:6px; cursor:pointer; font-family:var(--font-mono); font-size:12px; color:var(--green); transition:0.2s;" onmouseover="this.style.background='rgba(16,185,129,0.15)'" onmouseout="this.style.background='rgba(16,185,129,0.08)'">★ {{Certificate Link}}</div>`;
-  list.innerHTML = html;
+  let html = CP.headers.map(h => `<div class="me-tag" onclick="meInsertTag('{{${h}}}')">{{${h}}}</div>`).join('');
+  html += `<div class="me-tag" onclick="meInsertTag('{{Certificate Link}}')" style="background:rgba(16,185,129,0.15);color:#10b981;border-color:rgba(16,185,129,0.3)">★ {{Certificate Link}}</div>`;
+  cont.innerHTML = html;
 }
 
-function mInsertTag(tag) {
-  if (document.getElementById('mCodeWrapS3').style.display === 'block' && ME.cm) {
-    ME.cm.replaceSelection(tag); ME.cm.focus();
-  } else {
-    const block = ME.blocks.find(b => b.id === ME.selectedId);
-    if (block && block.props.text !== undefined) {
-      block.props.text += tag; mRenderVisual(); mRenderProps(block); mSyncToCode();
-    } else {
-      toast('Select a text block to insert tag, or use Code View', 'info');
+let meLastFocusedField = null;
+function meInsertTag(tag) {
+  if (ME.activeTab === 'code' && ME.cm) {
+    ME.cm.replaceSelection(tag); ME.cm.focus(); return;
+  }
+  if (meLastFocusedField && meLastFocusedField.id === 'mSubject') {
+    const el = document.getElementById('mSubject');
+    if (el) {
+      const start = el.selectionStart, end = el.selectionEnd;
+      el.value = el.value.substring(0, start) + tag + el.value.substring(end);
+      el.focus(); el.selectionStart = el.selectionEnd = start + tag.length;
     }
+    return;
   }
-}
-
-function switchLeftTab(tab) {
-  document.getElementById('mTab_ai').className = 'ep-tab ' + (tab === 'ai' ? 'active' : '');
-  document.getElementById('mTab_props').className = 'ep-tab ' + (tab === 'props' ? 'active' : '');
-  document.getElementById('mPanel_ai').style.display = tab === 'ai' ? 'flex' : 'none';
-  document.getElementById('mPanel_props').style.display = tab === 'props' ? 'flex' : 'none';
-  if (tab === 'ai') {
-    document.getElementById('mTab_ai').style.color = 'var(--cyan)'; document.getElementById('mTab_ai').style.borderBottomColor = 'var(--cyan)';
-    document.getElementById('mTab_props').style.color = 'var(--text-3)'; document.getElementById('mTab_props').style.borderBottomColor = 'transparent';
+  const block = ME.blocks.find(b => b.id === ME.selectedId);
+  if (block && block.props.text !== undefined) {
+    block.props.text += tag; meRenderVisual(); meRenderProps(block); meSyncToCode();
   } else {
-    document.getElementById('mTab_props').style.color = 'var(--cyan)'; document.getElementById('mTab_props').style.borderBottomColor = 'var(--cyan)';
-    document.getElementById('mTab_ai').style.color = 'var(--text-3)'; document.getElementById('mTab_ai').style.borderBottomColor = 'transparent';
+    toast('Select a text block to insert tag, or use Code view', 'info');
   }
 }
 
-function mSwitchView(view) {
-  document.getElementById('mBtnVisual').className = 'btn btn-ghost btn-sm ' + (view === 'visual' ? 'active' : '');
-  document.getElementById('mBtnCode').className = 'btn btn-ghost btn-sm ' + (view === 'code' ? 'active' : '');
-  document.getElementById('mVisualCol').style.display = view === 'visual' ? 'flex' : 'none';
-  document.getElementById('mCodeWrapS3').style.display = view === 'code' ? 'block' : 'none';
-  if (view === 'code' && ME.cm) { mSyncToCode(); setTimeout(() => ME.cm.refresh(), 50); }
+function meSwitchTab(tab) {
+  ME.activeTab = tab;
+  ['visual', 'code', 'preview'].forEach(t => {
+    document.getElementById('meTab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+    document.getElementById('me' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = (t === tab) ? (t === 'visual' ? 'grid' : 'block') : 'none';
+  });
+  if (tab === 'code') { if (ME.cm) setTimeout(() => ME.cm.refresh(), 50); document.getElementById('meBtnApplyCode').style.display = 'none'; }
+  if (tab === 'preview') meUpdatePreview();
 }
 
-function mSetDeviceS3(dev) {
-  document.getElementById('mBtnDesktopS3').className = 'btn btn-ghost btn-sm ' + (dev === 'desktop' ? 'active' : '');
-  document.getElementById('mBtnMobileS3').className = 'btn btn-ghost btn-sm ' + (dev === 'mobile' ? 'active' : '');
-  document.getElementById('mPrvBoxS3').style.width = dev === 'mobile' ? '375px' : '600px';
+function meSetDevice(device) {
+  ME.previewDevice = device;
+  document.getElementById('meBtnDesktop').classList.toggle('active', device === 'desktop');
+  document.getElementById('meBtnMobile').classList.toggle('active', device === 'mobile');
+  document.getElementById('mePreviewFrameWrap').className = 'me-preview-frame-wrap ' + device;
+  document.getElementById('mePreviewFrame').style.width = (device === 'mobile') ? '375px' : '100%';
 }
 
-function mClearAll() { ME.blocks = []; ME.selectedId = null; mRenderVisual(); mRenderProps(null); mSyncToCode(); }
-
-function mAddBlock(type) {
+function meAddBlock(type) {
   const def = ME_DEFS[type]; if (!def) return;
   const block = { id: 'b' + (ME.nextId++), type, props: def.defaults() };
-  ME.blocks.push(block); mRenderVisual(); mSelectBlock(block.id); mSyncToCode();
-  const list = document.getElementById('mVisualListS3'); if (list) list.scrollTop = list.scrollHeight;
+  ME.blocks.push(block); meRenderVisual(); meSelectBlock(block.id); meSyncToCode();
+  setTimeout(() => { const w = document.getElementById('meCanvasWrap'); if (w) w.scrollTop = w.scrollHeight; }, 50);
 }
 
-function mDeleteBlock(id) { ME.blocks = ME.blocks.filter(b => b.id !== id); if (ME.selectedId === id) { ME.selectedId = null; mRenderProps(null); } mRenderVisual(); mSyncToCode(); }
-function mDuplicateBlock(id) { const idx = ME.blocks.findIndex(b => b.id === id); if (idx < 0) return; const copy = { id: 'b' + (ME.nextId++), type: ME.blocks[idx].type, props: JSON.parse(JSON.stringify(ME.blocks[idx].props)) }; ME.blocks.splice(idx + 1, 0, copy); mRenderVisual(); mSelectBlock(copy.id); mSyncToCode(); }
+function meDeleteBlock(id) {
+  ME.blocks = ME.blocks.filter(b => b.id !== id);
+  if (ME.selectedId === id) { ME.selectedId = null; meRenderProps(null); }
+  meRenderVisual(); meSyncToCode();
+}
 
-function mSelectBlock(id) {
+function meDuplicateBlock(id) {
+  const idx = ME.blocks.findIndex(b => b.id === id); if (idx < 0) return;
+  const copy = { id: 'b' + (ME.nextId++), type: ME.blocks[idx].type, props: JSON.parse(JSON.stringify(ME.blocks[idx].props)) };
+  ME.blocks.splice(idx + 1, 0, copy); meRenderVisual(); meSelectBlock(copy.id); meSyncToCode();
+}
+
+function meSelectBlock(id) {
   ME.selectedId = id;
-  document.querySelectorAll('.m-block-wrap').forEach(el => el.style.borderColor = el.dataset.id === id ? 'var(--cyan)' : 'transparent');
-  mRenderProps(ME.blocks.find(b => b.id === id)); switchLeftTab('props');
+  document.querySelectorAll('.me-block-wrap').forEach(el => el.classList.toggle('selected', el.dataset.id === id));
+  meRenderProps(ME.blocks.find(b => b.id === id));
 }
 
-function mRenderVisual() {
-  const list = document.getElementById('mVisualListS3'); if (!list) return;
-  list.innerHTML = ME.blocks.map(b => `<div class="m-block-wrap" data-id="${b.id}" onclick="mSelectBlock('${b.id}')" style="background:rgba(255,255,255,0.03); border:1px solid ${b.id === ME.selectedId ? 'var(--cyan)' : 'transparent'}; border-radius:8px; padding:12px; cursor:pointer; position:relative; margin-bottom:8px;"><div class="m-drag-handle" style="position:absolute; top:12px; left:8px; cursor:grab; color:var(--text-3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div><div style="margin-left:24px; font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase;">${(ME_DEFS[b.type]||{}).label||b.type}</div><div style="position:absolute; top:8px; right:8px; display:flex; gap:4px;"><button onclick="event.stopPropagation();mDuplicateBlock('${b.id}')" style="background:var(--glass); border:1px solid var(--glass-border); border-radius:4px; color:var(--text-2); cursor:pointer; padding:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button onclick="event.stopPropagation();mDeleteBlock('${b.id}')" style="background:var(--glass); border:1px solid var(--glass-border); border-radius:4px; color:#f43f5e; cursor:pointer; padding:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div>`).join('');
+function meRenderVisual() {
+  const canvas = document.getElementById('meCanvas'); if (!canvas) return;
+  if (!ME.blocks.length) {
+    canvas.innerHTML = `<div class="me-empty-canvas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg><div style="font-size:14px;font-weight:600">Start building your email</div><div style="font-size:12.5px">Click a block type on the left</div></div>`;
+    return;
+  }
+  canvas.innerHTML = ME.blocks.map(b => `
+    <div class="me-block-wrap ${b.id === ME.selectedId ? 'selected' : ''}" data-id="${b.id}" onclick="meSelectBlock('${b.id}')">
+      <div class="me-drag-handle"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="me-block-controls">
+        <button class="me-ctrl-btn" onclick="event.stopPropagation();meDuplicateBlock('${b.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+        <button class="me-ctrl-btn del" onclick="event.stopPropagation();meDeleteBlock('${b.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+      </div>
+      <div class="me-block-inner">${meBlockToHtml(b, true)}</div>
+    </div>`).join('');
 }
 
-const ME_DEFS = {
-  logo:    { label:'Logo',    defaults:()=>({ text:'HONOURIX', tagline:'', bgColor:'#0d1728', color:'#00d4ff', fontSize:22, fontWeight:800, align:'center', paddingV:28, paddingH:40 }) },
-  header:  { label:'Heading', defaults:()=>({ text:'Your Heading', fontSize:28, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:32, paddingH:40 }) },
-  text:    { label:'Text',    defaults:()=>({ text:'Write your message here. Use {{name}} to personalize.', fontSize:16, color:'#475569', bgColor:'#ffffff', align:'left', paddingV:14, paddingH:40, lineHeight:1.75 }) },
-  button:  { label:'Button',  defaults:()=>({ text:'Click Here', link:'{{Certificate Link}}', btnBg:'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor:'#ffffff', bgColor:'#ffffff', align:'center', paddingV:24, paddingH:40, borderRadius:10, fontSize:15, fontWeight:700 }) },
-  image:   { label:'Image',   defaults:()=>({ src:'', alt:'Image', width:100, bgColor:'#f8fafc', paddingV:20, paddingH:40, borderRadius:8 }) },
-  divider: { label:'Divider', defaults:()=>({ color:'#e2e8f0', bgColor:'#ffffff', paddingV:12, thickness:1 }) },
-  spacer:  { label:'Spacer',  defaults:()=>({ height:40, bgColor:'#ffffff' }) },
-  footer:  { label:'Footer',  defaults:()=>({ text:'Sent via Honourix. Contact the organiser for questions.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 }) },
-};
-
-function mRenderProps(block) {
-  const form = document.getElementById('mPropsForm'), empty = document.getElementById('mPropsEmpty');
-  if (!block) { form.style.display = 'none'; empty.style.display = 'block'; return; }
-  form.style.display = 'flex'; empty.style.display = 'none';
+function meRenderProps(block) {
+  const body = document.getElementById('mePropsBody'); if (!body) return;
+  if (!block) {
+    body.innerHTML = `<div class="me-props-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Click any block to<br/>edit its properties</div></div>`;
+    return;
+  }
   const p = block.props, rows = [];
-  if (['logo','header','text','footer'].includes(block.type)) rows.push(mPropTextarea('Text Content', block.id, 'text', p.text));
-  if (block.type === 'logo') rows.push(mPropText('Tagline', block.id, 'tagline', p.tagline));
-  if (block.type === 'button') { rows.push(mPropText('Button Text', block.id, 'text', p.text)); rows.push(mPropText('Link URL', block.id, 'link', p.link)); rows.push(mPropColor('Button BG', block.id, 'btnBg', p.btnBg?.startsWith('linear')?'#00d4ff':p.btnBg)); rows.push(mPropColor('Text Color', block.id, 'btnColor', p.btnColor)); rows.push(mPropRange('Radius', block.id, 'borderRadius', p.borderRadius, 0, 40)); }
-  if (block.type === 'image') { rows.push(mPropText('Image URL', block.id, 'src', p.src)); rows.push(mPropRange('Width %', block.id, 'width', p.width, 20, 100)); }
-  if (block.type === 'divider') { rows.push(mPropColor('Color', block.id, 'color', p.color)); rows.push(mPropRange('Thickness', block.id, 'thickness', p.thickness, 1, 10)); }
-  if (block.type === 'spacer') rows.push(mPropRange('Height', block.id, 'height', p.height, 10, 100));
-  if (['logo','header','text','button','footer'].includes(block.type)) { if(block.type !== 'button') rows.push(mPropColor('Text Color', block.id, 'color', p.color)); if(block.type !== 'logo') rows.push(mPropRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 40)); }
-  rows.push(mPropColor('Background', block.id, 'bgColor', p.bgColor)); rows.push(mPropRange('Padding V', block.id, 'paddingV', p.paddingV, 0, 80));
-  form.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;">${(ME_DEFS[block.type]||{}).label||block.type} Settings</div>${rows.join('')}`;
+  if (['logo', 'header', 'text', 'footer'].includes(block.type)) rows.push(mePropTextarea('Text Content', block.id, 'text', p.text));
+  if (block.type === 'logo') rows.push(mePropText('Tagline', block.id, 'tagline', p.tagline));
+  if (block.type === 'button') { rows.push(mePropText('Button Text', block.id, 'text', p.text)); rows.push(mePropText('Link URL', block.id, 'link', p.link)); rows.push(mePropColor('Button BG', block.id, 'btnBg', p.btnBg)); rows.push(mePropColor('Text Color', block.id, 'btnColor', p.btnColor)); rows.push(mePropRange('Radius', block.id, 'borderRadius', p.borderRadius, 0, 40)); }
+  if (block.type === 'image') { rows.push(mePropText('Image URL', block.id, 'src', p.src)); rows.push(mePropRange('Width %', block.id, 'width', p.width, 20, 100)); }
+  if (block.type === 'divider') { rows.push(mePropColor('Color', block.id, 'color', p.color)); rows.push(mePropRange('Thickness', block.id, 'thickness', p.thickness, 1, 10)); }
+  if (block.type === 'spacer') rows.push(mePropRange('Height', block.id, 'height', p.height, 10, 100));
+  if (['logo', 'header', 'text', 'button', 'footer'].includes(block.type)) {
+    if (block.type !== 'button') rows.push(mePropColor('Text Color', block.id, 'color', p.color));
+    if (block.type !== 'logo') rows.push(mePropRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 40));
+    if (block.type !== 'image' && block.type !== 'divider' && block.type !== 'spacer') {
+      rows.push(`<div class="me-field"><label class="me-field-label">Alignment</label><div class="me-align-btns">
+        <button class="me-align-btn ${p.align === 'left' ? 'active' : ''}" onclick="meUpdateProp('${block.id}','align','left')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg></button>
+        <button class="me-align-btn ${p.align === 'center' ? 'active' : ''}" onclick="meUpdateProp('${block.id}','align','center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg></button>
+        <button class="me-align-btn ${p.align === 'right' ? 'active' : ''}" onclick="meUpdateProp('${block.id}','align','right')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg></button>
+      </div></div>`);
+    }
+  }
+  rows.push(mePropColor('Background', block.id, 'bgColor', p.bgColor));
+  rows.push(mePropRange('Padding V', block.id, 'paddingV', p.paddingV, 0, 80));
+  body.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px">${(ME_DEFS[block.type] || {}).label || block.type}</div>` + rows.join('');
 }
 
-function mPropText(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><input type="text" class="pr-input" value="${(val||'').replace(/"/g,'&quot;')}" oninput="mUpdateProp('${id}','${key}',this.value)"/></div>`; }
-function mPropTextarea(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><textarea class="pr-input" style="min-height:80px;resize:vertical;" oninput="mUpdateProp('${id}','${key}',this.value)">${(val||'').replace(/</g,'&lt;')}</textarea></div>`; }
-function mPropColor(label, id, key, val) { return `<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><div style="display:flex;gap:8px;"><input type="color" value="${val||'#ffffff'}" style="width:34px;height:34px;padding:2px;background:var(--glass);border:1px solid var(--glass-border);border-radius:6px;cursor:pointer;" oninput="mUpdateProp('${id}','${key}',this.value)"/><input type="text" class="pr-input" value="${val||'#ffffff'}" oninput="mUpdateProp('${id}','${key}',this.value)"/></div></div>`; }
-function mPropRange(label, id, key, val, min, max) { return `<div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;justify-content:space-between;"><label style="font-size:11.5px;color:var(--text-3);font-weight:600;">${label}</label><span id="mrv_${id}_${key}" style="font-size:11px;color:var(--cyan);font-family:var(--font-mono);">${val}</span></div><input type="range" class="pr-range" min="${min}" max="${max}" value="${val}" oninput="document.getElementById('mrv_${id}_${key}').textContent=this.value;mUpdateProp('${id}','${key}',Number(this.value))"/></div>`; }
+function mePropText(lbl, id, k, val) { return `<div class="me-field"><label class="me-field-label">${lbl}</label><input type="text" class="me-input" value="${(val || '').replace(/"/g, '&quot;')}" oninput="meUpdateProp('${id}','${k}',this.value)" onfocus="meLastFocusedField={id:'${id}', key:'${k}', el:this}"/></div>`; }
+function mePropTextarea(lbl, id, k, val) { return `<div class="me-field"><label class="me-field-label">${lbl}</label><textarea class="me-textarea" oninput="meUpdateProp('${id}','${k}',this.value)" onfocus="meLastFocusedField={id:'${id}', key:'${k}', el:this}">${(val || '').replace(/</g, '&lt;')}</textarea></div>`; }
+function mePropColor(lbl, id, k, val) { return `<div class="me-field"><label class="me-field-label">${lbl}</label><div class="me-color-row"><div class="me-color-swatch"><input type="color" value="${(val || '').startsWith('linear') ? '#ffffff' : val}" oninput="meUpdateProp('${id}','${k}',this.value)"/></div><input type="text" class="me-input" value="${val}" oninput="meUpdateProp('${id}','${k}',this.value)"/></div></div>`; }
+function mePropRange(lbl, id, k, val, min, max) { return `<div class="me-field"><div style="display:flex;justify-content:space-between"><label class="me-field-label">${lbl}</label><span id="mrv_${id}_${k}" style="font-size:11px;color:var(--cyan);font-family:var(--font-mono)">${val}</span></div><input type="range" class="me-range" min="${min}" max="${max}" value="${val}" oninput="document.getElementById('mrv_${id}_${k}').textContent=this.value;meUpdateProp('${id}','${k}',Number(this.value))"/></div>`; }
 
-function mUpdateProp(id, key, val) { const block = ME.blocks.find(b => b.id === id); if (!block) return; block.props[key] = val; mSyncToCode(); }
-
-function mSyncToCode() {
-  const html = meGetHtml();
-  if (ME.cm && document.getElementById('mCodeWrapS3').style.display !== 'none') { const c = ME.cm.getCursor(); ME.cm.setValue(html); try{ME.cm.setCursor(c);}catch(e){} }
-  mUpdatePreview(html);
+function meUpdateProp(id, key, val) {
+  const b = ME.blocks.find(x => x.id === id); if (!b) return;
+  b.props[key] = val; meRenderVisual(); meSyncToCode();
 }
 
-function mUpdatePreview(htmlOverride) {
-  const frame = document.getElementById('mPrvBoxS3'); if (!frame) return;
-  let html = htmlOverride || (ME.cm && document.getElementById('mCodeWrapS3').style.display === 'block' ? ME.cm.getValue() : meGetHtml());
-  if (CP.rows && CP.rows.length) { html = html.replace(/\{\{(\w+)\}\}/g, function (_, key) { const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key); return col ? (CP.rows[0][col] || '') : (CP.rows[0][key] || '{{' + key + '}}'); }); }
-  const noScrollCss = `<style>::-webkit-scrollbar { display: none !important; } html, body { scrollbar-width: none !important; margin: 0; padding: 0; }</style>`;
-  html = html.includes('</head>') ? html.replace('</head>', noScrollCss + '</head>') : noScrollCss + html;
+function meSyncToCode() {
+  if (ME.cm) {
+    const html = meGetHtml(); const pos = ME.cm.getCursor(); ME.cm.setValue(html);
+    try { ME.cm.setCursor(pos); } catch (e) { }
+  }
+}
+
+function meApplyCodeToVisual() {
+  document.getElementById('meBtnApplyCode').style.display = 'none';
+  toast('Code saved. Note: Direct code edits bypass visual blocks.', 'success');
+}
+
+function meFormatCode() { if (ME.cm) { const t = ME.cm.getValue(); ME.cm.setValue(t.replace(/></g, '>\n<')); } }
+function meCopyCode() { if (ME.cm) { navigator.clipboard.writeText(ME.cm.getValue()); toast('HTML Copied!', 'success'); } }
+
+function meUpdatePreview() {
+  const frame = document.getElementById('mePreviewFrame'); if (!frame) return;
+  let html = (ME.cm && ME.activeTab === 'code') ? ME.cm.getValue() : meGetHtml();
+  if (CP.rows && CP.rows.length) {
+    html = html.replace(/\{\{(\w+)\}\}/g, function (_, key) {
+      const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key);
+      return col ? (CP.rows[0][col] || '') : (CP.rows[0][key] || '{{' + key + '}}');
+    });
+  }
   frame.srcdoc = html;
 }
 
-function meBlockToHtml(block) {
+function meGetHtmlFromBlocks(blocks) {
+  const inner = blocks.map(b => meBlockToHtml(b)).join('\n');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet"/></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:'Plus Jakarta Sans',sans-serif"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:32px 16px"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><tr><td>${inner}</td></tr></table></td></tr></table></body></html>`;
+}
+function meGetHtml() { return meGetHtmlFromBlocks(ME.blocks); }
+function meBlockToHtml(block, isEditor = false) {
   const p = block.props, fs = "'Plus Jakarta Sans',sans-serif";
   switch (block.type) {
-    case 'logo': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fs}">${p.text}</div>${p.tagline?`<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fs}">${p.tagline}</div>`:''}</div>`;
+    case 'logo': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fs}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fs}">${p.tagline}</div>` : ''}</div>`;
     case 'header': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fs}">${p.text}</h1></div>`;
-    case 'text': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fs}">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+    case 'text': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fs}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
     case 'button': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fs}">${p.text}</a></div>`;
-    case 'image': return p.src ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt}" style="width:${p.width}%;max-width:100%;height:auto;border-radius:${p.borderRadius}px;display:block;margin:0 auto"/></div>` : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px">[Image — add URL in properties]</div></div>`;
+    case 'image': return p.src ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt}" style="width:${p.width}%;max-width:100%;height:auto;border-radius:${p.borderRadius}px;display:block;margin:0 auto"/></div>` : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px">[Image]</div></div>`;
     case 'divider': return `<div style="padding:${p.paddingV}px 40px;background:${p.bgColor}"><div style="height:${p.thickness}px;background:${p.color}"></div></div>`;
     case 'spacer': return `<div style="height:${p.height}px;background:${p.bgColor}">&nbsp;</div>`;
-    case 'footer': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+    case 'footer': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
     default: return '';
   }
 }
 
-function meGetHtml() {
-  if (!ME.blocks.length) return '';
-  const inner = ME.blocks.map(b => meBlockToHtml(b)).join('\n');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet"/></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:'Plus Jakarta Sans',sans-serif"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:32px 16px"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><tr><td>${inner}</td></tr></table></td></tr></table></body></html>`;
+/* ── AI Engine & Floating FAB ── */
+function galAiToggle() {
+  const panel = document.getElementById('galAiPanel');
+  const fab = document.getElementById('galAiFab');
+  const mainArea = document.querySelector('.main-area');
+  if (!panel) return;
+  panel.classList.toggle('open');
+  if (fab) fab.classList.toggle('panel-open');
+  if (mainArea) mainArea.classList.toggle('gal-open');
 }
 
-/* ── AI CHAT ENGINE ── */
 let meAiChatHistory = [];
 let meAiIsLoading = false;
 
 function meAiAppendBubble(role, content) {
-  const chat = document.getElementById('meAiChatBox'); if (!chat) return null;
-  const div = document.createElement('div'); div.style.display = 'flex'; div.style.gap = '12px';
+  const chat = document.getElementById('meAiChatBox') || document.getElementById('meAiChat');
+  const greet = document.getElementById('galAiGreeting');
+  if (greet) greet.style.display = 'none';
+  if (!chat) return null;
+  const div = document.createElement('div');
+  div.className = 'gal-ai-bubble ' + role;
   if (role === 'ai') {
-    div.innerHTML = `<div style="width:28px;height:28px;border-radius:50%;background:rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;color:var(--cyan);flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 7.1"/><path d="M12 12l9.9 4.9"/></svg></div>
-    <div style="background:var(--glass); border:1px solid var(--glass-border); padding:12px 14px; border-radius:12px; border-top-left-radius:0; font-size:13.5px; color:var(--text); line-height:1.5;">${content.replace(/\n/g, '<br>')}</div>`;
+    div.innerHTML = `<div class="gal-ai-bubble-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 7.1"/><path d="M12 12l9.9 4.9"/></svg> Gal AI</div>${content.replace(/\n/g, '<br>')}`;
   } else {
-    div.style.justifyContent = 'flex-end';
-    div.innerHTML = `<div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); padding:12px 14px; border-radius:12px; border-top-right-radius:0; font-size:13.5px; color:var(--text); line-height:1.5; max-width:85%;">${content}</div>`;
+    div.innerHTML = content;
   }
-  chat.appendChild(div); chat.scrollTop = chat.scrollHeight; return div;
+  chat.appendChild(div); chat.scrollTop = chat.scrollHeight;
+  return div;
 }
 
 async function meAiSend() {
-  const input = document.getElementById('meAiInput'); if (!input || meAiIsLoading) return;
+  const input = document.getElementById('meAiInput');
+  if (!input || meAiIsLoading) return;
   const msg = input.value.trim(); if (!msg) return;
-  input.value = ''; meAiIsLoading = true; document.getElementById('meAiSendBtn').style.opacity = '0.5';
+  input.value = ''; meAiIsLoading = true;
+  const btn = document.getElementById('meAiSendBtn');
+  if (btn) btn.disabled = true;
 
-  meAiAppendBubble('user', msg); const typingEl = meAiAppendBubble('ai', 'Thinking...');
+  meAiAppendBubble('user', msg);
+  const typingEl = meAiAppendBubble('ai', '<div class="gal-ai-thinking"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="gal-ai-status">Designing...</div>');
   meAiChatHistory.push({ role: 'user', content: msg });
 
   try {
     const token = localStorage.getItem('Honourix_token');
     const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/generate-email', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ userMessage: msg, mode: document.getElementById('mCodeWrapS3').style.display === 'block' ? 'code' : 'visual', htmlModeText: ME.cm ? ME.cm.getValue() : '', currentBlocks: ME.blocks, headers: CP.headers, chatHistory: meAiChatHistory.slice(-10), selectedBlockId: ME.selectedId }),
+      body: JSON.stringify({ userMessage: msg, mode: ME.activeTab, htmlModeText: ME.cm ? ME.cm.getValue() : '', currentBlocks: ME.blocks, headers: CP.headers, chatHistory: meAiChatHistory.slice(-10), selectedBlockId: ME.selectedId }),
     });
     const res = await response.json(); typingEl.remove();
     if (response.status === 403 && res.error === 'AI_LOCKED') { meAiAppendBubble('ai', '🔒 AI features require a Pro plan.'); return; }
     meAiChatHistory.push({ role: 'model', content: res.message || '' });
 
-    if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; mRenderVisual(); mRenderProps(null); mSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); } 
+    if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; meRenderVisual(); meRenderProps(null); meSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); } 
     else if (res.action === 'replace_html' && res.html && ME.cm) { ME.cm.setValue(res.html); meAiAppendBubble('ai', res.message || 'Code updated.'); } 
-    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); mSyncToCode(); mRenderVisual(); if(ME.selectedId===b.id)mRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); } 
+    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); meSyncToCode(); meRenderVisual(); if(ME.selectedId===b.id)meRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); } 
     else { meAiAppendBubble('ai', res.message || 'How else can I help?'); }
   } catch (err) { if (typingEl) typingEl.remove(); meAiAppendBubble('ai', 'Error: ' + err.message); } 
-  finally { meAiIsLoading = false; document.getElementById('meAiSendBtn').style.opacity = '1'; }
+  finally { meAiIsLoading = false; if (btn) btn.disabled = false; }
 }
+
 /* ════════════════════════════════════════════════════════════════
    STEP 5 — REVIEW
 ════════════════════════════════════════════════════════════════ */
@@ -1572,8 +1626,7 @@ async function launchPipeline() {
   
   const mappings = getAllMappings();
   const subject = document.getElementById('emailSubject').value;
-  const htmlTmpl = (ME.cm && document.getElementById('mCodeWrapS3').style.display === 'block') ? ME.cm.getValue() : meGetHtml();
-  
+  const htmlTmpl = (ME.cm && ME.activeTab === 'code') ? ME.cm.getValue() : meGetHtml();
   const campName = document.getElementById('cpName').value;
   const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
   const total = CP.rows.length;
