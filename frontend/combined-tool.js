@@ -1229,40 +1229,169 @@ function buildOutputFilename(rowData, index) {
 /* ════════════════════════════════════════════════════════════════
    STEP 4 — EMAIL TEMPLATE (AI ENGINE)
 ════════════════════════════════════════════════════════════════ */
-const ME = {
-  blocks: [], selectedId: null, nextId: 1, cm: null, cmDebounce: null, initialized: false,
+/* ── TEMPLATES & ROUTING ── */
+const ME_TEMPLATES = {
+  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready 🎉', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
+  event: { name: 'Event Invitation', desc: 'Banner + date + RSVP', blocks: [ { type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } }, { type: 'footer', props: { text: "If you're unable to attend, please let us know at your earliest convenience.", bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
+  thankyou: { name: 'Thank You', desc: 'Warm appreciation note', blocks: [ { type: 'logo', props: { text: 'THANK YOU', tagline: '', bgColor: '#10b981', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Thank You, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#d1fae5', bgColor: '#ffffff', paddingV: 16, thickness: 2 } }, { type: 'footer', props: { text: 'With gratitude,\nThe Honourix Team', bgColor: '#f0fdf4', color: '#6b7280', fontSize: 13, align: 'center', paddingV: 24, paddingH: 40 } } ] },
+  announcement: { name: 'Announcement', desc: 'Bold headline + CTA', blocks: [ { type: 'logo', props: { text: 'ANNOUNCEMENT', tagline: '', bgColor: '#0f172a', color: '#f59e0b', fontSize: 16, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Important Update', fontSize: 30, fontWeight: 800, color: '#0f172a', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nWe have an important announcement to share with you. Please read the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Learn More', link: '#', btnBg: '#f59e0b', btnColor: '#000000', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } } ] },
+  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}! 🎉', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] },
+  promo: { name: 'Promotional', desc: 'Bold offer with CTA', blocks: [ { type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } } ] },
+  newsletter: { name: 'Newsletter', desc: 'Clean content digest', blocks: [ { type: 'logo', props: { text: 'THE DIGEST', tagline: 'Weekly Newsletter', bgColor: '#0f172a', color: '#0ea5e9', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "This Week's Highlights", fontSize: 24, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 28, paddingH: 40 } }, { type: 'divider', props: { color: '#0ea5e9', bgColor: '#ffffff', paddingV: 4, thickness: 2 } }, { type: 'text', props: { text: 'Hi {{name}},\n\nHere\'s what happened this week that you need to know about:', fontSize: 15, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 16, paddingH: 40, lineHeight: 1.75 } } ] },
+  plain: { name: 'Plain Professional', desc: 'Clean text-only email', blocks: [ { type: 'text', props: { text: 'Hi {{name}},', fontSize: 18, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 24, paddingH: 40, lineHeight: 1.6 } }, { type: 'text', props: { text: 'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point. Let the reader know exactly what you need them to do.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.8 } }, { type: 'text', props: { text: 'Best regards,\nThe Honourix Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.7 } } ] }
 };
+const ME_TPL_CATS = { cert: 'certificate', welcome: 'welcome', promo: 'promo', newsletter: 'newsletter', event: 'event', thankyou: 'welcome', announcement: 'promo', plain: 'welcome' };
+let meTplGateSelected = null;
 
 function initStep4() {
-  if (ME.initialized) return;
+  if (ME.initialized) {
+    if (!ME.templateSelected) {
+      document.getElementById('mTemplateSelectorS3').style.display = 'flex';
+      document.getElementById('mEditorShellS3').style.display = 'none';
+    }
+    return;
+  }
   
   const el = document.getElementById('mVisualListS3');
   if (el && typeof Sortable !== 'undefined') {
-    Sortable.create(el, {
-      animation: 150, handle: '.m-drag-handle', ghostClass: 'm-ghost',
-      onEnd: e => {
-        const item = ME.blocks.splice(e.oldIndex, 1)[0];
-        ME.blocks.splice(e.newIndex, 0, item);
-        mSyncToCode();
-      }
-    });
+    Sortable.create(el, { animation: 150, handle: '.m-drag-handle', ghostClass: 'm-ghost', onEnd: e => { const item = ME.blocks.splice(e.oldIndex, 1)[0]; ME.blocks.splice(e.newIndex, 0, item); mSyncToCode(); } });
   }
 
   const cmEl = document.getElementById('mCodeEditorS3');
   if (cmEl && typeof CodeMirror !== 'undefined') {
     ME.cm = CodeMirror.fromTextArea(cmEl, { mode: 'xml', theme: 'dracula', lineNumbers: true, lineWrapping: true });
-    ME.cm.on('change', () => {
-      clearTimeout(ME.cmDebounce);
-      ME.cmDebounce = setTimeout(() => { mUpdatePreview(); }, 500);
-    });
+    ME.cm.on('change', () => { clearTimeout(ME.cmDebounce); ME.cmDebounce = setTimeout(() => { mUpdatePreview(); }, 500); });
   }
 
-  if (ME.blocks.length === 0) { 
-      mAddBlock('logo'); mAddBlock('header'); mAddBlock('text'); mAddBlock('button'); 
-  }
   mPopulateTags();
-  mSwitchView('visual');
+  
+  // Build Grid & Show Template Selector
+  meTplGateBuild();
+  ME.templateSelected = false;
+  document.getElementById('mTemplateSelectorS3').style.display = 'flex';
+  document.getElementById('mEditorShellS3').style.display = 'none';
+  
   ME.initialized = true;
+}
+
+function meGetHtmlFromBlocks(blocks) {
+  const inner = blocks.map(b => meBlockToHtml({ type: b.type, props: b.props })).join('\n');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#f1f5f9;font-family:Arial,sans-serif}</style></head><body><table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:16px 8px"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:12px;overflow:hidden"><tr><td>${inner}</td></tr></table></td></tr></table></body></html>`;
+}
+
+function meTplGateBuild() {
+  const grid = document.getElementById('meTplGateGrid');
+  if (!grid) return;
+
+  const blankHtml = `
+    <div class="me-tpl-gate-card" id="meTplGateCard_blank" onclick="meTplGateSelect('blank')" data-cat="all">
+      <div class="me-tpl-gate-thumb" style="background:linear-gradient(135deg,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" style="width:40px;height:40px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+      </div>
+      <div class="me-tpl-gate-info">
+        <div class="me-tpl-gate-name">Blank Canvas</div>
+        <div class="me-tpl-gate-desc">Start from scratch</div>
+      </div>
+    </div>
+    <div class="me-tpl-gate-card" id="meTplGateCard_code" onclick="meTplGateSelect('code')" data-cat="all">
+      <div class="me-tpl-gate-thumb" style="background:linear-gradient(135deg,#0d9488,#0f172a);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" style="width:40px;height:40px"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+      </div>
+      <div class="me-tpl-gate-info">
+        <div class="me-tpl-gate-name">Paste Code</div>
+        <div class="me-tpl-gate-desc">Write or paste pure HTML (Advanced)</div>
+      </div>
+    </div>`;
+
+  const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
+    const cat = ME_TPL_CATS[key] || 'all';
+    const previewHtml = meGetHtmlFromBlocks(tpl.blocks).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return `
+      <div class="me-tpl-gate-card" id="meTplGateCard_${key}" onclick="meTplGateSelect('${key}')" data-cat="${cat}">
+        <div class="me-tpl-gate-thumb">
+          <iframe srcdoc="${previewHtml}" scrolling="no" tabindex="-1"></iframe>
+          <div class="me-tpl-gate-thumb-overlay"></div>
+        </div>
+        <div class="me-tpl-gate-info">
+          <div class="me-tpl-gate-name">${tpl.name.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1FA70}-\u{1FAFF}\u{2B50}\u{2B55}\u{1F004}\u{1F0CF}\u{1F18E}\u{23E9}-\u{23F3}\u{23F8}-\u{23FA}]/gu, '').trim()}</div>
+          <div class="me-tpl-gate-desc">${tpl.desc || ''}</div>
+        </div>
+      </div>`;
+  });
+  grid.innerHTML = blankHtml + cards.join('');
+}
+
+function meTplGateFilter(cat, btn) {
+  document.querySelectorAll('.me-tpl-cat-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#meTplGateGrid .me-tpl-gate-card').forEach(card => {
+    const cardCat = card.dataset.cat || 'all';
+    card.style.display = (cat === 'all' || cardCat === cat || card.id === 'meTplGateCard_blank' || card.id === 'meTplGateCard_code') ? '' : 'none';
+  });
+}
+
+function meTplGateSelect(key) {
+  meTplGateSelected = key;
+  document.querySelectorAll('#meTplGateGrid .me-tpl-gate-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('meTplGateCard_' + key);
+  if (card) card.classList.add('selected');
+  const btn = document.getElementById('meTplGateUseBtn');
+  if (btn) { btn.disabled = false; btn.innerHTML = (key === 'blank' || key === 'code') ? 'Start ' + (key==='blank'?'Visual':'Code') + ' Editor →' : 'Use Template — Open Editor →'; }
+}
+
+function meTplGateConfirm() {
+  if (!meTplGateSelected) return;
+  mSelectTemplate(meTplGateSelected);
+}
+
+function mSelectTemplate(type) {
+  if (type === 'reset') {
+    ME.templateSelected = false;
+    meTplGateSelected = null;
+    document.getElementById('meTplGateUseBtn').disabled = true;
+    document.querySelectorAll('#meTplGateGrid .me-tpl-gate-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('mTemplateSelectorS3').style.display = 'flex';
+    document.getElementById('mEditorShellS3').style.display = 'none';
+    return;
+  }
+
+  ME.templateSelected = true;
+  document.getElementById('mTemplateSelectorS3').style.display = 'none';
+  document.getElementById('mEditorShellS3').style.display = 'flex';
+
+  if (type === 'blank') {
+    ME.blocks = [];
+    ME.selectedId = null;
+    document.getElementById('mLeftSidebarS3').style.display = 'flex';
+    document.getElementById('mBtnVisual').style.display = 'inline-block';
+    document.getElementById('mVisualToolbarBtns').style.display = 'flex';
+    mAddBlock('logo'); mAddBlock('header'); mAddBlock('text'); mAddBlock('button'); 
+    mSwitchView('visual');
+    switchLeftTab('ai');
+  } else if (type === 'code') {
+    ME.blocks = [];
+    document.getElementById('mLeftSidebarS3').style.display = 'none';
+    document.getElementById('mBtnVisual').style.display = 'none';
+    document.getElementById('mVisualToolbarBtns').style.display = 'none';
+    if (!document.getElementById('codeBackBtn')) {
+      document.getElementById('mBtnCode').insertAdjacentHTML('beforebegin', `<button class="btn btn-ghost btn-sm" onclick="mSelectTemplate('reset')" style="margin-right:12px; color:var(--text-3)" id="codeBackBtn">← Change Template</button>`);
+    }
+    if (ME.cm && !ME.cm.getValue().trim()) { ME.cm.setValue('\n\n'); }
+    mSwitchView('code');
+  } else if (ME_TEMPLATES[type]) {
+    const tpl = ME_TEMPLATES[type];
+    ME.blocks = tpl.blocks.map(b => ({
+      id: 'b' + (ME.nextId++), type: b.type, props: JSON.parse(JSON.stringify(b.props)),
+    }));
+    ME.selectedId = null;
+    document.getElementById('mLeftSidebarS3').style.display = 'flex';
+    document.getElementById('mBtnVisual').style.display = 'inline-block';
+    document.getElementById('mVisualToolbarBtns').style.display = 'flex';
+    mRenderVisual();
+    mSyncToCode();
+    mSwitchView('visual');
+    switchLeftTab('ai');
+  }
 }
 
 function mPopulateTags() {

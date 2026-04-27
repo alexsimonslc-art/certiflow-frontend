@@ -3018,6 +3018,18 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     (function () {
       let mseChatHistory = [];
       let mseIsLoading = false;
+      let _mseIsPro = null;
+      async function _mseCheckPro() {
+        if (_mseIsPro !== null) return _mseIsPro;
+        try {
+          const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
+            headers: { 'Authorization': 'Bearer ' + mseGetToken() }
+          });
+          const data = await res.json();
+          _mseIsPro = data?.plan === 'pro';
+        } catch (_) { _mseIsPro = false; }
+        return _mseIsPro;
+      }
 
       function mseGetToken() {
         return localStorage.getItem('Honourix_token') || '';
@@ -3043,6 +3055,46 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         history.appendChild(div);
         history.scrollTop = history.scrollHeight;
         return div;
+      }
+
+      function mseShowUpgrade() {
+        const history = document.getElementById('galAiHistory');
+        if (!history) return;
+        const div = document.createElement('div');
+        div.className = 'gal-ai-msg bot';
+        div.innerHTML = `
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+            <span class="gal-ai-sparkle-icon" style="font-size:14px">✨</span>
+            <span style="font-weight:600;font-size:13px">Gal AI</span>
+          </div>
+          <div style="margin-bottom:10px;color:var(--text-2)">Gal AI is a <strong style="color:var(--text)">Pro feature</strong>. Upgrade to unlock AI-powered site generation, block editing, and design assistance.</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>
+            <button class="gal-ai-sug" onclick="mseShowProDetails(this)" style="text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;">What's included in Pro?</button>
+          </div>`;
+        history.appendChild(div);
+        history.scrollTop = history.scrollHeight;
+      }
+
+      function mseShowProDetails(btn) {
+        const history = document.getElementById('galAiHistory');
+        const div = document.createElement('div');
+        div.className = 'gal-ai-msg bot';
+        div.innerHTML = `
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+            <span style="font-size:14px">✨</span>
+            <span style="font-weight:600;font-size:13px">Gal AI</span>
+          </div>
+          <div style="line-height:1.9;color:var(--text-2)">
+            ✦ AI-powered site generation<br>
+            ✦ Block editing via chat<br>
+            ✦ Smart design suggestions<br>
+            ✦ Theme and layout assistance<br>
+            ✦ Priority sending quota
+          </div>`;
+        btn.closest('.gal-ai-msg')?.insertAdjacentElement('afterend', div);
+        btn.remove();
+        if (history) history.scrollTop = history.scrollHeight;
       }
 
       // Apply a structured action from Gal AI to MSState
@@ -3111,6 +3163,15 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         const msg = (input?.value || '').trim();
         if (!msg) return;
 
+        // Frontend-first Pro gate — never touches backend AI for free users
+        const isPro = await _mseCheckPro();
+        if (!isPro) {
+          input.value = '';
+          mseAppendMsg('user', msg);
+          mseShowUpgrade();
+          return;
+        }
+
         mseIsLoading = true;
         input.value = '';
         if (sendBtn) sendBtn.disabled = true;
@@ -3137,14 +3198,6 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
 
           if (typingEl) typingEl.remove();
 
-          // Plan gate
-          if (resp.status === 403) {
-            const errData = await resp.json().catch(() => ({}));
-            if (errData.error === 'AI_LOCKED') {
-              mseAppendMsg('bot', '🔒 Gal AI requires a Pro plan. <a href="settings.html#billing" style="color:var(--accent)">Upgrade in Settings →</a>');
-              return;
-            }
-          }
           if (!resp.ok) throw new Error('Request failed: ' + resp.status);
 
           const data = await resp.json();
