@@ -103,18 +103,38 @@ function updateStepper() {
   });
 }
 
-/* ── Navigation ──────────────────────────────────────────────────── */
+/* ── Navigation Engine ─────────────────────────────────────────────────── */
 function goStep(n, force = false) {
-  if (!force && !validateStep(CP.step)) return;
-  if (CP.step === 4) meSyncTextarea();
+  // 1. Always allow going backwards! (Bypass validation if returning to a previous step)
+  if (n < CP.step) force = true;
+
+  // 2. If moving forward, run the validation check for the current step
+  if (!force && typeof validateStep === 'function' && !validateStep(CP.step)) return;
+
+  // 3. Update state and Stepper UI
   CP.step = n;
-  updateStepper();
+  if (typeof updateStepper === 'function') updateStepper();
+  
+  // 4. Switch the active panels
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(`sp${n}`).classList.add('active');
-  if (n === 2) requestAnimationFrame(() => requestAnimationFrame(() => resizeCanvas()));
-  if (n === 3) buildStep3();
-  if (n === 4) buildEmailStep();
-  if (n === 5) buildReview();
+  const targetPanel = document.getElementById(`sp${n}`);
+  if (targetPanel) targetPanel.classList.add('active');
+
+  // 5. Trigger specific step requirements
+  if (n === 2) {
+    // CRITICAL: Redraw the canvas when returning to Step 2 so it isn't blank
+    setTimeout(() => { 
+      if (typeof resizeCanvas === 'function') resizeCanvas(); 
+    }, 100);
+  }
+  if (n === 3) {
+    if (typeof populateStep3 === 'function') populateStep3();
+  }
+  if (n === 4) {
+    // (We will build the Step 4 init next!)
+    if (typeof initStep4 === 'function') initStep4(); 
+  }
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
