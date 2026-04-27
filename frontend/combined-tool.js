@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCanvas();
 
   loadSavedTemplate();
-  meBuildTemplatePicker();
+
   manualRenderTable();
   lucide.createIcons();
 
@@ -152,8 +152,10 @@ function validateStep(n) {
   }
   if (n === 4) {
     if (!document.getElementById('emailSubject').value.trim()) { toast('Enter an email subject', 'error'); return false; }
-    meSyncTextarea();
-    if (!document.getElementById('emailTemplate').value.trim()) { toast('Design your email template first', 'error'); return false; }
+    
+    // Check if the AI canvas has blocks OR the code editor has text
+    const hasTemplate = ME.blocks.length > 0 || (ME.cm && ME.cm.getValue().trim() !== '');
+    if (!hasTemplate) { toast('Design your email template first', 'error'); return false; }
   }
   return true;
 }
@@ -1453,11 +1455,25 @@ function buildReview() {
 /* ════════════════════════════════════════════════════════════════
    STEP 6 — LAUNCH PIPELINE
 ════════════════════════════════════════════════════════════════ */
+/* ── Pipeline Helpers ── */
+function getAllMappings() {
+  const m = { email: CP.emailCol || '', name: '' };
+  const primary = ED.fields.find(f => f.isPrimary);
+  if (primary && primary.column) m.name = primary.column;
+  ED.fields.forEach(f => { if (f.column) m[f.placeholder.replace(/[{}]/g, '')] = f.column; });
+  return m;
+}
 async function launchPipeline() {
   const btn = document.getElementById('launchBtn');
   btn.disabled = true; btn.style.opacity = '0.6';
   goStep(6, true);
   const mappings = getAllMappings(), subject = document.getElementById('emailSubject').value;
+  // NEW: Grab HTML directly from CodeMirror or the Block generator!
+  const htmlTmpl = (ME.cm && document.getElementById('mCodeWrapS3').style.display === 'block') ? ME.cm.getValue() : meGetHtml();
+  
+  const campName = document.getElementById('cpName').value;
+  const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
+  const total = CP.rows.length;
   meSyncTextarea();
   const htmlTmpl = document.getElementById('emailTemplate').value;
   const campName = document.getElementById('cpName').value;
@@ -1923,3 +1939,4 @@ async function meAiSend() {
     meAiIsLoading = false; document.getElementById('meAiSendBtn').style.opacity = '1';
   }
 }
+
