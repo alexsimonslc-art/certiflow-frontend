@@ -399,7 +399,6 @@
       background: rgba(255,255,255,0.035) !important; backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px;
       padding: 20px 22px; 
-      /* Nuke Scrollbars */
       overflow: hidden !important; 
       overflow-y: hidden !important;
       overflow-x: hidden !important;
@@ -1020,12 +1019,10 @@ Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
 Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
 /* ── DASHBOARD RENDERING & AUTO-GEN LOGIC ─────────────────────────────── */
-/* ── DASHBOARD RENDERING & AUTO-GEN LOGIC ─────────────────────────────── */
 function renderDashboard() {
   const rows    = _data?.rows    || [];
   const headers = _data?.headers || [];
   
-  // 1. Initialize GridStack
   if (!_grid) {
     _grid = GridStack.init({
       column: 12, cellHeight: 80, margin: 14, staticGrid: true, animate: true, minRow: 20 
@@ -1037,7 +1034,6 @@ function renderDashboard() {
     });
   }
 
-  // 2. Load Layout safely
   let rawLayout = _data.layout || _data.config?.dashboard_layout;
   let layout = null;
   
@@ -1047,17 +1043,15 @@ function renderDashboard() {
     else if (parsed && Array.isArray(parsed.layout)) layout = parsed.layout;
   } catch(e) { console.warn("Layout parse error", e); }
   
-  // 🚨 THE SANITIZER: Cures poisoned database layouts instantly 🚨
+  // 🚨 SANITIZER: Cures poisoned database layouts instantly
   if (Array.isArray(layout)) {
     layout.forEach(w => {
-      // If the database accidentally saved a stat card as a bar chart, fix it!
       if (w.field === 'total' || String(w.id).includes('stat_')) {
         w.type = 'stat';
       }
     });
   }
 
-  // 3. AUTO-GENERATE LAYOUT (If no layout exists)
   if (!Array.isArray(layout) || layout.length === 0) {
     layout = [];
     let currentY = 0;
@@ -1077,48 +1071,43 @@ function renderDashboard() {
     );
 
     let currentX = 0;
-    chartFields.forEach((field, index) => {
+    chartFields.forEach((field) => {
       let defaultType = 'bar';
       if (field.type === 'radio' || field.type === 'dropdown') defaultType = 'doughnut';
-      
       layout.push({ id: 'auto_' + field.id, type: defaultType, field: field.label, title: field.label, x: currentX, y: currentY, w: 6, h: 4 });
-
       currentX += 6;
       if (currentX >= 12) { currentX = 0; currentY += 4; }
     });
   }
 
-  // 4. Render Grid Elements
   _grid.removeAll();
   _grid.load(layout);
 
   Object.values(_charts).forEach(c => c.destroy());
   _charts = {};
 
-  // 5. Fill Widgets
   layout.forEach(widget => renderWidgetContent(widget, rows, headers));
 }
-
 /* ── Widget Content Renderer ─────────────────────────────── */
 function renderWidgetContent(widget, rows, headers) {
   const itemEl = document.querySelector(`.grid-stack-item[gs-id="${widget.id}"]`);
   if (!itemEl) return;
   const contentEl = itemEl.querySelector('.grid-stack-item-content');
   
-  // 1. Lock the exact widget configuration into HTML data attributes
+  // SECURE DATA ATTRIBUTES
   itemEl.setAttribute('data-widget-type', widget.type);
   itemEl.setAttribute('data-field', widget.field);
   if (widget.secondaryField) {
     itemEl.setAttribute('data-secfield', widget.secondaryField);
   } else {
-    itemEl.removeAttribute('data-secfield'); // Clear it if not needed
+    itemEl.removeAttribute('data-secfield');
   }
 
   const removeBtn = `<button class="widget-remove" onclick="removeWidget('${widget.id}')" title="Remove Widget">✕</button>`;
 
   if (widget.type === 'stat') {
     let val = widget.field === 'total' ? rows.length : calculateFieldStat(widget.field, rows, headers);
-    if (isNaN(val)) val = 0; // Fallback to prevent NaN text
+    if (isNaN(val)) val = 0; 
     
     contentEl.innerHTML = `
       ${removeBtn}
@@ -1144,7 +1133,6 @@ function renderWidgetContent(widget, rows, headers) {
 }
 
 /* ── SAVING LOGIC ───────────────────────────── */
-/* ── SAVING LOGIC ───────────────────────────── */
 async function saveLayout() {
   const btn = document.querySelector('#editToolbar .green');
   const ogText = btn.innerHTML;
@@ -1165,9 +1153,7 @@ async function saveLayout() {
       title = itemEl.querySelector('.dbv-chart-title')?.innerText || field;
     }
 
-    // Fail-safe to ensure GridStack never drops the ID
     const id = n.id || itemEl.getAttribute('gs-id');
-
     return { id, x: n.x, y: n.y, w: n.w, h: n.h, type, field, secondaryField, title };
   });
 

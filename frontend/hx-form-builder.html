@@ -1677,62 +1677,112 @@
       }
     }
 
-    /* ── WYSIWYG Canvas Cards ── */
-    .hxfb-canvas-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
+    /* ── Canvas Theme Variables ── */
+    #hxfbCanvas {
+      --cc-card-bg: rgba(13,23,40,0.72);
+      --cc-card-border: rgba(255,255,255,0.08);
+      --cc-card-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      --cc-text: #e8f0fd;
+      --cc-text-2: #7a90b0;
+      --cc-text-3: #3d5270;
+      --cc-accent: #00d4ff;
+      --cc-input-border: rgba(255,255,255,0.12);
+    }
+    #hxfbCanvas.theme-light {
+      --cc-card-bg: #ffffff;
+      --cc-card-border: rgba(0,0,0,0.1);
+      --cc-card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --cc-text: #202124;
+      --cc-text-2: #5f6368;
+      --cc-text-3: #80868b;
+      --cc-input-border: rgba(0,0,0,0.15);
+    }
+    .hxfb-center.theme-light {
+      background: repeating-conic-gradient(rgba(0,0,0,0.025) 0% 25%, transparent 0% 50%) 0 0/24px 24px, #f0f4f9;
+    }
+    /* ── Header Card ── */
+    .hxfc-header-card {
+      background: var(--cc-card-bg);
+      border: 1px solid var(--cc-card-border);
       border-radius: 12px;
-      padding: 32px 28px;
-      margin-bottom: 16px;
-      position: relative;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-    .hxfb-canvas-card:hover { border-color: rgba(0, 212, 255, 0.3); }
-    .hxfb-canvas-card.active {
-      border-color: var(--cyan);
-      background: rgba(0, 212, 255, 0.03);
-      box-shadow: -4px 0 0 var(--cyan), 0 8px 30px rgba(0,0,0,0.3);
-    }
-    .header-card {
-      border-top: none;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
       margin-bottom: 24px;
-      padding-top: 18px; /* space below accent bar */
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: var(--cc-card-shadow);
+      transition: all 0.18s;
     }
-    #canvasHeaderCover {
-      border-radius: 0;
-      margin-top: -18px; /* pull up to sit right below accent bar */
-    }
-    .hxfb-canvas-card-top-accent {
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 10px;
-      background: var(--grad-primary);
-    }
-    .hxfb-canvas-title {
+    .hxfc-header-card:hover { border-color: rgba(0,212,255,0.25); }
+    .hxfc-header-accent { height: 10px; background: var(--grad-primary); }
+    .hxfc-header-inner { padding: 22px 28px 28px; }
+    .hxfc-header-title {
       font-family: var(--font-display);
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
-      color: var(--text);
-      margin: 8px 0 12px;
-      line-height: 1.2;
-      outline: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s;
+      color: var(--cc-text);
+      margin: 0 0 10px;
+      line-height: 1.25;
+      user-select: none;
     }
-    .hxfb-canvas-title:focus { border-color: var(--cyan); }
-    .hxfb-canvas-desc {
-      font-size: 14.5px;
-      color: var(--text-2);
-      margin: 0;
-      line-height: 1.6;
-      outline: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s;
+    .hxfc-header-desc { font-size: 14px; color: var(--cc-text-2); line-height: 1.6; margin: 0; user-select: none; }
+    /* ── Field Cards ── */
+    .hxfc-card {
+      background: var(--cc-card-bg);
+      border: 1px solid var(--cc-card-border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.18s;
+      box-shadow: var(--cc-card-shadow);
+      overflow: hidden;
     }
-    .hxfb-canvas-desc:focus { border-color: var(--cyan); }
+    .hxfc-card:hover { border-color: rgba(0,212,255,0.3); }
+    .hxfc-card.selected { border-color: var(--cc-accent); }
+    .hxfc-card-sel-bar {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: var(--cc-accent); border-radius: 12px 0 0 12px;
+    }
+    .hxfc-card-inner { padding: 20px 24px 20px 24px; }
+    .hxfc-card.selected .hxfc-card-inner { padding-left: 28px; }
+    .hxfc-card-label { font-size: 15px; font-weight: 600; color: var(--cc-text); margin-bottom: 12px; user-select: none; pointer-events: none; }
+    .hxfc-req { color: #ef4444; margin-left: 3px; font-size: 15px; }
+    .hxfc-preview { color: var(--cc-text-3); font-size: 13.5px; user-select: none; pointer-events: none; }
+    .hxfc-text-preview { border-bottom: 1px dotted var(--cc-input-border); padding-bottom: 6px; width: 60%; min-height: 20px; }
+    .hxfc-long-preview { border-bottom: 1px dotted var(--cc-input-border); padding-bottom: 36px; width: 100%; min-height: 20px; }
+    .hxfc-radio-opt { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: var(--cc-text-2); font-size: 13.5px; }
+    .hxfc-radio-circle { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--cc-input-border); flex-shrink: 0; }
+    .hxfc-check-box { width: 16px; height: 16px; border-radius: 3px; border: 2px solid var(--cc-input-border); flex-shrink: 0; }
+    .hxfc-dropdown-preview { padding: 8px 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--cc-input-border); border-radius: 6px; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--cc-text-3); }
+    .hxfc-upload-preview { padding: 14px; border: 1.5px dashed var(--cc-input-border); border-radius: 8px; text-align: center; font-size: 13px; color: var(--cc-text-3); }
+    .hxfc-scale-preview { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .hxfc-scale-num { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--cc-input-border); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--cc-text-2); flex-shrink: 0; }
+    /* ── Card hover actions ── */
+    .hxfc-card-actions { display: none; position: absolute; top: 10px; right: 10px; gap: 5px; z-index: 2; }
+    .hxfc-card:hover .hxfc-card-actions, .hxfc-card.selected .hxfc-card-actions { display: flex; }
+    .hxfc-act-btn {
+      width: 28px; height: 28px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(13,23,40,0.85); color: #7a90b0; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 13px; transition: all 0.15s; line-height: 1;
+    }
+    .hxfc-act-btn:hover { background: rgba(255,255,255,0.12); color: #e8f0fd; }
+    .hxfc-act-btn.danger:hover { background: rgba(220,38,38,0.25); border-color: rgba(220,38,38,0.4); color: #ef4444; }
+    /* ── Page break card ── */
+    .hxfc-page-break {
+      background: rgba(124,58,237,0.08);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.18s;
+    }
+    .hxfc-page-break:hover { border-color: rgba(167,139,250,0.5); }
+    .hxfc-page-break.selected { border-color: #a78bfa; box-shadow: 0 0 0 1px rgba(167,139,250,0.3); }
+    .hxfc-page-break-badge { background: rgba(124,58,237,0.2); padding: 8px 20px; color: #a78bfa; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; border-bottom: 1px solid rgba(124,58,237,0.2); user-select: none; }
+    .hxfc-page-break-body { padding: 18px 24px; }
+    .hxfc-page-break-title { font-size: 16px; font-weight: 700; color: var(--cc-text); margin-bottom: 5px; user-select: none; }
+    .hxfc-page-break-desc { font-size: 13px; color: var(--cc-text-2); user-select: none; }
   </style>
 </head>
 
@@ -1909,11 +1959,13 @@
         <div style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;pointer-events:none;">
           
           <div style="width:100%;max-width:680px;flex-shrink:1;min-width:0;pointer-events:auto;" id="hxfbCanvas">
-            <div class="hxfb-canvas-card header-card" id="canvasHeaderCard" onclick="switchRTab('settings')">
-              <div class="hxfb-canvas-card-top-accent" id="canvasTopAccent"></div>
-              <div id="canvasHeaderCover" style="display:none;margin:-8px -28px 20px;height:160px;background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
-              <h1 class="hxfb-canvas-title" id="canvasFormTitle" contenteditable="true" spellcheck="false" onblur="updateSetting('title', this.innerText)">Untitled Form</h1>
-              <div class="hxfb-canvas-desc" id="canvasFormDesc" contenteditable="true" spellcheck="false" onblur="updateSetting('description', this.innerText)">Form description...</div>
+            <div class="hxfc-header-card" id="canvasHeaderCard" onclick="selectedId=null;switchRTab('settings');renderRightPanel();">
+              <div class="hxfc-header-accent" id="canvasTopAccent"></div>
+              <div id="canvasHeaderCover" style="display:none;height:160px;background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
+              <div class="hxfc-header-inner">
+                <div class="hxfc-header-title" id="canvasFormTitle">Untitled Form</div>
+                <div class="hxfc-header-desc" id="canvasFormDesc">Form description...</div>
+              </div>
             </div>
             
             <div id="canvasFieldsWrap"></div>
@@ -2246,10 +2298,22 @@
       renderLayers();
       switchRTab('field');
       renderRightPanel();
-      // Update active state on canvas cards without full re-render
-      document.querySelectorAll('.hxfb-canvas-card').forEach(card => {
+      // Update selected state on canvas cards without full re-render
+      document.querySelectorAll('.hxfc-card, .hxfc-page-break').forEach(card => {
         const cid = card.id?.replace('canvas-card-', '');
-        card.classList.toggle('active', cid === id);
+        const sel = cid === id;
+        card.classList.toggle('selected', sel);
+        // Show/hide the left selection bar for .hxfc-card
+        if (card.classList.contains('hxfc-card')) {
+          let bar = card.querySelector('.hxfc-card-sel-bar');
+          if (sel && !bar) {
+            bar = document.createElement('div');
+            bar.className = 'hxfc-card-sel-bar';
+            card.insertBefore(bar, card.firstChild);
+          } else if (!sel && bar) {
+            bar.remove();
+          }
+        }
       });
       // Scroll the selected card into view
       document.getElementById('canvas-card-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -2570,23 +2634,21 @@
       }
     }
     function renderPreviewHeader() {
-      // Update only the header portion of the canvas
       const s = _S.config?.settings || {};
       const th = _S.config?.theme || {};
       const titleEl = document.getElementById('canvasFormTitle');
       const descEl = document.getElementById('canvasFormDesc');
       const accentEl = document.getElementById('canvasTopAccent');
       const coverEl = document.getElementById('canvasHeaderCover');
-      if (titleEl && document.activeElement !== titleEl) titleEl.innerText = s.title || _S.name || 'Untitled Form';
-      if (descEl && document.activeElement !== descEl) {
+      if (titleEl) titleEl.textContent = s.title || _S.name || 'Untitled Form';
+      if (descEl) {
         if (s.description) {
           descEl.innerHTML = s.description;
         } else {
-          descEl.innerText = 'Form description...';
+          descEl.innerHTML = '<span style="opacity:0.4">Form description...</span>';
         }
       }
       if (accentEl) accentEl.style.background = ACCENT[th.color] || ACCENT.cyan;
-      // Cover image — uses the static placeholder div in the header card HTML
       if (coverEl) {
         if (s.coverImage) {
           coverEl.style.backgroundImage = 'url(' + JSON.stringify(s.coverImage) + ')';
@@ -2595,6 +2657,22 @@
           coverEl.style.display = 'none';
         }
       }
+      applyCanvasTheme();
+    }
+
+    function applyCanvasTheme() {
+      const th = _S.config?.theme || {};
+      const canvas = document.getElementById('hxfbCanvas');
+      const center = document.getElementById('hxfbCenterPanel');
+      if (!canvas) return;
+      canvas.classList.toggle('theme-light', !!th.lightMode);
+      if (center) center.classList.toggle('theme-light', !!th.lightMode);
+      const accSol = ACCENT_SOLID[th.color] || '#00d4ff';
+      canvas.style.setProperty('--cc-accent', accSol);
+      if (th.cardColor) canvas.style.setProperty('--cc-card-bg', th.cardColor);
+      else canvas.style.removeProperty('--cc-card-bg');
+      if (th.pageColor && center) center.style.backgroundColor = th.pageColor;
+      else if (center) center.style.backgroundColor = '';
     }
 
     /* ── Cover image upload helper ─────────────────────────────────── */
@@ -2757,6 +2835,13 @@
       renderSettings();
       renderPreview();
     }
+    function updateCanvasColor(key, value) {
+      _S.updateTheme({ [key]: value || null });
+      setSaveStatus('unsaved');
+      applyCanvasTheme();
+      // Re-render settings to show/hide Reset buttons
+      renderSettings();
+    }
 
     /* ════════════════════════════════════════════════════════════════
        SETTINGS (renders in right settings tab)
@@ -2875,6 +2960,24 @@
         </div>
         <div class="hxfb-toggle${th.lightMode ? ' on' : ''}" onclick="updateThemeLightMode()"></div>
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+        <div class="hxfb-prop" style="margin-bottom:0">
+          <label class="hxfb-prop-label">Card Background</label>
+          <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
+            <input type="color" value="${th.cardColor || '#0d1728'}" oninput="updateCanvasColor('cardColor',this.value)"
+                   style="width:34px;height:28px;border:1px solid rgba(255,255,255,0.12);padding:1px 3px;background:rgba(255,255,255,0.05);cursor:pointer;border-radius:5px"/>
+            ${th.cardColor ? `<button onclick="updateCanvasColor('cardColor',null)" style="font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer">Reset</button>` : ''}
+          </div>
+        </div>
+        <div class="hxfb-prop" style="margin-bottom:0">
+          <label class="hxfb-prop-label">Canvas Background</label>
+          <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
+            <input type="color" value="${th.pageColor || '#04080f'}" oninput="updateCanvasColor('pageColor',this.value)"
+                   style="width:34px;height:28px;border:1px solid rgba(255,255,255,0.12);padding:1px 3px;background:rgba(255,255,255,0.05);cursor:pointer;border-radius:5px"/>
+            ${th.pageColor ? `<button onclick="updateCanvasColor('pageColor',null)" style="font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer">Reset</button>` : ''}
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="hxfb-settings-section">
@@ -2977,6 +3080,151 @@
         </div>
       </details>
     </div>`;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       EVENT PASS FIELD EDITOR
+    ════════════════════════════════════════════════════════════════ */
+    function renderPassFieldEditor(f, idx, total) {
+      const id = f.id;
+      const allFields = _S.config?.fields || [];
+      const textFields = allFields.filter(x => ['text','email','phone'].includes(x.type));
+      const tfOpts = textFields.map(x => `<option value="${escAttr(x.id)}" ${f.passNameField===x.id?'selected':''}>${escHtml(x.label||x.type)}</option>`).join('');
+      const efOpts = textFields.map(x => `<option value="${escAttr(x.id)}" ${f.passEmailField===x.id?'selected':''}>${escHtml(x.label||x.type)}</option>`).join('');
+      const rules = (f.passRules || []);
+      return `
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Field Label</label>
+        <input class="hxfb-input" value="${escAttr(f.label||'Entry Pass')}" oninput="updateFP('${id}','label',this.value)"/>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Event Name</label>
+        <input class="hxfb-input" value="${escAttr(f.passEventName||'')}" oninput="updateFP('${id}','passEventName',this.value)" placeholder="e.g. TechConf 2025"/>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Subtitle / Instruction</label>
+        <input class="hxfb-input" value="${escAttr(f.passSubtitle||'')}" oninput="updateFP('${id}','passSubtitle',this.value)" placeholder="Present this pass at the entrance"/>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Venue</label>
+        <input class="hxfb-input" value="${escAttr(f.passVenue||'')}" oninput="updateFP('${id}','passVenue',this.value)" placeholder="Venue name or address"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Date</label>
+          <input class="hxfb-input" type="date" value="${escAttr(f.passDate||'')}" oninput="updateFP('${id}','passDate',this.value)"/>
+        </div>
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Time</label>
+          <input class="hxfb-input" type="time" value="${escAttr(f.passTime||'')}" oninput="updateFP('${id}','passTime',this.value)"/>
+        </div>
+      </div>
+
+      <div class="hxfb-settings-sec-title" style="margin-top:18px">Pass Colours</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Background</label>
+          <input type="color" class="hxfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passBannerColor||'#12172a')}" oninput="updateFP('${id}','passBannerColor',this.value)"/>
+        </div>
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Text</label>
+          <input type="color" class="hxfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passTextColor||'#ffffff')}" oninput="updateFP('${id}','passTextColor',this.value)"/>
+        </div>
+        <div class="hxfb-prop">
+          <label class="hxfb-prop-label">Accent</label>
+          <input type="color" class="hxfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passAccentColor||'#00d4ff')}" oninput="updateFP('${id}','passAccentColor',this.value)"/>
+        </div>
+      </div>
+
+      <div class="hxfb-settings-sec-title" style="margin-top:18px">Field Mappings</div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Attendee Name field</label>
+        <select class="hxfb-select" onchange="updateFP('${id}','passNameField',this.value)">
+          <option value="">— select field —</option>${tfOpts}
+        </select>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Attendee Email field</label>
+        <select class="hxfb-select" onchange="updateFP('${id}','passEmailField',this.value)">
+          <option value="">— select field —</option>${efOpts}
+        </select>
+      </div>
+
+      <div class="hxfb-settings-sec-title" style="margin-top:18px">QR Code</div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">QR Size: ${f.passQrSize||140}px</label>
+        <input type="range" min="80" max="200" step="10" value="${f.passQrSize||140}" class="hxfb-input" style="padding:4px 0;cursor:pointer"
+               oninput="this.previousElementSibling.textContent='QR Size: '+this.value+'px';updateFP('${id}','passQrSize',+this.value)"/>
+      </div>
+      <div class="hxfb-prop">
+        <label class="hxfb-prop-label">Staff Verification Code</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="hxfb-input" id="passCodeIn_${id}" value="${escAttr(f.passStaffCode||'')}" readonly style="font-family:monospace;letter-spacing:2px;flex:1" placeholder="Auto-generated"/>
+          <button onclick="genPassStaffCode('${id}')" style="padding:7px 11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:var(--text-2);font-size:12px;cursor:pointer;white-space:nowrap">Generate</button>
+          <button onclick="copyPassStaffCode('${id}')" style="padding:7px 11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:var(--text-2);font-size:12px;cursor:pointer;white-space:nowrap">Copy</button>
+        </div>
+      </div>
+      <div class="hxfb-prop">
+        <div class="hxfb-toggle-row">
+          <div>
+            <div style="font-size:13px;color:var(--text)">Attendance tracking</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:2px">Record scan timestamp in sheet</div>
+          </div>
+          <div class="hxfb-toggle${f.passShowAttendance?' on':''}" onclick="updateFP('${id}','passShowAttendance',!${!!f.passShowAttendance})"></div>
+        </div>
+      </div>
+
+      <div class="hxfb-settings-sec-title" style="margin-top:18px">Entry Rules</div>
+      <div id="passRulesList_${id}">
+        ${rules.map((r,i) => `
+          <div style="display:flex;gap:6px;margin-bottom:6px">
+            <input class="hxfb-input" value="${escAttr(r)}" style="flex:1" oninput="updatePassRule('${id}',${i},this.value)" placeholder="Rule text..."/>
+            <button onclick="delPassRule('${id}',${i})" style="padding:6px 10px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);border-radius:7px;color:var(--red);font-size:13px;cursor:pointer">&#10005;</button>
+          </div>`).join('')}
+      </div>
+      <button onclick="addPassRule('${id}')" style="width:100%;padding:8px;margin-top:4px;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.15);border-radius:8px;color:var(--text-3);font-size:13px;cursor:pointer">+ Add Rule</button>
+
+      <div style="display:flex;gap:8px;margin-top:20px">
+        ${idx > 0 ? `<button class="hxfb-secondary-btn" onclick="moveFP('${id}',-1)">&#8593; Up</button>` : ''}
+        ${idx < total-1 ? `<button class="hxfb-secondary-btn" onclick="moveFP('${id}',1)">&#8595; Down</button>` : ''}
+        <button class="hxfb-danger-btn" onclick="delFP('${id}')">Delete</button>
+      </div>`;
+    }
+
+    function genPassStaffCode(id) {
+      const code = Math.random().toString(36).slice(2,8).toUpperCase();
+      updateFP(id, 'passStaffCode', code);
+      const el = document.getElementById('passCodeIn_' + id);
+      if (el) el.value = code;
+    }
+    function copyPassStaffCode(id) {
+      const el = document.getElementById('passCodeIn_' + id);
+      if (!el) return;
+      navigator.clipboard.writeText(el.value).catch(() => {});
+      const btn = el.nextElementSibling?.nextElementSibling;
+      if (btn) { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 2000); }
+    }
+    function addPassRule(id) {
+      const f = (_S.config?.fields || []).find(x => x.id === id);
+      if (!f) return;
+      updateFP(id, 'passRules', [...(f.passRules || []), '']);
+      renderRightPanel();
+    }
+    function delPassRule(id, idx) {
+      const f = (_S.config?.fields || []).find(x => x.id === id);
+      if (!f) return;
+      const rules = [...(f.passRules || [])];
+      rules.splice(idx, 1);
+      updateFP(id, 'passRules', rules);
+      renderRightPanel();
+    }
+    function updatePassRule(id, idx, value) {
+      const f = (_S.config?.fields || []).find(x => x.id === id);
+      if (!f) return;
+      const rules = [...(f.passRules || [])];
+      rules[idx] = value;
+      _S.updateField(id, { passRules: rules });
+      setSaveStatus('unsaved');
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -3112,93 +3360,96 @@
 
     function renderPreview() {
       if (!_S.config) return;
-      
-      // 1. Sync Header Card (title, description, accent, cover image)
       renderPreviewHeader();
-
-      // 2. Render Field Cards (guard: don't destroy active contenteditable)
       const wrap = document.getElementById('canvasFieldsWrap');
       if (wrap) {
-        // Check if any canvas card element is currently being edited
-        const activeEl = document.activeElement;
-        const isEditingCanvas = wrap.contains(activeEl) && activeEl !== wrap;
-        
-        if (isEditingCanvas) {
-          // Only update non-focused cards to avoid cursor loss
-          const fields = _S.config.fields || [];
-          fields.forEach((f, i) => {
-            const card = document.getElementById('canvas-card-' + f.id);
-            if (card && !card.contains(activeEl)) {
-              const tmp = document.createElement('div');
-              tmp.innerHTML = renderCanvasCard(f, i);
-              const newCard = tmp.firstElementChild;
-              if (newCard) card.replaceWith(newCard);
-            }
-          });
+        const fields = _S.config.fields || [];
+        if (!fields.length) {
+          wrap.innerHTML = `
+            <div style="text-align:center;padding:50px 20px;color:var(--cc-text-3);font-size:14.5px;border:2px dashed rgba(255,255,255,0.08);border-radius:12px;background:rgba(255,255,255,0.01);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:32px;height:32px;margin-bottom:12px;opacity:0.4;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><br>
+              Field cards will appear here.<br>Click "+ Add Field" on the left to add one!
+            </div>`;
         } else {
-          const fields = _S.config.fields || [];
-          if (!fields.length) {
-            wrap.innerHTML = `
-              <div style="text-align:center; padding: 50px 20px; color: var(--text-3); font-size: 14.5px; border: 2px dashed rgba(255,255,255,0.08); border-radius: 12px; background: rgba(255,255,255,0.01);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:32px;height:32px;margin-bottom:12px;opacity:0.5;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><br>
-                Field cards will appear here.<br>Click a tool on the left to add one!
-              </div>`;
-          } else {
-            wrap.innerHTML = fields.map((f, i) => renderCanvasCard(f, i)).join('');
-          }
+          wrap.innerHTML = fields.map((f, i) => renderCanvasCard(f, i)).join('');
         }
       }
-      
       renderBuilderPass();
-      // Re-initialize any lucide icons that may have been added
       if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function getFieldPreview(f) {
+      const t = f.type;
+      if (['text','email','phone','number','date','time'].includes(t))
+        return `<div class="hxfc-text-preview">${escHtml(f.placeholder || 'Short answer text')}</div>`;
+      if (t === 'textarea')
+        return `<div class="hxfc-long-preview">${escHtml(f.placeholder || 'Long answer text...')}</div>`;
+      if (t === 'radio' || t === 'checkbox') {
+        const icon = t === 'radio'
+          ? '<div class="hxfc-radio-circle"></div>'
+          : '<div class="hxfc-check-box"></div>';
+        return (f.options || ['Option 1']).slice(0, 4)
+          .map(o => `<div class="hxfc-radio-opt">${icon}<span>${escHtml(o)}</span></div>`).join('');
+      }
+      if (t === 'dropdown')
+        return `<div class="hxfc-dropdown-preview">${escHtml((f.options || ['Option 1'])[0])} <span style="font-size:10px">&#9660;</span></div>`;
+      if (t === 'file_upload')
+        return `<div class="hxfc-upload-preview">&#8679;&nbsp; Upload File &nbsp;(Max ${f.maxMB || 10}MB)</div>`;
+      if (t === 'linear_scale') {
+        const nums = Array.from({ length: f.max || 5 }, (_, i) => `<div class="hxfc-scale-num">${i + 1}</div>`).join('');
+        return `<div class="hxfc-scale-preview"><span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.minLabel || 'Poor')}</span>${nums}<span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
+      }
+      return '';
     }
 
     function renderCanvasCard(f, idx) {
       const isSel = (f.id === selectedId);
-      const req = f.required ? `<span style="color:var(--red);margin-left:4px;">*</span>` : '';
-      
-      let inputUI = '';
-      if (['text', 'email', 'phone', 'number', 'date', 'time'].includes(f.type)) {
-        inputUI = `<div style="border-bottom: 1px dotted var(--text-3); padding-bottom: 6px; color: var(--text-3); width: 60%; font-size:14px;">${f.placeholder || 'Short answer text'}</div>`;
-      } else if (f.type === 'textarea') {
-        inputUI = `<div style="border-bottom: 1px dotted var(--text-3); padding-bottom: 6px; color: var(--text-3); width: 100%; font-size:14px;">${f.placeholder || 'Long answer text'}</div>`;
-      } else if (['radio', 'checkbox'].includes(f.type)) {
-        const icon = f.type === 'radio' ? '<circle cx="12" cy="12" r="10"/>' : '<rect x="3" y="3" width="18" height="18" rx="2"/>';
-        inputUI = (f.options || ['Option 1']).map((opt, i) => `
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; color:var(--text-2);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;opacity:0.4">${icon}</svg>
-            <div contenteditable="true" spellcheck="false" onblur="updateOpt('${f.id}', ${i}, this.innerText)" style="outline:none; border-bottom: 1px solid transparent; font-size:14px; padding:2px 0;" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(opt)}</div>
-          </div>
-        `).join('');
-      } else if (f.type === 'dropdown') {
-        inputUI = `<div style="padding:10px 16px; background:rgba(255,255,255,0.04); border-radius:6px; display:inline-block; color:var(--text-3); font-size:14px; border:1px solid rgba(255,255,255,0.1);">1. ${escHtml((f.options||[])[0] || 'Option 1')} &nbsp; ▼</div>`;
-      } else if (f.type === 'file_upload') {
-        inputUI = `<div style="padding:16px; border:1px dashed rgba(255,255,255,0.2); border-radius:6px; text-align:center; color:var(--text-3); font-size:13px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;margin-bottom:6px"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg><br>Upload File (Max ${f.maxMB||10}MB)</div>`;
-      } else if (f.type === 'linear_scale') {
-        inputUI = `<div style="display:flex; gap:16px; align-items:flex-end;">
-          <span style="font-size:13px; color:var(--text-3); padding-bottom:6px">${escHtml(f.minLabel || 'Poor')}</span>
-          <div style="display:flex; gap:10px;">${Array.from({length: f.max||5}, (_, i) => `<div style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(255,255,255,0.03);">${i+1}</div>`).join('')}</div>
-          <span style="font-size:13px; color:var(--text-3); padding-bottom:6px">${escHtml(f.maxLabel || 'Excellent')}</span>
-        </div>`;
-      } else if (f.type === 'event_pass') {
-        return renderPassCanvasCard(f, isSel);
-      } else if (f.type === 'section_break') {
-        return `<div class="hxfb-canvas-card ${isSel ? 'active' : ''}" onclick="selectLayer('${f.id}')" id="canvas-card-${f.id}" style="padding:0; overflow:hidden;">
-          <div style="background:rgba(124,58,237,0.15); padding:10px 24px; border-bottom:1px solid rgba(124,58,237,0.3); color:#a78bfa; font-size:11px; font-weight:700; letter-spacing:1px">PAGE BREAK</div>
-          <div style="padding:28px;">
-            <div style="font-size:20px; font-weight:700; color:var(--text); outline:none; margin-bottom:8px; border-bottom:1px solid transparent;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'label', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.label || 'Untitled Page')}</div>
-            <div style="font-size:13px; color:var(--text-2); outline:none; border-bottom:1px solid transparent;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'description', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.description || 'Description (optional)')}</div>
+      if (f.type === 'event_pass') return renderPassCanvasCard(f, isSel);
+      if (f.type === 'section_break') return `
+        <div class="hxfc-page-break ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
+          <div class="hxfc-page-break-badge">PAGE BREAK</div>
+          <div class="hxfc-page-break-body">
+            <div class="hxfc-page-break-title">${escHtml(f.label || 'Untitled Page')}</div>
+            ${f.description ? `<div class="hxfc-page-break-desc">${escHtml(f.description)}</div>` : ''}
           </div>
         </div>`;
-      }
-
       return `
-        <div class="hxfb-canvas-card ${isSel ? 'active' : ''}" onclick="selectLayer('${f.id}')" id="canvas-card-${f.id}">
-          <div style="font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--text); margin-bottom:20px; outline:none; border-bottom: 1px solid transparent; display:inline-block;" contenteditable="true" spellcheck="false" onblur="updateFP('${f.id}', 'label', this.innerText)" onfocus="this.style.borderBottom='1px solid var(--cyan)'">${escHtml(f.label || 'Untitled Question')}${req}</div>
-          ${inputUI}
-        </div>
-      `;
+        <div class="hxfc-card ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
+          ${isSel ? '<div class="hxfc-card-sel-bar"></div>' : ''}
+          <div class="hxfc-card-inner">
+            <div class="hxfc-card-label">${escHtml(f.label || 'Untitled Question')}${f.required ? '<span class="hxfc-req">*</span>' : ''}</div>
+            <div class="hxfc-preview">${getFieldPreview(f)}</div>
+          </div>
+          <div class="hxfc-card-actions">
+            <button class="hxfc-act-btn" title="Duplicate" onclick="event.stopPropagation();dupFP('${f.id}')">&#10697;</button>
+            <button class="hxfc-act-btn danger" title="Delete" onclick="event.stopPropagation();delFP('${f.id}')">&#10005;</button>
+          </div>
+        </div>`;
+    }
+
+    function renderPassCanvasCard(f, isSel) {
+      const bg = f.passBannerColor || '#12172a';
+      const tc = f.passTextColor || '#ffffff';
+      const ac = f.passAccentColor || '#00d4ff';
+      return `
+        <div class="hxfc-card ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')"
+             style="background:${escAttr(bg)};color:${escAttr(tc)};border-color:${isSel ? escAttr(ac) : 'rgba(255,255,255,0.1)'}">
+          ${isSel ? `<div class="hxfc-card-sel-bar" style="background:${escAttr(ac)}"></div>` : ''}
+          <div style="height:5px;background:linear-gradient(90deg,${escAttr(ac)},#7c3aed);"></div>
+          <div style="padding:18px 24px 20px ${isSel ? '28px' : '24px'};">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.4px;opacity:0.55;margin-bottom:8px;text-transform:uppercase;">Entry Pass</div>
+            <div style="font-size:18px;font-weight:700;margin-bottom:4px;">${escHtml(f.passEventName || f.label || 'Event Name')}</div>
+            <div style="font-size:13px;opacity:0.65;margin-bottom:12px;">${escHtml(f.passSubtitle || 'Present this pass at the venue entrance')}</div>
+            <div style="display:flex;gap:18px;font-size:12px;opacity:0.7;flex-wrap:wrap;">
+              ${f.passVenue ? `<span>&#128205; ${escHtml(f.passVenue)}</span>` : ''}
+              ${f.passDate ? `<span>&#128197; ${escHtml(f.passDate)}</span>` : ''}
+              ${f.passTime ? `<span>&#128336; ${escHtml(f.passTime)}</span>` : ''}
+            </div>
+          </div>
+          <div class="hxfc-card-actions">
+            <button class="hxfc-act-btn danger" title="Delete" onclick="event.stopPropagation();delFP('${f.id}')" style="background:rgba(0,0,0,0.4);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);">&#10005;</button>
+          </div>
+        </div>`;
     }
 
     function pvShowPage(n, animate = true) {
@@ -3373,7 +3624,7 @@
           body = `<input class="hxfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
       }
 
-      return `<div class="hxfb-pv-field" id="pvf-${f.id}"><div class="hxfb-pv-label" contenteditable="true" onblur="updateFP('${f.id}', 'label', this.innerText)">${f.label || 'Untitled'} ${req}</div>${body}</div>`;
+      return `<div class="hxfb-pv-field" id="pvf-${f.id}"><div class="hxfb-pv-label">${escHtml(f.label || 'Untitled')} ${req}</div>${body}</div>`;
     }
 
     /* ── Preview interaction handlers ──────────────────────────────── */
