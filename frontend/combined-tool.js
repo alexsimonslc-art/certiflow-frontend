@@ -1607,14 +1607,6 @@ function resetAll() {
    STEP 4 — EMAIL TEMPLATE (AI ENGINE)
 ════════════════════════════════════════════════════════════════ */
 
-const ME = {
-  blocks: [],
-  selectedId: null,
-  nextId: 1,
-  cm: null,
-  cmDebounce: null,
-  initialized: false,
-};
 
 function initStep4() {
   if (ME.initialized) return;
