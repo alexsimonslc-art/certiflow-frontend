@@ -1358,9 +1358,7 @@ function mSelectTemplate(type) {
 
   ME.templateSelected = true;
   document.getElementById('mTemplateSelectorS3').style.display = 'none';
-  
-  // Notice we use flex here so the Subject card and Editor shell stack nicely!
-  document.getElementById('mEditorShellS3').style.display = 'flex';
+  document.getElementById('mEditorShellS3').style.display = 'flex'; // This reveals the Editor AND Subject Line!
 
   if (type === 'blank') {
     ME.blocks = [];
