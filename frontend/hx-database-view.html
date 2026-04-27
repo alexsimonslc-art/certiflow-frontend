@@ -1612,13 +1612,11 @@ function exportCSV() {
 ════════════════════════════════════════════════════════════════ */
 function populatePivotSelects() {
   const headers = _data?.headers || [];
-  const fields  = _data?.fields  || [];
-  // Only include categorical fields (radio, dropdown, checkbox) + text for pivot
-  const catFields = fields.filter(f => ['radio','dropdown','checkbox','text','phone','number'].includes(f.type));
-  const opts = catFields.map(f => {
-    const idx = headers.indexOf(f.label);
-    return idx >= 0 ? `<option value="${idx}">${escHtml(f.label)}</option>` : '';
-  }).filter(Boolean).join('');
+  
+  // Create an option for EVERY column header found in the data
+  const opts = headers.map((h, idx) => {
+    return `<option value="${idx}">${escHtml(h)}</option>`;
+  }).join('');
 
   ['pivotRow','pivotCol'].forEach(id => {
     const sel = document.getElementById(id);
