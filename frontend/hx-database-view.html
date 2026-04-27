@@ -1009,7 +1009,7 @@ function switchSubTab(sub) {
 ════════════════════════════════════════════════════════════════ */
 let _grid = null;
 let _isEditing = false;
-let _widgetState = {}; // Pure JS state to prevent data loss on drag
+let _widgetState = {}; 
 
 const CHART_COLORS = [
   'rgba(0,212,255,0.85)', 'rgba(124,58,237,0.85)', 'rgba(16,185,129,0.85)',
@@ -1044,15 +1044,26 @@ function renderDashboard() {
     else if (parsed && Array.isArray(parsed.layout)) layout = parsed.layout;
   } catch(e) { console.warn("Layout parse error", e); }
   
-  // 🚨 CRITICAL CRASH FIX: Forcing an array to prevent GridStack from exploding
   if (!Array.isArray(layout)) layout = [];
 
-  // 2. Sanitizer
-  layout.forEach(w => {
-    if (w.field === 'total' || String(w.id).includes('stat_')) w.type = 'stat';
-  });
+  // 🚨 AUTO-HEALER: Fixes the corrupted data currently stuck in your database
+  if (layout.length > 0) {
+    layout = layout.filter(w => {
+      // Remove permanently broken charts that were accidentally mapped to 'total'
+      if (w.type !== 'stat' && w.type !== 'timeline' && w.field === 'total') return false;
+      return true;
+    });
+    
+    layout.forEach(w => {
+      if (String(w.id).includes('stat_')) w.type = 'stat';
+      // If the bug turned your custom stat card into 'total', try to restore its real field from the title
+      if (w.type === 'stat' && w.field === 'total' && w.title && w.title !== 'Total Responses') {
+        if (headers.includes(w.title)) w.field = w.title;
+      }
+    });
+  }
 
-  // 3. Auto-Generate if empty
+  // 3. Auto-Generate if completely empty
   if (layout.length === 0) {
     let currentY = 0;
     layout.push({ id: 'stat_1', type: 'stat', field: 'total', title: 'Total Responses', x: 0, y: currentY, w: 3, h: 2 });
@@ -1070,26 +1081,20 @@ function renderDashboard() {
     );
 
     let currentX = 0;
-    chartFields.forEach((field) => {
+    chartFields.forEach((field, idx) => {
       let defaultType = 'bar';
       if (field.type === 'radio' || field.type === 'dropdown') defaultType = 'doughnut';
-      layout.push({ id: 'auto_' + field.id, type: defaultType, field: field.label, title: field.label, x: currentX, y: currentY, w: 6, h: 4 });
+      layout.push({ id: 'auto_' + idx, type: defaultType, field: field.label, title: field.label, x: currentX, y: currentY, w: 6, h: 4 });
       currentX += 6;
       if (currentX >= 12) { currentX = 0; currentY += 4; }
     });
   }
 
-  // 4. Sync to JS State
   _widgetState = {};
   layout.forEach(w => { _widgetState[w.id] = w; });
 
-  // 5. Render Grid
-  try {
-    _grid.removeAll();
-    _grid.load(layout);
-  } catch (err) {
-    console.error("GridStack load error:", err);
-  }
+  _grid.removeAll();
+  _grid.load(layout);
 
   Object.values(_charts).forEach(c => c.destroy());
   _charts = {};
@@ -1102,6 +1107,16 @@ function renderWidgetContent(widget, rows, headers) {
   if (!itemEl) return;
   const contentEl = itemEl.querySelector('.grid-stack-item-content');
   
+  // 🚨 THE BULLETPROOF FIX: Embed the config securely into the DOM element itself!
+  const configStr = JSON.stringify({
+    type: widget.type,
+    field: widget.field,
+    secondaryField: widget.secondaryField || null,
+    title: widget.title
+  });
+  itemEl.setAttribute('data-widget-config', configStr);
+  itemEl.setAttribute('data-chart-id', `chart_${widget.id}`);
+
   const removeBtn = `<button class="widget-remove" onclick="removeWidget('${widget.id}')" title="Remove Widget">✕</button>`;
 
   if (widget.type === 'stat') {
@@ -1114,7 +1129,6 @@ function renderWidgetContent(widget, rows, headers) {
       <div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>
     `;
   } else {
-    itemEl.setAttribute('data-chart-id', `chart_${widget.id}`);
     contentEl.innerHTML = `
       ${removeBtn}
       <div class="dbv-chart-title" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(widget.title)}</div>
@@ -1134,6 +1148,7 @@ function renderWidgetContent(widget, rows, headers) {
 function calculateFieldStat(fieldLabel, rows, headers) {
   const hIdx = headers.indexOf(fieldLabel);
   if (hIdx < 0) return 0;
+  // This explicitly ignores empty fields, ensuring optional questions count correctly
   return rows.filter(r => {
     const val = r[hIdx];
     return val !== undefined && val !== null && String(val).trim() !== '';
@@ -1234,217 +1249,22 @@ function renderCustomChart(canvasId, type, fieldLabel, rows, headers, secondaryF
   });
 }
 
-function renderTimelineChartDirect(canvasId, rows, tsIdx) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas || tsIdx < 0) return;
-
-  const counts = {};
-  rows.forEach(r => {
-    if (!r[tsIdx]) return;
-    const key = new Date(r[tsIdx]).toISOString().slice(0,10); 
-    counts[key] = (counts[key]||0) + 1;
-  });
-
-  const labels = Object.keys(counts).sort();
-  const values = labels.map(k => counts[k]);
-  const display = labels.map(l => new Date(l).toLocaleDateString('en-IN',{day:'numeric',month:'short'}));
-
-  _charts[canvasId] = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: display,
-      datasets: [{
-        data: values, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)',
-        borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#00d4ff', fill: true, tension: 0.35,
-      }],
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.06)' } },
-        x: { grid: { display: false } },
-      },
-    },
-  });
-}
-
-
-/* ── Chart Generation Logic (Dynamic Matrix Engine) ──────────────────────────────── */
-function renderCustomChart(canvasId, type, fieldLabel, rows, headers, secondaryFieldLabel = null) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  
-  const hIdx = headers.indexOf(fieldLabel);
-  if (hIdx < 0) return;
-
-  // ==========================================
-  // SCENARIO 1: STANDARD ANALYSIS (Single Field)
-  // ==========================================
-  if (!secondaryFieldLabel) {
-    const vals = rows.map(r => r[hIdx]).filter(Boolean);
-    if (!vals.length) return;
-
-    const counts = {};
-    vals.forEach(v => {
-      const parts = String(v).includes(',') ? String(v).split(',') : [String(v)];
-      parts.forEach(p => { const k = p.trim(); counts[k] = (counts[k]||0) + 1; });
-    });
-    
-    const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-    const labels = sorted.map(([l]) => l.length > 25 ? l.substring(0, 25) + '...' : l);
-    const values = sorted.map(([,v]) => v);
-
-    _charts[canvasId] = new Chart(canvas, {
-      type: type,
-      data: {
-        labels,
-        datasets: [{
-          data: values,
-          backgroundColor: CHART_COLORS.slice(0, labels.length),
-          ...(type === 'doughnut' ? { borderWidth: 2, borderColor: '#080d1c' } : { borderRadius: 6 })
-        }],
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        indexAxis: type === 'bar' ? 'y' : undefined,
-        plugins: {
-          legend: type === 'doughnut' ? { position:'right', labels:{ color:'#a0a0b0', boxWidth:12, font:{size:11} } } : { display:false }
-        },
-        scales: type === 'bar' ? {
-          x: { beginAtZero:true, ticks:{precision:0}, grid:{color:'rgba(255,255,255,0.06)'} },
-          y: { grid:{display:false} }
-        } : {}
-      }
-    });
-    return;
-  }
-
-  // ==========================================
-  // SCENARIO 2: CROSS ANALYSIS (Two Fields)
-  // ==========================================
-  const hIdx2 = headers.indexOf(secondaryFieldLabel);
-  if (hIdx2 < 0) return;
-
-  const matrix = {};
-  const secLabelsSet = new Set();
-
-  // Build a 2D Matrix of occurrences
-  rows.forEach(r => {
-    const primVal = r[hIdx] ? String(r[hIdx]).trim() : '(blank)';
-    const secVal = r[hIdx2] ? String(r[hIdx2]).trim() : '(blank)';
-    
-    if (!matrix[primVal]) matrix[primVal] = {};
-    matrix[primVal][secVal] = (matrix[primVal][secVal] || 0) + 1;
-    secLabelsSet.add(secVal);
-  });
-
-  const primaryLabels = Object.keys(matrix).sort();
-  const secondaryLabels = Array.from(secLabelsSet).sort();
-
-  // Create a dataset for every unique secondary field value
-  const datasets = secondaryLabels.map((secLabel, i) => {
-    return {
-      label: secLabel,
-      data: primaryLabels.map(primLabel => matrix[primLabel][secLabel] || 0),
-      backgroundColor: CHART_COLORS[i % CHART_COLORS.length],
-      borderRadius: 4
-    };
-  });
-
-  // Force stacked bar chart for cross-analysis (Doughnuts don't cross-analyze well visually)
-  const actualType = 'bar';
-
-  _charts[canvasId] = new Chart(canvas, {
-    type: actualType,
-    data: {
-      labels: primaryLabels.map(l => l.length > 20 ? l.substring(0, 20) + '...' : l),
-      datasets: datasets
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      indexAxis: 'y', // Horizontal bars
-      plugins: {
-        legend: { position: 'top', labels: { color: '#a0a0b0', boxWidth: 12, font: { size: 11 } } },
-        tooltip: { mode: 'index', intersect: false } // Shows all stacked values in tooltip
-      },
-      scales: {
-        x: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.06)' } },
-        y: { stacked: true, grid: { display: false } }
-      }
-    }
-  });
-}
-
-function renderTimelineChartDirect(canvasId, rows, tsIdx) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas || tsIdx < 0) return;
-
-  const counts = {};
-  rows.forEach(r => {
-    if (!r[tsIdx]) return;
-    const key = new Date(r[tsIdx]).toISOString().slice(0,10); // Group by day
-    counts[key] = (counts[key]||0) + 1;
-  });
-
-  const labels = Object.keys(counts).sort();
-  const values = labels.map(k => counts[k]);
-  const display = labels.map(l => new Date(l).toLocaleDateString('en-IN',{day:'numeric',month:'short'}));
-
-  _charts[canvasId] = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: display,
-      datasets: [{
-        data: values,
-        borderColor: '#00d4ff',
-        backgroundColor: 'rgba(0,212,255,0.08)',
-        borderWidth: 2.5,
-        pointRadius: 4, pointBackgroundColor: '#00d4ff', fill: true, tension: 0.35,
-      }],
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.06)' } },
-        x: { grid: { display: false } },
-      },
-    },
-  });
-}
-
-function calculateFieldStat(fieldLabel, rows, headers) {
-  const hIdx = headers.indexOf(fieldLabel);
-  if (hIdx < 0) return 0;
-  return rows.filter(r => r[hIdx]).length; // Simple count of non-empty cells
-}
-
 /* ── EDIT MODE CONTROLS ─────────────────────────── */
-let _selectedChartType = 'bar'
+let _selectedChartType = 'bar';
 
-/* ── EDIT MODE CONTROLS ─────────────────────────── */
 function toggleEditMode() {
   _isEditing = !_isEditing;
-  
-  _grid.setStatic(!_isEditing); // Unlocks drag & drop
-  
-  // BY REMOVING THE "FLOAT" COMMAND HERE, WE TURN GRAVITY BACK ON!
-  // Now, when you drag a chart down, the chart below it will jump UP 
-  // into the empty space, allowing you to easily swap their positions.
-
+  _grid.setStatic(!_isEditing);
+  _grid.float(_isEditing); 
   document.getElementById('editToolbar').classList.toggle('active', _isEditing);
   document.getElementById('btnEditDashWrap').style.display = _isEditing ? 'none' : 'flex';
   document.getElementById('dashGrid').classList.toggle('grid-edit-mode', _isEditing);
 }
+
 function openWidgetBuilder() {
-  // Populate the primary dropdown
   const opts = _data.headers.map(h => `<option value="${escHtml(h)}">${escHtml(h)}</option>`).join('');
   document.getElementById('bwField').innerHTML = opts;
-  
-  // Populate the secondary dropdown (excluding timestamps/emails if possible)
   document.getElementById('bwField2').innerHTML = `<option value="">— Select field —</option>` + opts;
-
   document.getElementById('widgetModal').classList.add('open');
 }
 
@@ -1454,14 +1274,12 @@ function closeWidgetBuilder() {
   document.getElementById('advToggle').checked = false;
   toggleAdvanced();
 }
+
 function selectChartType(type, el) {
   _selectedChartType = type;
-  
-  // Visual update
   document.querySelectorAll('.chart-card-option').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 
-  // Disable cross-analysis for Stat Cards and Timelines
   const advToggle = document.getElementById('advToggle');
   if (type === 'stat' || type === 'timeline') {
     advToggle.checked = false;
@@ -1477,32 +1295,25 @@ function selectChartType(type, el) {
 function toggleAdvanced() {
   const isChecked = document.getElementById('advToggle').checked;
   const wrap = document.getElementById('secondaryFieldWrap');
-  if (isChecked) {
-      wrap.classList.add('visible');
-  } else {
-      wrap.classList.remove('visible');
-      document.getElementById('bwField2').value = '';
-  }
+  if (isChecked) wrap.classList.add('visible');
+  else { wrap.classList.remove('visible'); document.getElementById('bwField2').value = ''; }
 }
+
 function createWidget() {
   const type = _selectedChartType;
   const field = document.getElementById('bwField').value;
   const secondaryField = document.getElementById('bwField2').value;
   let title = document.getElementById('bwTitle').value.trim();
   
-  if (!title) {
-    title = secondaryField ? `${field} by ${secondaryField}` : field;
-  }
+  if (!title) title = secondaryField ? `${field} by ${secondaryField}` : field;
 
   const id = 'w_' + Math.random().toString(36).substr(2, 9);
-  
-  // Set sizes based on type
   let w = 6, h = 4;
   if (type === 'stat') { w = 3; h = 2; }
   if (type === 'timeline') { w = 9; h = 4; }
 
-  // We are now saving the secondaryField to the widgetData object!
   const widgetData = { id, type, field, secondaryField, title, x: 0, y: 0, w, h };
+  _widgetState[id] = widgetData;
   
   _grid.addWidget({ id, x:0, y:0, w, h });
   renderWidgetContent(widgetData, _data.rows, _data.headers);
@@ -1511,35 +1322,47 @@ function createWidget() {
 
 function removeWidget(id) {
   const el = document.querySelector(`.grid-stack-item[gs-id="${id}"]`);
-  if (el) _grid.removeWidget(el);
+  if (el) {
+    _grid.removeWidget(el);
+    delete _widgetState[id]; 
+  }
 }
 
-/* ── SAVING LOGIC ───────────────────────────── */
+/* ── BULLETPROOF SAVING LOGIC ───────────────────────────── */
 async function saveLayout() {
   const btn = document.querySelector('#editToolbar .green');
   const ogText = btn.innerHTML;
   btn.innerHTML = 'Saving...';
   btn.disabled = true;
 
-  const layout = _grid.engine.nodes.map(n => {
-    const itemEl = n.el;
-    let type = 'bar', field = 'unknown', secondaryField = null, title = 'Widget';
+  const items = document.querySelectorAll('.grid-stack-item');
+  const layout = [];
+
+  // Scrape the DOM to perfectly save what is physically on the screen
+  items.forEach(el => {
+    const node = el.gridstackNode;
+    const id = el.getAttribute('gs-id');
+    if (!node || !id) return;
     
-    if (itemEl.querySelector('.dbv-stat-num')) {
-      type = 'stat'; title = itemEl.querySelector('.dbv-stat-label').innerText; field = 'total'; 
-    } else {
-      title = itemEl.querySelector('.dbv-chart-title')?.innerText || 'Chart';
-      const canvas = itemEl.querySelector('canvas');
-      if (canvas && _charts[canvas.id]) {
-        type = _charts[canvas.id].config.type;
-        if (type === 'line') type = 'timeline';
-        
-        // Grab the exact fields we saved as data attributes in renderWidgetContent
-        field = itemEl.getAttribute('data-field') || title; 
-        secondaryField = itemEl.getAttribute('data-secfield') || null;
-      }
+    let config = { type: 'bar', field: 'total', title: 'Widget', secondaryField: null };
+    
+    try {
+      // Read the securely embedded JSON config straight out of the HTML
+      const raw = el.getAttribute('data-widget-config');
+      if (raw) config = JSON.parse(raw);
+      else if (_widgetState[id]) config = _widgetState[id];
+    } catch(e) {
+      if (_widgetState[id]) config = _widgetState[id];
     }
-    return { id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, type, field, secondaryField, title };
+    
+    layout.push({
+      id,
+      x: node.x, y: node.y, w: node.w, h: node.h,
+      type: config.type,
+      field: config.field,
+      secondaryField: config.secondaryField,
+      title: config.title
+    });
   });
 
   try {
@@ -1551,9 +1374,8 @@ async function saveLayout() {
     
     if(!res.ok) throw new Error((await res.json()).error || 'Failed to save');
     
-    // Update local cache properly!
     if (_data) {
-       _data.layout = layout; // Ensure the live variable is updated
+       _data.layout = layout; 
        sessionStorage.setItem(`hxdb_${_formId}`, JSON.stringify(_data));
     }
     
