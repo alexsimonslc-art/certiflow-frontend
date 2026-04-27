@@ -1471,6 +1471,19 @@ function meGetHtml() {
 /* ── AI CHAT ENGINE ── */
 let meAiChatHistory = [];
 let meAiIsLoading = false;
+let _galAiIsPro = null;
+async function _galAiCheckPro() {
+  if (_galAiIsPro !== null) return _galAiIsPro;
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    _galAiIsPro = data?.plan === 'pro';
+  } catch (_) { _galAiIsPro = false; }
+  return _galAiIsPro;
+}
 
 function meAiAppendBubble(role, content) {
   const chat = document.getElementById('meAiChatBox');
@@ -1489,10 +1502,57 @@ function meAiAppendBubble(role, content) {
   return div;
 }
 
+function meAiShowUpgrade() {
+  const chat = document.getElementById('meAiChatBox');
+  if (!chat) return;
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;gap:12px;margin-top:4px';
+  wrap.innerHTML = `
+    <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;color:var(--cyan);flex-shrink:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12 2.1 7.1"/><path d="M12 12l9.9 4.9"/></svg>
+    </div>
+    <div style="background:var(--glass);border:1px solid var(--glass-border);padding:12px 14px;border-radius:12px;border-top-left-radius:0;font-size:13.5px;color:var(--text);line-height:1.5;">
+      <div style="margin-bottom:10px">Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered email generation, design suggestions, and unlimited assistance.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        <a href="settings.html#billing" style="padding:7px 13px;border-radius:9px;background:linear-gradient(90deg,rgba(0,212,255,0.18),rgba(124,58,237,0.18));border:1px solid rgba(0,212,255,0.3);color:var(--cyan);font-size:12.5px;font-weight:600;text-decoration:none;">🚀 Upgrade to Pro →</a>
+        <button onclick="meAiShowProDetails(this)" style="padding:7px 13px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:12.5px;cursor:pointer;font-family:inherit;">What's included?</button>
+      </div>
+    </div>`;
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function meAiShowProDetails(btn) {
+  const chat = document.getElementById('meAiChatBox');
+  btn.closest('div[style*="display:flex"]')?.insertAdjacentHTML('afterend',
+    `<div style="display:flex;gap:12px;margin-top:8px">
+      <div style="width:28px;flex-shrink:0"></div>
+      <div style="background:var(--glass);border:1px solid var(--glass-border);padding:12px 14px;border-radius:12px;font-size:13px;color:var(--text-2);line-height:1.7">
+        ✦ Unlimited AI email generation<br>
+        ✦ Smart design suggestions<br>
+        ✦ Block-level AI edits<br>
+        ✦ Subject line brainstorming<br>
+        ✦ Priority sending quota
+      </div>
+    </div>`
+  );
+  btn.remove();
+  if (chat) chat.scrollTop = chat.scrollHeight;
+}
+
 async function meAiSend() {
   const input = document.getElementById('meAiInput');
   if (!input || meAiIsLoading) return;
   const msg = input.value.trim(); if (!msg) return;
+
+  const isPro = await _galAiCheckPro();
+  if (!isPro) {
+    input.value = '';
+    meAiAppendBubble('user', msg);
+    meAiShowUpgrade();
+    return;
+  }
+
   input.value = ''; meAiIsLoading = true;
   document.getElementById('meAiSendBtn').style.opacity = '0.5';
 
@@ -1517,10 +1577,6 @@ async function meAiSend() {
     });
     const res = await response.json();
     typingEl.remove();
-
-    if (response.status === 403 && res.error === 'AI_LOCKED') {
-      meAiAppendBubble('ai', '🔒 AI features require a Pro plan.'); return;
-    }
 
     meAiChatHistory.push({ role: 'model', content: res.message || '' });
 

@@ -200,6 +200,27 @@ function initSidebar() {
       : (user.name || 'U').charAt(0).toUpperCase();
   }
 
+  // Async Pro badge — fire-and-forget, doesn't block sidebar render
+  (async () => {
+    try {
+      const token = localStorage.getItem('Honourix_token');
+      const res = await fetch('/api/settings/plan', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const data = await res.json();
+      if (data?.plan === 'pro' && avatarEl) {
+        const wrap = document.createElement('div');
+        wrap.className = 'user-avatar-wrap';
+        avatarEl.parentNode.insertBefore(wrap, avatarEl);
+        wrap.appendChild(avatarEl);
+        const pill = document.createElement('div');
+        pill.className = 'pro-badge-pill';
+        pill.textContent = 'PRO';
+        wrap.appendChild(pill);
+      }
+    } catch (_) {}
+  })();
+
   // Logout button → show confirm dialog
   const logoutBtn = document.getElementById('sidebarLogoutBtn');
   if (logoutBtn) {

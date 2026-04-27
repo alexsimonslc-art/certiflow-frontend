@@ -914,10 +914,27 @@
         <input type="text" id="emailSubject" class="form-input" placeholder="e.g. Your Certificate is Ready!" style="font-size:16px;padding:14px 16px"/>
       </div>
 
-      <div style="display:flex; height:750px; border:1px solid var(--glass-border); border-radius:var(--radius-lg); overflow:hidden; background:var(--surface);">
-        
-        <div style="width:340px; border-right:1px solid var(--glass-border); display:flex; flex-direction:column; background:rgba(0,0,0,0.2);">
-          
+      <div id="mTemplateSelectorS3" style="display:flex; gap:20px; margin-top:10px;">
+            <div class="card" style="flex:1; cursor:pointer; border:1px solid transparent; transition:0.2s" onclick="mSelectTemplate('blank')" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='transparent'">
+              <div style="font-size:32px; margin-bottom:12px">📄</div>
+              <div style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:8px">Blank Canvas</div>
+              <div style="font-size:13.5px; color:var(--text-3); line-height:1.5;">Start fresh with the visual drag-and-drop editor and Gal AI assistant.</div>
+            </div>
+            <div class="card" style="flex:1; cursor:pointer; border:1px solid transparent; transition:0.2s" onclick="mSelectTemplate('code')" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='transparent'">
+              <div style="font-size:32px; margin-bottom:12px">💻</div>
+              <div style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:8px">Paste Code</div>
+              <div style="font-size:13.5px; color:var(--text-3); line-height:1.5;">Paste your own custom HTML. Visual editor & AI features will be disabled.</div>
+            </div>
+            <div class="card" style="flex:1; cursor:pointer; border:1px solid transparent; opacity:0.5">
+              <div style="font-size:32px; margin-bottom:12px">📁</div>
+              <div style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:8px">Saved Templates</div>
+              <div style="font-size:13.5px; color:var(--text-3); line-height:1.5;">(Coming Soon) Load a previously saved email design.</div>
+            </div>
+          </div>
+
+          <div id="mEditorShellS3" style="display:none; height:750px; border:1px solid var(--glass-border); border-radius:var(--radius-lg); overflow:hidden; background:var(--surface);">
+            
+            <div id="mLeftSidebarS3" style="width:340px; border-right:1px solid var(--glass-border); display:flex; flex-direction:column; background:rgba(0,0,0,0.2);">  
           <div style="display:flex; border-bottom:1px solid var(--glass-border);">
             <div class="ep-tab active" id="mTab_ai" onclick="switchLeftTab('ai')" style="flex:1;text-align:center;padding:14px;cursor:pointer;font-weight:600;font-size:13px;border-bottom:2px solid var(--cyan);color:var(--cyan)">Gal AI</div>
             <div class="ep-tab" id="mTab_props" onclick="switchLeftTab('props')" style="flex:1;text-align:center;padding:14px;cursor:pointer;font-weight:600;font-size:13px;border-bottom:2px solid transparent;color:var(--text-3)">Properties</div>

@@ -209,6 +209,27 @@ ul, ol { list-style: none; }
 }
 .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
+.user-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.pro-badge-pill {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #00d4ff 0%, #7c3aed 100%);
+  color: #fff;
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  line-height: 14px;
+  pointer-events: none;
+}
+
 .user-info { flex: 1; min-width: 0; }
 .user-name {
   font-size: 12.5px; font-weight: 600; color: var(--text);
