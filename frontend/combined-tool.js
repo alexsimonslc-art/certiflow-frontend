@@ -58,7 +58,8 @@ const ME = {
    INIT
 ════════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('sidebarMount').outerHTML = renderSidebar('combined-tool.html');
+  const sidebarEl = document.getElementById('sidebarMount');
+  sidebarEl.innerHTML = renderSidebar('combined-tool.html');
   initSidebar();
   buildStepper();
 
