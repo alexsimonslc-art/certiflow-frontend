@@ -19,8 +19,11 @@ const CP = {
 
 const STEPS = ['Data & Campaign','Certificate Design','Field Mapping','Email Template','Review & Launch','Results'];
 
-/* ── /* ── Canvas Editor State ────────────────────────────────────────── */
+
+/* ── Canvas Editor State ────────────────────────────────────────── */
 let canvas, ctx, fieldOverlay;
+let isPanning = false, startPanX = 0, startPanY = 0, scrollStartX = 0, scrollStartY = 0;
+
 const ED = {
   w: 1122, h: 794,
   bgImg: null, bgBase64: null, bgColor: '#ffffff',
@@ -351,261 +354,190 @@ function manualApplyData() {
 }
 
 function initCanvas() {
-  _canvas      = document.getElementById('certCanvas');
-  _ctx         = _canvas.getContext('2d');
-  _overlay     = document.getElementById('fieldOverlay');
-  canvas       = _canvas;   // alias used by new functions
-  ctx          = _ctx;      // alias used by new functions
-  fieldOverlay = _overlay;  // alias used by new functions
-  ED.ready = true;
+  canvas = document.getElementById('certCanvas');
+  ctx = canvas.getContext('2d');
+  fieldOverlay = document.getElementById('fieldOverlay');
+  
+  // Setup interactive wrap for panning and zooming
+  const wrap = document.getElementById('canvasWrap');
+  
+  // Mouse Wheel Zooming
+  wrap.addEventListener('wheel', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const zoomStep = 0.05;
+      const newZoom = e.deltaY < 0 ? ED.zoom + zoomStep : ED.zoom - zoomStep;
+      setZoom(newZoom);
+    }
+  }, { passive: false });
+
+  // Spacebar Panning (Grab cursor)
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      wrap.style.cursor = 'grabbing';
+      isPanning = true;
+    }
+  });
+  window.addEventListener('keyup', (e) => {
+    if (e.code === 'Space') {
+      wrap.style.cursor = 'grab';
+      isPanning = false;
+    }
+  });
+
+  // Panning drag logic
+  wrap.addEventListener('mousedown', (e) => {
+    if (isPanning || e.button === 1) { // Spacebar or Middle-click
+      e.preventDefault();
+      isPanning = true;
+      wrap.style.cursor = 'grabbing';
+      startPanX = e.clientX;
+      startPanY = e.clientY;
+      scrollStartX = wrap.scrollLeft;
+      scrollStartY = wrap.scrollTop;
+    }
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (isPanning && (e.buttons === 1 || e.buttons === 4)) {
+      wrap.scrollLeft = scrollStartX - (e.clientX - startPanX);
+      wrap.scrollTop = scrollStartY - (e.clientY - startPanY);
+    }
+  });
+  window.addEventListener('mouseup', () => {
+    if (isPanning && !document.hasFocus()) return; // Keep panning if space is still held
+    wrap.style.cursor = 'grab';
+    isPanning = false;
+  });
+
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
-
-  /* ── Mouse Wheel Zoom ── */
-  const zone = document.getElementById('canvasWrap');
-  if (zone) {
-    zone.addEventListener('wheel', e => {
-      if (e.ctrlKey || e.metaKey) {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? -0.05 : 0.05;
-        setZoom(ED.zoom + delta);
-      }
-    }, { passive: false });
-
-    /* ── Canvas Panning ── */
-    let isPanning = false, startX, startY, scrollLeft, scrollTop;
-    zone.style.cursor = 'grab';
-    zone.addEventListener('mousedown', e => {
-      if (e.target === zone || e.target.id === 'certCanvas') {
-        isPanning = true;
-        zone.style.cursor = 'grabbing';
-        startX = e.pageX - zone.offsetLeft;
-        startY = e.pageY - zone.offsetTop;
-        scrollLeft = zone.scrollLeft;
-        scrollTop  = zone.scrollTop;
-      }
-    });
-    zone.addEventListener('mousemove', e => {
-      if (!isPanning) return;
-      e.preventDefault();
-      zone.scrollLeft = scrollLeft - (e.pageX - zone.offsetLeft - startX);
-      zone.scrollTop  = scrollTop  - (e.pageY - zone.offsetTop  - startY);
-    });
-    window.addEventListener('mouseup', () => {
-      isPanning = false;
-      if (zone) zone.style.cursor = 'grab';
-    });
-  }
-
-  /* ── Pro Keyboard Shortcuts ── */
-  document.addEventListener('keydown', e => {
-    if (CP.step !== 2) return;
-    if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
-    if (e.ctrlKey || e.metaKey) {
-      if (e.key === '=') { e.preventDefault(); setZoom(ED.zoom + 0.1); return; }
-      if (e.key === '-') { e.preventDefault(); setZoom(ED.zoom - 0.1); return; }
-      if (e.key === '0') { e.preventDefault(); setZoom(1); return; }
-      if (e.key.toLowerCase() === 'd' && ED.selId) { e.preventDefault(); duplicateField(ED.selId); return; }
-    }
-    if (ED.selId) {
-      const f = ED.fields.find(x => x.id === ED.selId);
-      if (!f) return;
-      const step = e.shiftKey ? 1 : 0.1;
-      let moved = false;
-      if (e.key === 'ArrowUp')    { f.y -= step; moved = true; }
-      if (e.key === 'ArrowDown')  { f.y += step; moved = true; }
-      if (e.key === 'ArrowLeft')  { f.x -= step; moved = true; }
-      if (e.key === 'ArrowRight') { f.x += step; moved = true; }
-      if (e.key === 'Delete' || e.key === 'Backspace') { deleteField(ED.selId); return; }
-      if (moved) {
-        e.preventDefault();
-        redraw();
-        const px = document.getElementById('pX'), py = document.getElementById('pY');
-        if (px) px.value = f.x.toFixed(1);
-        if (py) py.value = f.y.toFixed(1);
-        saveTemplate();
-      }
-    }
-  });
 }
-/* ════════════════════════════════════════════════════════════════
-   STEP 2 — CANVAS EDITOR
-════════════════════════════════════════════════════════════════ */
+
 function resizeCanvas() {
-  const zone = document.getElementById('canvasWrap');
-  if (!zone) return;
-  const zw = zone.clientWidth, zh = zone.clientHeight;
-  if (zw < 10) { setTimeout(resizeCanvas, 50); return; }
-  const baseScale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
-  ED.scale = baseScale * ED.zoom;
-  const cw = Math.round(ED.w * ED.scale), ch = Math.round(ED.h * ED.scale);
-  const dpr  = window.devicePixelRatio || 1;
-  const cont = document.getElementById('canvasContainer');
-  if (cont) { cont.style.width = cw+'px'; cont.style.height = ch+'px'; }
-  canvas.style.width  = cw + 'px';
-  canvas.style.height = ch + 'px';
-  canvas.width  = Math.round(cw * dpr);
-  canvas.height = Math.round(ch * dpr);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.scale(dpr, dpr);
-  ED.ready = true;
-  redraw();
+  if (!canvas) return;
+  const container = document.getElementById('canvasContainer');
+  const wrap = document.getElementById('canvasWrap');
+  
+  // Calculate base scale to fit the wrap area
+  const padding = 40;
+  const availW = wrap.clientWidth - padding;
+  const availH = wrap.clientHeight - padding;
+  
+  const scaleW = availW / ED.w;
+  const scaleH = availH / ED.h;
+  ED.scale = Math.min(scaleW, scaleH);
+  
+  // Apply Zoom
+  const finalScale = ED.scale * ED.zoom;
+  
+  canvas.width = ED.w;
+  canvas.height = ED.h;
+  container.style.width = (ED.w * finalScale) + 'px';
+  container.style.height = (ED.h * finalScale) + 'px';
+  
+  redrawCanvas();
 }
+
 function redrawCanvas() {
-  const w = Math.round(ED.w * ED.scale), h = Math.round(ED.h * ED.scale);
-  ctx.clearRect(0, 0, w, h);
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
   if (ED.bgImg) {
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(ED.bgImg, 0, 0, w, h);
+    ctx.drawImage(ED.bgImg, 0, 0, ED.w, ED.h);
   } else {
     ctx.fillStyle = ED.bgColor;
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(0, 0, ED.w, ED.h);
   }
-  ED.fields.forEach(f => {
-    const boxX = f.x / 100 * w, boxY = f.y / 100 * h, boxW = f.width / 100 * w;
-    const fs = Math.max(4, f.fontSize * ED.scale);
-    const ls = (f.letterSpacing || 0) * ED.scale;
-    const fw = f.bold   ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
-    const fi = f.italic ? 'italic' : 'normal';
-    const ff = getFontCSS(f.fontFamily || 'Helvetica');
-    const value = (f.column && CP.rows && CP.rows[0])
-      ? CP.rows[0][f.column] : (f.previewText || f.placeholder);
-    ctx.save();
-    ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
-    ctx.fillStyle   = f.color || '#1a1a1a';
-    ctx.textBaseline = 'top';
-    ctx.textAlign    = 'left';
-    /* ── Word-wrap engine ── */
-    const words = String(value).split(' ');
-    const lines = [];
-    let currentLine = words[0];
-    for (let j = 1; j < words.length; j++) {
-      const testLine = currentLine + ' ' + words[j];
-      let testWidth = ctx.measureText(testLine).width;
-      if (ls > 0) testWidth += ls * (testLine.length - 1);
-      if (testWidth > boxW && currentLine !== '') { lines.push(currentLine); currentLine = words[j]; }
-      else currentLine = testLine;
-    }
-    if (currentLine !== '') lines.push(currentLine);
-    if (lines.length === 0) lines.push('');
-    const numLines = lines.length;
-    const cx = boxX + boxW / 2, cy = boxY + fs * 1.3 * numLines / 2;
-    ctx.translate(cx, cy);
-    ctx.rotate((f.rotation || 0) * Math.PI / 180);
-    ctx.translate(-cx, -cy);
-    lines.forEach((line, i) => {
-      const drawY = boxY + i * fs * 1.3;
-      let textW = ctx.measureText(line).width;
-      if (ls > 0) textW += ls * (line.length - 1);
-      let drawX = boxX;
-      if (f.align === 'center') drawX = boxX + (boxW - textW) / 2;
-      else if (f.align === 'right') drawX = boxX + boxW - textW;
-      if (ls > 0 && line.length > 1) {
-        let drawCx = drawX;
-        for (const ch of line) { ctx.fillText(ch, drawCx, drawY); drawCx += ctx.measureText(ch).width + ls; }
-      } else {
-        ctx.fillText(line, drawX, drawY);
-      }
-    });
-    ctx.restore();
-  });
-}
-
-function redraw() {
-  redrawCanvas();
+  
   renderHandles();
 }
 
 function renderHandles() {
-  if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
+  
+  // Create rotation tooltip if it doesn't exist
+  if (!document.getElementById('rotTooltip')) {
+    const tt = document.createElement('div');
+    tt.id = 'rotTooltip';
+    tt.className = 'tf-rot-tooltip';
+    document.body.appendChild(tt);
+  }
+
   ED.fields.forEach(f => {
-    const cw = Math.round(ED.w * ED.scale), ch = Math.round(ED.h * ED.scale);
-    const x = f.x / 100 * cw, y = f.y / 100 * ch, w = f.width / 100 * cw;
-    const fs = Math.max(6, f.fontSize * ED.scale);
-    const ls = (f.letterSpacing || 0) * ED.scale;
-    const value = (f.column && CP.rows && CP.rows[0]) ? CP.rows[0][f.column] : (f.previewText || f.placeholder);
-    ctx.save();
-    ctx.font = `${f.italic ? 'italic' : 'normal'} ${f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica')}px ${getFontCSS(f.fontFamily || 'Helvetica')}`;
-    const words = String(value).split(' ');
-    let linesCount = 1, currentLine = words[0];
-    for (let j = 1; j < words.length; j++) {
-      const testLine = currentLine + ' ' + words[j];
-      let testWidth = ctx.measureText(testLine).width;
-      if (ls > 0) testWidth += ls * (testLine.length - 1);
-      if (testWidth > w && currentLine !== '') { linesCount++; currentLine = words[j]; }
-      else currentLine = testLine;
+    const finalScale = ED.scale * ED.zoom;
+    const isSel = (f.id === ED.selId);
+    
+    const div = document.createElement('div');
+    div.className = 'tf-handle' + (isSel ? ' sel' : '');
+    div.id = 'field_' + f.id;
+    
+    // Position & Size based on canvas % and zoom
+    div.style.left = f.x + '%';
+    div.style.top = f.y + '%';
+    div.style.width = f.w + '%';
+    div.style.transform = `translate(-50%, -50%) rotate(${f.rotation || 0}deg)`;
+    
+    // Text Styling
+    div.style.fontFamily = getFontCSS(f.font);
+    div.style.fontSize = (f.size * finalScale) + 'px';
+    div.style.color = f.color;
+    div.style.letterSpacing = (f.spacing * finalScale) + 'px';
+    div.style.textAlign = f.align;
+    div.style.fontWeight = f.bold ? 'bold' : 'normal';
+    div.style.fontStyle = f.italic ? 'italic' : 'normal';
+    div.style.lineHeight = '1.2';
+    div.style.whiteSpace = 'pre-wrap';
+    div.style.wordBreak = 'break-word';
+    
+    // Text Content
+    div.textContent = f.preview || `[${f.ph}]`;
+    
+    // Selection events
+    div.onmousedown = (e) => {
+      if (e.target.closest('.tf-action-btn') || e.target.closest('.tf-resizer-corner') || e.target.closest('.tf-resizer-width') || e.target.closest('.tf-ctrl-btn')) return;
+      selectField(f.id);
+      startDrag(e, f.id);
+    };
+
+    if (isSel) {
+      // 1. Top Action Bar (Duplicate, Delete)
+      const actionBar = document.createElement('div');
+      actionBar.className = 'tf-action-bar';
+      actionBar.innerHTML = `
+        <div class="tf-action-btn" onclick="duplicateField('${f.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></div>
+        <div class="tf-action-btn del" onclick="deleteField('${f.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
+      `;
+      div.appendChild(actionBar);
+
+      // 2. Bottom Control Pill (Drag to move)
+      const ctrlPill = document.createElement('div');
+      ctrlPill.className = 'tf-ctrl-pill';
+      ctrlPill.innerHTML = `
+        <div class="tf-ctrl-btn" onmousedown="startDrag(event, '${f.id}')" title="Move"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="19 9 22 12 19 15"/><polyline points="9 19 12 22 15 19"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg></div>
+      `;
+      // Note: If you want rotation back, add a rotate button in this pill and hook up startRotate()
+      div.appendChild(ctrlPill);
+
+      // 3. Corner Resizers (Scale)
+      ['tl', 'tr', 'bl', 'br'].forEach(pos => {
+        const res = document.createElement('div');
+        res.className = `tf-resizer-corner ${pos}`;
+        res.onmousedown = (e) => startScale(e, f.id, pos);
+        div.appendChild(res);
+      });
+
+      // 4. Width Resizers (Left/Right)
+      ['left', 'right'].forEach(side => {
+        const wRes = document.createElement('div');
+        wRes.className = `tf-resizer-width ${side}`;
+        wRes.onmousedown = (e) => startWidthResize(e, f.id, side);
+        div.appendChild(wRes);
+      });
     }
-    ctx.restore();
-    const h = Math.round(fs * 1.3 * linesCount);
-    const cx = x + w / 2, cy = y + h / 2;
 
-    const el = document.createElement('div');
-    el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
-    el.dataset.fid = f.id;
-    el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%,-50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
-
-    /* Action Bar — Duplicate + Delete */
-    const actionBar = document.createElement('div');
-    actionBar.className = 'tf-action-bar';
-    const btnDup = document.createElement('div');
-    btnDup.className = 'tf-action-btn';
-    btnDup.title = 'Duplicate';
-    btnDup.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-    btnDup.addEventListener('mousedown', e => { e.stopPropagation(); duplicateField(f.id); });
-    const btnDel = document.createElement('div');
-    btnDel.className = 'tf-action-btn del';
-    btnDel.title = 'Delete';
-    btnDel.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
-    btnDel.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
-    actionBar.appendChild(btnDup);
-    actionBar.appendChild(btnDel);
-    el.appendChild(actionBar);
-
-    /* Ctrl Pill — Move + Rotate */
-    const ctrlPill = document.createElement('div');
-    ctrlPill.className = 'tf-ctrl-pill';
-    const btnMove = document.createElement('div');
-    btnMove.className = 'tf-ctrl-btn move';
-    btnMove.title = 'Move';
-    btnMove.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="19 9 22 12 19 15"/><polyline points="9 19 12 22 15 19"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>`;
-    btnMove.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startDrag(e, f); });
-    const btnRot = document.createElement('div');
-    btnRot.className = 'tf-ctrl-btn rot';
-    btnRot.title = 'Rotate';
-    btnRot.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 2.63-6.37L21 8"/></svg>`;
-    btnRot.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startRotate(e, f); });
-    ctrlPill.appendChild(btnMove);
-    ctrlPill.appendChild(btnRot);
-    el.appendChild(ctrlPill);
-
-    /* Corner resizers */
-    const isSmall = (h < 40 || w < 80);
-    ['tl','tr','bl','br'].forEach(corner => {
-      const cEl = document.createElement('div');
-      cEl.className = `tf-resizer-corner ${corner}`;
-      if (isSmall && corner !== 'tr') cEl.style.opacity = '0';
-      cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
-      el.appendChild(cEl);
-    });
-
-    /* Side width resizers */
-    ['left','right'].forEach(side => {
-      const sEl = document.createElement('div');
-      sEl.className = `tf-resizer-width ${side}`;
-      if (isSmall && side !== 'right') sEl.style.opacity = '0';
-      sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
-      el.appendChild(sEl);
-    });
-
-    /* Base drag */
-    el.addEventListener('mousedown', e => {
-      if (e.target === el) { e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); }
-    });
-    fieldOverlay.appendChild(el);
+    fieldOverlay.appendChild(div);
   });
-  renderChipList();
 }
 
 function startDrag(e, field) {
@@ -812,77 +744,122 @@ function addField() {
 
 function addCanvasField() { addField(); }
 
+/* ── Select / Delete / Duplicate Field & UI Sync ──────────────────────── */
 function selectField(id) {
   ED.selId = id;
   const f = ED.fields.find(f => f.id === id); if (!f) return;
   switchEPTab('props');
+  
   document.getElementById('propsEmpty').style.display = 'none';
   document.getElementById('propsForm').style.display  = 'flex';
+  
   document.getElementById('pPh').value = f.placeholder;
-  document.getElementById('pPrev').value = f.previewText || '';
-  document.getElementById('pFont').value = f.fontFamily || 'Helvetica';
-  document.getElementById('pSize').value = f.fontSize;
+  
+  // Connect live preview to CP.rows (Combined Pipeline State)
+  const livePreview = (f.column && CP.rows && CP.rows[0]) ? (CP.rows[0][f.column] || f.previewText || '') : (f.previewText || '');
+  document.getElementById('pPrev').value = livePreview;
+  document.getElementById('pPrev').style.color = (f.column && CP.rows && CP.rows[0]) ? 'var(--cyan)' : 'var(--text)';
+  document.getElementById('pPrev').title = f.column ? 'Live value from row 1 of your data' : 'Manual preview text';
+  
+  document.getElementById('pFont').value  = f.fontFamily || 'Helvetica';
+  document.getElementById('pSize').value  = f.fontSize;
   document.getElementById('pSizeVal').textContent = f.fontSize + 'px';
   document.getElementById('pColor').value = f.color || '#111111';
   document.getElementById('pColorHex').textContent = f.color || '#111111';
-  document.getElementById('pX').value = f.x.toFixed(1);
-  document.getElementById('pY').value = f.y.toFixed(1);
-  document.getElementById('pW').value = f.width;
+  document.getElementById('pX').value     = f.x.toFixed(1);
+  document.getElementById('pY').value     = f.y.toFixed(1);
+  document.getElementById('pW').value     = f.width;
   document.getElementById('pSpacing').value = f.letterSpacing || 0;
   document.getElementById('pSpacingVal').textContent = (f.letterSpacing || 0) + 'px';
+  
   document.getElementById('boldBtn').classList.toggle('on', !!f.bold);
   document.getElementById('italicBtn').classList.toggle('on', !!f.italic);
+  
   ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on'));
   document.getElementById(f.align === 'center' ? 'alC' : f.align === 'right' ? 'alR' : 'alL').classList.add('on');
-  loadFontIfNeeded(f.fontFamily || 'Helvetica');
+  
+  if (typeof loadFontIfNeeded === 'function') loadFontIfNeeded(f.fontFamily || 'Helvetica');
   updateFontPreview(f.fontFamily || 'Helvetica', f.bold, f.italic);
+  
   renderHandles();
 }
 
 function updateFontPreview(name, bold, italic) {
   const el = document.getElementById('fontPreviewSample'); if (!el) return;
   el.style.fontFamily = getFontCSS(name);
-  el.style.fontWeight = bold ? 700 : getFontWeight(name);
+  el.style.fontWeight = bold ? 700 : (typeof getFontWeight === 'function' ? getFontWeight(name) : 400);
   el.style.fontStyle  = italic ? 'italic' : 'normal';
   el.textContent      = name + ' — Aa 123';
 }
 
 function deleteField(id) {
   ED.fields = ED.fields.filter(f => f.id !== id);
-  if (ED.selId === id) {
-    ED.selId = null;
-    const pe = document.getElementById('propsEmpty'), pf = document.getElementById('propsForm');
-    if (pe) pe.style.display = '';
-    if (pf) pf.style.display = 'none';
+  if (ED.selId === id) { 
+    ED.selId = null; 
+    document.getElementById('propsEmpty').style.display = ''; 
+    document.getElementById('propsForm').style.display = 'none'; 
   }
   renderHandles();
-  redrawCanvas();
-  saveTemplate();
+  redrawCanvas(); // Instantly erase text preview from canvas
 }
-function deleteSelField()    { if (ED.selId) deleteField(ED.selId); }
-function deleteSelectedField(){ if (ED.selId) deleteField(ED.selId); }
 
 function duplicateField(id) {
   const f = ED.fields.find(x => x.id === id);
   if (!f) return;
-  const newF   = JSON.parse(JSON.stringify(f));
-  newF.id      = 'f' + Date.now();
-  newF.isPrimary = false;
-  newF.x       = Math.min(95, newF.x + 3);
-  newF.y       = Math.min(95, newF.y + 3);
+  const newF = JSON.parse(JSON.stringify(f));
+  newF.id = 'f_' + Date.now();
+  newF.x = Math.min(95, newF.x + 3); // Offset x slightly so it doesn't overlap perfectly
+  newF.y = Math.min(95, newF.y + 3); // Offset y slightly
   ED.fields.push(newF);
   selectField(newF.id);
   redraw();
-  saveTemplate();
 }
-function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; renderHandles(); }
-function setFPFont(name) {
-  const f = ED.fields.find(f => f.id === ED.selId);
-  if (!f) return;
-  f.fontFamily = name;
-  loadFontIfNeeded(name);
-  updateFontPreview(name, f.bold, f.italic);
-  renderHandles();
+
+function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
+function deleteSelField()      { if (ED.selId) deleteField(ED.selId); }
+
+/* ── Properties Panel Updates ── */
+function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; redraw(); }
+function setFPFont(name) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.fontFamily = name; if (typeof loadFontIfNeeded === 'function') loadFontIfNeeded(name); updateFontPreview(name, f.bold, f.italic); redraw(); }
+function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value)||f.x; f.y = parseFloat(document.getElementById('pY').value)||f.y; redraw(); }
+function setAlign(a) { setFP('align', a); ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a==='center'?'alC':a==='right'?'alR':'alL').classList.add('on'); }
+function toggleBold()   { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold   = !f.bold;   document.getElementById('boldBtn').classList.toggle('on', f.bold);   redraw(); }
+function toggleItalic() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.italic = !f.italic; document.getElementById('italicBtn').classList.toggle('on', f.italic); redraw(); }
+
+/* ── UI Helpers ── */
+function switchEPTab(tab) { 
+  ['fields','props'].forEach(t => { 
+    const elT = document.getElementById(`epTab_${t}`); 
+    const elP = document.getElementById(`epPanel_${t}`); 
+    if(elT) elT.className = 'ep-tab'+(t===tab?' active':''); 
+    if(elP) elP.className = 'ep-panel'+(t===tab?' active':''); 
+  }); 
+}
+
+function renderChipList() {
+  const el = document.getElementById('fieldChipList'); if (!el) return;
+  if (!ED.fields.length) { 
+    el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span></div>`; 
+    return; 
+  }
+  el.innerHTML = ED.fields.map(f => `
+    <div class="fc-chip ${f.id===ED.selId?'sel':''}" onclick="selectField('${f.id}')">
+      <div class="fc-dot" style="background:${f.color}"></div>
+      <div style="flex:1;min-width:0">
+        <span class="fc-name">${f.previewText||f.placeholder}</span>
+        <span class="fc-ph">${f.placeholder}${f.column?' → '+f.column:''}</span>
+      </div>
+      ${f.isPrimary?'<span style="font-size:10px;font-weight:700;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.25);border-radius:4px;padding:1px 5px;flex-shrink:0">PRIMARY</span>':''}
+    </div>`).join('');
+}
+
+/* ── Custom Spinner Nudge Logic ── */
+function nudgeInput(id, step, up) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  const val = parseFloat(el.value) || 0;
+  el.value = parseFloat((val + (up ? step : -step)).toFixed(2));
+  el.dispatchEvent(new Event('change')); // Triggers setFPXY or setFP naturally
 }
 
 function loadFontIfNeeded(name) {
@@ -895,28 +872,7 @@ function loadFontIfNeeded(name) {
   link.href = FONT_URLS[name];
   document.head.appendChild(link);
 }
-function toggleBold() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold = !f.bold; document.getElementById('boldBtn').classList.toggle('on', f.bold); renderHandles(); }
-function toggleItalic() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.italic = !f.italic; document.getElementById('italicBtn').classList.toggle('on', f.italic); renderHandles(); }
-function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value) || f.x; f.y = parseFloat(document.getElementById('pY').value) || f.y; renderHandles(); }
-function setAlign(a) { setFP('align', a); ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a === 'center' ? 'alC' : a === 'right' ? 'alR' : 'alL').classList.add('on'); }
-function switchEPTab(tab) { ['fields','props'].forEach(t => { document.getElementById(`epTab_${t}`).className = 'ep-tab' + (t === tab ? ' active' : ''); document.getElementById(`epPanel_${t}`).className = 'ep-panel' + (t === tab ? ' active' : ''); }); }
-function renderChipList() {
-  const el = document.getElementById('fieldChipList');
-  if (!el) return;
-  if (!ED.fields.length) {
-    el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br><span style="color:var(--cyan)">Click Add Field</span></div>`;
-    return;
-  }
-  el.innerHTML = ED.fields.map(f => `
-    <div class="fc-chip ${f.id === ED.selId ? 'sel' : ''}" onclick="selectField('${f.id}')">
-      <div class="fc-dot" style="background:${f.color}"></div>
-      <div style="flex:1;min-width:0">
-        <span class="fc-name">${f.previewText || f.placeholder}</span>
-        <span class="fc-ph">${f.placeholder}${f.column ? ` · ${f.column}` : ''}</span>
-      </div>
-      ${f.isPrimary ? `<span style="font-size:10px;font-weight:700;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.25);border-radius:4px;padding:1px 5px;flex-shrink:0">PRIMARY</span>` : ''}
-    </div>`).join('');
-}
+
 
 function uploadBackground(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = ev => { const img = new Image(); img.onload = () => { ED.bgImg = img; ED.bgBase64 = ev.target.result; redrawCanvas(); toast('Background uploaded', 'success', 1800); }; img.src = ev.target.result; }; reader.readAsDataURL(file); }
 function changeBgColor() { ED.bgColor = document.getElementById('bgColor').value; if (!ED.bgImg) redrawCanvas(); }
