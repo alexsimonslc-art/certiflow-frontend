@@ -1477,9 +1477,7 @@ async function launchPipeline() {
   const total = CP.rows.length;
   meSyncTextarea();
   
-  const campName = document.getElementById('cpName').value;
-  const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
-  const total = CP.rows.length;
+
   let certsDone = 0, mailsDone = 0, failed = 0;
   CP.results = [];
   setRunProgress(0, total, 'Starting up…');

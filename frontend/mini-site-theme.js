@@ -333,19 +333,6 @@ function mst_rebuildSiteSettings() {
     ${mst_renderFontPairGrid()}
   </div>
 
-  <!-- LOGO SHAPE -->
-  <div class="mse-props-section" style="padding-top:14px">
-    <div class="mse-props-sec-label">Logo Shape</div>
-    <div class="mse-shape-row" style="margin-top:8px">
-      ${['circle', 'rounded', 'square'].map(s => `
-      <button class="mse-shape-btn ${c.logoShape === s ? 'on' : ''}" id="mstShape_${s}"
-        onclick="mst_setLogoShape('${s}')">
-        <div class="mse-shape-preview ${s}"></div>
-        ${s[0].toUpperCase() + s.slice(1)}
-      </button>`).join('')}
-    </div>
-  </div>
-
   <!-- REGISTRATION -->
   <div class="mse-props-section" style="padding-top:14px">
     <div class="mse-props-sec-label">Registration</div>
