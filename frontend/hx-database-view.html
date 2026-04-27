@@ -1009,7 +1009,7 @@ function switchSubTab(sub) {
 ════════════════════════════════════════════════════════════════ */
 let _grid = null;
 let _isEditing = false;
-let _widgetState = {}; 
+let _selectedChartType = 'bar'; 
 
 const CHART_COLORS = [
   'rgba(0,212,255,0.85)', 'rgba(124,58,237,0.85)', 'rgba(16,185,129,0.85)',
@@ -1035,7 +1035,6 @@ function renderDashboard() {
     });
   }
 
-  // 1. Safe Layout Extraction
   let rawLayout = _data.layout || _data.config?.dashboard_layout;
   let layout = null;
   try {
@@ -1046,24 +1045,7 @@ function renderDashboard() {
   
   if (!Array.isArray(layout)) layout = [];
 
-  // 🚨 AUTO-HEALER: Fixes the corrupted data currently stuck in your database
-  if (layout.length > 0) {
-    layout = layout.filter(w => {
-      // Remove permanently broken charts that were accidentally mapped to 'total'
-      if (w.type !== 'stat' && w.type !== 'timeline' && w.field === 'total') return false;
-      return true;
-    });
-    
-    layout.forEach(w => {
-      if (String(w.id).includes('stat_')) w.type = 'stat';
-      // If the bug turned your custom stat card into 'total', try to restore its real field from the title
-      if (w.type === 'stat' && w.field === 'total' && w.title && w.title !== 'Total Responses') {
-        if (headers.includes(w.title)) w.field = w.title;
-      }
-    });
-  }
-
-  // 3. Auto-Generate if completely empty
+  // Auto-Generate if completely empty
   if (layout.length === 0) {
     let currentY = 0;
     layout.push({ id: 'stat_1', type: 'stat', field: 'total', title: 'Total Responses', x: 0, y: currentY, w: 3, h: 2 });
@@ -1090,57 +1072,45 @@ function renderDashboard() {
     });
   }
 
-  _widgetState = {};
-  layout.forEach(w => { _widgetState[w.id] = w; });
-
   _grid.removeAll();
-  _grid.load(layout);
-
   Object.values(_charts).forEach(c => c.destroy());
   _charts = {};
 
-  layout.forEach(widget => renderWidgetContent(widget, rows, headers));
+  // Build widgets synchronously
+  layout.forEach(w => {
+    _grid.addWidget({ id: w.id, x: w.x, y: w.y, w: w.w, h: w.h });
+    const itemEl = document.querySelector(`.grid-stack-item[gs-id="${w.id}"]`);
+    if (itemEl) buildWidgetDOM(itemEl, w, rows, headers);
+  });
 }
 
-function renderWidgetContent(widget, rows, headers) {
-  const itemEl = document.querySelector(`.grid-stack-item[gs-id="${widget.id}"]`);
-  if (!itemEl) return;
-  const contentEl = itemEl.querySelector('.grid-stack-item-content');
-  
-  // 🚨 THE BULLETPROOF FIX: Embed the config securely into the DOM element itself!
-  const configStr = JSON.stringify({
-    type: widget.type,
-    field: widget.field,
-    secondaryField: widget.secondaryField || null,
-    title: widget.title
-  });
-  itemEl.setAttribute('data-widget-config', configStr);
-  itemEl.setAttribute('data-chart-id', `chart_${widget.id}`);
+function buildWidgetDOM(itemEl, w, rows, headers) {
+  let contentEl = itemEl.querySelector('.grid-stack-item-content');
+  if (!contentEl) {
+    contentEl = document.createElement('div');
+    contentEl.className = 'grid-stack-item-content';
+    itemEl.appendChild(contentEl);
+  }
 
-  const removeBtn = `<button class="widget-remove" onclick="removeWidget('${widget.id}')" title="Remove Widget">✕</button>`;
+  // Lock Config safely into the DOM
+  itemEl.setAttribute('data-widget-config', JSON.stringify({
+    type: w.type, field: w.field, secondaryField: w.secondaryField, title: w.title
+  }));
+  itemEl.setAttribute('data-chart-id', `chart_${w.id}`);
 
-  if (widget.type === 'stat') {
-    let val = widget.field === 'total' ? rows.length : calculateFieldStat(widget.field, rows, headers);
+  const removeBtn = `<button class="widget-remove" onclick="removeWidget('${w.id}')" title="Remove Widget">✕</button>`;
+
+  if (w.type === 'stat') {
+    let val = w.field === 'total' ? rows.length : calculateFieldStat(w.field, rows, headers);
     if (isNaN(val)) val = 0; 
-    
-    contentEl.innerHTML = `
-      ${removeBtn}
-      <div class="dbv-stat-label" style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">${escHtml(widget.title)}</div>
-      <div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>
-    `;
+    contentEl.innerHTML = removeBtn + `<div class="dbv-stat-label" style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">${escHtml(w.title)}</div><div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>`;
   } else {
-    contentEl.innerHTML = `
-      ${removeBtn}
-      <div class="dbv-chart-title" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(widget.title)}</div>
-      <div style="flex:1; position:relative; min-height:0; width:100%;">
-         <canvas id="chart_${widget.id}"></canvas>
-      </div>
-    `;
+    contentEl.innerHTML = removeBtn + `<div class="dbv-chart-title" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div style="flex:1; position:relative; min-height:0; width:100%;"><canvas id="chart_${w.id}"></canvas></div>`;
     
-    if (widget.type === 'timeline') {
-       renderTimelineChartDirect(`chart_${widget.id}`, rows, headers.indexOf(widget.field));
+    if (w.type === 'timeline') {
+       renderTimelineChartDirect(`chart_${w.id}`, rows, headers.indexOf(w.field));
     } else {
-       renderCustomChart(`chart_${widget.id}`, widget.type, widget.field, rows, headers, widget.secondaryField);
+       renderCustomChart(`chart_${w.id}`, w.type, w.field, rows, headers, w.secondaryField);
     }
   }
 }
@@ -1148,7 +1118,7 @@ function renderWidgetContent(widget, rows, headers) {
 function calculateFieldStat(fieldLabel, rows, headers) {
   const hIdx = headers.indexOf(fieldLabel);
   if (hIdx < 0) return 0;
-  // This explicitly ignores empty fields, ensuring optional questions count correctly
+  // Accurately skip blank optional answers
   return rows.filter(r => {
     const val = r[hIdx];
     return val !== undefined && val !== null && String(val).trim() !== '';
@@ -1210,7 +1180,6 @@ function renderCustomChart(canvasId, type, fieldLabel, rows, headers, secondaryF
   rows.forEach(r => {
     const primVal = r[hIdx] ? String(r[hIdx]).trim() : '(blank)';
     const secVal = r[hIdx2] ? String(r[hIdx2]).trim() : '(blank)';
-    
     if (!matrix[primVal]) matrix[primVal] = {};
     matrix[primVal][secVal] = (matrix[primVal][secVal] || 0) + 1;
     secLabelsSet.add(secVal);
@@ -1249,13 +1218,45 @@ function renderCustomChart(canvasId, type, fieldLabel, rows, headers, secondaryF
   });
 }
 
-/* ── EDIT MODE CONTROLS ─────────────────────────── */
-let _selectedChartType = 'bar';
+function renderTimelineChartDirect(canvasId, rows, tsIdx) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || tsIdx < 0) return;
 
+  const counts = {};
+  rows.forEach(r => {
+    if (!r[tsIdx]) return;
+    const key = new Date(r[tsIdx]).toISOString().slice(0,10); 
+    counts[key] = (counts[key]||0) + 1;
+  });
+
+  const labels = Object.keys(counts).sort();
+  const values = labels.map(k => counts[k]);
+  const display = labels.map(l => new Date(l).toLocaleDateString('en-IN',{day:'numeric',month:'short'}));
+
+  _charts[canvasId] = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: display,
+      datasets: [{
+        data: values, borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)',
+        borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#00d4ff', fill: true, tension: 0.35,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+}
+
+/* ── EDIT MODE CONTROLS ─────────────────────────── */
 function toggleEditMode() {
   _isEditing = !_isEditing;
   _grid.setStatic(!_isEditing);
-  _grid.float(_isEditing); 
   document.getElementById('editToolbar').classList.toggle('active', _isEditing);
   document.getElementById('btnEditDashWrap').style.display = _isEditing ? 'none' : 'flex';
   document.getElementById('dashGrid').classList.toggle('grid-edit-mode', _isEditing);
@@ -1304,7 +1305,6 @@ function createWidget() {
   const field = document.getElementById('bwField').value;
   const secondaryField = document.getElementById('bwField2').value;
   let title = document.getElementById('bwTitle').value.trim();
-  
   if (!title) title = secondaryField ? `${field} by ${secondaryField}` : field;
 
   const id = 'w_' + Math.random().toString(36).substr(2, 9);
@@ -1312,57 +1312,44 @@ function createWidget() {
   if (type === 'stat') { w = 3; h = 2; }
   if (type === 'timeline') { w = 9; h = 4; }
 
-  const widgetData = { id, type, field, secondaryField, title, x: 0, y: 0, w, h };
-  _widgetState[id] = widgetData;
-  
   _grid.addWidget({ id, x:0, y:0, w, h });
-  renderWidgetContent(widgetData, _data.rows, _data.headers);
+  const itemEl = document.querySelector(`.grid-stack-item[gs-id="${id}"]`);
+  if (itemEl) buildWidgetDOM(itemEl, { id, type, field, secondaryField, title }, _data.rows, _data.headers);
   closeWidgetBuilder();
 }
 
 function removeWidget(id) {
   const el = document.querySelector(`.grid-stack-item[gs-id="${id}"]`);
-  if (el) {
-    _grid.removeWidget(el);
-    delete _widgetState[id]; 
-  }
+  if (el) _grid.removeWidget(el);
 }
 
-/* ── BULLETPROOF SAVING LOGIC ───────────────────────────── */
+/* ── SAVING LOGIC ───────────────────────────── */
 async function saveLayout() {
   const btn = document.querySelector('#editToolbar .green');
   const ogText = btn.innerHTML;
   btn.innerHTML = 'Saving...';
   btn.disabled = true;
 
-  const items = document.querySelectorAll('.grid-stack-item');
   const layout = [];
+  const items = document.querySelectorAll('.grid-stack-item');
 
-  // Scrape the DOM to perfectly save what is physically on the screen
+  // Bulletproof reading directly from the DOM attributes
   items.forEach(el => {
-    const node = el.gridstackNode;
     const id = el.getAttribute('gs-id');
-    if (!node || !id) return;
+    if (!id) return;
     
+    const x = parseInt(el.getAttribute('gs-x')) || 0;
+    const y = parseInt(el.getAttribute('gs-y')) || 0;
+    const w = parseInt(el.getAttribute('gs-w')) || 1;
+    const h = parseInt(el.getAttribute('gs-h')) || 1;
+
     let config = { type: 'bar', field: 'total', title: 'Widget', secondaryField: null };
-    
     try {
-      // Read the securely embedded JSON config straight out of the HTML
       const raw = el.getAttribute('data-widget-config');
       if (raw) config = JSON.parse(raw);
-      else if (_widgetState[id]) config = _widgetState[id];
-    } catch(e) {
-      if (_widgetState[id]) config = _widgetState[id];
-    }
-    
-    layout.push({
-      id,
-      x: node.x, y: node.y, w: node.w, h: node.h,
-      type: config.type,
-      field: config.field,
-      secondaryField: config.secondaryField,
-      title: config.title
-    });
+    } catch(e) {}
+
+    layout.push({ id, x, y, w, h, type: config.type, field: config.field, secondaryField: config.secondaryField, title: config.title });
   });
 
   try {
