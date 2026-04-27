@@ -2063,10 +2063,55 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       if (sendBtn) sendBtn.addEventListener('click', (e) => { e.preventDefault(); sendGalAiMessage(); });
     });
 
+    let _galSendIsPro = null;
+    async function _galSendCheckPro() {
+      if (_galSendIsPro !== null) return _galSendIsPro;
+      try {
+        const token = localStorage.getItem('Honourix_token');
+        const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        _galSendIsPro = data?.plan === 'pro';
+      } catch (_) { _galSendIsPro = false; }
+      return _galSendIsPro;
+    }
+
+    function showGalUpgrade() {
+      appendGalMessage(
+        `Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered site generation, block editing, and design assistance.<br><br>` +
+        `<div style="display:flex;flex-direction:column;gap:6px;margin-top:2px">` +
+          `<a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>` +
+          `<button class="gal-ai-sug" onclick="showGalProDetails(this)" style="text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;">What's included in Pro?</button>` +
+        `</div>`,
+        'bot'
+      );
+    }
+
+    function showGalProDetails(btn) {
+      btn.remove();
+      appendGalMessage(
+        `✦ AI-powered site generation<br>✦ Block editing via chat<br>✦ Smart design suggestions<br>✦ Theme &amp; layout assistance<br>✦ Priority sending quota`,
+        'bot'
+      );
+    }
+
     async function sendGalAiMessage() {
       const inputEl = document.getElementById('galAiInput');
       const text = inputEl.value.trim();
       if (!text) return;
+
+      // Frontend-first Pro gate — never touches AI server for free users
+      const isPro = await _galSendCheckPro();
+      if (!isPro) {
+        inputEl.value = '';
+        inputEl.style.height = 'auto';
+        const greeting = document.getElementById('galAiGreeting');
+        if (greeting) greeting.style.display = 'none';
+        appendGalMessage(text, 'user');
+        showGalUpgrade();
+        return;
+      }
 
       inputEl.value = '';
       inputEl.style.height = 'auto'; // Reset textarea height
@@ -2101,8 +2146,6 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
 
         clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
         document.getElementById(loadingId)?.remove();
-
-        if (res.error) throw new Error(res.error);
 
         galChatHistory.push({ role: 'user', content: text }, { role: 'model', content: res.message || 'Done!' });
         appendGalMessage(res.message || 'I have updated the page for you.', 'bot');

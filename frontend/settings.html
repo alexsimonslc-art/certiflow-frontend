@@ -75,22 +75,24 @@
     .s-row-info span { font-size: 13px; color: var(--text-3); }
 
     /* ── Progress bars ───────────────────────────────── */
-    .s-bar-wrap { margin-top: 8px; }
+    .s-bar-wrap { margin-top: 10px; }
     .s-bar-track {
-      height: 6px;
-      background: var(--border);
+      height: 8px;
+      background: rgba(255,255,255,0.07);
       border-radius: 99px;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
     }
     .s-bar-fill {
       height: 100%;
-      background: var(--accent);
+      min-width: 3px;
+      background: linear-gradient(90deg, var(--accent), rgba(124,58,237,0.9));
       border-radius: 99px;
-      transition: width .4s ease;
+      transition: width .5s ease;
     }
-    .s-bar-fill.warn { background: #f59e0b; }
-    .s-bar-fill.danger { background: var(--red, #f43f5e); }
-    .s-bar-label { font-size: 12px; color: var(--text-3); margin-top: 5px; }
+    .s-bar-fill.warn { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .s-bar-fill.danger { background: linear-gradient(90deg, #f43f5e, #dc2626); }
+    .s-bar-label { font-size: 12px; color: var(--text-3); margin-top: 6px; }
 
     /* ── Stat cards (Usage tab) ──────────────────────── */
     .s-stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
@@ -102,7 +104,12 @@
     }
     .s-stat-card .s-stat-val { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
     .s-stat-card .s-stat-label { font-size: 12px; color: var(--text-3); margin-top: 6px; }
-    .s-stat-card .s-stat-icon { font-size: 20px; margin-bottom: 10px; }
+    .s-stat-card .s-stat-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+    }
+    .s-stat-card .s-stat-icon svg { width: 18px; height: 18px; }
 
     /* ── Plan cards (Billing tab) ────────────────────── */
     .s-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
@@ -369,22 +376,38 @@
               <div class="s-section-title">Platform Activity</div>
               <div class="s-stat-grid" id="usageStatGrid">
                 <div class="s-stat-card">
-                  <div class="s-stat-icon">📄</div>
+                  <div class="s-stat-icon" style="background:rgba(0,212,255,0.1)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
+                    </svg>
+                  </div>
                   <div class="s-stat-val" id="uCertsTotal">—</div>
                   <div class="s-stat-label">Certificates generated</div>
                 </div>
                 <div class="s-stat-card">
-                  <div class="s-stat-icon">📧</div>
+                  <div class="s-stat-icon" style="background:rgba(124,58,237,0.12)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                  </div>
                   <div class="s-stat-val" id="uMailsToday">—</div>
                   <div class="s-stat-label">Emails sent today</div>
                 </div>
                 <div class="s-stat-card">
-                  <div class="s-stat-icon">🌐</div>
+                  <div class="s-stat-icon" style="background:rgba(16,185,129,0.1)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                  </div>
                   <div class="s-stat-val" id="uSites">—</div>
                   <div class="s-stat-label">Mini sites (of 10)</div>
                 </div>
                 <div class="s-stat-card">
-                  <div class="s-stat-icon">📋</div>
+                  <div class="s-stat-icon" style="background:rgba(245,158,11,0.1)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+                    </svg>
+                  </div>
                   <div class="s-stat-val" id="uForms">—</div>
                   <div class="s-stat-label">Forms created</div>
                 </div>
