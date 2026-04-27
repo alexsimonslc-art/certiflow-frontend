@@ -42,17 +42,7 @@ function setZoom(val) {
   resizeCanvas();
 }
 
-/* ── Email Editor state ──────────────────────────────────────────── */
-const ME = {
-  blocks: [],
-  selectedId: null,
-  nextId: 1,
-  activeTab: 'visual',
-  cm: null,
-  cmDebounce: null,
-  previewDevice: 'desktop',
-  initialized: false,
-};
+
 
 /* ════════════════════════════════════════════════════════════════
    INIT
@@ -1237,381 +1227,15 @@ function buildOutputFilename(rowData, index) {
   return `${name}${event}_${num}.pdf`;
 }
 /* ════════════════════════════════════════════════════════════════
-   STEP 4 — EMAIL TEMPLATE (full editor ported from mail-tool.js)
-════════════════════════════════════════════════════════════════ */
-
-/* ── Block definitions ────────────────────────────────────────── */
-const ME_DEFS = {
-  logo:    { label:'Logo / Banner', defaults:()=>({ text:'HONOURIX', tagline:'', bgColor:'#0d1728', color:'#00d4ff', fontSize:22, fontWeight:800, align:'center', paddingV:28, paddingH:40 }) },
-  header:  { label:'Heading',      defaults:()=>({ text:'Your Email Heading', fontSize:28, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:32, paddingH:40 }) },
-  text:    { label:'Text',         defaults:()=>({ text:'Write your message here. Use {{name}} to personalize.', fontSize:16, color:'#475569', bgColor:'#ffffff', align:'left', paddingV:14, paddingH:40, lineHeight:1.75 }) },
-  button:  { label:'Button',       defaults:()=>({ text:'Click Here', link:'{{cert_link}}', btnBg:'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor:'#ffffff', bgColor:'#ffffff', align:'center', paddingV:24, paddingH:40, borderRadius:10, fontSize:15, fontWeight:700 }) },
-  image:   { label:'Image',        defaults:()=>({ src:'', alt:'Image', width:100, bgColor:'#f8fafc', paddingV:20, paddingH:40, borderRadius:8 }) },
-  divider: { label:'Divider',      defaults:()=>({ color:'#e2e8f0', bgColor:'#ffffff', paddingV:12, thickness:1 }) },
-  spacer:  { label:'Spacer',       defaults:()=>({ height:40, bgColor:'#ffffff' }) },
-  footer:  { label:'Footer',       defaults:()=>({ text:'Sent via Honourix. Contact the organiser for questions.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 }) },
-};
-
-function meBlockToHtml(block) {
-  const p = block.props, fs = "'Montserrat','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
-  switch (block.type) {
-    case 'logo': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fs}">${p.text}</div>${p.tagline?`<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fs}">${p.tagline}</div>`:''}</div>`;
-    case 'header': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fs}">${p.text}</h1></div>`;
-    case 'text': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fs}">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
-    case 'button': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fs}">${p.text}</a></div>`;
-    case 'image': return p.src ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt}" style="width:${p.width}%;max-width:100%;height:auto;border-radius:${p.borderRadius}px;display:block;margin:0 auto"/></div>` : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px">[Image — add URL in properties]</div></div>`;
-    case 'divider': return `<div style="padding:${p.paddingV}px 40px;background:${p.bgColor}"><div style="height:${p.thickness}px;background:${p.color}"></div></div>`;
-    case 'spacer': return `<div style="height:${p.height}px;background:${p.bgColor}">&nbsp;</div>`;
-    case 'footer': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
-    default: return '';
-  }
-}
-
-function meGetHtml() {
-  if (!ME.blocks.length) return '';
-  const inner = ME.blocks.map(b => meBlockToHtml(b)).join('\n');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Cinzel:wght@400;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;1,400&family=Raleway:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:32px 16px"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><tr><td>${inner}</td></tr></table></td></tr></table></body></html>`;
-}
-
-function buildEmailStep() {
-  const mappings = getAllMappings();
-  const fixedTags = ['{{name}}','{{email}}','{{cert_link}}'];
-  const extraTags = Object.keys(mappings).filter(k => !['name','email'].includes(k)).map(k => `{{${k}}}`);
-  const allTags = [...new Set([...fixedTags, ...extraTags])];
-  const tagRow = document.getElementById('meMergeTags');
-  if (tagRow) tagRow.innerHTML = allTags.map(t => `<span class="me-tag" onclick="meInsertTag('${t}')">${t}</span>`).join('');
-
-  if (ME.initialized) { if (ME.cm) ME.cm.refresh(); return; }
-  ME.initialized = true;
-
-  const wrapper = document.getElementById('meCmWrap');
-  ME.cm = CodeMirror(wrapper, { mode:'htmlmixed', theme:'dracula', lineNumbers:true, lineWrapping:true, tabSize:2, value: document.getElementById('emailTemplate').value || '' });
-  wrapper.querySelector('.CodeMirror').style.background = '#080f1e';
-  ME.cm.on('change', () => {
-    clearTimeout(ME.cmDebounce);
-    ME.cmDebounce = setTimeout(() => {
-      document.getElementById('emailTemplate').value = ME.cm.getValue();
-      if (ME.activeTab === 'preview') meRefreshPreview();
-    }, 400);
-  });
-
-  if (!ME.blocks.length && !ME.cm.getValue().trim()) meLoadTemplate('cert');
-  else if (ME.blocks.length) meSyncToCode();
-}
-
-function meInsertTag(tag) {
-  if (ME.activeTab === 'code' && ME.cm) { ME.cm.replaceSelection(tag); ME.cm.focus(); toast('Inserted ' + tag, 'success', 1200); }
-  else if (ME.activeTab === 'visual') {
-    const block = ME.blocks.find(b => b.id === ME.selectedId);
-    if (block && block.props.text !== undefined) { block.props.text += tag; meRenderCanvas(); meRenderProps(block); meSyncToCode(); toast('Inserted ' + tag, 'success', 1500); }
-    else toast('Select a text block first, or switch to Code tab', 'info', 2500);
-  }
-}
-
-/* ── Tab switching ───────────────────────────────────────────── */
-function meSwitchTab(tab) {
-  ME.activeTab = tab;
-  ['visual','code','preview'].forEach(t => { const btn = document.getElementById('meTab' + t.charAt(0).toUpperCase() + t.slice(1)); if (btn) btn.classList.toggle('active', t === tab); });
-  document.getElementById('meVisual').style.display  = tab === 'visual'  ? 'grid' : 'none';
-  document.getElementById('meCode').style.display    = tab === 'code'    ? 'block' : 'none';
-  document.getElementById('mePreview').style.display = tab === 'preview' ? 'block' : 'none';
-  if (tab === 'code' && ME.cm) { if (ME.blocks.length) meSyncToCode(); setTimeout(() => ME.cm.refresh(), 50); }
-  if (tab === 'preview') { meSyncTextarea(); meRefreshPreview(); }
-}
-
-/* ── Canvas rendering ────────────────────────────────────────── */
-function meRenderCanvas() {
-  const canvas = document.getElementById('meCanvas'), empty = document.getElementById('meEmptyCanvas'); if (!canvas) return;
-  if (!ME.blocks.length) { if (empty) empty.style.display = ''; canvas.querySelectorAll('.me-block-wrap').forEach(el => el.remove()); return; }
-  if (empty) empty.style.display = 'none';
-  canvas.querySelectorAll('.me-block-wrap').forEach(el => el.remove());
-  ME.blocks.forEach((block, idx) => {
-    const wrap = document.createElement('div'); wrap.className = 'me-block-wrap' + (block.id === ME.selectedId ? ' selected' : ''); wrap.dataset.id = block.id;
-    const ctrl = document.createElement('div'); ctrl.className = 'me-block-controls';
-    ctrl.innerHTML = (idx > 0 ? `<button class="me-ctrl-btn" onclick="event.stopPropagation();meMoveBlock('${block.id}',-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>` : '') +
-      (idx < ME.blocks.length - 1 ? `<button class="me-ctrl-btn" onclick="event.stopPropagation();meMoveBlock('${block.id}',1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>` : '') +
-      `<button class="me-ctrl-btn" onclick="event.stopPropagation();meDuplicateBlock('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>` +
-      `<button class="me-ctrl-btn del" onclick="event.stopPropagation();meDeleteBlock('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`;
-    const inner = document.createElement('div'); inner.className = 'me-block-inner'; inner.innerHTML = meBlockToHtml(block);
-    wrap.appendChild(ctrl); wrap.appendChild(inner);
-    wrap.addEventListener('click', () => meSelectBlock(block.id));
-    canvas.appendChild(wrap);
-  });
-}
-
-function meAddBlock(type) { const def = ME_DEFS[type]; if (!def) return; const block = { id:'b'+(ME.nextId++), type, props:def.defaults() }; ME.blocks.push(block); meRenderCanvas(); meSelectBlock(block.id); meSyncToCode(); const wrap = document.getElementById('meCanvasWrap'); if (wrap) wrap.scrollTop = wrap.scrollHeight; toast('Added ' + def.label, 'success', 1500); }
-function meDeleteBlock(id) { ME.blocks = ME.blocks.filter(b => b.id !== id); if (ME.selectedId === id) { ME.selectedId = null; meRenderProps(null); } meRenderCanvas(); meSyncToCode(); }
-function meDuplicateBlock(id) { const idx = ME.blocks.findIndex(b => b.id === id); if (idx < 0) return; const copy = { id:'b'+(ME.nextId++), type:ME.blocks[idx].type, props:JSON.parse(JSON.stringify(ME.blocks[idx].props)) }; ME.blocks.splice(idx+1, 0, copy); meRenderCanvas(); meSelectBlock(copy.id); meSyncToCode(); }
-function meMoveBlock(id, dir) { const idx = ME.blocks.findIndex(b => b.id === id); const ni = idx + dir; if (ni < 0 || ni >= ME.blocks.length) return; [ME.blocks[idx], ME.blocks[ni]] = [ME.blocks[ni], ME.blocks[idx]]; meRenderCanvas(); meSyncToCode(); }
-function meSelectBlock(id) { ME.selectedId = id; document.querySelectorAll('.me-block-wrap').forEach(el => el.classList.toggle('selected', el.dataset.id === id)); meRenderProps(ME.blocks.find(b => b.id === id)); }
-
-function meRenderProps(block) {
-  const body = document.getElementById('mePropsBody'); if (!body) return;
-  if (!block) { body.innerHTML = `<div class="me-props-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Click any block to<br/>edit its properties</div></div>`; return; }
-  const p = block.props, rows = [];
-  if (['logo','header','text','footer'].includes(block.type)) rows.push(mePropTextarea('Text', block.id, 'text', p.text));
-  if (block.type === 'logo') rows.push(mePropText('Tagline', block.id, 'tagline', p.tagline || ''));
-  if (block.type === 'button') { rows.push(mePropText('Button Text', block.id, 'text', p.text)); rows.push(mePropText('Link / URL', block.id, 'link', p.link)); rows.push(mePropColor('Button Color', block.id, 'btnBg', p.btnBg?.startsWith('linear') ? '#00d4ff' : p.btnBg)); }
-  if (block.type === 'image') { rows.push(mePropText('Image URL', block.id, 'src', p.src)); rows.push(mePropText('Alt Text', block.id, 'alt', p.alt)); rows.push(mePropRange('Width %', block.id, 'width', p.width, 20, 100)); }
-  if (block.type === 'divider') { rows.push(mePropColor('Line Color', block.id, 'color', p.color)); rows.push(mePropRange('Thickness', block.id, 'thickness', p.thickness, 1, 8)); }
-  if (block.type === 'spacer') rows.push(mePropRange('Height', block.id, 'height', p.height, 8, 120));
-  if (['logo','header','text','button','footer'].includes(block.type)) { if (['header','text','footer','logo'].includes(block.type)) { rows.push(mePropColor('Text Color', block.id, 'color', p.color)); rows.push(mePropRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 48)); } }
-  rows.push(mePropColor('Background', block.id, 'bgColor', p.bgColor));
-  rows.push(mePropRange('Padding V', block.id, 'paddingV', p.paddingV, 0, 80));
-  body.innerHTML = `<div class="me-props-body"><div style="font-size:12px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">${(ME_DEFS[block.type]||{}).label||block.type}</div>${rows.join('')}</div>`;
-}
-
-function mePropText(label, id, key, val) { return `<div class="me-field"><div class="me-field-label">${label}</div><input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}" oninput="meUpdateProp('${id}','${key}',this.value)"/></div>`; }
-function mePropTextarea(label, id, key, val) { return `<div class="me-field"><div class="me-field-label">${label}</div><textarea class="me-textarea" oninput="meUpdateProp('${id}','${key}',this.value)">${(val||'').replace(/</g,'&lt;')}</textarea></div>`; }
-function mePropColor(label, id, key, val) { return `<div class="me-field"><div class="me-field-label">${label}</div><div class="me-color-row"><div class="me-color-swatch" style="background:${val||'#fff'}"><input type="color" value="${val||'#ffffff'}" oninput="meUpdateProp('${id}','${key}',this.value)"/></div><input class="me-input" type="text" value="${val||'#ffffff'}" oninput="meUpdateProp('${id}','${key}',this.value)" style="flex:1"/></div></div>`; }
-function mePropRange(label, id, key, val, min, max) { return `<div class="me-field"><div class="me-field-label" style="display:flex;justify-content:space-between">${label} <span id="rv_${id}_${key}" style="color:var(--cyan)">${val}</span></div><input class="me-range" type="range" min="${min}" max="${max}" value="${val}" oninput="document.getElementById('rv_${id}_${key}').textContent=this.value;meUpdateProp('${id}','${key}',Number(this.value))"/></div>`; }
-
-function meUpdateProp(id, key, value) {
-  const block = ME.blocks.find(b => b.id === id); if (!block) return;
-  block.props[key] = value;
-  const inner = document.querySelector(`.me-block-wrap[data-id="${id}"] .me-block-inner`);
-  if (inner) inner.innerHTML = meBlockToHtml(block);
-  clearTimeout(ME._propSync);
-  ME._propSync = setTimeout(() => meSyncToCode(), 300);
-}
-
-function meSyncToCode() { const html = meGetHtml(); document.getElementById('emailTemplate').value = html; if (ME.cm) { const c = ME.cm.getCursor(); ME.cm.setValue(html); try { ME.cm.setCursor(c); } catch {} } }
-function meSyncTextarea() { if (ME.cm && ME.activeTab === 'code') document.getElementById('emailTemplate').value = ME.cm.getValue(); else if (ME.blocks.length) document.getElementById('emailTemplate').value = meGetHtml(); }
-function meSyncVisualFromCode() { if (ME.cm) document.getElementById('emailTemplate').value = ME.cm.getValue(); toast('Code synced — visual shows current blocks', 'info', 2500); }
-function meRefreshPreview() { const iframe = document.getElementById('mePreviewFrame'); if (!iframe) return; let html = document.getElementById('emailTemplate').value || meGetHtml(); if (CP.rows.length) html = personalise(html, CP.rows[0], getAllMappings()); iframe.srcdoc = html; }
-function meSetDevice(d) { ME.previewDevice = d; const f = document.getElementById('mePreviewFrame'); document.getElementById('meBtnDesktop').classList.toggle('active', d==='desktop'); document.getElementById('meBtnMobile').classList.toggle('active', d==='mobile'); if (f) { f.style.width = d==='mobile'?'375px':'100%'; f.style.height = d==='mobile'?'600px':'480px'; } }
-
-function meShowTemplatePicker() { const w = document.getElementById('meTplPickerWrap'); if (w) w.style.display = w.style.display === 'none' ? 'block' : 'none'; }
-function meHideTemplatePicker() { const w = document.getElementById('meTplPickerWrap'); if (w) w.style.display = 'none'; }
-
-const ME_TEMPLATES = {
-  cert: { name:'🎓 Certificate Dispatch', thumb:'linear-gradient(135deg,#0d1728,#1a2744)', blocks:[
-    { type:'logo', props:{ text:'HONOURIX', tagline:'Certificate Platform', bgColor:'#0d1728', color:'#00d4ff', fontSize:20, fontWeight:800, align:'center', paddingV:28, paddingH:40 } },
-    { type:'header', props:{ text:'Your Certificate is Ready 🎉', fontSize:26, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:36, paddingH:40 } },
-    { type:'text', props:{ text:'Dear {{name}},\n\nCongratulations on completing your course. Your personalized certificate is ready.', fontSize:16, color:'#475569', bgColor:'#ffffff', align:'left', paddingV:8, paddingH:40, lineHeight:1.75 } },
-    { type:'button', props:{ text:'Download Certificate', link:'{{cert_link}}', btnBg:'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor:'#ffffff', bgColor:'#ffffff', align:'center', paddingV:28, paddingH:40, borderRadius:10, fontSize:15, fontWeight:700 } },
-    { type:'divider', props:{ color:'#e2e8f0', bgColor:'#ffffff', paddingV:16, thickness:1 } },
-    { type:'footer', props:{ text:'Sent via Honourix. Contact the organiser for questions.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 } },
-  ]},
-  event: { name:'📅 Event Invitation', thumb:'linear-gradient(135deg,#7c3aed,#4f46e5)', blocks:[
-    { type:'logo', props:{ text:'EVENT', tagline:'', bgColor:'#7c3aed', color:'#ffffff', fontSize:18, fontWeight:800, align:'center', paddingV:24, paddingH:40 } },
-    { type:'header', props:{ text:"You're Invited, {{name}}!", fontSize:28, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:36, paddingH:40 } },
-    { type:'text', props:{ text:'Join us for an unforgettable experience.', fontSize:16, color:'#475569', bgColor:'#ffffff', align:'center', paddingV:8, paddingH:40, lineHeight:1.75 } },
-    { type:'button', props:{ text:'RSVP Now', link:'#', btnBg:'#7c3aed', btnColor:'#ffffff', bgColor:'#ffffff', align:'center', paddingV:28, paddingH:40, borderRadius:8, fontSize:15, fontWeight:700 } },
-    { type:'footer', props:{ text:'Let us know if you cannot attend.', bgColor:'#f8fafc', color:'#94a3b8', fontSize:12, align:'center', paddingV:24, paddingH:40 } },
-  ]},
-  thankyou: { name:'🙏 Thank You', thumb:'linear-gradient(135deg,#10b981,#059669)', blocks:[
-    { type:'logo', props:{ text:'THANK YOU', tagline:'', bgColor:'#10b981', color:'#ffffff', fontSize:20, fontWeight:800, align:'center', paddingV:28, paddingH:40 } },
-    { type:'header', props:{ text:'Thank You, {{name}}!', fontSize:28, fontWeight:700, color:'#1e293b', bgColor:'#ffffff', align:'center', paddingV:36, paddingH:40 } },
-    { type:'text', props:{ text:'We truly appreciate your participation and dedication.', fontSize:16, color:'#475569', bgColor:'#ffffff', align:'left', paddingV:12, paddingH:40, lineHeight:1.8 } },
-    { type:'footer', props:{ text:'With gratitude,\nThe Honourix Team', bgColor:'#f0fdf4', color:'#6b7280', fontSize:13, align:'center', paddingV:24, paddingH:40 } },
-  ]},
-};
-
-function meBuildTemplatePicker() {
-  const row = document.getElementById('meTplRow'); if (!row) return;
-  row.innerHTML = Object.entries(ME_TEMPLATES).map(([key, tpl]) => `<div class="me-tpl-card" onclick="meLoadTemplate('${key}')"><div class="me-tpl-thumb" style="background:${tpl.thumb}">${tpl.name.split(' ')[0]}</div><div class="me-tpl-info"><div class="me-tpl-name">${tpl.name.slice(tpl.name.indexOf(' ')+1)}</div><button class="me-tpl-btn">Use This</button></div></div>`).join('');
-}
-
-function meLoadTemplate(key) {
-  const tpl = ME_TEMPLATES[key]; if (!tpl) return;
-  ME.blocks = tpl.blocks.map(b => ({ id:'b'+(ME.nextId++), type:b.type, props:JSON.parse(JSON.stringify(b.props)) }));
-  ME.selectedId = null;
-  meRenderCanvas(); meSyncToCode(); meHideTemplatePicker();
-  if (ME.activeTab !== 'visual') meSwitchTab('visual');
-  toast('Template loaded: ' + tpl.name, 'success', 2000);
-}
-
-function personalise(tmpl, row, mappings) {
-  let out = tmpl;
-  out = out.replace(/\{\{name\}\}/gi, row[mappings.name] || '');
-  out = out.replace(/\{\{email\}\}/gi, row[mappings.email] || '');
-  
-  Object.entries(mappings).forEach(([ph, col]) => { out = out.replace(new RegExp(`\\{\\{${ph}\\}\\}`, 'gi'), row[col] || ''); });
-  return out;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   STEP 5 — REVIEW
-════════════════════════════════════════════════════════════════ */
-function buildReview() {
-  const n = CP.rows.length, mappings = getAllMappings(), camp = document.getElementById('cpName').value;
-  document.getElementById('rvParticipants').textContent = n;
-  document.getElementById('rvCerts').textContent = n;
-  document.getElementById('rvEmails').textContent = n;
-  const rows = [
-    { k:'Campaign', v:camp }, { k:'Participants', v:String(n) },
-    { k:'Data source', v:CP.sheetId ? `Sheet (${CP.sheetId.slice(0,18)}…)` : CP.srcType === 'manual' ? 'Manual entry' : 'Uploaded file' },
-    { k:'Name column', v:mappings.name }, { k:'Email column', v:mappings.email },
-    { k:'Custom mappings', v:`${CP.customMappings.filter(m=>m.col&&m.ph).length} field(s)` },
-    { k:'Certificate fields', v:`${ED.fields.length} text field(s)` },
-    { k:'Canvas size', v:`${ED.w} × ${ED.h} px` },
-    { k:'Email subject', v:document.getElementById('emailSubject').value },
-    { k:'Write links back', v:document.getElementById('writeBackToggle').classList.contains('on') ? 'Yes' : 'No' },
-  ];
-  document.getElementById('reviewDetailsEl').innerHTML = rows.map(r => `<div class="rv-row"><span class="rv-key">${r.k}</span><span class="rv-val">${r.v}</span></div>`).join('');
-  document.getElementById('runJobInfo').innerHTML = rows.slice(0, 3).map(r => `<div style="display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--glass-border)"><span style="color:var(--text-2)">${r.k}</span><strong style="color:var(--text)">${r.v}</strong></div>`).join('');
-}
-
-/* ════════════════════════════════════════════════════════════════
-   STEP 6 — LAUNCH PIPELINE
-════════════════════════════════════════════════════════════════ */
-/* ── Pipeline Helpers ── */
-function getAllMappings() {
-  const m = { email: CP.emailCol || '', name: '' };
-  const primary = ED.fields.find(f => f.isPrimary);
-  if (primary && primary.column) m.name = primary.column;
-  ED.fields.forEach(f => { if (f.column) m[f.placeholder.replace(/[{}]/g, '')] = f.column; });
-  return m;
-}
-async function launchPipeline() {
-  const btn = document.getElementById('launchBtn');
-  btn.disabled = true; btn.style.opacity = '0.6';
-  goStep(6, true);
-  const mappings = getAllMappings(), subject = document.getElementById('emailSubject').value;
-  // NEW: Grab HTML directly from CodeMirror or the Block generator!
-  const htmlTmpl = (ME.cm && document.getElementById('mCodeWrapS3').style.display === 'block') ? ME.cm.getValue() : meGetHtml();
-  
-  const campName = document.getElementById('cpName').value;
-  const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
-  const total = CP.rows.length;
-  meSyncTextarea();
-  
-
-  let certsDone = 0, mailsDone = 0, failed = 0;
-  CP.results = [];
-  setRunProgress(0, total, 'Starting up…');
-  llLog('info', `Launching: ${campName} — ${total} participants`);
-
-  for (let i = 0; i < CP.rows.length; i++) {
-    const row = CP.rows[i], name = row[mappings.name] || `Person ${i+1}`, email = row[mappings.email] || '';
-    setRunProgress(i, total, `Processing: ${name} (${i+1}/${total})`);
-    let certLink = '';
-    try {
-      const participant = { ...row }; Object.entries(mappings).forEach(([ph, col]) => { participant[ph] = row[col] || ''; });
-      const certRes = await apiFetch('/api/certificates/generate', { method:'POST', body:JSON.stringify({
-        campaignName:campName, template:{ width:ED.w, height:ED.h, bgColor:ED.bgColor, backgroundBase64:ED.bgBase64||null, fields:ED.fields, fontUrls:getUsedFontUrls() },
-        participants:[participant], nameCol:mappings.name, emailCol:mappings.email, sheetId:writeBack?CP.sheetId:null, writeBack, rowOffset:i,
-      })});
-      const r0 = certRes?.results?.[0];
-      if (r0?.status === 'success') { certLink = r0.link || ''; certsDone++; llLog('cert', `Certificate saved: ${name}`); }
-      else throw new Error(r0?.error || 'Certificate generation failed');
-    } catch (e) {
-      failed++; llLog('err', `Cert failed for ${name}: ${e.message}`);
-      CP.results.push({ name, email, certLink:'', certStatus:'failed', mailStatus:'skipped', error:e.message });
-      setRunProgress(i+1, total); updateRunCounts(certsDone, mailsDone, failed); continue;
-    }
-    try {
-      const personHtml = personalise(htmlTmpl, row, mappings).replace(/\{\{cert_link\}\}/gi, certLink);
-      const personSubj = personalise(subject, row, mappings);
-      await apiFetch('/api/mail/send-one', { method:'POST', body:JSON.stringify({ to:email, subject:personSubj, html:personHtml }) });
-      mailsDone++; llLog('mail', `Email sent → ${email}`);
-    } catch (e) { failed++; llLog('err', `Email failed for ${name}: ${e.message}`); }
-    CP.results.push({ name, email, certLink, certStatus:'success', mailStatus:mailsDone > certsDone-1 ? 'sent' : 'failed' });
-    setRunProgress(i+1, total); updateRunCounts(certsDone, mailsDone, failed);
-  }
-  saveCampaignHistory({ name:campName, type:'combined', date:new Date().toISOString(), total, success:certsDone, failed });
-  setTimeout(() => showDone(certsDone, mailsDone, failed, total), 700);
-}
-
-function setRunProgress(done, total, status) {
-  const pct = total > 0 ? Math.round((done/total)*100) : 0;
-  document.getElementById('runPct').textContent = pct+'%';
-  document.getElementById('runFraction').textContent = `${done} / ${total}`;
-  if (status) document.getElementById('runStatus').textContent = status;
-  document.getElementById('runBar').style.width = pct+'%';
-  const rc = document.getElementById('ringCircle');
-  if (rc) rc.style.strokeDashoffset = 345 - (345 * pct / 100);
-}
-function updateRunCounts(c, m, f) { document.getElementById('runCertsDone').textContent = c; document.getElementById('runMailsDone').textContent = m; document.getElementById('runFailed').textContent = f; }
-function llLog(type, msg) { const win = document.getElementById('liveLog'); if (!win) return; const ts = new Date().toLocaleTimeString('en-IN',{hour12:false}); const el = document.createElement('div'); el.className = 'll-row'; el.innerHTML = `<span class="ll-ts">${ts}</span><span class="ll-${type}">${msg}</span>`; win.appendChild(el); win.scrollTop = win.scrollHeight; }
-
-function showDone(certs, mails, failed, total) {
-  document.getElementById('runningState').style.display = 'none';
-  document.getElementById('doneState').style.display = 'block';
-  document.getElementById('dCerts').textContent = certs;
-  document.getElementById('dEmails').textContent = mails;
-  document.getElementById('dFailed').textContent = failed;
-  document.getElementById('doneTitle').textContent = failed === 0 ? 'Pipeline Complete!' : `${certs} certs · ${mails} emails · ${failed} failed`;
-  if (failed > 0) { const ring = document.getElementById('doneRing'); if (ring) { ring.style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)'; ring.style.boxShadow = '0 0 48px rgba(245,158,11,0.35)'; } }
-  renderResultTable(CP.results);
-  toast(`Done — ${certs} certs, ${mails} emails`, 'success', 6000);
-}
-
-function renderResultTable(results) {
-  const tbody = document.getElementById('resultTbody'); if (!tbody) return;
-  tbody.innerHTML = results.map(r => {
-    const cb = r.certStatus==='success' ? `<span style="background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Generated</span>` : `<span style="background:var(--red-dim);color:var(--red);border:1px solid rgba(244,63,94,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Failed</span>`;
-    const mb = r.mailStatus==='sent' ? `<span style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Sent</span>` : r.mailStatus==='skipped' ? `<span style="color:var(--text-3);font-size:11.5px">Skipped</span>` : `<span style="color:var(--red);font-size:11.5px">Failed</span>`;
-    const cert = r.certLink ? `<a href="${r.certLink}" target="_blank" style="color:var(--cyan);font-size:12.5px;max-width:200px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.certLink}</a>` : '—';
-    return `<tr data-name="${r.name}" data-email="${r.email||''}"><td style="font-weight:600">${r.name}</td><td style="color:var(--text-2)">${r.email||'—'}</td><td>${cert}</td><td style="display:flex;gap:5px;flex-wrap:wrap">${cb}${mb}</td><td>${r.certLink?`<button class="ic-btn" onclick="copyToClipboard('${r.certLink}','Link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`:''}</td></tr>`;
-  }).join('');
-}
-
-function filterResultTable() { const q = document.getElementById('resultSearch').value.toLowerCase(); document.querySelectorAll('#resultTbody tr').forEach(tr => { tr.style.display = (!q || tr.dataset.name.toLowerCase().includes(q) || (tr.dataset.email||'').toLowerCase().includes(q)) ? '' : 'none'; }); }
-function downloadFullReport() { downloadCSV(CP.results.map(r => ({ Name:r.name, Email:r.email||'', 'Cert Status':r.certStatus, 'Email Status':r.mailStatus, 'Certificate Link':r.certLink||'', Error:r.error||'' })), `honourix-pipeline-${Date.now()}.csv`); }
-
-// ── Connect Pipeline to Supabase ──
-async function saveCampaignHistory(rec) { 
-  const mappings = getAllMappings();
-  
-  // Build Backup Sheet Payload: S.No | Email | mapped cert fields | Certificate Link
-  const backupData = CP.results.map((r, i) => {
-    const original = CP.rows[i] || {};
-    const rowData  = { 'S.No': i + 1, 'Email': r.email || '' };
-
-    // Add any extra mapped columns (name + custom mappings, excluding email)
-    if (mappings.name && mappings.name !== mappings.email) {
-      rowData[mappings.name] = r.name || original[mappings.name] || '';
-    }
-    CP.customMappings.forEach(m => {
-      if (m.col && m.col !== mappings.email) rowData[m.col] = original[m.col] || '';
-    });
-
-    rowData['Certificate Link'] = r.certLink || '';
-    return rowData;
-  });
-
-  try {
-    await apiFetch('/api/campaigns', {
-      method: 'POST',
-      body: JSON.stringify({
-        name:        rec.name || 'Combined Campaign',
-        type:        'combined',
-        total_count: rec.total,
-        sent_count:  rec.success,
-        status:      rec.failed === 0 ? 'completed' : (rec.success > 0 ? 'partial' : 'failed'),
-        backup_data: backupData,
-      }),
-    });
-  } catch(e) {
-    console.error('Pipeline database save failed', e);
-  }
-}
-
-function resetAll() {
-  if (!confirm('Start a new campaign? Current results will be cleared.')) return;
-  CP.rows = []; CP.results = []; CP.headers = []; CP.customMappings = []; CP.sheetId = null;
-  ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null; ED.ready = false;
-  ME.blocks = []; ME.selectedId = null; ME.initialized = false;
-  ['cpName','sheetId','emailSubject','emailTemplate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  ['sheetLoadedMsg','fileLoadedMsg','manualLoadedMsg','hxFormLoadedMsg'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-  document.getElementById('customMappings').innerHTML = '';
-  if (ME.cm) ME.cm.setValue('');
-  goStep(1, true);
-}
-
-
-
-/* ════════════════════════════════════════════════════════════════
    STEP 4 — EMAIL TEMPLATE (AI ENGINE)
 ════════════════════════════════════════════════════════════════ */
-
+const ME = {
+  blocks: [], selectedId: null, nextId: 1, cm: null, cmDebounce: null, initialized: false,
+};
 
 function initStep4() {
   if (ME.initialized) return;
   
-  // 1. SortableJS for Visual Canvas
   const el = document.getElementById('mVisualListS3');
   if (el && typeof Sortable !== 'undefined') {
     Sortable.create(el, {
@@ -1624,31 +1248,23 @@ function initStep4() {
     });
   }
 
-  // 2. CodeMirror for Raw HTML Editor
   const cmEl = document.getElementById('mCodeEditorS3');
   if (cmEl && typeof CodeMirror !== 'undefined') {
     ME.cm = CodeMirror.fromTextArea(cmEl, { mode: 'xml', theme: 'dracula', lineNumbers: true, lineWrapping: true });
     ME.cm.on('change', () => {
       clearTimeout(ME.cmDebounce);
-      ME.cmDebounce = setTimeout(() => {
-        mUpdatePreview();
-      }, 500);
+      ME.cmDebounce = setTimeout(() => { mUpdatePreview(); }, 500);
     });
   }
 
-  // Default Template Load
   if (ME.blocks.length === 0) { 
-      mAddBlock('logo'); 
-      mAddBlock('header'); 
-      mAddBlock('text'); 
-      mAddBlock('button'); 
+      mAddBlock('logo'); mAddBlock('header'); mAddBlock('text'); mAddBlock('button'); 
   }
   mPopulateTags();
   mSwitchView('visual');
   ME.initialized = true;
 }
 
-// Automatically loads tags based on Step 1 / Step 3 data
 function mPopulateTags() {
   const list = document.getElementById('mTagsList');
   if (!list) return;
@@ -1677,7 +1293,6 @@ function mInsertTag(tag) {
   }
 }
 
-// Side Panel Tabs
 function switchLeftTab(tab) {
   document.getElementById('mTab_ai').className = 'ep-tab ' + (tab === 'ai' ? 'active' : '');
   document.getElementById('mTab_props').className = 'ep-tab ' + (tab === 'props' ? 'active' : '');
@@ -1931,3 +1546,174 @@ async function meAiSend() {
   }
 }
 
+/* ── TEMPLATE HELPER ── */
+function personalise(tmpl, row, mappings) {
+  let out = tmpl;
+  out = out.replace(/\{\{name\}\}/gi, row[mappings.name] || '');
+  out = out.replace(/\{\{email\}\}/gi, row[mappings.email] || '');
+  Object.entries(mappings).forEach(([ph, col]) => { out = out.replace(new RegExp(`\\{\\{${ph}\\}\\}`, 'gi'), row[col] || ''); });
+  return out;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   STEP 5 — REVIEW
+════════════════════════════════════════════════════════════════ */
+function buildReview() {
+  const n = CP.rows.length, mappings = getAllMappings(), camp = document.getElementById('cpName').value;
+  document.getElementById('rvParticipants').textContent = n;
+  document.getElementById('rvCerts').textContent = n;
+  document.getElementById('rvEmails').textContent = n;
+  const rows = [
+    { k:'Campaign', v:camp }, { k:'Participants', v:String(n) },
+    { k:'Data source', v:CP.sheetId ? `Sheet (${CP.sheetId.slice(0,18)}…)` : CP.srcType === 'manual' ? 'Manual entry' : 'Uploaded file' },
+    { k:'Name column', v:mappings.name }, { k:'Email column', v:mappings.email },
+    { k:'Custom mappings', v:`${CP.customMappings.filter(m=>m.col&&m.ph).length} field(s)` },
+    { k:'Certificate fields', v:`${ED.fields.length} text field(s)` },
+    { k:'Canvas size', v:`${ED.w} × ${ED.h} px` },
+    { k:'Email subject', v:document.getElementById('emailSubject').value },
+    { k:'Write links back', v:document.getElementById('writeBackToggle').classList.contains('on') ? 'Yes' : 'No' },
+  ];
+  document.getElementById('reviewDetailsEl').innerHTML = rows.map(r => `<div class="rv-row"><span class="rv-key">${r.k}</span><span class="rv-val">${r.v}</span></div>`).join('');
+  document.getElementById('runJobInfo').innerHTML = rows.slice(0, 3).map(r => `<div style="display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--glass-border)"><span style="color:var(--text-2)">${r.k}</span><strong style="color:var(--text)">${r.v}</strong></div>`).join('');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   STEP 6 — LAUNCH PIPELINE
+════════════════════════════════════════════════════════════════ */
+function getAllMappings() {
+  const m = { email: CP.emailCol || '', name: '' };
+  const primary = ED.fields.find(f => f.isPrimary);
+  if (primary && primary.column) m.name = primary.column;
+  ED.fields.forEach(f => { if (f.column) m[f.placeholder.replace(/[{}]/g, '')] = f.column; });
+  return m;
+}
+
+async function launchPipeline() {
+  const btn = document.getElementById('launchBtn');
+  btn.disabled = true; btn.style.opacity = '0.6';
+  goStep(6, true);
+  
+  const mappings = getAllMappings();
+  const subject = document.getElementById('emailSubject').value;
+  const htmlTmpl = (ME.cm && document.getElementById('mCodeWrapS3').style.display === 'block') ? ME.cm.getValue() : meGetHtml();
+  
+  const campName = document.getElementById('cpName').value;
+  const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
+  const total = CP.rows.length;
+  
+  let certsDone = 0, mailsDone = 0, failed = 0;
+  CP.results = [];
+  setRunProgress(0, total, 'Starting up…');
+  llLog('info', `Launching: ${campName} — ${total} participants`);
+
+  for (let i = 0; i < CP.rows.length; i++) {
+    const row = CP.rows[i], name = row[mappings.name] || `Person ${i+1}`, email = row[mappings.email] || '';
+    setRunProgress(i, total, `Processing: ${name} (${i+1}/${total})`);
+    let certLink = '';
+    try {
+      const participant = { ...row }; Object.entries(mappings).forEach(([ph, col]) => { participant[ph] = row[col] || ''; });
+      const certRes = await apiFetch('/api/certificates/generate', { method:'POST', body:JSON.stringify({
+        campaignName:campName, template:{ width:ED.w, height:ED.h, bgColor:ED.bgColor, backgroundBase64:ED.bgBase64||null, fields:ED.fields, fontUrls:getUsedFontUrls() },
+        participants:[participant], nameCol:mappings.name, emailCol:mappings.email, sheetId:writeBack?CP.sheetId:null, writeBack, rowOffset:i,
+      })});
+      const r0 = certRes?.results?.[0];
+      if (r0?.status === 'success') { certLink = r0.link || ''; certsDone++; llLog('cert', `Certificate saved: ${name}`); }
+      else throw new Error(r0?.error || 'Certificate generation failed');
+    } catch (e) {
+      failed++; llLog('err', `Cert failed for ${name}: ${e.message}`);
+      CP.results.push({ name, email, certLink:'', certStatus:'failed', mailStatus:'skipped', error:e.message });
+      setRunProgress(i+1, total); updateRunCounts(certsDone, mailsDone, failed); continue;
+    }
+    try {
+      const personHtml = personalise(htmlTmpl, row, mappings).replace(/\{\{cert_link\}\}/gi, certLink);
+      const personSubj = personalise(subject, row, mappings);
+      await apiFetch('/api/mail/send-one', { method:'POST', body:JSON.stringify({ to:email, subject:personSubj, html:personHtml }) });
+      mailsDone++; llLog('mail', `Email sent → ${email}`);
+    } catch (e) { failed++; llLog('err', `Email failed for ${name}: ${e.message}`); }
+    CP.results.push({ name, email, certLink, certStatus:'success', mailStatus:mailsDone > certsDone-1 ? 'sent' : 'failed' });
+    setRunProgress(i+1, total); updateRunCounts(certsDone, mailsDone, failed);
+  }
+  saveCampaignHistory({ name:campName, type:'combined', date:new Date().toISOString(), total, success:certsDone, failed });
+  setTimeout(() => showDone(certsDone, mailsDone, failed, total), 700);
+}
+
+function setRunProgress(done, total, status) {
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  document.getElementById('runPct').textContent = pct+'%';
+  document.getElementById('runFraction').textContent = `${done} / ${total}`;
+  if (status) document.getElementById('runStatus').textContent = status;
+  document.getElementById('runBar').style.width = pct+'%';
+  const rc = document.getElementById('ringCircle');
+  if (rc) rc.style.strokeDashoffset = 345 - (345 * pct / 100);
+}
+function updateRunCounts(c, m, f) { document.getElementById('runCertsDone').textContent = c; document.getElementById('runMailsDone').textContent = m; document.getElementById('runFailed').textContent = f; }
+function llLog(type, msg) { const win = document.getElementById('liveLog'); if (!win) return; const ts = new Date().toLocaleTimeString('en-IN',{hour12:false}); const el = document.createElement('div'); el.className = 'll-row'; el.innerHTML = `<span class="ll-ts">${ts}</span><span class="ll-${type}">${msg}</span>`; win.appendChild(el); win.scrollTop = win.scrollHeight; }
+
+function showDone(certs, mails, failed, total) {
+  document.getElementById('runningState').style.display = 'none';
+  document.getElementById('doneState').style.display = 'block';
+  document.getElementById('dCerts').textContent = certs;
+  document.getElementById('dEmails').textContent = mails;
+  document.getElementById('dFailed').textContent = failed;
+  document.getElementById('doneTitle').textContent = failed === 0 ? 'Pipeline Complete!' : `${certs} certs · ${mails} emails · ${failed} failed`;
+  if (failed > 0) { const ring = document.getElementById('doneRing'); if (ring) { ring.style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)'; ring.style.boxShadow = '0 0 48px rgba(245,158,11,0.35)'; } }
+  renderResultTable(CP.results);
+  toast(`Done — ${certs} certs, ${mails} emails`, 'success', 6000);
+}
+
+function renderResultTable(results) {
+  const tbody = document.getElementById('resultTbody'); if (!tbody) return;
+  tbody.innerHTML = results.map(r => {
+    const cb = r.certStatus==='success' ? `<span style="background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Generated</span>` : `<span style="background:var(--red-dim);color:var(--red);border:1px solid rgba(244,63,94,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Failed</span>`;
+    const mb = r.mailStatus==='sent' ? `<span style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Sent</span>` : r.mailStatus==='skipped' ? `<span style="color:var(--text-3);font-size:11.5px">Skipped</span>` : `<span style="color:var(--red);font-size:11.5px">Failed</span>`;
+    const cert = r.certLink ? `<a href="${r.certLink}" target="_blank" style="color:var(--cyan);font-size:12.5px;max-width:200px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.certLink}</a>` : '—';
+    return `<tr data-name="${r.name}" data-email="${r.email||''}"><td style="font-weight:600">${r.name}</td><td style="color:var(--text-2)">${r.email||'—'}</td><td>${cert}</td><td style="display:flex;gap:5px;flex-wrap:wrap">${cb}${mb}</td><td>${r.certLink?`<button class="ic-btn" onclick="copyToClipboard('${r.certLink}','Link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`:''}</td></tr>`;
+  }).join('');
+}
+
+function filterResultTable() { const q = document.getElementById('resultSearch').value.toLowerCase(); document.querySelectorAll('#resultTbody tr').forEach(tr => { tr.style.display = (!q || tr.dataset.name.toLowerCase().includes(q) || (tr.dataset.email||'').toLowerCase().includes(q)) ? '' : 'none'; }); }
+function downloadFullReport() { downloadCSV(CP.results.map(r => ({ Name:r.name, Email:r.email||'', 'Cert Status':r.certStatus, 'Email Status':r.mailStatus, 'Certificate Link':r.certLink||'', Error:r.error||'' })), `honourix-pipeline-${Date.now()}.csv`); }
+
+async function saveCampaignHistory(rec) { 
+  const mappings = getAllMappings();
+  const backupData = CP.results.map((r, i) => {
+    const original = CP.rows[i] || {};
+    const rowData  = { 'S.No': i + 1, 'Email': r.email || '' };
+    if (mappings.name && mappings.name !== mappings.email) {
+      rowData[mappings.name] = r.name || original[mappings.name] || '';
+    }
+    CP.customMappings.forEach(m => {
+      if (m.col && m.col !== mappings.email) rowData[m.col] = original[m.col] || '';
+    });
+    rowData['Certificate Link'] = r.certLink || '';
+    return rowData;
+  });
+
+  try {
+    await apiFetch('/api/campaigns', {
+      method: 'POST',
+      body: JSON.stringify({
+        name:        rec.name || 'Combined Campaign',
+        type:        'combined',
+        total_count: rec.total,
+        sent_count:  rec.success,
+        status:      rec.failed === 0 ? 'completed' : (rec.success > 0 ? 'partial' : 'failed'),
+        backup_data: backupData,
+      }),
+    });
+  } catch(e) {
+    console.error('Pipeline database save failed', e);
+  }
+}
+
+function resetAll() {
+  if (!confirm('Start a new campaign? Current results will be cleared.')) return;
+  CP.rows = []; CP.results = []; CP.headers = []; CP.customMappings = []; CP.sheetId = null;
+  ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null; ED.ready = false;
+  ME.blocks = []; ME.selectedId = null; ME.initialized = false;
+  ['cpName','sheetId','emailSubject','emailTemplate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['sheetLoadedMsg','fileLoadedMsg','manualLoadedMsg','hxFormLoadedMsg'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  document.getElementById('customMappings').innerHTML = '';
+  if (ME.cm) ME.cm.setValue('');
+  goStep(1, true);
+}
