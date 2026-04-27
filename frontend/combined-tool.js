@@ -1476,7 +1476,7 @@ async function launchPipeline() {
   const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
   const total = CP.rows.length;
   meSyncTextarea();
-  const htmlTmpl = document.getElementById('emailTemplate').value;
+  
   const campName = document.getElementById('cpName').value;
   const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
   const total = CP.rows.length;

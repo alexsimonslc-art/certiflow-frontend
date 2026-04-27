@@ -157,11 +157,60 @@ function msc_miniTextarea(label, value, oninput, placeholder) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   COLOUR HELPERS — per-block text colour pickers
+═══════════════════════════════════════════════════════════════ */
+
+/** Snapshot of theme defaults at call-time — used for Reset swatch fallback. */
+function msc_themeDefaults() {
+  const isDark = MSState.config.theme !== 'light';
+  return {
+    text:   isDark ? '#eef4ff' : '#1e293b',
+    sub:    isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)',
+    muted:  isDark ? 'rgba(255,255,255,0.3)'  : 'rgba(0,0,0,0.3)',
+    accent: MSState.config.accentColor || '#00d4ff',
+  };
+}
+
+/** Swatch + hex input + Reset row for a single block text-colour prop. */
+function msc_colorRow(bid, prop, label, defaultColor) {
+  const block = MSState.getBlock(bid);
+  const val   = (block?.props[prop]) || '';
+  const disp  = val || defaultColor || '#888888';
+  return `
+<div class="mse-prop-row" style="margin-bottom:6px">
+  <div class="mse-prop-label">${label}</div>
+  <div class="mse-color-row">
+    <div class="mse-color-swatch" style="background:${disp}">
+      <input type="color" value="${val || defaultColor || '#ffffff'}"
+        oninput="msc_set('${bid}','${prop}',this.value);this.parentNode.style.background=this.value;this.parentNode.nextElementSibling.value=this.value"/>
+    </div>
+    <input type="text" class="mse-prop-input" value="${val}" placeholder="Theme default" style="flex:1"
+      oninput="if(/^#[0-9a-f]{6}$/i.test(this.value)){msc_set('${bid}','${prop}',this.value);this.previousElementSibling.style.background=this.value}else if(!this.value.trim()){msc_set('${bid}','${prop}','')}"/>
+    <button onclick="msc_set('${bid}','${prop}','');this.previousElementSibling.value='';this.previousElementSibling.previousElementSibling.style.background='${disp}'"
+      style="padding:0 8px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font)">Reset</button>
+  </div>
+</div>`;
+}
+
+/** Wraps colour rows in a compact "Text Colours" labelled box. */
+function msc_colorSection(bid, fields) {
+  return `
+<div style="margin-top:4px;padding:10px 10px 4px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:9px">
+  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:5px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;flex-shrink:0"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 8v4l3 3"/></svg>
+    Text Colours
+  </div>
+  ${fields.map(([prop, label, def]) => msc_colorRow(bid, prop, label, def)).join('')}
+</div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    FULL renderBlockProps — overrides the one in mini-site-editor.html
 ═══════════════════════════════════════════════════════════════ */
 function renderBlockProps(block) {
   const p = block.props;
   const bid = block.id;
+  const td = msc_themeDefaults();
 
   switch (block.type) {
 
@@ -228,6 +277,10 @@ function renderBlockProps(block) {
     <div class="mse-toggle ${p.logoBorder !== false ? 'on' : ''}"
       onclick="msc_set('${bid}','logoBorder',${p.logoBorder === false});updateRightPanel()"></div>
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor',   'Site Name',  '#ffffff'],
+    ['taglineColor', 'Tagline',    'rgba(255,255,255,0.68)'],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
@@ -251,6 +304,10 @@ function renderBlockProps(block) {
         </svg></button>`).join('')}
     </div>
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor', 'Section Title', td.text],
+    ['textColor',  'Content Text',  td.sub],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
@@ -275,6 +332,11 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Announcement', `msc_addItem('${bid}','items',{id:'a${msc_uid()}',text:'New announcement',date:'',pinned:false})`)}
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor',    'Section Title', td.text],
+    ['itemTextColor', 'Item Text',     td.text],
+    ['itemDateColor', 'Item Date',     td.muted],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -336,6 +398,10 @@ function renderBlockProps(block) {
     <input class="mse-prop-input" type="url" value="${p.onlineLink || ''}" placeholder="https://meet.google.com/…"
       oninput="msc_set('${bid}','onlineLink',this.value)"/>
   </div>`}
+  ${msc_colorSection(bid, [
+    ['valueColor', 'Value Text',  td.text],
+    ['labelColor', 'Label Text',  td.muted],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
@@ -374,6 +440,12 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Person', `msc_addItem('${bid}','items',{id:'sp${msc_uid()}',name:'',role:'',photo:'',bio:''})`)}
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor', 'Section Title', td.text],
+    ['nameColor',  'Speaker Name',  td.text],
+    ['roleColor',  'Role / Title',  td.accent],
+    ['bioColor',   'Bio Text',      td.sub],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -394,6 +466,11 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Question', `msc_addItem('${bid}','items',{id:'q${msc_uid()}',question:'',answer:''})`)}
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor',    'Section Title', td.text],
+    ['questionColor', 'Question',      td.text],
+    ['answerColor',   'Answer',        td.sub],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -473,6 +550,10 @@ function renderBlockProps(block) {
     ${tiersHtml}
     ${msc_addBtn('Add Tier', `msc_addTier('${bid}')`)}
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor',    'Section Title', td.text],
+    ['tierNameColor', 'Tier Name',     td.muted],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -545,6 +626,10 @@ function renderBlockProps(block) {
     </div>
   </div>
 
+  ${msc_colorSection(bid, [
+    ['titleColor',    'Block Title', td.text],
+    ['subtitleColor', 'Subtitle',    td.sub],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -590,6 +675,11 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Document', `msc_addItem('${bid}','items',{id:'d${msc_uid()}',label:'',desc:'',url:'',linkType:'drive'})`)}
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor',     'Section Title', td.text],
+    ['itemLabelColor', 'Item Label',    td.text],
+    ['itemDescColor',  'Item Desc',     td.muted],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -638,6 +728,10 @@ function renderBlockProps(block) {
     `)).join('')}
     ${!atMax ? msc_addBtn('Add Video', `msc_addItem('${bid}','items',{id:'v${msc_uid()}',url:'',title:'',thumbnail:''})`) : ''}
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor',      'Section Title', td.text],
+    ['videoTitleColor', 'Video Title',   td.text],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -675,6 +769,9 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Social Link', `msc_addItem('${bid}','links',{id:'sl${msc_uid()}',platform:'instagram',url:''})`)}
   </div>
+  ${msc_colorSection(bid, [
+    ['titleColor', 'Section Title', td.text],
+  ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }

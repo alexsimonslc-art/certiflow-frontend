@@ -16,6 +16,7 @@ const BLOCK_REG = {
       logoImage: '', logoShape: 'circle', showLogo: true,
       siteName: '', tagline: '',
       bgColor: '#0a0f1e',
+      titleColor: '', taglineColor: '',
     }),
   },
 
@@ -26,6 +27,7 @@ const BLOCK_REG = {
       title: 'About This Event',
       content: 'Write a description of your event here. Tell people what to expect, who should attend, and why they should register.',
       alignment: 'center', bgColor: '',
+      titleColor: '', textColor: '',
     }),
   },
 
@@ -36,6 +38,7 @@ const BLOCK_REG = {
       title: 'Announcements',
       items: [{ id: 'a1', text: 'Registration is now open!', date: '', pinned: true }],
       bgColor: '',
+      titleColor: '', itemTextColor: '', itemDateColor: '',
     }),
   },
 
@@ -46,6 +49,7 @@ const BLOCK_REG = {
       date: '', time: '', endTime: '', timezone: 'IST',
       venueName: '', venueAddress: '', venueType: 'in-person',
       onlineLink: '', mapLink: '', bgColor: '',
+      valueColor: '', labelColor: '',
     }),
   },
 
@@ -55,6 +59,7 @@ const BLOCK_REG = {
     defaults: () => ({
       title: 'Speakers', layout: 'grid',
       items: [], bgColor: '',
+      titleColor: '', nameColor: '', roleColor: '', bioColor: '',
     }),
   },
 
@@ -68,6 +73,7 @@ const BLOCK_REG = {
         { id: 'q2', question: 'Is there a registration fee?', answer: 'Registration is completely free for all participants.' },
       ],
       bgColor: '',
+      titleColor: '', questionColor: '', answerColor: '',
     }),
   },
 
@@ -81,6 +87,7 @@ const BLOCK_REG = {
         { id: 't2', name: 'Co-Sponsor', items: [] },
       ],
       bgColor: '',
+      titleColor: '', tierNameColor: '',
     }),
   },
 
@@ -96,6 +103,7 @@ const BLOCK_REG = {
       connectUrl: '',
       hxFormId: '',
       bgColor: '',
+      titleColor: '', subtitleColor: '',
     }),
   },
 
@@ -105,6 +113,7 @@ const BLOCK_REG = {
     defaults: () => ({
       title: 'Resources',
       items: [], bgColor: '',
+      titleColor: '', itemLabelColor: '', itemDescColor: '',
     }),
   },
 
@@ -113,6 +122,7 @@ const BLOCK_REG = {
     desc: 'YouTube or Drive videos (max 2)',
     defaults: () => ({
       title: '', items: [], bgColor: '',
+      titleColor: '', videoTitleColor: '',
     }),
   },
 
@@ -121,6 +131,7 @@ const BLOCK_REG = {
     desc: 'Social media icons and follow links',
     defaults: () => ({
       title: 'Follow Us', links: [], bgColor: '',
+      titleColor: '',
     }),
   },
 
