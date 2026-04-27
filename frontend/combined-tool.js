@@ -357,59 +357,86 @@ function initCanvas() {
   canvas = document.getElementById('certCanvas');
   ctx = canvas.getContext('2d');
   fieldOverlay = document.getElementById('fieldOverlay');
-  
-  // Setup interactive wrap for panning and zooming
-  const wrap = document.getElementById('canvasWrap');
-  
-  // Mouse Wheel Zooming
-  wrap.addEventListener('wheel', (e) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const zoomStep = 0.05;
-      const newZoom = e.deltaY < 0 ? ED.zoom + zoomStep : ED.zoom - zoomStep;
-      setZoom(newZoom);
-    }
-  }, { passive: false });
 
-  // Spacebar Panning (Grab cursor)
-  window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+  const zone = document.getElementById('canvasWrap');
+  if (zone) {
+    // Mouse Wheel Zooming
+    zone.addEventListener('wheel', e => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.05 : -0.05;
+        setZoom((ED.zoom || 1) + delta);
+      }
+    }, { passive: false });
+
+    // Background Drag/Pan
+    let isPanning = false;
+    let startX, startY, scrollLeft, scrollTop;
+
+    zone.style.cursor = 'grab';
+
+    zone.addEventListener('mousedown', e => {
+      if (e.target === zone || e.target.id === 'certCanvas') {
+        isPanning = true;
+        zone.style.cursor = 'grabbing';
+        startX = e.pageX - zone.offsetLeft;
+        startY = e.pageY - zone.offsetTop;
+        scrollLeft = zone.scrollLeft;
+        scrollTop = zone.scrollTop;
+      }
+    });
+    zone.addEventListener('mousemove', e => {
+      if (!isPanning) return;
       e.preventDefault();
-      wrap.style.cursor = 'grabbing';
-      isPanning = true;
-    }
-  });
-  window.addEventListener('keyup', (e) => {
-    if (e.code === 'Space') {
-      wrap.style.cursor = 'grab';
+      const x = e.pageX - zone.offsetLeft;
+      const y = e.pageY - zone.offsetTop;
+      zone.scrollLeft = scrollLeft - (x - startX);
+      zone.scrollTop = scrollTop - (y - startY);
+    });
+    window.addEventListener('mouseup', () => {
       isPanning = false;
+      if (zone) zone.style.cursor = 'grab';
+    });
+  }
+
+  // Keyboard Shortcuts
+  document.addEventListener('keydown', e => {
+    if (CP.step !== 2) return;
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+    
+    // Zoom & Duplicate
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === '=' || e.key === '+') { e.preventDefault(); setZoom((ED.zoom || 1) + 0.1); return; }
+      if (e.key === '-') { e.preventDefault(); setZoom((ED.zoom || 1) - 0.1); return; }
+      if (e.key === '0') { e.preventDefault(); setZoom(1); return; }
+      if (e.key.toLowerCase() === 'd' && ED.selId) { e.preventDefault(); duplicateField(ED.selId); return; }
+    }
+    
+    // Nudge Movement
+    if (ED.selId) {
+      const f = ED.fields.find(x => x.id === ED.selId);
+      if (!f) return;
+      const step = e.shiftKey ? 1 : 0.1;
+      let moved = false;
+      
+      if (e.key === 'ArrowUp') { f.y -= step; moved = true; }
+      if (e.key === 'ArrowDown') { f.y += step; moved = true; }
+      if (e.key === 'ArrowLeft') { f.x -= step; moved = true; }
+      if (e.key === 'ArrowRight') { f.x += step; moved = true; }
+      if (e.key === 'Delete' || e.key === 'Backspace') { deleteField(ED.selId); return; }
+      
+      if (moved) {
+        e.preventDefault();
+        redraw();
+        const px = document.getElementById('pX'), py = document.getElementById('pY');
+        if (px) px.value = f.x.toFixed(1);
+        if (py) py.value = f.y.toFixed(1);
+        saveTemplate();
+      }
     }
   });
 
-  // Panning drag logic
-  wrap.addEventListener('mousedown', (e) => {
-    if (isPanning || e.button === 1) { // Spacebar or Middle-click
-      e.preventDefault();
-      isPanning = true;
-      wrap.style.cursor = 'grabbing';
-      startPanX = e.clientX;
-      startPanY = e.clientY;
-      scrollStartX = wrap.scrollLeft;
-      scrollStartY = wrap.scrollTop;
-    }
-  });
-  window.addEventListener('mousemove', (e) => {
-    if (isPanning && (e.buttons === 1 || e.buttons === 4)) {
-      wrap.scrollLeft = scrollStartX - (e.clientX - startPanX);
-      wrap.scrollTop = scrollStartY - (e.clientY - startPanY);
-    }
-  });
-  window.addEventListener('mouseup', () => {
-    if (isPanning && !document.hasFocus()) return; // Keep panning if space is still held
-    wrap.style.cursor = 'grab';
-    isPanning = false;
-  });
-
+  ED.ready = true;
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
 }
@@ -543,90 +570,115 @@ function redraw() {
 }
 
 function renderHandles() {
+  if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
   
-  // Create rotation tooltip if it doesn't exist
-  if (!document.getElementById('rotTooltip')) {
-    const tt = document.createElement('div');
-    tt.id = 'rotTooltip';
-    tt.className = 'tf-rot-tooltip';
-    document.body.appendChild(tt);
-  }
-
   ED.fields.forEach(f => {
-    const finalScale = ED.scale * ED.zoom;
-    const isSel = (f.id === ED.selId);
+    const cw = Math.round(ED.w * ED.scale);
+    const ch = Math.round(ED.h * ED.scale);
+    const x = (f.x / 100) * cw;
+    const y = (f.y / 100) * ch;
+    const w = (f.width / 100) * cw;
+    const fs = Math.max(6, f.fontSize * ED.scale);
     
-    const div = document.createElement('div');
-    div.className = 'tf-handle' + (isSel ? ' sel' : '');
-    div.id = 'field_' + f.id;
-    
-    // Position & Size based on canvas % and zoom
-    div.style.left = f.x + '%';
-    div.style.top = f.y + '%';
-    div.style.width = f.w + '%';
-    div.style.transform = `translate(-50%, -50%) rotate(${f.rotation || 0}deg)`;
-    
-    // Text Styling
-    div.style.fontFamily = getFontCSS(f.font);
-    div.style.fontSize = (f.size * finalScale) + 'px';
-    div.style.color = f.color;
-    div.style.letterSpacing = (f.spacing * finalScale) + 'px';
-    div.style.textAlign = f.align;
-    div.style.fontWeight = f.bold ? 'bold' : 'normal';
-    div.style.fontStyle = f.italic ? 'italic' : 'normal';
-    div.style.lineHeight = '1.2';
-    div.style.whiteSpace = 'pre-wrap';
-    div.style.wordBreak = 'break-word';
-    
-    // Text Content
-    div.textContent = f.preview || `[${f.ph}]`;
-    
-    // Selection events
-    div.onmousedown = (e) => {
-      if (e.target.closest('.tf-action-btn') || e.target.closest('.tf-resizer-corner') || e.target.closest('.tf-resizer-width') || e.target.closest('.tf-ctrl-btn')) return;
-      selectField(f.id);
-      startDrag(e, f.id);
-    };
-
-    if (isSel) {
-      // 1. Top Action Bar (Duplicate, Delete)
-      const actionBar = document.createElement('div');
-      actionBar.className = 'tf-action-bar';
-      actionBar.innerHTML = `
-        <div class="tf-action-btn" onclick="duplicateField('${f.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></div>
-        <div class="tf-action-btn del" onclick="deleteField('${f.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
-      `;
-      div.appendChild(actionBar);
-
-      // 2. Bottom Control Pill (Drag to move)
-      const ctrlPill = document.createElement('div');
-      ctrlPill.className = 'tf-ctrl-pill';
-      ctrlPill.innerHTML = `
-        <div class="tf-ctrl-btn" onmousedown="startDrag(event, '${f.id}')" title="Move"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="19 9 22 12 19 15"/><polyline points="9 19 12 22 15 19"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg></div>
-      `;
-      // Note: If you want rotation back, add a rotate button in this pill and hook up startRotate()
-      div.appendChild(ctrlPill);
-
-      // 3. Corner Resizers (Scale)
-      ['tl', 'tr', 'bl', 'br'].forEach(pos => {
-        const res = document.createElement('div');
-        res.className = `tf-resizer-corner ${pos}`;
-        res.onmousedown = (e) => startScale(e, f.id, pos);
-        div.appendChild(res);
-      });
-
-      // 4. Width Resizers (Left/Right)
-      ['left', 'right'].forEach(side => {
-        const wRes = document.createElement('div');
-        wRes.className = `tf-resizer-width ${side}`;
-        wRes.onmousedown = (e) => startWidthResize(e, f.id, side);
-        div.appendChild(wRes);
-      });
+    // Auto-calculate the bounding box height based on wrapped lines
+    const value = (f.column && CP.rows && CP.rows[0]) ? (CP.rows[0][f.column] || f.previewText || f.placeholder) : (f.previewText || f.placeholder);
+    ctx.save();
+    ctx.font = `${f.italic ? 'italic' : 'normal'} ${f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica')} ${fs}px ${getFontCSS(f.fontFamily || 'Helvetica')}`;
+    const ls = (f.letterSpacing || 0) * ED.scale;
+    const words = String(value).split(' ');
+    let linesCount = 1; let currentLine = words[0] || '';
+    for (let j = 1; j < words.length; j++) {
+      const testLine = currentLine + ' ' + words[j];
+      let testWidth = ctx.measureText(testLine).width;
+      if (ls > 0 && testLine.length > 1) testWidth += ls * (testLine.length - 1);
+      if (testWidth > w && currentLine !== '') { linesCount++; currentLine = words[j]; } 
+      else { currentLine = testLine; }
     }
+    ctx.restore();
 
-    fieldOverlay.appendChild(div);
+    const h = Math.round(fs * 1.3 * linesCount);
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+
+    const el = document.createElement('div');
+    el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
+    el.dataset.fid = f.id;
+    
+    // Core Positioning & Rotation Map
+    el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%, -50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
+
+    // 1. Top Action Bar (Duplicate & Delete)
+    const actionBar = document.createElement('div');
+    actionBar.className = 'tf-action-bar';
+    
+    const btnDup = document.createElement('div');
+    btnDup.className = 'tf-action-btn';
+    btnDup.title = "Duplicate";
+    btnDup.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+    btnDup.addEventListener('mousedown', e => { e.stopPropagation(); duplicateField(f.id); });
+    
+    const btnDel = document.createElement('div');
+    btnDel.className = 'tf-action-btn del';
+    btnDel.title = "Delete";
+    btnDel.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
+    btnDel.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
+    
+    actionBar.appendChild(btnDup);
+    actionBar.appendChild(btnDel);
+    el.appendChild(actionBar);
+
+    // 2. Bottom Control Pill (Move & Rotate)
+    const ctrlPill = document.createElement('div');
+    ctrlPill.className = 'tf-ctrl-pill';
+    
+    const btnMove = document.createElement('div');
+    btnMove.className = 'tf-ctrl-btn move';
+    btnMove.title = "Move";
+    btnMove.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="19 9 22 12 19 15"></polyline><polyline points="9 19 12 22 15 19"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>';
+    btnMove.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startDrag(e, f); });
+    
+    const btnRot = document.createElement('div');
+    btnRot.className = 'tf-ctrl-btn rot';
+    btnRot.title = "Rotate";
+    btnRot.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 2.63-6.37L21 8"></path></svg>';
+    btnRot.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startRotate(e, f); });
+    
+    ctrlPill.appendChild(btnMove);
+    ctrlPill.appendChild(btnRot);
+    el.appendChild(ctrlPill);
+
+    // 3. Dynamic Corners & Controllers
+    const isSmall = h < 40 || w < 80;
+
+    ['tl', 'tr', 'bl', 'br'].forEach(corner => {
+        const cEl = document.createElement('div');
+        cEl.className = `tf-resizer-corner ${corner}`;
+        if (isSmall && corner !== 'tl') cEl.style.opacity = '0'; 
+        cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
+        el.appendChild(cEl);
+    });
+
+    ['left', 'right'].forEach(side => {
+        const sEl = document.createElement('div');
+        sEl.className = `tf-resizer-width ${side}`;
+        if (isSmall && side !== 'right') sEl.style.opacity = '0'; 
+        sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
+        el.appendChild(sEl);
+    });
+
+    // Freeform Dragging Base
+    el.addEventListener('mousedown', e => { 
+        if (e.target === el) { 
+            e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
+        }
+    });
+    
+    fieldOverlay.appendChild(el);
   });
+  
+  // Triggers the Fields panel to update so you can click chips in the sidebar!
+  if (typeof renderChipList === 'function') renderChipList();
 }
 
 function startDrag(e, field) {
