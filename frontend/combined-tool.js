@@ -19,14 +19,25 @@ const CP = {
 
 const STEPS = ['Data & Campaign','Certificate Design','Field Mapping','Email Template','Review & Launch','Results'];
 
-/* ── Canvas state ────────────────────────────────────────────────── */
-let _canvas, _ctx, _overlay;
+/* ── /* ── Canvas Editor State ────────────────────────────────────────── */
+let canvas, ctx, fieldOverlay;
 const ED = {
   w: 1122, h: 794,
   bgImg: null, bgBase64: null, bgColor: '#ffffff',
-  fields: [], selId: null, scale: 1,
-  ready: false,
+  fields: [],
+  selId: null,
+  scale: 1,
+  zoom: 1,
 };
+
+function setZoom(val) {
+  ED.zoom = Math.max(0.1, Math.min(3, parseFloat(val)));
+  const zr = document.getElementById('canvasZoom');
+  if (zr) zr.value = ED.zoom;
+  const zl = document.getElementById('zoomLabel');
+  if (zl) zl.textContent = Math.round(ED.zoom * 100) + '%';
+  resizeCanvas();
+}
 
 /* ── Email Editor state ──────────────────────────────────────────── */
 const ME = {
@@ -48,9 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebar();
   buildStepper();
 
-  _canvas  = document.getElementById('certCanvas');
-  _ctx     = _canvas.getContext('2d');
-  _overlay = document.getElementById('fieldOverlay');
+  initCanvas();
 
   loadSavedTemplate();
   meBuildTemplatePicker();
@@ -341,72 +350,352 @@ function manualApplyData() {
   toast(`${CP.rows.length} participants ready`, 'success');
 }
 
+function initCanvas() {
+  _canvas      = document.getElementById('certCanvas');
+  _ctx         = _canvas.getContext('2d');
+  _overlay     = document.getElementById('fieldOverlay');
+  canvas       = _canvas;   // alias used by new functions
+  ctx          = _ctx;      // alias used by new functions
+  fieldOverlay = _overlay;  // alias used by new functions
+  ED.ready = true;
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  /* ── Mouse Wheel Zoom ── */
+  const zone = document.getElementById('canvasWrap');
+  if (zone) {
+    zone.addEventListener('wheel', e => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.05 : 0.05;
+        setZoom(ED.zoom + delta);
+      }
+    }, { passive: false });
+
+    /* ── Canvas Panning ── */
+    let isPanning = false, startX, startY, scrollLeft, scrollTop;
+    zone.style.cursor = 'grab';
+    zone.addEventListener('mousedown', e => {
+      if (e.target === zone || e.target.id === 'certCanvas') {
+        isPanning = true;
+        zone.style.cursor = 'grabbing';
+        startX = e.pageX - zone.offsetLeft;
+        startY = e.pageY - zone.offsetTop;
+        scrollLeft = zone.scrollLeft;
+        scrollTop  = zone.scrollTop;
+      }
+    });
+    zone.addEventListener('mousemove', e => {
+      if (!isPanning) return;
+      e.preventDefault();
+      zone.scrollLeft = scrollLeft - (e.pageX - zone.offsetLeft - startX);
+      zone.scrollTop  = scrollTop  - (e.pageY - zone.offsetTop  - startY);
+    });
+    window.addEventListener('mouseup', () => {
+      isPanning = false;
+      if (zone) zone.style.cursor = 'grab';
+    });
+  }
+
+  /* ── Pro Keyboard Shortcuts ── */
+  document.addEventListener('keydown', e => {
+    if (CP.step !== 2) return;
+    if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === '=') { e.preventDefault(); setZoom(ED.zoom + 0.1); return; }
+      if (e.key === '-') { e.preventDefault(); setZoom(ED.zoom - 0.1); return; }
+      if (e.key === '0') { e.preventDefault(); setZoom(1); return; }
+      if (e.key.toLowerCase() === 'd' && ED.selId) { e.preventDefault(); duplicateField(ED.selId); return; }
+    }
+    if (ED.selId) {
+      const f = ED.fields.find(x => x.id === ED.selId);
+      if (!f) return;
+      const step = e.shiftKey ? 1 : 0.1;
+      let moved = false;
+      if (e.key === 'ArrowUp')    { f.y -= step; moved = true; }
+      if (e.key === 'ArrowDown')  { f.y += step; moved = true; }
+      if (e.key === 'ArrowLeft')  { f.x -= step; moved = true; }
+      if (e.key === 'ArrowRight') { f.x += step; moved = true; }
+      if (e.key === 'Delete' || e.key === 'Backspace') { deleteField(ED.selId); return; }
+      if (moved) {
+        e.preventDefault();
+        redraw();
+        const px = document.getElementById('pX'), py = document.getElementById('pY');
+        if (px) px.value = f.x.toFixed(1);
+        if (py) py.value = f.y.toFixed(1);
+        saveTemplate();
+      }
+    }
+  });
+}
 /* ════════════════════════════════════════════════════════════════
    STEP 2 — CANVAS EDITOR
 ════════════════════════════════════════════════════════════════ */
 function resizeCanvas() {
-  const zone = document.getElementById('canvasZone');
+  const zone = document.getElementById('canvasWrap');
   if (!zone) return;
   const zw = zone.clientWidth, zh = zone.clientHeight;
   if (zw < 10) { setTimeout(resizeCanvas, 50); return; }
-  ED.scale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
+  const baseScale = Math.min((zw - 48) / ED.w, Math.max((zh - 48) / 200, 1 / ED.h));
+  ED.scale = baseScale * ED.zoom;
   const cw = Math.round(ED.w * ED.scale), ch = Math.round(ED.h * ED.scale);
-  const cont = document.getElementById('cContainer');
-  if (cont) { cont.style.width = cw + 'px'; cont.style.height = ch + 'px'; }
-  _canvas.width = cw; _canvas.height = ch;
+  const dpr  = window.devicePixelRatio || 1;
+  const cont = document.getElementById('canvasContainer');
+  if (cont) { cont.style.width = cw+'px'; cont.style.height = ch+'px'; }
+  canvas.style.width  = cw + 'px';
+  canvas.style.height = ch + 'px';
+  canvas.width  = Math.round(cw * dpr);
+  canvas.height = Math.round(ch * dpr);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
   ED.ready = true;
-  redrawCanvas();
+  redraw();
+}
+function redrawCanvas() {
+  const w = Math.round(ED.w * ED.scale), h = Math.round(ED.h * ED.scale);
+  ctx.clearRect(0, 0, w, h);
+  if (ED.bgImg) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(ED.bgImg, 0, 0, w, h);
+  } else {
+    ctx.fillStyle = ED.bgColor;
+    ctx.fillRect(0, 0, w, h);
+  }
+  ED.fields.forEach(f => {
+    const boxX = f.x / 100 * w, boxY = f.y / 100 * h, boxW = f.width / 100 * w;
+    const fs = Math.max(4, f.fontSize * ED.scale);
+    const ls = (f.letterSpacing || 0) * ED.scale;
+    const fw = f.bold   ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
+    const fi = f.italic ? 'italic' : 'normal';
+    const ff = getFontCSS(f.fontFamily || 'Helvetica');
+    const value = (f.column && CP.rows && CP.rows[0])
+      ? CP.rows[0][f.column] : (f.previewText || f.placeholder);
+    ctx.save();
+    ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
+    ctx.fillStyle   = f.color || '#1a1a1a';
+    ctx.textBaseline = 'top';
+    ctx.textAlign    = 'left';
+    /* ── Word-wrap engine ── */
+    const words = String(value).split(' ');
+    const lines = [];
+    let currentLine = words[0];
+    for (let j = 1; j < words.length; j++) {
+      const testLine = currentLine + ' ' + words[j];
+      let testWidth = ctx.measureText(testLine).width;
+      if (ls > 0) testWidth += ls * (testLine.length - 1);
+      if (testWidth > boxW && currentLine !== '') { lines.push(currentLine); currentLine = words[j]; }
+      else currentLine = testLine;
+    }
+    if (currentLine !== '') lines.push(currentLine);
+    if (lines.length === 0) lines.push('');
+    const numLines = lines.length;
+    const cx = boxX + boxW / 2, cy = boxY + fs * 1.3 * numLines / 2;
+    ctx.translate(cx, cy);
+    ctx.rotate((f.rotation || 0) * Math.PI / 180);
+    ctx.translate(-cx, -cy);
+    lines.forEach((line, i) => {
+      const drawY = boxY + i * fs * 1.3;
+      let textW = ctx.measureText(line).width;
+      if (ls > 0) textW += ls * (line.length - 1);
+      let drawX = boxX;
+      if (f.align === 'center') drawX = boxX + (boxW - textW) / 2;
+      else if (f.align === 'right') drawX = boxX + boxW - textW;
+      if (ls > 0 && line.length > 1) {
+        let drawCx = drawX;
+        for (const ch of line) { ctx.fillText(ch, drawCx, drawY); drawCx += ctx.measureText(ch).width + ls; }
+      } else {
+        ctx.fillText(line, drawX, drawY);
+      }
+    });
+    ctx.restore();
+  });
 }
 
-function redrawCanvas() {
-  if (!_ctx || !ED.ready) return;
-  const w = _canvas.width, h = _canvas.height;
-  _ctx.clearRect(0, 0, w, h);
-  if (ED.bgImg) _ctx.drawImage(ED.bgImg, 0, 0, w, h);
-  else { _ctx.fillStyle = ED.bgColor; _ctx.fillRect(0, 0, w, h); }
+function redraw() {
+  redrawCanvas();
   renderHandles();
 }
 
 function renderHandles() {
-  if (!_overlay || !ED.ready) return;
-  _overlay.innerHTML = '';
+  if (!fieldOverlay) return;
+  fieldOverlay.innerHTML = '';
   ED.fields.forEach(f => {
-    const cw = _canvas.width, ch = _canvas.height;
-    const x = (f.x / 100) * cw, y = (f.y / 100) * ch, w = (f.width / 100) * cw;
+    const cw = Math.round(ED.w * ED.scale), ch = Math.round(ED.h * ED.scale);
+    const x = f.x / 100 * cw, y = f.y / 100 * ch, w = f.width / 100 * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
-    const ls = ((f.letterSpacing || 0) * ED.scale).toFixed(2);
-    const ff = getFontCSS(f.fontFamily || 'Helvetica');
-    const fw = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
-    const fi = f.italic ? 'italic' : 'normal';
+    const ls = (f.letterSpacing || 0) * ED.scale;
+    const value = (f.column && CP.rows && CP.rows[0]) ? CP.rows[0][f.column] : (f.previewText || f.placeholder);
+    ctx.save();
+    ctx.font = `${f.italic ? 'italic' : 'normal'} ${f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica')}px ${getFontCSS(f.fontFamily || 'Helvetica')}`;
+    const words = String(value).split(' ');
+    let linesCount = 1, currentLine = words[0];
+    for (let j = 1; j < words.length; j++) {
+      const testLine = currentLine + ' ' + words[j];
+      let testWidth = ctx.measureText(testLine).width;
+      if (ls > 0) testWidth += ls * (testLine.length - 1);
+      if (testWidth > w && currentLine !== '') { linesCount++; currentLine = words[j]; }
+      else currentLine = testLine;
+    }
+    ctx.restore();
+    const h = Math.round(fs * 1.3 * linesCount);
+    const cx = x + w / 2, cy = y + h / 2;
+
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
-    el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;font-size:${fs}px;font-family:${ff};font-weight:${fw};font-style:${fi};color:${f.color||'#111'};text-align:${f.align||'left'};letter-spacing:${ls}px;line-height:1.2;`;
-    el.textContent = f.previewText || f.placeholder;
-    const del = document.createElement('div');
-    del.className = 'tf-del'; del.textContent = '×';
-    del.addEventListener('click', e => { e.stopPropagation(); deleteField(f.id); });
-    el.appendChild(del);
-    el.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f, el); });
-    _overlay.appendChild(el);
+    el.dataset.fid = f.id;
+    el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%,-50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
+
+    /* Action Bar — Duplicate + Delete */
+    const actionBar = document.createElement('div');
+    actionBar.className = 'tf-action-bar';
+    const btnDup = document.createElement('div');
+    btnDup.className = 'tf-action-btn';
+    btnDup.title = 'Duplicate';
+    btnDup.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    btnDup.addEventListener('mousedown', e => { e.stopPropagation(); duplicateField(f.id); });
+    const btnDel = document.createElement('div');
+    btnDel.className = 'tf-action-btn del';
+    btnDel.title = 'Delete';
+    btnDel.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+    btnDel.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
+    actionBar.appendChild(btnDup);
+    actionBar.appendChild(btnDel);
+    el.appendChild(actionBar);
+
+    /* Ctrl Pill — Move + Rotate */
+    const ctrlPill = document.createElement('div');
+    ctrlPill.className = 'tf-ctrl-pill';
+    const btnMove = document.createElement('div');
+    btnMove.className = 'tf-ctrl-btn move';
+    btnMove.title = 'Move';
+    btnMove.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="19 9 22 12 19 15"/><polyline points="9 19 12 22 15 19"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>`;
+    btnMove.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startDrag(e, f); });
+    const btnRot = document.createElement('div');
+    btnRot.className = 'tf-ctrl-btn rot';
+    btnRot.title = 'Rotate';
+    btnRot.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 2.63-6.37L21 8"/></svg>`;
+    btnRot.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startRotate(e, f); });
+    ctrlPill.appendChild(btnMove);
+    ctrlPill.appendChild(btnRot);
+    el.appendChild(ctrlPill);
+
+    /* Corner resizers */
+    const isSmall = (h < 40 || w < 80);
+    ['tl','tr','bl','br'].forEach(corner => {
+      const cEl = document.createElement('div');
+      cEl.className = `tf-resizer-corner ${corner}`;
+      if (isSmall && corner !== 'tr') cEl.style.opacity = '0';
+      cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
+      el.appendChild(cEl);
+    });
+
+    /* Side width resizers */
+    ['left','right'].forEach(side => {
+      const sEl = document.createElement('div');
+      sEl.className = `tf-resizer-width ${side}`;
+      if (isSmall && side !== 'right') sEl.style.opacity = '0';
+      sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
+      el.appendChild(sEl);
+    });
+
+    /* Base drag */
+    el.addEventListener('mousedown', e => {
+      if (e.target === el) { e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); }
+    });
+    fieldOverlay.appendChild(el);
   });
   renderChipList();
 }
 
-function startDrag(e, field, el) {
-  const sx = e.clientX, sy = e.clientY, sx0 = field.x, sy0 = field.y;
-  const onMove = ev => {
-    field.x = Math.max(0, Math.min(96, sx0 + ((ev.clientX - sx) / _canvas.width) * 100));
-    field.y = Math.max(0, Math.min(96, sy0 + ((ev.clientY - sy) / _canvas.height) * 100));
-    el.style.left = (field.x / 100 * _canvas.width) + 'px';
-    el.style.top  = (field.y / 100 * _canvas.height) + 'px';
+function startDrag(e, field) {
+  const startX = e.clientX, startY = e.clientY;
+  const startFieldX = field.x, startFieldY = field.y;
+  const dispW = Math.round(ED.w * ED.scale), dispH = Math.round(ED.h * ED.scale);
+  const mm = ev => {
+    field.x = startFieldX + (ev.clientX - startX) / dispW * 100;
+    field.y = startFieldY + (ev.clientY - startY) / dispH * 100;
+    redraw();
     if (field.id === ED.selId) {
       const px = document.getElementById('pX'), py = document.getElementById('pY');
-      if (px) { px.value = field.x.toFixed(1); py.value = field.y.toFixed(1); }
+      if (px) px.value = field.x.toFixed(1);
+      if (py) py.value = field.y.toFixed(1);
     }
   };
-  const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup', onUp);
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+}
+
+function startScale(e, field, corner = 'r') {
+  const startX  = e.clientX;
+  const startW  = field.width, startSize = field.fontSize;
+  const dispW   = Math.round(ED.w * ED.scale);
+  const mm = ev => {
+    let dx = ev.clientX - startX;
+    if (corner.includes('l')) dx = -dx;
+    const deltaPct   = dx / dispW * 100;
+    const scaleRatio = Math.max(0.1, (startW + deltaPct) / startW);
+    field.width    = startW    * scaleRatio;
+    field.fontSize = Math.max(8, Math.round(startSize * scaleRatio));
+    redraw();
+    if (field.id === ED.selId) {
+      const pW = document.getElementById('pW'); if (pW) pW.value = field.width.toFixed(1);
+      const pS = document.getElementById('pSize'); if (pS) pS.value = field.fontSize;
+      const pSV = document.getElementById('pSizeVal'); if (pSV) pSV.textContent = field.fontSize + 'px';
+    }
+  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+}
+
+function startWidthResize(e, field, side) {
+  const startX = e.clientX, startFieldX = field.x, startFieldW = field.width;
+  const dispW  = Math.round(ED.w * ED.scale);
+  const mm = ev => {
+    const dx = ev.clientX - startX, pctDelta = dx / dispW * 100;
+    if (side === 'right') {
+      field.width = Math.max(5, startFieldW + pctDelta);
+    } else {
+      const newW = Math.max(5, startFieldW - pctDelta);
+      if (newW > 5) { field.width = newW; field.x = startFieldX + pctDelta; }
+    }
+    redraw();
+    if (field.id === ED.selId) {
+      const pX = document.getElementById('pX'); if (pX) pX.value = field.x.toFixed(1);
+      const pW = document.getElementById('pW'); if (pW) pW.value = field.width.toFixed(1);
+    }
+  };
+  const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+}
+
+function startRotate(e, field) {
+  const handleEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
+  const rect = handleEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tf-rot-tooltip';
+  document.body.appendChild(tooltip);
+  const mm = ev => {
+    const angle = Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180 / Math.PI;
+    field.rotation = ((Math.round(angle + 90) % 360) + 360) % 360;
+    tooltip.textContent = field.rotation + '°';
+    tooltip.style.left  = ev.clientX + 15 + 'px';
+    tooltip.style.top   = ev.clientY - 35 + 'px';
+    tooltip.style.display = 'block';
+    redraw();
+  };
+  const mu = () => {
+    document.removeEventListener('mousemove', mm);
+    document.removeEventListener('mouseup', mu);
+    tooltip.remove();
+    saveTemplate();
+  };
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
 }
 
 const FONT_MAP = {
@@ -443,30 +732,49 @@ function getUsedFontUrls() {
   return used.filter(f => FONT_URLS[f]).map(f => FONT_URLS[f]);
 }
 
-function openAFModal()  { document.getElementById('afOverlay').classList.add('open'); }
+function openAFModal() {
+  const sel = document.getElementById('afColSelect');
+  if (sel) {
+    sel.innerHTML = '<option value="">— no column —</option>';
+    (CP.headers || []).forEach(h => {
+      const o = document.createElement('option'); o.value = h; o.textContent = h; sel.appendChild(o);
+    });
+  }
+  const afPrimary = document.getElementById('afPrimary');
+  if (afPrimary) afPrimary.checked = ED.fields.length === 0;
+  document.getElementById('afOverlay').classList.add('open');
+}
 function closeAFModal() { document.getElementById('afOverlay').classList.remove('open'); }
+function openAddFieldModal()  { openAFModal(); }
+function closeAddFieldModal() { closeAFModal(); }
 
 function addCanvasField() {
-  let ph = document.getElementById('afPh').value;
-  if (ph === 'custom') {
-    const c = document.getElementById('afCustom').value.trim();
-    if (!c) { toast('Enter a custom placeholder name', 'error'); return; }
-    ph = '{{' + c.replace(/[{}]/g, '') + '}}';
+  const colSel   = document.getElementById('afColSelect');
+  const phInput  = document.getElementById('afPh');
+  const col      = colSel ? colSel.value : '';
+  let   ph       = phInput ? phInput.value.trim() : '';
+  if (!ph && col) ph = col.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+  if (!ph) {
+    const custom = document.getElementById('afCustom');
+    if (custom) ph = custom.value.trim().replace(/\s+/g,'_');
   }
-  const previews = { '{{name}}':'John Smith','{{course}}':'Web Development','{{date}}':'March 2026','{{score}}':'95%','{{email}}':'john@example.com','{{org}}':'NIT Trichy' };
+  if (!ph) { toast('Enter a placeholder name', 'error'); return; }
+  const size      = parseInt(document.getElementById('afSize')?.value || document.getElementById('newFieldSize')?.value || '48', 10);
+  const isPrimary = document.getElementById('afPrimary')?.checked || false;
+  const previewText = (col && CP.rows && CP.rows[0]) ? CP.rows[0][col] : ph;
+  if (isPrimary) ED.fields.forEach(f => f.isPrimary = false);
   const field = {
-    id: 'f_' + Date.now(), placeholder: ph,
-    previewText: document.getElementById('afPreview').value.trim() || previews[ph] || ph.replace(/[{}]/g, ''),
-    x: 10, y: 10 + ED.fields.length * 15, width: 80,
-    fontSize: parseInt(document.getElementById('afSize').value, 10) || 48,
-    fontFamily: 'Helvetica', color: '#111111', align: 'center',
-    bold: false, italic: false, letterSpacing: 0,
+    id: 'f' + Date.now(), placeholder: ph, previewText, column: col || '',
+    isPrimary, x: 10, y: 10 + ED.fields.length * 15, width: 80,
+    fontSize: size, fontFamily: 'Helvetica', color: '#111111',
+    align: 'center', bold: false, italic: false, letterSpacing: 0, rotation: 0,
   };
   ED.fields.push(field);
   closeAFModal();
-  if (!ED.ready) requestAnimationFrame(() => requestAnimationFrame(() => { resizeCanvas(); selectField(field.id); }));
-  else selectField(field.id);
-  toast(`Added field: ${ph}`, 'success', 1800);
+  if (!ED.ready) { requestAnimationFrame(() => requestAnimationFrame(resizeCanvas)); }
+  selectField(field.id);
+  redraw();
+  toast(`Added "${ph}" field`, 'success', 1800);
 }
 
 function selectField(id) {
@@ -506,10 +814,32 @@ function updateFontPreview(name, bold, italic) {
 
 function deleteField(id) {
   ED.fields = ED.fields.filter(f => f.id !== id);
-  if (ED.selId === id) { ED.selId = null; const pe = document.getElementById('propsEmpty'), pf = document.getElementById('propsForm'); if (pe) pe.style.display = ''; if (pf) pf.style.display = 'none'; }
+  if (ED.selId === id) {
+    ED.selId = null;
+    const pe = document.getElementById('propsEmpty'), pf = document.getElementById('propsForm');
+    if (pe) pe.style.display = '';
+    if (pf) pf.style.display = 'none';
+  }
   renderHandles();
+  redrawCanvas();
+  saveTemplate();
 }
-function deleteSelField() { if (ED.selId) deleteField(ED.selId); }
+function deleteSelField()    { if (ED.selId) deleteField(ED.selId); }
+function deleteSelectedField(){ if (ED.selId) deleteField(ED.selId); }
+
+function duplicateField(id) {
+  const f = ED.fields.find(x => x.id === id);
+  if (!f) return;
+  const newF   = JSON.parse(JSON.stringify(f));
+  newF.id      = 'f' + Date.now();
+  newF.isPrimary = false;
+  newF.x       = Math.min(95, newF.x + 3);
+  newF.y       = Math.min(95, newF.y + 3);
+  ED.fields.push(newF);
+  selectField(newF.id);
+  redraw();
+  saveTemplate();
+}
 function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; renderHandles(); }
 function setFPFont(name) {
   const f = ED.fields.find(f => f.id === ED.selId);
@@ -536,22 +866,39 @@ function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) r
 function setAlign(a) { setFP('align', a); ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a === 'center' ? 'alC' : a === 'right' ? 'alR' : 'alL').classList.add('on'); }
 function switchEPTab(tab) { ['fields','props'].forEach(t => { document.getElementById(`epTab_${t}`).className = 'ep-tab' + (t === tab ? ' active' : ''); document.getElementById(`epPanel_${t}`).className = 'ep-panel' + (t === tab ? ' active' : ''); }); }
 function renderChipList() {
-  const el = document.getElementById('fieldChipList'); if (!el) return;
-  if (!ED.fields.length) { el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span></div>`; return; }
-  el.innerHTML = ED.fields.map(f => `<div class="fc-chip ${f.id === ED.selId ? 'sel' : ''}" onclick="selectField('${f.id}')"><div class="fc-dot" style="background:${f.color}"></div><span class="fc-name">${f.previewText || f.placeholder}</span><span class="fc-ph">${f.placeholder}</span></div>`).join('');
+  const el = document.getElementById('fieldChipList');
+  if (!el) return;
+  if (!ED.fields.length) {
+    el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br><span style="color:var(--cyan)">Click Add Field</span></div>`;
+    return;
+  }
+  el.innerHTML = ED.fields.map(f => `
+    <div class="fc-chip ${f.id === ED.selId ? 'sel' : ''}" onclick="selectField('${f.id}')">
+      <div class="fc-dot" style="background:${f.color}"></div>
+      <div style="flex:1;min-width:0">
+        <span class="fc-name">${f.previewText || f.placeholder}</span>
+        <span class="fc-ph">${f.placeholder}${f.column ? ` · ${f.column}` : ''}</span>
+      </div>
+      ${f.isPrimary ? `<span style="font-size:10px;font-weight:700;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.25);border-radius:4px;padding:1px 5px;flex-shrink:0">PRIMARY</span>` : ''}
+    </div>`).join('');
 }
 
-function uploadBG(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = ev => { const img = new Image(); img.onload = () => { ED.bgImg = img; ED.bgBase64 = ev.target.result; redrawCanvas(); toast('Background uploaded', 'success', 1800); }; img.src = ev.target.result; }; reader.readAsDataURL(file); }
-function changeBGColor() { ED.bgColor = document.getElementById('bgColor').value; if (!ED.bgImg) redrawCanvas(); }
-function clearBG() { ED.bgImg = null; ED.bgBase64 = null; document.getElementById('bgUpload').value = ''; redrawCanvas(); toast('Background cleared', 'info', 1800); }
-function changeSize() { const [w, h] = document.getElementById('canvasSize').value.split(',').map(Number); ED.w = w; ED.h = h; resizeCanvas(); }
-function clearCanvas() { ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null; const pe = document.getElementById('propsEmpty'), pf = document.getElementById('propsForm'); if (pe) pe.style.display = ''; if (pf) pf.style.display = 'none'; redrawCanvas(); toast('Canvas cleared', 'info', 1800); }
+function uploadBackground(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = ev => { const img = new Image(); img.onload = () => { ED.bgImg = img; ED.bgBase64 = ev.target.result; redrawCanvas(); toast('Background uploaded', 'success', 1800); }; img.src = ev.target.result; }; reader.readAsDataURL(file); }
+function changeBgColor() { ED.bgColor = document.getElementById('bgColor').value; if (!ED.bgImg) redrawCanvas(); }
+function clearBackground() { ED.bgImg = null; ED.bgBase64 = null; document.getElementById('bgUpload').value = ''; redrawCanvas(); toast('Background cleared', 'info', 1800); }
+function changeCanvasSize() { const [w, h] = document.getElementById('canvasSize').value.split(',').map(Number); ED.w = w; ED.h = h; resizeCanvas(); }
+function clearAll() { ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null; const pe = document.getElementById('propsEmpty'), pf = document.getElementById('propsForm'); if (pe) pe.style.display = ''; if (pf) pf.style.display = 'none'; redrawCanvas(); toast('Canvas cleared', 'info', 1800); }
 function saveTemplate() { localStorage.setItem('cf_cp_tmpl', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, bgBase64: ED.bgBase64, fields: ED.fields })); }
 function loadSavedTemplate() {
   const raw = localStorage.getItem('cf_cp_tmpl'); if (!raw) return;
   try { const t = JSON.parse(raw); ED.w = t.w || 1122; ED.h = t.h || 794; ED.bgColor = t.bgColor || '#ffffff'; ED.fields = (t.fields || []).map(f => ({ bold: false, italic: false, letterSpacing: 0, ...f })); if (t.bgBase64) { const img = new Image(); img.onload = () => { ED.bgImg = img; }; img.src = t.bgBase64; ED.bgBase64 = t.bgBase64; } if (t.fields?.length) toast('Previous template restored', 'info', 2200); } catch {}
 }
-
+/* ── Aliases so existing HTML onclick= still resolves ── */
+const uploadBG          = uploadBackground;
+const changeBGColor     = changeBgColor;
+const clearBG           = clearBackground;
+const changeSize        = changeCanvasSize;
+const clearCanvas       = clearAll;
 /* ════════════════════════════════════════════════════════════════
    STEP 3 — FIELD MAPPING
 ════════════════════════════════════════════════════════════════ */
