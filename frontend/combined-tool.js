@@ -1031,42 +1031,176 @@ const changeBGColor     = changeBgColor;
 const clearBG           = clearBackground;
 const changeSize        = changeCanvasSize;
 const clearCanvas       = clearAll;
+
 /* ════════════════════════════════════════════════════════════════
    STEP 3 — FIELD MAPPING
 ════════════════════════════════════════════════════════════════ */
-function buildStep3() {
+function populateStep3() {
   saveTemplate();
-  const opts = CP.headers.map(h => `<option value="${h}">${h}</option>`).join('');
-  ['mapName','mapEmail'].forEach(id => { const sel = document.getElementById(id); const cur = sel.value; sel.innerHTML = `<option value="">Select column…</option>${opts}`; if (cur) sel.value = cur; });
-  const ng = CP.headers.find(h => /name/i.test(h));
-  const eg = CP.headers.find(h => /email|mail/i.test(h));
-  if (ng && !document.getElementById('mapName').value) document.getElementById('mapName').value = ng;
-  if (eg && !document.getElementById('mapEmail').value) document.getElementById('mapEmail').value = eg;
-  document.querySelectorAll('.cp-col-sel').forEach(sel => { const cur = sel.value; sel.innerHTML = `<option value="">Sheet column…</option>${opts}`; if (cur) sel.value = cur; });
-  document.getElementById('colList').innerHTML = CP.headers.map(h => `<div class="col-pill"><span class="col-dot"></span>${h}</div>`).join('');
-  const tags = [...new Set(ED.fields.map(f => f.placeholder))].join(', ');
-  const df = document.getElementById('detectedFields'); if (df) df.textContent = tags || 'none';
+  buildStep3();
+  fnRefreshNamePill();
 }
 
-function addFMapping() {
-  const idx = CP.customMappings.length;
-  CP.customMappings.push({ col: '', ph: '' });
-  const opts = CP.headers.map(h => `<option value="${h}">${h}</option>`).join('');
-  const tagOpts = ED.fields.map(f => { const t = f.placeholder.replace(/[{}]/g, ''); return `<option value="${t}">${f.placeholder}</option>`; }).join('');
-  const row = document.createElement('div'); row.className = 'fm-row'; row.dataset.idx = idx;
-  row.innerHTML = `<select class="form-select cp-col-sel" style="flex:1" onchange="CP.customMappings[${idx}].col=this.value"><option value="">Sheet column…</option>${opts}</select><svg class="fm-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg><select class="form-select cp-col-sel" style="flex:1" onchange="CP.customMappings[${idx}].ph=this.value"><option value="">Template tag…</option>${tagOpts}</select><button class="fm-del" onclick="removeFMapping(${idx},this.closest('.fm-row'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
-  document.getElementById('customMappings').appendChild(row);
-  document.getElementById('noMappingsNote').style.display = 'none';
+function buildStep3() {
+  const rows  = document.getElementById('s3Rows');
+  const empty = document.getElementById('s3Empty');
+  const count = document.getElementById('s3FieldCount');
+  const emailSel = document.getElementById('s3EmailCol');
+
+  // Populate Email Column Dropdown (Crucial for Combined Pipeline)
+  if (emailSel && CP.headers) {
+    const currentEmail = emailSel.value;
+    emailSel.innerHTML = '<option value="">— Select Email Column —</option>' + 
+      CP.headers.map(h => `<option value="${h}" ${currentEmail === h ? 'selected' : ''}>${h}</option>`).join('');
+      
+    // Auto-select if we find a likely email column
+    if (!currentEmail) {
+        const likelyEmail = CP.headers.find(h => h.toLowerCase().includes('email'));
+        if (likelyEmail) emailSel.value = likelyEmail;
+    }
+  }
+
+  // Rebuild the column hint list on the right panel
+  const hints = (CP.headers || []).map(h => `
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--glass-border)">
+      <span style="width:7px;height:7px;background:var(--cyan);border-radius:50%;flex-shrink:0"></span>
+      <span style="font-size:14px;color:var(--text)">${h}</span>
+    </div>`).join('');
+  const ch = document.getElementById('colsListHint');
+  if (ch) ch.innerHTML = hints || '<span style="color:var(--text-3);font-size:13px">No columns loaded yet.</span>';
+
+  if (!ED.fields.length) {
+    if (rows)  rows.style.display  = 'none';
+    if (empty) empty.style.display = 'block';
+    if (count) count.textContent   = '0 fields';
+    buildStep3Writeback();
+    return;
+  }
+
+  if (empty) empty.style.display = 'none';
+  if (rows)  rows.style.display  = 'flex';
+  if (count) count.textContent   = `${ED.fields.length} field${ED.fields.length > 1 ? 's' : ''}`;
+
+  rows.innerHTML = ED.fields.map((f, i) => {
+    const isLast = i === ED.fields.length - 1;
+    const colOpts = `<option value="">— choose column —</option>${(CP.headers || []).map(h =>
+      `<option value="${h}" ${f.column === h ? 'selected' : ''}>${h}</option>`
+    ).join('')}`;
+
+    return `
+    <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:12px;padding:14px 18px;${!isLast ? 'border-bottom:1px solid var(--glass-border)' : ''}">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0">
+        <div style="width:8px;height:8px;border-radius:50%;background:${f.isPrimary ? 'var(--cyan)' : 'var(--glass-border)'};flex-shrink:0;transition:background 0.2s"></div>
+        <code style="font-family:var(--font-mono);font-size:13px;color:var(--cyan);background:rgba(0,212,255,0.08);padding:4px 10px;border-radius:6px;white-space:nowrap">${f.placeholder}</code>
+        ${f.isPrimary ? '<span style="font-size:10.5px;padding:2px 7px;background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.25);border-radius:12px;color:var(--cyan);font-weight:700;letter-spacing:.03em;flex-shrink:0">PRIMARY</span>' : ''}
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3);flex-shrink:0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <select class="form-select" style="font-size:13.5px;padding:9px 32px 9px 12px" onchange="s3ColChanged('${f.id}', this.value)">
+        ${colOpts}
+      </select>
+      <div title="Set as primary field (used for PDF filename)"
+        onclick="s3SetPrimary('${f.id}')"
+        style="width:32px;height:32px;border-radius:8px;border:1px solid ${f.isPrimary ? 'rgba(0,212,255,0.4)' : 'var(--glass-border)'};background:${f.isPrimary ? 'rgba(0,212,255,0.08)' : 'var(--glass)'};display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s;flex-shrink:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="${f.isPrimary ? 'var(--cyan)' : 'none'}" stroke="${f.isPrimary ? 'var(--cyan)' : 'var(--text-3)'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+    </div>`;
+  }).join('');
+
+  buildStep3Writeback();
 }
 
-function removeFMapping(idx, rowEl) { CP.customMappings.splice(idx, 1); if (rowEl) rowEl.remove(); if (!CP.customMappings.length) document.getElementById('noMappingsNote').style.display = 'flex'; }
-
-function getAllMappings() {
-  const m = { name: document.getElementById('mapName').value, email: document.getElementById('mapEmail').value };
-  CP.customMappings.filter(x => x.col && x.ph).forEach(x => { m[x.ph] = x.col; });
-  return m;
+function s3ColChanged(fieldId, colValue) {
+  const f = ED.fields.find(x => x.id === fieldId);
+  if (f) { f.column = colValue; if (typeof redraw === 'function') redraw(); }
 }
 
+function s3SetPrimary(fieldId) {
+  ED.fields.forEach(f => f.isPrimary = (f.id === fieldId));
+  buildStep3();
+  fnRefreshNamePill();
+}
+
+function buildStep3Writeback() {
+  const badge   = document.getElementById('s3WritebackBadge');
+  const desc    = document.getElementById('s3WritebackDesc');
+  const options = document.getElementById('s3WritebackOptions');
+  const isGS    = CP.srcType === 'sheets';
+
+  if (!badge || !desc) return;
+
+  if (isGS) {
+    badge.textContent = 'Active';
+    badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.25)';
+    desc.textContent = 'After generation, certificate links will be written back to your Google Sheet as a new column at the end of your data.';
+    if (options) options.style.display = 'block';
+  } else {
+    const srcLabel = CP.srcType === 'file' ? 'CSV/Excel upload' : CP.srcType === 'manual' ? 'manual entry' : CP.srcType === 'hxform' ? 'HX Form' : 'this source';
+    badge.textContent = 'N/A for this source';
+    badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--glass-border)';
+    desc.textContent = `Write-back is only available when data is imported via Google Sheets ID. You imported data via ${srcLabel}, so this option is not applicable.`;
+    if (options) options.style.display = 'none';
+  }
+}
+
+function validateStep3() {
+  const emailCol = document.getElementById('s3EmailCol')?.value;
+  if (!emailCol) {
+    toast('Please select the Email Delivery column.', 'error');
+    return;
+  }
+  CP.emailCol = emailCol;
+
+  const unmapped = ED.fields.filter(f => !f.column);
+  if (unmapped.length) {
+    toast(`Please map a column for: ${unmapped.map(f => f.placeholder).join(', ')}`, 'error');
+    return;
+  }
+  const hasPrimary = ED.fields.some(f => f.isPrimary);
+  if (ED.fields.length > 0 && !hasPrimary) {
+    toast('Please star (★) one field as Primary — it will be used for the PDF filename.', 'error');
+    return;
+  }
+  
+  CP.eventName = (document.getElementById('fnEventInput')?.value || '').trim();
+  goStep(4);
+}
+
+/* ── File Naming Logic ─────────────────────────────── */
+function fnRefreshNamePill() {
+  const primary = ED.fields.find(f => f.isPrimary);
+  const sampleName = primary && CP.rows && CP.rows[0]
+    ? (CP.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g,''))
+    : 'participant_name';
+  const pill = document.getElementById('fnNamePill');
+  if (pill) pill.textContent = sampleName;
+  fnUpdatePreview();
+}
+
+function fnUpdatePreview() {
+  const primary = ED.fields.find(f => f.isPrimary);
+  const sampleName = primary && CP.rows && CP.rows[0]
+    ? sanitizeFilename(CP.rows[0][primary.column] || 'Name')
+    : 'Name';
+  const eventInput = document.getElementById('fnEventInput');
+  const event = eventInput ? eventInput.value.trim() : '';
+  const eventPart = event ? '_' + sanitizeFilename(event) : '';
+  const preview = document.getElementById('fnPreviewText');
+  if (preview) preview.textContent = sampleName + eventPart + '_01.pdf';
+  const sep = document.getElementById('fnSepNum');
+  if (sep) sep.style.display = event ? 'none' : '';
+}
+
+function sanitizeFilename(str) {
+  return String(str).replace(/[^a-zA-Z0-9_\-\u0900-\u097F\u00C0-\u024F]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+}
+
+function buildOutputFilename(rowData, index) {
+  const primary = ED.fields.find(f => f.isPrimary);
+  const name = primary ? sanitizeFilename(rowData[primary.column] || 'cert') : 'cert';
+  const event = CP.eventName ? '_' + sanitizeFilename(CP.eventName) : '';
+  const num = String(index + 1).padStart(2, '0');
+  return `${name}${event}_${num}.pdf`;
+}
 /* ════════════════════════════════════════════════════════════════
    STEP 4 — EMAIL TEMPLATE (full editor ported from mail-tool.js)
 ════════════════════════════════════════════════════════════════ */
