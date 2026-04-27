@@ -399,7 +399,10 @@
       background: rgba(255,255,255,0.035) !important; backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.09) !important; border-radius: 16px;
       padding: 20px 22px; 
-      overflow: hidden !important; /* <--- This forces scrollbars to disappear */
+      /* Nuke Scrollbars */
+      overflow: hidden !important; 
+      overflow-y: hidden !important;
+      overflow-x: hidden !important;
       display: flex; flex-direction: column;
       position: relative;
     }
@@ -410,6 +413,9 @@
       display: none; align-items: center; gap: 10px; margin-bottom: 20px; 
       padding: 12px 18px; background: var(--glass); 
       border: 1px solid var(--glass-border-2); border-radius: 12px; 
+    }
+    #widgetModal .dbv-btn-primary {
+      border-radius: 9px !important;
     }
     .dbv-edit-toolbar.active { display: flex; animation: slideUp 0.3s var(--ease) both; }
     
@@ -1014,6 +1020,7 @@ Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
 Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
 /* ── DASHBOARD RENDERING & AUTO-GEN LOGIC ─────────────────────────────── */
+/* ── DASHBOARD RENDERING & AUTO-GEN LOGIC ─────────────────────────────── */
 function renderDashboard() {
   const rows    = _data?.rows    || [];
   const headers = _data?.headers || [];
@@ -1021,12 +1028,7 @@ function renderDashboard() {
   // 1. Initialize GridStack
   if (!_grid) {
     _grid = GridStack.init({
-      column: 12,
-      cellHeight: 80,
-      margin: 14,
-      staticGrid: true, 
-      animate: true,
-      minRow: 20 
+      column: 12, cellHeight: 80, margin: 14, staticGrid: true, animate: true, minRow: 20 
     }, '#dashGrid');
 
     _grid.on('resizestop', function(event, el) {
@@ -1035,30 +1037,33 @@ function renderDashboard() {
     });
   }
 
-  // 2. Load Layout safely (Bulletproof JSON parsing)
+  // 2. Load Layout safely
   let rawLayout = _data.layout || _data.config?.dashboard_layout;
   let layout = null;
   
   try {
     let parsed = typeof rawLayout === 'string' ? JSON.parse(rawLayout) : rawLayout;
-    
-    // Ensure we explicitly extract the array, regardless of how Supabase wrapped it
-    if (Array.isArray(parsed)) {
-      layout = parsed;
-    } else if (parsed && Array.isArray(parsed.layout)) {
-      layout = parsed.layout;
-    }
+    if (Array.isArray(parsed)) layout = parsed;
+    else if (parsed && Array.isArray(parsed.layout)) layout = parsed.layout;
   } catch(e) { console.warn("Layout parse error", e); }
   
-  // 3. AUTO-GENERATE LAYOUT (Strict check to guarantee an array)
+  // 🚨 THE SANITIZER: Cures poisoned database layouts instantly 🚨
+  if (Array.isArray(layout)) {
+    layout.forEach(w => {
+      // If the database accidentally saved a stat card as a bar chart, fix it!
+      if (w.field === 'total' || String(w.id).includes('stat_')) {
+        w.type = 'stat';
+      }
+    });
+  }
+
+  // 3. AUTO-GENERATE LAYOUT (If no layout exists)
   if (!Array.isArray(layout) || layout.length === 0) {
     layout = [];
     let currentY = 0;
 
-    // A. Always add the Total Responses Stat Card
     layout.push({ id: 'stat_1', type: 'stat', field: 'total', title: 'Total Responses', x: 0, y: currentY, w: 3, h: 2 });
     
-    // B. Always add Timeline if timestamps exist
     const tsIdx = headers.indexOf('Submitted At');
     if (tsIdx >= 0) {
       layout.push({ id: 'chart_tl', type: 'timeline', field: 'Submitted At', title: 'Submissions Over Time', x: 3, y: currentY, w: 9, h: 4 });
@@ -1067,34 +1072,19 @@ function renderDashboard() {
       currentY += 2; 
     }
 
-    // C. Auto-generate charts for all chartable fields
     const chartFields = (_data.fields || []).filter(f => 
       ['radio','dropdown','checkbox','number','linear_scale'].includes(f.type)
     );
 
     let currentX = 0;
     chartFields.forEach((field, index) => {
-      // Determine best chart type based on field type
       let defaultType = 'bar';
       if (field.type === 'radio' || field.type === 'dropdown') defaultType = 'doughnut';
       
-      layout.push({
-        id: 'auto_' + field.id, 
-        type: defaultType, 
-        field: field.label, 
-        title: field.label, 
-        x: currentX, 
-        y: currentY, 
-        w: 6, 
-        h: 4 
-      });
+      layout.push({ id: 'auto_' + field.id, type: defaultType, field: field.label, title: field.label, x: currentX, y: currentY, w: 6, h: 4 });
 
-      // Simple grid math to place them side-by-side
       currentX += 6;
-      if (currentX >= 12) {
-        currentX = 0;
-        currentY += 4;
-      }
+      if (currentX >= 12) { currentX = 0; currentY += 4; }
     });
   }
 
@@ -1154,13 +1144,13 @@ function renderWidgetContent(widget, rows, headers) {
 }
 
 /* ── SAVING LOGIC ───────────────────────────── */
+/* ── SAVING LOGIC ───────────────────────────── */
 async function saveLayout() {
   const btn = document.querySelector('#editToolbar .green');
   const ogText = btn.innerHTML;
   btn.innerHTML = 'Saving...';
   btn.disabled = true;
 
-  // 2. Safely extract configurations directly from the data attributes
   const layout = _grid.engine.nodes.map(n => {
     const itemEl = n.el;
     
@@ -1175,7 +1165,10 @@ async function saveLayout() {
       title = itemEl.querySelector('.dbv-chart-title')?.innerText || field;
     }
 
-    return { id: n.id, x: n.x, y: n.y, w: n.w, h: n.h, type, field, secondaryField, title };
+    // Fail-safe to ensure GridStack never drops the ID
+    const id = n.id || itemEl.getAttribute('gs-id');
+
+    return { id, x: n.x, y: n.y, w: n.w, h: n.h, type, field, secondaryField, title };
   });
 
   try {
@@ -1187,7 +1180,6 @@ async function saveLayout() {
     
     if(!res.ok) throw new Error((await res.json()).error || 'Failed to save');
     
-    // Update local cache so it survives a soft-refresh
     if (_data) {
        _data.layout = layout; 
        sessionStorage.setItem(`hxdb_${_formId}`, JSON.stringify(_data));

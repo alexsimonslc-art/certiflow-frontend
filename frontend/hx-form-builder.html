@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Form Builder — Honourix</title>
+  <title>Form Builder - Honourix</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -480,93 +480,104 @@
     }
 
     /* Add field section at bottom */
-    .hxfb-add-section {
+    /* ── Left panel tabs ─────────────────────────────────────────── */
+    .hxfb-left-tabs {
+      display: flex;
       flex-shrink: 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
 
-    .hxfb-add-trigger {
+    .hxfb-ltab {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      padding: 11px 14px;
-      font-size: 13px;
+      gap: 6px;
+      padding: 10px 6px;
+      font-size: 11.5px;
       font-weight: 600;
-      color: var(--cyan);
-      cursor: pointer;
-      transition: background 0.15s;
+      color: var(--text-3);
       background: none;
       border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
       font-family: var(--font);
-      width: 100%;
+      transition: all 0.15s;
+      letter-spacing: 0.2px;
     }
 
-    .hxfb-add-trigger:hover {
-      background: rgba(0, 212, 255, 0.05);
+    .hxfb-ltab:hover { color: var(--text-2); }
+
+    .hxfb-ltab.active {
+      color: var(--cyan);
+      border-bottom-color: var(--cyan);
     }
 
-    .hxfb-add-trigger svg {
-      width: 14px;
-      height: 14px;
-      transition: transform 0.25s;
-    }
-
-    .hxfb-add-trigger.open svg {
-      transform: rotate(45deg);
-    }
-
-    /* Type picker */
-    .hxfb-add-panel {
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height 0.3s var(--ease);
-    }
-
-    .hxfb-add-panel.open {
-      max-height: 320px;
-    }
-
-    .hxfb-type-grid {
+    .hxfb-left-body {
+      flex: 1;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-top: 14px;
+      min-height: 0;
     }
 
-    .hxfb-type-btn {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--glass-b);
+    .hxfb-left-body::-webkit-scrollbar { width: 3px; }
+    .hxfb-left-body::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+
+    /* ── Field type cards (Add tab) ──────────────────────────────── */
+    .hxfb-field-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      padding: 12px 10px;
+    }
+
+    .hxfb-field-card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 10px;
-      padding: 14px 16px;
+      padding: 14px 6px 11px;
       color: var(--text-2);
-      font-size: 13.5px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
-      gap: 14px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 8px;
+      transition: all 0.15s;
       font-family: var(--font);
-      text-align: left;
+      text-align: center;
+      line-height: 1.3;
     }
 
-    .hxfb-type-btn:hover {
-      background: rgba(0, 212, 255, 0.06);
+    .hxfb-field-card:hover {
+      background: rgba(0, 212, 255, 0.07);
       border-color: rgba(0, 212, 255, 0.3);
       color: var(--text);
-      transform: translateX(4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     }
 
-    .hxfb-type-btn svg {
-      width: 18px;
-      height: 18px;
+    .hxfb-field-card svg {
+      width: 20px;
+      height: 20px;
       color: var(--cyan);
-      opacity: 0.9;
+      opacity: 0.85;
       flex-shrink: 0;
     }
+
+    .hxfb-field-card.card-full {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: center;
+      padding: 11px 14px;
+      font-size: 12px;
+      gap: 9px;
+    }
+
+    .hxfb-field-card.card-full svg { width: 15px; height: 15px; }
 
     /*  CENTER: Interactive Preview  */
     .hxfb-center {
@@ -1813,91 +1824,80 @@
     <!-- ── 3-column layout ──────────────────────────────────────── -->
     <div class="hxfb-layout">
 
-      <!-- LEFT: Add Tools -->
+      <!-- LEFT: Fields + Add Field tabs -->
       <aside class="hxfb-left">
-        <div class="hxfb-layers-hdr" style="border-bottom:none;">
-          <span style="font-size:12px">Add Tools</span>
+        <!-- Tab bar -->
+        <div class="hxfb-left-tabs">
+          <button class="hxfb-ltab active" id="ltabFields" onclick="switchLTab('fields')">
+            Fields&nbsp;<span class="hxfb-layer-count" id="layerCount">0</span>
+          </button>
+          <button class="hxfb-ltab" id="ltabAdd" onclick="switchLTab('add')">+ Add Field</button>
         </div>
-        <div class="hxfb-add-panel open" id="addFieldPanel"
-          style="max-height: none; overflow-y: auto; flex:1; display:flex;">
-          <div class="hxfb-type-grid" style="grid-template-columns: repeat(2, 1fr); padding: 14px 10px;">
-            <button class="hxfb-type-btn" onclick="addField('text')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <polyline points="4 7 4 4 20 4 20 7" />
-                <line x1="9" y1="20" x2="15" y2="20" />
-                <line x1="12" y1="4" x2="12" y2="20" />
-              </svg>Short Text</button>
-            <button class="hxfb-type-btn" onclick="addField('textarea')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <line x1="17" y1="10" x2="3" y2="10" />
-                <line x1="21" y1="6" x2="3" y2="6" />
-                <line x1="21" y1="14" x2="3" y2="14" />
-                <line x1="17" y1="18" x2="3" y2="18" />
-              </svg>Paragraph</button>
-            <button class="hxfb-type-btn" onclick="addField('email')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94" />
-              </svg>Email</button>
-            <button class="hxfb-type-btn" onclick="addField('phone')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <path
-                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-              </svg>Phone</button>
-            <button class="hxfb-type-btn" onclick="addField('number')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <line x1="4" y1="9" x2="20" y2="9" />
-                <line x1="4" y1="15" x2="20" y2="15" />
-                <line x1="10" y1="3" x2="8" y2="21" />
-                <line x1="16" y1="3" x2="14" y2="21" />
-              </svg>Number</button>
-            <button class="hxfb-type-btn" onclick="addField('date')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>Date</button>
-            <button class="hxfb-type-btn" onclick="addField('time')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>Time</button>
-            <button class="hxfb-type-btn" onclick="addField('dropdown')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <path d="M3 9h18" />
-                <path d="M3 15h18" />
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>Dropdown</button>
-            <button class="hxfb-type-btn" onclick="addField('radio')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>Multiple Choice</button>
-            <button class="hxfb-type-btn" onclick="addField('checkbox')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <polyline points="9 11 12 14 22 4" />
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-              </svg>Checkboxes</button>
-            <button class="hxfb-type-btn" onclick="addField('file_upload')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <polyline points="16 16 12 12 8 16" />
-                <line x1="12" y1="12" x2="12" y2="21" />
-                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-              </svg>File Upload</button>
-            <button class="hxfb-type-btn" onclick="addField('linear_scale')"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <polygon
-                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>Rating Scale</button>
-            <button class="hxfb-type-btn" onclick="addField('section_break')"
-              style="grid-column:1/-1;flex-direction:row;justify-content:center;gap:7px;color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                style="width:13px;height:13px">
-                <rect x="3" y="3" width="18" height="7" rx="1" />
-                <rect x="3" y="14" width="18" height="7" rx="1" />
-              </svg>
+
+        <!-- Fields tab: draggable layer list -->
+        <div class="hxfb-left-body" id="ltabFieldsBody">
+          <div class="hxfb-layer-list" id="layerList"></div>
+        </div>
+
+        <!-- Add Field tab: card grid -->
+        <div class="hxfb-left-body" id="ltabAddBody" style="display:none">
+          <div class="hxfb-field-cards-grid">
+            <button class="hxfb-field-card" onclick="addField('text')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+              Short Text
+            </button>
+            <button class="hxfb-field-card" onclick="addField('textarea')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+              Paragraph
+            </button>
+            <button class="hxfb-field-card" onclick="addField('email')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+              Email
+            </button>
+            <button class="hxfb-field-card" onclick="addField('phone')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Phone
+            </button>
+            <button class="hxfb-field-card" onclick="addField('number')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+              Number
+            </button>
+            <button class="hxfb-field-card" onclick="addField('date')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Date
+            </button>
+            <button class="hxfb-field-card" onclick="addField('time')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Time
+            </button>
+            <button class="hxfb-field-card" onclick="addField('dropdown')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18"/><path d="M3 15h18"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+              Dropdown
+            </button>
+            <button class="hxfb-field-card" onclick="addField('radio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+              Multiple Choice
+            </button>
+            <button class="hxfb-field-card" onclick="addField('checkbox')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Checkboxes
+            </button>
+            <button class="hxfb-field-card" onclick="addField('file_upload')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              File Upload
+            </button>
+            <button class="hxfb-field-card" onclick="addField('linear_scale')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Rating Scale
+            </button>
+            <button class="hxfb-field-card card-full" onclick="addField('event_pass')"
+              style="color:#f59e0b;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+              Event Entry Pass
+            </button>
+            <button class="hxfb-field-card card-full" onclick="addField('section_break')"
+              style="color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg>
               Add New Page
             </button>
           </div>
@@ -2022,18 +2022,17 @@
       text: 'type', textarea: 'align-left', email: 'at-sign', phone: 'phone',
       number: 'hash', date: 'calendar', time: 'clock', dropdown: 'chevrons-up-down',
       radio: 'circle-dot', checkbox: 'check-square', file_upload: 'upload-cloud',
-      linear_scale: 'star', section_break: 'layout-template',
+      linear_scale: 'star', section_break: 'layout-template', event_pass: 'ticket',
     };
     const FIELD_LABELS = {
       text: 'Short Text', textarea: 'Paragraph', email: 'Email', phone: 'Phone',
       number: 'Number', date: 'Date', time: 'Time', dropdown: 'Dropdown',
       radio: 'Multiple Choice', checkbox: 'Checkboxes', file_upload: 'File Upload',
-      linear_scale: 'Rating Scale', section_break: 'Page Break',
+      linear_scale: 'Rating Scale', section_break: 'Page Break', event_pass: 'Entry Pass',
     };
 
     /* ── Runtime state ──────────────────────────────────────────────── */
     let selectedId = null;   // selected field id in layers
-    let addPanelOpen = false;
     let publishedUrl = null;
     let leaveTarget = 'hx-forms.html';
     let rightTab = 'field';
@@ -2072,12 +2071,9 @@
       requestAnimationFrame(() => {
         renderPreview();
         setSaveStatus('saved');
-        // If no fields yet, open the add panel
+        // If no fields yet, switch to the Add Field tab automatically
         if (!state.config.fields || !state.config.fields.length) {
-          // Don't toggle - just open it
-          addPanelOpen = true;
-          document.getElementById('addFieldPanel').classList.add('open');
-          document.getElementById('addTriggerBtn').classList.add('open');
+          switchLTab('add');
         }
       });
     })();
@@ -2102,7 +2098,7 @@
       const dot = document.getElementById('saveDot');
       const txt = document.getElementById('saveStatusTxt');
       dot.className = 'hxfb-save-dot' + (s === 'unsaved' ? ' unsaved' : s === 'saving' ? ' saving' : '');
-      txt.textContent = s === 'saved' ? 'Saved' : s === 'saving' ? 'Saving…' : 'Unsaved';
+      txt.textContent = s === 'saved' ? 'Saved' : s === 'saving' ? 'Saving...' : 'Unsaved';
     }
 
     function updateTopBar() {
@@ -2118,7 +2114,7 @@
 
       badge.style.display = isLive ? '' : 'none';
       if (isLive) {
-        badge.textContent = status === 'published' ? '● Published' : '● Closed';
+        badge.innerHTML = status === 'published' ? '<span style="color:#10b981">&#9679;</span> Published' : '<span style="color:#6b7280">&#9679;</span> Closed';
         badge.className = 'hxfb-status-badge ' + status;
       }
 
@@ -2316,25 +2312,31 @@
     }
 
     /* ── Add field panel ─────────────────────────────────────────────── */
-    function toggleAddPanel() {
-      addPanelOpen = !addPanelOpen;
-      document.getElementById('addFieldPanel').classList.toggle('open', addPanelOpen);
-      document.getElementById('addTriggerBtn').classList.toggle('open', addPanelOpen);
+    function switchLTab(tab) {
+      document.getElementById('ltabFields').classList.toggle('active', tab === 'fields');
+      document.getElementById('ltabAdd').classList.toggle('active', tab === 'add');
+      document.getElementById('ltabFieldsBody').style.display = tab === 'fields' ? '' : 'none';
+      document.getElementById('ltabAddBody').style.display = tab === 'add' ? '' : 'none';
     }
 
     function addField(type) {
+      if (type === 'event_pass' && (_S.config?.fields || []).some(f => f.type === 'event_pass')) {
+        toast('Only one Entry Pass per form is allowed.', 'warn'); return;
+      }
       const field = _S.addField(type);
       if (!field) return;
       selectedId = field.id;
       setSaveStatus('unsaved');
-      addPanelOpen = false;
-      document.getElementById('addFieldPanel').classList.remove('open');
-      document.getElementById('addTriggerBtn').classList.remove('open');
+      switchLTab('fields');
+      if (type === 'event_pass') {
+        if (!_S.config.settings) _S.config.settings = {};
+        _S.config.settings.passEnabled = true;
+        _S.save();
+      }
       renderLayers();
       switchRTab('field');
       renderRightPanel();
-      renderPreview(); // Full render since this is a structural add
-      // Smoothly scroll both the left layers list and the center canvas to the new field
+      renderPreview();
       requestAnimationFrame(() => {
         setTimeout(() => {
           document.getElementById('li-' + field.id)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -2381,6 +2383,7 @@
     ════════════════════════════════════════════════════════════════ */
     function fieldEditor(f, idx, total) {
       const id = f.id;
+      if (f.type === 'event_pass') return renderPassFieldEditor(f, idx, total);
       let html = `
       <div class="hxfb-prop" >
       <label class="hxfb-prop-label">Field Label</label>
@@ -2424,7 +2427,7 @@
       <div class="hxfb-prop" >
           <label class="hxfb-prop-label" style="display:flex;justify-content:space-between;align-items:center">
             Options
-            <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);font-size:10.5px">Label &nbsp;·&nbsp; Cap (seats)</span>
+            <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);font-size:10.5px">Label &nbsp;&middot;&nbsp; Cap (seats)</span>
           </label>
           <div class="hxfb-options-list">
             ${opts.map((o, i) => `
@@ -2878,7 +2881,7 @@
       <details${s.passEnabled ? ' open' : ''}>
         <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:4px 0;user-select:none">
           <div class="hxfb-settings-sec-title" style="margin-bottom:0">🎫 Entry Pass &amp; Attendance</div>
-          <span style="font-size:11px;color:var(--text-3)">${s.passEnabled ? '▲' : '▼'}</span>
+          <span style="font-size:11px;color:var(--text-3)">${s.passEnabled ? '&#9650;' : '&#9660;'}</span>
         </summary>
         <div style="padding-top:14px">
           <div class="hxfb-prop">
@@ -3178,6 +3181,8 @@
           <div style="display:flex; gap:10px;">${Array.from({length: f.max||5}, (_, i) => `<div style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(255,255,255,0.03);">${i+1}</div>`).join('')}</div>
           <span style="font-size:13px; color:var(--text-3); padding-bottom:6px">${escHtml(f.maxLabel || 'Excellent')}</span>
         </div>`;
+      } else if (f.type === 'event_pass') {
+        return renderPassCanvasCard(f, isSel);
       } else if (f.type === 'section_break') {
         return `<div class="hxfb-canvas-card ${isSel ? 'active' : ''}" onclick="selectLayer('${f.id}')" id="canvas-card-${f.id}" style="padding:0; overflow:hidden;">
           <div style="background:rgba(124,58,237,0.15); padding:10px 24px; border-bottom:1px solid rgba(124,58,237,0.3); color:#a78bfa; font-size:11px; font-weight:700; letter-spacing:1px">PAGE BREAK</div>
@@ -3242,7 +3247,7 @@
       }
 
       // Nav
-      const submitLabel = isLast ? (s.submitLabel || 'Submit') : 'Next →';
+      const submitLabel = isLast ? (s.submitLabel || 'Submit') : 'Next &rarr;';
       const backVisible = !isFirst;
       html += `<div class="hxfb-pv-nav">
     ${backVisible ? `<button class="hxfb-pv-back" onclick="pvShowPage(${_pv.page - 1})">← Back</button>` : ''}
@@ -3342,8 +3347,28 @@
           }
           break;
         case 'file_upload':
-          body = `<div class="hxfb-pv-upload">📎 Click to upload ${f.accept && f.accept !== '*' ? `(${f.accept})` : ''}<div style="font-size:11px;margin-top:3px">Max ${f.maxMB || 10} MB</div></div>`;
+          body = `<div class="hxfb-pv-upload">&#128206; Click to upload ${f.accept && f.accept !== '*' ? `(${f.accept})` : ''}<div style="font-size:11px;margin-top:3px">Max ${f.maxMB || 10} MB</div></div>`;
           break;
+        case 'event_pass': {
+          const bg = f.passBannerColor || '#12172a';
+          const tc = f.passTextColor || '#ffffff';
+          const ac = f.passAccentColor || '#00d4ff';
+          body = `<div style="border-radius:12px;overflow:hidden;background:${escAttr(bg)};color:${escAttr(tc)};font-size:13px;margin-top:6px">
+            <div style="height:6px;background:linear-gradient(90deg,${escAttr(ac)},#7c3aed)"></div>
+            <div style="padding:16px 18px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:2px;opacity:0.6;margin-bottom:8px">ENTRY PASS</div>
+              <div style="font-size:17px;font-weight:700;margin-bottom:6px">${escHtml(f.passEventName || 'Event Name')}</div>
+              ${f.passVenue ? `<div style="font-size:12px;opacity:0.7;margin-bottom:2px">&#128205; ${escHtml(f.passVenue)}</div>` : ''}
+              ${f.passDate || f.passTime ? `<div style="font-size:12px;opacity:0.7;margin-bottom:2px">&#128197; ${escHtml([f.passDate,f.passTime].filter(Boolean).join(' - '))}</div>` : ''}
+              <div style="border-top:1px solid rgba(255,255,255,0.12);margin:12px 0;padding-top:12px;display:flex;align-items:center;gap:14px">
+                <div style="width:64px;height:64px;background:rgba(255,255,255,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;font-family:monospace">&#9638;</div>
+                <div style="font-size:11px;opacity:0.6">${escHtml(f.passSubtitle || 'Present this pass at the venue entrance')}</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:6px;text-align:center">Your unique QR pass will be sent after submission</div>`;
+          return `<div class="hxfb-pv-field" id="pvf-${f.id}">${body}</div>`;
+        }
         default:
           body = `<input class="hxfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
       }
@@ -3446,13 +3471,13 @@
         return;
       }
       if (_S.status === 'closed') {
-        btn.disabled = true; btn.textContent = 'Reopening…';
+        btn.disabled = true; btn.textContent = 'Reopening...';
         try { await _S.reopen(); updateTopBar(); toast('Form is live again!', 'success'); }
         catch (e) { toast(e.message, 'error'); }
         btn.disabled = false; return;
       }
       btn.disabled = true;
-      btn.textContent = _S.status === 'published' ? 'Saving…' : 'Publishing…';
+      btn.textContent = _S.status === 'published' ? 'Saving...' : 'Publishing...';
       try {
         setSaveStatus('saving');
         const result = await _S.publish();
@@ -3494,7 +3519,7 @@
     function leaveNow() { closeLeaveModal(); window.location.href = leaveTarget; }
     async function saveAndLeave() {
       const btn = document.querySelector('#leaveModal .btn-primary');
-      btn.textContent = 'Saving…'; btn.disabled = true;
+      btn.textContent = 'Saving...'; btn.disabled = true;
       setSaveStatus('saving');
       await _S.saveToBackendNow();
       setSaveStatus('saved');
@@ -3565,7 +3590,7 @@
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
       if (s.passVenue) { ctx.fillText('📍 ' + s.passVenue, 24, cy); cy += 28; }
       if (s.passDate || s.passTime) {
-        const dt = [s.passDate, s.passTime].filter(Boolean).join('  ·  ');
+        const dt = [s.passDate, s.passTime].filter(Boolean).join('  &middot;  ');
         ctx.fillText('📅 ' + dt, 24, cy); cy += 28;
       }
 
@@ -3616,7 +3641,7 @@
         ctx.fillText('ENTRY RULES', 24, cy); cy += 20;
         ctx.font = '14px "Plus Jakarta Sans", sans-serif';
         ctx.fillStyle = 'rgba(255,255,255,0.65)';
-        rules.forEach(r => { ctx.fillText('• ' + r, 24, cy); cy += 20; });
+        rules.forEach(r => { ctx.fillText('* ' + r, 24, cy); cy += 20; });
       }
 
       // Bottom attendee strip
