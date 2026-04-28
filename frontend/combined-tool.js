@@ -122,8 +122,10 @@ function goStep(n, force = false) {
     if (typeof populateStep3 === 'function') populateStep3();
   }
   if (n === 4) {
-    // (We will build the Step 4 init next!)
-    if (typeof initStep4 === 'function') initStep4(); 
+    if (typeof initStep4 === 'function') initStep4();
+  }
+  if (n === 5) {
+    if (typeof buildReview === 'function') buildReview();
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1735,7 +1737,8 @@ function meCopyCode() { if (ME.cm) { navigator.clipboard.writeText(ME.cm.getValu
 
 function meUpdatePreview() {
   const frame = document.getElementById('mePreviewFrame'); if (!frame) return;
-  let html = (ME.cm && ME.activeTab === 'code') ? ME.cm.getValue() : meGetHtml();
+  // Use code editor content when in paste-code mode OR when code tab is active
+  let html = (ME.cm && (ME.mode === 'code' || ME.activeTab === 'code')) ? ME.cm.getValue() : meGetHtml();
   if (CP.rows && CP.rows.length) {
     html = html.replace(/\{\{(\w+)\}\}/g, function (_, key) {
       const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key);
@@ -2094,11 +2097,93 @@ function getFinalHtmlTmpl() {
 /* ════════════════════════════════════════════════════════════════
    STEP 5 — REVIEW
 ════════════════════════════════════════════════════════════════ */
+function personalise(tmpl, row, mappings) {
+  return (tmpl || '').replace(/\{\{(\w+)\}\}/g, (_, key) => {
+    if (mappings && mappings[key] && row[mappings[key]] != null) return row[mappings[key]];
+    if (row[key] != null) return row[key];
+    const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key);
+    return col ? (row[col] ?? '') : ('{{' + key + '}}');
+  });
+}
+
+let rvPrevIdx = 0;
+
+function rvRenderAt(idx) {
+  if (!CP.rows || !CP.rows.length) return;
+  idx = Math.max(0, Math.min(idx, CP.rows.length - 1));
+  rvPrevIdx = idx;
+  const n = CP.rows.length;
+  const navLabel = document.getElementById('rvEmailNavLabel');
+  if (navLabel) navLabel.textContent = `${idx + 1} / ${n}`;
+
+  const mappings = getAllMappings();
+  const row = CP.rows[idx];
+  const emailCol = mappings.email;
+  const subjectRaw = document.getElementById('emailSubject')?.value || '';
+
+  const toEl = document.getElementById('rvEmailTo');
+  const subEl = document.getElementById('rvEmailSubject');
+  if (toEl) toEl.textContent = (row[emailCol] || '—');
+  if (subEl) subEl.textContent = personalise(subjectRaw, row, mappings) || '—';
+
+  const htmlTmpl = getFinalHtmlTmpl();
+  const personHtml = personalise(htmlTmpl, row, mappings);
+  const frame = document.getElementById('rvEmailFrame');
+  if (frame) {
+    frame.srcdoc = personHtml;
+    // Auto-resize iframe after content loads
+    frame.onload = () => {
+      try {
+        const h = frame.contentDocument?.body?.scrollHeight;
+        if (h && h > 100) frame.style.minHeight = h + 'px';
+      } catch (_) {}
+    };
+  }
+
+  // Prev/next button states
+  const prevBtn = document.querySelector('[onclick="rvNavPrev()"]');
+  const nextBtn = document.querySelector('[onclick="rvNavNext()"]');
+  if (prevBtn) prevBtn.disabled = idx === 0;
+  if (nextBtn) nextBtn.disabled = idx === n - 1;
+}
+
+function rvNavPrev() { rvRenderAt(rvPrevIdx - 1); }
+function rvNavNext() { rvRenderAt(rvPrevIdx + 1); }
+
 function buildReview() {
   const n = CP.rows.length, mappings = getAllMappings(), camp = document.getElementById('cpName').value;
-  document.getElementById('rvParticipants').textContent = n;
-  document.getElementById('rvCerts').textContent = n;
-  document.getElementById('rvEmails').textContent = n;
+
+  // Stats row
+  const rvP = document.getElementById('rvParticipants');
+  const rvC = document.getElementById('rvCerts');
+  const rvE = document.getElementById('rvEmails');
+  if (rvP) rvP.textContent = n;
+  if (rvC) rvC.textContent = n;
+  if (rvE) rvE.textContent = n;
+
+  // Certificate preview
+  const certImg = document.getElementById('rvCertPreview');
+  const certFallback = document.getElementById('rvCertFallback');
+  const certEl = document.getElementById('certCanvas');
+  if (certEl) {
+    try {
+      const dataUrl = certEl.toDataURL('image/png');
+      if (certImg) { certImg.src = dataUrl; certImg.style.display = 'block'; }
+      if (certFallback) certFallback.style.display = 'none';
+    } catch (_) {
+      if (certImg) certImg.style.display = 'none';
+      if (certFallback) certFallback.style.display = 'flex';
+    }
+  } else {
+    if (certImg) certImg.style.display = 'none';
+    if (certFallback) certFallback.style.display = 'flex';
+  }
+
+  // Email preview — first recipient
+  rvPrevIdx = 0;
+  rvRenderAt(0);
+
+  // Config summary table
   const rows = [
     { k:'Campaign', v:camp }, { k:'Participants', v:String(n) },
     { k:'Data source', v:CP.sheetId ? `Sheet (${CP.sheetId.slice(0,18)}…)` : CP.srcType === 'manual' ? 'Manual entry' : 'Uploaded file' },
@@ -2106,11 +2191,13 @@ function buildReview() {
     { k:'Custom mappings', v:`${CP.customMappings.filter(m=>m.col&&m.ph).length} field(s)` },
     { k:'Certificate fields', v:`${ED.fields.length} text field(s)` },
     { k:'Canvas size', v:`${ED.w} × ${ED.h} px` },
-    { k:'Email subject', v:document.getElementById('emailSubject').value },
-    { k:'Write links back', v:document.getElementById('writeBackToggle').classList.contains('on') ? 'Yes' : 'No' },
+    { k:'Email subject', v:document.getElementById('emailSubject')?.value || '—' },
+    { k:'Write links back', v:document.getElementById('writeBackToggle')?.classList.contains('on') ? 'Yes' : 'No' },
   ];
-  document.getElementById('reviewDetailsEl').innerHTML = rows.map(r => `<div class="rv-row"><span class="rv-key">${r.k}</span><span class="rv-val">${r.v}</span></div>`).join('');
-  document.getElementById('runJobInfo').innerHTML = rows.slice(0, 3).map(r => `<div style="display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--glass-border)"><span style="color:var(--text-2)">${r.k}</span><strong style="color:var(--text)">${r.v}</strong></div>`).join('');
+  const detailsEl = document.getElementById('reviewDetailsEl');
+  if (detailsEl) detailsEl.innerHTML = rows.map(r => `<div class="rv-row"><span class="rv-key">${r.k}</span><span class="rv-val">${r.v}</span></div>`).join('');
+  const runJobEl = document.getElementById('runJobInfo');
+  if (runJobEl) runJobEl.innerHTML = rows.slice(0, 3).map(r => `<div style="display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--glass-border)"><span style="color:var(--text-2)">${r.k}</span><strong style="color:var(--text)">${r.v}</strong></div>`).join('');
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -2131,7 +2218,7 @@ async function launchPipeline() {
   
   const mappings = getAllMappings();
   const subject = document.getElementById('emailSubject').value;
-  const htmlTmpl = (ME.cm && ME.activeTab === 'code') ? ME.cm.getValue() : meGetHtml();
+  const htmlTmpl = getFinalHtmlTmpl();
   const campName = document.getElementById('cpName').value;
   const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
   const total = CP.rows.length;
