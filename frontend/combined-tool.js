@@ -1188,7 +1188,7 @@ function buildOutputFilename(rowData, index) {
    STEP 4 — EMAIL TEMPLATE (AI ENGINE)
 ════════════════════════════════════════════════════════════════ */
 
-// Initialize ME state if it doesn't exist
+// Initialize ME state
 if (typeof window.ME === 'undefined') {
   window.ME = { blocks: [], selectedId: null, nextId: 1, activeTab: 'visual', cm: null, cmDebounce: null, previewDevice: 'desktop', initialized: false };
 }
@@ -1312,7 +1312,6 @@ function meBackToGate() {
   document.getElementById('meStep2Nav').style.display = 'none';
   document.getElementById('meHeadActions').style.display = 'none';
   
-  // Close AI sidebar if open
   const panel = document.getElementById('galAiPanel');
   const fab = document.getElementById('galAiFab');
   if (panel && panel.classList.contains('open')) {
@@ -1328,8 +1327,14 @@ function meSelectTemplate(type) {
   document.getElementById('meEditorWrap').style.display = 'block';
   document.getElementById('meStep2Nav').style.display = 'flex';
   document.getElementById('meHeadActions').style.display = 'flex';
-  document.getElementById('meAiToggleBtn').style.display = (type === 'code') ? 'none' : 'flex';
-  document.getElementById('galAiFab').style.display = (type === 'code') ? 'none' : 'flex';
+  
+  const aiBtn = document.getElementById('meAiToggleBtn');
+  if (aiBtn) aiBtn.style.display = (type === 'code') ? 'none' : 'flex';
+  
+  const fab = document.getElementById('galAiFab');
+  if (fab) fab.style.display = (type === 'code') ? 'none' : 'flex';
+  
+  document.getElementById('meTabBarWrap').style.display = 'flex';
 
   if (type === 'blank') {
     ME.blocks = []; ME.selectedId = null;
@@ -1363,8 +1368,8 @@ function meInsertTag(tag) {
   if (ME.activeTab === 'code' && ME.cm) {
     ME.cm.replaceSelection(tag); ME.cm.focus(); return;
   }
-  if (meLastFocusedField && meLastFocusedField.id === 'mSubject') {
-    const el = document.getElementById('mSubject');
+  if (meLastFocusedField && meLastFocusedField.id === 'emailSubject') {
+    const el = document.getElementById('emailSubject');
     if (el) {
       const start = el.selectionStart, end = el.selectionEnd;
       el.value = el.value.substring(0, start) + tag + el.value.substring(end);
@@ -1376,17 +1381,19 @@ function meInsertTag(tag) {
   if (block && block.props.text !== undefined) {
     block.props.text += tag; meRenderVisual(); meRenderProps(block); meSyncToCode();
   } else {
-    toast('Select a text block to insert tag, or use Code view', 'info');
+    toast('Select a text block or the subject line to insert a tag.', 'info');
   }
 }
 
 function meSwitchTab(tab) {
   ME.activeTab = tab;
   ['visual', 'code', 'preview'].forEach(t => {
-    document.getElementById('meTab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
-    document.getElementById('me' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = (t === tab) ? (t === 'visual' ? 'grid' : 'block') : 'none';
+    const btn = document.getElementById('meTab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (btn) btn.classList.toggle('active', t === tab);
+    const panel = document.getElementById('me' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (panel) panel.style.display = (t === tab) ? (t === 'visual' ? 'grid' : 'block') : 'none';
   });
-  if (tab === 'code') { if (ME.cm) setTimeout(() => ME.cm.refresh(), 50); document.getElementById('meBtnApplyCode').style.display = 'none'; }
+  if (tab === 'code') { if (ME.cm) setTimeout(() => ME.cm.refresh(), 50); const ac = document.getElementById('meBtnApplyCode'); if(ac) ac.style.display = 'none'; }
   if (tab === 'preview') meUpdatePreview();
 }
 
@@ -1487,7 +1494,7 @@ function meSyncToCode() {
 }
 
 function meApplyCodeToVisual() {
-  document.getElementById('meBtnApplyCode').style.display = 'none';
+  const btn = document.getElementById('meBtnApplyCode'); if (btn) btn.style.display = 'none';
   toast('Code saved. Note: Direct code edits bypass visual blocks.', 'success');
 }
 
@@ -1526,7 +1533,7 @@ function meBlockToHtml(block, isEditor = false) {
   }
 }
 
-/* ── AI Engine & Floating FAB ── */
+/* ── AI Engine ── */
 function galAiToggle() {
   const panel = document.getElementById('galAiPanel');
   const fab = document.getElementById('galAiFab');
@@ -1541,7 +1548,7 @@ let meAiChatHistory = [];
 let meAiIsLoading = false;
 
 function meAiAppendBubble(role, content) {
-  const chat = document.getElementById('meAiChatBox') || document.getElementById('meAiChat');
+  const chat = document.getElementById('galAiChatBox');
   const greet = document.getElementById('galAiGreeting');
   if (greet) greet.style.display = 'none';
   if (!chat) return null;
@@ -1557,11 +1564,11 @@ function meAiAppendBubble(role, content) {
 }
 
 async function meAiSend() {
-  const input = document.getElementById('meAiInput');
+  const input = document.getElementById('galAiInput');
   if (!input || meAiIsLoading) return;
   const msg = input.value.trim(); if (!msg) return;
   input.value = ''; meAiIsLoading = true;
-  const btn = document.getElementById('meAiSendBtn');
+  const btn = document.getElementById('galAiSendBtn');
   if (btn) btn.disabled = true;
 
   meAiAppendBubble('user', msg);
@@ -1570,7 +1577,7 @@ async function meAiSend() {
 
   try {
     const token = localStorage.getItem('Honourix_token');
-    const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/generate-email', {
+    const response = await fetch('[https://certiflow-backend-73xk.onrender.com/api/ai/generate-email](https://certiflow-backend-73xk.onrender.com/api/ai/generate-email)', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ userMessage: msg, mode: ME.activeTab, htmlModeText: ME.cm ? ME.cm.getValue() : '', currentBlocks: ME.blocks, headers: CP.headers, chatHistory: meAiChatHistory.slice(-10), selectedBlockId: ME.selectedId }),
     });
