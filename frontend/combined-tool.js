@@ -2115,8 +2115,10 @@ function rvRenderAt(idx) {
   idx = Math.max(0, Math.min(idx, CP.rows.length - 1));
   rvPrevIdx = idx;
   const n = CP.rows.length;
-  const navLabel = document.getElementById('rvCertNavLabel');
-  if (navLabel) navLabel.textContent = `${idx + 1} / ${n}`;
+  const certNav = document.getElementById('rvCertNavLabel');
+  const emailNav = document.getElementById('rvEmailNavLabel');
+  if (certNav) certNav.textContent = `${idx + 1} / ${n}`;
+  if (emailNav) emailNav.textContent = `${idx + 1} / ${n}`;
 
   const mappings = getAllMappings();
   const row = CP.rows[idx];
@@ -2334,40 +2336,117 @@ async function launchPipeline() {
 
   let certsDone = 0, mailsDone = 0, failed = 0;
   CP.results = [];
-  setRunProgress(0, total, 'Starting up…');
+  setRunProgress(0, total, 'Initializing pipeline...');
+  
+  const logWin = document.getElementById('liveLog');
+  if (logWin) logWin.innerHTML = '';
   llLog('info', `Launching: ${campName} — ${total} participants`);
 
-  for (let i = 0; i < CP.rows.length; i++) {
-    const row = CP.rows[i], name = row[mappings.name] || `Person ${i + 1}`, email = row[mappings.email] || '';
-    setRunProgress(i, total, `Processing: ${name} (${i + 1}/${total})`);
-    let certLink = '';
-    try {
-      const participant = { ...row }; Object.entries(mappings).forEach(([ph, col]) => { participant[ph] = row[col] || ''; });
-      const certRes = await apiFetch('/api/certificates/generate', {
-        method: 'POST', body: JSON.stringify({
-          campaignName: campName, template: { width: ED.w, height: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64 || null, fields: ED.fields, fontUrls: getUsedFontUrls() },
-          participants: [participant], nameCol: mappings.name, emailCol: mappings.email, sheetId: writeBack ? CP.sheetId : null, writeBack, rowOffset: i,
-        })
-      });
-      const r0 = certRes?.results?.[0];
-      if (r0?.status === 'success') { certLink = r0.link || ''; certsDone++; llLog('cert', `Certificate saved: ${name}`); }
-      else throw new Error(r0?.error || 'Certificate generation failed');
-    } catch (e) {
-      failed++; llLog('err', `Cert failed for ${name}: ${e.message}`);
-      CP.results.push({ name, email, certLink: '', certStatus: 'failed', mailStatus: 'skipped', error: e.message });
-      setRunProgress(i + 1, total); updateRunCounts(certsDone, mailsDone, failed); continue;
+  const payload = {
+    campaignName: campName,
+    eventName: CP.eventName || '',
+    template: {
+      width: ED.w,
+      height: ED.h,
+      backgroundBase64: ED.bgBase64 || null,
+      bgColor: ED.bgColor,
+      fields: ED.fields.map(f => ({ ...f })),
+      fontUrls: getUsedFontUrls()
+    },
+    participants: CP.rows,
+    nameCol: mappings.name,
+    emailCol: mappings.email,
+    sheetId: writeBack ? CP.sheetId : null,
+    writeBack: writeBack,
+    fieldMappings: Object.keys(mappings).map(k => ({ ph: k, col: mappings[k] }))
+  };
+
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/certificates/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+       const errData = await response.json().catch(()=>({}));
+       throw new Error(errData.error || `HTTP Error ${response.status}`);
     }
-    try {
-      const personHtml = personalise(htmlTmpl, row, mappings).replace(/\{\{cert_link\}\}/gi, certLink);
-      const personSubj = personalise(subject, row, mappings);
-      await apiFetch('/api/mail/send-one', { method: 'POST', body: JSON.stringify({ to: email, subject: personSubj, html: personHtml }) });
-      mailsDone++; llLog('mail', `Email sent → ${email}`);
-    } catch (e) { failed++; llLog('err', `Email failed for ${name}: ${e.message}`); }
-    CP.results.push({ name, email, certLink, certStatus: 'success', mailStatus: mailsDone > certsDone - 1 ? 'sent' : 'failed' });
-    setRunProgress(i + 1, total); updateRunCounts(certsDone, mailsDone, failed);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    let processed = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // Keep the last partial line in the buffer
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const event = JSON.parse(line);
+
+          if (event.type === 'info') {
+            llLog('info', event.message);
+            document.getElementById('runStatus').textContent = event.message;
+          } 
+          else if (event.type === 'success' || event.type === 'error') {
+            processed++;
+            const r = event.result; // { name, email, link, status, error }
+            const row = CP.rows[processed - 1]; // Sequential alignment
+            const name = r.name || `Person ${processed}`;
+            const email = r.email || row[mappings.email] || '';
+
+            if (event.type === 'success') {
+              certsDone++;
+              llLog('cert', `✓ Certificate generated: ${name}`);
+              const certLink = r.link || '';
+
+              try {
+                const personHtml = personalise(htmlTmpl, row, mappings).replace(/\{\{Certificate Link\}\}/gi, certLink).replace(/\{\{cert_link\}\}/gi, certLink);
+                const personSubj = personalise(subject, row, mappings);
+                await apiFetch('/api/mail/send-one', { method: 'POST', body: JSON.stringify({ to: email, subject: personSubj, html: personHtml }) });
+                mailsDone++;
+                llLog('mail', `✉ Email sent → ${email}`);
+                CP.results.push({ name, email, certLink, certStatus: 'success', mailStatus: 'sent' });
+              } catch (e) {
+                failed++;
+                llLog('err', `✗ Email failed for ${name}: ${e.message}`);
+                CP.results.push({ name, email, certLink, certStatus: 'success', mailStatus: 'failed', error: e.message });
+              }
+            } else {
+              failed++;
+              llLog('err', `✗ Cert failed for ${name} — ${r.error}`);
+              CP.results.push({ name, email, certLink: '', certStatus: 'failed', mailStatus: 'skipped', error: r.error });
+            }
+
+            setRunProgress(processed, total, `Processing: ${name} (${processed}/${total})`);
+            updateRunCounts(certsDone, mailsDone, failed);
+          } 
+          else if (event.type === 'done') {
+            llLog('ok', event.message);
+          }
+        } catch(e) {
+          console.warn("Error parsing stream chunk:", e, line);
+        }
+      }
+    }
+  } catch (err) {
+    llLog('err', 'Pipeline execution stopped: ' + err.message);
+    toast('Failed: ' + err.message, 'error');
   }
+
   saveCampaignHistory({ name: campName, type: 'combined', date: new Date().toISOString(), total, success: certsDone, failed });
-  setTimeout(() => showDone(certsDone, mailsDone, failed, total), 700);
+  setTimeout(() => showDone(certsDone, mailsDone, failed, total), 800);
 }
 
 function setRunProgress(done, total, status) {
@@ -2411,14 +2490,18 @@ async function saveCampaignHistory(rec) {
   const mappings = getAllMappings();
   const backupData = CP.results.map((r, i) => {
     const original = CP.rows[i] || {};
-    const rowData = { 'S.No': i + 1, 'Email': r.email || '' };
-    if (mappings.name && mappings.name !== mappings.email) {
-      rowData[mappings.name] = r.name || original[mappings.name] || '';
-    }
-    CP.customMappings.forEach(m => {
-      if (m.col && m.col !== mappings.email) rowData[m.col] = original[m.col] || '';
+    const rowData = { 'S.No': i + 1 };
+    
+    ED.fields.forEach(f => {
+      if (f.column) rowData[f.column] = original[f.column] || '';
     });
+    
+    if (mappings.email && !rowData[mappings.email]) {
+       rowData[mappings.email] = r.email || original[mappings.email] || '';
+    }
+    
     rowData['Certificate Link'] = r.certLink || '';
+    rowData['Email Status'] = r.mailStatus || '';
     return rowData;
   });
 
