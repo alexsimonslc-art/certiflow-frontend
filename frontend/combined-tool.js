@@ -1325,6 +1325,9 @@ function meBackToGate() {
   if (fab) fab.classList.remove('visible');
   const panel = document.getElementById('galAiPanel');
   if (panel && panel.classList.contains('open')) galAiToggle();
+  // Restore all tabs (in case we came from paste-code mode)
+  const tv = document.getElementById('meTabVisual');
+  if (tv) tv.style.display = '';
 }
 
 function meSelectTemplate(type) {
@@ -1332,24 +1335,39 @@ function meSelectTemplate(type) {
   document.getElementById('meEditorWrap').style.display = 'flex';
   document.getElementById('meStep4Nav').style.display = 'flex';
   document.getElementById('meHeadActions').style.display = 'flex';
-  
-  const fab = document.getElementById('galAiFab');
-  if (fab) { if (type === 'code') fab.classList.remove('visible'); else fab.classList.add('visible'); }
-  document.getElementById('meTabBarWrap').style.display = 'flex';
 
   ME.mode = (type === 'code') ? 'code' : 'visual';
+  ME.codeEditable = (type === 'code'); // only paste-code template is editable
+
+  // Gal AI available for all template types
+  const fab = document.getElementById('galAiFab');
+  if (fab) fab.classList.add('visible');
+  document.getElementById('meTabBarWrap').style.display = 'flex';
+
+  // For paste-code mode, hide the Visual tab
+  const tabVisual = document.getElementById('meTabVisual');
+  if (tabVisual) tabVisual.style.display = (type === 'code') ? 'none' : '';
 
   if (type === 'blank') {
+    // Blank canvas — no preset blocks, code is view-only
     ME.blocks = []; ME.selectedId = null;
-    meAddBlock('logo'); meAddBlock('header'); meAddBlock('text'); meAddBlock('button');
+    if (ME.cm) ME.cm.setOption('readOnly', true);
     meSwitchTab('visual');
   } else if (type === 'code') {
+    // Paste Code — editable code editor, fresh/empty, no visual tab
     ME.blocks = [];
-    if (ME.cm && !ME.cm.getValue().trim()) ME.cm.setValue('\n\n');
+    if (ME.cm) { ME.cm.setValue(''); ME.cm.setOption('readOnly', false); }
+    meRenderCanvas();
     meSwitchTab('code');
+    return; // skip meSyncToCode below (editor is already empty)
   } else if (ME_TEMPLATES[type]) {
-    ME.blocks = ME_TEMPLATES[type].blocks.map(b => ({ id: 'b' + (ME.nextId++), type: b.type, props: JSON.parse(JSON.stringify(b.props)) }));
-    ME.selectedId = null; meSwitchTab('visual');
+    // Pre-built templates — visual editor, code is view-only
+    ME.blocks = ME_TEMPLATES[type].blocks.map(b => ({
+      id: 'b' + (ME.nextId++), type: b.type, props: JSON.parse(JSON.stringify(b.props))
+    }));
+    ME.selectedId = null;
+    if (ME.cm) ME.cm.setOption('readOnly', true);
+    meSwitchTab('visual');
   }
   meRenderCanvas(); meSyncToCode();
 }
@@ -1392,11 +1410,19 @@ function meSwitchTab(tab) {
   ME.activeTab = tab;
   ['visual', 'code', 'preview'].forEach(t => {
     const btn = document.getElementById('meTab' + t.charAt(0).toUpperCase() + t.slice(1));
-    if (btn) btn.classList.toggle('active', t === tab);
+    // Don't mark hidden tab (Visual in code mode) as active — just toggle visible tabs
+    if (btn && btn.style.display !== 'none') btn.classList.toggle('active', t === tab);
     const panel = document.getElementById('me' + t.charAt(0).toUpperCase() + t.slice(1));
     if (panel) panel.style.display = (t === tab) ? (t === 'visual' ? 'grid' : 'block') : 'none';
   });
-  if (tab === 'code') { if (ME.cm) setTimeout(() => ME.cm.refresh(), 50); const ac = document.getElementById('meBtnApplyCode'); if(ac) ac.style.display = 'none'; }
+  if (tab === 'code') {
+    if (ME.cm) setTimeout(() => ME.cm.refresh(), 50);
+    // Update bottom bar label based on editable state
+    const bar = document.querySelector('.me-code-apply-bar span');
+    if (bar) bar.textContent = ME.codeEditable
+      ? 'Type or paste your HTML here — Gal AI can write it for you ✨'
+      : 'View-only — use Copy Code to export, or switch to Visual to edit blocks';
+  }
   if (tab === 'preview') meUpdatePreview();
 }
 
@@ -2043,7 +2069,17 @@ async function meAiSend() {
     if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; meRenderCanvas(); meRenderProps(null); meSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); }
     else if (res.action === 'replace_html' && res.html && ME.cm) { ME.cm.setValue(res.html); document.getElementById('mHtmlTmpl').value = res.html; meAiAppendBubble('ai', res.message || 'Code updated.'); }
     else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); meSyncToCode(); meRenderCanvas(); if(ME.selectedId===b.id)meRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); }
-    else { meAiAppendBubble('ai', res.message || 'How else can I help?'); }
+    else {
+      const txt = res.message || 'How else can I help?';
+      meAiAppendBubble('ai', txt);
+      // In paste-code mode: if the message contains HTML markup, inject it into the editor
+      if (ME.mode === 'code' && ME.cm && /<[a-zA-Z][\s\S]*>/.test(txt)) {
+        const htmlMatch = txt.match(/```html\s*([\s\S]*?)```/) || txt.match(/(<!DOCTYPE[\s\S]*?<\/html>)/i) || txt.match(/(<html[\s\S]*?<\/html>)/i);
+        const htmlCode = htmlMatch ? (htmlMatch[1] || htmlMatch[0]) : txt;
+        ME.cm.setValue(htmlCode.replace(/^```html\s*/,'').replace(/\s*```$/,''));
+        document.getElementById('mHtmlTmpl').value = ME.cm.getValue();
+      }
+    }
   } catch (err) { if (typingEl) { clearInterval(typingEl.dataset.thinkTimer); typingEl.remove(); } meAiAppendBubble('ai', 'Error: ' + err.message); }
   finally { meAiIsLoading = false; if (btn) btn.disabled = false; }
 }
