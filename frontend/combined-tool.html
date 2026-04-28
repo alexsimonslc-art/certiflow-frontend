@@ -665,18 +665,67 @@
     .me-ai-suggestion-btn:hover { background: rgba(0,212,255,0.14); border-color: rgba(0,212,255,0.35); }
     .me-ai-suggestions { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
     /* FAB */
+    /* FAB toggle button — Animated Gradient Glass Capsule */
     .gal-ai-fab {
-      position: fixed; top: 16px; right: 20px; z-index: 501;
-      display: none; align-items: center; gap: 8px; padding: 9px 18px;
-      border-radius: 22px; background: linear-gradient(135deg,#00d4ff,#7c3aed);
-      border: none; color: #fff; font-size: 13px; font-weight: 700;
-      font-family: 'Plus Jakarta Sans',sans-serif; cursor: pointer; letter-spacing: 0.2px;
-      box-shadow: 0 4px 20px rgba(0,212,255,0.35); transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      z-index: 501;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 22px;
+      border-radius: 99px; /* Perfect Capsule */
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      
+      /* Dark glass inner with running gradient outer border */
+      border: 2px solid transparent;
+      background: 
+        linear-gradient(rgba(10, 14, 25, 0.95), rgba(10, 14, 25, 0.95)) padding-box,
+        linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff, #7c3aed) border-box;
+      background-size: 100% 100%, 300% 100%;
+      animation: galAiBorderPan 3s linear infinite;
+      
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
     }
-    .gal-ai-fab.visible { display: flex; }
-    .gal-ai-fab:hover { box-shadow: 0 6px 28px rgba(0,212,255,0.5); transform: translateY(-2px); }
-    .gal-ai-fab.panel-open { right: calc(var(--gal-width,380px) + 12px); border-radius: 10px; }
-    .gal-ai-fab svg { width: 15px; height: 15px; }
+
+    .gal-ai-fab.visible {
+      display: flex;
+    }
+
+    /* Keyframes to pan the border gradient smoothly */
+    @keyframes galAiBorderPan {
+      0% { background-position: 0% 0%, 0% 50%; }
+      100% { background-position: 0% 0%, 300% 50%; }
+    }
+
+    .gal-ai-fab:hover {
+      /* Cyan & Purple Neon Glow */
+      box-shadow: 
+        0 0 15px rgba(0, 212, 255, 0.5), 
+        0 0 30px rgba(124, 58, 237, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .gal-ai-fab:active {
+      transform: translateY(1px);
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+    }
+
+    .gal-ai-fab.panel-open {
+      right: calc(var(--gal-width, 380px) + 12px);
+    }
+
+    .gal-ai-fab svg {
+      width: 15px;
+      height: 15px;
+    }
     /* Old toggle button hidden — FAB replaces it */
     .me-ai-toggle { display: none !important; }
   </style>
