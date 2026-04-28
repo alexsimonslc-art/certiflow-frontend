@@ -675,10 +675,11 @@ async function loadUsage() {
     const total = tokIn + tokOut;
     
     // The exact cap to guarantee your Rs. 55 profit margin
+    // The exact cap to guarantee your Rs. 55 profit margin
     const cap = 860000; 
     const pct = Math.min(Math.round((total / cap) * 100), 100);
     
-    // 1. Update the new top boxy stat card
+    // 1. Update the new top boxy stat card (Keeps the accurate math)
     const aiPctCard = document.getElementById('uAiPct');
     if (aiPctCard) aiPctCard.textContent = pct + '%';
     
@@ -691,7 +692,13 @@ async function loadUsage() {
     // 3. Update the progress bar robustly
     const tokenBar = document.getElementById('uTokenBar');
     if (tokenBar) {
-      tokenBar.style.width = String(pct) + '%'; 
+      // UX FIX: If they have used ANY tokens, force the bar to be at least 4% wide visually
+      let visualPct = pct;
+      if (total > 0 && pct < 4) {
+        visualPct = 4; 
+      }
+      
+      tokenBar.style.width = String(visualPct) + '%'; 
       
       // Apply correct color classes
       if (pct > 95) {
