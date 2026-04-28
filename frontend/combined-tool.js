@@ -1238,14 +1238,16 @@ function initStep4() {
 }
 
 const ME_DEFS = {
-  logo: { label: 'Logo', defaults: () => ({ text: 'HONOURIX', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }) },
-  header: { label: 'Heading', defaults: () => ({ text: 'Your Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }) },
-  text: { label: 'Text', defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }) },
-  button: { label: 'Button', defaults: () => ({ text: 'Click Here', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 }) },
-  image: { label: 'Image', defaults: () => ({ src: '', alt: 'Image', width: 100, bgColor: '#f8fafc', paddingV: 20, paddingH: 40, borderRadius: 8 }) },
-  divider: { label: 'Divider', defaults: () => ({ color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 }) },
-  spacer: { label: 'Spacer', defaults: () => ({ height: 40, bgColor: '#ffffff' }) },
-  footer: { label: 'Footer', defaults: () => ({ text: 'Sent via Honourix.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) }
+  logo:    { label: 'Logo / Banner', defaults: () => ({ text: 'HONOURIX', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }) },
+  header:  { label: 'Heading',       defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }) },
+  text:    { label: 'Text',          defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }) },
+  button:  { label: 'Button',        defaults: () => ({ text: 'Click Here', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 }) },
+  image:   { label: 'Image',         defaults: () => ({ src: '', alt: 'Image', width: 100, bgColor: '#f8fafc', paddingV: 20, paddingH: 40, borderRadius: 8 }) },
+  divider: { label: 'Divider',       defaults: () => ({ color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 }) },
+  spacer:  { label: 'Spacer',        defaults: () => ({ height: 40, bgColor: '#ffffff' }) },
+  footer:  { label: 'Footer',        defaults: () => ({ text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) },
+  social:  { label: 'Social Links',  defaults: () => ({ platforms: [{ name: 'LinkedIn', url: '', icon: 'linkedin' }, { name: 'Twitter/X', url: '', icon: 'x' }, { name: 'Instagram', url: '', icon: 'instagram' }], bgColor: '#ffffff', align: 'center', paddingV: 20, paddingH: 40, iconSize: 32, style: 'plain', color: '#475569' }) },
+  table:   { label: 'Table',         defaults: () => ({ rows: 3, cols: 3, data: [['Header 1','Header 2','Header 3'],['Cell','Cell','Cell'],['Cell','Cell','Cell']], headerRow: true, borderWidth: 1, borderColor: '#e2e8f0', headerBg: '#f1f5f9', headerColor: '#1e293b', cellBg: '#ffffff', cellColor: '#475569', cellPadding: 10, fontSize: 14, bgColor: '#ffffff', paddingV: 20, paddingH: 40, width: '100%' }) },
 };
 
 const ME_TEMPLATES = {
@@ -1452,42 +1454,241 @@ function meRenderCanvas() {
 }
 
 function meRenderProps(block) {
-  const body = document.getElementById('mePropsBody'); if (!body) return;
+  const body = document.getElementById('mePropsBody');
+  if (!body) return;
   if (!block) {
-    body.innerHTML = `<div class="me-props-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Click any block to<br/>edit its properties</div></div>`;
+    body.innerHTML = `<div class="me-props-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>Click any block to<br/>edit its properties</div>
+    </div>`;
     return;
   }
   const p = block.props, rows = [];
-  if (['logo', 'header', 'text', 'footer'].includes(block.type)) rows.push(mePropTextarea('Text Content', block.id, 'text', p.text));
-  if (block.type === 'logo') rows.push(mePropText('Tagline', block.id, 'tagline', p.tagline));
-  if (block.type === 'button') { rows.push(mePropText('Button Text', block.id, 'text', p.text)); rows.push(mePropText('Link URL', block.id, 'link', p.link)); rows.push(mePropColor('Button BG', block.id, 'btnBg', p.btnBg)); rows.push(mePropColor('Text Color', block.id, 'btnColor', p.btnColor)); rows.push(mePropRange('Radius', block.id, 'borderRadius', p.borderRadius, 0, 40)); }
-  if (block.type === 'image') { rows.push(mePropText('Image URL', block.id, 'src', p.src)); rows.push(mePropRange('Width %', block.id, 'width', p.width, 20, 100)); }
-  if (block.type === 'divider') { rows.push(mePropColor('Color', block.id, 'color', p.color)); rows.push(mePropRange('Thickness', block.id, 'thickness', p.thickness, 1, 10)); }
-  if (block.type === 'spacer') rows.push(mePropRange('Height', block.id, 'height', p.height, 10, 100));
-  if (['logo', 'header', 'text', 'button', 'footer'].includes(block.type)) {
-    if (block.type !== 'button') rows.push(mePropColor('Text Color', block.id, 'color', p.color));
-    if (block.type !== 'logo') rows.push(mePropRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 40));
-    if (block.type !== 'image' && block.type !== 'divider' && block.type !== 'spacer') {
-      rows.push(`<div class="me-field"><label class="me-field-label">Alignment</label><div class="me-align-btns">
-        <button class="me-align-btn ${p.align === 'left' ? 'active' : ''}" onclick="meUpdateProp('${block.id}','align','left')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg></button>
-        <button class="me-align-btn ${p.align === 'center' ? 'active' : ''}" onclick="meUpdateProp('${block.id}','align','center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg></button>
-        <button class="me-align-btn ${p.align === 'right' ? 'active' : ''}" onclick="meUpdateProp('${block.id}','align','right')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="9" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg></button>
-      </div></div>`);
+
+  if (['logo', 'header', 'text', 'footer'].includes(block.type)) {
+    rows.push(meFieldTextarea('Text', block.id, 'text', p.text));
+    if (['header', 'text', 'footer'].includes(block.type)) {
+      rows.push(`<div class="me-field">
+        <div class="me-field-label">Formatting</div>
+        <div class="me-align-btns">
+          <button class="me-align-btn ${p.fontWeight >= 700 ? 'active' : ''}" title="Bold"
+            onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight >= 700 ? 400 : 700});this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach((b,i)=>{if(i===0)b.classList.toggle('active',${p.fontWeight < 700})})">
+            <strong style="font-size:13px">B</strong>
+          </button>
+          <button class="me-align-btn ${p.fontWeight === 600 ? 'active' : ''}" title="Semi-Bold"
+            onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight === 600 ? 400 : 600});this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach((b,i)=>{if(i===1)b.classList.toggle('active',${p.fontWeight !== 600})})">
+            <span style="font-size:13px;font-weight:600">S</span>
+          </button>
+          <button class="me-align-btn ${p.fontStyle === 'italic' ? 'active' : ''}" title="Italic"
+            onclick="meUpdateProp('${block.id}','fontStyle',${p.fontStyle === 'italic' ? "'normal'" : "'italic'"})">
+            <em style="font-size:13px">I</em>
+          </button>
+        </div>
+      </div>`);
     }
   }
-  rows.push(mePropColor('Background', block.id, 'bgColor', p.bgColor));
-  rows.push(mePropRange('Padding V', block.id, 'paddingV', p.paddingV, 0, 80));
-  body.innerHTML = `<div style="font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px">${(ME_DEFS[block.type] || {}).label || block.type}</div>` + rows.join('');
+  if (block.type === 'logo') rows.push(meFieldText('Tagline', block.id, 'tagline', p.tagline || ''));
+  if (block.type === 'button') {
+    rows.push(meFieldText('Button Text', block.id, 'text', p.text));
+    rows.push(meFieldText('Link / URL', block.id, 'link', p.link));
+    rows.push(meFieldColor('Button Color', block.id, 'btnBg', p.btnBg && p.btnBg.startsWith('linear') ? '#00d4ff' : p.btnBg));
+    rows.push(meFieldColor('Button Text Color', block.id, 'btnColor', p.btnColor));
+    rows.push(meFieldRange('Border Radius', block.id, 'borderRadius', p.borderRadius, 0, 40));
+    rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 28));
+  }
+  if (block.type === 'image') {
+    rows.push(meFieldText('Image URL', block.id, 'src', p.src));
+    rows.push(meFieldText('Alt Text', block.id, 'alt', p.alt));
+    rows.push(meFieldRange('Width %', block.id, 'width', p.width, 20, 100));
+    rows.push(meFieldRange('Border Radius', block.id, 'borderRadius', p.borderRadius, 0, 40));
+  }
+  if (block.type === 'divider') {
+    rows.push(meFieldColor('Line Color', block.id, 'color', p.color));
+    rows.push(meFieldRange('Thickness (px)', block.id, 'thickness', p.thickness, 1, 8));
+  }
+  if (block.type === 'social') {
+    const plats = ['LinkedIn', 'Twitter/X', 'Instagram', 'Facebook', 'YouTube', 'TikTok', 'Pinterest', 'GitHub', 'WhatsApp', 'Telegram', 'Discord', 'Snapchat'];
+    const currentPlatforms = p.platforms || [];
+    const platRows = currentPlatforms.map((pl, i) => `
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+        <select class="me-input" style="flex:0 0 110px;font-size:12px;padding:6px 8px" onchange="meSocialUpdatePlatform('${block.id}',${i},'name',this.value)">
+          ${plats.map(pt => `<option value="${pt}" ${pl.name === pt ? 'selected' : ''}>${pt}</option>`).join('')}
+        </select>
+        <input class="me-input" type="url" placeholder="https://..." value="${pl.url || ''}"
+          onfocus="meLastFocusedField={id:'${block.id}',key:'social_url_${i}',el:this}"
+          oninput="meSocialUpdatePlatform('${block.id}',${i},'url',this.value)" style="flex:1;font-size:12px;padding:6px 8px"/>
+        <button class="me-ctrl-btn del" onclick="meSocialRemovePlatform('${block.id}',${i})" style="width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`).join('');
+    rows.push(`<div class="me-field">
+      <div class="me-field-label">Platforms</div>
+      ${platRows}
+      <button class="btn btn-outline btn-sm" style="margin-top:4px;font-size:11px" onclick="meSocialAddPlatform('${block.id}')">+ Add Platform</button>
+    </div>`);
+    rows.push(`<div class="me-field">
+      <div class="me-field-label">Icon Style</div>
+      <div class="me-align-btns">
+        ${['plain', 'circle', 'square'].map(s => `<button class="me-align-btn ${p.style === s ? 'active' : ''}" onclick="meUpdateProp('${block.id}','style','${s}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
+      </div>
+    </div>`);
+    rows.push(meFieldRange('Icon Size', block.id, 'iconSize', p.iconSize || 32, 20, 60));
+    rows.push(meFieldAlign(block.id, p.align));
+  }
+  if (block.type === 'table') {
+    rows.push(`<div class="me-field">
+      <div class="me-field-label">Edit Cells</div>
+      <div style="overflow-x:auto;border:1px solid rgba(255,255,255,0.08);border-radius:8px;max-height:200px;overflow-y:auto">
+        <table style="border-collapse:collapse;width:max-content;min-width:100%">
+          ${(p.data||[]).map((row,ri) => `<tr>${row.map((cell,ci) => `
+            <td style="padding:3px"><input class="me-input" value="${(cell||'').replace(/"/g,'&quot;')}"
+              style="width:80px;font-size:12px;padding:5px 7px"
+              oninput="meTableUpdateCell('${block.id}',${ri},${ci},this.value)"/></td>`).join('')}</tr>`).join('')}
+        </table>
+      </div>
+    </div>`);
+    rows.push(`<div class="me-field"><div class="me-field-label">Size</div>
+      <div style="display:flex;gap:6px">
+        <div style="flex:1"><div style="font-size:10px;color:var(--text-3);margin-bottom:3px">Rows</div>
+          <input class="me-input" type="number" value="${p.rows}" min="1" max="20" style="font-size:13px;padding:6px 8px" oninput="meTableResize('${block.id}','rows',+this.value)"/></div>
+        <div style="flex:1"><div style="font-size:10px;color:var(--text-3);margin-bottom:3px">Cols</div>
+          <input class="me-input" type="number" value="${p.cols}" min="1" max="10" style="font-size:13px;padding:6px 8px" oninput="meTableResize('${block.id}','cols',+this.value)"/></div>
+      </div>
+    </div>`);
+    rows.push(`<div class="me-field"><div class="me-field-label">Header Row</div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" ${p.headerRow ? 'checked' : ''} onchange="meUpdateProp('${block.id}','headerRow',this.checked)" style="accent-color:var(--cyan)"/>
+        <span style="font-size:13px;color:var(--text-2)">First row is header</span>
+      </label></div>`);
+    rows.push(meFieldRange('Border Width', block.id, 'borderWidth', p.borderWidth, 0, 5));
+    rows.push(meFieldColor('Border Color', block.id, 'borderColor', p.borderColor));
+    rows.push(meFieldColor('Header Background', block.id, 'headerBg', p.headerBg));
+    rows.push(meFieldColor('Header Text', block.id, 'headerColor', p.headerColor));
+    rows.push(meFieldColor('Cell Background', block.id, 'cellBg', p.cellBg));
+    rows.push(meFieldColor('Cell Text', block.id, 'cellColor', p.cellColor));
+    rows.push(meFieldRange('Cell Padding', block.id, 'cellPadding', p.cellPadding, 4, 32));
+    rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 24));
+  }
+  if (block.type === 'spacer') rows.push(meFieldRange('Height (px)', block.id, 'height', p.height, 8, 120));
+
+  // Common props
+  if (['logo', 'header', 'text', 'button', 'footer'].includes(block.type)) {
+    rows.push(meFieldAlign(block.id, p.align));
+    if (['header', 'text', 'footer'].includes(block.type)) {
+      rows.push(meFieldColor('Text Color', block.id, 'color', p.color));
+      rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 48));
+    }
+    if (block.type === 'logo') {
+      rows.push(meFieldColor('Text Color', block.id, 'color', p.color));
+      rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 12, 40));
+    }
+  }
+  rows.push(meFieldColor('Background', block.id, 'bgColor', p.bgColor));
+  rows.push(meFieldRange('Padding Top/Bottom', block.id, 'paddingV', p.paddingV, 0, 80));
+  if (p.paddingH !== undefined) rows.push(meFieldRange('Padding Left/Right', block.id, 'paddingH', p.paddingH, 0, 80));
+
+  body.innerHTML = `<div class="me-props-body">
+    <div style="font-size:12px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">${(ME_DEFS[block.type]||{}).label||block.type}</div>
+    ${rows.join('')}
+  </div>`;
 }
 
-function mePropText(lbl, id, k, val) { return `<div class="me-field"><label class="me-field-label">${lbl}</label><input type="text" class="me-input" value="${(val || '').replace(/"/g, '&quot;')}" oninput="meUpdateProp('${id}','${k}',this.value)" onfocus="meLastFocusedField={id:'${id}', key:'${k}', el:this}"/></div>`; }
-function mePropTextarea(lbl, id, k, val) { return `<div class="me-field"><label class="me-field-label">${lbl}</label><textarea class="me-textarea" oninput="meUpdateProp('${id}','${k}',this.value)" onfocus="meLastFocusedField={id:'${id}', key:'${k}', el:this}">${(val || '').replace(/</g, '&lt;')}</textarea></div>`; }
-function mePropColor(lbl, id, k, val) { return `<div class="me-field"><label class="me-field-label">${lbl}</label><div class="me-color-row"><div class="me-color-swatch"><input type="color" value="${(val || '').startsWith('linear') ? '#ffffff' : val}" oninput="meUpdateProp('${id}','${k}',this.value)"/></div><input type="text" class="me-input" value="${val}" oninput="meUpdateProp('${id}','${k}',this.value)"/></div></div>`; }
-function mePropRange(lbl, id, k, val, min, max) { return `<div class="me-field"><div style="display:flex;justify-content:space-between"><label class="me-field-label">${lbl}</label><span id="mrv_${id}_${k}" style="font-size:11px;color:var(--cyan);font-family:var(--font-mono)">${val}</span></div><input type="range" class="me-range" min="${min}" max="${max}" value="${val}" oninput="document.getElementById('mrv_${id}_${k}').textContent=this.value;meUpdateProp('${id}','${k}',Number(this.value))"/></div>`; }
+function meFieldText(label, id, key, val) {
+  return `<div class="me-field"><div class="me-field-label">${label}</div>
+    <input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}"
+      onfocus="meLastFocusedField={id:'${id}',key:'${key}',el:this}"
+      oninput="meUpdateProp('${id}','${key}',this.value)"/></div>`;
+}
+function meFieldTextarea(label, id, key, val) {
+  return `<div class="me-field"><div class="me-field-label">${label}</div>
+    <textarea class="me-textarea" oninput="meUpdateProp('${id}','${key}',this.value)">${(val||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea></div>`;
+}
+function meFieldColor(label, id, key, val) {
+  return `<div class="me-field"><div class="me-field-label">${label}</div>
+    <div class="me-color-row">
+      <div class="me-color-swatch" style="background:${val||'#ffffff'}" id="swatch_${id}_${key}">
+        <input type="color" value="${val||'#ffffff'}"
+          oninput="document.getElementById('swatch_${id}_${key}').style.background=this.value;document.getElementById('hex_${id}_${key}').value=this.value;meUpdateProp('${id}','${key}',this.value)"/>
+      </div>
+      <input class="me-input" type="text" id="hex_${id}_${key}" value="${val||'#ffffff'}"
+        oninput="document.getElementById('swatch_${id}_${key}').style.background=this.value;meUpdateProp('${id}','${key}',this.value)" style="flex:1"/>
+    </div></div>`;
+}
+function meFieldRange(label, id, key, val, min, max) {
+  return `<div class="me-field">
+    <div class="me-field-label" style="display:flex;justify-content:space-between">${label} <span id="rv_${id}_${key}" style="color:var(--cyan)">${val}</span></div>
+    <input class="me-range" type="range" min="${min}" max="${max}" value="${val}" oninput="document.getElementById('rv_${id}_${key}').textContent=this.value;meUpdateProp('${id}','${key}',Number(this.value))"/></div>`;
+}
+function meFieldAlign(id, val) {
+  const opts = [
+    ['left','<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>'],
+    ['center','<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/>'],
+    ['right','<line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="21" y2="6"/><line x1="21" y1="14" x2="21" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/>'],
+  ];
+  return `<div class="me-field"><div class="me-field-label">Alignment</div>
+    <div class="me-align-btns">
+      ${opts.map(([a,svg]) => `<button class="me-align-btn ${val===a?'active':''}" onclick="meUpdateProp('${id}','align','${a}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">${svg}</svg>
+      </button>`).join('')}
+    </div></div>`;
+}
 
-function meUpdateProp(id, key, val) {
-  const b = ME.blocks.find(x => x.id === id); if (!b) return;
-  b.props[key] = val; meRenderCanvas(); meSyncToCode();
+function meUpdateProp(id, key, value) {
+  const block = ME.blocks.find(b => b.id === id);
+  if (!block) return;
+  block.props[key] = value;
+  const inner = document.querySelector(`.me-block-wrap[data-id="${id}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  clearTimeout(ME._propSyncTimer);
+  ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+
+function meSocialAddPlatform(blockId) {
+  const block = ME.blocks.find(b => b.id === blockId); if (!block) return;
+  block.props.platforms = block.props.platforms || [];
+  block.props.platforms.push({ name: 'LinkedIn', url: '' });
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  meRenderProps(block);
+  clearTimeout(ME._propSyncTimer); ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+function meSocialRemovePlatform(blockId, idx) {
+  const block = ME.blocks.find(b => b.id === blockId); if (!block) return;
+  block.props.platforms.splice(idx, 1);
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  meRenderProps(block);
+  clearTimeout(ME._propSyncTimer); ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+function meSocialUpdatePlatform(blockId, idx, field, val) {
+  const block = ME.blocks.find(b => b.id === blockId); if (!block) return;
+  block.props.platforms[idx][field] = val;
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  clearTimeout(ME._propSyncTimer); ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+function meTableUpdateCell(blockId, ri, ci, val) {
+  const block = ME.blocks.find(b => b.id === blockId); if (!block) return;
+  block.props.data[ri][ci] = val;
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  clearTimeout(ME._propSyncTimer); ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
+}
+function meTableResize(blockId, dim, val) {
+  const block = ME.blocks.find(b => b.id === blockId); if (!block || val < 1) return;
+  const d = block.props.data;
+  if (dim === 'rows') {
+    block.props.rows = val;
+    while (d.length < val) d.push(Array(block.props.cols).fill(''));
+    while (d.length > val) d.pop();
+  } else {
+    block.props.cols = val;
+    d.forEach(row => { while (row.length < val) row.push(''); while (row.length > val) row.pop(); });
+  }
+  const inner = document.querySelector(`.me-block-wrap[data-id="${blockId}"] .me-block-inner`);
+  if (inner) inner.innerHTML = meBlockToHtml(block);
+  meRenderProps(block);
+  clearTimeout(ME._propSyncTimer); ME._propSyncTimer = setTimeout(() => meSyncToCode(), 300);
 }
 
 function meSyncToCode() {
@@ -1540,17 +1741,65 @@ function meGetHtmlFromBlocks(blocks) {
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet"/></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:'Plus Jakarta Sans',sans-serif"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:32px 16px"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><tr><td>${inner}</td></tr></table></td></tr></table></body></html>`;
 }
 function meGetHtml() { return meGetHtmlFromBlocks(ME.blocks); }
-function meBlockToHtml(block, isEditor = false) {
-  const p = block.props, fs = "'Plus Jakarta Sans',sans-serif";
+function meBlockToHtml(block) {
+  const p = block.props;
+  const fs = "'Montserrat','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
   switch (block.type) {
-    case 'logo': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fs}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fs}">${p.tagline}</div>` : ''}</div>`;
-    case 'header': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fs}">${p.text}</h1></div>`;
-    case 'text': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fs}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
-    case 'button': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fs}">${p.text}</a></div>`;
-    case 'image': return p.src ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt}" style="width:${p.width}%;max-width:100%;height:auto;border-radius:${p.borderRadius}px;display:block;margin:0 auto"/></div>` : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px">[Image]</div></div>`;
-    case 'divider': return `<div style="padding:${p.paddingV}px 40px;background:${p.bgColor}"><div style="height:${p.thickness}px;background:${p.color}"></div></div>`;
-    case 'spacer': return `<div style="height:${p.height}px;background:${p.bgColor}">&nbsp;</div>`;
-    case 'footer': return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
+    case 'logo':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fs}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fs}">${p.tagline}</div>` : ''}</div>`;
+    case 'header':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight||700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fs};font-style:${p.fontStyle||'normal'}">${p.text}</h1></div>`;
+    case 'text':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fs};font-weight:${p.fontWeight||400};font-style:${p.fontStyle||'normal'}">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+    case 'button':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fs}">${p.text}</a></div>`;
+    case 'image':
+      return p.src
+        ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt}" style="width:${p.width}%;max-width:100%;height:auto;border-radius:${p.borderRadius}px;display:block;margin:0 auto"/></div>`
+        : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;font-family:${fs}">[Image — add a URL in the properties panel]</div></div>`;
+    case 'divider':
+      return `<div style="padding:${p.paddingV}px 40px;background:${p.bgColor}"><div style="height:${p.thickness}px;background:${p.color}"></div></div>`;
+    case 'spacer':
+      return `<div style="height:${p.height}px;background:${p.bgColor};font-size:0;line-height:0">&nbsp;</div>`;
+    case 'footer':
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+    case 'social': {
+      const iconBase = 'https://cdn.simpleicons.org/';
+      const knownIcons = { linkedin:'linkedin','twitter/x':'x',twitter:'x',instagram:'instagram',facebook:'facebook',youtube:'youtube',tiktok:'tiktok',pinterest:'pinterest',github:'github',whatsapp:'whatsapp',telegram:'telegram',discord:'discord',snapchat:'snapchat',website:'' };
+      const size = p.iconSize || 32;
+      const pad = p.style === 'plain' ? 0 : Math.round(size * 0.25);
+      const br = p.style === 'circle' ? '50%' : p.style === 'square' ? '8px' : '0';
+      const bgBadge = p.style !== 'plain' ? 'background:rgba(0,0,0,0.08);' : '';
+      const icons = (p.platforms || []).filter(pl => pl.url).map(pl => {
+        const slug = knownIcons[(pl.name || '').toLowerCase()] || (pl.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const imgHtml = slug
+          ? `<img src="${iconBase}${slug}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;width:${size}px;height:${size}px"/>`
+          : `<span style="font-size:${size*0.5}px;line-height:${size}px;color:${p.color}">${(pl.name||'').slice(0,2).toUpperCase()}</span>`;
+        return `<a href="${pl.url}" style="display:inline-block;margin:0 ${Math.round(size*0.2)}px;text-decoration:none;${bgBadge}padding:${pad}px;border-radius:${br};vertical-align:middle">${imgHtml}</a>`;
+      }).join('');
+      return icons
+        ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">${icons}</div>`
+        : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center;color:#94a3b8;font-size:13px">Add social links in properties →</div>`;
+    }
+    case 'table': {
+      const d = p.data || [[]];
+      const bw = p.borderWidth !== undefined ? p.borderWidth : 1;
+      const bst = bw > 0 ? `${bw}px solid ${p.borderColor||'#e2e8f0'}` : 'none';
+      const cBg = p.cellBg || '#ffffff', cColor = p.cellColor || '#475569';
+      const hBg = p.headerBg || '#f1f5f9', hColor = p.headerColor || '#1e293b';
+      const fSize = p.fontSize || 14, pad = p.cellPadding !== undefined ? p.cellPadding : 10;
+      const rows = d.map((row, ri) => {
+        const isHeader = p.headerRow && ri === 0;
+        const cells = row.map(cell => {
+          const cleanCell = typeof cell === 'string' ? cell.replace(/color\s*:\s*[^;"]+;?/gi, '') : cell;
+          return isHeader
+            ? `<th style="padding:${pad}px;background:${hBg};color:${hColor} !important;font-family:${fs};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cleanCell}</th>`
+            : `<td style="padding:${pad}px;background:${cBg};color:${cColor} !important;font-family:${fs};font-size:${fSize}px;border:${bst}">${cleanCell}</td>`;
+        }).join('');
+        return `<tr>${cells}</tr>`;
+      }).join('');
+      return `<div style="padding:${p.paddingV!==undefined?p.paddingV:20}px ${p.paddingH!==undefined?p.paddingH:40}px;background:${p.bgColor||'#ffffff'}"><table width="${p.width||'100%'}" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:${p.width||'100%'};border:${bst}">${rows}</table></div>`;
+    }
     default: return '';
   }
 }
