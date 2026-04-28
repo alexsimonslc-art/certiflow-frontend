@@ -46,14 +46,7 @@
 <div class="app-layout">
   <div id="sidebarMount"></div>
   <div class="main-area">
-    <header class="top-header">
-      <div class="header-actions">
-        <button class="btn btn-secondary btn-sm" onclick="exportCSV()">
-          <i data-lucide="download"></i> Export CSV
-        </button>
-      </div>
-    </header>
-
+    
     <div class="page-content">
       <div class="page-title">Campaign History</div>
       <div class="page-subtitle">All certificate and email campaigns run from your account.</div>
@@ -65,6 +58,9 @@
           <button class="tab-btn"        id="filterCert"  onclick="setFilter('cert')">Certificates</button>
           <button class="tab-btn"        id="filterMail"  onclick="setFilter('mail')">Emails</button>
           <button class="tab-btn"        id="filterCombo" onclick="setFilter('combined')">Combined</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">
+          <i data-lucide="download"></i> Export CSV
+        </button>
         </div>
         <div class="input-wrap" style="flex:1;min-width:200px">
           <i data-lucide="search" class="input-icon"></i>
