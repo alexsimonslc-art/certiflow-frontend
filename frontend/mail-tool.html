@@ -2610,8 +2610,6 @@
                       Preview
                     </button>
                   </div>
-                </div>
-              </div>
 
               <!-- ── TEMPLATE SELECTION GATE (shown first) ─────────── -->
               <div id="meTplGate">
@@ -2867,21 +2865,22 @@
             <!-- Hidden textarea — source of truth for send logic -->
             <textarea id="mHtmlTmpl" style="display:none"></textarea>
 
-            <div class="step-nav" id="meStep2Nav" style="display:none">
-              <button class="btn btn-secondary btn-lg" onclick="meBackToGate()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="19" y1="12" x2="5" y2="12" />
-                  <polyline points="12 19 5 12 12 5" />
-                </svg>
-                Change Template
-              </button>
-              <button class="btn btn-primary btn-xl" onclick="mGoStep(3)">
-                Preview &amp; Review
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </button>
+              <div class="step-nav" id="meStep2Nav" style="display:none">
+                <button class="btn btn-secondary btn-lg" onclick="meBackToGate()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                  </svg>
+                  Change Template
+                </button>
+                <button class="btn btn-primary btn-xl" onclick="mGoStep(3)">
+                  Preview &amp; Review
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -2892,11 +2891,11 @@
         <div class="step-panel" id="sp3">
           <div style="display:flex;flex-direction:column;gap:20px">
 
-              <!-- Personalised Preview -->
-              <div class="card" style="padding:0;overflow:hidden">
-                <div
-                  style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-                  <div class="card-title">
+            <!-- Personalised Preview -->
+            <div class="card" style="padding:0;overflow:hidden">
+              <div
+                style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <div class="card-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                       <circle cx="12" cy="12" r="3" />
@@ -2999,8 +2998,8 @@
                   Send to All
                 </button>
               </div>
+            </div>
           </div>
-        </div>
 
         <!-- ══════════════════════════════════════════════════════
            STEP 4 — Sending
