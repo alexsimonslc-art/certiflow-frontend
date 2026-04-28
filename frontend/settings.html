@@ -416,21 +416,28 @@
 
             <div class="s-section">
               <div class="s-section-title">AI Token Usage</div>
-              <div id="usageTokenSection">
-                <div class="s-row" style="border:none;padding:0 0 8px">
+              <div id="usageTokenSection" style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+                <div class="s-row" style="border:none; padding:0 0 12px; align-items: flex-start;">
                   <div class="s-row-info">
-                    <strong>Tokens consumed</strong>
-                    <span id="uTokensLabel" style="font-size:13px;color:var(--text-3)">Loading…</span>
+                    <strong style="font-size: 15px; margin-bottom: 6px;">Total Tokens Consumed</strong>
+                    <div id="uTokensLabel" style="font-size:13px; color:var(--text-2); font-family: monospace;">Loading…</div>
                   </div>
-                  <span id="uTokensBadge" style="font-size:13px;font-weight:600;color:var(--text-2)"></span>
+                  <div style="text-align: right;">
+                    <span id="uTokensBadge" style="font-size:12px; font-weight:700; padding: 4px 10px; background: rgba(124,110,250,.1); color: var(--accent); border-radius: 6px; letter-spacing: 0.5px;"></span>
+                  </div>
                 </div>
-                <div class="s-bar-wrap">
-                  <div class="s-bar-track"><div class="s-bar-fill" id="uTokenBar" style="width:0%"></div></div>
-                  <div class="s-bar-label" id="uTokenBarLabel"></div>
+                
+                <div class="s-bar-wrap" style="margin-top: 4px;">
+                  <div class="s-bar-track" style="height: 10px; background: var(--surface-2);">
+                    <div class="s-bar-fill" id="uTokenBar" style="width:0%"></div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                    <div class="s-bar-label" id="uTokenBarLabel" style="font-weight: 500;"></div>
+                    <div id="uCostLabel" style="font-size: 11px; color: var(--text-3); font-family: monospace;"></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
           <!-- ═══ BILLING ═══ -->
           <div class="settings-pane" id="tab-billing">
@@ -656,19 +663,44 @@ async function loadUsage() {
     document.getElementById('uForms').textContent      = (d.formsCount   || 0).toLocaleString();
 
     // AI tokens
-    const total = d.tokensTotal || 0;
-    const cap   = 500000; // soft display cap
-    const pct   = Math.min(Math.round(total / cap * 100), 100);
-    document.getElementById('uTokensLabel').textContent = total.toLocaleString() + ' tokens consumed';
-    document.getElementById('uTokensBadge').textContent = 'Input: ' + (d.tokensInput||0).toLocaleString() + ' · Output: ' + (d.tokensOutput||0).toLocaleString();
-    document.getElementById('uTokenBar').style.width = pct + '%';
-    document.getElementById('uTokenBar').className = 's-bar-fill' + (pct > 80 ? ' warn' : '');
-    document.getElementById('uTokenBarLabel').textContent = total.toLocaleString() + ' of ~' + cap.toLocaleString() + ' token display cap';
+    const tokIn = d.tokensInput || 0;
+    const tokOut = d.tokensOutput || 0;
+    const total = tokIn + tokOut;
+    
+    // The exact cap to guarantee a minimum Rs. 55 profit on the Rs. 299 plan
+    const cap = 860000; 
+    const pct = Math.min(Math.round((total / cap) * 100), 100);
+    
+    // Format: Input tokens: xxx | Output tokens: xxx
+    document.getElementById('uTokensLabel').innerHTML = 
+      `<span style="color:var(--text-3)">Input:</span> ${tokIn.toLocaleString()} <span style="color:var(--border); margin:0 8px">|</span> <span style="color:var(--text-3)">Output:</span> ${tokOut.toLocaleString()}`;
+      
+    // Format: [ 57% Stats ]
+    document.getElementById('uTokensBadge').textContent = `[ ${pct}% USED ]`;
+    
+    // Update the progress bar width and color thresholds
+    const tokenBar = document.getElementById('uTokenBar');
+    tokenBar.style.width = pct + '%';
+    
+    if (pct > 95) {
+      tokenBar.className = 's-bar-fill danger';
+    } else if (pct > 80) {
+      tokenBar.className = 's-bar-fill warn';
+    } else {
+      tokenBar.className = 's-bar-fill';
+    }
+    
+    document.getElementById('uTokenBarLabel').textContent = `${total.toLocaleString()} of ${cap.toLocaleString()} quota`;
+    
+    // Optional: Calculate and show the exact API cost in INR (Internal transparency)
+    const costINR = (tokIn * 0.000047255) + (tokOut * 0.00028353);
+    if (costINR > 0) {
+      document.getElementById('uCostLabel').textContent = `Est. API Cost: ₹${costINR.toFixed(2)}`;
+    }
   } catch (e) {
     document.getElementById('uTokensLabel').textContent = 'Could not load usage data';
   }
 }
-
 /* ──────────────────────────── Billing tab ──── */
 async function loadBilling() {
   try {
