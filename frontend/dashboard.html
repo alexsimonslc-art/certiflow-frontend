@@ -406,6 +406,7 @@
   }
 
   // ── STEP 4: Stats
+  // ── STEP 4: Stats
   function renderStats(data) {
     const safe = n => (n >= 0 ? fmtNum(n) : '0');
     
@@ -414,16 +415,16 @@
     const limit = data.monthlyEmailLimit || 500;
     document.getElementById('mailUsageStat').textContent = `${safe(data.monthMails)} / ${limit}`;
 
-    // 2. Forms & Sites (Fallback placeholders if backend properties missing)
-    document.getElementById('formsUsage').innerHTML = `${safe(data.totalForms || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Responses</span>`;
-    document.getElementById('sitesUsage').innerHTML = `${safe(data.totalSites || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Views/wk</span>`;
+    // 2. Forms & Sites
+    document.getElementById('formsUsage').innerHTML = `${safe(data.totalForms || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Forms</span>`;
+    document.getElementById('sitesUsage').innerHTML = `${safe(data.totalSites || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Sites</span>`;
   }
 
   async function loadStats() {
     const local = getLocalStats();
     renderStats({ ...local, monthlyEmailLimit: 500 });
 
-    // Fetch real cert + mail counts from Supabase via campaigns API
+    // 1. Fetch Campaigns (Certs & Mails count)
     try {
       const campData = await apiFetch('/api/campaigns', { silent: true });
       if (campData?.campaigns) {
@@ -438,32 +439,35 @@
       }
     } catch { /* use local fallback */ }
 
-    // Fetch system quota from Honourix Backend
+    // 2. Fetch Usage (Forms & Sites count from settings.js)
+    let usageData = {};
+    try {
+      usageData = await apiFetch('/api/settings/usage', { silent: true }) || {};
+    } catch { }
+
+    // 3. Fetch Quota (Emails limit & Drive Storage from quota.js)
     try {
       const data = await apiFetch('/api/quota', { silent: true });
-      if (data) renderStats({
-        ...local,
-        monthlyEmailLimit: data.dailyLimit || 500,
-        monthMails: data.sentToday || local.monthMails,
-        totalForms: data.totalForms || 0, 
-        totalSites: data.totalSites || 0
-      });
-    } catch { /* Backend unreachable, using local stats */ }
+      if (data) {
+        // Map the correct backend variables to the frontend
+        renderStats({
+          ...local,
+          monthlyEmailLimit: data.dailyLimit || 500,
+          monthMails: data.sentToday || local.monthMails,
+          totalForms: usageData.formsCount || 0, // Matched from settings.js
+          totalSites: usageData.sitesCount || 0  // Matched from settings.js
+        });
 
-    // Fetch REAL Google Drive Storage
-    try {
-      const driveData = await apiFetch('/api/google/drive-quota', { silent: true });
-      
-      if (driveData && driveData.usage !== undefined) {
-        const usedGB = (driveData.usage / (1024 * 1024 * 1024)).toFixed(2);
-        const limitGB = (driveData.limit / (1024 * 1024 * 1024)).toFixed(0);
-        document.getElementById('storageUsage').textContent = `${usedGB} GB`;
-        document.getElementById('storageLabel').textContent = `Drive Storage (${limitGB}GB)`;
-      } else {
-        document.getElementById('storageUsage').textContent = `—`;
+        // Map Drive Storage correctly from quota.js
+        if (data.driveUsed !== undefined) {
+          const usedGB = (data.driveUsed / (1024 * 1024 * 1024)).toFixed(2);
+          const limitGB = (data.driveTotal / (1024 * 1024 * 1024)).toFixed(0);
+          document.getElementById('storageUsage').innerHTML = `${usedGB} <span style="font-size:14px; font-weight:500; color:var(--text-3); margin-left:4px;">GB</span>`;
+          document.getElementById('storageLabel').textContent = `Drive Storage (${limitGB}GB)`;
+        }
       }
-    } catch (e) {
-      document.getElementById('storageUsage').innerHTML = `<span style="font-size:14px; color:var(--text-3); font-weight:500;">API Not Connected</span>`;
+    } catch {
+      document.getElementById('storageUsage').innerHTML = `<span style="font-size:14px; color:var(--text-3); font-weight:500;">API Error</span>`;
     }
   }
   
