@@ -1187,7 +1187,7 @@ function buildOutputFilename(rowData, index) {
 /* ════════════════════════════════════════════════════════════════
    STEP 4 — EMAIL TEMPLATE (AI ENGINE)
 ════════════════════════════════════════════════════════════════ */
-
+let meTplGateSelected = null;  // ← declare at module level
 // Initialize ME state
 if (typeof window.ME === 'undefined') {
   window.ME = { blocks: [], selectedId: null, nextId: 1, activeTab: 'visual', cm: null, cmDebounce: null, previewDevice: 'desktop', initialized: false };
@@ -1438,6 +1438,18 @@ function meTplGateBuild() {
     </div>`;
 
   const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
+    const METPLCATS = {
+  cert:         'certificate',
+  event:        'event',
+  thankyou:     'welcome',
+  announcement: 'promo',
+  plain:        'newsletter',
+  welcome:      'welcome',
+  promo:        'promo',
+  newsletter:   'newsletter',
+  saas:         'certificate',
+  classic:      'newsletter',
+};
     const cat = ME_TPL_CATS[key] || 'all';
     const previewHtml = meGetHtmlFromBlocks(tpl.blocks).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     return `<div class="me-tpl-gate-card" id="meTplGateCard_${key}" onclick="meTplGateSelect('${key}')" data-cat="${cat}">
