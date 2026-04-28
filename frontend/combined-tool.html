@@ -1003,190 +1003,337 @@
         </div>
       </div>
 
-      <div class="me-card" id="meCard">
+      <div class="step-panel" id="sp4">
+          <div style="display:flex;flex-direction:column;gap:20px">
 
-        <div class="me-head">
-          <div>
-            <div class="card-title" style="margin:0">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="14" rx="2" />
-                <path d="M8 21h8M12 17v4" />
-              </svg>
-              Email Template Designer
-            </div>
-            <div style="font-size:12.5px;color:var(--text-3);margin-top:3px">Pick a template to start designing your email</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px" id="meHeadActions">
-            <button class="btn btn-ghost btn-sm me-ai-toggle" id="meAiToggleBtn" onclick="galAiToggle()" style="display:none; color:var(--cyan);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px">
-                <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1H1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
-              </svg>
-              ✨ AI
-            </button>
-            <div class="me-tab-bar" id="meTabBarWrap" style="display:none">
-              <button class="me-tab active" id="meTabVisual" onclick="meSwitchTab('visual')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
-                  <rect x="3" y="3" width="18" height="14" rx="2" />
-                  <path d="M8 21h8M12 17v4" />
-                </svg>
-                Visual
-              </button>
-              <button class="me-tab" id="meTabCode" onclick="meSwitchTab('code')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
-                  <polyline points="16 18 22 12 16 6" />
-                  <polyline points="8 6 2 12 8 18" />
-                </svg>
-                Code
-              </button>
-              <button class="me-tab" id="meTabPreview" onclick="meSwitchTab('preview')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                Preview
-              </button>
-            </div>
-          </div>
-        </div>
+            <!-- ── 3-Mode Editor Card ─────────────────────────────── -->
+            <div class="me-card" id="meCard">
 
-        <div id="meTplGate">
-          <div class="me-tpl-gate">
-            <div class="me-tpl-gate-title">Choose a Starting Template</div>
-            <div class="me-tpl-gate-sub">Select a template to open the editor, or start with a blank canvas.</div>
-            
-            <div class="me-tpl-gate-cats" id="meTplGateCats">
-              <button class="me-tpl-cat-btn active" onclick="meTplGateFilter('all',this)">All</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('certificate',this)">Certificate</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('welcome',this)">Welcome</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('promo',this)">Promotional</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('newsletter',this)">Newsletter</button>
-              <button class="me-tpl-cat-btn" onclick="meTplGateFilter('event',this)">Event</button>
-            </div>
-            
-            <div class="me-tpl-gate-grid" id="meTplGateGrid"></div>
-          </div>
-          <div class="me-tpl-gate-actions">
-            <button class="btn btn-secondary btn-lg" onclick="goStep(3)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
-              </svg>
-              Back
-            </button>
-            <button class="btn btn-primary btn-lg" id="meTplGateUseBtn" onclick="meTplGateConfirm()" disabled>
-              Use Template — Open Editor
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="me-editor-wrap" id="meEditorWrap">
-
-          <div class="me-editor-with-ai">
-            <div class="me-editor-main">
-
-              <div class="me-tags-row">
-                <span style="font-size:11.5px;font-weight:700;color:var(--text-3);white-space:nowrap">INSERT TAG:</span>
-                <div id="meMergeTags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-              </div>
-
-              <div style="padding:14px 22px;border-bottom:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.01)">
-                <div style="display:flex;align-items:center;gap:12px">
-                  <label style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap">Subject Line:</label>
-                  <input type="text" id="emailSubject" class="form-input" placeholder="e.g. Your certificate is ready, {{name}}!" style="font-size:14px;padding:10px 14px;flex:1"/>
-                </div>
-              </div>
-
-              <div id="meVisual" class="me-visual-layout">
-                <div class="me-palette" id="mePaletteCols">
-                  <div class="me-palette-title">Add Block</div>
-                  <button class="me-palette-btn" onclick="meAddBlock('logo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2" /></svg> Logo / Banner</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('header')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h8" /></svg> Heading</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('text')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10" /><line x1="21" y1="6" x2="3" y2="6" /><line x1="21" y1="14" x2="3" y2="14" /><line x1="17" y1="18" x2="3" y2="18" /></svg> Text</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('button')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="8" rx="4" /></svg> Button</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('image')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg> Image</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('divider')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12" /></svg> Divider</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('spacer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" /></svg> Spacer</button>
-                  <button class="me-palette-btn" onclick="meAddBlock('footer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M4 12h16M4 7h16" /></svg> Footer</button>
-                </div>
-
-                <div class="me-canvas-wrap" id="meCanvasWrap">
-                  <div class="me-canvas-inner" id="meCanvas">
-                    <div class="me-empty-canvas" id="meEmptyCanvas">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M8 12h8M12 8v8" /></svg>
-                      <div style="font-size:14px;font-weight:600">Start building your email</div>
-                      <div style="font-size:12.5px">Click a block type on the left, or ask the AI</div>
-                    </div>
+              <!-- Header (always visible) -->
+              <div class="me-head">
+                <div>
+                  <div class="card-title" style="margin:0">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="14" rx="2" />
+                      <path d="M8 21h8M12 17v4" />
+                    </svg>
+                    Email Template Designer
                   </div>
+                  <div style="font-size:12.5px;color:var(--text-3);margin-top:3px">Pick a template to start designing
+                    your email</div>
                 </div>
-
-                <div class="me-props" id="mePropsPanel">
-                  <div class="me-props-header">Properties</div>
-                  <div id="mePropsBody">
-                    <div class="me-props-empty">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
-                      <div>Click any block to<br />edit its properties</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div id="meCode" style="display:none;position:relative">
-                <div class="me-code-actions">
-                  <button class="btn btn-secondary btn-sm" onclick="meFormatCode()" title="Format HTML">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" /></svg> Format
+                <div style="display:flex;align-items:center;gap:10px" id="meHeadActions">
+                  <!-- AI toggle — shown after template selected -->
+                  <button class="me-ai-toggle" id="meAiToggleBtn" onclick="meToggleAiPanel()" style="display:none">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1H1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
+                    </svg>
+                    ✨ AI
                   </button>
-                </div>
-                <div class="me-code-wrap" id="meCmWrap"></div>
-                <div class="me-code-apply-bar">
-                  <span id="meCodeSaveNotice">Code edits require manual saving to visual if needed.</span>
-                  <button class="btn btn-primary btn-sm" id="meBtnApplyCode" onclick="meApplyCodeToVisual()" style="display:none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg> Apply to Visual
-                  </button>
-                  <button class="btn btn-primary btn-sm" id="meBtnCopyCode" onclick="meCopyCode()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy Code
-                  </button>
-                </div>
-              </div>
-
-              <div id="mePreview" style="display:none">
-                <div class="me-preview-wrap">
-                  <div class="me-preview-toolbar">
-                    <button class="me-device-btn active" id="meBtnDesktop" onclick="meSetDevice('desktop')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" /></svg> Desktop
+                  <!-- Tab bar — shown after template selected -->
+                  <div class="me-tab-bar" id="meTabBarWrap" style="display:none">
+                    <button class="me-tab active" id="meTabVisual" onclick="meSwitchTab('visual')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
+                        <rect x="3" y="3" width="18" height="14" rx="2" />
+                        <path d="M8 21h8M12 17v4" />
+                      </svg>
+                      Visual
                     </button>
-                    <button class="me-device-btn" id="meBtnMobile" onclick="meSetDevice('mobile')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:-2px;margin-right:5px"><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg> Mobile
+                    <button class="me-tab" id="meTabCode" onclick="meSwitchTab('code')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                      </svg>
+                      Code
                     </button>
-                    <div style="margin-left:auto;font-size:12.5px;color:var(--text-3)" id="mePreviewNote">Live preview with first recipient</div>
-                  </div>
-                  <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
-                    <iframe id="mePreviewFrame" style="width:100%;height:480px" sandbox="allow-same-origin allow-scripts"></iframe>
+                    <button class="me-tab" id="meTabPreview" onclick="meSwitchTab('preview')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      Preview
+                    </button>
                   </div>
                 </div>
               </div>
 
+              <!-- ── TEMPLATE SELECTION GATE (shown first) ─────────── -->
+              <div id="meTplGate">
+                <div class="me-tpl-gate">
+                  <div class="me-tpl-gate-title">Choose a Starting Template</div>
+                  <div class="me-tpl-gate-sub">Select a template to open the editor, or start with a blank canvas.</div>
+                  <!-- Category filters -->
+                  <div class="me-tpl-gate-cats" id="meTplGateCats">
+                    <button class="me-tpl-cat-btn active" onclick="meTplGateFilter('all',this)">All</button>
+                    <button class="me-tpl-cat-btn" onclick="meTplGateFilter('certificate',this)">Certificate</button>
+                    <button class="me-tpl-cat-btn" onclick="meTplGateFilter('welcome',this)">Welcome</button>
+                    <button class="me-tpl-cat-btn" onclick="meTplGateFilter('promo',this)">Promotional</button>
+                    <button class="me-tpl-cat-btn" onclick="meTplGateFilter('newsletter',this)">Newsletter</button>
+                    <button class="me-tpl-cat-btn" onclick="meTplGateFilter('event',this)">Event</button>
+                  </div>
+                  <!-- Template grid -->
+                  <div class="me-tpl-gate-grid" id="meTplGateGrid"></div>
+                </div>
+                <div class="me-tpl-gate-actions">
+                  <button class="btn btn-secondary btn-lg" onclick="mGoStep(1)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="19" y1="12" x2="5" y2="12" />
+                      <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    Back
+                  </button>
+                  <button class="btn btn-primary btn-lg" id="meTplGateUseBtn" onclick="meTplGateConfirm()" disabled>
+                    Use Template — Open Editor
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ── EDITOR (hidden until template chosen) ─────────── -->
+              <div class="me-editor-wrap" id="meEditorWrap">
+
+                <!-- Editor + AI panel side by side -->
+                <div class="me-editor-with-ai">
+
+                  <!-- Left: Editor main -->
+                  <div class="me-editor-main">
+
+                    <!-- Merge Tags row -->
+                    <div class="me-tags-row">
+                      <span style="font-size:11.5px;font-weight:700;color:var(--text-3);white-space:nowrap">INSERT
+                        TAG:</span>
+                      <div id="meMergeTags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+                      <span style="font-size:11.5px;color:var(--text-3);margin-left:auto;white-space:nowrap"
+                        title="These placeholders are replaced with real data per recipient">ℹ Tags auto-replaced per
+                        recipient</span>
+                    </div>
+
+                    <!-- Subject line (now below merge tags) -->
+                    <div
+                      style="padding:14px 22px;border-bottom:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.01)">
+                      <div style="display:flex;align-items:center;gap:12px">
+                        <label
+                          style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap">Subject
+                          Line:</label>
+                        <input type="text" id="mSubject" class="form-input"
+                          placeholder="e.g. Your certificate is ready, {{name}}!"
+                          style="font-size:14px;padding:10px 14px;flex:1"
+                          onfocus="meLastFocusedField={id:'mSubject', key:'value', el:this}" />
+                      </div>
+                    </div>
+
+                    <!-- Tab content: Visual -->
+                    <div id="meVisual" class="me-visual-layout">
+                      <!-- Block Palette -->
+                      <div class="me-palette">
+                        <div class="me-palette-title">Add Block</div>
+                        <button class="me-palette-btn" onclick="meAddBlock('logo')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="10" rx="2" />
+                          </svg>
+                          Logo / Banner
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('header')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 6h16M4 12h8" />
+                          </svg>
+                          Heading
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('text')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="17" y1="10" x2="3" y2="10" />
+                            <line x1="21" y1="6" x2="3" y2="6" />
+                            <line x1="21" y1="14" x2="3" y2="14" />
+                            <line x1="17" y1="18" x2="3" y2="18" />
+                          </svg>
+                          Text
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('button')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="8" width="20" height="8" rx="4" />
+                          </svg>
+                          Button
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('image')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <polyline points="21 15 16 10 5 21" />
+                          </svg>
+                          Image
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('divider')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                          </svg>
+                          Divider
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('spacer')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" />
+                          </svg>
+                          Spacer
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('footer')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 17h16M4 12h16M4 7h16" />
+                          </svg>
+                          Footer
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('social')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="18" cy="5" r="3" />
+                            <circle cx="6" cy="12" r="3" />
+                            <circle cx="18" cy="19" r="3" />
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                          </svg>
+                          Social Links
+                        </button>
+                        <button class="me-palette-btn" onclick="meAddBlock('table')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" />
+                            <line x1="9" y1="3" x2="9" y2="21" />
+                            <line x1="15" y1="3" x2="15" y2="21" />
+                          </svg>
+                          Table
+                        </button>
+                      </div>
+
+                      <!-- Canvas -->
+                      <div class="me-canvas-wrap" id="meCanvasWrap">
+                        <div class="me-canvas-inner" id="meCanvas">
+                          <div class="me-empty-canvas" id="meEmptyCanvas">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                              <rect x="3" y="3" width="18" height="18" rx="2" />
+                              <path d="M8 12h8M12 8v8" />
+                            </svg>
+                            <div style="font-size:14px;font-weight:600">Start building your email</div>
+                            <div style="font-size:12.5px">Click a block type on the left, or ask the AI</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Properties -->
+                      <div class="me-props" id="mePropsPanel">
+                        <div class="me-props-header">Properties</div>
+                        <div id="mePropsBody">
+                          <div class="me-props-empty">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                              <circle cx="12" cy="12" r="10" />
+                              <line x1="12" y1="8" x2="12" y2="12" />
+                              <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                            <div>Click any block to<br />edit its properties</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div><!-- /meVisual -->
+
+                    <!-- Tab content: Code -->
+                    <div id="meCode" style="display:none;position:relative">
+                      <div class="me-code-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="meFormatCode()" title="Format HTML">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            style="width:13px;height:13px">
+                            <polyline points="4 17 10 11 4 5" />
+                            <line x1="12" y1="19" x2="20" y2="19" />
+                          </svg>
+                          Format
+                        </button>
+                      </div>
+                      <div class="me-code-wrap" id="meCmWrap"></div>
+                      <div class="me-code-apply-bar">
+                        <span id="meCodeSaveNotice">Note: To save this template please copy the code and save it in your
+                          local storage. (Visual mode uses code preview only)</span>
+                        <button class="btn btn-primary btn-sm" id="meBtnApplyCode" onclick="meApplyCodeToVisual()"
+                          style="display:none;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            style="width:13px;height:13px">
+                            <polyline points="23 4 23 10 17 10" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                          </svg>
+                          Apply to Visual
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="meBtnCopyCode" onclick="meCopyCode()">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            style="width:13px;height:13px">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                          </svg>
+                          Copy Code
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Tab content: Preview -->
+                    <div id="mePreview" style="display:none">
+                      <div class="me-preview-wrap">
+                        <div class="me-preview-toolbar">
+                          <button class="me-device-btn active" id="meBtnDesktop" onclick="meSetDevice('desktop')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              style="width:13px;height:13px;vertical-align:-2px;margin-right:5px">
+                              <rect x="2" y="3" width="20" height="14" rx="2" />
+                              <path d="M8 21h8M12 17v4" />
+                            </svg>
+                            Desktop
+                          </button>
+                          <button class="me-device-btn" id="meBtnMobile" onclick="meSetDevice('mobile')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              style="width:13px;height:13px;vertical-align:-2px;margin-right:5px">
+                              <rect x="5" y="2" width="14" height="20" rx="2" />
+                              <line x1="12" y1="18" x2="12.01" y2="18" />
+                            </svg>
+                            Mobile
+                          </button>
+                          <div style="margin-left:auto;font-size:12.5px;color:var(--text-3)" id="mePreviewNote">Showing
+                            live preview with first recipient's data</div>
+                        </div>
+                        <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
+                          <iframe id="mePreviewFrame" style="width:100%;height:480px"
+                            sandbox="allow-same-origin allow-scripts"></iframe>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div><!-- /me-editor-main -->
+
+                </div><!-- /me-editor-with-ai -->
+
+              </div><!-- /meEditorWrap -->
+
+            </div><!-- /me-card -->
+
+            <!-- Hidden textarea — source of truth for send logic -->
+            <textarea id="mHtmlTmpl" style="display:none"></textarea>
+
+            <div class="step-nav" id="meStep2Nav" style="display:none">
+              <button class="btn btn-secondary btn-lg" onclick="meBackToGate()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="19" y1="12" x2="5" y2="12" />
+                  <polyline points="12 19 5 12 12 5" />
+                </svg>
+                Change Template
+              </button>
+              <button class="btn btn-primary btn-xl" onclick="mGoStep(3)">
+                Preview &amp; Review
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
-
-        <div class="step-nav" id="meStep2Nav" style="display:none; margin-top:20px;">
-          <button class="btn btn-secondary btn-lg" onclick="meBackToGate()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
-            Change Template
-          </button>
-          <button class="btn btn-primary btn-xl" onclick="goStep(5)">
-            Continue to Review
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
       <!-- ════════════════════════════ STEP 5 — REVIEW ════════════════════════════ -->
       <div class="step-panel" id="sp5">
         <div style="display:flex;flex-direction:column;gap:22px">
