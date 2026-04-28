@@ -138,9 +138,10 @@ function validateStep(n) {
     if (!ED.fields.length) { toast('Add at least one field to your certificate template', 'warning'); return false; }
   }
   if (n === 3) {
-    if (!document.getElementById('mapName').value)  { toast('Select the Name column', 'error'); return false; }
-    if (!document.getElementById('mapEmail').value) { toast('Select the Email column', 'error'); return false; }
-  }
+  const hasPrimary = ED.fields.some(f => f.isPrimary && f.column);
+  if (!hasPrimary) { toast('Please star a Primary field and map it to a column', 'error'); return false; }
+  if (!document.getElementById('s3EmailCol').value) { toast('Select the Email column', 'error'); return false; }
+}
   if (n === 4) {
     if (!document.getElementById('emailSubject').value.trim()) { toast('Enter an email subject', 'error'); return false; }
     
@@ -1785,17 +1786,9 @@ meRenderCanvas = function () {
 let meAiChatHistory = [];
 let meAiIsLoading = false;
 let _galAiIsPro = null;
-async function _galAiCheckPro() {
-  if (_galAiIsPro !== null) return _galAiIsPro;
-  try {
-    const token = localStorage.getItem('Honourix_token');
-    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    const data = await res.json();
-    _galAiIsPro = data?.plan === 'pro';
-  } catch (_) { _galAiIsPro = false; }
-  return _galAiIsPro;
+async function galAiCheckPro() {
+  galAiIsPro = true;
+  return true;
 }
 
 function meToggleAiPanel() {
@@ -1896,14 +1889,7 @@ async function meAiSend() {
   const msg = input.value.trim();
   if (!msg) return;
 
-  const isPro = await _galAiCheckPro();
-  if (!isPro) {
-    input.value = '';
-    input.style.height = 'auto';
-    meAiAppendBubble('user', msg);
-    meAiShowUpgrade();
-    return;
-  }
+ // Pro gate removed — all users can use AI
 
   input.value = '';
   input.style.height = 'auto';
