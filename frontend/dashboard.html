@@ -406,7 +406,6 @@
   }
 
   // ── STEP 4: Stats
-  // ── STEP 4: Map Stats to New Professional Grid
   function renderStats(data) {
     const safe = n => (n >= 0 ? fmtNum(n) : '0');
     
@@ -446,16 +445,13 @@
         ...local,
         monthlyEmailLimit: data.dailyLimit || 500,
         monthMails: data.sentToday || local.monthMails,
-        totalForms: data.totalForms || 2, // Example mappings
-        totalSites: data.totalSites || 1
+        totalForms: data.totalForms || 0, 
+        totalSites: data.totalSites || 0
       });
     } catch { /* Backend unreachable, using local stats */ }
 
     // Fetch REAL Google Drive Storage
     try {
-      // NOTE: We call the backend route which securely fetches Google Drive Quota. 
-      // If your frontend uses the Google Access Token directly, you can swap this for:
-      // fetch('https://www.googleapis.com/drive/v3/about?fields=storageQuota', { headers: { 'Authorization': 'Bearer ' + googleToken }})
       const driveData = await apiFetch('/api/google/drive-quota', { silent: true });
       
       if (driveData && driveData.usage !== undefined) {
@@ -471,21 +467,6 @@
     }
   }
   
-  loadStats();
-
-  async function loadStats() {
-    const local = getLocalStats();
-    renderStats({ ...local, monthlyEmailLimit: 500 });
-    try {
-      // ✅ silent:true — a 401 here will NOT log you out
-      const data = await apiFetch('/api/quota', { silent: true });
-      if (data) renderStats({
-        ...local,
-        monthlyEmailLimit: data.dailyLimit || 500,
-        monthMails: data.sentToday || local.monthMails,
-      });
-    } catch { /* API unavailable — local data shown */ }
-  }
   loadStats();
 
   // ── STEP 5: Campaigns table
