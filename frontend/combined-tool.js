@@ -1188,11 +1188,10 @@ function buildOutputFilename(rowData, index) {
 /* ════════════════════════════════════════════════════════════════
    STEP 4 — EMAIL TEMPLATE (AI ENGINE)
 ════════════════════════════════════════════════════════════════ */
-let meTplGateSelected = null;  // ← declare at module level
-// Initialize ME state
-if (typeof window.ME === 'undefined') {
-  window.ME = { blocks: [], selectedId: null, nextId: 1, activeTab: 'visual', cm: null, cmDebounce: null, previewDevice: 'desktop', initialized: false };
-}
+
+const ME = {
+  blocks: [], selectedId: null, nextId: 1, activeTab: 'visual', cm: null, cmDebounce: null, previewDevice: 'desktop', initialized: false, mode: 'visual'
+};
 
 function initStep4() {
   if (ME.initialized) return;
@@ -1209,6 +1208,7 @@ function initStep4() {
         if (ME.activeTab === 'code') meUpdatePreview();
         const btn = document.getElementById('meBtnApplyCode');
         if (btn) btn.style.display = 'inline-flex';
+        document.getElementById('mHtmlTmpl').value = ME.cm.getValue();
       }, 500);
     });
   }
@@ -1231,7 +1231,7 @@ function initStep4() {
   
   document.getElementById('meTplGate').style.display = 'block';
   document.getElementById('meEditorWrap').style.display = 'none';
-  document.getElementById('meStep2Nav').style.display = 'none';
+  document.getElementById('meStep4Nav').style.display = 'none';
   document.getElementById('meHeadActions').style.display = 'none';
   
   ME.initialized = true;
@@ -1248,178 +1248,20 @@ const ME_DEFS = {
   footer: { label: 'Footer', defaults: () => ({ text: 'Sent via Honourix.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) }
 };
 
-/* ══════════════════════════════════════════════════════════════
-   TEMPLATE PICKER
-══════════════════════════════════════════════════════════════ */
 const ME_TEMPLATES = {
-  cert: {
-    name: '🎓 Certificate Dispatch',
-    desc: 'Cert link + personalization',
-    thumb: 'linear-gradient(135deg,#0d1728,#1a2744)',
-    blocks: [
-      { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } },
-      { type: 'header', props: { text: 'Your Certificate is Ready 🎉', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } },
-      { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } },
-      { type: 'button', props: { text: 'Download Certificate', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } },
-      { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } },
-      { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } },
-    ]
-  },
-  event: {
-    name: '📅 Event Invitation',
-    desc: 'Banner + date + RSVP',
-    thumb: 'linear-gradient(135deg,#7c3aed,#4f46e5)',
-    blocks: [
-      { type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } },
-      { type: 'header', props: { text: 'You\'re Invited, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } },
-      { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } },
-      { type: 'text', props: { text: '📅 Date: {{date}}\n📍 Venue: {{org}}', fontSize: 15, color: '#1e293b', bgColor: '#f8fafc', align: 'center', paddingV: 20, paddingH: 40, lineHeight: 2 } },
-      { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } },
-      { type: 'footer', props: { text: 'If you\'re unable to attend, please let us know at your earliest convenience.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } },
-    ]
-  },
-  thankyou: {
-    name: '🙏 Thank You',
-    desc: 'Warm appreciation note',
-    thumb: 'linear-gradient(135deg,#10b981,#059669)',
-    blocks: [
-      { type: 'logo', props: { text: 'THANK YOU', tagline: '', bgColor: '#10b981', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } },
-      { type: 'header', props: { text: 'Thank You, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } },
-      { type: 'text', props: { text: 'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.8 } },
-      { type: 'divider', props: { color: '#d1fae5', bgColor: '#ffffff', paddingV: 16, thickness: 2 } },
-      { type: 'footer', props: { text: 'With gratitude,\nThe Honourix Team', bgColor: '#f0fdf4', color: '#6b7280', fontSize: 13, align: 'center', paddingV: 24, paddingH: 40 } },
-    ]
-  },
-  announcement: {
-    name: '📢 Announcement',
-    desc: 'Bold headline + CTA',
-    thumb: 'linear-gradient(135deg,#f59e0b,#ef4444)',
-    blocks: [
-      { type: 'logo', props: { text: 'ANNOUNCEMENT', tagline: '', bgColor: '#0f172a', color: '#f59e0b', fontSize: 16, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } },
-      { type: 'header', props: { text: 'Important Update', fontSize: 30, fontWeight: 800, color: '#0f172a', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } },
-      { type: 'text', props: { text: 'Dear {{name}},\n\nWe have an important announcement to share with you. Please read the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } },
-      { type: 'text', props: { text: 'Your update / announcement body goes here. You can edit this block to include all the relevant details.', fontSize: 15, color: '#4b5563', bgColor: '#fffbeb', align: 'left', paddingV: 20, paddingH: 40, lineHeight: 1.75 } },
-      { type: 'button', props: { text: 'Learn More', link: '#', btnBg: '#f59e0b', btnColor: '#000000', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } },
-      { type: 'footer', props: { text: 'You received this because you are part of our community.', bgColor: '#f8fafc', color: '#9ca3af', fontSize: 12, align: 'center', paddingV: 20, paddingH: 40 } },
-    ]
-  },
-  plain: {
-    name: '🧾 Plain Professional',
-    desc: 'Clean text-only email',
-    thumb: 'linear-gradient(135deg,#334155,#1e293b)',
-    blocks: [
-      { type: 'spacer', props: { height: 24, bgColor: '#ffffff' } },
-      { type: 'text', props: { text: 'Hi {{name}},', fontSize: 18, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.6 } },
-      { type: 'text', props: { text: 'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point. Let the reader know exactly what you need them to do.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.8 } },
-      { type: 'text', props: { text: 'Best regards,\nThe Honourix Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.7 } },
-      { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } },
-      { type: 'footer', props: { text: 'Sent via Honourix | Unsubscribe', bgColor: '#f8fafc', color: '#9ca3af', fontSize: 12, align: 'center', paddingV: 20, paddingH: 40 } },
-    ]
-  },
-  welcome: {
-    name: '👋 Welcome Email',
-    desc: 'Warm onboarding email',
-    thumb: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
-    blocks: [
-      { type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } },
-      { type: 'header', props: { text: 'Welcome, {{name}}! 🎉', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } },
-      { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.\n\nHere's what you can do next:", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } },
-      { type: 'text', props: { text: '✅ Complete your profile\n✅ Explore the dashboard\n✅ Start your first project', fontSize: 15, color: '#1e293b', bgColor: '#f5f3ff', align: 'left', paddingV: 20, paddingH: 40, lineHeight: 2 } },
-      { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } },
-      { type: 'footer', props: { text: 'If you have questions, reply to this email or contact our support team.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } },
-    ]
-  },
-  promo: {
-    name: '🛍️ Promotional',
-    desc: 'Bold offer with CTA',
-    thumb: 'linear-gradient(135deg,#ec4899,#f97316)',
-    blocks: [
-      { type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } },
-      { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } },
-      { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } },
-      { type: 'text', props: { text: '🔥 Use code: SAVE30\n⏰ Offer expires in 48 hours', fontSize: 16, color: '#1e293b', bgColor: '#fff7ed', align: 'center', paddingV: 20, paddingH: 40, lineHeight: 2, fontWeight: 700 } },
-      { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } },
-      { type: 'footer', props: { text: 'You received this because you opted in to our promotions. Unsubscribe anytime.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } },
-    ]
-  },
-  newsletter: {
-    name: '📰 Newsletter',
-    desc: 'Clean content digest',
-    thumb: 'linear-gradient(135deg,#0ea5e9,#6366f1)',
-    blocks: [
-      { type: 'logo', props: { text: 'THE DIGEST', tagline: 'Weekly Newsletter', bgColor: '#0f172a', color: '#0ea5e9', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } },
-      { type: 'header', props: { text: "This Week's Highlights", fontSize: 24, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 28, paddingH: 40 } },
-      { type: 'divider', props: { color: '#0ea5e9', bgColor: '#ffffff', paddingV: 4, thickness: 2 } },
-      { type: 'text', props: { text: 'Hi {{name}},\n\nHere\'s what happened this week that you need to know about:', fontSize: 15, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 16, paddingH: 40, lineHeight: 1.75 } },
-      { type: 'header', props: { text: '📌 Feature Story', fontSize: 18, fontWeight: 700, color: '#0f172a', bgColor: '#f0f9ff', align: 'left', paddingV: 16, paddingH: 40 } },
-      { type: 'text', props: { text: 'Your feature story body text goes here. Write 2-3 sentences that summarize the key points and draw the reader in.', fontSize: 15, color: '#374151', bgColor: '#f0f9ff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.7 } },
-      { type: 'button', props: { text: 'Read Full Story', link: '#', btnBg: '#0ea5e9', btnColor: '#ffffff', bgColor: '#f0f9ff', align: 'left', paddingV: 16, paddingH: 40, borderRadius: 8, fontSize: 14, fontWeight: 600 } },
-      { type: 'footer', props: { text: 'You are subscribed to our weekly digest. Unsubscribe | Manage Preferences', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } },
-    ]
-  },
-  saas: {
-    name: '💻 SaaS Onboarding',
-    desc: 'Modern product email',
-    thumb: 'linear-gradient(135deg,#1e293b,#0d1728)',
-    blocks: [
-      { type: 'logo', props: { text: 'HONOURIX', tagline: 'Your workspace is ready', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } },
-      { type: 'header', props: { text: "You're all set, {{name}}!", fontSize: 28, fontWeight: 700, color: '#f8fafc', bgColor: '#1e293b', align: 'center', paddingV: 36, paddingH: 40 } },
-      { type: 'text', props: { text: 'Your account is active and ready to use. Here\'s a quick overview of what you can do:', fontSize: 16, color: '#cbd5e1', bgColor: '#1e293b', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } },
-      { type: 'text', props: { text: '⚡ Build faster with templates\n🤖 Use AI to generate content\n📊 Track your campaigns\n🎓 Issue certificates at scale', fontSize: 15, color: '#94a3b8', bgColor: '#0f172a', align: 'left', paddingV: 20, paddingH: 40, lineHeight: 2.1 } },
-      { type: 'button', props: { text: 'Open Dashboard', link: '#', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#1e293b', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } },
-      { type: 'footer', props: { text: 'Need help? Visit our docs or chat with support. We\'re here to help.', bgColor: '#0d1728', color: '#64748b', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } },
-    ]
-  },
-  classic: {
-    name: '📄 Classic Business',
-    desc: 'Formal business email',
-    thumb: 'linear-gradient(135deg,#334155,#475569)',
-    blocks: [
-      { type: 'logo', props: { text: 'HONOURIX', tagline: 'Business Communication', bgColor: '#334155', color: '#f8fafc', fontSize: 18, fontWeight: 700, align: 'left', paddingV: 24, paddingH: 40 } },
-      { type: 'header', props: { text: 'Dear {{name}},', fontSize: 22, fontWeight: 600, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 32, paddingH: 40 } },
-      { type: 'text', props: { text: 'I am writing to inform you about an important matter regarding your account with us. Please review the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.8 } },
-      { type: 'text', props: { text: 'The key details are as follows:\n\n• Item one: description\n• Item two: description\n• Item three: description', fontSize: 15, color: '#4b5563', bgColor: '#f8fafc', align: 'left', paddingV: 20, paddingH: 40, lineHeight: 1.9 } },
-      { type: 'text', props: { text: 'Should you have any questions, please do not hesitate to reach out.\n\nYours sincerely,\nThe Honourix Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 20, paddingH: 40, lineHeight: 1.7 } },
-      { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 } },
-      { type: 'footer', props: { text: 'Honourix | Trusted Certificate & Mail Platform', bgColor: '#f1f5f9', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 20, paddingH: 40 } },
-    ]
-  },
+  cert: { name: '🎓 Certificate Dispatch', desc: 'Cert link + personalization', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready 🎉', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
+  event: { name: '📅 Event Invitation', desc: 'Banner + date + RSVP', blocks: [ { type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } } ] },
+  thankyou: { name: '🙏 Thank You', desc: 'Warm appreciation note', blocks: [ { type: 'logo', props: { text: 'THANK YOU', tagline: '', bgColor: '#10b981', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Thank You, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#d1fae5', bgColor: '#ffffff', paddingV: 16, thickness: 2 } }, { type: 'footer', props: { text: 'With gratitude,\nThe Honourix Team', bgColor: '#f0fdf4', color: '#6b7280', fontSize: 13, align: 'center', paddingV: 24, paddingH: 40 } } ] },
+  announcement: { name: '📢 Announcement', desc: 'Bold headline + CTA', blocks: [ { type: 'logo', props: { text: 'ANNOUNCEMENT', tagline: '', bgColor: '#0f172a', color: '#f59e0b', fontSize: 16, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Important Update', fontSize: 30, fontWeight: 800, color: '#0f172a', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nWe have an important announcement to share with you. Please read the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Learn More', link: '#', btnBg: '#f59e0b', btnColor: '#000000', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } } ] },
+  plain: { name: '🧾 Plain Professional', desc: 'Clean text-only email', blocks: [ { type: 'spacer', props: { height: 24, bgColor: '#ffffff' } }, { type: 'text', props: { text: 'Hi {{name}},', fontSize: 18, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.6 } }, { type: 'text', props: { text: 'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.8 } }, { type: 'text', props: { text: 'Best regards,\nThe Honourix Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.7 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'Sent via Honourix', bgColor: '#f8fafc', color: '#9ca3af', fontSize: 12, align: 'center', paddingV: 20, paddingH: 40 } } ] },
+  welcome: { name: '👋 Welcome Email', desc: 'Warm onboarding email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}! 🎉', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] },
+  promo: { name: '🛍️ Promotional', desc: 'Bold offer with CTA', blocks: [ { type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } } ] },
+  newsletter: { name: '📰 Newsletter', desc: 'Clean content digest', blocks: [ { type: 'logo', props: { text: 'THE DIGEST', tagline: 'Weekly Newsletter', bgColor: '#0f172a', color: '#0ea5e9', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "This Week's Highlights", fontSize: 24, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 28, paddingH: 40 } }, { type: 'divider', props: { color: '#0ea5e9', bgColor: '#ffffff', paddingV: 4, thickness: 2 } }, { type: 'text', props: { text: 'Hi {{name}},\n\nHere\'s what happened this week that you need to know about:', fontSize: 15, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 16, paddingH: 40, lineHeight: 1.75 } } ] },
+  saas: { name: '💻 SaaS Onboarding', desc: 'Modern product email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Your workspace is ready', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: "You're all set, {{name}}!", fontSize: 28, fontWeight: 700, color: '#f8fafc', bgColor: '#1e293b', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Your account is active and ready to use. Here\'s a quick overview of what you can do:', fontSize: 16, color: '#cbd5e1', bgColor: '#1e293b', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Open Dashboard', link: '#', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#1e293b', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] },
+  classic: { name: '📄 Classic Business', desc: 'Formal business email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Business Communication', bgColor: '#334155', color: '#f8fafc', fontSize: 18, fontWeight: 700, align: 'left', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Dear {{name}},', fontSize: 22, fontWeight: 600, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 32, paddingH: 40 } }, { type: 'text', props: { text: 'I am writing to inform you about an important matter regarding your account with us. Please review the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 } } ] }
 };
-
-function meBuildTemplatePicker() {
-  const row = document.getElementById('meTplRow');
-  if (!row) return;
-
-  // Blank template entry
-  const blankCard = `
-    <div class="me-tpl-card" onclick="meLoadTemplate('blank')">
-      <div class="me-tpl-thumb" style="background:#f8fafc;display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" style="width:36px;height:36px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
-      </div>
-      <div class="me-tpl-info">
-        <div class="me-tpl-name">Blank Template</div>
-        <button class="me-tpl-btn">Start Fresh</button>
-      </div>
-    </div>`;
-
-  const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
-    // Generate mini preview HTML for the iframe thumbnail
-    const previewHtml = meGetHtmlFromBlocks(tpl.blocks);
-    return `
-      <div class="me-tpl-card" onclick="meLoadTemplate('${key}')">
-        <div class="me-tpl-thumb">
-          <iframe srcdoc="${previewHtml.replace(/"/g, '&quot;').replace(/'/g, '&#39;')}" scrolling="no" tabindex="-1"></iframe>
-          <div class="me-tpl-thumb-overlay"></div>
-        </div>
-        <div class="me-tpl-info">
-          <div class="me-tpl-name">${tpl.name.slice(tpl.name.indexOf(' ') + 1)}</div>
-          <button class="me-tpl-btn">Use This</button>
-        </div>
-      </div>`;
-  });
-
-  row.innerHTML = blankCard + cards.join('');
-}
+const ME_TPL_CATS = { cert: 'certificate', event: 'event', thankyou: 'welcome', announcement: 'promo', plain: 'welcome', welcome: 'welcome', promo: 'promo', newsletter: 'newsletter', saas: 'welcome', classic: 'welcome' };
+let meTplGateSelected = null;
 
 function meTplGateBuild() {
   const grid = document.getElementById('meTplGateGrid');
@@ -1439,18 +1281,6 @@ function meTplGateBuild() {
     </div>`;
 
   const cards = Object.entries(ME_TEMPLATES).map(([key, tpl]) => {
-    const METPLCATS = {
-  cert:         'certificate',
-  event:        'event',
-  thankyou:     'welcome',
-  announcement: 'promo',
-  plain:        'newsletter',
-  welcome:      'welcome',
-  promo:        'promo',
-  newsletter:   'newsletter',
-  saas:         'certificate',
-  classic:      'newsletter',
-};
     const cat = ME_TPL_CATS[key] || 'all';
     const previewHtml = meGetHtmlFromBlocks(tpl.blocks).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     return `<div class="me-tpl-gate-card" id="meTplGateCard_${key}" onclick="meTplGateSelect('${key}')" data-cat="${cat}">
@@ -1485,34 +1315,25 @@ function meTplGateConfirm() {
 }
 
 function meBackToGate() {
-  document.getElementById('meTplGate').style.display = 'block';
+  document.getElementById('meTplGate').style.display = 'flex';
   document.getElementById('meEditorWrap').style.display = 'none';
-  document.getElementById('meStep2Nav').style.display = 'none';
+  document.getElementById('meStep4Nav').style.display = 'none';
   document.getElementById('meHeadActions').style.display = 'none';
-  
-  const panel = document.getElementById('galAiPanel');
-  const fab = document.getElementById('galAiFab');
-  if (panel && panel.classList.contains('open')) {
-    panel.classList.remove('open');
-    if (fab) fab.classList.remove('panel-open');
-    const mainArea = document.querySelector('.main-area');
-    if (mainArea) mainArea.classList.remove('gal-open');
-  }
+  const panel = document.getElementById('meAiPanel');
+  if (panel) { panel.style.display = 'none'; panel.classList.remove('open'); }
 }
 
 function meSelectTemplate(type) {
   document.getElementById('meTplGate').style.display = 'none';
-  document.getElementById('meEditorWrap').style.display = 'block';
-  document.getElementById('meStep2Nav').style.display = 'flex';
+  document.getElementById('meEditorWrap').style.display = 'flex';
+  document.getElementById('meStep4Nav').style.display = 'flex';
   document.getElementById('meHeadActions').style.display = 'flex';
   
   const aiBtn = document.getElementById('meAiToggleBtn');
   if (aiBtn) aiBtn.style.display = (type === 'code') ? 'none' : 'flex';
-  
-  const fab = document.getElementById('galAiFab');
-  if (fab) fab.style.display = (type === 'code') ? 'none' : 'flex';
-  
   document.getElementById('meTabBarWrap').style.display = 'flex';
+
+  ME.mode = (type === 'code') ? 'code' : 'visual';
 
   if (type === 'blank') {
     ME.blocks = []; ME.selectedId = null;
@@ -1526,7 +1347,7 @@ function meSelectTemplate(type) {
     ME.blocks = ME_TEMPLATES[type].blocks.map(b => ({ id: 'b' + (ME.nextId++), type: b.type, props: JSON.parse(JSON.stringify(b.props)) }));
     ME.selectedId = null; meSwitchTab('visual');
   }
-  meRenderVisual(); meSyncToCode();
+  meRenderCanvas(); meSyncToCode();
 }
 
 function mePopulateTags() {
@@ -1546,8 +1367,8 @@ function meInsertTag(tag) {
   if (ME.activeTab === 'code' && ME.cm) {
     ME.cm.replaceSelection(tag); ME.cm.focus(); return;
   }
-  if (meLastFocusedField && meLastFocusedField.id === 'emailSubject') {
-    const el = document.getElementById('emailSubject');
+  if (meLastFocusedField && meLastFocusedField.id === 'mSubject') {
+    const el = document.getElementById('mSubject');
     if (el) {
       const start = el.selectionStart, end = el.selectionEnd;
       el.value = el.value.substring(0, start) + tag + el.value.substring(end);
@@ -1557,7 +1378,7 @@ function meInsertTag(tag) {
   }
   const block = ME.blocks.find(b => b.id === ME.selectedId);
   if (block && block.props.text !== undefined) {
-    block.props.text += tag; meRenderVisual(); meRenderProps(block); meSyncToCode();
+    block.props.text += tag; meRenderCanvas(); meRenderProps(block); meSyncToCode();
   } else {
     toast('Select a text block or the subject line to insert a tag.', 'info');
   }
@@ -1579,27 +1400,30 @@ function meSetDevice(device) {
   ME.previewDevice = device;
   document.getElementById('meBtnDesktop').classList.toggle('active', device === 'desktop');
   document.getElementById('meBtnMobile').classList.toggle('active', device === 'mobile');
-  document.getElementById('mePreviewFrameWrap').className = 'me-preview-frame-wrap ' + device;
-  document.getElementById('mePreviewFrame').style.width = (device === 'mobile') ? '375px' : '100%';
+  const frame = document.getElementById('mePreviewFrame');
+  if (frame) {
+    frame.style.width = (device === 'mobile') ? '375px' : '100%';
+    setTimeout(() => resizeMailPreview(), 50);
+  }
 }
 
 function meAddBlock(type) {
   const def = ME_DEFS[type]; if (!def) return;
   const block = { id: 'b' + (ME.nextId++), type, props: def.defaults() };
-  ME.blocks.push(block); meRenderVisual(); meSelectBlock(block.id); meSyncToCode();
+  ME.blocks.push(block); meRenderCanvas(); meSelectBlock(block.id); meSyncToCode();
   setTimeout(() => { const w = document.getElementById('meCanvasWrap'); if (w) w.scrollTop = w.scrollHeight; }, 50);
 }
 
 function meDeleteBlock(id) {
   ME.blocks = ME.blocks.filter(b => b.id !== id);
   if (ME.selectedId === id) { ME.selectedId = null; meRenderProps(null); }
-  meRenderVisual(); meSyncToCode();
+  meRenderCanvas(); meSyncToCode();
 }
 
 function meDuplicateBlock(id) {
   const idx = ME.blocks.findIndex(b => b.id === id); if (idx < 0) return;
   const copy = { id: 'b' + (ME.nextId++), type: ME.blocks[idx].type, props: JSON.parse(JSON.stringify(ME.blocks[idx].props)) };
-  ME.blocks.splice(idx + 1, 0, copy); meRenderVisual(); meSelectBlock(copy.id); meSyncToCode();
+  ME.blocks.splice(idx + 1, 0, copy); meRenderCanvas(); meSelectBlock(copy.id); meSyncToCode();
 }
 
 function meSelectBlock(id) {
@@ -1608,7 +1432,7 @@ function meSelectBlock(id) {
   meRenderProps(ME.blocks.find(b => b.id === id));
 }
 
-function meRenderVisual() {
+function meRenderCanvas() {
   const canvas = document.getElementById('meCanvas'); if (!canvas) return;
   if (!ME.blocks.length) {
     canvas.innerHTML = `<div class="me-empty-canvas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg><div style="font-size:14px;font-weight:600">Start building your email</div><div style="font-size:12.5px">Click a block type on the left</div></div>`;
@@ -1661,12 +1485,13 @@ function mePropRange(lbl, id, k, val, min, max) { return `<div class="me-field">
 
 function meUpdateProp(id, key, val) {
   const b = ME.blocks.find(x => x.id === id); if (!b) return;
-  b.props[key] = val; meRenderVisual(); meSyncToCode();
+  b.props[key] = val; meRenderCanvas(); meSyncToCode();
 }
 
 function meSyncToCode() {
   if (ME.cm) {
     const html = meGetHtml(); const pos = ME.cm.getCursor(); ME.cm.setValue(html);
+    document.getElementById('mHtmlTmpl').value = html;
     try { ME.cm.setCursor(pos); } catch (e) { }
   }
 }
@@ -1688,7 +1513,24 @@ function meUpdatePreview() {
       return col ? (CP.rows[0][col] || '') : (CP.rows[0][key] || '{{' + key + '}}');
     });
   }
+  const noScrollCss = `<style>::-webkit-scrollbar { display: none !important; } html, body { scrollbar-width: none !important; -ms-overflow-style: none !important; margin: 0; padding: 0; }</style>`;
+  html = html.includes('</head>') ? html.replace('</head>', noScrollCss + '</head>') : noScrollCss + html;
   frame.srcdoc = html;
+  frame.onload = () => resizeMailPreview();
+}
+
+function resizeMailPreview() {
+  const iframe = document.getElementById('mePreviewFrame');
+  if (!iframe) return;
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    setTimeout(() => {
+      if (doc.body) { doc.body.style.margin = '0'; doc.body.style.padding = '0'; doc.body.style.overflow = 'hidden'; }
+      const h = doc.documentElement;
+      const realHeight = Math.max(doc.body.scrollHeight, doc.body.offsetHeight, h.clientHeight, h.scrollHeight, h.offsetHeight, 340);
+      iframe.style.height = realHeight + 'px';
+    }, 50);
+  } catch (e) { }
 }
 
 function meGetHtmlFromBlocks(blocks) {
@@ -1711,593 +1553,81 @@ function meBlockToHtml(block, isEditor = false) {
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   INLINE TEXT EDITING — double-click blocks
-══════════════════════════════════════════════════════════════ */
-let meInlineToolbar = null;
-
-function meEnableInlineEdit(blockId) {
-  const blockEl = document.querySelector(`.me-block-wrap[data-id="${blockId}"]`);
-  const inner = blockEl && blockEl.querySelector('.me-block-inner');
-  if (!inner) return;
-  const block = ME.blocks.find(b => b.id === blockId);
-  if (!block || !['header', 'text', 'footer', 'logo'].includes(block.type)) return;
-
-  // Remove any existing toolbar
-  meCloseInlineEdit();
-
-  inner.contentEditable = 'true';
-  inner.focus();
-
-  // Create floating toolbar
-  const toolbar = document.createElement('div');
-  toolbar.className = 'me-inline-toolbar';
-  toolbar.id = 'meInlineToolbar';
-  toolbar.innerHTML = `
-    <button class="me-itb-btn" title="Bold" onmousedown="event.preventDefault();document.execCommand('bold')"><strong>B</strong></button>
-    <button class="me-itb-btn" title="Italic" onmousedown="event.preventDefault();document.execCommand('italic')"><em>I</em></button>
-    <button class="me-itb-btn" title="Underline" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
-    <div class="me-itb-sep"></div>
-    <button class="me-itb-btn" title="Done editing" onmousedown="event.preventDefault();meCloseInlineEdit()" style="font-size:11px;color:var(--cyan);font-weight:700">Done</button>
-  `;
-  blockEl.style.position = 'relative';
-  blockEl.appendChild(toolbar);
-  meInlineToolbar = toolbar;
-
-  // On blur, save content back to block
-  const saveContent = () => {
-    const text = inner.innerText || inner.textContent || '';
-    block.props.text = text;
-    inner.contentEditable = 'false';
-    inner.blur();
-    toolbar.remove();
-    meInlineToolbar = null;
-    meSyncToCode();
-  };
-
-  inner.addEventListener('blur', saveContent, { once: true });
-}
-
-function meCloseInlineEdit() {
-  if (meInlineToolbar) { meInlineToolbar.remove(); meInlineToolbar = null; }
-  document.querySelectorAll('.me-block-inner[contenteditable="true"]').forEach(el => {
-    el.contentEditable = 'false';
-  });
-}
-
-// Patch meRenderCanvas to add double-click listeners
-const _meRenderCanvas_orig2 = meRenderCanvas;
-meRenderCanvas = function () {
-  _meRenderCanvas_orig2();
-  document.querySelectorAll('.me-block-wrap').forEach(wrap => {
-    const blockId = wrap.dataset.id;
-    const block = ME.blocks.find(b => b.id === blockId);
-    if (!block || !['header', 'text', 'footer', 'logo'].includes(block.type)) return;
-    wrap.addEventListener('dblclick', (e) => {
-      e.stopPropagation();
-      meEnableInlineEdit(blockId);
-    }, { once: false });
-  });
-};
-
-/* ══════════════════════════════════════════════════════════════
-   AI CHAT PANEL
-══════════════════════════════════════════════════════════════ */
+/* ── AI Engine & Chat ── */
 let meAiChatHistory = [];
 let meAiIsLoading = false;
-let _galAiIsPro = null;
-async function galAiCheckPro() {
-  galAiIsPro = true;
-  return true;
-}
 
 function meToggleAiPanel() {
   const panel = document.getElementById('meAiPanel');
-  const toggle = document.getElementById('meAiToggleBtn');
+  const btn = document.getElementById('meAiToggleBtn');
   if (!panel) return;
-  const isOpen = panel.classList.toggle('open');
-  if (toggle) toggle.classList.toggle('active', isOpen);
+  if (panel.style.display === 'none' || panel.style.display === '') {
+    panel.style.display = 'flex';
+    btn.classList.add('active');
+  } else {
+    panel.style.display = 'none';
+    btn.classList.remove('active');
+  }
 }
 
 function meAiAppendBubble(role, content, isTyping) {
   const chat = document.getElementById('meAiChat');
   if (!chat) return null;
-
   const div = document.createElement('div');
   div.className = 'me-ai-bubble ' + role;
-
-  if (isTyping) {
-    div.classList.add('typing');
-    div.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
-  } else if (role === 'ai') {
-    div.innerHTML = `<div class="ai-avatar">✨ Gemini AI</div>${content.replace(/\n/g, '<br>')}`;
-  } else {
+  
+  if (role === 'user') {
+    div.style.cssText = 'background:rgba(255,255,255,0.08); color:var(--text); padding:14px 20px; border-radius:18px 18px 4px 18px; max-width:85%; align-self:flex-end; font-size:14px; line-height:1.5; margin-bottom:16px; border:1px solid rgba(255,255,255,0.05);';
     div.textContent = content;
+  } else {
+    div.style.cssText = 'display:flex; gap:12px; align-self:flex-start; width:100%; color:var(--text); font-size:14px; line-height:1.6; margin-bottom:16px;';
+    const parsed = content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    div.innerHTML = `
+      <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">✨</div>
+      <div style="flex:1; background:var(--glass); border:1px solid var(--glass-border); padding:12px 14px; border-radius:12px; border-top-left-radius:0;">${parsed}</div>`;
   }
-
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  
+  chat.appendChild(div); chat.scrollTop = chat.scrollHeight;
   return div;
-}
-
-function meAiApplySuggestions(suggestions) {
-  const chat = document.getElementById('meAiChat');
-  if (!chat || !suggestions || !suggestions.length) return;
-
-  const div = document.createElement('div');
-  div.className = 'me-ai-bubble ai';
-  const btns = suggestions.map((s, i) =>
-    `<button class="me-ai-suggestion-btn" onclick="meAiApplySubject(this,'${s.replace(/'/g, "\\'")}')">
-      <span style="color:var(--text-3);font-size:11px;margin-right:5px">${i + 1}.</span>${s}
-    </button>`
-  ).join('');
-  div.innerHTML = `<div class="ai-avatar">✨ Gemini AI</div>
-    <div style="margin-bottom:8px">Here are 5 subject line suggestions. Click one to apply:</div>
-    <div class="me-ai-suggestions">${btns}</div>`;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-function meAiApplySubject(btn, subject) {
-  const el = document.getElementById('mSubject');
-  if (el) {
-    el.value = subject;
-    el.style.borderColor = 'rgba(0,212,255,0.6)';
-    setTimeout(() => el.style.borderColor = '', 1500);
-    toast('Subject applied: ' + subject.slice(0, 40) + '…', 'success', 2000);
-  }
-  btn.style.background = 'rgba(16,185,129,0.2)';
-  btn.style.borderColor = 'rgba(16,185,129,0.35)';
-}
-
-function meAiShowUpgrade() {
-  const chat = document.getElementById('meAiChat');
-  if (!chat) return;
-  const div = document.createElement('div');
-  div.className = 'me-ai-bubble ai';
-  div.innerHTML = `<div class="ai-avatar">✨ Gal AI</div>
-    <div style="margin-bottom:10px">Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered email generation, design suggestions, and unlimited assistance.</div>
-    <div class="gal-ai-sugg-list">
-      <a href="settings.html#billing" class="gal-ai-sugg-btn" style="background:linear-gradient(90deg,rgba(0,212,255,0.12),rgba(124,58,237,0.12));border-color:rgba(0,212,255,0.3);color:var(--cyan);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>
-      <button class="gal-ai-sugg-btn" onclick="meAiShowProDetails(this)">What's included?</button>
-    </div>`;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-function meAiShowProDetails(btn) {
-  const chat = document.getElementById('meAiChat');
-  const details = document.createElement('div');
-  details.className = 'me-ai-bubble ai';
-  details.innerHTML = `<div class="ai-avatar">✨ Gal AI</div>
-    <div style="line-height:1.8">
-      ✦ Unlimited AI email generation<br>
-      ✦ Smart design suggestions<br>
-      ✦ Block-level AI edits<br>
-      ✦ Subject line brainstorming<br>
-      ✦ Priority sending quota
-    </div>`;
-  btn.closest('.me-ai-bubble')?.insertAdjacentElement('afterend', details);
-  btn.remove();
-  if (chat) chat.scrollTop = chat.scrollHeight;
 }
 
 async function meAiSend() {
   const input = document.getElementById('meAiInput');
   if (!input || meAiIsLoading) return;
-
-  const msg = input.value.trim();
-  if (!msg) return;
-
- // Pro gate removed — all users can use AI
-
-  input.value = '';
-  input.style.height = 'auto';
-  meAiIsLoading = true;
-  document.getElementById('meAiSendBtn').disabled = true;
+  const msg = input.value.trim(); if (!msg) return;
+  input.value = ''; meAiIsLoading = true;
+  const btn = document.getElementById('meAiSendBtn');
+  if (btn) btn.disabled = true;
 
   meAiAppendBubble('user', msg);
-  const typingEl = meAiAppendBubble('ai', '', true);
-
+  const typingEl = meAiAppendBubble('ai', 'Thinking...');
   meAiChatHistory.push({ role: 'user', content: msg });
 
   try {
-    mePushHistory(); // save undo snapshot before AI modifies canvas
-
-    const body = {
-      userMessage: msg,
-      mode: ME.mode || 'visual',
-      htmlModeText: (ME.mode === 'code' && ME.cm) ? ME.cm.getValue() : '',
-      currentBlocks: ME.blocks,
-      headers: MS.headers,
-      chatHistory: meAiChatHistory.slice(-10),
-      selectedBlockId: ME.selectedId,
-    };
-
-    // ── FIXED: Native Fetch with Authorization ──
     const token = localStorage.getItem('Honourix_token');
     const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/generate-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify(body),
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ userMessage: msg, mode: ME.activeTab, htmlModeText: ME.cm ? ME.cm.getValue() : '', currentBlocks: ME.blocks, headers: CP.headers, chatHistory: meAiChatHistory.slice(-10), selectedBlockId: ME.selectedId }),
     });
-    const res = await response.json();
-    // ──────────────────────────────────────────
+    const res = await response.json(); typingEl.remove();
+    if (response.status === 403 && res.error === 'AI_LOCKED') { meAiAppendBubble('ai', '🔒 AI features require a Pro plan.'); return; }
+    meAiChatHistory.push({ role: 'model', content: res.message || '' });
 
-    if (typingEl) typingEl.remove();
-
-    const action = res.action;
-    const message = res.message || '';
-
-    meAiChatHistory.push({ role: 'model', content: message });
-
-    if (action === 'replace_html' && res.html && ME.mode === 'code') {
-      if (typeof res.html === 'string' && ME.cm) {
-        ME.cm.setValue(res.html);
-        document.getElementById('mHtmlTmpl').value = res.html;
-        meRefreshPreviewIframe();
-      }
-      meAiAppendBubble('ai', message || 'Your HTML code has been updated directly!');
-      toast('AI updated your HTML', 'success', 2000);
-
-    } else if (action === 'replace_blocks' && res.blocks && res.blocks.length) {
-      ME.blocks = res.blocks.map(b => ({
-        id: b.id || ('b' + (ME.nextId++)),
-        type: b.type,
-        props: b.props || {},
-      }));
-      ME.selectedId = null;
-      meRenderCanvas();
-      meRenderProps(null);
-      meSyncToCode();
-      meAiAppendBubble('ai', message || 'Done! Your email has been updated.');
-      toast('AI updated your email', 'success', 2000);
-
-    } else if (action === 'update_block' && res.blockId && res.props) {
-      const block = ME.blocks.find(b => b.id === res.blockId) || ME.blocks.find(b => b.id === ME.selectedId);
-      if (block) {
-        Object.assign(block.props, res.props);
-        const inner = document.querySelector(`.me-block-wrap[data-id="${block.id}"] .me-block-inner`);
-        if (inner) inner.innerHTML = meBlockToHtml(block);
-        meSyncToCode();
-        meAiAppendBubble('ai', message || 'Block updated!');
-      } else {
-        meAiAppendBubble('ai', message || 'Could not find block to update. Please select a block first.');
-      }
-
-    } else if (action === 'subject_suggestions' && res.suggestions) {
-      meAiApplySuggestions(res.suggestions);
-
-    } else {
-      // reply_only or unknown
-      meAiAppendBubble('ai', message || 'I\'m here to help! Try asking me to generate or modify your email.');
-    }
-
-  } catch (err) {
-    if (typingEl) typingEl.remove();
-    meAiAppendBubble('ai', 'Sorry, something went wrong: ' + (err.message || 'Unknown error'));
-  } finally {
-    meAiIsLoading = false;
-    document.getElementById('meAiSendBtn').disabled = false;
-  }
+    if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; meRenderCanvas(); meRenderProps(null); meSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); } 
+    else if (res.action === 'replace_html' && res.html && ME.cm) { ME.cm.setValue(res.html); document.getElementById('mHtmlTmpl').value = res.html; meAiAppendBubble('ai', res.message || 'Code updated.'); } 
+    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); meSyncToCode(); meRenderCanvas(); if(ME.selectedId===b.id)meRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); } 
+    else { meAiAppendBubble('ai', res.message || 'How else can I help?'); }
+  } catch (err) { if (typingEl) typingEl.remove(); meAiAppendBubble('ai', 'Error: ' + err.message); } 
+  finally { meAiIsLoading = false; if (btn) btn.disabled = false; }
 }
-/* ══════════════════════════════════════════════════════════════
-   PATCH mNewCampaign to reset gate state
-══════════════════════════════════════════════════════════════ */
-const _mNewCampaign_orig = mNewCampaign;
-mNewCampaign = function () {
-  _mNewCampaign_orig();
-  // Reset gate
-  meTplGateSelected = null;
-  meAiChatHistory = [];
-  ME_HISTORY.length = 0;
-  ME_HIST_IDX = -1;
-  const gate = document.getElementById('meTplGate');
-  const wrap = document.getElementById('meEditorWrap');
-  if (gate) gate.style.display = '';
-  if (wrap) wrap.classList.remove('visible');
-  const tabBar = document.getElementById('meTabBarWrap');
-  const aiBtn = document.getElementById('meAiToggleBtn');
-  const nav = document.getElementById('meStep2Nav');
-  if (tabBar) tabBar.style.display = 'none';
-  if (aiBtn) aiBtn.style.display = 'none';
-  if (nav) nav.style.display = 'none';
-  // Reset AI chat
-  const aiChat = document.getElementById('meAiChat');
-  if (aiChat) aiChat.innerHTML = `<div class="me-ai-bubble ai">
-    <div class="ai-avatar">✨ Gemini AI</div>
-    Hi! I can help you create beautiful email designs. Try asking me:<br><br>
-    <strong>• "Generate a professional welcome email"</strong><br>
-    <strong>• "Make the header dark blue and bold"</strong><br>
-    <strong>• "Suggest 5 subject lines"</strong><br>
-    <strong>• Paste any HTML to import it</strong>
-  </div>`;
-  // Close AI panel
-  const panel = document.getElementById('meAiPanel');
-  if (panel) panel.classList.remove('open');
-};
 
 /* ════════════════════════════════════════════════════════════════
-   GAL AI — Fixed Panel, Resize, Greeting, Cycling Suggestions
+   UPDATE LAUNCH PIPELINE HTML FETCH
 ════════════════════════════════════════════════════════════════ */
-(function galAiInit() {
-  const GAL_SUGGESTIONS = [
-    'Generate a professional welcome email',
-    'Create a dark-themed SaaS onboarding email',
-    'Make the header gradient blue and bold',
-    'Add a two-column image + text section',
-    'Suggest 5 subject lines for this email',
-    'Design a premium certificate completion email',
-    'Create a bold promotional email with a CTA',
-    'Add a footer with social media links',
-    'Make this email look like a luxury brand',
-    'Rewrite the body text in a friendly tone',
-  ];
-  let galCycleIdx = 0;
-  let galCycleTimer = null;
-
-  // Start cycling suggestions in the greeting screen
-  window.galAiStartCycle = function () {
-    const el = document.getElementById('galAiCycleText');
-    if (!el) return;
-    if (galCycleTimer) clearInterval(galCycleTimer);
-    galCycleTimer = setInterval(() => {
-      el.style.opacity = '0';
-      setTimeout(() => {
-        galCycleIdx = (galCycleIdx + 1) % GAL_SUGGESTIONS.length;
-        el.textContent = GAL_SUGGESTIONS[galCycleIdx];
-        el.style.opacity = '1';
-      }, 400);
-    }, 3000);
-  };
-
-  // Set greeting name from JWT token
-  window.galAiSetGreetName = function () {
-    try {
-      const token = localStorage.getItem('Honourix_token');
-      if (!token) return;
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const firstName = (payload.name || '').split(' ')[0] || 'there';
-      const el = document.getElementById('galAiGreetName');
-      if (el) el.innerHTML = `How can I help you today,<br>${firstName}`;
-    } catch (e) { }
-  };
-
-  // Toggle panel open/close
-  window.galAiToggle = function () {
-    const panel = document.getElementById('galAiPanel');
-    const fab = document.getElementById('galAiFab');
-    const main = document.querySelector('.main-area');
-    if (!panel) return;
-    const isOpen = panel.classList.toggle('open');
-    if (fab) fab.classList.toggle('panel-open', isOpen);
-    if (main) main.classList.toggle('gal-open', isOpen);
-    if (isOpen) {
-      galAiStartCycle();
-      galAiSetGreetName();
-    } else {
-      if (galCycleTimer) { clearInterval(galCycleTimer); galCycleTimer = null; }
-    }
-  };
-  // Old name still used by AI JS below
-  window.meToggleAiPanel = window.galAiToggle;
-
-  // Show greeting / hide greeting based on chat messages
-  window.galAiSyncGreeting = function () {
-    const chat = document.getElementById('meAiChat');
-    const greet = document.getElementById('galAiGreeting');
-    if (!chat || !greet) return;
-    const hasMessages = Array.from(chat.children).some(c => c.id !== 'galAiGreeting' && c.tagName !== 'STYLE');
-    greet.style.display = hasMessages ? 'none' : 'flex';
-  };
-
-  // ── Resize handle ──
-  const resizeHandle = document.getElementById('galAiResize');
-  const panel = document.getElementById('galAiPanel');
-  if (resizeHandle && panel) {
-    let startX, startW;
-    resizeHandle.addEventListener('mousedown', (e) => {
-      startX = e.clientX;
-      startW = parseInt(getComputedStyle(panel).width, 10);
-      resizeHandle.classList.add('dragging');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
-      const onMove = (e) => {
-        const delta = startX - e.clientX;
-        const newW = Math.min(640, Math.max(300, startW + delta));
-        document.documentElement.style.setProperty('--gal-width', newW + 'px');
-      };
-      const onUp = () => {
-        resizeHandle.classList.remove('dragging');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-      };
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
-    });
-  }
-
-  // Show FAB when template is selected (editor becomes visible)
-  const _origOpen = window.meLoadTemplateAndOpenEditor;
-  window.meLoadTemplateAndOpenEditor = function (key) {
-    if (_origOpen) _origOpen.apply(this, arguments);
-    const fab = document.getElementById('galAiFab');
-    if (fab) fab.classList.add('visible');
-  };
-
-  // Patch meAiAppendBubble for Gemini Layout (Right align User, Center AI, Custom Statuses)
-  // Patch meAiAppendBubble for Gemini Layout (Right align User Box, Center/Unboxed AI)
-  window.meAiAppendBubble = function (role, content, isTyping) {
-    const chat = document.getElementById('meAiChat');
-    if (!chat) return null;
-    const wrap = document.createElement('div');
-    const id = 'msg_' + Date.now();
-    wrap.id = id;
-
-    if (role === 'user') {
-      // User: Right Aligned, Inside a Box
-      wrap.style.cssText = 'background:rgba(255,255,255,0.08); color:var(--text); padding:14px 20px; border-radius:18px 18px 4px 18px; max-width:85%; align-self:flex-end; font-size:15px; line-height:1.5; font-family:"Plus Jakarta Sans"; margin-bottom:24px; border:1px solid rgba(255,255,255,0.05);';
-      wrap.textContent = content;
-    } else {
-      // AI: Unboxed, slightly wider, centered feel with sparkle
-      wrap.style.cssText = 'display:flex; gap:16px; align-self:flex-start; width:100%; color:var(--text); font-size:15px; line-height:1.7; font-family:"Plus Jakarta Sans"; margin-bottom:24px; background:transparent; border:none; padding:0;';
-
-      if (isTyping) {
-        const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
-        let sIdx = 0;
-        wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
-          <div style="flex:1; display:flex; align-items:center; gap:8px;">
-            <div style="display:flex; gap:4px;">
-               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0s;"></div>
-               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0.2s;"></div>
-               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0.4s;"></div>
-            </div>
-            <span id="thinkText_${id}" style="color:var(--cyan); font-weight:600; font-size:14px;">Thinking...</span>
-          </div>`;
-
-        wrap.dataset.thinkTimer = setInterval(() => {
-          sIdx = (sIdx + 1) % statuses.length;
-          const el = document.getElementById(`thinkText_${id}`);
-          if (el) el.textContent = statuses[sIdx] + '...';
-        }, 1500);
-      } else {
-        // Parse Markdown & Clickable Options
-        let parsedContent = content.replace(/\n/g, '<br>');
-        parsedContent = parsedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        parsedContent = parsedContent.replace(/\*(.*?)\*/g, '<em>$1</em>');
-        parsedContent = parsedContent.replace(/<br>[•\-\*]\s+(.+)/g, '<br><div class="ai-clickable-option" onclick="applyAiOption(this.innerText)">$1</div>');
-        parsedContent = parsedContent.replace(/<br>\d+\.\s+(.+)/g, '<br><div class="ai-clickable-option" onclick="applyAiOption(this.innerText)">$1</div>');
-
-        wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
-          <div style="flex:1;">${parsedContent}</div>`;
-      }
-    }
-
-    chat.appendChild(wrap);
-    chat.scrollTop = chat.scrollHeight;
-
-    // Hide Greeting explicitly when chat begins
-    const greet = document.getElementById('galAiGreeting');
-    if (greet) greet.style.display = 'none';
-
-    return wrap;
-  };
-
-  // Patch meAiApplySuggestions to use Gal AI suggestion button style
-  const _origSugg = window.meAiApplySuggestions;
-  window.meAiApplySuggestions = function (suggestions) {
-    const chat = document.getElementById('meAiChat');
-    if (!chat || !suggestions?.length) return;
-    const wrap = document.createElement('div');
-    wrap.className = 'gal-ai-sugg-list';
-    suggestions.forEach(s => {
-      const btn = document.createElement('button');
-      btn.className = 'gal-ai-sugg-btn';
-      btn.textContent = s;
-      btn.onclick = () => window.meAiApplySubject && window.meAiApplySubject(btn, s);
-      wrap.appendChild(btn);
-    });
-    chat.appendChild(wrap);
-    chat.scrollTop = chat.scrollHeight;
-  };
-
-  // Init on DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
-    galAiSyncGreeting();
-    galAiStartCycle();
-    galAiSetGreetName();
-  });
-
-})();
-
-/* ════════════════════════════════════════════════════════════════
-   AI CLICKABLE OPTION HANDLER
-════════════════════════════════════════════════════════════════ */
-window.applyAiOption = function (text) {
-  // 1. If user was last typing in the Subject Field, update the subject!
-  if (window.meLastFocusedField && window.meLastFocusedField.id === 'mSubject') {
-    const subj = document.getElementById('mSubject');
-    if (subj) {
-      subj.value = text;
-      if (typeof meToast === 'function') meToast('Subject updated!', 'success');
-      return;
-    }
-  }
-
-  // 2. If user has a Text block actively selected on the Canvas, update it!
-  if (typeof ME !== 'undefined' && ME.selectedId) {
-    const b = ME.blocks.find(x => x.id === ME.selectedId);
-    if (b && (b.type === 'text' || b.type === 'title')) {
-      b.props.text = text;
-      if (typeof meRenderCanvas === 'function') meRenderCanvas();
-      if (typeof meToast === 'function') meToast('Text block updated!', 'success');
-      return;
-    }
-  }
-
-  // 3. Fallback: Copy to clipboard
-  navigator.clipboard.writeText(text);
-  if (typeof meToast === 'function') meToast('Copied to clipboard!', 'info');
-};
-
-/* ════════════════════════════════════════════════════════════════
-   DYNAMIC IFRAME RESIZER & CUSTOM SCROLLBARS
-════════════════════════════════════════════════════════════════ */
-window.resizeMailPreview = function () {
-  const iframe = document.getElementById('mPreviewIframe');
-  if (!iframe) return;
-
-  try {
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-    // Auto-Expand Height with precisely no artificial gap
-    setTimeout(() => {
-      const body = doc.body;
-      const h = doc.documentElement;
-
-      // Clear out artificial margin/padding to eliminate gap at the bottom
-      if (body) {
-        body.style.margin = '0';
-        body.style.padding = '0';
-        body.style.overflow = 'hidden'; // Hide internal scrollbar to prevent gliching
-      }
-
-      // Calculate perfect height bounding entirely on actual content 
-      const realHeight = Math.max(
-        body.scrollHeight, body.offsetHeight,
-        h.clientHeight, h.scrollHeight, h.offsetHeight, 340
-      );
-
-      iframe.style.height = realHeight + 'px';
-    }, 50);
-
-  } catch (e) {
-    console.warn("Could not resize iframe due to cross-origin or loading state.");
-  }
-};
-
-window.mSetDeviceS3 = function (device) {
-  const frame = document.getElementById('mPrvBoxS3');
-  if (!frame) return;
-  document.getElementById('mBtnDesktopS3').classList.toggle('active', device === 'desktop');
-  document.getElementById('mBtnMobileS3').classList.toggle('active', device === 'mobile');
-
-  if (device === 'mobile') {
-    frame.style.width = '375px';
-  } else {
-    frame.style.width = '100%';
-  }
-
-  // Automatically trigger height recalculation for the new width
-  if (window.resizeMailPreview) window.resizeMailPreview();
-};
+// Ensure we use the textarea value exactly as it is built!
+function getFinalHtmlTmpl() {
+  return document.getElementById('mHtmlTmpl').value || meGetHtml();
+}
 /* ════════════════════════════════════════════════════════════════
    STEP 5 — REVIEW
 ════════════════════════════════════════════════════════════════ */
