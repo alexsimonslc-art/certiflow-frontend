@@ -1678,9 +1678,13 @@ async function mStartSend() {
   document.getElementById('mSendCounter').textContent = '0 / ' + total;
   mLog('info', 'Starting campaign: ' + camp + ' — ' + total + ' recipients');
 
+  // Pass the raw data exactly as it is, but guarantee 'name' and 'email' exist for the backend
   const recipients = MS.rows.map(r => {
-    const obj = { name: r[nameC] || '', email: r[emailC] || '' };
-    MS.headers.forEach(h => { obj[h.toLowerCase().replace(/\s+/g, '_')] = r[h] || ''; });
+    // Clone the raw row so all original keys are intact for personalization
+    const obj = { ...r }; 
+    // Explicitly set the required routing fields based on the user's dropdown selection
+    obj.name = r[nameC] || ''; 
+    obj.email = r[emailC] || ''; 
     return obj;
   });
 
