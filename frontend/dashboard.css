@@ -1825,3 +1825,60 @@ select optgroup {
 .sidebar.collapsed .user-avatar {
   margin: 0 auto !important;
 }
+
+/* ── AI Animated Toggle Button ── */
+.me-ai-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 22px; /* Wider padding forces the perfect capsule shape */
+  border-radius: 99px; /* Capsule rounding */
+  font-family: var(--font, 'Plus Jakarta Sans', sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  
+  /* The Magic Gradient Border Setup */
+  border: 2px solid transparent; /* Reserves space for the border */
+  background: 
+    linear-gradient(#070d1a, #070d1a) padding-box, /* Inner dark background */
+    linear-gradient(90deg, #7c3aed, #00d4ff, #ec4899, #7c3aed, #00d4ff) border-box; /* Gradient border */
+  background-size: 100% 100%, 300% 100%; /* Stretches the gradient so we can pan it */
+  
+  /* Trigger the infinite animation */
+  animation: aiBorderPan 3s linear infinite;
+  
+  /* Smooth transitions for hovering */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Subtle resting shadow */
+}
+
+/* Icon alignment and sizing */
+.me-ai-toggle svg {
+  width: 16px;
+  height: 16px;
+  margin-bottom: 1px; /* Optically centers the icon with the text */
+}
+
+/* Keyframes to pan the gradient border */
+@keyframes aiBorderPan {
+  0% { background-position: 0% 0%, 0% 50%; }
+  100% { background-position: 0% 0%, 300% 50%; }
+}
+
+/* ── Hover & Glow State ── */
+.me-ai-toggle:hover {
+  /* Creates a vibrant cyan and purple combined glow */
+  box-shadow: 
+    0 0 15px rgba(0, 212, 255, 0.4), 
+    0 0 30px rgba(124, 58, 237, 0.3);
+  transform: translateY(-1px); /* Slight lift effect */
+}
+
+/* Press state */
+.me-ai-toggle:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
