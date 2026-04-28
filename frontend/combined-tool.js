@@ -1315,7 +1315,7 @@ function meTplGateConfirm() {
 }
 
 function meBackToGate() {
-  document.getElementById('meTplGate').style.display = 'flex';
+  document.getElementById('meTplGate').style.display = 'block';
   document.getElementById('meEditorWrap').style.display = 'none';
   document.getElementById('meStep4Nav').style.display = 'none';
   document.getElementById('meHeadActions').style.display = 'none';
