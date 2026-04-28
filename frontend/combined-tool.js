@@ -1319,8 +1319,10 @@ function meBackToGate() {
   document.getElementById('meEditorWrap').style.display = 'none';
   document.getElementById('meStep4Nav').style.display = 'none';
   document.getElementById('meHeadActions').style.display = 'none';
-  const panel = document.getElementById('meAiPanel');
-  if (panel) { panel.style.display = 'none'; panel.classList.remove('open'); }
+  const fab = document.getElementById('galAiFab');
+  if (fab) fab.classList.remove('visible');
+  const panel = document.getElementById('galAiPanel');
+  if (panel && panel.classList.contains('open')) galAiToggle();
 }
 
 function meSelectTemplate(type) {
@@ -1329,8 +1331,8 @@ function meSelectTemplate(type) {
   document.getElementById('meStep4Nav').style.display = 'flex';
   document.getElementById('meHeadActions').style.display = 'flex';
   
-  const aiBtn = document.getElementById('meAiToggleBtn');
-  if (aiBtn) aiBtn.style.display = (type === 'code') ? 'none' : 'flex';
+  const fab = document.getElementById('galAiFab');
+  if (fab) { if (type === 'code') fab.classList.remove('visible'); else fab.classList.add('visible'); }
   document.getElementById('meTabBarWrap').style.display = 'flex';
 
   ME.mode = (type === 'code') ? 'code' : 'visual';
@@ -1557,50 +1559,226 @@ function meBlockToHtml(block, isEditor = false) {
 let meAiChatHistory = [];
 let meAiIsLoading = false;
 
-function meToggleAiPanel() {
-  const panel = document.getElementById('meAiPanel');
-  const btn = document.getElementById('meAiToggleBtn');
-  if (!panel) return;
-  if (panel.style.display === 'none' || panel.style.display === '') {
-    panel.style.display = 'flex';
-    btn.classList.add('active');
-  } else {
-    panel.style.display = 'none';
-    btn.classList.remove('active');
+/* ════════════════════════════════════════════════════════════════
+   GAL AI — Fixed Panel, Resize, Greeting, Cycling Suggestions
+════════════════════════════════════════════════════════════════ */
+(function galAiInit() {
+  const GAL_SUGGESTIONS = [
+    'Generate a professional welcome email',
+    'Create a dark-themed SaaS onboarding email',
+    'Make the header gradient blue and bold',
+    'Add a two-column image + text section',
+    'Suggest 5 subject lines for this email',
+    'Design a premium certificate completion email',
+    'Create a bold promotional email with a CTA',
+    'Add a footer with social media links',
+    'Make this email look like a luxury brand',
+    'Rewrite the body text in a friendly tone',
+  ];
+  let galCycleIdx = 0;
+  let galCycleTimer = null;
+
+  window.galAiStartCycle = function () {
+    const el = document.getElementById('galAiCycleText');
+    if (!el) return;
+    if (galCycleTimer) clearInterval(galCycleTimer);
+    galCycleTimer = setInterval(() => {
+      el.style.opacity = '0';
+      setTimeout(() => {
+        galCycleIdx = (galCycleIdx + 1) % GAL_SUGGESTIONS.length;
+        el.textContent = GAL_SUGGESTIONS[galCycleIdx];
+        el.style.opacity = '1';
+      }, 400);
+    }, 3000);
+  };
+
+  window.galAiSetGreetName = function () {
+    try {
+      const token = localStorage.getItem('Honourix_token');
+      if (!token) return;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const firstName = (payload.name || '').split(' ')[0] || 'there';
+      const el = document.getElementById('galAiGreetName');
+      if (el) el.innerHTML = `How can I help you today,<br>${firstName}`;
+    } catch (e) { }
+  };
+
+  window.galAiToggle = function () {
+    const panel = document.getElementById('galAiPanel');
+    const fab = document.getElementById('galAiFab');
+    const main = document.querySelector('.main-area');
+    if (!panel) return;
+    const isOpen = panel.classList.toggle('open');
+    if (fab) fab.classList.toggle('panel-open', isOpen);
+    if (main) main.classList.toggle('gal-open', isOpen);
+    if (isOpen) {
+      galAiStartCycle();
+      galAiSetGreetName();
+    } else {
+      if (galCycleTimer) { clearInterval(galCycleTimer); galCycleTimer = null; }
+    }
+  };
+  window.meToggleAiPanel = window.galAiToggle;
+
+  window.galAiSyncGreeting = function () {
+    const chat = document.getElementById('meAiChat');
+    const greet = document.getElementById('galAiGreeting');
+    if (!chat || !greet) return;
+    const hasMessages = Array.from(chat.children).some(c => c.id !== 'galAiGreeting' && c.tagName !== 'STYLE');
+    greet.style.display = hasMessages ? 'none' : 'flex';
+  };
+
+  const resizeHandle = document.getElementById('galAiResize');
+  const panel = document.getElementById('galAiPanel');
+  if (resizeHandle && panel) {
+    let startX, startW;
+    resizeHandle.addEventListener('mousedown', (e) => {
+      startX = e.clientX;
+      startW = parseInt(getComputedStyle(panel).width, 10);
+      resizeHandle.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      const onMove = (e) => {
+        const delta = startX - e.clientX;
+        const newW = Math.min(640, Math.max(300, startW + delta));
+        document.documentElement.style.setProperty('--gal-width', newW + 'px');
+      };
+      const onUp = () => {
+        resizeHandle.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
   }
+
+  window.meAiAppendBubble = function (role, content, isTyping) {
+    const chat = document.getElementById('meAiChat');
+    if (!chat) return null;
+    const wrap = document.createElement('div');
+    const id = 'msg_' + Date.now();
+    wrap.id = id;
+
+    if (role === 'user') {
+      wrap.style.cssText = 'background:rgba(255,255,255,0.08); color:var(--text); padding:14px 20px; border-radius:18px 18px 4px 18px; max-width:85%; align-self:flex-end; font-size:15px; line-height:1.5; font-family:"Plus Jakarta Sans"; margin-bottom:24px; border:1px solid rgba(255,255,255,0.05);';
+      wrap.textContent = content;
+    } else {
+      wrap.style.cssText = 'display:flex; gap:16px; align-self:flex-start; width:100%; color:var(--text); font-size:15px; line-height:1.7; font-family:"Plus Jakarta Sans"; margin-bottom:24px; background:transparent; border:none; padding:0;';
+      if (isTyping) {
+        const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
+        let sIdx = 0;
+        wrap.innerHTML = `
+          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
+          <div style="flex:1; display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; gap:4px;">
+               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0s;"></div>
+               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0.2s;"></div>
+               <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0.4s;"></div>
+            </div>
+            <span id="thinkText_${id}" style="color:var(--cyan); font-weight:600; font-size:14px;">Thinking...</span>
+          </div>`;
+        wrap.dataset.thinkTimer = setInterval(() => {
+          sIdx = (sIdx + 1) % statuses.length;
+          const el = document.getElementById(`thinkText_${id}`);
+          if (el) el.textContent = statuses[sIdx] + '...';
+        }, 1500);
+      } else {
+        let parsed = content.replace(/\n/g, '<br>');
+        parsed = parsed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        parsed = parsed.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        wrap.innerHTML = `
+          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
+          <div style="flex:1;">${parsed}</div>`;
+      }
+    }
+
+    chat.appendChild(wrap);
+    chat.scrollTop = chat.scrollHeight;
+    const greet = document.getElementById('galAiGreeting');
+    if (greet) greet.style.display = 'none';
+    return wrap;
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    galAiSyncGreeting();
+    galAiSetGreetName();
+  });
+})();
+
+let _galAiIsPro = null;
+async function _galAiCheckPro() {
+  if (_galAiIsPro !== null) return _galAiIsPro;
+  try {
+    const token = localStorage.getItem('Honourix_token');
+    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    _galAiIsPro = data?.plan === 'pro';
+  } catch (_) { _galAiIsPro = false; }
+  return _galAiIsPro;
 }
 
-function meAiAppendBubble(role, content, isTyping) {
+function meAiShowUpgrade() {
   const chat = document.getElementById('meAiChat');
-  if (!chat) return null;
-  const div = document.createElement('div');
-  div.className = 'me-ai-bubble ' + role;
-  
-  if (role === 'user') {
-    div.style.cssText = 'background:rgba(255,255,255,0.08); color:var(--text); padding:14px 20px; border-radius:18px 18px 4px 18px; max-width:85%; align-self:flex-end; font-size:14px; line-height:1.5; margin-bottom:16px; border:1px solid rgba(255,255,255,0.05);';
-    div.textContent = content;
-  } else {
-    div.style.cssText = 'display:flex; gap:12px; align-self:flex-start; width:100%; color:var(--text); font-size:14px; line-height:1.6; margin-bottom:16px;';
-    const parsed = content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    div.innerHTML = `
-      <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">✨</div>
-      <div style="flex:1; background:var(--glass); border:1px solid var(--glass-border); padding:12px 14px; border-radius:12px; border-top-left-radius:0;">${parsed}</div>`;
-  }
-  
-  chat.appendChild(div); chat.scrollTop = chat.scrollHeight;
-  return div;
+  if (!chat) return;
+  const greet = document.getElementById('galAiGreeting');
+  if (greet) greet.style.display = 'none';
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;gap:12px;margin-bottom:24px';
+  wrap.innerHTML = `
+    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;box-shadow:0 4px 12px rgba(124,58,237,0.3);margin-top:2px;">✨</div>
+    <div style="flex:1;">
+      <div style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:10px">Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered email generation, design suggestions, and unlimited assistance.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        <a href="settings.html#billing" style="padding:8px 14px;border-radius:10px;background:linear-gradient(90deg,rgba(0,212,255,0.18),rgba(124,58,237,0.18));border:1px solid rgba(0,212,255,0.3);color:var(--cyan);font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;">🚀 Upgrade to Pro →</a>
+        <button onclick="meAiShowProDetails(this)" style="padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit;">What's included?</button>
+      </div>
+    </div>`;
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function meAiShowProDetails(btn) {
+  const chat = document.getElementById('meAiChat');
+  btn.closest('div[style*="display:flex"]')?.insertAdjacentHTML('afterend',
+    `<div style="display:flex;gap:12px;margin-bottom:24px">
+      <div style="width:28px;flex-shrink:0"></div>
+      <div style="flex:1;font-size:13.5px;color:var(--text-2);line-height:1.8">
+        ✦ Unlimited AI email generation<br>
+        ✦ Smart design suggestions<br>
+        ✦ Block-level AI edits<br>
+        ✦ Subject line brainstorming<br>
+        ✦ Priority sending quota
+      </div>
+    </div>`
+  );
+  btn.remove();
+  if (chat) chat.scrollTop = chat.scrollHeight;
 }
 
 async function meAiSend() {
   const input = document.getElementById('meAiInput');
   if (!input || meAiIsLoading) return;
   const msg = input.value.trim(); if (!msg) return;
+
+  const isPro = await _galAiCheckPro();
+  if (!isPro) {
+    input.value = '';
+    meAiAppendBubble('user', msg);
+    meAiShowUpgrade();
+    return;
+  }
+
   input.value = ''; meAiIsLoading = true;
   const btn = document.getElementById('meAiSendBtn');
   if (btn) btn.disabled = true;
 
   meAiAppendBubble('user', msg);
-  const typingEl = meAiAppendBubble('ai', 'Thinking...');
+  const typingEl = meAiAppendBubble('ai', '', true);
   meAiChatHistory.push({ role: 'user', content: msg });
 
   try {
@@ -1609,15 +1787,15 @@ async function meAiSend() {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ userMessage: msg, mode: ME.activeTab, htmlModeText: ME.cm ? ME.cm.getValue() : '', currentBlocks: ME.blocks, headers: CP.headers, chatHistory: meAiChatHistory.slice(-10), selectedBlockId: ME.selectedId }),
     });
-    const res = await response.json(); typingEl.remove();
-    if (response.status === 403 && res.error === 'AI_LOCKED') { meAiAppendBubble('ai', '🔒 AI features require a Pro plan.'); return; }
+    const res = await response.json();
+    if (typingEl) { clearInterval(typingEl.dataset.thinkTimer); typingEl.remove(); }
     meAiChatHistory.push({ role: 'model', content: res.message || '' });
 
-    if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; meRenderCanvas(); meRenderProps(null); meSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); } 
-    else if (res.action === 'replace_html' && res.html && ME.cm) { ME.cm.setValue(res.html); document.getElementById('mHtmlTmpl').value = res.html; meAiAppendBubble('ai', res.message || 'Code updated.'); } 
-    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); meSyncToCode(); meRenderCanvas(); if(ME.selectedId===b.id)meRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); } 
+    if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; meRenderCanvas(); meRenderProps(null); meSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); }
+    else if (res.action === 'replace_html' && res.html && ME.cm) { ME.cm.setValue(res.html); document.getElementById('mHtmlTmpl').value = res.html; meAiAppendBubble('ai', res.message || 'Code updated.'); }
+    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); meSyncToCode(); meRenderCanvas(); if(ME.selectedId===b.id)meRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); }
     else { meAiAppendBubble('ai', res.message || 'How else can I help?'); }
-  } catch (err) { if (typingEl) typingEl.remove(); meAiAppendBubble('ai', 'Error: ' + err.message); } 
+  } catch (err) { if (typingEl) { clearInterval(typingEl.dataset.thinkTimer); typingEl.remove(); } meAiAppendBubble('ai', 'Error: ' + err.message); }
   finally { meAiIsLoading = false; if (btn) btn.disabled = false; }
 }
 

@@ -540,6 +540,141 @@
     .me-device-btn.active { background: var(--glass); border-color: var(--glass-border); color: var(--text); }
     .me-preview-frame-wrap { flex: 1; padding: 32px; overflow-y: auto; display: flex; justify-content: center; transition: 0.3s; }
     #mePreviewFrame { background: #fff; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); transition: width 0.3s ease; border: none; }
+
+    /* ═══════════════════════════════════════════════════
+       GAL AI — Fixed Right Panel (exact mail-tool port)
+    ═══════════════════════════════════════════════════ */
+    .gal-ai-panel {
+      position: fixed; top: 0; right: 0; height: 100vh; width: 0;
+      overflow: hidden; transition: width 0.32s cubic-bezier(0.16,1,0.3,1);
+      z-index: 500; display: flex; flex-direction: column;
+      background: rgba(4,8,15,0.97); border-left: 1px solid rgba(255,255,255,0.09);
+      backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+      box-shadow: -12px 0 60px rgba(0,0,0,0.6); font-family: 'Plus Jakarta Sans',sans-serif;
+      will-change: width; transform: translateZ(0);
+    }
+    .gal-ai-panel.open { width: var(--gal-width,380px); }
+    .main-area { transition: margin-right 0.32s cubic-bezier(0.16,1,0.3,1); }
+    .main-area.gal-open { margin-right: var(--gal-width,380px); }
+    .gal-ai-resize {
+      position: absolute; left: 0; top: 0; width: 5px; height: 100%;
+      cursor: col-resize; z-index: 10; transition: background 0.15s;
+    }
+    .gal-ai-resize:hover, .gal-ai-resize.dragging {
+      background: linear-gradient(180deg,rgba(0,212,255,0.5),rgba(124,58,237,0.5));
+    }
+    .gal-ai-inner { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    .gal-ai-header {
+      padding: 16px 18px 14px; border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; background: rgba(255,255,255,0.015);
+    }
+    .gal-ai-header-left { display: flex; align-items: center; gap: 10px; }
+    .gal-ai-avatar-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg,#00d4ff,#7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0; box-shadow: 0 4px 14px rgba(0,212,255,0.3);
+    }
+    .gal-ai-title { font-size: 14.5px; font-weight: 800; color: var(--text); letter-spacing: 0.2px; }
+    .gal-ai-subtitle { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+    .gal-ai-close-btn {
+      width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08); color: var(--text-2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    .gal-ai-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .gal-ai-close-btn svg { width: 14px; height: 14px; }
+    .gal-ai-chat {
+      flex: 1; overflow-y: auto; padding: 16px; display: flex;
+      flex-direction: column; gap: 12px; scrollbar-width: thin;
+      scrollbar-color: rgba(0,212,255,0.12) transparent;
+    }
+    .gal-ai-chat::-webkit-scrollbar { width: 5px; }
+    .gal-ai-chat::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.15); border-radius: 4px; }
+    .gal-ai-greeting {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 36px 24px; text-align: center;
+      gap: 16px; flex: 1; transition: opacity 0.3s;
+    }
+    .gal-ai-greeting.hidden { display: none; }
+    .gal-ai-greet-sub { font-size: 13.5px; color: var(--text-2); line-height: 1.5; max-width: 260px; }
+    /* Chat bubbles */
+    .gal-ai-bubble { max-width: 90%; font-size: 13.5px; line-height: 1.6; font-family: 'Plus Jakarta Sans',sans-serif; }
+    .gal-ai-bubble.user {
+      align-self: flex-end; background: linear-gradient(135deg,rgba(0,212,255,0.2),rgba(124,58,237,0.2));
+      border: 1px solid rgba(0,212,255,0.25); color: var(--text);
+      padding: 10px 14px; border-radius: 16px; border-bottom-right-radius: 4px;
+    }
+    .gal-ai-bubble.ai {
+      align-self: flex-start; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08); color: var(--text-2);
+      padding: 10px 14px; border-radius: 16px; border-bottom-left-radius: 4px;
+    }
+    .gal-ai-bubble-label {
+      font-size: 11px; font-weight: 700;
+      background: linear-gradient(135deg,#00d4ff,#7c3aed);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 5px; display: flex; align-items: center; gap: 4px; letter-spacing: 0.3px;
+    }
+    /* me-ai-bubble aliases to gal-ai-bubble */
+    .me-ai-bubble { max-width: 90%; font-size: 13.5px; line-height: 1.6; font-family: 'Plus Jakarta Sans',sans-serif; }
+    .me-ai-bubble.user {
+      align-self: flex-end; background: linear-gradient(135deg,rgba(0,212,255,0.2),rgba(124,58,237,0.2));
+      border: 1px solid rgba(0,212,255,0.25); color: var(--text);
+      padding: 10px 14px; border-radius: 16px; border-bottom-right-radius: 4px;
+    }
+    .me-ai-bubble.ai {
+      align-self: flex-start; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08); color: var(--text-2);
+      padding: 10px 14px; border-radius: 16px; border-bottom-left-radius: 4px;
+      width: 100%;
+    }
+    .ai-avatar { font-size: 11px; font-weight: 700; background: linear-gradient(135deg,#00d4ff,#7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+    /* Thinking dots */
+    .gal-ai-bubble.typing { display: flex; align-items: center; gap: 5px; padding: 12px 14px; }
+    .gal-ai-bubble.typing .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: linear-gradient(135deg,#00d4ff,#7c3aed);
+      animation: galThinkDot 1.4s ease-in-out infinite;
+    }
+    .gal-ai-bubble.typing .dot:nth-child(2) { animation-delay: 0.2s; }
+    .gal-ai-bubble.typing .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes galThinkDot {
+      0%,80%,100% { transform: scale(0.7); opacity: 0.4; }
+      40% { transform: scale(1.2); opacity: 1; }
+    }
+    /* Suggestion chips */
+    .gal-ai-sugg-list { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+    .gal-ai-sugg-btn {
+      padding: 8px 12px; border-radius: 10px; background: rgba(0,212,255,0.07);
+      border: 1px solid rgba(0,212,255,0.18); color: var(--text); font-size: 12.5px;
+      cursor: pointer; text-align: left; transition: all 0.15s; font-family: 'Plus Jakarta Sans',sans-serif;
+    }
+    .gal-ai-sugg-btn:hover { background: rgba(0,212,255,0.14); border-color: rgba(0,212,255,0.35); }
+    .me-ai-suggestion-btn {
+      display: block; width: 100%; padding: 8px 12px; border-radius: 10px;
+      background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.18);
+      color: var(--text); font-size: 12.5px; cursor: pointer; text-align: left;
+      transition: all 0.15s; font-family: 'Plus Jakarta Sans',sans-serif; margin-top: 5px;
+    }
+    .me-ai-suggestion-btn:hover { background: rgba(0,212,255,0.14); border-color: rgba(0,212,255,0.35); }
+    .me-ai-suggestions { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+    /* FAB */
+    .gal-ai-fab {
+      position: fixed; top: 16px; right: 20px; z-index: 501;
+      display: none; align-items: center; gap: 8px; padding: 9px 18px;
+      border-radius: 22px; background: linear-gradient(135deg,#00d4ff,#7c3aed);
+      border: none; color: #fff; font-size: 13px; font-weight: 700;
+      font-family: 'Plus Jakarta Sans',sans-serif; cursor: pointer; letter-spacing: 0.2px;
+      box-shadow: 0 4px 20px rgba(0,212,255,0.35); transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .gal-ai-fab.visible { display: flex; }
+    .gal-ai-fab:hover { box-shadow: 0 6px 28px rgba(0,212,255,0.5); transform: translateY(-2px); }
+    .gal-ai-fab.panel-open { right: calc(var(--gal-width,380px) + 12px); border-radius: 10px; }
+    .gal-ai-fab svg { width: 15px; height: 15px; }
+    /* Old toggle button hidden — FAB replaces it */
+    .me-ai-toggle { display: none !important; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css" />
@@ -1171,31 +1306,6 @@
 
                 </div>
 
-                <div id="meAiPanel" style="width:340px; border-left:1px solid var(--glass-border); display:none; flex-direction:column; background:var(--surface);">
-                  <div style="padding:14px 20px; border-bottom:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">
-                    <div style="font-weight:700; color:var(--text); display:flex; align-items:center; gap:8px;">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--cyan)"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1H1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/></svg>
-                      Gal AI Assistant
-                    </div>
-                    <button onclick="meToggleAiPanel()" style="background:none; border:none; color:var(--text-3); cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-                  </div>
-                  <div id="meAiChat" style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px;">
-                    <div class="me-ai-bubble ai">
-                      <div class="ai-avatar">✨ Gemini AI</div>
-                      Hi! I can help you create beautiful email designs. Try asking me:<br><br>
-                      <strong>• "Generate a professional welcome email"</strong><br>
-                      <strong>• "Make the header dark blue and bold"</strong><br>
-                      <strong>• "Suggest 5 subject lines"</strong>
-                    </div>
-                  </div>
-                  <div style="padding:16px; border-top:1px solid var(--glass-border); position:relative;">
-                    <textarea id="meAiInput" class="custom-scroll-input" rows="2" placeholder="Ask Gal AI to design or write..."
-                      autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();meAiSend()}"
-                      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,180)+'px'"
-                      style="width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:16px 44px 16px 16px; color:var(--text); font-size:14px; font-family:var(--font); outline:none; resize:none; min-height:60px; max-height:180px;"></textarea>
-                    <button id="meAiSendBtn" onclick="meAiSend()" style="position:absolute; right:28px; bottom:26px; background:transparent; border:none; color:var(--text-3); cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-                  </div>
-                </div>
 
               </div>
             </div>
@@ -1356,6 +1466,83 @@
         </button>
       </div>
     </div>
+  </div>
+</div>
+
+<button class="gal-ai-fab" id="galAiFab" onclick="galAiToggle()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1H1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
+  </svg>
+  Gal AI
+</button>
+
+<div class="gal-ai-panel" id="galAiPanel">
+  <div class="gal-ai-resize" id="galAiResize"></div>
+  <div class="gal-ai-inner">
+
+    <div class="gal-ai-header">
+      <div class="gal-ai-header-left">
+        <div class="gal-ai-avatar-icon">✨</div>
+        <div>
+          <div class="gal-ai-title">Gal AI</div>
+          <div class="gal-ai-subtitle">Email design assistant</div>
+        </div>
+      </div>
+      <button class="gal-ai-close-btn" onclick="galAiToggle()" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="gal-ai-chat" id="meAiChat"
+      style="display:flex; flex-direction:column; flex:1; overflow-y:auto; padding:24px 20px;">
+
+      <div class="gal-ai-greeting" id="galAiGreeting"
+        style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; flex:1; width:100%; margin:auto; overflow-y:auto; padding:20px 0;">
+        <div
+          style="font-size:clamp(22px, 5vw, 32px); line-height:1.25; font-weight:700; background:linear-gradient(90deg, #00d4ff, #7c3aed); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:24px; letter-spacing:-0.5px; text-align:center; word-break:break-word; padding:0 10px;"
+          id="galAiGreetName">How can I help you today,<br>{{User name}}</div>
+
+        <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px; padding:0 10px;">
+          <div class="gal-ai-sugg-btn"
+            onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();"
+            style="padding:14px 18px; border-radius:16px; font-size:13.5px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-2); white-space:normal; cursor:pointer; transition:all 0.2s;"
+            onmouseover="this.style.background='rgba(0,212,255,0.1)';this.style.color='var(--cyan)';this.style.borderColor='rgba(0,212,255,0.3)';this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='var(--text-2)';this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
+            Design a sleek header block</div>
+          <div class="gal-ai-sugg-btn"
+            onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();"
+            style="padding:14px 18px; border-radius:16px; font-size:13.5px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-2); white-space:normal; cursor:pointer; transition:all 0.2s;"
+            onmouseover="this.style.background='rgba(0,212,255,0.1)';this.style.color='var(--cyan)';this.style.borderColor='rgba(0,212,255,0.3)';this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='var(--text-2)';this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
+            Create a 3-column feature grid</div>
+          <div class="gal-ai-sugg-btn"
+            onclick="document.getElementById('meAiInput').value=this.textContent; meAiSend();"
+            style="padding:14px 18px; border-radius:16px; font-size:13.5px; font-weight:500; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--text-2); white-space:normal; cursor:pointer; transition:all 0.2s;"
+            onmouseover="this.style.background='rgba(0,212,255,0.1)';this.style.color='var(--cyan)';this.style.borderColor='rgba(0,212,255,0.3)';this.style.transform='translateY(-2px)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='var(--text-2)';this.style.borderColor='rgba(255,255,255,0.08)';this.style.transform='none'">
+            Write 5 catchy subject lines</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:0 20px 24px 20px; background:transparent; position:relative; flex-shrink:0;">
+      <textarea id="meAiInput" class="custom-scroll-input" rows="2" placeholder="Ask Gal AI to design or write..."
+        autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();meAiSend()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,180)+'px'"
+        style="width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px 50px 20px 20px; color:var(--text); font-size:15px; font-family:'Plus Jakarta Sans',sans-serif; outline:none; resize:none; min-height:85px; max-height:180px; overflow-y:auto; transition:border-color 0.2s; box-sizing:border-box; line-height:1.6;"></textarea>
+
+      <button id="meAiSendBtn" onclick="meAiSend()" title="Send"
+        style="position:absolute; right:36px; bottom:42px; width:28px; height:28px; background:transparent; color:var(--text-3); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; z-index:2; padding:0;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;">
+          <line x1="22" y1="2" x2="11" y2="13" />
+          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
+      </button>
+    </div>
+
   </div>
 </div>
 
