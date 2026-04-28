@@ -17,7 +17,7 @@ const CP = {
   manualRows: [{ Name: '', Email: '' }],
 };
 
-const STEPS = ['Data & Campaign','Certificate Design','Field Mapping','Email Template','Review & Launch','Results'];
+const STEPS = ['Data & Campaign', 'Certificate Design', 'Field Mapping', 'Email Template', 'Review & Launch', 'Results'];
 
 
 /* ── Canvas Editor State ────────────────────────────────────────── */
@@ -62,9 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const dz = document.getElementById('cpUploadZone');
   if (dz) {
-    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('dz-over'); });
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dz-over'); });
     dz.addEventListener('dragleave', () => dz.classList.remove('dz-over'));
-    dz.addEventListener('drop',      e => { e.preventDefault(); dz.classList.remove('dz-over'); handleFileUpload({ target: { files: e.dataTransfer.files } }); });
+    dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dz-over'); handleFileUpload({ target: { files: e.dataTransfer.files } }); });
   }
 });
 
@@ -85,11 +85,11 @@ function updateStepper() {
   STEPS.forEach((_, i) => {
     const n = i + 1;
     const node = document.getElementById(`sn${n}`);
-    const ci   = document.getElementById(`sci${n}`);
+    const ci = document.getElementById(`sci${n}`);
     const conn = document.getElementById(`sc${n}`);
     if (!node) return;
     node.className = `step-node ${n < CP.step ? 'done' : n === CP.step ? 'active' : ''}`;
-    ci.innerHTML   = n < CP.step ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>` : String(n);
+    ci.innerHTML = n < CP.step ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>` : String(n);
     if (conn) conn.className = `step-connector ${n <= CP.step ? 'done' : ''}`;
   });
 }
@@ -105,7 +105,7 @@ function goStep(n, force = false) {
   // 3. Update state and Stepper UI
   CP.step = n;
   if (typeof updateStepper === 'function') updateStepper();
-  
+
   // 4. Switch the active panels
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
   const targetPanel = document.getElementById(`sp${n}`);
@@ -114,8 +114,8 @@ function goStep(n, force = false) {
   // 5. Trigger specific step requirements
   if (n === 2) {
     // CRITICAL: Redraw the canvas when returning to Step 2 so it isn't blank
-    setTimeout(() => { 
-      if (typeof resizeCanvas === 'function') resizeCanvas(); 
+    setTimeout(() => {
+      if (typeof resizeCanvas === 'function') resizeCanvas();
     }, 100);
   }
   if (n === 3) {
@@ -140,13 +140,13 @@ function validateStep(n) {
     if (!ED.fields.length) { toast('Add at least one field to your certificate template', 'warning'); return false; }
   }
   if (n === 3) {
-  const hasPrimary = ED.fields.some(f => f.isPrimary && f.column);
-  if (!hasPrimary) { toast('Please star a Primary field and map it to a column', 'error'); return false; }
-  if (!document.getElementById('s3EmailCol').value) { toast('Select the Email column', 'error'); return false; }
-}
+    const hasPrimary = ED.fields.some(f => f.isPrimary && f.column);
+    if (!hasPrimary) { toast('Please star a Primary field and map it to a column', 'error'); return false; }
+    if (!document.getElementById('s3EmailCol').value) { toast('Select the Email column', 'error'); return false; }
+  }
   if (n === 4) {
-    if (!document.getElementById('emailSubject').value.trim()) { toast('Enter an email subject', 'error'); return false; }
-    
+    if (!document.getElementById('mSubject').value.trim()) { toast('Enter an email subject', 'error'); return false; }
+
     // Check if the AI canvas has blocks OR the code editor has text
     const hasTemplate = ME.blocks.length > 0 || (ME.cm && ME.cm.getValue().trim() !== '');
     if (!hasTemplate) { toast('Design your email template first', 'error'); return false; }
@@ -159,14 +159,14 @@ function validateStep(n) {
 ════════════════════════════════════════════════════════════════ */
 function switchDataSrc(type) {
   CP.srcType = type;
-  document.getElementById('panelSheets').style.display  = type === 'sheets' ? 'block' : 'none';
-  document.getElementById('panelFile').style.display    = type === 'file'   ? 'block' : 'none';
-  document.getElementById('panelManual').style.display  = type === 'manual' ? 'block' : 'none';
-  document.getElementById('panelHxForm').style.display  = type === 'hxform' ? 'block' : 'none';
-  document.getElementById('srcSheetsBtn').className     = 'src-opt' + (type === 'sheets' ? ' active' : '');
-  document.getElementById('srcFileBtn').className       = 'src-opt' + (type === 'file'   ? ' active' : '');
-  document.getElementById('srcManualBtn').className     = 'src-opt' + (type === 'manual' ? ' active' : '');
-  document.getElementById('srcHxFormBtn').className     = 'src-opt' + (type === 'hxform' ? ' active' : '');
+  document.getElementById('panelSheets').style.display = type === 'sheets' ? 'block' : 'none';
+  document.getElementById('panelFile').style.display = type === 'file' ? 'block' : 'none';
+  document.getElementById('panelManual').style.display = type === 'manual' ? 'block' : 'none';
+  document.getElementById('panelHxForm').style.display = type === 'hxform' ? 'block' : 'none';
+  document.getElementById('srcSheetsBtn').className = 'src-opt' + (type === 'sheets' ? ' active' : '');
+  document.getElementById('srcFileBtn').className = 'src-opt' + (type === 'file' ? ' active' : '');
+  document.getElementById('srcManualBtn').className = 'src-opt' + (type === 'manual' ? ' active' : '');
+  document.getElementById('srcHxFormBtn').className = 'src-opt' + (type === 'hxform' ? ' active' : '');
   if (type === 'hxform') cpLoadHxFormList();
 }
 async function cpLoadHxFormList() {
@@ -189,7 +189,7 @@ async function cpLoadHxFormList() {
 async function cpLoadHxFormData(formId) {
   if (!formId) return;
   const sel = document.getElementById('cpHxFormSelect');
-  const el  = document.getElementById('hxFormLoadedMsg');
+  const el = document.getElementById('hxFormLoadedMsg');
   sel.disabled = true;
 
   el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--glass);font-size:14px;color:var(--text-2)">
@@ -208,7 +208,7 @@ async function cpLoadHxFormData(formId) {
     if (!data.rows?.length) { toast('No submissions in this form yet', 'warning'); el.style.display = 'none'; return; }
 
     CP.headers = data.headers;
-    CP.rows    = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
+    CP.rows = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
     CP.sheetId = null;
 
     el.innerHTML = `
@@ -225,19 +225,19 @@ async function cpLoadHxFormData(formId) {
           </thead>
           <tbody>
             ${CP.rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-              ${data.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g,'&lt;')}</td>`).join('')}
+              ${data.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g, '&lt;')}</td>`).join('')}
             </tr>`).join('')}
           </tbody>
         </table>
       </div>`;
     el.style.display = 'block';
     toast(`${CP.rows.length} participants imported`, 'success');
-  } catch(e) { toast('Could not load form: ' + e.message, 'error'); el.style.display = 'none'; }
+  } catch (e) { toast('Could not load form: ' + e.message, 'error'); el.style.display = 'none'; }
   finally { sel.disabled = false; }
 }
 
 async function loadSheetData() {
-  const id  = document.getElementById('sheetId').value.trim();
+  const id = document.getElementById('sheetId').value.trim();
   if (!id) { toast('Paste your Sheet ID first', 'error'); return; }
   const btn = document.getElementById('loadSheetBtn');
   btn.classList.add('loading'); btn.disabled = true;
@@ -245,7 +245,7 @@ async function loadSheetData() {
     const data = await apiFetch(`/api/sheets/read?sheetId=${encodeURIComponent(id)}&range=Sheet1`);
     if (!data?.data?.length || data.data.length < 2) { toast('Sheet is empty or unreadable', 'warning'); return; }
     CP.headers = data.data[0].map(h => h.toString().trim());
-    CP.rows    = data.data.slice(1).map(row => Object.fromEntries(CP.headers.map((h, i) => [h, row[i] || ''])));
+    CP.rows = data.data.slice(1).map(row => Object.fromEntries(CP.headers.map((h, i) => [h, row[i] || ''])));
     CP.sheetId = id;
     showDataOK('sheetLoadedMsg', `${CP.rows.length} participants · ${CP.headers.length} columns`);
     toast(`Loaded ${CP.rows.length} participants`, 'success');
@@ -255,17 +255,19 @@ async function loadSheetData() {
 
 function handleFileUpload(e) {
   const file = e.target.files[0]; if (!file) return;
-  const ext  = file.name.split('.').pop().toLowerCase();
+  const ext = file.name.split('.').pop().toLowerCase();
   if (ext === 'csv') {
-    Papa.parse(file, { header: true, skipEmptyLines: true, complete: r => {
-      CP.headers = r.meta.fields; CP.rows = r.data; CP.sheetId = null;
-      showDataOK('fileLoadedMsg', `${CP.rows.length} rows from ${file.name}`);
-      toast(`Loaded ${CP.rows.length} participants`, 'success');
-    }});
-  } else if (['xlsx','xls'].includes(ext)) {
+    Papa.parse(file, {
+      header: true, skipEmptyLines: true, complete: r => {
+        CP.headers = r.meta.fields; CP.rows = r.data; CP.sheetId = null;
+        showDataOK('fileLoadedMsg', `${CP.rows.length} rows from ${file.name}`);
+        toast(`Loaded ${CP.rows.length} participants`, 'success');
+      }
+    });
+  } else if (['xlsx', 'xls'].includes(ext)) {
     const reader = new FileReader();
     reader.onload = ev => {
-      const wb  = XLSX.read(ev.target.result, { type: 'array' });
+      const wb = XLSX.read(ev.target.result, { type: 'array' });
       const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
       CP.headers = Object.keys(arr[0] || {}); CP.rows = arr; CP.sheetId = null;
       showDataOK('fileLoadedMsg', `${CP.rows.length} rows from ${file.name}`);
@@ -279,13 +281,13 @@ function showDataOK(id, msg) {
   const el = document.getElementById(id);
   // Build preview table from current CP data
   const headers = CP.headers || [];
-  const rows    = CP.rows    || [];
+  const rows = CP.rows || [];
   const theadHtml = headers.map(h =>
     `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`
   ).join('');
   const tbodyHtml = rows.map(r =>
     `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-      ${headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g,'&lt;')}</td>`).join('')}
+      ${headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g, '&lt;')}</td>`).join('')}
     </tr>`
   ).join('');
   el.innerHTML = `
@@ -307,7 +309,7 @@ function showDataOK(id, msg) {
 /* ── Manual Entry ────────────────────────────────────────────────── */
 function manualRenderTable() {
   const headerRow = document.getElementById('manualHeaderRow');
-  const body      = document.getElementById('manualBody');
+  const body = document.getElementById('manualBody');
   if (!headerRow || !body) return;
 
   headerRow.innerHTML = '<th style="width:36px">#</th>' +
@@ -318,11 +320,11 @@ function manualRenderTable() {
 
   body.innerHTML = CP.manualRows.map((row, ri) =>
     '<tr>' +
-      `<td style="color:var(--text-3);font-size:12px;text-align:center">${ri + 1}</td>` +
-      CP.manualColumns.map(col =>
-        `<td><input type="text" placeholder="${col}" value="${(row[col] || '').replace(/"/g, '&quot;')}" oninput="CP.manualRows[${ri}]['${col}']=this.value"/></td>`
-      ).join('') +
-      `<td><button class="manual-row-del" onclick="manualRemoveRow(${ri})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></td>` +
+    `<td style="color:var(--text-3);font-size:12px;text-align:center">${ri + 1}</td>` +
+    CP.manualColumns.map(col =>
+      `<td><input type="text" placeholder="${col}" value="${(row[col] || '').replace(/"/g, '&quot;')}" oninput="CP.manualRows[${ri}]['${col}']=this.value"/></td>`
+    ).join('') +
+    `<td><button class="manual-row-del" onclick="manualRemoveRow(${ri})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></td>` +
     '</tr>'
   ).join('');
 }
@@ -363,7 +365,7 @@ function manualApplyData() {
   const valid = CP.manualRows.filter(r => r.Name?.trim() || r.Email?.trim());
   if (!valid.length) { toast('Add at least one participant with a name or email', 'error'); return; }
   CP.headers = [...CP.manualColumns];
-  CP.rows    = valid.map(r => ({ ...r }));
+  CP.rows = valid.map(r => ({ ...r }));
   CP.sheetId = null;
   showDataOK('manualLoadedMsg', `${CP.rows.length} participants entered manually`);
   toast(`${CP.rows.length} participants ready`, 'success');
@@ -419,7 +421,7 @@ function initCanvas() {
   document.addEventListener('keydown', e => {
     if (CP.step !== 2) return;
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
-    
+
     // Zoom & Duplicate
     if (e.ctrlKey || e.metaKey) {
       if (e.key === '=' || e.key === '+') { e.preventDefault(); setZoom((ED.zoom || 1) + 0.1); return; }
@@ -427,20 +429,20 @@ function initCanvas() {
       if (e.key === '0') { e.preventDefault(); setZoom(1); return; }
       if (e.key.toLowerCase() === 'd' && ED.selId) { e.preventDefault(); duplicateField(ED.selId); return; }
     }
-    
+
     // Nudge Movement
     if (ED.selId) {
       const f = ED.fields.find(x => x.id === ED.selId);
       if (!f) return;
       const step = e.shiftKey ? 1 : 0.1;
       let moved = false;
-      
+
       if (e.key === 'ArrowUp') { f.y -= step; moved = true; }
       if (e.key === 'ArrowDown') { f.y += step; moved = true; }
       if (e.key === 'ArrowLeft') { f.x -= step; moved = true; }
       if (e.key === 'ArrowRight') { f.x += step; moved = true; }
       if (e.key === 'Delete' || e.key === 'Backspace') { deleteField(ED.selId); return; }
-      
+
       if (moved) {
         e.preventDefault();
         redraw();
@@ -467,7 +469,7 @@ function resizeCanvas() {
 
   // Base fit calculation
   const baseScale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
-  
+
   // Apply zoom multiplier
   ED.scale = baseScale * (ED.zoom || 1);
 
@@ -512,11 +514,11 @@ function redrawCanvas() {
     const boxX = (f.x / 100) * w;
     const boxY = (f.y / 100) * h;
     const boxW = (f.width / 100) * w;
-    const fs   = Math.max(4, f.fontSize * ED.scale);
-    const ls   = (f.letterSpacing || 0) * ED.scale;
-    const fw   = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
-    const fi   = f.italic ? 'italic' : 'normal';
-    const ff   = getFontCSS(f.fontFamily || 'Helvetica');
+    const fs = Math.max(4, f.fontSize * ED.scale);
+    const ls = (f.letterSpacing || 0) * ED.scale;
+    const fw = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
+    const fi = f.italic ? 'italic' : 'normal';
+    const ff = getFontCSS(f.fontFamily || 'Helvetica');
 
     // Use CP.rows for the Combined Pipeline data connection
     const value = (f.column && CP.rows && CP.rows[0])
@@ -561,7 +563,7 @@ function redrawCanvas() {
       const drawY = boxY + (i * fs * 1.3);
       let textW = ctx.measureText(line).width;
       if (ls > 0 && line.length > 1) textW += ls * (line.length - 1);
-      
+
       let drawX = boxX;
       if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
       else if (f.align === 'right') drawX = boxX + boxW - textW;
@@ -588,7 +590,7 @@ function redraw() {
 function renderHandles() {
   if (!fieldOverlay) return;
   fieldOverlay.innerHTML = '';
-  
+
   ED.fields.forEach(f => {
     const cw = Math.round(ED.w * ED.scale);
     const ch = Math.round(ED.h * ED.scale);
@@ -596,7 +598,7 @@ function renderHandles() {
     const y = (f.y / 100) * ch;
     const w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
-    
+
     // Auto-calculate the bounding box height based on wrapped lines
     const value = (f.column && CP.rows && CP.rows[0]) ? (CP.rows[0][f.column] || f.previewText || f.placeholder) : (f.previewText || f.placeholder);
     ctx.save();
@@ -608,7 +610,7 @@ function renderHandles() {
       const testLine = currentLine + ' ' + words[j];
       let testWidth = ctx.measureText(testLine).width;
       if (ls > 0 && testLine.length > 1) testWidth += ls * (testLine.length - 1);
-      if (testWidth > w && currentLine !== '') { linesCount++; currentLine = words[j]; } 
+      if (testWidth > w && currentLine !== '') { linesCount++; currentLine = words[j]; }
       else { currentLine = testLine; }
     }
     ctx.restore();
@@ -620,26 +622,26 @@ function renderHandles() {
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
     el.dataset.fid = f.id;
-    
+
     // Core Positioning & Rotation Map
     el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%, -50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
 
     // 1. Top Action Bar (Duplicate & Delete)
     const actionBar = document.createElement('div');
     actionBar.className = 'tf-action-bar';
-    
+
     const btnDup = document.createElement('div');
     btnDup.className = 'tf-action-btn';
     btnDup.title = "Duplicate";
     btnDup.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
     btnDup.addEventListener('mousedown', e => { e.stopPropagation(); duplicateField(f.id); });
-    
+
     const btnDel = document.createElement('div');
     btnDel.className = 'tf-action-btn del';
     btnDel.title = "Delete";
     btnDel.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
     btnDel.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
-    
+
     actionBar.appendChild(btnDup);
     actionBar.appendChild(btnDel);
     el.appendChild(actionBar);
@@ -647,19 +649,19 @@ function renderHandles() {
     // 2. Bottom Control Pill (Move & Rotate)
     const ctrlPill = document.createElement('div');
     ctrlPill.className = 'tf-ctrl-pill';
-    
+
     const btnMove = document.createElement('div');
     btnMove.className = 'tf-ctrl-btn move';
     btnMove.title = "Move";
     btnMove.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="19 9 22 12 19 15"></polyline><polyline points="9 19 12 22 15 19"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>';
     btnMove.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startDrag(e, f); });
-    
+
     const btnRot = document.createElement('div');
     btnRot.className = 'tf-ctrl-btn rot';
     btnRot.title = "Rotate";
     btnRot.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 2.63-6.37L21 8"></path></svg>';
     btnRot.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startRotate(e, f); });
-    
+
     ctrlPill.appendChild(btnMove);
     ctrlPill.appendChild(btnRot);
     el.appendChild(ctrlPill);
@@ -668,31 +670,31 @@ function renderHandles() {
     const isSmall = h < 40 || w < 80;
 
     ['tl', 'tr', 'bl', 'br'].forEach(corner => {
-        const cEl = document.createElement('div');
-        cEl.className = `tf-resizer-corner ${corner}`;
-        if (isSmall && corner !== 'tl') cEl.style.opacity = '0'; 
-        cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
-        el.appendChild(cEl);
+      const cEl = document.createElement('div');
+      cEl.className = `tf-resizer-corner ${corner}`;
+      if (isSmall && corner !== 'tl') cEl.style.opacity = '0';
+      cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
+      el.appendChild(cEl);
     });
 
     ['left', 'right'].forEach(side => {
-        const sEl = document.createElement('div');
-        sEl.className = `tf-resizer-width ${side}`;
-        if (isSmall && side !== 'right') sEl.style.opacity = '0'; 
-        sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
-        el.appendChild(sEl);
+      const sEl = document.createElement('div');
+      sEl.className = `tf-resizer-width ${side}`;
+      if (isSmall && side !== 'right') sEl.style.opacity = '0';
+      sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
+      el.appendChild(sEl);
     });
 
     // Freeform Dragging Base
-    el.addEventListener('mousedown', e => { 
-        if (e.target === el) { 
-            e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
-        }
+    el.addEventListener('mousedown', e => {
+      if (e.target === el) {
+        e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f);
+      }
     });
-    
+
     fieldOverlay.appendChild(el);
   });
-  
+
   // Triggers the Fields panel to update so you can click chips in the sidebar!
   if (typeof renderChipList === 'function') renderChipList();
 }
@@ -717,15 +719,15 @@ function startDrag(e, field) {
 }
 
 function startScale(e, field, corner = 'r') {
-  const startX  = e.clientX;
-  const startW  = field.width, startSize = field.fontSize;
-  const dispW   = Math.round(ED.w * ED.scale);
+  const startX = e.clientX;
+  const startW = field.width, startSize = field.fontSize;
+  const dispW = Math.round(ED.w * ED.scale);
   const mm = ev => {
     let dx = ev.clientX - startX;
     if (corner.includes('l')) dx = -dx;
-    const deltaPct   = dx / dispW * 100;
+    const deltaPct = dx / dispW * 100;
     const scaleRatio = Math.max(0.1, (startW + deltaPct) / startW);
-    field.width    = startW    * scaleRatio;
+    field.width = startW * scaleRatio;
     field.fontSize = Math.max(8, Math.round(startSize * scaleRatio));
     redraw();
     if (field.id === ED.selId) {
@@ -741,7 +743,7 @@ function startScale(e, field, corner = 'r') {
 
 function startWidthResize(e, field, side) {
   const startX = e.clientX, startFieldX = field.x, startFieldW = field.width;
-  const dispW  = Math.round(ED.w * ED.scale);
+  const dispW = Math.round(ED.w * ED.scale);
   const mm = ev => {
     const dx = ev.clientX - startX, pctDelta = dx / dispW * 100;
     if (side === 'right') {
@@ -772,8 +774,8 @@ function startRotate(e, field) {
     const angle = Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180 / Math.PI;
     field.rotation = ((Math.round(angle + 90) % 360) + 360) % 360;
     tooltip.textContent = field.rotation + '°';
-    tooltip.style.left  = ev.clientX + 15 + 'px';
-    tooltip.style.top   = ev.clientY - 35 + 'px';
+    tooltip.style.left = ev.clientX + 15 + 'px';
+    tooltip.style.top = ev.clientY - 35 + 'px';
     tooltip.style.display = 'block';
     redraw();
   };
@@ -788,32 +790,32 @@ function startRotate(e, field) {
 }
 
 const FONT_MAP = {
-  'Helvetica':          { css: 'Helvetica, Arial, sans-serif', weight: 400 },
-  'Montserrat':         { css: "'Montserrat', sans-serif", weight: 400 },
-  'Raleway':            { css: "'Raleway', sans-serif", weight: 400 },
-  'Plus Jakarta Sans':  { css: "'Plus Jakarta Sans', sans-serif", weight: 400 },
-  'Times New Roman':    { css: "'Times New Roman', serif", weight: 400 },
-  'EB Garamond':        { css: "'EB Garamond', serif", weight: 400 },
-  'Playfair Display':   { css: "'Playfair Display', serif", weight: 400 },
+  'Helvetica': { css: 'Helvetica, Arial, sans-serif', weight: 400 },
+  'Montserrat': { css: "'Montserrat', sans-serif", weight: 400 },
+  'Raleway': { css: "'Raleway', sans-serif", weight: 400 },
+  'Plus Jakarta Sans': { css: "'Plus Jakarta Sans', sans-serif", weight: 400 },
+  'Times New Roman': { css: "'Times New Roman', serif", weight: 400 },
+  'EB Garamond': { css: "'EB Garamond', serif", weight: 400 },
+  'Playfair Display': { css: "'Playfair Display', serif", weight: 400 },
   'Cormorant Garamond': { css: "'Cormorant Garamond', serif", weight: 400 },
-  'Dancing Script':     { css: "'Dancing Script', cursive", weight: 400 },
-  'Cinzel':             { css: "'Cinzel', serif", weight: 400 },
-  'Courier New':        { css: "'Courier New', monospace", weight: 400 },
-  'JetBrains Mono':     { css: "'JetBrains Mono', monospace", weight: 400 },
+  'Dancing Script': { css: "'Dancing Script', cursive", weight: 400 },
+  'Cinzel': { css: "'Cinzel', serif", weight: 400 },
+  'Courier New': { css: "'Courier New', monospace", weight: 400 },
+  'JetBrains Mono': { css: "'JetBrains Mono', monospace", weight: 400 },
 };
-function getFontCSS(name)    { return (FONT_MAP[name] || FONT_MAP['Helvetica']).css; }
+function getFontCSS(name) { return (FONT_MAP[name] || FONT_MAP['Helvetica']).css; }
 function getFontWeight(name) { return (FONT_MAP[name] || FONT_MAP['Helvetica']).weight; }
 // Add this helper to combined-tool.js
 const FONT_URLS = {
-  'Montserrat':         'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap',
-  'Raleway':            'https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap',
-  'Plus Jakarta Sans':  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap',
-  'EB Garamond':        'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
-  'Playfair Display':   'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+  'Montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap',
+  'Raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap',
+  'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap',
+  'EB Garamond': 'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+  'Playfair Display': 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
   'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
-  'Dancing Script':     'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap',
-  'Cinzel':             'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
-  'JetBrains Mono':     'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+  'Dancing Script': 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap',
+  'Cinzel': 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
+  'JetBrains Mono': 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
 };
 
 function getUsedFontUrls() {
@@ -842,7 +844,7 @@ function openAFModal() {
   document.getElementById('afOverlay').classList.add('open');
 }
 function closeAFModal() { document.getElementById('afOverlay').classList.remove('open'); }
-function openAddFieldModal()  { openAFModal(); }
+function openAddFieldModal() { openAFModal(); }
 function closeAddFieldModal() { closeAFModal(); }
 
 function afColumnChanged(col) {
@@ -869,10 +871,10 @@ function afPhInput(val) {
 }
 
 function addField() {
-  const colSel  = document.getElementById('afColSelect');
+  const colSel = document.getElementById('afColSelect');
   const phInner = document.getElementById('afPhInner').value.trim().replace(/[{}]/g, '');
-  const col     = colSel ? colSel.value : '';
-  const size    = parseInt(document.getElementById('newFieldSize')?.value || '36', 10);
+  const col = colSel ? colSel.value : '';
+  const size = parseInt(document.getElementById('newFieldSize')?.value || '36', 10);
   const isPrimary = document.getElementById('afPrimary')?.checked || false;
 
   if (!phInner) { toast('Enter a placeholder name', 'error'); return; }
@@ -906,38 +908,38 @@ function selectField(id) {
   ED.selId = id;
   const f = ED.fields.find(f => f.id === id); if (!f) return;
   switchEPTab('props');
-  
+
   document.getElementById('propsEmpty').style.display = 'none';
-  document.getElementById('propsForm').style.display  = 'flex';
-  
+  document.getElementById('propsForm').style.display = 'flex';
+
   document.getElementById('pPh').value = f.placeholder;
-  
+
   // Connect live preview to CP.rows (Combined Pipeline State)
   const livePreview = (f.column && CP.rows && CP.rows[0]) ? (CP.rows[0][f.column] || f.previewText || '') : (f.previewText || '');
   document.getElementById('pPrev').value = livePreview;
   document.getElementById('pPrev').style.color = (f.column && CP.rows && CP.rows[0]) ? 'var(--cyan)' : 'var(--text)';
   document.getElementById('pPrev').title = f.column ? 'Live value from row 1 of your data' : 'Manual preview text';
-  
-  document.getElementById('pFont').value  = f.fontFamily || 'Helvetica';
-  document.getElementById('pSize').value  = f.fontSize;
+
+  document.getElementById('pFont').value = f.fontFamily || 'Helvetica';
+  document.getElementById('pSize').value = f.fontSize;
   document.getElementById('pSizeVal').textContent = f.fontSize + 'px';
   document.getElementById('pColor').value = f.color || '#111111';
   document.getElementById('pColorHex').textContent = f.color || '#111111';
-  document.getElementById('pX').value     = f.x.toFixed(1);
-  document.getElementById('pY').value     = f.y.toFixed(1);
-  document.getElementById('pW').value     = f.width;
+  document.getElementById('pX').value = f.x.toFixed(1);
+  document.getElementById('pY').value = f.y.toFixed(1);
+  document.getElementById('pW').value = f.width;
   document.getElementById('pSpacing').value = f.letterSpacing || 0;
   document.getElementById('pSpacingVal').textContent = (f.letterSpacing || 0) + 'px';
-  
+
   document.getElementById('boldBtn').classList.toggle('on', !!f.bold);
   document.getElementById('italicBtn').classList.toggle('on', !!f.italic);
-  
-  ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on'));
+
+  ['alL', 'alC', 'alR'].forEach(b => document.getElementById(b).classList.remove('on'));
   document.getElementById(f.align === 'center' ? 'alC' : f.align === 'right' ? 'alR' : 'alL').classList.add('on');
-  
+
   if (typeof loadFontIfNeeded === 'function') loadFontIfNeeded(f.fontFamily || 'Helvetica');
   updateFontPreview(f.fontFamily || 'Helvetica', f.bold, f.italic);
-  
+
   renderHandles();
 }
 
@@ -945,16 +947,16 @@ function updateFontPreview(name, bold, italic) {
   const el = document.getElementById('fontPreviewSample'); if (!el) return;
   el.style.fontFamily = getFontCSS(name);
   el.style.fontWeight = bold ? 700 : (typeof getFontWeight === 'function' ? getFontWeight(name) : 400);
-  el.style.fontStyle  = italic ? 'italic' : 'normal';
-  el.textContent      = name + ' — Aa 123';
+  el.style.fontStyle = italic ? 'italic' : 'normal';
+  el.textContent = name + ' — Aa 123';
 }
 
 function deleteField(id) {
   ED.fields = ED.fields.filter(f => f.id !== id);
-  if (ED.selId === id) { 
-    ED.selId = null; 
-    document.getElementById('propsEmpty').style.display = ''; 
-    document.getElementById('propsForm').style.display = 'none'; 
+  if (ED.selId === id) {
+    ED.selId = null;
+    document.getElementById('propsEmpty').style.display = '';
+    document.getElementById('propsForm').style.display = 'none';
   }
   renderHandles();
   redrawCanvas(); // Instantly erase text preview from canvas
@@ -973,47 +975,47 @@ function duplicateField(id) {
 }
 
 function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
-function deleteSelField()      { if (ED.selId) deleteField(ED.selId); }
+function deleteSelField() { if (ED.selId) deleteField(ED.selId); }
 
 /* ── Properties Panel Updates ── */
 function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; redraw(); }
 function setFPFont(name) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.fontFamily = name; if (typeof loadFontIfNeeded === 'function') loadFontIfNeeded(name); updateFontPreview(name, f.bold, f.italic); redraw(); }
-function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value)||f.x; f.y = parseFloat(document.getElementById('pY').value)||f.y; redraw(); }
-function setAlign(a) { setFP('align', a); ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a==='center'?'alC':a==='right'?'alR':'alL').classList.add('on'); }
-function toggleBold()   { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold   = !f.bold;   document.getElementById('boldBtn').classList.toggle('on', f.bold);   redraw(); }
+function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value) || f.x; f.y = parseFloat(document.getElementById('pY').value) || f.y; redraw(); }
+function setAlign(a) { setFP('align', a);['alL', 'alC', 'alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a === 'center' ? 'alC' : a === 'right' ? 'alR' : 'alL').classList.add('on'); }
+function toggleBold() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold = !f.bold; document.getElementById('boldBtn').classList.toggle('on', f.bold); redraw(); }
 function toggleItalic() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.italic = !f.italic; document.getElementById('italicBtn').classList.toggle('on', f.italic); redraw(); }
 
 /* ── UI Helpers ── */
-function switchEPTab(tab) { 
-  ['fields','props'].forEach(t => { 
-    const elT = document.getElementById(`epTab_${t}`); 
-    const elP = document.getElementById(`epPanel_${t}`); 
-    if(elT) elT.className = 'ep-tab'+(t===tab?' active':''); 
-    if(elP) elP.className = 'ep-panel'+(t===tab?' active':''); 
-  }); 
+function switchEPTab(tab) {
+  ['fields', 'props'].forEach(t => {
+    const elT = document.getElementById(`epTab_${t}`);
+    const elP = document.getElementById(`epPanel_${t}`);
+    if (elT) elT.className = 'ep-tab' + (t === tab ? ' active' : '');
+    if (elP) elP.className = 'ep-panel' + (t === tab ? ' active' : '');
+  });
 }
 
 function renderChipList() {
   const el = document.getElementById('fieldChipList'); if (!el) return;
-  if (!ED.fields.length) { 
-    el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span></div>`; 
-    return; 
+  if (!ED.fields.length) {
+    el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span></div>`;
+    return;
   }
   el.innerHTML = ED.fields.map(f => `
-    <div class="fc-chip ${f.id===ED.selId?'sel':''}" onclick="selectField('${f.id}')">
+    <div class="fc-chip ${f.id === ED.selId ? 'sel' : ''}" onclick="selectField('${f.id}')">
       <div class="fc-dot" style="background:${f.color}"></div>
       <div style="flex:1;min-width:0">
-        <span class="fc-name">${f.previewText||f.placeholder}</span>
-        <span class="fc-ph">${f.placeholder}${f.column?' → '+f.column:''}</span>
+        <span class="fc-name">${f.previewText || f.placeholder}</span>
+        <span class="fc-ph">${f.placeholder}${f.column ? ' → ' + f.column : ''}</span>
       </div>
-      ${f.isPrimary?'<span style="font-size:10px;font-weight:700;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.25);border-radius:4px;padding:1px 5px;flex-shrink:0">PRIMARY</span>':''}
+      ${f.isPrimary ? '<span style="font-size:10px;font-weight:700;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.25);border-radius:4px;padding:1px 5px;flex-shrink:0">PRIMARY</span>' : ''}
     </div>`).join('');
 }
 
 /* ── Custom Spinner Nudge Logic ── */
 function nudgeInput(id, step, up) {
   const el = document.getElementById(id);
-  if(!el) return;
+  if (!el) return;
   const val = parseFloat(el.value) || 0;
   el.value = parseFloat((val + (up ? step : -step)).toFixed(2));
   el.dispatchEvent(new Event('change')); // Triggers setFPXY or setFP naturally
@@ -1024,8 +1026,8 @@ function loadFontIfNeeded(name) {
   const id = 'gfont_' + name.replace(/\s+/g, '_');
   if (document.getElementById(id)) return; // already loaded
   const link = document.createElement('link');
-  link.id   = id;
-  link.rel  = 'stylesheet';
+  link.id = id;
+  link.rel = 'stylesheet';
   link.href = FONT_URLS[name];
   document.head.appendChild(link);
 }
@@ -1049,11 +1051,11 @@ function loadSavedTemplate() {
   // you will get a 100% fresh, blank canvas. No ghost fields!
 }
 /* ── Aliases so existing HTML onclick= still resolves ── */
-const uploadBG          = uploadBackground;
-const changeBGColor     = changeBgColor;
-const clearBG           = clearBackground;
-const changeSize        = changeCanvasSize;
-const clearCanvas       = clearAll;
+const uploadBG = uploadBackground;
+const changeBGColor = changeBgColor;
+const clearBG = clearBackground;
+const changeSize = changeCanvasSize;
+const clearCanvas = clearAll;
 
 /* ════════════════════════════════════════════════════════════════
    STEP 3 — FIELD MAPPING
@@ -1064,19 +1066,19 @@ function populateStep3() {
 }
 
 function buildStep3() {
-  const rows  = document.getElementById('s3Rows');
+  const rows = document.getElementById('s3Rows');
   const empty = document.getElementById('s3Empty');
   const count = document.getElementById('s3FieldCount');
   const emailSel = document.getElementById('s3EmailCol');
 
   if (emailSel && CP.headers) {
     const currentEmail = emailSel.value;
-    emailSel.innerHTML = '<option value="">— Select Email Column —</option>' + 
+    emailSel.innerHTML = '<option value="">— Select Email Column —</option>' +
       CP.headers.map(h => `<option value="${h}" ${currentEmail === h ? 'selected' : ''}>${h}</option>`).join('');
-      
+
     if (!currentEmail) {
-        const likelyEmail = CP.headers.find(h => h.toLowerCase().includes('email'));
-        if (likelyEmail) emailSel.value = likelyEmail;
+      const likelyEmail = CP.headers.find(h => h.toLowerCase().includes('email'));
+      if (likelyEmail) emailSel.value = likelyEmail;
     }
   }
 
@@ -1089,16 +1091,16 @@ function buildStep3() {
   if (ch) ch.innerHTML = hints || '<span style="color:var(--text-3);font-size:13px">No columns loaded yet.</span>';
 
   if (!ED.fields.length) {
-    if (rows)  rows.style.display  = 'none';
+    if (rows) rows.style.display = 'none';
     if (empty) empty.style.display = 'block';
-    if (count) count.textContent   = '0 fields';
+    if (count) count.textContent = '0 fields';
     buildStep3Writeback();
     return;
   }
 
   if (empty) empty.style.display = 'none';
-  if (rows)  rows.style.display  = 'flex';
-  if (count) count.textContent   = `${ED.fields.length} field${ED.fields.length > 1 ? 's' : ''}`;
+  if (rows) rows.style.display = 'flex';
+  if (count) count.textContent = `${ED.fields.length} field${ED.fields.length > 1 ? 's' : ''}`;
 
   rows.innerHTML = ED.fields.map((f, i) => {
     const isLast = i === ED.fields.length - 1;
@@ -1159,12 +1161,12 @@ function validateStep3() {
   if (unmapped.length) { toast(`Please map a column for: ${unmapped.map(f => f.placeholder).join(', ')}`, 'error'); return; }
   if (ED.fields.length > 0 && !ED.fields.some(f => f.isPrimary)) { toast('Please star (★) one field as Primary.', 'error'); return; }
   CP.eventName = (document.getElementById('fnEventInput')?.value || '').trim();
-  goStep(4, true); 
+  goStep(4, true);
 }
 
 function fnRefreshNamePill() {
   const primary = ED.fields.find(f => f.isPrimary);
-  const sampleName = primary && CP.rows && CP.rows[0] ? (CP.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g,'')) : 'participant_name';
+  const sampleName = primary && CP.rows && CP.rows[0] ? (CP.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g, '')) : 'participant_name';
   const pill = document.getElementById('fnNamePill');
   if (pill) pill.textContent = sampleName;
   fnUpdatePreview();
@@ -1179,7 +1181,7 @@ function fnUpdatePreview() {
   const sep = document.getElementById('fnSepNum'); if (sep) sep.style.display = event ? 'none' : '';
 }
 
-function sanitizeFilename(str) { return String(str).replace(/[^a-zA-Z0-9_\-\u0900-\u097F\u00C0-\u024F]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,''); }
+function sanitizeFilename(str) { return String(str).replace(/[^a-zA-Z0-9_\-\u0900-\u097F\u00C0-\u024F]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, ''); }
 
 function buildOutputFilename(rowData, index) {
   const primary = ED.fields.find(f => f.isPrimary);
@@ -1200,7 +1202,7 @@ function initStep4() {
 
   const cmEl = document.getElementById('meCmWrap');
   if (cmEl && typeof CodeMirror !== 'undefined') {
-    cmEl.innerHTML = ''; 
+    cmEl.innerHTML = '';
     const txt = document.createElement('textarea');
     cmEl.appendChild(txt);
     ME.cm = CodeMirror.fromTextArea(txt, { mode: 'xml', theme: 'dracula', lineNumbers: true, lineWrapping: true });
@@ -1220,7 +1222,7 @@ function initStep4() {
     Sortable.create(canvasEl, {
       animation: 150, handle: '.me-drag-handle', ghostClass: 'm-ghost',
       onEnd: e => {
-        if(e.oldIndex === e.newIndex) return;
+        if (e.oldIndex === e.newIndex) return;
         const item = ME.blocks.splice(e.oldIndex, 1)[0];
         ME.blocks.splice(e.newIndex, 0, item);
         meSyncToCode();
@@ -1230,39 +1232,39 @@ function initStep4() {
 
   meTplGateBuild();
   mePopulateTags();
-  
+
   document.getElementById('meTplGate').style.display = 'block';
   document.getElementById('meEditorWrap').style.display = 'none';
   document.getElementById('meStep4Nav').style.display = 'none';
   document.getElementById('meHeadActions').style.display = 'none';
-  
+
   ME.initialized = true;
 }
 
 const ME_DEFS = {
-  logo:    { label: 'Logo / Banner', defaults: () => ({ text: 'HONOURIX', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }) },
-  header:  { label: 'Heading',       defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }) },
-  text:    { label: 'Text',          defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }) },
-  button:  { label: 'Button',        defaults: () => ({ text: 'Click Here', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 }) },
-  image:   { label: 'Image',         defaults: () => ({ src: '', alt: 'Image', width: 100, bgColor: '#f8fafc', paddingV: 20, paddingH: 40, borderRadius: 8 }) },
-  divider: { label: 'Divider',       defaults: () => ({ color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 }) },
-  spacer:  { label: 'Spacer',        defaults: () => ({ height: 40, bgColor: '#ffffff' }) },
-  footer:  { label: 'Footer',        defaults: () => ({ text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) },
-  social:  { label: 'Social Links',  defaults: () => ({ platforms: [{ name: 'LinkedIn', url: '', icon: 'linkedin' }, { name: 'Twitter/X', url: '', icon: 'x' }, { name: 'Instagram', url: '', icon: 'instagram' }], bgColor: '#ffffff', align: 'center', paddingV: 20, paddingH: 40, iconSize: 32, style: 'plain', color: '#475569' }) },
-  table:   { label: 'Table',         defaults: () => ({ rows: 3, cols: 3, data: [['Header 1','Header 2','Header 3'],['Cell','Cell','Cell'],['Cell','Cell','Cell']], headerRow: true, borderWidth: 1, borderColor: '#e2e8f0', headerBg: '#f1f5f9', headerColor: '#1e293b', cellBg: '#ffffff', cellColor: '#475569', cellPadding: 10, fontSize: 14, bgColor: '#ffffff', paddingV: 20, paddingH: 40, width: '100%' }) },
+  logo: { label: 'Logo / Banner', defaults: () => ({ text: 'HONOURIX', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }) },
+  header: { label: 'Heading', defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }) },
+  text: { label: 'Text', defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }) },
+  button: { label: 'Button', defaults: () => ({ text: 'Click Here', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 }) },
+  image: { label: 'Image', defaults: () => ({ src: '', alt: 'Image', width: 100, bgColor: '#f8fafc', paddingV: 20, paddingH: 40, borderRadius: 8 }) },
+  divider: { label: 'Divider', defaults: () => ({ color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 }) },
+  spacer: { label: 'Spacer', defaults: () => ({ height: 40, bgColor: '#ffffff' }) },
+  footer: { label: 'Footer', defaults: () => ({ text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) },
+  social: { label: 'Social Links', defaults: () => ({ platforms: [{ name: 'LinkedIn', url: '', icon: 'linkedin' }, { name: 'Twitter/X', url: '', icon: 'x' }, { name: 'Instagram', url: '', icon: 'instagram' }], bgColor: '#ffffff', align: 'center', paddingV: 20, paddingH: 40, iconSize: 32, style: 'plain', color: '#475569' }) },
+  table: { label: 'Table', defaults: () => ({ rows: 3, cols: 3, data: [['Header 1', 'Header 2', 'Header 3'], ['Cell', 'Cell', 'Cell'], ['Cell', 'Cell', 'Cell']], headerRow: true, borderWidth: 1, borderColor: '#e2e8f0', headerBg: '#f1f5f9', headerColor: '#1e293b', cellBg: '#ffffff', cellColor: '#475569', cellPadding: 10, fontSize: 14, bgColor: '#ffffff', paddingV: 20, paddingH: 40, width: '100%' }) },
 };
 
 const ME_TEMPLATES = {
-  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready 🎉', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } } ] },
-  event: { name: 'Event Invitation', desc: 'Banner + date + RSVP', blocks: [ { type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } } ] },
-  thankyou: { name: 'Thank You', desc: 'Warm appreciation note', blocks: [ { type: 'logo', props: { text: 'THANK YOU', tagline: '', bgColor: '#10b981', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Thank You, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#d1fae5', bgColor: '#ffffff', paddingV: 16, thickness: 2 } }, { type: 'footer', props: { text: 'With gratitude,\nThe Honourix Team', bgColor: '#f0fdf4', color: '#6b7280', fontSize: 13, align: 'center', paddingV: 24, paddingH: 40 } } ] },
-  announcement: { name: 'Announcement', desc: 'Bold headline + CTA', blocks: [ { type: 'logo', props: { text: 'ANNOUNCEMENT', tagline: '', bgColor: '#0f172a', color: '#f59e0b', fontSize: 16, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Important Update', fontSize: 30, fontWeight: 800, color: '#0f172a', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nWe have an important announcement to share with you. Please read the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Learn More', link: '#', btnBg: '#f59e0b', btnColor: '#000000', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } } ] },
-  plain: { name: 'Plain Professional', desc: 'Clean text-only email', blocks: [ { type: 'spacer', props: { height: 24, bgColor: '#ffffff' } }, { type: 'text', props: { text: 'Hi {{name}},', fontSize: 18, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.6 } }, { type: 'text', props: { text: 'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.8 } }, { type: 'text', props: { text: 'Best regards,\nThe Honourix Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.7 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'Sent via Honourix', bgColor: '#f8fafc', color: '#9ca3af', fontSize: 12, align: 'center', paddingV: 20, paddingH: 40 } } ] },
-  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}! 🎉', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] },
-  promo: { name: 'Promotional', desc: 'Bold offer with CTA', blocks: [ { type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } } ] },
-  newsletter: { name: 'Newsletter', desc: 'Clean content digest', blocks: [ { type: 'logo', props: { text: 'THE DIGEST', tagline: 'Weekly Newsletter', bgColor: '#0f172a', color: '#0ea5e9', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "This Week's Highlights", fontSize: 24, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 28, paddingH: 40 } }, { type: 'divider', props: { color: '#0ea5e9', bgColor: '#ffffff', paddingV: 4, thickness: 2 } }, { type: 'text', props: { text: 'Hi {{name}},\n\nHere\'s what happened this week that you need to know about:', fontSize: 15, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 16, paddingH: 40, lineHeight: 1.75 } } ] },
-  saas: { name: 'SaaS Onboarding', desc: 'Modern product email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Your workspace is ready', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: "You're all set, {{name}}!", fontSize: 28, fontWeight: 700, color: '#f8fafc', bgColor: '#1e293b', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Your account is active and ready to use. Here\'s a quick overview of what you can do:', fontSize: 16, color: '#cbd5e1', bgColor: '#1e293b', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Open Dashboard', link: '#', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#1e293b', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } } ] },
-  classic: { name: 'Classic Business', desc: 'Formal business email', blocks: [ { type: 'logo', props: { text: 'HONOURIX', tagline: 'Business Communication', bgColor: '#334155', color: '#f8fafc', fontSize: 18, fontWeight: 700, align: 'left', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Dear {{name}},', fontSize: 22, fontWeight: 600, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 32, paddingH: 40 } }, { type: 'text', props: { text: 'I am writing to inform you about an important matter regarding your account with us. Please review the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 } } ] }
+  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [{ type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready 🎉', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } }] },
+  event: { name: 'Event Invitation', desc: 'Banner + date + RSVP', blocks: [{ type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } }] },
+  thankyou: { name: 'Thank You', desc: 'Warm appreciation note', blocks: [{ type: 'logo', props: { text: 'THANK YOU', tagline: '', bgColor: '#10b981', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Thank You, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#d1fae5', bgColor: '#ffffff', paddingV: 16, thickness: 2 } }, { type: 'footer', props: { text: 'With gratitude,\nThe Honourix Team', bgColor: '#f0fdf4', color: '#6b7280', fontSize: 13, align: 'center', paddingV: 24, paddingH: 40 } }] },
+  announcement: { name: 'Announcement', desc: 'Bold headline + CTA', blocks: [{ type: 'logo', props: { text: 'ANNOUNCEMENT', tagline: '', bgColor: '#0f172a', color: '#f59e0b', fontSize: 16, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Important Update', fontSize: 30, fontWeight: 800, color: '#0f172a', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nWe have an important announcement to share with you. Please read the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Learn More', link: '#', btnBg: '#f59e0b', btnColor: '#000000', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } }] },
+  plain: { name: 'Plain Professional', desc: 'Clean text-only email', blocks: [{ type: 'spacer', props: { height: 24, bgColor: '#ffffff' } }, { type: 'text', props: { text: 'Hi {{name}},', fontSize: 18, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.6 } }, { type: 'text', props: { text: 'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.8 } }, { type: 'text', props: { text: 'Best regards,\nThe Honourix Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.7 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'Sent via Honourix', bgColor: '#f8fafc', color: '#9ca3af', fontSize: 12, align: 'center', paddingV: 20, paddingH: 40 } }] },
+  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [{ type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}! 🎉', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }] },
+  promo: { name: 'Promotional', desc: 'Bold offer with CTA', blocks: [{ type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } }] },
+  newsletter: { name: 'Newsletter', desc: 'Clean content digest', blocks: [{ type: 'logo', props: { text: 'THE DIGEST', tagline: 'Weekly Newsletter', bgColor: '#0f172a', color: '#0ea5e9', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "This Week's Highlights", fontSize: 24, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 28, paddingH: 40 } }, { type: 'divider', props: { color: '#0ea5e9', bgColor: '#ffffff', paddingV: 4, thickness: 2 } }, { type: 'text', props: { text: 'Hi {{name}},\n\nHere\'s what happened this week that you need to know about:', fontSize: 15, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }] },
+  saas: { name: 'SaaS Onboarding', desc: 'Modern product email', blocks: [{ type: 'logo', props: { text: 'HONOURIX', tagline: 'Your workspace is ready', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: "You're all set, {{name}}!", fontSize: 28, fontWeight: 700, color: '#f8fafc', bgColor: '#1e293b', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Your account is active and ready to use. Here\'s a quick overview of what you can do:', fontSize: 16, color: '#cbd5e1', bgColor: '#1e293b', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Open Dashboard', link: '#', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#1e293b', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }] },
+  classic: { name: 'Classic Business', desc: 'Formal business email', blocks: [{ type: 'logo', props: { text: 'HONOURIX', tagline: 'Business Communication', bgColor: '#334155', color: '#f8fafc', fontSize: 18, fontWeight: 700, align: 'left', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Dear {{name}},', fontSize: 22, fontWeight: 600, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 32, paddingH: 40 } }, { type: 'text', props: { text: 'I am writing to inform you about an important matter regarding your account with us. Please review the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 } }] }
 };
 const ME_TPL_CATS = { cert: 'certificate', event: 'event', thankyou: 'welcome', announcement: 'promo', plain: 'welcome', welcome: 'welcome', promo: 'promo', newsletter: 'newsletter', saas: 'welcome', classic: 'welcome' };
 let meTplGateSelected = null;
@@ -1310,7 +1312,7 @@ function meTplGateSelect(key) {
   const card = document.getElementById('meTplGateCard_' + key);
   if (card) card.classList.add('selected');
   const btn = document.getElementById('meTplGateUseBtn');
-  if (btn) { btn.disabled = false; btn.innerHTML = (key === 'blank' || key === 'code') ? `Start ${(key==='blank'?'Visual':'Code')} Editor →` : 'Use Template — Open Editor →'; }
+  if (btn) { btn.disabled = false; btn.innerHTML = (key === 'blank' || key === 'code') ? `Start ${(key === 'blank' ? 'Visual' : 'Code')} Editor →` : 'Use Template — Open Editor →'; }
 }
 
 function meTplGateConfirm() {
@@ -1557,7 +1559,7 @@ function meRenderProps(block) {
     rows.push(`<div class="me-field">
       <div class="me-field-label">Icon Style</div>
       <div class="me-align-btns">
-        ${['plain', 'circle', 'square'].map(s => `<button class="me-align-btn ${p.style === s ? 'active' : ''}" onclick="meUpdateProp('${block.id}','style','${s}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
+        ${['plain', 'circle', 'square'].map(s => `<button class="me-align-btn ${p.style === s ? 'active' : ''}" onclick="meUpdateProp('${block.id}','style','${s}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">${s.charAt(0).toUpperCase() + s.slice(1)}</button>`).join('')}
       </div>
     </div>`);
     rows.push(meFieldRange('Icon Size', block.id, 'iconSize', p.iconSize || 32, 20, 60));
@@ -1568,8 +1570,8 @@ function meRenderProps(block) {
       <div class="me-field-label">Edit Cells</div>
       <div style="overflow-x:auto;border:1px solid rgba(255,255,255,0.08);border-radius:8px;max-height:200px;overflow-y:auto">
         <table style="border-collapse:collapse;width:max-content;min-width:100%">
-          ${(p.data||[]).map((row,ri) => `<tr>${row.map((cell,ci) => `
-            <td style="padding:3px"><input class="me-input" value="${(cell||'').replace(/"/g,'&quot;')}"
+          ${(p.data || []).map((row, ri) => `<tr>${row.map((cell, ci) => `
+            <td style="padding:3px"><input class="me-input" value="${(cell || '').replace(/"/g, '&quot;')}"
               style="width:80px;font-size:12px;padding:5px 7px"
               oninput="meTableUpdateCell('${block.id}',${ri},${ci},this.value)"/></td>`).join('')}</tr>`).join('')}
         </table>
@@ -1616,29 +1618,29 @@ function meRenderProps(block) {
   if (p.paddingH !== undefined) rows.push(meFieldRange('Padding Left/Right', block.id, 'paddingH', p.paddingH, 0, 80));
 
   body.innerHTML = `<div class="me-props-body">
-    <div style="font-size:12px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">${(ME_DEFS[block.type]||{}).label||block.type}</div>
+    <div style="font-size:12px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">${(ME_DEFS[block.type] || {}).label || block.type}</div>
     ${rows.join('')}
   </div>`;
 }
 
 function meFieldText(label, id, key, val) {
   return `<div class="me-field"><div class="me-field-label">${label}</div>
-    <input class="me-input" type="text" value="${(val||'').replace(/"/g,'&quot;')}"
+    <input class="me-input" type="text" value="${(val || '').replace(/"/g, '&quot;')}"
       onfocus="meLastFocusedField={id:'${id}',key:'${key}',el:this}"
       oninput="meUpdateProp('${id}','${key}',this.value)"/></div>`;
 }
 function meFieldTextarea(label, id, key, val) {
   return `<div class="me-field"><div class="me-field-label">${label}</div>
-    <textarea class="me-textarea" oninput="meUpdateProp('${id}','${key}',this.value)">${(val||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea></div>`;
+    <textarea class="me-textarea" oninput="meUpdateProp('${id}','${key}',this.value)">${(val || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea></div>`;
 }
 function meFieldColor(label, id, key, val) {
   return `<div class="me-field"><div class="me-field-label">${label}</div>
     <div class="me-color-row">
-      <div class="me-color-swatch" style="background:${val||'#ffffff'}" id="swatch_${id}_${key}">
-        <input type="color" value="${val||'#ffffff'}"
+      <div class="me-color-swatch" style="background:${val || '#ffffff'}" id="swatch_${id}_${key}">
+        <input type="color" value="${val || '#ffffff'}"
           oninput="document.getElementById('swatch_${id}_${key}').style.background=this.value;document.getElementById('hex_${id}_${key}').value=this.value;meUpdateProp('${id}','${key}',this.value)"/>
       </div>
-      <input class="me-input" type="text" id="hex_${id}_${key}" value="${val||'#ffffff'}"
+      <input class="me-input" type="text" id="hex_${id}_${key}" value="${val || '#ffffff'}"
         oninput="document.getElementById('swatch_${id}_${key}').style.background=this.value;meUpdateProp('${id}','${key}',this.value)" style="flex:1"/>
     </div></div>`;
 }
@@ -1649,13 +1651,13 @@ function meFieldRange(label, id, key, val, min, max) {
 }
 function meFieldAlign(id, val) {
   const opts = [
-    ['left','<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>'],
-    ['center','<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/>'],
-    ['right','<line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="21" y2="6"/><line x1="21" y1="14" x2="21" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/>'],
+    ['left', '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>'],
+    ['center', '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/>'],
+    ['right', '<line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="21" y2="6"/><line x1="21" y1="14" x2="21" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/>'],
   ];
   return `<div class="me-field"><div class="me-field-label">Alignment</div>
     <div class="me-align-btns">
-      ${opts.map(([a,svg]) => `<button class="me-align-btn ${val===a?'active':''}" onclick="meUpdateProp('${id}','align','${a}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
+      ${opts.map(([a, svg]) => `<button class="me-align-btn ${val === a ? 'active' : ''}" onclick="meUpdateProp('${id}','align','${a}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">${svg}</svg>
       </button>`).join('')}
     </div></div>`;
@@ -1777,9 +1779,9 @@ function meBlockToHtml(block) {
     case 'logo':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fs}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fs}">${p.tagline}</div>` : ''}</div>`;
     case 'header':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight||700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fs};font-style:${p.fontStyle||'normal'}">${p.text}</h1></div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fs};font-style:${p.fontStyle || 'normal'}">${p.text}</h1></div>`;
     case 'text':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fs};font-weight:${p.fontWeight||400};font-style:${p.fontStyle||'normal'}">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fs};font-weight:${p.fontWeight || 400};font-style:${p.fontStyle || 'normal'}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
     case 'button':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fs}">${p.text}</a></div>`;
     case 'image':
@@ -1791,10 +1793,10 @@ function meBlockToHtml(block) {
     case 'spacer':
       return `<div style="height:${p.height}px;background:${p.bgColor};font-size:0;line-height:0">&nbsp;</div>`;
     case 'footer':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
     case 'social': {
       const iconBase = 'https://cdn.simpleicons.org/';
-      const knownIcons = { linkedin:'linkedin','twitter/x':'x',twitter:'x',instagram:'instagram',facebook:'facebook',youtube:'youtube',tiktok:'tiktok',pinterest:'pinterest',github:'github',whatsapp:'whatsapp',telegram:'telegram',discord:'discord',snapchat:'snapchat',website:'' };
+      const knownIcons = { linkedin: 'linkedin', 'twitter/x': 'x', twitter: 'x', instagram: 'instagram', facebook: 'facebook', youtube: 'youtube', tiktok: 'tiktok', pinterest: 'pinterest', github: 'github', whatsapp: 'whatsapp', telegram: 'telegram', discord: 'discord', snapchat: 'snapchat', website: '' };
       const size = p.iconSize || 32;
       const pad = p.style === 'plain' ? 0 : Math.round(size * 0.25);
       const br = p.style === 'circle' ? '50%' : p.style === 'square' ? '8px' : '0';
@@ -1803,8 +1805,8 @@ function meBlockToHtml(block) {
         const slug = knownIcons[(pl.name || '').toLowerCase()] || (pl.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
         const imgHtml = slug
           ? `<img src="${iconBase}${slug}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;width:${size}px;height:${size}px"/>`
-          : `<span style="font-size:${size*0.5}px;line-height:${size}px;color:${p.color}">${(pl.name||'').slice(0,2).toUpperCase()}</span>`;
-        return `<a href="${pl.url}" style="display:inline-block;margin:0 ${Math.round(size*0.2)}px;text-decoration:none;${bgBadge}padding:${pad}px;border-radius:${br};vertical-align:middle">${imgHtml}</a>`;
+          : `<span style="font-size:${size * 0.5}px;line-height:${size}px;color:${p.color}">${(pl.name || '').slice(0, 2).toUpperCase()}</span>`;
+        return `<a href="${pl.url}" style="display:inline-block;margin:0 ${Math.round(size * 0.2)}px;text-decoration:none;${bgBadge}padding:${pad}px;border-radius:${br};vertical-align:middle">${imgHtml}</a>`;
       }).join('');
       return icons
         ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">${icons}</div>`
@@ -1813,7 +1815,7 @@ function meBlockToHtml(block) {
     case 'table': {
       const d = p.data || [[]];
       const bw = p.borderWidth !== undefined ? p.borderWidth : 1;
-      const bst = bw > 0 ? `${bw}px solid ${p.borderColor||'#e2e8f0'}` : 'none';
+      const bst = bw > 0 ? `${bw}px solid ${p.borderColor || '#e2e8f0'}` : 'none';
       const cBg = p.cellBg || '#ffffff', cColor = p.cellColor || '#475569';
       const hBg = p.headerBg || '#f1f5f9', hColor = p.headerColor || '#1e293b';
       const fSize = p.fontSize || 14, pad = p.cellPadding !== undefined ? p.cellPadding : 10;
@@ -1827,7 +1829,7 @@ function meBlockToHtml(block) {
         }).join('');
         return `<tr>${cells}</tr>`;
       }).join('');
-      return `<div style="padding:${p.paddingV!==undefined?p.paddingV:20}px ${p.paddingH!==undefined?p.paddingH:40}px;background:${p.bgColor||'#ffffff'}"><table width="${p.width||'100%'}" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:${p.width||'100%'};border:${bst}">${rows}</table></div>`;
+      return `<div style="padding:${p.paddingV !== undefined ? p.paddingV : 20}px ${p.paddingH !== undefined ? p.paddingH : 40}px;background:${p.bgColor || '#ffffff'}"><table width="${p.width || '100%'}" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:${p.width || '100%'};border:${bst}">${rows}</table></div>`;
     }
     default: return '';
   }
@@ -2071,7 +2073,7 @@ async function meAiSend() {
 
     if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; meRenderCanvas(); meRenderProps(null); meSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); }
     else if (res.action === 'replace_html' && res.html && ME.cm) { ME.cm.setValue(res.html); document.getElementById('mHtmlTmpl').value = res.html; meAiAppendBubble('ai', res.message || 'Code updated.'); }
-    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); meSyncToCode(); meRenderCanvas(); if(ME.selectedId===b.id)meRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); }
+    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); meSyncToCode(); meRenderCanvas(); if (ME.selectedId === b.id) meRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); }
     else {
       const txt = res.message || 'How else can I help?';
       meAiAppendBubble('ai', txt);
@@ -2079,7 +2081,7 @@ async function meAiSend() {
       if (ME.mode === 'code' && ME.cm && /<[a-zA-Z][\s\S]*>/.test(txt)) {
         const htmlMatch = txt.match(/```html\s*([\s\S]*?)```/) || txt.match(/(<!DOCTYPE[\s\S]*?<\/html>)/i) || txt.match(/(<html[\s\S]*?<\/html>)/i);
         const htmlCode = htmlMatch ? (htmlMatch[1] || htmlMatch[0]) : txt;
-        ME.cm.setValue(htmlCode.replace(/^```html\s*/,'').replace(/\s*```$/,''));
+        ME.cm.setValue(htmlCode.replace(/^```html\s*/, '').replace(/\s*```$/, ''));
         document.getElementById('mHtmlTmpl').value = ME.cm.getValue();
       }
     }
@@ -2113,13 +2115,13 @@ function rvRenderAt(idx) {
   idx = Math.max(0, Math.min(idx, CP.rows.length - 1));
   rvPrevIdx = idx;
   const n = CP.rows.length;
-  const navLabel = document.getElementById('rvEmailNavLabel');
+  const navLabel = document.getElementById('rvCertNavLabel');
   if (navLabel) navLabel.textContent = `${idx + 1} / ${n}`;
 
   const mappings = getAllMappings();
   const row = CP.rows[idx];
   const emailCol = mappings.email;
-  const subjectRaw = document.getElementById('emailSubject')?.value || '';
+  const subjectRaw = document.getElementById('mSubject')?.value || '';
 
   const toEl = document.getElementById('rvEmailTo');
   const subEl = document.getElementById('rvEmailSubject');
@@ -2136,9 +2138,12 @@ function rvRenderAt(idx) {
       try {
         const h = frame.contentDocument?.body?.scrollHeight;
         if (h && h > 100) frame.style.minHeight = h + 'px';
-      } catch (_) {}
+      } catch (_) { }
     };
   }
+
+  // Render personalized certificate preview
+  rvRenderCert(idx);
 
   // Prev/next button states
   const prevBtn = document.querySelector('[onclick="rvNavPrev()"]');
@@ -2149,6 +2154,128 @@ function rvRenderAt(idx) {
 
 function rvNavPrev() { rvRenderAt(rvPrevIdx - 1); }
 function rvNavNext() { rvRenderAt(rvPrevIdx + 1); }
+
+function rvRenderCert(idx) {
+  const row = CP.rows[idx] || {};
+  const canvas = document.getElementById('rvCertPreviewCanvas');
+  const fallback = document.getElementById('rvCertFallback');
+  if (!canvas) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const scale = Math.min(1, 720 / ED.w);
+  const cssW = Math.round(ED.w * scale);
+  const cssH = Math.round(ED.h * scale);
+
+  canvas.width = cssW * dpr;
+  canvas.height = cssH * dpr;
+  canvas.style.width = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+  canvas.style.display = 'block';
+  if (fallback) fallback.style.display = 'none';
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.scale(scale * dpr, scale * dpr);
+
+  const drawFields = () => {
+    ED.fields.forEach(f => {
+      const boxX = (f.x / 100) * ED.w;
+      const boxY = (f.y / 100) * ED.h;
+      const boxW = (f.width / 100) * ED.w;
+      const fs = Math.max(4, f.fontSize);
+      const ls = (f.letterSpacing || 0);
+      const fw = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
+      const fi = f.italic ? 'italic' : 'normal';
+      const ff = getFontCSS(f.fontFamily || 'Helvetica');
+
+      let value = f.placeholder;
+      if (f.column && row[f.column] !== undefined) {
+        value = String(row[f.column]);
+      } else {
+        Object.keys(row).forEach(col => {
+          value = value.replace(new RegExp(`{{${col}}}`, 'gi'), row[col] || '');
+        });
+        if (value === f.placeholder) value = f.previewText || f.placeholder;
+      }
+
+      ctx.save();
+      ctx.font = `${fi} ${fw} ${fs}px ${ff}`;
+      ctx.fillStyle = f.color || '#1a1a1a';
+      ctx.textBaseline = 'top';
+      ctx.textAlign = 'left';
+
+      const words = String(value).split(' ');
+      const lines = [];
+      let currentLine = words[0] || '';
+      for (let j = 1; j < words.length; j++) {
+        const word = words[j];
+        const testLine = currentLine + ' ' + word;
+        let testWidth = ctx.measureText(testLine).width;
+        if (ls > 0 && testLine.length > 1) testWidth += ls * (testLine.length - 1);
+        if (testWidth > boxW && currentLine !== '') {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine !== '') lines.push(currentLine);
+      if (lines.length === 0) lines.push('');
+
+      const numLines = lines.length;
+
+      const cx = boxX + boxW / 2;
+      const cy = boxY + (fs * 1.3 * numLines) / 2;
+      ctx.translate(cx, cy);
+      ctx.rotate((f.rotation || 0) * Math.PI / 180);
+      ctx.translate(-cx, -cy);
+
+      lines.forEach((line, i) => {
+        const drawY = boxY + (i * fs * 1.3);
+        let textW = ctx.measureText(line).width;
+        if (ls > 0 && line.length > 1) textW += ls * (line.length - 1);
+
+        let drawX = boxX;
+        if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
+        else if (f.align === 'right') drawX = boxX + boxW - textW;
+
+        if (ls > 0 && line.length > 1) {
+          let drawCx = drawX;
+          for (const ch of line) {
+            ctx.fillText(ch, drawCx, drawY);
+            drawCx += ctx.measureText(ch).width + ls;
+          }
+        } else {
+          ctx.fillText(line, drawX, drawY);
+        }
+      });
+      ctx.restore();
+    });
+  };
+
+  if (ED.bgImg) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(ED.bgImg, 0, 0, ED.w, ED.h);
+    drawFields();
+  } else if (ED.bgBase64) {
+    const img = new Image();
+    img.onload = () => {
+      const ctx2 = canvas.getContext('2d');
+      ctx2.setTransform(1, 0, 0, 1, 0, 0);
+      ctx2.clearRect(0, 0, canvas.width, canvas.height);
+      ctx2.scale(scale * dpr, scale * dpr);
+      ctx2.drawImage(img, 0, 0, ED.w, ED.h);
+      drawFields();
+    };
+    img.src = ED.bgBase64;
+  } else {
+    ctx.fillStyle = ED.bgColor || '#ffffff';
+    ctx.fillRect(0, 0, ED.w, ED.h);
+    drawFields();
+  }
+}
 
 function buildReview() {
   const n = CP.rows.length, mappings = getAllMappings(), camp = document.getElementById('cpName').value;
@@ -2161,38 +2288,20 @@ function buildReview() {
   if (rvC) rvC.textContent = n;
   if (rvE) rvE.textContent = n;
 
-  // Certificate preview
-  const certImg = document.getElementById('rvCertPreview');
-  const certFallback = document.getElementById('rvCertFallback');
-  const certEl = document.getElementById('certCanvas');
-  if (certEl) {
-    try {
-      const dataUrl = certEl.toDataURL('image/png');
-      if (certImg) { certImg.src = dataUrl; certImg.style.display = 'block'; }
-      if (certFallback) certFallback.style.display = 'none';
-    } catch (_) {
-      if (certImg) certImg.style.display = 'none';
-      if (certFallback) certFallback.style.display = 'flex';
-    }
-  } else {
-    if (certImg) certImg.style.display = 'none';
-    if (certFallback) certFallback.style.display = 'flex';
-  }
-
   // Email preview — first recipient
   rvPrevIdx = 0;
   rvRenderAt(0);
 
   // Config summary table
   const rows = [
-    { k:'Campaign', v:camp }, { k:'Participants', v:String(n) },
-    { k:'Data source', v:CP.sheetId ? `Sheet (${CP.sheetId.slice(0,18)}…)` : CP.srcType === 'manual' ? 'Manual entry' : 'Uploaded file' },
-    { k:'Name column', v:mappings.name }, { k:'Email column', v:mappings.email },
-    { k:'Custom mappings', v:`${CP.customMappings.filter(m=>m.col&&m.ph).length} field(s)` },
-    { k:'Certificate fields', v:`${ED.fields.length} text field(s)` },
-    { k:'Canvas size', v:`${ED.w} × ${ED.h} px` },
-    { k:'Email subject', v:document.getElementById('emailSubject')?.value || '—' },
-    { k:'Write links back', v:document.getElementById('writeBackToggle')?.classList.contains('on') ? 'Yes' : 'No' },
+    { k: 'Campaign', v: camp }, { k: 'Participants', v: String(n) },
+    { k: 'Data source', v: CP.sheetId ? `Sheet (${CP.sheetId.slice(0, 18)}…)` : CP.srcType === 'manual' ? 'Manual entry' : 'Uploaded file' },
+    { k: 'Name column', v: mappings.name }, { k: 'Email column', v: mappings.email },
+    { k: 'Custom mappings', v: `${CP.customMappings.filter(m => m.col && m.ph).length} field(s)` },
+    { k: 'Certificate fields', v: `${ED.fields.length} text field(s)` },
+    { k: 'Canvas size', v: `${ED.w} × ${ED.h} px` },
+    { k: 'Email subject', v: document.getElementById('mSubject')?.value || '—' },
+    { k: 'Write links back', v: document.getElementById('writeBackToggle')?.classList.contains('on') ? 'Yes' : 'No' },
   ];
   const detailsEl = document.getElementById('reviewDetailsEl');
   if (detailsEl) detailsEl.innerHTML = rows.map(r => `<div class="rv-row"><span class="rv-key">${r.k}</span><span class="rv-val">${r.v}</span></div>`).join('');
@@ -2215,61 +2324,63 @@ async function launchPipeline() {
   const btn = document.getElementById('launchBtn');
   btn.disabled = true; btn.style.opacity = '0.6';
   goStep(6, true);
-  
+
   const mappings = getAllMappings();
-  const subject = document.getElementById('emailSubject').value;
+  const subject = document.getElementById('mSubject').value;
   const htmlTmpl = getFinalHtmlTmpl();
   const campName = document.getElementById('cpName').value;
   const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
   const total = CP.rows.length;
-  
+
   let certsDone = 0, mailsDone = 0, failed = 0;
   CP.results = [];
   setRunProgress(0, total, 'Starting up…');
   llLog('info', `Launching: ${campName} — ${total} participants`);
 
   for (let i = 0; i < CP.rows.length; i++) {
-    const row = CP.rows[i], name = row[mappings.name] || `Person ${i+1}`, email = row[mappings.email] || '';
-    setRunProgress(i, total, `Processing: ${name} (${i+1}/${total})`);
+    const row = CP.rows[i], name = row[mappings.name] || `Person ${i + 1}`, email = row[mappings.email] || '';
+    setRunProgress(i, total, `Processing: ${name} (${i + 1}/${total})`);
     let certLink = '';
     try {
       const participant = { ...row }; Object.entries(mappings).forEach(([ph, col]) => { participant[ph] = row[col] || ''; });
-      const certRes = await apiFetch('/api/certificates/generate', { method:'POST', body:JSON.stringify({
-        campaignName:campName, template:{ width:ED.w, height:ED.h, bgColor:ED.bgColor, backgroundBase64:ED.bgBase64||null, fields:ED.fields, fontUrls:getUsedFontUrls() },
-        participants:[participant], nameCol:mappings.name, emailCol:mappings.email, sheetId:writeBack?CP.sheetId:null, writeBack, rowOffset:i,
-      })});
+      const certRes = await apiFetch('/api/certificates/generate', {
+        method: 'POST', body: JSON.stringify({
+          campaignName: campName, template: { width: ED.w, height: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64 || null, fields: ED.fields, fontUrls: getUsedFontUrls() },
+          participants: [participant], nameCol: mappings.name, emailCol: mappings.email, sheetId: writeBack ? CP.sheetId : null, writeBack, rowOffset: i,
+        })
+      });
       const r0 = certRes?.results?.[0];
       if (r0?.status === 'success') { certLink = r0.link || ''; certsDone++; llLog('cert', `Certificate saved: ${name}`); }
       else throw new Error(r0?.error || 'Certificate generation failed');
     } catch (e) {
       failed++; llLog('err', `Cert failed for ${name}: ${e.message}`);
-      CP.results.push({ name, email, certLink:'', certStatus:'failed', mailStatus:'skipped', error:e.message });
-      setRunProgress(i+1, total); updateRunCounts(certsDone, mailsDone, failed); continue;
+      CP.results.push({ name, email, certLink: '', certStatus: 'failed', mailStatus: 'skipped', error: e.message });
+      setRunProgress(i + 1, total); updateRunCounts(certsDone, mailsDone, failed); continue;
     }
     try {
       const personHtml = personalise(htmlTmpl, row, mappings).replace(/\{\{cert_link\}\}/gi, certLink);
       const personSubj = personalise(subject, row, mappings);
-      await apiFetch('/api/mail/send-one', { method:'POST', body:JSON.stringify({ to:email, subject:personSubj, html:personHtml }) });
+      await apiFetch('/api/mail/send-one', { method: 'POST', body: JSON.stringify({ to: email, subject: personSubj, html: personHtml }) });
       mailsDone++; llLog('mail', `Email sent → ${email}`);
     } catch (e) { failed++; llLog('err', `Email failed for ${name}: ${e.message}`); }
-    CP.results.push({ name, email, certLink, certStatus:'success', mailStatus:mailsDone > certsDone-1 ? 'sent' : 'failed' });
-    setRunProgress(i+1, total); updateRunCounts(certsDone, mailsDone, failed);
+    CP.results.push({ name, email, certLink, certStatus: 'success', mailStatus: mailsDone > certsDone - 1 ? 'sent' : 'failed' });
+    setRunProgress(i + 1, total); updateRunCounts(certsDone, mailsDone, failed);
   }
-  saveCampaignHistory({ name:campName, type:'combined', date:new Date().toISOString(), total, success:certsDone, failed });
+  saveCampaignHistory({ name: campName, type: 'combined', date: new Date().toISOString(), total, success: certsDone, failed });
   setTimeout(() => showDone(certsDone, mailsDone, failed, total), 700);
 }
 
 function setRunProgress(done, total, status) {
-  const pct = total > 0 ? Math.round((done/total)*100) : 0;
-  document.getElementById('runPct').textContent = pct+'%';
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('runPct').textContent = pct + '%';
   document.getElementById('runFraction').textContent = `${done} / ${total}`;
   if (status) document.getElementById('runStatus').textContent = status;
-  document.getElementById('runBar').style.width = pct+'%';
+  document.getElementById('runBar').style.width = pct + '%';
   const rc = document.getElementById('ringCircle');
   if (rc) rc.style.strokeDashoffset = 345 - (345 * pct / 100);
 }
 function updateRunCounts(c, m, f) { document.getElementById('runCertsDone').textContent = c; document.getElementById('runMailsDone').textContent = m; document.getElementById('runFailed').textContent = f; }
-function llLog(type, msg) { const win = document.getElementById('liveLog'); if (!win) return; const ts = new Date().toLocaleTimeString('en-IN',{hour12:false}); const el = document.createElement('div'); el.className = 'll-row'; el.innerHTML = `<span class="ll-ts">${ts}</span><span class="ll-${type}">${msg}</span>`; win.appendChild(el); win.scrollTop = win.scrollHeight; }
+function llLog(type, msg) { const win = document.getElementById('liveLog'); if (!win) return; const ts = new Date().toLocaleTimeString('en-IN', { hour12: false }); const el = document.createElement('div'); el.className = 'll-row'; el.innerHTML = `<span class="ll-ts">${ts}</span><span class="ll-${type}">${msg}</span>`; win.appendChild(el); win.scrollTop = win.scrollHeight; }
 
 function showDone(certs, mails, failed, total) {
   document.getElementById('runningState').style.display = 'none';
@@ -2286,21 +2397,21 @@ function showDone(certs, mails, failed, total) {
 function renderResultTable(results) {
   const tbody = document.getElementById('resultTbody'); if (!tbody) return;
   tbody.innerHTML = results.map(r => {
-    const cb = r.certStatus==='success' ? `<span style="background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Generated</span>` : `<span style="background:var(--red-dim);color:var(--red);border:1px solid rgba(244,63,94,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Failed</span>`;
-    const mb = r.mailStatus==='sent' ? `<span style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Sent</span>` : r.mailStatus==='skipped' ? `<span style="color:var(--text-3);font-size:11.5px">Skipped</span>` : `<span style="color:var(--red);font-size:11.5px">Failed</span>`;
+    const cb = r.certStatus === 'success' ? `<span style="background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Generated</span>` : `<span style="background:var(--red-dim);color:var(--red);border:1px solid rgba(244,63,94,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Failed</span>`;
+    const mb = r.mailStatus === 'sent' ? `<span style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Sent</span>` : r.mailStatus === 'skipped' ? `<span style="color:var(--text-3);font-size:11.5px">Skipped</span>` : `<span style="color:var(--red);font-size:11.5px">Failed</span>`;
     const cert = r.certLink ? `<a href="${r.certLink}" target="_blank" style="color:var(--cyan);font-size:12.5px;max-width:200px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.certLink}</a>` : '—';
-    return `<tr data-name="${r.name}" data-email="${r.email||''}"><td style="font-weight:600">${r.name}</td><td style="color:var(--text-2)">${r.email||'—'}</td><td>${cert}</td><td style="display:flex;gap:5px;flex-wrap:wrap">${cb}${mb}</td><td>${r.certLink?`<button class="ic-btn" onclick="copyToClipboard('${r.certLink}','Link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>`:''}</td></tr>`;
+    return `<tr data-name="${r.name}" data-email="${r.email || ''}"><td style="font-weight:600">${r.name}</td><td style="color:var(--text-2)">${r.email || '—'}</td><td>${cert}</td><td style="display:flex;gap:5px;flex-wrap:wrap">${cb}${mb}</td><td>${r.certLink ? `<button class="ic-btn" onclick="copyToClipboard('${r.certLink}','Link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>` : ''}</td></tr>`;
   }).join('');
 }
 
-function filterResultTable() { const q = document.getElementById('resultSearch').value.toLowerCase(); document.querySelectorAll('#resultTbody tr').forEach(tr => { tr.style.display = (!q || tr.dataset.name.toLowerCase().includes(q) || (tr.dataset.email||'').toLowerCase().includes(q)) ? '' : 'none'; }); }
-function downloadFullReport() { downloadCSV(CP.results.map(r => ({ Name:r.name, Email:r.email||'', 'Cert Status':r.certStatus, 'Email Status':r.mailStatus, 'Certificate Link':r.certLink||'', Error:r.error||'' })), `honourix-pipeline-${Date.now()}.csv`); }
+function filterResultTable() { const q = document.getElementById('resultSearch').value.toLowerCase(); document.querySelectorAll('#resultTbody tr').forEach(tr => { tr.style.display = (!q || tr.dataset.name.toLowerCase().includes(q) || (tr.dataset.email || '').toLowerCase().includes(q)) ? '' : 'none'; }); }
+function downloadFullReport() { downloadCSV(CP.results.map(r => ({ Name: r.name, Email: r.email || '', 'Cert Status': r.certStatus, 'Email Status': r.mailStatus, 'Certificate Link': r.certLink || '', Error: r.error || '' })), `honourix-pipeline-${Date.now()}.csv`); }
 
-async function saveCampaignHistory(rec) { 
+async function saveCampaignHistory(rec) {
   const mappings = getAllMappings();
   const backupData = CP.results.map((r, i) => {
     const original = CP.rows[i] || {};
-    const rowData  = { 'S.No': i + 1, 'Email': r.email || '' };
+    const rowData = { 'S.No': i + 1, 'Email': r.email || '' };
     if (mappings.name && mappings.name !== mappings.email) {
       rowData[mappings.name] = r.name || original[mappings.name] || '';
     }
@@ -2315,15 +2426,15 @@ async function saveCampaignHistory(rec) {
     await apiFetch('/api/campaigns', {
       method: 'POST',
       body: JSON.stringify({
-        name:        rec.name || 'Combined Campaign',
-        type:        'combined',
+        name: rec.name || 'Combined Campaign',
+        type: 'combined',
         total_count: rec.total,
-        sent_count:  rec.success,
-        status:      rec.failed === 0 ? 'completed' : (rec.success > 0 ? 'partial' : 'failed'),
+        sent_count: rec.success,
+        status: rec.failed === 0 ? 'completed' : (rec.success > 0 ? 'partial' : 'failed'),
         backup_data: backupData,
       }),
     });
-  } catch(e) {
+  } catch (e) {
     console.error('Pipeline database save failed', e);
   }
 }
@@ -2333,8 +2444,8 @@ function resetAll() {
   CP.rows = []; CP.results = []; CP.headers = []; CP.customMappings = []; CP.sheetId = null;
   ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null; ED.ready = false;
   ME.blocks = []; ME.selectedId = null; ME.initialized = false;
-  ['cpName','sheetId','emailSubject','emailTemplate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  ['sheetLoadedMsg','fileLoadedMsg','manualLoadedMsg','hxFormLoadedMsg'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  ['cpName', 'sheetId', 'emailSubject', 'emailTemplate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['sheetLoadedMsg', 'fileLoadedMsg', 'manualLoadedMsg', 'hxFormLoadedMsg'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
   document.getElementById('customMappings').innerHTML = '';
   if (ME.cm) ME.cm.setValue('');
   goStep(1, true);
