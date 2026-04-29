@@ -2049,46 +2049,110 @@ async function meAiSend() {
   const isPro = await _galAiCheckPro();
   if (!isPro) {
     input.value = '';
-    meAiAppendBubble('user', msg);
+    window.meAiAppendBubble('user', msg);
     meAiShowUpgrade();
     return;
   }
 
-  input.value = ''; meAiIsLoading = true;
+  input.value = '';
+  input.style.height = 'auto';
+  meAiIsLoading = true;
   const btn = document.getElementById('meAiSendBtn');
   if (btn) btn.disabled = true;
 
-  meAiAppendBubble('user', msg);
-  const typingEl = meAiAppendBubble('ai', '', true);
+  window.meAiAppendBubble('user', msg);
+  const typingEl = window.meAiAppendBubble('ai', '', true);
   meAiChatHistory.push({ role: 'user', content: msg });
 
   try {
     const token = localStorage.getItem('Honourix_token');
     const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/generate-email', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ userMessage: msg, mode: ME.activeTab, htmlModeText: ME.cm ? ME.cm.getValue() : '', currentBlocks: ME.blocks, headers: CP.headers, chatHistory: meAiChatHistory.slice(-10), selectedBlockId: ME.selectedId }),
+      body: JSON.stringify({ 
+        userMessage: msg, 
+        mode: ME.mode || 'visual', 
+        htmlModeText: (ME.mode === 'code' && ME.cm) ? ME.cm.getValue() : '', 
+        currentBlocks: ME.blocks, 
+        headers: CP.headers, 
+        chatHistory: meAiChatHistory.slice(-10), 
+        selectedBlockId: ME.selectedId 
+      }),
     });
     const res = await response.json();
     if (typingEl) { clearInterval(typingEl.dataset.thinkTimer); typingEl.remove(); }
-    meAiChatHistory.push({ role: 'model', content: res.message || '' });
+    
+    const action = res.action;
+    const message = res.message || '';
+    
+    meAiChatHistory.push({ role: 'model', content: message });
 
-    if (res.action === 'replace_blocks' && res.blocks) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; meRenderCanvas(); meRenderProps(null); meSyncToCode(); meAiAppendBubble('ai', res.message || 'Done! Canvas updated.'); }
-    else if (res.action === 'replace_html' && res.html && ME.cm) { ME.cm.setValue(res.html); document.getElementById('mHtmlTmpl').value = res.html; meAiAppendBubble('ai', res.message || 'Code updated.'); }
-    else if (res.action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId); if (b) { Object.assign(b.props, res.props); meSyncToCode(); meRenderCanvas(); if (ME.selectedId === b.id) meRenderProps(b); } meAiAppendBubble('ai', res.message || 'Block updated.'); }
+    if (action === 'replace_html' && res.html && ME.mode === 'code') { if (typeof res.html === 'string' && ME.cm) { ME.cm.setValue(res.html); document.getElementById('mHtmlTmpl').value = res.html; if (typeof meRefreshPreviewIframe === 'function') meRefreshPreviewIframe(); } window.meAiAppendBubble('ai', message || 'Your HTML code has been updated directly!'); toast('AI updated your HTML', 'success', 2000); }
+    else if (action === 'replace_blocks' && res.blocks && res.blocks.length) { ME.blocks = res.blocks.map(b => ({ id: b.id || ('b' + (ME.nextId++)), type: b.type, props: b.props || {} })); ME.selectedId = null; meRenderCanvas(); meRenderProps(null); meSyncToCode(); window.meAiAppendBubble('ai', message || 'Done! Your email has been updated.'); toast('AI updated your email', 'success', 2000); }
+    else if (action === 'update_block' && res.blockId && res.props) { const b = ME.blocks.find(x => x.id === res.blockId) || ME.blocks.find(b => b.id === ME.selectedId); if (b) { Object.assign(b.props, res.props); const inner = document.querySelector(`.me-block-wrap[data-id="${b.id}"] .me-block-inner`); if (inner) inner.innerHTML = meBlockToHtml(b); meSyncToCode(); if (ME.selectedId === b.id) meRenderProps(b); window.meAiAppendBubble('ai', message || 'Block updated!'); } else { window.meAiAppendBubble('ai', message || 'Could not find block to update. Please select a block first.'); } }
+    else if (action === 'subject_suggestions' && res.suggestions) { if (window.meAiApplySuggestions) window.meAiApplySuggestions(res.suggestions); else window.meAiAppendBubble('ai', message || 'Here are some suggestions.'); }
     else {
-      const txt = res.message || 'How else can I help?';
-      meAiAppendBubble('ai', txt);
-      // In paste-code mode: if the message contains HTML markup, inject it into the editor
-      if (ME.mode === 'code' && ME.cm && /<[a-zA-Z][\s\S]*>/.test(txt)) {
-        const htmlMatch = txt.match(/```html\s*([\s\S]*?)```/) || txt.match(/(<!DOCTYPE[\s\S]*?<\/html>)/i) || txt.match(/(<html[\s\S]*?<\/html>)/i);
-        const htmlCode = htmlMatch ? (htmlMatch[1] || htmlMatch[0]) : txt;
+      window.meAiAppendBubble('ai', message || 'How else can I help?');
+      if (ME.mode === 'code' && ME.cm && /<[a-zA-Z][\s\S]*>/.test(message)) {
+        const htmlMatch = message.match(/```html\s*([\s\S]*?)```/) || message.match(/(<!DOCTYPE[\s\S]*?<\/html>)/i) || message.match(/(<html[\s\S]*?<\/html>)/i);
+        const htmlCode = htmlMatch ? (htmlMatch[1] || htmlMatch[0]) : message;
         ME.cm.setValue(htmlCode.replace(/^```html\s*/, '').replace(/\s*```$/, ''));
         document.getElementById('mHtmlTmpl').value = ME.cm.getValue();
       }
     }
-  } catch (err) { if (typingEl) { clearInterval(typingEl.dataset.thinkTimer); typingEl.remove(); } meAiAppendBubble('ai', 'Error: ' + err.message); }
+  } catch (err) { if (typingEl) { clearInterval(typingEl.dataset.thinkTimer); typingEl.remove(); } window.meAiAppendBubble('ai', 'Error: ' + err.message); }
   finally { meAiIsLoading = false; if (btn) btn.disabled = false; }
 }
+
+window.meAiApplySuggestions = function (suggestions) {
+  const chat = document.getElementById('meAiChat');
+  if (!chat || !suggestions?.length) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'gal-ai-sugg-list';
+  suggestions.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'gal-ai-sugg-btn';
+    btn.textContent = s;
+    btn.onclick = () => window.meAiApplySubject && window.meAiApplySubject(btn, s);
+    wrap.appendChild(btn);
+  });
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+};
+
+window.meAiApplySubject = function(btn, subject) {
+  const el = document.getElementById('mSubject');
+  if (el) {
+    el.value = subject;
+    el.style.borderColor = 'rgba(0,212,255,0.6)';
+    setTimeout(() => el.style.borderColor = '', 1500);
+    toast('Subject applied!', 'success', 2000);
+  }
+  btn.style.background = 'rgba(16,185,129,0.2)';
+  btn.style.borderColor = 'rgba(16,185,129,0.35)';
+};
+
+window.applyAiOption = function (text) {
+  if (window.meLastFocusedField && window.meLastFocusedField.id === 'mSubject') {
+    const subj = document.getElementById('mSubject');
+    if (subj) {
+      subj.value = text;
+      toast('Subject updated!', 'success');
+      return;
+    }
+  }
+  if (typeof ME !== 'undefined' && ME.selectedId) {
+    const b = ME.blocks.find(x => x.id === ME.selectedId);
+    if (b && (b.type === 'text' || b.type === 'header' || b.type === 'footer')) {
+      b.props.text = text;
+      if (typeof meRenderCanvas === 'function') meRenderCanvas();
+      if (typeof meRenderProps === 'function') meRenderProps(b);
+      toast('Text block updated!', 'success');
+      return;
+    }
+  }
+  navigator.clipboard.writeText(text);
+  toast('Copied to clipboard!', 'info');
+};
 
 /* ════════════════════════════════════════════════════════════════
    UPDATE LAUNCH PIPELINE HTML FETCH
