@@ -435,8 +435,8 @@ function msb_form(block, cfg) {
     <div style="width:48px;height:48px;border-radius:12px;background:rgba(${br},${bg_},${bb},0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
       <svg viewBox="0 0 24 24" fill="none" stroke="${btnBg}" stroke-width="2" style="width:22px;height:22px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
     </div>
-    <div style="font-size:14.5px;font-weight:700;color:${t.text};margin-bottom:6px">No form connected yet</div>
-    <div style="font-size:13px;color:${t.sub};line-height:1.55">Paste your Google Forms, Typeform, or any form URL in the Block settings panel.</div>
+    <div style="font-size:14.5px;font-weight:700;color:${p.subtitleColor || t.sub};margin-bottom:6px">No form connected yet</div>
+    <div style="font-size:13px;color:${p.subtitleColor || t.sub};line-height:1.55">Paste your Google Forms, Typeform, or any form URL in the Block settings panel.</div>
   </div>
   `}
   ` : `

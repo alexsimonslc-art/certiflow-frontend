@@ -195,7 +195,7 @@ function msc_colorRow(bid, prop, label, defaultColor) {
 /** Wraps colour rows in a compact "Text Colours" labelled box. */
 function msc_colorSection(bid, fields) {
   return `
-<div style="margin-top:4px;padding:10px 10px 4px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:9px">
+<div style="margin-top:4px;padding:10px 10px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:9px">
   <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:5px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;flex-shrink:0"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 8v4l3 3"/></svg>
     Text Colours
