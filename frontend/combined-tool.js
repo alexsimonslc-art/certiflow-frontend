@@ -2607,14 +2607,14 @@ function showDone(certs, mails, failed, total) {
       dt.textContent = 'Pipeline Complete!';
       dt.style.background = 'linear-gradient(135deg, #10b981, #00d4ff)';
     } else {
-      dt.textContent = \`Completed with \${failed} failure(s)\`;
+        dt.textContent = `Completed with ${failed} failure(s)`;
       dt.style.background = 'linear-gradient(135deg, #f59e0b, #ef4444)';
     }
     dt.style.webkitBackgroundClip = 'text';
     dt.style.backgroundClip = 'text';
   }
   if (ds) {
-    ds.textContent = \`\${certs} certificates generated, \${mails} emails sent out of \${total} participants.\`;
+      ds.textContent = `${certs} certificates generated, ${mails} emails sent out of ${total} participants.`;
   }
   
   renderResultTable(CP.results);
