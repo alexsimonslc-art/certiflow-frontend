@@ -2171,7 +2171,8 @@ function rvRenderCert(idx) {
   canvas.width = cssW * dpr;
   canvas.height = cssH * dpr;
   canvas.style.width = '100%';
-  canvas.style.maxWidth = cssW + 'px';
+  canvas.style.maxWidth = Math.max(cssW, 800) + 'px';
+  canvas.style.maxHeight = '600px';
   canvas.style.height = 'auto';
   canvas.style.aspectRatio = `${ED.w} / ${ED.h}`;
   canvas.style.objectFit = 'contain';
@@ -2289,9 +2290,9 @@ function buildReview() {
   const rvP = document.getElementById('rvParticipants');
   const rvC = document.getElementById('rvCerts');
   const rvE = document.getElementById('rvEmails');
-  if (rvP) rvP.textContent = n;
-  if (rvC) rvC.textContent = n;
-  if (rvE) rvE.textContent = n;
+  if (rvP) { rvP.textContent = n; rvP.style.fontFamily = 'var(--font-display)'; rvP.style.fontSize = '26px'; rvP.style.fontWeight = '700'; rvP.style.color = 'var(--text)'; }
+  if (rvC) { rvC.textContent = n; rvC.style.fontFamily = 'var(--font-display)'; rvC.style.fontSize = '26px'; rvC.style.fontWeight = '700'; rvC.style.color = 'var(--text)'; }
+  if (rvE) { rvE.textContent = n; rvE.style.fontFamily = 'var(--font-display)'; rvE.style.fontSize = '26px'; rvE.style.fontWeight = '700'; rvE.style.color = 'var(--text)'; }
 
   // Email preview — first recipient
   rvPrevIdx = 0;
@@ -2311,9 +2312,10 @@ function buildReview() {
   const detailsEl = document.getElementById('reviewDetailsEl');
   if (detailsEl) {
     detailsEl.style.display = 'grid';
-    detailsEl.style.gridTemplateColumns = 'repeat(auto-fit, minmax(300px, 1fr))';
-    detailsEl.style.gap = '12px 20px';
-    detailsEl.innerHTML = rows.map(r => `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;"><span style="color:var(--text-2);font-size:13.5px;font-weight:500">${r.k}</span><span style="color:var(--text);font-size:14px;font-weight:600;text-align:right">${r.v}</span></div>`).join('');
+    detailsEl.style.gridTemplateColumns = 'repeat(auto-fit, minmax(320px, 1fr))';
+    detailsEl.style.gap = '16px 24px';
+    detailsEl.style.padding = '8px 16px';
+    detailsEl.innerHTML = rows.map(r => `<div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:var(--surface-2);border:1px solid var(--glass-border);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);"><span style="color:var(--text-2);font-size:12.5px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700">${r.k}</span><span style="color:var(--text);font-size:14.5px;font-weight:600;text-align:right">${r.v}</span></div>`).join('');
   }
   const runJobEl = document.getElementById('runJobInfo');
   if (runJobEl) runJobEl.innerHTML = rows.slice(0, 3).map(r => `<div style="display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--glass-border)"><span style="color:var(--text-2)">${r.k}</span><strong style="color:var(--text)">${r.v}</strong></div>`).join('');
@@ -2459,34 +2461,41 @@ async function launchPipeline() {
 
 function setRunProgress(done, total, status) {
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-  document.getElementById('runPct').textContent = pct + '%';
-  document.getElementById('runFraction').textContent = `${done} / ${total}`;
-  if (status) document.getElementById('runStatus').textContent = status;
-  document.getElementById('runBar').style.width = pct + '%';
+  const pctEl = document.getElementById('runPct');
+  if (pctEl) { pctEl.textContent = pct + '%'; pctEl.style.fontFamily = 'var(--font-display)'; pctEl.style.fontSize = '36px'; pctEl.style.fontWeight = '800'; pctEl.style.color = 'var(--text)'; }
+  const fracEl = document.getElementById('runFraction');
+  if (fracEl) { fracEl.textContent = `${done} / ${total}`; fracEl.style.color = 'var(--text-3)'; fracEl.style.fontSize = '14px'; fracEl.style.fontWeight = '600'; fracEl.style.letterSpacing = '1px'; }
+  if (status) { const statEl = document.getElementById('runStatus'); if (statEl) { statEl.textContent = status; statEl.style.color = 'var(--cyan)'; statEl.style.fontWeight = '500'; } }
+  const bar = document.getElementById('runBar');
+  if (bar) { bar.style.width = pct + '%'; bar.style.background = 'linear-gradient(90deg, #00d4ff, #7c3aed)'; bar.style.boxShadow = '0 0 10px rgba(0,212,255,0.4)'; }
   const rc = document.getElementById('ringCircle');
-  if (rc) rc.style.strokeDashoffset = 345 - (345 * pct / 100);
+  if (rc) { rc.style.strokeDashoffset = 345 - (345 * pct / 100); rc.style.transition = 'stroke-dashoffset 0.4s ease'; }
 }
 function updateRunCounts(c, m, f) {
   const cd = document.getElementById('runCertsDone');
   const md = document.getElementById('runMailsDone');
   const fd = document.getElementById('runFailed');
-  if(cd) { cd.textContent = c; cd.style.fontSize = '22px'; cd.style.color = 'var(--cyan)'; cd.style.fontWeight = '700'; }
-  if(md) { md.textContent = m; md.style.fontSize = '22px'; md.style.color = '#a78bfa'; md.style.fontWeight = '700'; }
-  if(fd) { fd.textContent = f; fd.style.fontSize = '22px'; fd.style.color = 'var(--red)'; fd.style.fontWeight = '700'; }
+  if(cd) { cd.textContent = c; cd.style.fontFamily = 'var(--font-display)'; cd.style.fontSize = '26px'; cd.style.color = 'var(--text)'; cd.style.fontWeight = '700'; }
+  if(md) { md.textContent = m; md.style.fontFamily = 'var(--font-display)'; md.style.fontSize = '26px'; md.style.color = 'var(--text)'; md.style.fontWeight = '700'; }
+  if(fd) { fd.textContent = f; fd.style.fontFamily = 'var(--font-display)'; fd.style.fontSize = '26px'; fd.style.color = f > 0 ? 'var(--red)' : 'var(--text)'; fd.style.fontWeight = '700'; }
 }
 function llLog(type, msg) {
   const win = document.getElementById('liveLog');
   if (!win) return;
   if (!win.classList.contains('log-window')) {
-    win.className = 'log-window';
+    win.classList.add('styled-log');
+    win.style.cssText = 'background:rgba(2,4,8,0.8); border:1px solid var(--glass-border); border-radius:12px; padding:16px; font-family:var(--font-mono); font-size:13px; color:#4a6080; height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; box-shadow:inset 0 2px 10px rgba(0,0,0,0.2);';
   }
   const ts = new Date().toLocaleTimeString('en-IN', { hour12: false });
   const el = document.createElement('div');
-  el.className = 'log-entry';
-  let mappedType = type;
-  if (type === 'cert') mappedType = 'ok';
-  if (type === 'mail') mappedType = 'info';
-  el.innerHTML = `<span class="log-ts">${ts}</span><span class="log-${mappedType}">${msg}</span>`;
+  let color = '#4a6080';
+  let icon = '·';
+  if (type === 'cert' || type === 'ok') { color = '#10b981'; icon = '✓'; }
+  else if (type === 'mail' || type === 'info') { color = '#00d4ff'; icon = '✉'; }
+  else if (type === 'err') { color = '#f43f5e'; icon = '✗'; }
+  else if (type === 'warn') { color = '#f59e0b'; icon = '⚠'; }
+  el.style.cssText = `color:${color}; display:flex; align-items:flex-start; gap:8px; line-height:1.5; padding:2px 0; border-bottom:1px solid rgba(255,255,255,0.03);`;
+  el.innerHTML = `<span style="color:#2d4060;flex-shrink:0;font-size:11.5px;margin-top:2px;">[${ts}]</span><span style="flex-shrink:0;font-weight:700;">${icon}</span><span style="flex:1;">${msg}</span>`;
   win.appendChild(el);
   win.scrollTop = win.scrollHeight;
 }
@@ -2497,9 +2506,9 @@ function showDone(certs, mails, failed, total) {
   const dc = document.getElementById('dCerts');
   const de = document.getElementById('dEmails');
   const df = document.getElementById('dFailed');
-  if (dc) { dc.textContent = certs; dc.style.fontSize = '24px'; dc.style.color = 'var(--cyan)'; }
-  if (de) { de.textContent = mails; de.style.fontSize = '24px'; de.style.color = '#a78bfa'; }
-  if (df) { df.textContent = failed; df.style.fontSize = '24px'; df.style.color = 'var(--red)'; }
+  if (dc) { dc.textContent = certs; dc.style.fontFamily = 'var(--font-display)'; dc.style.fontSize = '32px'; dc.style.color = 'var(--text)'; }
+  if (de) { de.textContent = mails; de.style.fontFamily = 'var(--font-display)'; de.style.fontSize = '32px'; de.style.color = 'var(--text)'; }
+  if (df) { df.textContent = failed; df.style.fontFamily = 'var(--font-display)'; df.style.fontSize = '32px'; df.style.color = failed > 0 ? 'var(--red)' : 'var(--text)'; }
   document.getElementById('doneTitle').textContent = failed === 0 ? 'Pipeline Complete!' : `${certs} certs · ${mails} emails · ${failed} failed`;
   if (failed > 0) { const ring = document.getElementById('doneRing'); if (ring) { ring.style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)'; ring.style.boxShadow = '0 0 48px rgba(245,158,11,0.35)'; } }
   renderResultTable(CP.results);
