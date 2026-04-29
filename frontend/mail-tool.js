@@ -362,8 +362,9 @@ async function mFetchQuota() {
    PERSONALISE HELPER
 ══════════════════════════════════════════════════════════════ */
 function mPersonalise(tmpl, data) {
-  return (tmpl || '').replace(/\{\{(\w+)\}\}/g, function (_, key) {
-    const col = MS.headers.find(h => h.toLowerCase().replace(/\s+/g, '_') === key);
+  return (tmpl || '').replace(/\{\{([^}]+)\}\}/g, function (_, key) {
+    key = key.trim();
+    const col = MS.headers.find(h => h.toLowerCase().replace(/\s+/g, '_') === key.toLowerCase().replace(/\s+/g, '_') || h === key);
     return col ? (data[col] || '') : (data[key] || '{{' + key + '}}');
   });
 }
@@ -521,10 +522,10 @@ function meBlockToHtml(block) {
     }
 
     case 'table': {
-      const d   = p.data || [[]];
-      const bw  = p.borderWidth !== undefined ? p.borderWidth : 1;
+      const d = p.data || [[]];
+      const bw = p.borderWidth !== undefined ? p.borderWidth : 1;
       const bst = bw > 0 ? `${bw}px solid ${p.borderColor || '#e2e8f0'}` : 'none';
-      
+
       // Strict fallbacks to prevent "undefined" CSS crashes
       const cBg = p.cellBg || '#ffffff';
       const cColor = p.cellColor || '#475569';
@@ -532,7 +533,7 @@ function meBlockToHtml(block) {
       const hColor = p.headerColor || '#1e293b';
       const fSize = p.fontSize || 14;
       const pad = p.cellPadding !== undefined ? p.cellPadding : 10;
-      
+
       const rows = d.map((row, ri) => {
         const isHeader = p.headerRow && ri === 0;
         const cells = row.map(cell => {
@@ -544,7 +545,7 @@ function meBlockToHtml(block) {
         }).join('');
         return `<tr>${cells}</tr>`;
       }).join('');
-      
+
       return `<div style="padding:${p.paddingV !== undefined ? p.paddingV : 20}px ${p.paddingH !== undefined ? p.paddingH : 40}px;background:${p.bgColor || '#ffffff'}">
         <table width="${p.width || '100%'}" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:${p.width || '100%'};border:${bst}">
           ${rows}
@@ -987,11 +988,11 @@ function meFieldColor(label, id, key, val) {
   return `<div class="me-field">
     <div class="me-field-label">${label}</div>
     <div class="me-color-row">
-      <div class="me-color-swatch" style="background:${val||'#ffffff'}" id="swatch_${id}_${key}">
-        <input type="color" value="${val||'#ffffff'}" 
+      <div class="me-color-swatch" style="background:${val || '#ffffff'}" id="swatch_${id}_${key}">
+        <input type="color" value="${val || '#ffffff'}" 
           oninput="document.getElementById('swatch_${id}_${key}').style.background=this.value; document.getElementById('hex_${id}_${key}').value=this.value; meUpdateProp('${id}','${key}',this.value)" />
       </div>
-      <input class="me-input" type="text" id="hex_${id}_${key}" value="${val||'#ffffff'}" 
+      <input class="me-input" type="text" id="hex_${id}_${key}" value="${val || '#ffffff'}" 
         oninput="document.getElementById('swatch_${id}_${key}').style.background=this.value; meUpdateProp('${id}','${key}',this.value)" style="flex:1"/>
     </div>
   </div>`;
@@ -1681,10 +1682,10 @@ async function mStartSend() {
   // Pass the raw data exactly as it is, but guarantee 'name' and 'email' exist for the backend
   const recipients = MS.rows.map(r => {
     // Clone the raw row so all original keys are intact for personalization
-    const obj = { ...r }; 
+    const obj = { ...r };
     // Explicitly set the required routing fields based on the user's dropdown selection
-    obj.name = r[nameC] || ''; 
-    obj.email = r[emailC] || ''; 
+    obj.name = r[nameC] || '';
+    obj.email = r[emailC] || '';
     return obj;
   });
 

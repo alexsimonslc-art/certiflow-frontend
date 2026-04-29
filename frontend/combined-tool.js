@@ -1742,8 +1742,9 @@ function meUpdatePreview() {
   // Use code editor content when in paste-code mode OR when code tab is active
   let html = (ME.cm && (ME.mode === 'code' || ME.activeTab === 'code')) ? ME.cm.getValue() : meGetHtml();
   if (CP.rows && CP.rows.length) {
-    html = html.replace(/\{\{(\w+)\}\}/g, function (_, key) {
-      const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key);
+    html = html.replace(/\{\{([^}]+)\}\}/g, function (_, key) {
+      key = key.trim();
+      const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key.toLowerCase().replace(/\s+/g, '_') || h === key);
       return col ? (CP.rows[0][col] || '') : (CP.rows[0][key] || '{{' + key + '}}');
     });
   }
@@ -2100,10 +2101,11 @@ function getFinalHtmlTmpl() {
    STEP 5 — REVIEW
 ════════════════════════════════════════════════════════════════ */
 function personalise(tmpl, row, mappings) {
-  return (tmpl || '').replace(/\{\{(\w+)\}\}/g, (_, key) => {
+  return (tmpl || '').replace(/\{\{([^}]+)\}\}/g, (_, key) => {
+    key = key.trim();
     if (mappings && mappings[key] && row[mappings[key]] != null) return row[mappings[key]];
     if (row[key] != null) return row[key];
-    const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key);
+    const col = (CP.headers || []).find(h => h.toLowerCase().replace(/\s+/g, '_') === key.toLowerCase().replace(/\s+/g, '_') || h === key);
     return col ? (row[col] ?? '') : ('{{' + key + '}}');
   });
 }
@@ -2510,7 +2512,7 @@ async function launchPipeline() {
 
               try {
                 const personHtml = personalise(htmlTmpl, row, mappings).replace(/\{\{Certificate Link\}\}/gi, certLink).replace(/\{\{cert_link\}\}/gi, certLink);
-                const personSubj = personalise(subject, row, mappings);
+                const personSubj = personalise(subject, row, mappings).replace(/\{\{Certificate Link\}\}/gi, certLink).replace(/\{\{cert_link\}\}/gi, certLink);
                 await apiFetch('/api/mail/send-one', { method: 'POST', body: JSON.stringify({ to: email, subject: personSubj, html: personHtml }) });
                 mailsDone++;
                 llLog('mail', `Email sent → ${email}`);
