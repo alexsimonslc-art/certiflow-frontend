@@ -203,11 +203,8 @@ function initSidebar() {
   // Async Pro badge — fire-and-forget, doesn't block sidebar render
   (async () => {
     try {
-      const token = localStorage.getItem('Honourix_token');
-      const res = await fetch('/api/settings/plan', {
-        headers: { 'Authorization': 'Bearer ' + token }
-      });
-      const data = await res.json();
+      // Use apiFetch for proper backend URL and error handling
+      const data = await apiFetch('/api/settings/plan', { silent: true });
       if (data?.plan === 'pro' && avatarEl) {
         const wrap = document.createElement('div');
         wrap.className = 'user-avatar-wrap';

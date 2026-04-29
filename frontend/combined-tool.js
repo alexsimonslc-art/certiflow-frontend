@@ -182,7 +182,7 @@ async function cpLoadHxFormList() {
     sel.innerHTML = '<option value="">Select a form…</option>' +
       eligible.map(f => `<option value="${f.id}">${f.name} (${f.submissionCount} responses)</option>`).join('');
     if (!eligible.length) sel.innerHTML = '<option value="">No forms with submissions found</option>';
-    sel.dataset.loaded = '1';
+    sel.dataset.loaded = '1'; // Mark as loaded to prevent re-fetching
   } catch { sel.innerHTML = '<option value="">Could not load forms</option>'; }
 }
 

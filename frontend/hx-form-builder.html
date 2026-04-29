@@ -2135,7 +2135,8 @@
     ════════════════════════════════════════════════════════════════ */
     function onNameBlur() {
       const el = document.getElementById('formNameEl');
-      const val = el.textContent.trim();
+      if (!el) return; // Ensure the element exists before accessing its properties
+      const val = el.textContent?.trim() || ''; // Use optional chaining for safety and default to empty string
       if (!val) { el.textContent = _S.name; return; }
       if (val !== _S.name) {
         _S.name = val;
