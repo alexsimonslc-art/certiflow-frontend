@@ -2463,13 +2463,18 @@ function setRunProgress(done, total, status) {
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   const pctEl = document.getElementById('runPct');
   if (pctEl) { pctEl.textContent = pct + '%'; pctEl.style.fontFamily = 'var(--font-display)'; pctEl.style.fontSize = '36px'; pctEl.style.fontWeight = '800'; pctEl.style.color = 'var(--text)'; }
+  if (pctEl) { pctEl.textContent = pct + '%'; pctEl.style.cssText = 'font-size: 36px; font-weight: 700; color: var(--text); line-height: 1; font-family: var(--font); display: block; margin-bottom: 4px;'; }
   const fracEl = document.getElementById('runFraction');
   if (fracEl) { fracEl.textContent = `${done} / ${total}`; fracEl.style.color = 'var(--text-3)'; fracEl.style.fontSize = '14px'; fracEl.style.fontWeight = '600'; fracEl.style.letterSpacing = '1px'; }
   if (status) { const statEl = document.getElementById('runStatus'); if (statEl) { statEl.textContent = status; statEl.style.color = 'var(--cyan)'; statEl.style.fontWeight = '500'; } }
+  if (fracEl) { fracEl.textContent = `${done} / ${total}`; fracEl.style.cssText = 'font-size: 13.5px; font-weight: 600; color: var(--text-3); display: block; letter-spacing: 0.5px;'; }
+  if (status) { const statEl = document.getElementById('runStatus'); if (statEl) { statEl.textContent = status; statEl.style.cssText = 'color: var(--cyan); font-weight: 600; font-size: 14.5px; display: block; margin-top: 14px; letter-spacing: 0.3px;'; } }
   const bar = document.getElementById('runBar');
   if (bar) { bar.style.width = pct + '%'; bar.style.background = 'linear-gradient(90deg, #00d4ff, #7c3aed)'; bar.style.boxShadow = '0 0 10px rgba(0,212,255,0.4)'; }
+  if (bar) { bar.style.width = pct + '%'; bar.style.background = 'linear-gradient(90deg, #00d4ff, #7c3aed)'; bar.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)'; bar.style.borderRadius = '99px'; bar.style.height = '100%'; bar.style.transition = 'width 0.3s ease'; }
   const rc = document.getElementById('ringCircle');
   if (rc) { rc.style.strokeDashoffset = 345 - (345 * pct / 100); rc.style.transition = 'stroke-dashoffset 0.4s ease'; }
+  if (rc) { rc.style.strokeDasharray = '345'; rc.style.strokeDashoffset = 345 - (345 * pct / 100); rc.style.transition = 'stroke-dashoffset 0.4s ease'; }
 }
 function updateRunCounts(c, m, f) {
   const cd = document.getElementById('runCertsDone');
@@ -2478,6 +2483,10 @@ function updateRunCounts(c, m, f) {
   if(cd) { cd.textContent = c; cd.style.fontFamily = 'var(--font-display)'; cd.style.fontSize = '26px'; cd.style.color = 'var(--text)'; cd.style.fontWeight = '700'; }
   if(md) { md.textContent = m; md.style.fontFamily = 'var(--font-display)'; md.style.fontSize = '26px'; md.style.color = 'var(--text)'; md.style.fontWeight = '700'; }
   if(fd) { fd.textContent = f; fd.style.fontFamily = 'var(--font-display)'; fd.style.fontSize = '26px'; fd.style.color = f > 0 ? 'var(--red)' : 'var(--text)'; fd.style.fontWeight = '700'; }
+  const sharedStyle = 'font-size: 28px; font-weight: 700; line-height: 1.1; font-family: var(--font);';
+  if(cd) { cd.textContent = c; cd.style.cssText = sharedStyle + ' color: var(--cyan);'; }
+  if(md) { md.textContent = m; md.style.cssText = sharedStyle + ' color: #a78bfa;'; }
+  if(fd) { fd.textContent = f; fd.style.cssText = sharedStyle + ` color: ${f > 0 ? 'var(--red)' : 'var(--text-3)'};`; }
 }
 function llLog(type, msg) {
   const win = document.getElementById('liveLog');
@@ -2510,6 +2519,21 @@ function showDone(certs, mails, failed, total) {
   if (de) { de.textContent = mails; de.style.fontFamily = 'var(--font-display)'; de.style.fontSize = '32px'; de.style.color = 'var(--text)'; }
   if (df) { df.textContent = failed; df.style.fontFamily = 'var(--font-display)'; df.style.fontSize = '32px'; df.style.color = failed > 0 ? 'var(--red)' : 'var(--text)'; }
   document.getElementById('doneTitle').textContent = failed === 0 ? 'Pipeline Complete!' : `${certs} certs · ${mails} emails · ${failed} failed`;
+  const sharedStyle = 'font-size: 36px; font-weight: 800; line-height: 1; font-family: var(--font); margin-bottom: 6px; display: block;';
+  if (dc) { dc.textContent = certs; dc.style.cssText = sharedStyle + 'color: var(--cyan);'; }
+  if (de) { de.textContent = mails; de.style.cssText = sharedStyle + 'color: #a78bfa;'; }
+  if (df) { df.textContent = failed; df.style.cssText = sharedStyle + `color: ${failed > 0 ? 'var(--red)' : 'var(--text-3)'};`; }
+  
+  const dt = document.getElementById('doneTitle');
+  if (dt) {
+    dt.textContent = failed === 0 ? 'Pipeline Complete!' : `Pipeline finished with ${failed} failed`;
+    dt.style.fontSize = '24px';
+    dt.style.fontWeight = '700';
+    dt.style.color = 'var(--text)';
+    dt.style.letterSpacing = '-0.3px';
+    dt.style.marginBottom = '8px';
+  }
+  
   if (failed > 0) { const ring = document.getElementById('doneRing'); if (ring) { ring.style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)'; ring.style.boxShadow = '0 0 48px rgba(245,158,11,0.35)'; } }
   renderResultTable(CP.results);
   toast(`Done — ${certs} certs, ${mails} emails`, 'success', 6000);
