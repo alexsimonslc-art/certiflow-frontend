@@ -307,7 +307,7 @@
     }
 
     .dbv-stat-num {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 36px;
       font-weight: 700;
       color: var(--text);
@@ -465,7 +465,7 @@
     }
 
     .dbv-num-stat-val {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 22px;
       font-weight: 700;
       color: var(--text);
@@ -1548,18 +1548,7 @@
     <div id="sidebarMount"></div>
 
     <div class="main-area">
-      <header class="top-header">
-        <div class="header-actions" id="headerActions" style="display:none">
-          <button class="btn btn-secondary btn-sm" onclick="refreshData()" id="refreshBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
-              <polyline points="23 4 23 10 17 10" />
-              <polyline points="1 20 1 14 7 14" />
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-            </svg>
-            Refresh
-          </button>
-        </div>
-      </header>
+      
 
       <main class="page-content fade-in">
 
@@ -1645,12 +1634,13 @@
                 </svg>
                 Export CSV
               </button>
-              <button class="dbv-btn" onclick="refreshData()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="refreshIcon">
+              <button class="btn btn-secondary btn-sm" onclick="refreshData()" id="refreshBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
                   <polyline points="23 4 23 10 17 10" />
                   <polyline points="1 20 1 14 7 14" />
                   <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                 </svg>
+                Refresh
               </button>
             </div>
           </div>
