@@ -1883,13 +1883,40 @@ select optgroup {
   box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
 }
 
-/* ── AI Input Glow ── */
+/* ── AI Input Glow & Scrollbar ── */
 #meAiInput {
   transition: all 0.3s ease !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 212, 255, 0.2) transparent;
+}
+#meAiInput::-webkit-scrollbar {
+  width: 6px;
+}
+#meAiInput::-webkit-scrollbar-track {
+  background: transparent;
+}
+#meAiInput::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+#meAiInput::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.4);
 }
 #meAiInput:hover, #meAiInput:focus {
   border-color: rgba(0, 212, 255, 0.5) !important;
   box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.12) !important;
   background: rgba(0, 212, 255, 0.04) !important;
   outline: none !important;
+}
+
+/* ── AI Send Button Fix ── */
+#meAiSendBtn {
+  background: linear-gradient(135deg, #00d4ff, #7c3aed) !important;
+  color: #fff !important;
+}
+#meAiSendBtn:hover {
+  background: linear-gradient(135deg, #00bced, #6b21db) !important;
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.45) !important;
+  transform: translateY(-2px) !important;
+  color: #fff !important;
 }

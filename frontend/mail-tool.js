@@ -2576,22 +2576,23 @@ async function meAiSend() {
   const msg = input.value.trim();
   if (!msg) return;
 
-  const isPro = await _galAiCheckPro();
-  if (!isPro) {
-    input.value = '';
-    input.style.height = 'auto';
-    meAiAppendBubble('user', msg);
-    meAiShowUpgrade();
-    return;
-  }
-
   input.value = '';
   input.style.height = 'auto';
   meAiIsLoading = true;
-  document.getElementById('meAiSendBtn').disabled = true;
+  const btn = document.getElementById('meAiSendBtn');
+  if (btn) btn.disabled = true;
 
   meAiAppendBubble('user', msg);
   const typingEl = meAiAppendBubble('ai', '', true);
+
+  const isPro = await _galAiCheckPro();
+  if (!isPro) {
+    if (typingEl) typingEl.remove();
+    meAiShowUpgrade();
+    meAiIsLoading = false;
+    if (btn) btn.disabled = false;
+    return;
+  }
 
   meAiChatHistory.push({ role: 'user', content: msg });
 

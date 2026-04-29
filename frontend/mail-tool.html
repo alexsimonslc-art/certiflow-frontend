@@ -1938,22 +1938,23 @@
       align-items: center;
       gap: 8px;
       padding: 9px 22px;
-      border-radius: 99px; /* Perfect Capsule */
+      border-radius: 99px;
+      /* Perfect Capsule */
       color: #fff;
       font-size: 13px;
       font-weight: 700;
       font-family: 'Plus Jakarta Sans', sans-serif;
       cursor: pointer;
       letter-spacing: 0.5px;
-      
+
       /* Dark glass inner with running gradient outer border */
       border: 2px solid transparent;
-      background: 
+      background:
         linear-gradient(rgba(10, 14, 25, 0.95), rgba(10, 14, 25, 0.95)) padding-box,
         linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff, #7c3aed) border-box;
       background-size: 100% 100%, 300% 100%;
       animation: galAiBorderPan 9s linear infinite;
-      
+
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       transition: all 0.3s ease;
     }
@@ -1964,14 +1965,19 @@
 
     /* Keyframes to pan the border gradient smoothly */
     @keyframes galAiBorderPan {
-      0% { background-position: 0% 0%, 0% 50%; }
-      100% { background-position: 0% 0%, 300% 50%; }
+      0% {
+        background-position: 0% 0%, 0% 50%;
+      }
+
+      100% {
+        background-position: 0% 0%, 300% 50%;
+      }
     }
 
     .gal-ai-fab:hover {
       /* Cyan & Purple Neon Glow */
-      box-shadow: 
-        0 0 15px rgba(0, 212, 255, 0.5), 
+      box-shadow:
+        0 0 15px rgba(0, 212, 255, 0.5),
         0 0 30px rgba(124, 58, 237, 0.4);
       transform: translateY(-2px);
     }
@@ -2155,61 +2161,69 @@
       box-shadow: none !important;
     }
 
-    #meAiSendBtn:hover {
-      background: transparent !important;
-      transform: scale(1.1) !important;
-      color: var(--cyan) !important;
-      box-shadow: none !important;
-    }
     /* ── AI Animated Toggle Button ── */
     .me-ai-toggle {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 22px; /* Wider padding forces the perfect capsule shape */
-      border-radius: 99px; /* Capsule rounding */
+      padding: 8px 22px;
+      /* Wider padding forces the perfect capsule shape */
+      border-radius: 99px;
+      /* Capsule rounding */
       font-family: var(--font, 'Plus Jakarta Sans', sans-serif);
       font-size: 13px;
       font-weight: 700;
       color: #fff;
       cursor: pointer;
       letter-spacing: 0.5px;
-      
+
       /* The Magic Gradient Border Setup */
-      border: 2px solid transparent; /* Reserves space for the border */
-      background: 
-        linear-gradient(#070d1a, #070d1a) padding-box, /* Inner dark background */
-        linear-gradient(90deg, #7c3aed, #00d4ff, #ec4899, #7c3aed, #00d4ff) border-box; /* Gradient border */
-      background-size: 100% 100%, 300% 100%; /* Stretches the gradient so we can pan it */
-      
+      border: 2px solid transparent;
+      /* Reserves space for the border */
+      background:
+        linear-gradient(#070d1a, #070d1a) padding-box,
+        /* Inner dark background */
+        linear-gradient(90deg, #7c3aed, #00d4ff, #ec4899, #7c3aed, #00d4ff) border-box;
+      /* Gradient border */
+      background-size: 100% 100%, 300% 100%;
+      /* Stretches the gradient so we can pan it */
+
       /* Trigger the infinite animation */
       animation: aiBorderPan 3s linear infinite;
-      
+
       /* Smooth transitions for hovering */
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Subtle resting shadow */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      /* Subtle resting shadow */
     }
 
     /* Icon alignment and sizing */
     .me-ai-toggle svg {
       width: 16px;
       height: 16px;
-      margin-bottom: 1px; /* Optically centers the icon with the text */
+      margin-bottom: 1px;
+      /* Optically centers the icon with the text */
     }
 
     /* Keyframes to pan the gradient border */
     @keyframes aiBorderPan {
-      0% { background-position: 0% 0%, 0% 50%; }
-      100% { background-position: 0% 0%, 300% 50%; }
+      0% {
+        background-position: 0% 0%, 0% 50%;
+      }
+
+      100% {
+        background-position: 0% 0%, 300% 50%;
+      }
     }
 
     /* ── Hover & Glow State ── */
     .me-ai-toggle:hover {
       /* Creates a vibrant cyan and purple combined glow */
-      box-shadow: 
-        0 0 15px rgba(0, 212, 255, 0.4), 
+      box-shadow:
+        0 0 15px rgba(0, 212, 255, 0.4),
         0 0 30px rgba(124, 58, 237, 0.3);
-      transform: translateY(-1px); /* Slight lift effect */
+      transform: translateY(-1px);
+      /* Slight lift effect */
     }
 
     /* Press state */
@@ -2221,7 +2235,7 @@
 </head>
 
 <body>
-<script>(function(){if(window.innerWidth<768){document.body.innerHTML='<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>';}})();</script>
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
   <div class="app-layout">
     <div id="sidebarMount"></div>
 
@@ -2583,34 +2597,34 @@
                     ✨ AI
                   </button>
                 </div>
-                  <!-- Tab bar — shown after template selected -->
-                  <div class="me-tab-bar" id="meTabBarWrap" style="display:none">
-                    <button class="me-tab active" id="meTabVisual" onclick="meSwitchTab('visual')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
-                        <rect x="3" y="3" width="18" height="14" rx="2" />
-                        <path d="M8 21h8M12 17v4" />
-                      </svg>
-                      Visual
-                    </button>
-                    <button class="me-tab" id="meTabCode" onclick="meSwitchTab('code')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
-                        <polyline points="16 18 22 12 16 6" />
-                        <polyline points="8 6 2 12 8 18" />
-                      </svg>
-                      Code
-                    </button>
-                    <button class="me-tab" id="meTabPreview" onclick="meSwitchTab('preview')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                      Preview
-                    </button>
-                  </div>
+                <!-- Tab bar — shown after template selected -->
+                <div class="me-tab-bar" id="meTabBarWrap" style="display:none">
+                  <button class="me-tab active" id="meTabVisual" onclick="meSwitchTab('visual')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
+                      <rect x="3" y="3" width="18" height="14" rx="2" />
+                      <path d="M8 21h8M12 17v4" />
+                    </svg>
+                    Visual
+                  </button>
+                  <button class="me-tab" id="meTabCode" onclick="meSwitchTab('code')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
+                      <polyline points="16 18 22 12 16 6" />
+                      <polyline points="8 6 2 12 8 18" />
+                    </svg>
+                    Code
+                  </button>
+                  <button class="me-tab" id="meTabPreview" onclick="meSwitchTab('preview')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      style="width:13px;height:13px;display:inline;vertical-align:-2px;margin-right:5px">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    Preview
+                  </button>
                 </div>
+              </div>
 
               <!-- ── TEMPLATE SELECTION GATE (shown first) ─────────── -->
               <div id="meTplGate">
@@ -2646,7 +2660,7 @@
                   </button>
                 </div>
               </div>
-              
+
               <!-- ── EDITOR (hidden until template chosen) ─────────── -->
               <div class="me-editor-wrap" id="meEditorWrap">
 
@@ -2850,7 +2864,8 @@
                             live preview with first recipient's data</div>
                         </div>
                         <div class="me-preview-frame-wrap" id="mePreviewFrameWrap">
-                          <iframe id="mePreviewFrame" style="width:100%;max-width:800px;height:480px;margin:0 auto;display:block;"></iframe>
+                          <iframe id="mePreviewFrame"
+                            style="width:100%;max-width:800px;height:480px;margin:0 auto;display:block;"></iframe>
                         </div>
                       </div>
                     </div>
@@ -2866,26 +2881,26 @@
             <!-- Hidden textarea — source of truth for send logic -->
             <textarea id="mHtmlTmpl" style="display:none"></textarea>
 
-              <div class="step-nav" id="meStep2Nav" style="display:none">
-                <button class="btn btn-secondary btn-lg" onclick="meBackToGate()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="19" y1="12" x2="5" y2="12" />
-                    <polyline points="12 19 5 12 12 5" />
-                  </svg>
-                  Change Template
-                </button>
-                <button class="btn btn-primary btn-xl" onclick="mGoStep(3)">
-                  Preview &amp; Review
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </button>
-              </div>
+            <div class="step-nav" id="meStep2Nav" style="display:none">
+              <button class="btn btn-secondary btn-lg" onclick="meBackToGate()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="19" y1="12" x2="5" y2="12" />
+                  <polyline points="12 19 5 12 12 5" />
+                </svg>
+                Change Template
+              </button>
+              <button class="btn btn-primary btn-xl" onclick="mGoStep(3)">
+                Preview &amp; Review
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
             </div>
           </div>
-        
-        
+        </div>
+
+
         <!-- ══════════════════════════════════════════════════════
            STEP 3 — Preview & Send Config
       ═══════════════════════════════════════════════════════ -->
@@ -2897,219 +2912,218 @@
               <div
                 style="padding:18px 24px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
                 <div class="card-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                    Personalized Preview
-                  </div>
-
-                  <div style="display:flex;align-items:center;gap:12px;margin-left:auto">
-                    <div
-                      style="display:flex;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;overflow:hidden">
-                      <button class="me-device-btn active" id="mBtnDesktopS3" onclick="mSetDeviceS3('desktop')"
-                        style="border:none;background:transparent;padding:6px 12px;font-size:12px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;transition:all 0.2s;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                          style="width:13px;height:13px;margin-right:5px">
-                          <rect x="2" y="3" width="20" height="14" rx="2" />
-                          <path d="M8 21h8M12 17v4" />
-                        </svg>
-                        Desktop
-                      </button>
-                      <button class="me-device-btn" id="mBtnMobileS3" onclick="mSetDeviceS3('mobile')"
-                        style="border:none;background:transparent;padding:6px 12px;font-size:12px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;transition:all 0.2s;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                          style="width:13px;height:13px;margin-right:5px">
-                          <rect x="5" y="2" width="14" height="20" rx="2" />
-                          <line x1="12" y1="18" x2="12.01" y2="18" />
-                        </svg>
-                        Mobile
-                      </button>
-                    </div>
-
-                    <div class="preview-nav">
-                      <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
-                      <button class="preview-nav-btn" onclick="mNavPrev()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <line x1="19" y1="12" x2="5" y2="12" />
-                          <polyline points="12 19 5 12 12 5" />
-                        </svg>
-                      </button>
-                      <button class="preview-nav-btn" onclick="mNavNext()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <line x1="5" y1="12" x2="19" y2="12" />
-                          <polyline points="12 5 19 12 12 19" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Personalized Preview
                 </div>
-                <div style="padding:40px 20px; background:rgba(0,0,0,0.15); display:flex; justify-content:center;">
+
+                <div style="display:flex;align-items:center;gap:12px;margin-left:auto">
                   <div
-                    style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;width:100%;max-width:800px;transition:width 0.3s ease;margin:0 auto;"
-                    id="mPrvBoxS3">
-                    <div style="background:#e8edf3;padding:12px 18px;border-bottom:1px solid rgba(0,0,0,0.08)">
-                      <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong
-                          style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
-                      <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span
-                          id="mFinalSubject">—</span></div>
-                    </div>
-                    <iframe id="mPreviewIframe" scrolling="no"
-                      onload="if(window.resizeMailPreview) window.resizeMailPreview()"
-                      style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease, width 0.3s ease;"></iframe>
+                    style="display:flex;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;overflow:hidden">
+                    <button class="me-device-btn active" id="mBtnDesktopS3" onclick="mSetDeviceS3('desktop')"
+                      style="border:none;background:transparent;padding:6px 12px;font-size:12px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;transition:all 0.2s;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="width:13px;height:13px;margin-right:5px">
+                        <rect x="2" y="3" width="20" height="14" rx="2" />
+                        <path d="M8 21h8M12 17v4" />
+                      </svg>
+                      Desktop
+                    </button>
+                    <button class="me-device-btn" id="mBtnMobileS3" onclick="mSetDeviceS3('mobile')"
+                      style="border:none;background:transparent;padding:6px 12px;font-size:12px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;transition:all 0.2s;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="width:13px;height:13px;margin-right:5px">
+                        <rect x="5" y="2" width="14" height="20" rx="2" />
+                        <line x1="12" y1="18" x2="12.01" y2="18" />
+                      </svg>
+                      Mobile
+                    </button>
+                  </div>
+
+                  <div class="preview-nav">
+                    <span style="font-size:13.5px;color:var(--text-2)" id="mPrvNav">1 / 1</span>
+                    <button class="preview-nav-btn" onclick="mNavPrev()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                      </svg>
+                    </button>
+                    <button class="preview-nav-btn" onclick="mNavNext()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
-
-              <!-- Send Summary -->
-              <div class="card">
-                <div class="card-title" style="margin-bottom:18px">Send Summary</div>
-                <div class="summary-grid" id="mSummaryGrid"></div>
-              </div>
-
-              <!-- Recipients list — now BELOW preview -->
-              <div class="card card-sm">
-                <div class="card-title" style="margin-bottom:14px">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                  </svg>
-                  Recipients
-                  <span id="mSendCountLabel"
-                    style="margin-left:6px;font-size:12px;color:var(--text-3);font-weight:500"></span>
+              <div style="padding:40px 20px; background:rgba(0,0,0,0.15); display:flex; justify-content:center;">
+                <div
+                  style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;width:100%;max-width:800px;transition:width 0.3s ease;margin:0 auto;"
+                  id="mPrvBoxS3">
+                  <div style="background:#e8edf3;padding:12px 18px;border-bottom:1px solid rgba(0,0,0,0.08)">
+                    <div style="font-size:13px;color:#475569;margin-bottom:4px"><strong
+                        style="color:#1e293b">To:</strong> <span id="mFinalTo">—</span></div>
+                    <div style="font-size:13px;color:#475569"><strong style="color:#1e293b">Subject:</strong> <span
+                        id="mFinalSubject">—</span></div>
+                  </div>
+                  <iframe id="mPreviewIframe" scrolling="no"
+                    onload="if(window.resizeMailPreview) window.resizeMailPreview()"
+                    style="width:100%;border:none;min-height:340px;background:#fff;overflow:hidden;transition:height 0.2s ease, width 0.3s ease;"></iframe>
                 </div>
-                <div id="mRecipientList"
-                  style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;font-size:13.5px;scrollbar-width:thin">
-                </div>
-              </div>
-
-              <div class="step-nav">
-                <button class="btn btn-secondary btn-lg" onclick="mGoStep(2)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="19" y1="12" x2="5" y2="12" />
-                    <polyline points="12 19 5 12 12 5" />
-                  </svg>
-                  Back
-                </button>
-                <button class="btn btn-primary btn-xl" id="mSendBtn" onclick="mStartSend()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="22" y1="2" x2="11" y2="13" />
-                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                  </svg>
-                  Send to All
-                </button>
               </div>
             </div>
+
+            <!-- Send Summary -->
+            <div class="card">
+              <div class="card-title" style="margin-bottom:18px">Send Summary</div>
+              <div class="summary-grid" id="mSummaryGrid"></div>
+            </div>
+
+            <!-- Recipients list — now BELOW preview -->
+            <div class="card card-sm">
+              <div class="card-title" style="margin-bottom:14px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                </svg>
+                Recipients
+                <span id="mSendCountLabel"
+                  style="margin-left:6px;font-size:12px;color:var(--text-3);font-weight:500"></span>
+              </div>
+              <div id="mRecipientList"
+                style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;font-size:13.5px;scrollbar-width:thin">
+              </div>
+            </div>
+
+            <div class="step-nav">
+              <button class="btn btn-secondary btn-lg" onclick="mGoStep(2)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="19" y1="12" x2="5" y2="12" />
+                  <polyline points="12 19 5 12 12 5" />
+                </svg>
+                Back
+              </button>
+              <button class="btn btn-primary btn-xl" id="mSendBtn" onclick="mStartSend()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+                Send to All
+              </button>
+            </div>
           </div>
+        </div>
 
         <!-- ══════════════════════════════════════════════════════
            STEP 4 — Sending
       ═══════════════════════════════════════════════════════ -->
         <div class="step-panel" id="sp4">
-            <div style="display:grid;grid-template-columns:1fr 320px;gap:22px">
-              <div class="card">
-                <div style="text-align:center;padding:32px 0 28px">
-                  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
-                    <span class="live-dot"></span>
-                    <span style="font-size:17px;font-weight:600;color:var(--text)">Sending Emails…</span>
-                  </div>
-                  <div class="send-counter" id="mSendCounter">0 / 0</div>
-                  <div style="font-size:15px;color:var(--text-2);margin-top:6px" id="mSendStatus">Preparing…</div>
+          <div style="display:grid;grid-template-columns:1fr 320px;gap:22px">
+            <div class="card">
+              <div style="text-align:center;padding:32px 0 28px">
+                <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
+                  <span class="live-dot"></span>
+                  <span style="font-size:17px;font-weight:600;color:var(--text)">Sending Emails…</span>
                 </div>
-                <div style="margin-bottom:24px">
-                  <div
-                    style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:8px">
-                    <span>Progress</span><span id="mSendPct">0%</span>
-                  </div>
-                  <div class="progress-track" style="height:12px">
-                    <div class="progress-fill green" id="mSendBar" style="width:0%"></div>
-                  </div>
-                </div>
+                <div class="send-counter" id="mSendCounter">0 / 0</div>
+                <div style="font-size:15px;color:var(--text-2);margin-top:6px" id="mSendStatus">Preparing…</div>
+              </div>
+              <div style="margin-bottom:24px">
                 <div
-                  style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">
-                  Send Log</div>
-                <div class="log-window" id="mSendLog"
-                  style="height:280px;overflow-y:auto;font-family:var(--font-mono);font-size:12.5px;line-height:1.7;padding:10px 14px;background:rgba(0,0,0,0.3);border-radius:10px;border:1px solid rgba(255,255,255,0.06);scrollbar-width:thin">
+                  style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:8px">
+                  <span>Progress</span><span id="mSendPct">0%</span>
+                </div>
+                <div class="progress-track" style="height:12px">
+                  <div class="progress-fill green" id="mSendBar" style="width:0%"></div>
                 </div>
               </div>
-              <div style="display:flex;flex-direction:column;gap:16px">
-                <div class="card card-sm">
-                  <div class="card-title" style="margin-bottom:14px">Campaign Info</div>
-                  <div class="summary-grid" id="mJobInfo"></div>
-                </div>
-                <div class="notice notice-cyan">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  </svg>
-                  <span>Emails are sent from your personal Gmail account. Keep this tab open until complete.</span>
-                </div>
+              <div
+                style="font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">
+                Send Log</div>
+              <div class="log-window" id="mSendLog"
+                style="height:280px;overflow-y:auto;font-family:var(--font-mono);font-size:12.5px;line-height:1.7;padding:10px 14px;background:rgba(0,0,0,0.3);border-radius:10px;border:1px solid rgba(255,255,255,0.06);scrollbar-width:thin">
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="card card-sm">
+                <div class="card-title" style="margin-bottom:14px">Campaign Info</div>
+                <div class="summary-grid" id="mJobInfo"></div>
+              </div>
+              <div class="notice notice-cyan">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <span>Emails are sent from your personal Gmail account. Keep this tab open until complete.</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- ══════════════════════════════════════════════════════
+        <!-- ══════════════════════════════════════════════════════
            STEP 5 — Report
       ═══════════════════════════════════════════════════════ -->
-          <div class="step-panel" id="sp5">
-            <div style="display:flex;flex-direction:column;gap:22px">
-              <div class="card" style="padding:0;overflow:hidden">
-                <div style="text-align:center;padding:44px 28px 24px">
-                  <div class="completion-ring" id="mCompRing"
-                    style="background:linear-gradient(135deg,#10b981,#06b6d4);box-shadow:0 0 40px rgba(16,185,129,0.3)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
-                      style="width:34px;height:34px">
-                      <line x1="22" y1="2" x2="11" y2="13" />
-                      <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                    </svg>
-                  </div>
-                  <h2
-                    style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);margin-bottom:8px"
-                    id="mResultTitle">Emails Sent</h2>
-                  <p style="font-size:15px;color:var(--text-2)" id="mResultSub">All emails dispatched from your Gmail.
-                  </p>
+        <div class="step-panel" id="sp5">
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <div class="card" style="padding:0;overflow:hidden">
+              <div style="text-align:center;padding:44px 28px 24px">
+                <div class="completion-ring" id="mCompRing"
+                  style="background:linear-gradient(135deg,#10b981,#06b6d4);box-shadow:0 0 40px rgba(16,185,129,0.3)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="width:34px;height:34px">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
                 </div>
-                <div class="mini-stats-row">
-                  <div class="mini-stat">
-                    <div class="mini-stat-num" id="mResTotal">0</div>
-                    <div class="mini-stat-label">Total</div>
-                  </div>
-                  <div class="mini-stat">
-                    <div class="mini-stat-num" id="mResSent" style="color:var(--green)">0</div>
-                    <div class="mini-stat-label">Sent</div>
-                  </div>
-                  <div class="mini-stat">
-                    <div class="mini-stat-num" id="mResFailed" style="color:var(--red)">0</div>
-                    <div class="mini-stat-label">Failed</div>
-                  </div>
+                <h2
+                  style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);margin-bottom:8px"
+                  id="mResultTitle">Emails Sent</h2>
+                <p style="font-size:15px;color:var(--text-2)" id="mResultSub">All emails dispatched from your Gmail.
+                </p>
+              </div>
+              <div class="mini-stats-row">
+                <div class="mini-stat">
+                  <div class="mini-stat-num" id="mResTotal">0</div>
+                  <div class="mini-stat-label">Total</div>
                 </div>
-                <div
-                  style="padding:18px 24px;border-top:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;gap:12px">
-                  <button class="btn btn-secondary btn-lg" onclick="mDownloadReport()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="7 10 12 15 17 10" />
-                      <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    Export Report CSV
-                  </button>
-                  <button class="btn btn-primary btn-lg" onclick="mNewCampaign()">New Campaign</button>
+                <div class="mini-stat">
+                  <div class="mini-stat-num" id="mResSent" style="color:var(--green)">0</div>
+                  <div class="mini-stat-label">Sent</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="mini-stat-num" id="mResFailed" style="color:var(--red)">0</div>
+                  <div class="mini-stat-label">Failed</div>
                 </div>
               </div>
-              <div class="card" style="padding:0;overflow:hidden">
-                <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border)">
-                  <div class="card-title">Delivery Report</div>
+              <div
+                style="padding:18px 24px;border-top:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;gap:12px">
+                <button class="btn btn-secondary btn-lg" onclick="mDownloadReport()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Export Report CSV
+                </button>
+                <button class="btn btn-primary btn-lg" onclick="mNewCampaign()">New Campaign</button>
+              </div>
+            </div>
+            <div class="card" style="padding:0;overflow:hidden">
+              <div style="padding:18px 24px;border-bottom:1px solid var(--glass-border)">
+                <div class="card-title">Delivery Report</div>
+              </div>
+              <div>
+                <div class="report-row header">
+                  <div>Name</div>
+                  <div>Email</div>
+                  <div>Status</div>
                 </div>
-                <div>
-                  <div class="report-row header">
-                    <div>Name</div>
-                    <div>Email</div>
-                    <div>Status</div>
-                  </div>
-                  <div id="mReportRows"></div>
-                </div>
+                <div id="mReportRows"></div>
               </div>
             </div>
           </div>
+        </div>
 
       </main>
     </div>
@@ -3190,10 +3204,11 @@
             style="width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:16px 50px 16px 20px; color:var(--text); font-size:15px; font-family:'Plus Jakarta Sans',sans-serif; outline:none; resize:none; min-height:85px; max-height:180px; overflow-y:auto; transition:border-color 0.2s; box-sizing:border-box; line-height:1.6;"></textarea>
 
           <button id="meAiSendBtn" onclick="meAiSend()" title="Send"
-            style="position:absolute; right:16px; bottom:16px; width:34px; height:34px; background:linear-gradient(135deg, var(--cyan), #7c3aed); color:#fff; border-radius:10px; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform 0.2s, box-shadow 0.2s; z-index: 10;"
-            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0, 212, 255, 0.4)';"
-            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            style="position:absolute; right:16px; bottom:16px; width:34px; height:34px; border-radius:10px; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s ease; z-index: 10;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
           </button>
         </div>
       </div>

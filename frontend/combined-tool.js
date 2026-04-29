@@ -2046,14 +2046,6 @@ async function meAiSend() {
   if (!input || meAiIsLoading) return;
   const msg = input.value.trim(); if (!msg) return;
 
-  const isPro = await _galAiCheckPro();
-  if (!isPro) {
-    input.value = '';
-    window.meAiAppendBubble('user', msg);
-    meAiShowUpgrade();
-    return;
-  }
-
   input.value = '';
   input.style.height = 'auto';
   meAiIsLoading = true;
@@ -2062,6 +2054,16 @@ async function meAiSend() {
 
   window.meAiAppendBubble('user', msg);
   const typingEl = window.meAiAppendBubble('ai', '', true);
+
+  const isPro = await _galAiCheckPro();
+  if (!isPro) {
+    if (typingEl) { clearInterval(typingEl.dataset.thinkTimer); typingEl.remove(); }
+    meAiShowUpgrade();
+    meAiIsLoading = false;
+    if (btn) btn.disabled = false;
+    return;
+  }
+
   meAiChatHistory.push({ role: 'user', content: msg });
 
   try {
@@ -2430,7 +2432,6 @@ async function launchPipeline() {
       </style>
       <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
         <div style="text-align: center; margin-bottom: 8px;">
-          <div id="runPct" style="font-size: 72px; font-family: var(--font-display); font-weight: 800; color: transparent; background: linear-gradient(135deg, #00d4ff, #7c3aed); -webkit-background-clip: text; background-clip: text; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 24px rgba(0,212,255,0.2);">0%</div>
           <div id="runPct" style="font-size: 72px; font-family: var(--font); font-weight: 800; color: transparent; background: linear-gradient(135deg, #00d4ff, #7c3aed); -webkit-background-clip: text; background-clip: text; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 24px rgba(0,212,255,0.2);">0%</div>
           <div id="runStatus" style="font-size: 15px; color: var(--text-2); font-weight: 500; margin-top: 12px; letter-spacing: 0.5px;">Connecting to Google Server...</div>
         </div>
@@ -2459,8 +2460,7 @@ async function launchPipeline() {
 
         <div id="doneState" style="display: none; animation: fadeInUp 0.6s ease; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--glass-border);">
           <div style="text-align:center;margin-bottom:32px;">
-            <h2 id="doneTitle" style="font-family: var(--font-display); font-size: 42px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Results</h2>
-            <h2 id="doneTitle" style="font-family: var(--font); font-size: 42px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Results</h2>
+            <h2 id="doneTitle" style="font-family: var(--font); font-size: 48px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Results</h2>
             <p id="doneSub" style="color:var(--text-2);font-size:15px;">Pipeline completed successfully.</p>
           </div>
           <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 32px;">
@@ -2616,27 +2616,19 @@ async function launchPipeline() {
 function setRunProgress(done, total, status) {
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   const pctEl = document.getElementById('runPct');
-  if (pctEl) { pctEl.textContent = pct + '%'; pctEl.style.fontFamily = 'var(--font-display)'; pctEl.style.fontSize = '36px'; pctEl.style.fontWeight = '800'; pctEl.style.color = 'var(--text)'; }
-  if (pctEl) { pctEl.textContent = pct + '%'; pctEl.style.cssText = 'font-size: 36px; font-weight: 700; color: var(--text); line-height: 1; font-family: var(--font); display: block; margin-bottom: 4px;'; }
+  if (pctEl) { pctEl.textContent = pct + '%'; }
   const fracEl = document.getElementById('runFraction');
-  if (fracEl) { fracEl.textContent = `${done} / ${total}`; fracEl.style.color = 'var(--text-3)'; fracEl.style.fontSize = '14px'; fracEl.style.fontWeight = '600'; fracEl.style.letterSpacing = '1px'; }
-  if (status) { const statEl = document.getElementById('runStatus'); if (statEl) { statEl.textContent = status; statEl.style.color = 'var(--cyan)'; statEl.style.fontWeight = '500'; } }
-  if (fracEl) { fracEl.textContent = `${done} / ${total}`; fracEl.style.cssText = 'font-size: 13.5px; font-weight: 600; color: var(--text-3); display: block; letter-spacing: 0.5px;'; }
-  if (status) { const statEl = document.getElementById('runStatus'); if (statEl) { statEl.textContent = status; statEl.style.cssText = 'color: var(--cyan); font-weight: 600; font-size: 14.5px; display: block; margin-top: 14px; letter-spacing: 0.3px;'; } }
+  if (fracEl) { fracEl.textContent = `${done} / ${total}`; }
+  if (status) { const statEl = document.getElementById('runStatus'); if (statEl) { statEl.textContent = status; } }
   const bar = document.getElementById('runBar');
-  if (bar) { bar.style.width = pct + '%'; bar.style.background = 'linear-gradient(90deg, #00d4ff, #7c3aed)'; bar.style.boxShadow = '0 0 10px rgba(0,212,255,0.4)'; }
-  if (bar) { bar.style.width = pct + '%'; bar.style.background = 'linear-gradient(90deg, #00d4ff, #7c3aed)'; bar.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)'; bar.style.borderRadius = '99px'; bar.style.height = '100%'; bar.style.transition = 'width 0.3s ease'; }
+  if (bar) { bar.style.width = pct + '%'; }
   const rc = document.getElementById('ringCircle');
-  if (rc) { rc.style.strokeDashoffset = 345 - (345 * pct / 100); rc.style.transition = 'stroke-dashoffset 0.4s ease'; }
-  if (rc) { rc.style.strokeDasharray = '345'; rc.style.strokeDashoffset = 345 - (345 * pct / 100); rc.style.transition = 'stroke-dashoffset 0.4s ease'; }
+  if (rc) { rc.style.strokeDasharray = '345'; rc.style.strokeDashoffset = 345 - (345 * pct / 100); }
 }
 function updateRunCounts(c, m, f) {
   const cd = document.getElementById('runCertsDone');
   const md = document.getElementById('runMailsDone');
   const fd = document.getElementById('runFailed');
-  if(cd) { cd.textContent = c; cd.style.fontFamily = 'var(--font-display)'; cd.style.fontSize = '26px'; cd.style.color = 'var(--text)'; cd.style.fontWeight = '700'; }
-  if(md) { md.textContent = m; md.style.fontFamily = 'var(--font-display)'; md.style.fontSize = '26px'; md.style.color = 'var(--text)'; md.style.fontWeight = '700'; }
-  if(fd) { fd.textContent = f; fd.style.fontFamily = 'var(--font-display)'; fd.style.fontSize = '26px'; fd.style.color = f > 0 ? 'var(--red)' : 'var(--text)'; fd.style.fontWeight = '700'; }
   const sharedStyle = 'font-size: 28px; font-weight: 700; line-height: 1.1; font-family: var(--font);';
   if(cd) { cd.textContent = c; cd.style.cssText = sharedStyle + ' color: var(--cyan);'; }
   if(md) { md.textContent = m; md.style.cssText = sharedStyle + ' color: #a78bfa;'; }
@@ -2671,18 +2663,21 @@ function showDone(certs, mails, failed, total) {
   const dt = document.getElementById('doneTitle');
   const ds = document.getElementById('doneSub');
   if (dt) {
+    dt.textContent = 'Results';
     if (failed === 0) {
-      dt.textContent = 'Pipeline Complete!';
       dt.style.background = 'linear-gradient(135deg, #10b981, #00d4ff)';
     } else {
-        dt.textContent = `Completed with ${failed} failure(s)`;
       dt.style.background = 'linear-gradient(135deg, #f59e0b, #ef4444)';
     }
     dt.style.webkitBackgroundClip = 'text';
     dt.style.backgroundClip = 'text';
   }
   if (ds) {
-      ds.textContent = `${certs} certificates generated, ${mails} emails sent out of ${total} participants.`;
+    if (failed === 0) {
+      ds.textContent = `Pipeline completed! ${certs} certificates generated, ${mails} emails sent.`;
+    } else {
+      ds.textContent = `Completed with ${failed} failure(s). ${certs} certificates generated, ${mails} emails sent.`;
+    }
   }
   
   renderResultTable(CP.results);
