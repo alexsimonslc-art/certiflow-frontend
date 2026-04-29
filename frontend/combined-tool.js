@@ -1537,7 +1537,7 @@ function meRenderProps(block) {
     rows.push(meFieldRange('Thickness (px)', block.id, 'thickness', p.thickness, 1, 8));
   }
   if (block.type === 'social') {
-    const plats = ['LinkedIn', 'Twitter/X', 'Instagram', 'Facebook', 'YouTube', 'TikTok', 'Pinterest', 'GitHub', 'WhatsApp', 'Telegram', 'Discord', 'Snapchat'];
+    const plats = ['LinkedIn', 'Twitter/X', 'Instagram', 'Facebook', 'YouTube', 'TikTok', 'Pinterest', 'GitHub', 'WhatsApp', 'Telegram', 'Discord', 'Snapchat', 'Website'];
     const currentPlatforms = p.platforms || [];
     const platRows = currentPlatforms.map((pl, i) => `
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
@@ -1799,7 +1799,7 @@ function meBlockToHtml(block) {
     case 'social': {
       const iconMap = {
         linkedin: 'lucide:linkedin', 'twitter/x': 'tabler:brand-x', twitter: 'lucide:twitter', instagram: 'lucide:instagram',
-        facebook: 'lucide:facebook', youtube: 'lucide:youtube', tiktok: 'tabler:brand-tiktok', pinterest: 'tabler:brand-pinterest',
+        facebook: 'lucide:facebook', youtube: 'lucide:youtube', tiktok: 'tabler:brand-tiktok', pinterest: 'tabler:brand-pinterest', website: 'lucide:globe',
         github: 'lucide:github', whatsapp: 'tabler:brand-whatsapp', telegram: 'tabler:brand-telegram', discord: 'tabler:brand-discord',
         snapchat: 'tabler:brand-snapchat', website: 'lucide:globe',
       };
@@ -2075,22 +2075,22 @@ async function meAiSend() {
     const token = localStorage.getItem('Honourix_token');
     const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/generate-email', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ 
-        userMessage: msg, 
-        mode: ME.mode || 'visual', 
-        htmlModeText: (ME.mode === 'code' && ME.cm) ? ME.cm.getValue() : '', 
-        currentBlocks: ME.blocks, 
-        headers: CP.headers, 
-        chatHistory: meAiChatHistory.slice(-10), 
-        selectedBlockId: ME.selectedId 
+      body: JSON.stringify({
+        userMessage: msg,
+        mode: ME.mode || 'visual',
+        htmlModeText: (ME.mode === 'code' && ME.cm) ? ME.cm.getValue() : '',
+        currentBlocks: ME.blocks,
+        headers: CP.headers,
+        chatHistory: meAiChatHistory.slice(-10),
+        selectedBlockId: ME.selectedId
       }),
     });
     const res = await response.json();
     if (typingEl) { clearInterval(typingEl.dataset.thinkTimer); typingEl.remove(); }
-    
+
     const action = res.action;
     const message = res.message || '';
-    
+
     meAiChatHistory.push({ role: 'model', content: message });
 
     if (action === 'replace_html' && res.html && ME.mode === 'code') { if (typeof res.html === 'string' && ME.cm) { ME.cm.setValue(res.html); document.getElementById('mHtmlTmpl').value = res.html; if (typeof meRefreshPreviewIframe === 'function') meRefreshPreviewIframe(); } window.meAiAppendBubble('ai', message || 'Your HTML code has been updated directly!'); toast('AI updated your HTML', 'success', 2000); }
@@ -2126,7 +2126,7 @@ window.meAiApplySuggestions = function (suggestions) {
   chat.scrollTop = chat.scrollHeight;
 };
 
-window.meAiApplySubject = function(btn, subject) {
+window.meAiApplySubject = function (btn, subject) {
   const el = document.getElementById('mSubject');
   if (el) {
     el.value = subject;
@@ -2492,13 +2492,13 @@ async function launchPipeline() {
   CP.results = [];
 
   function setRunPct(pct, statusStr) {
-    const pEl = document.getElementById('runPct'); if(pEl) pEl.textContent = pct + '%';
-    const sEl = document.getElementById('runStatus'); if(sEl && statusStr) sEl.textContent = statusStr;
-    const bEl = document.getElementById('runBar'); if(bEl) bEl.style.width = pct + '%';
+    const pEl = document.getElementById('runPct'); if (pEl) pEl.textContent = pct + '%';
+    const sEl = document.getElementById('runStatus'); if (sEl && statusStr) sEl.textContent = statusStr;
+    const bEl = document.getElementById('runBar'); if (bEl) bEl.style.width = pct + '%';
   }
   function upCounts(c, m) {
-    const cd = document.getElementById('runCertsDone'); if(cd) cd.textContent = c;
-    const md = document.getElementById('runMailsDone'); if(md) md.textContent = m;
+    const cd = document.getElementById('runCertsDone'); if (cd) cd.textContent = c;
+    const md = document.getElementById('runMailsDone'); if (md) md.textContent = m;
   }
 
   setRunPct(1, 'Connecting to Google Server...');
@@ -2540,8 +2540,8 @@ async function launchPipeline() {
     });
 
     if (!response.ok) {
-       const errData = await response.json().catch(()=>({}));
-       throw new Error(errData.error || `HTTP Error ${response.status}`);
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || `HTTP Error ${response.status}`);
     }
 
     const reader = response.body.getReader();
@@ -2564,9 +2564,9 @@ async function launchPipeline() {
 
           if (event.type === 'info') {
             llLog('info', event.message);
-              const sEl = document.getElementById('runStatus');
-              if (sEl) sEl.textContent = event.message;
-          } 
+            const sEl = document.getElementById('runStatus');
+            if (sEl) sEl.textContent = event.message;
+          }
           else if (event.type === 'success' || event.type === 'error') {
             processed++;
             const r = event.result; // { name, email, link, status, error }
@@ -2597,14 +2597,14 @@ async function launchPipeline() {
               CP.results.push({ name, email, certLink: '', certStatus: 'failed', mailStatus: 'skipped', error: r.error });
             }
 
-              const realPct = 2 + Math.round((processed / total) * 98);
-              setRunPct(realPct, `Processing: ${name} (${processed}/${total})`);
-              upCounts(certsDone, mailsDone);
-          } 
+            const realPct = 2 + Math.round((processed / total) * 98);
+            setRunPct(realPct, `Processing: ${name} (${processed}/${total})`);
+            upCounts(certsDone, mailsDone);
+          }
           else if (event.type === 'done') {
             llLog('ok', event.message);
           }
-        } catch(e) {
+        } catch (e) {
           console.warn("Error parsing stream chunk:", e, line);
         }
       }
@@ -2635,9 +2635,9 @@ function updateRunCounts(c, m, f) {
   const md = document.getElementById('runMailsDone');
   const fd = document.getElementById('runFailed');
   const sharedStyle = 'font-size: 28px; font-weight: 700; line-height: 1.1; font-family: var(--font);';
-  if(cd) { cd.textContent = c; cd.style.cssText = sharedStyle + ' color: var(--cyan);'; }
-  if(md) { md.textContent = m; md.style.cssText = sharedStyle + ' color: #a78bfa;'; }
-  if(fd) { fd.textContent = f; fd.style.cssText = sharedStyle + ` color: ${f > 0 ? 'var(--red)' : 'var(--text-3)'};`; }
+  if (cd) { cd.textContent = c; cd.style.cssText = sharedStyle + ' color: var(--cyan);'; }
+  if (md) { md.textContent = m; md.style.cssText = sharedStyle + ' color: #a78bfa;'; }
+  if (fd) { fd.textContent = f; fd.style.cssText = sharedStyle + ` color: ${f > 0 ? 'var(--red)' : 'var(--text-3)'};`; }
 }
 function llLog(type, msg) {
   const win = document.getElementById('liveLog');
@@ -2684,7 +2684,7 @@ function showDone(certs, mails, failed, total) {
       ds.textContent = `Completed with ${failed} failure(s). ${certs} certificates generated, ${mails} emails sent.`;
     }
   }
-  
+
   renderResultTable(CP.results);
   toast(`Done — ${certs} certs, ${mails} emails`, 'success', 6000);
 }
@@ -2710,19 +2710,19 @@ function renderResultTable(results) {
           </thead>
           <tbody>
             ${results.map((r, i) => {
-              const rowData = CP.rows[i] || {};
-              
-              const mailBadge = r.mailStatus === 'sent' 
-                ? `<span style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Sent</span>` 
-                : r.mailStatus === 'skipped' 
-                ? `<span style="background:rgba(255,255,255,0.05);color:var(--text-3);border:1px solid var(--glass-border);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Skipped</span>`
-                : `<span style="background:rgba(244,63,94,0.1);color:var(--red);border:1px solid rgba(244,63,94,0.2);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;" title="${(r.error || '').replace(/"/g, '&quot;')}">Failed</span>`;
+    const rowData = CP.rows[i] || {};
 
-              const certLink = r.certLink 
-                ? `<a href="${r.certLink}" target="_blank" style="color:var(--cyan);text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:6px 12px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;transition:all 0.2s;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open PDF</a>` 
-                : `<span style="color:var(--red);font-size:13px;font-weight:500;" title="${(r.error || '').replace(/"/g, '&quot;')}">Failed</span>`;
+    const mailBadge = r.mailStatus === 'sent'
+      ? `<span style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Sent</span>`
+      : r.mailStatus === 'skipped'
+        ? `<span style="background:rgba(255,255,255,0.05);color:var(--text-3);border:1px solid var(--glass-border);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Skipped</span>`
+        : `<span style="background:rgba(244,63,94,0.1);color:var(--red);border:1px solid rgba(244,63,94,0.2);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;" title="${(r.error || '').replace(/"/g, '&quot;')}">Failed</span>`;
 
-              return `
+    const certLink = r.certLink
+      ? `<a href="${r.certLink}" target="_blank" style="color:var(--cyan);text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:6px 12px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;transition:all 0.2s;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open PDF</a>`
+      : `<span style="color:var(--red);font-size:13px;font-weight:500;" title="${(r.error || '').replace(/"/g, '&quot;')}">Failed</span>`;
+
+    return `
               <tr style="transition:background 0.15s" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
                 <td style="padding:14px 16px;color:var(--text-3);font-size:12px;font-weight:600;border-top:1px solid rgba(255,255,255,0.04);">${i + 1}</td>
                 ${displayCols.map(h => `<td style="padding:14px 16px;color:var(--text-2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;border-top:1px solid rgba(255,255,255,0.04);" title="${(rowData[h] || '').toString().replace(/"/g, '&quot;')}">${(rowData[h] || '—')}</td>`).join('')}
@@ -2730,7 +2730,7 @@ function renderResultTable(results) {
                 <td style="padding:14px 16px;border-left:1px solid var(--glass-border);border-top:1px solid rgba(255,255,255,0.04);position:sticky;right:160px;z-index:2;background:var(--surface);">${mailBadge}</td>
                 <td style="padding:14px 16px;border-top:1px solid rgba(255,255,255,0.04);position:sticky;right:0;z-index:2;background:var(--surface);">${certLink}</td>
               </tr>`;
-            }).join('')}
+  }).join('')}
           </tbody>
         </table>
       </div>
@@ -2747,15 +2747,15 @@ async function saveCampaignHistory(rec) {
   const backupData = CP.results.map((r, i) => {
     const original = CP.rows[i] || {};
     const rowData = { 'S.No': i + 1 };
-    
+
     ED.fields.forEach(f => {
       if (f.column) rowData[f.column] = original[f.column] || '';
     });
-    
+
     if (mappings.email && !rowData[mappings.email]) {
-       rowData[mappings.email] = r.email || original[mappings.email] || '';
+      rowData[mappings.email] = r.email || original[mappings.email] || '';
     }
-    
+
     rowData['Certificate Link'] = r.certLink || '';
     rowData['Email Status'] = r.mailStatus || '';
     return rowData;

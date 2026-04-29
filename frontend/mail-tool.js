@@ -867,7 +867,7 @@ function meRenderProps(block) {
     rows.push(meFieldRange('Thickness (px)', block.id, 'thickness', p.thickness, 1, 8));
   }
   if (block.type === 'social') {
-    const plats = ['LinkedIn', 'Twitter/X', 'Instagram', 'Facebook', 'YouTube', 'TikTok', 'Pinterest', 'GitHub', 'WhatsApp', 'Telegram', 'Discord', 'Snapchat'];
+    const plats = ['LinkedIn', 'Twitter/X', 'Instagram', 'Facebook', 'YouTube', 'TikTok', 'Pinterest', 'GitHub', 'WhatsApp', 'Telegram', 'Discord', 'Snapchat', 'Website'];
     const currentPlatforms = p.platforms || [];
     const platRows = currentPlatforms.map((pl, i) => `
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
@@ -1669,68 +1669,74 @@ function mAppendLog(msg, type) {
 ══════════════════════════════════════════════════════════════ */
 async function mStartSend() {
   mGoStep(4, true);
-  const total = MS.rows.length;
-  const nameC = document.getElementById('mNameCol').value;
-  const emailC = document.getElementById('mEmailCol').value;
-  let subj = document.getElementById('mSubject').value;
-  let tmpl = document.getElementById('mHtmlTmpl').value;
-  const camp = document.getElementById('mCampName').value;
+  const total      = MS.rows.length;
+  const nameCol    = document.getElementById('mNameCol').value;
+  const emailCol   = document.getElementById('mEmailCol').value;
+  const subjectRaw = document.getElementById('mSubject').value;
+  const htmlTmpl   = document.getElementById('mHtmlTmpl').value;
+  const campName   = document.getElementById('mCampName').value;
 
   document.getElementById('mSendCounter').textContent = '0 / ' + total;
-  mLog('info', 'Starting campaign: ' + camp + ' — ' + total + ' recipients');
+  mLog('info', 'Starting campaign: ' + campName + ' — ' + total + ' recipients');
 
-  // Pre-process template tags to ensure they are backend-safe (avoids regex \w+ bugs on spaces/special chars)
-  const allTags = new Set();
-  const tagRegex = /\{\{([^}]+)\}\}/g;
-  let match;
-  while ((match = tagRegex.exec(subj)) !== null) allTags.add(match[1]);
-  while ((match = tagRegex.exec(tmpl)) !== null) allTags.add(match[1]);
+  let sentCount = 0;
+  let failedCount = 0;
+  MS.results = []; // Clear previous results
 
-  allTags.forEach(tag => {
-    const safeTag = tag.trim().replace(/[^a-zA-Z0-9_]/g, '_');
-    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    subj = subj.replace(new RegExp(`\\{\\{${escapeRegExp(tag)}\\}\\}`, 'g'), `{{${safeTag}}}`);
-    tmpl = tmpl.replace(new RegExp(`\\{\\{${escapeRegExp(tag)}\\}\\}`, 'g'), `{{${safeTag}}}`);
-  });
+  for (let i = 0; i < total; i++) {
+    const row = MS.rows[i];
+    const recipientName = row[nameCol] || 'Recipient';
+    const recipientEmail = row[emailCol];
 
-  // Pass the raw data exactly as it is, but guarantee 'name' and 'email' exist for the backend
-  const recipients = MS.rows.map(r => {
-    // Clone the raw row so all original keys are intact for personalization
-    const obj = { ...r };
-    // Explicitly set the required routing fields based on the user's dropdown selection
-    obj.name = r[nameC] || '';
-    obj.email = r[emailC] || '';
+    // Skip if no email is found for the recipient
+    if (!recipientEmail) {
+      failedCount++;
+      mLog('err', `Skipping row ${i + 1}: No email address found for ${recipientName}`);
+      MS.results.push({ name: recipientName, email: '', status: 'failed', error: 'No email address' });
+      continue;
+    }
 
-    // Map backend-friendly safe tags to their actual values from the sheet
-    allTags.forEach(tag => {
-      const safeTag = tag.trim().replace(/[^a-zA-Z0-9_]/g, '_');
-      const key = tag.trim();
-      const col = MS.headers.find(h => h.toLowerCase().replace(/\s+/g, '_') === key.toLowerCase().replace(/\s+/g, '_') || h === key);
-      obj[safeTag] = col ? (r[col] || '') : (r[key] || '');
-    });
+    // Personalize subject and HTML for the current recipient
+    const personalizedSubject = mPersonalise(subjectRaw, row);
+    const personalizedHtml    = mPersonalise(htmlTmpl, row);
 
-    return obj;
-  });
+    mLog('info', `Sending to ${recipientName} (${recipientEmail})...`);
 
+    try {
+      await apiFetch('/api/mail/send-one', {
+        method: 'POST',
+        body: JSON.stringify({
+          to: recipientEmail,
+          subject: personalizedSubject,
+          html: personalizedHtml,
+        }),
+      });
+      sentCount++;
+      mLog('ok', `Sent to ${recipientName} → ${recipientEmail}`);
+      MS.results.push({ name: recipientName, email: recipientEmail, status: 'sent' });
+    } catch (e) {
+      failedCount++;
+      mLog('err', `Failed to send to ${recipientName} → ${recipientEmail}: ${e.message}`);
+      MS.results.push({ name: recipientName, email: recipientEmail, status: 'failed', error: e.message });
+    }
+
+    // Update progress bar and counter
+    const done = sentCount + failedCount;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('mSendCounter').textContent = done + ' / ' + total;
+    document.getElementById('mSendBar').style.width = pct + '%';
+    document.getElementById('mSendPct').textContent = pct + '%';
+    document.getElementById('mSendStatus').textContent = `Sending… ${pct}% complete`;
+
+    // Add a small delay to prevent overwhelming the API
+    await new Promise(r => setTimeout(r, 100));
+  }
+
+  // After loop, show report
   try {
-    const res = await apiFetch('/api/mail/send', {
-      method: 'POST',
-      body: JSON.stringify({ recipients, subject: subj, htmlTemplate: tmpl, campaignName: camp }),
-    });
-    MS.results = res.results || [];
-    MS.results.forEach((r, i) => {
-      setTimeout(() => {
-        const done = i + 1;
-        const pct = Math.round(done / total * 100);
-        document.getElementById('mSendCounter').textContent = done + ' / ' + total;
-        document.getElementById('mSendBar').style.width = pct + '%';
-        document.getElementById('mSendPct').textContent = pct + '%';
-        document.getElementById('mSendStatus').textContent = 'Sending… ' + pct + '% complete';
-        if (r.status === 'sent') mLog('ok', 'Sent → ' + r.email);
-        else mLog('err', 'Failed → ' + r.email + ': ' + r.error);
-        if (done === total) setTimeout(mShowReport, 800);
-      }, i * 60);
-    });
+    // Save campaign history to database
+    await saveCampaign('mail', campName, total, sentCount, null);
+    mShowReport();
   } catch (e) {
     mLog('err', 'Send failed: ' + e.message);
     toast('Send failed: ' + e.message, 'error');
