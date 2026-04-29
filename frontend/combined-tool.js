@@ -2170,8 +2170,11 @@ function rvRenderCert(idx) {
 
   canvas.width = cssW * dpr;
   canvas.height = cssH * dpr;
-  canvas.style.width = cssW + 'px';
-  canvas.style.height = cssH + 'px';
+  canvas.style.width = '100%';
+  canvas.style.maxWidth = cssW + 'px';
+  canvas.style.height = 'auto';
+  canvas.style.aspectRatio = `${ED.w} / ${ED.h}`;
+  canvas.style.objectFit = 'contain';
   canvas.style.display = 'block';
   if (fallback) fallback.style.display = 'none';
 
@@ -2306,9 +2309,14 @@ function buildReview() {
     { k: 'Write links back', v: document.getElementById('writeBackToggle')?.classList.contains('on') ? 'Yes' : 'No' },
   ];
   const detailsEl = document.getElementById('reviewDetailsEl');
-  if (detailsEl) detailsEl.innerHTML = rows.map(r => `<div class="rv-row"><span class="rv-key">${r.k}</span><span class="rv-val">${r.v}</span></div>`).join('');
+  if (detailsEl) {
+    detailsEl.style.display = 'grid';
+    detailsEl.style.gridTemplateColumns = 'repeat(auto-fit, minmax(300px, 1fr))';
+    detailsEl.style.gap = '12px 20px';
+    detailsEl.innerHTML = rows.map(r => `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;"><span style="color:var(--text-2);font-size:13.5px;font-weight:500">${r.k}</span><span style="color:var(--text);font-size:14px;font-weight:600;text-align:right">${r.v}</span></div>`).join('');
+  }
   const runJobEl = document.getElementById('runJobInfo');
-  if (runJobEl) runJobEl.innerHTML = rows.slice(0, 3).map(r => `<div style="display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--glass-border)"><span style="color:var(--text-2)">${r.k}</span><strong style="color:var(--text)">${r.v}</strong></div>`).join('');
+  if (runJobEl) runJobEl.innerHTML = rows.slice(0, 3).map(r => `<div style="display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--glass-border)"><span style="color:var(--text-2)">${r.k}</span><strong style="color:var(--text)">${r.v}</strong></div>`).join('');
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -2458,15 +2466,40 @@ function setRunProgress(done, total, status) {
   const rc = document.getElementById('ringCircle');
   if (rc) rc.style.strokeDashoffset = 345 - (345 * pct / 100);
 }
-function updateRunCounts(c, m, f) { document.getElementById('runCertsDone').textContent = c; document.getElementById('runMailsDone').textContent = m; document.getElementById('runFailed').textContent = f; }
-function llLog(type, msg) { const win = document.getElementById('liveLog'); if (!win) return; const ts = new Date().toLocaleTimeString('en-IN', { hour12: false }); const el = document.createElement('div'); el.className = 'll-row'; el.innerHTML = `<span class="ll-ts">${ts}</span><span class="ll-${type}">${msg}</span>`; win.appendChild(el); win.scrollTop = win.scrollHeight; }
+function updateRunCounts(c, m, f) {
+  const cd = document.getElementById('runCertsDone');
+  const md = document.getElementById('runMailsDone');
+  const fd = document.getElementById('runFailed');
+  if(cd) { cd.textContent = c; cd.style.fontSize = '22px'; cd.style.color = 'var(--cyan)'; cd.style.fontWeight = '700'; }
+  if(md) { md.textContent = m; md.style.fontSize = '22px'; md.style.color = '#a78bfa'; md.style.fontWeight = '700'; }
+  if(fd) { fd.textContent = f; fd.style.fontSize = '22px'; fd.style.color = 'var(--red)'; fd.style.fontWeight = '700'; }
+}
+function llLog(type, msg) {
+  const win = document.getElementById('liveLog');
+  if (!win) return;
+  if (!win.classList.contains('log-window')) {
+    win.className = 'log-window';
+  }
+  const ts = new Date().toLocaleTimeString('en-IN', { hour12: false });
+  const el = document.createElement('div');
+  el.className = 'log-entry';
+  let mappedType = type;
+  if (type === 'cert') mappedType = 'ok';
+  if (type === 'mail') mappedType = 'info';
+  el.innerHTML = `<span class="log-ts">${ts}</span><span class="log-${mappedType}">${msg}</span>`;
+  win.appendChild(el);
+  win.scrollTop = win.scrollHeight;
+}
 
 function showDone(certs, mails, failed, total) {
   document.getElementById('runningState').style.display = 'none';
   document.getElementById('doneState').style.display = 'block';
-  document.getElementById('dCerts').textContent = certs;
-  document.getElementById('dEmails').textContent = mails;
-  document.getElementById('dFailed').textContent = failed;
+  const dc = document.getElementById('dCerts');
+  const de = document.getElementById('dEmails');
+  const df = document.getElementById('dFailed');
+  if (dc) { dc.textContent = certs; dc.style.fontSize = '24px'; dc.style.color = 'var(--cyan)'; }
+  if (de) { de.textContent = mails; de.style.fontSize = '24px'; de.style.color = '#a78bfa'; }
+  if (df) { df.textContent = failed; df.style.fontSize = '24px'; df.style.color = 'var(--red)'; }
   document.getElementById('doneTitle').textContent = failed === 0 ? 'Pipeline Complete!' : `${certs} certs · ${mails} emails · ${failed} failed`;
   if (failed > 0) { const ring = document.getElementById('doneRing'); if (ring) { ring.style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)'; ring.style.boxShadow = '0 0 48px rgba(245,158,11,0.35)'; } }
   renderResultTable(CP.results);
