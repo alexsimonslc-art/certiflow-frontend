@@ -1913,6 +1913,7 @@ select optgroup {
 #meAiSendBtn {
   background: linear-gradient(135deg, #00d4ff, #7c3aed) !important;
   color: #fff !important;
+  border-radius: 10px !important;
 }
 #meAiSendBtn:hover {
   background: linear-gradient(135deg, #00bced, #6b21db) !important;

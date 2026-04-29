@@ -1556,6 +1556,7 @@ function meRenderProps(block) {
       ${platRows}
       <button class="btn btn-outline btn-sm" style="margin-top:4px;font-size:11px" onclick="meSocialAddPlatform('${block.id}')">+ Add Platform</button>
     </div>`);
+    rows.push(meFieldColor('Icon Color', block.id, 'color', p.color || '#475569'));
     rows.push(`<div class="me-field">
       <div class="me-field-label">Icon Style</div>
       <div class="me-align-btns">
@@ -1796,17 +1797,21 @@ function meBlockToHtml(block) {
     case 'footer':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
     case 'social': {
-      const iconBase = 'https://cdn.simpleicons.org/';
-      const knownIcons = { linkedin: 'linkedin', 'twitter/x': 'x', twitter: 'x', instagram: 'instagram', facebook: 'facebook', youtube: 'youtube', tiktok: 'tiktok', pinterest: 'pinterest', github: 'github', whatsapp: 'whatsapp', telegram: 'telegram', discord: 'discord', snapchat: 'snapchat', website: '' };
+      const iconMap = {
+        linkedin: 'lucide:linkedin', 'twitter/x': 'tabler:brand-x', twitter: 'lucide:twitter', instagram: 'lucide:instagram',
+        facebook: 'lucide:facebook', youtube: 'lucide:youtube', tiktok: 'tabler:brand-tiktok', pinterest: 'tabler:brand-pinterest',
+        github: 'lucide:github', whatsapp: 'tabler:brand-whatsapp', telegram: 'tabler:brand-telegram', discord: 'tabler:brand-discord',
+        snapchat: 'tabler:brand-snapchat', website: 'lucide:globe',
+      };
       const size = p.iconSize || 32;
       const pad = p.style === 'plain' ? 0 : Math.round(size * 0.25);
       const br = p.style === 'circle' ? '50%' : p.style === 'square' ? '8px' : '0';
-      const bgBadge = p.style !== 'plain' ? 'background:rgba(0,0,0,0.08);' : '';
+      const bgBadge = p.style !== 'plain' ? 'background:rgba(128,128,128,0.15);' : '';
+      const iconColor = encodeURIComponent(p.color || '#475569');
       const icons = (p.platforms || []).filter(pl => pl.url).map(pl => {
-        const slug = knownIcons[(pl.name || '').toLowerCase()] || (pl.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        const imgHtml = slug
-          ? `<img src="${iconBase}${slug}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;width:${size}px;height:${size}px"/>`
-          : `<span style="font-size:${size * 0.5}px;line-height:${size}px;color:${p.color}">${(pl.name || '').slice(0, 2).toUpperCase()}</span>`;
+        const slug = iconMap[(pl.name || '').toLowerCase()] || 'lucide:globe';
+        const src = `https://api.iconify.design/${slug}.svg?color=${iconColor}&stroke-width=1.5`;
+        const imgHtml = `<img src="${src}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;width:${size}px;height:${size}px"/>`;
         return `<a href="${pl.url}" style="display:inline-block;margin:0 ${Math.round(size * 0.2)}px;text-decoration:none;${bgBadge}padding:${pad}px;border-radius:${br};vertical-align:middle">${imgHtml}</a>`;
       }).join('');
       return icons
@@ -2460,8 +2465,8 @@ async function launchPipeline() {
 
         <div id="doneState" style="display: none; animation: fadeInUp 0.6s ease; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--glass-border);">
           <div style="text-align:center;margin-bottom:32px;">
-            <h2 id="doneTitle" style="font-family: var(--font); font-size: 48px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Results</h2>
-            <p id="doneSub" style="color:var(--text-2);font-size:15px;">Pipeline completed successfully.</p>
+            <h2 id="doneTitle" style="font-family: var(--font); font-size: 48px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Pipeline completed successfully.</h2>
+            <p id="doneSub" style="color:var(--text-2);font-size:15px;">Results</p>
           </div>
           <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 32px;">
             <button class="btn btn-primary btn-lg" onclick="downloadFullReport()" style="box-shadow: 0 4px 20px rgba(0,212,255,0.25);">

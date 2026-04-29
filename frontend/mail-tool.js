@@ -496,23 +496,22 @@ function meBlockToHtml(block) {
   <p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fontStack}">${p.text.replace(/\n/g, '<br/>')}</p>
 </div>`;
     case 'social': {
-      const iconBase = 'https://cdn.simpleicons.org/';
-      const knownIcons = {
-        linkedin: 'linkedin', 'twitter/x': 'x', twitter: 'x', instagram: 'instagram',
-        facebook: 'facebook', youtube: 'youtube', tiktok: 'tiktok', pinterest: 'pinterest',
-        github: 'github', whatsapp: 'whatsapp', telegram: 'telegram', discord: 'discord',
-        snapchat: 'snapchat', website: '',
+      const iconMap = {
+        linkedin: 'lucide:linkedin', 'twitter/x': 'tabler:brand-x', twitter: 'lucide:twitter', instagram: 'lucide:instagram',
+        facebook: 'lucide:facebook', youtube: 'lucide:youtube', tiktok: 'tabler:brand-tiktok', pinterest: 'tabler:brand-pinterest',
+        github: 'lucide:github', whatsapp: 'tabler:brand-whatsapp', telegram: 'tabler:brand-telegram', discord: 'tabler:brand-discord',
+        snapchat: 'tabler:brand-snapchat', website: 'lucide:globe',
       };
       const size = p.iconSize || 32;
       const pad = p.style === 'plain' ? 0 : Math.round(size * 0.25);
       const br = p.style === 'circle' ? '50%' : p.style === 'square' ? '8px' : '0';
-      const bgBadge = p.style !== 'plain' ? `background:rgba(0,0,0,0.08);` : '';
+      const bgBadge = p.style !== 'plain' ? 'background:rgba(128,128,128,0.15);' : '';
+      const iconColor = encodeURIComponent(p.color || '#475569');
 
       const icons = (p.platforms || []).filter(pl => pl.url).map(pl => {
-        const slug = knownIcons[(pl.name || '').toLowerCase()] || (pl.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        const imgHtml = slug
-          ? `<img src="${iconBase}${slug}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;width:${size}px;height:${size}px"/>`
-          : `<span style="font-size:${size * 0.5}px;line-height:${size}px;color:${p.color}">${pl.name.slice(0, 2).toUpperCase()}</span>`;
+        const slug = iconMap[(pl.name || '').toLowerCase()] || 'lucide:globe';
+        const src = `https://api.iconify.design/${slug}.svg?color=${iconColor}&stroke-width=1.5`;
+        const imgHtml = `<img src="${src}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;width:${size}px;height:${size}px"/>`;
         return `<a href="${pl.url}" style="display:inline-block;margin:0 ${Math.round(size * 0.2)}px;text-decoration:none;${bgBadge}padding:${pad}px;border-radius:${br};vertical-align:middle">${imgHtml}</a>`;
       }).join('');
 
@@ -889,6 +888,7 @@ function meRenderProps(block) {
       <button class="btn btn-outline btn-sm" style="margin-top:4px;font-size:11px" onclick="meSocialAddPlatform('${block.id}')">+ Add Platform</button>
     </div>`);
 
+    rows.push(meFieldColor('Icon Color', block.id, 'color', p.color || '#475569'));
     rows.push(`<div class="me-field">
       <div class="me-field-label">Icon Style</div>
       <div class="me-align-btns">
@@ -1672,12 +1672,26 @@ async function mStartSend() {
   const total = MS.rows.length;
   const nameC = document.getElementById('mNameCol').value;
   const emailC = document.getElementById('mEmailCol').value;
-  const subj = document.getElementById('mSubject').value;
-  const tmpl = document.getElementById('mHtmlTmpl').value;
+  let subj = document.getElementById('mSubject').value;
+  let tmpl = document.getElementById('mHtmlTmpl').value;
   const camp = document.getElementById('mCampName').value;
 
   document.getElementById('mSendCounter').textContent = '0 / ' + total;
   mLog('info', 'Starting campaign: ' + camp + ' — ' + total + ' recipients');
+
+  // Pre-process template tags to ensure they are backend-safe (avoids regex \w+ bugs on spaces/special chars)
+  const allTags = new Set();
+  const tagRegex = /\{\{([^}]+)\}\}/g;
+  let match;
+  while ((match = tagRegex.exec(subj)) !== null) allTags.add(match[1]);
+  while ((match = tagRegex.exec(tmpl)) !== null) allTags.add(match[1]);
+
+  allTags.forEach(tag => {
+    const safeTag = tag.trim().replace(/[^a-zA-Z0-9_]/g, '_');
+    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    subj = subj.replace(new RegExp(`\\{\\{${escapeRegExp(tag)}\\}\\}`, 'g'), `{{${safeTag}}}`);
+    tmpl = tmpl.replace(new RegExp(`\\{\\{${escapeRegExp(tag)}\\}\\}`, 'g'), `{{${safeTag}}}`);
+  });
 
   // Pass the raw data exactly as it is, but guarantee 'name' and 'email' exist for the backend
   const recipients = MS.rows.map(r => {
@@ -1686,6 +1700,15 @@ async function mStartSend() {
     // Explicitly set the required routing fields based on the user's dropdown selection
     obj.name = r[nameC] || '';
     obj.email = r[emailC] || '';
+
+    // Map backend-friendly safe tags to their actual values from the sheet
+    allTags.forEach(tag => {
+      const safeTag = tag.trim().replace(/[^a-zA-Z0-9_]/g, '_');
+      const key = tag.trim();
+      const col = MS.headers.find(h => h.toLowerCase().replace(/\s+/g, '_') === key.toLowerCase().replace(/\s+/g, '_') || h === key);
+      obj[safeTag] = col ? (r[col] || '') : (r[key] || '');
+    });
+
     return obj;
   });
 
