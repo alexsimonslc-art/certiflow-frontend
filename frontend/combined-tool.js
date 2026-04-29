@@ -2365,6 +2365,7 @@ async function launchPipeline() {
       <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
         <div style="text-align: center; margin-bottom: 8px;">
           <div id="runPct" style="font-size: 72px; font-family: var(--font-display); font-weight: 800; color: transparent; background: linear-gradient(135deg, #00d4ff, #7c3aed); -webkit-background-clip: text; background-clip: text; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 24px rgba(0,212,255,0.2);">0%</div>
+          <div id="runPct" style="font-size: 72px; font-family: var(--font); font-weight: 800; color: transparent; background: linear-gradient(135deg, #00d4ff, #7c3aed); -webkit-background-clip: text; background-clip: text; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 24px rgba(0,212,255,0.2);">0%</div>
           <div id="runStatus" style="font-size: 15px; color: var(--text-2); font-weight: 500; margin-top: 12px; letter-spacing: 0.5px;">Connecting to Google Server...</div>
         </div>
 
@@ -2393,6 +2394,7 @@ async function launchPipeline() {
         <div id="doneState" style="display: none; animation: fadeInUp 0.6s ease; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--glass-border);">
           <div style="text-align:center;margin-bottom:32px;">
             <h2 id="doneTitle" style="font-family: var(--font-display); font-size: 42px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Results</h2>
+            <h2 id="doneTitle" style="font-family: var(--font); font-size: 42px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Results</h2>
             <p id="doneSub" style="color:var(--text-2);font-size:15px;">Pipeline completed successfully.</p>
           </div>
           <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 32px;">
@@ -2503,7 +2505,7 @@ async function launchPipeline() {
 
             if (event.type === 'success') {
               certsDone++;
-              llLog('cert', `✓ Certificate generated: ${name}`);
+              llLog('cert', `Certificate generated: ${name}`);
               const certLink = r.link || '';
 
               try {
@@ -2511,7 +2513,7 @@ async function launchPipeline() {
                 const personSubj = personalise(subject, row, mappings);
                 await apiFetch('/api/mail/send-one', { method: 'POST', body: JSON.stringify({ to: email, subject: personSubj, html: personHtml }) });
                 mailsDone++;
-                llLog('mail', `✉ Email sent → ${email}`);
+                llLog('mail', `Email sent → ${email}`);
                 CP.results.push({ name, email, certLink, certStatus: 'success', mailStatus: 'sent' });
               } catch (e) {
                 failed++;
@@ -2586,7 +2588,7 @@ function llLog(type, msg) {
   else if (type === 'err') { color = '#f43f5e'; icon = '✗'; }
   else if (type === 'warn') { color = '#f59e0b'; icon = '⚠'; }
   el.style.cssText = `color:${color}; display:flex; align-items:flex-start; gap:8px; line-height:1.5; padding:3px 0; border-bottom:1px solid rgba(255,255,255,0.03);`;
-  el.innerHTML = `<span style="color:#4a6080;flex-shrink:0;font-size:11.5px;margin-top:2px;">[${ts}]</span><span style="flex-shrink:0;font-weight:700;color:${color}">${icon}</span><span style="flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; animation:typingLine 0.4s cubic-bezier(0.2,1,0.3,1) forwards;">${msg}</span>`;
+  el.innerHTML = `<span style="color:#8aa0c0;flex-shrink:0;font-size:11.5px;margin-top:2px;">[${ts}]</span><span style="flex-shrink:0;font-weight:700;color:${color}">${icon}</span><span style="flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; animation:typingLine 0.4s cubic-bezier(0.2,1,0.3,1) forwards;">${msg}</span>`;
   win.appendChild(el);
   win.scrollTop = win.scrollHeight;
 }
