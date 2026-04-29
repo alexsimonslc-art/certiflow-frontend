@@ -657,7 +657,10 @@
         _forms = data.forms || [];
         renderHero();
         renderGrid();
-        document.getElementById('dbLastUpdated').textContent = 'Updated just now';
+        const lastUpdatedEl = document.getElementById('dbLastUpdated');
+        if (lastUpdatedEl) {
+          lastUpdatedEl.textContent = 'Updated just now';
+        }
       } catch (e) {
         toast('Could not load forms: ' + e.message, 'error');
       } finally {
