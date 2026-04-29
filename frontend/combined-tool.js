@@ -2334,7 +2334,7 @@ function getAllMappings() {
 
 async function launchPipeline() {
   const btn = document.getElementById('launchBtn');
-  btn.disabled = true; btn.style.opacity = '0.6';
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = 'Launching...'; }
   goStep(6, true);
 
   const mappings = getAllMappings();
@@ -2344,13 +2344,76 @@ async function launchPipeline() {
   const writeBack = document.getElementById('writeBackToggle').classList.contains('on');
   const total = CP.rows.length;
 
+  // ── INJECT NEW UI FOR RESULTS PAGE ──
+  const sp6 = document.getElementById('sp6');
+  if (sp6) {
+    sp6.innerHTML = `
+      <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
+        <div style="text-align: center; margin-bottom: 8px;">
+          <div id="runPct" style="font-size: 64px; font-family: var(--font-display); font-weight: 800; color: var(--text); line-height: 1;">0%</div>
+          <div id="runStatus" style="font-size: 16px; color: var(--cyan); font-weight: 600; margin-top: 12px; letter-spacing: 0.5px;">Connecting to Google Server...</div>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 40px; background: var(--surface-2); padding: 24px; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+          <div style="text-align: center; flex: 1;">
+            <div style="font-size: 32px; font-weight: 700; color: var(--cyan); font-family: var(--font-mono);">[ <span id="runCertsDone">0</span> / <span class="totalCount">${total}</span> ]</div>
+            <div style="font-size: 14px; color: var(--text-2); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Certificates Created</div>
+          </div>
+          <div style="width: 1px; background: var(--glass-border);"></div>
+          <div style="text-align: center; flex: 1;">
+            <div style="font-size: 32px; font-weight: 700; color: #a78bfa; font-family: var(--font-mono);">[ <span id="runMailsDone">0</span> / <span class="totalCount">${total}</span> ]</div>
+            <div style="font-size: 14px; color: var(--text-2); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Mails Sent</div>
+          </div>
+        </div>
+
+        <div style="height: 10px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);">
+          <div id="runBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #00d4ff, #7c3aed); border-radius: 99px; transition: width 0.3s ease; box-shadow: 0 0 12px rgba(0,212,255,0.4);"></div>
+        </div>
+
+        <div id="liveLog" class="styled-log" style="background:rgba(2,4,8,0.8); border:1px solid var(--glass-border); border-radius:12px; padding:20px; font-family:var(--font-mono); font-size:13.5px; color:#4a6080; height:320px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; box-shadow:inset 0 2px 16px rgba(0,0,0,0.2);"></div>
+
+        <div id="doneState" style="display: none; animation: fadeInUp 0.6s ease; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--glass-border);">
+          <h2 id="doneTitle" style="font-family: var(--font-display); font-size: 36px; font-weight: 800; color: var(--text); margin-bottom: 28px; text-align: center; letter-spacing: -0.5px;">Results</h2>
+          <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 32px;">
+            <button class="btn btn-primary btn-lg" onclick="downloadFullReport()" style="box-shadow: 0 4px 20px rgba(0,212,255,0.25);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export Excel
+            </button>
+            <button class="btn btn-secondary btn-lg" onclick="window.location.href='dashboard.html'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Home
+            </button>
+            <button class="btn btn-outline btn-lg" onclick="resetAll()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              New Campaign
+            </button>
+          </div>
+          <div id="resultTableWrap"></div>
+        </div>
+      </div>
+    `;
+  }
+
   let certsDone = 0, mailsDone = 0, failed = 0;
   CP.results = [];
-  setRunProgress(0, total, 'Initializing pipeline...');
-  
-  const logWin = document.getElementById('liveLog');
-  if (logWin) logWin.innerHTML = '';
+
+  function setRunPct(pct, statusStr) {
+    const pEl = document.getElementById('runPct'); if(pEl) pEl.textContent = pct + '%';
+    const sEl = document.getElementById('runStatus'); if(sEl && statusStr) sEl.textContent = statusStr;
+    const bEl = document.getElementById('runBar'); if(bEl) bEl.style.width = pct + '%';
+  }
+  function upCounts(c, m) {
+    const cd = document.getElementById('runCertsDone'); if(cd) cd.textContent = c;
+    const md = document.getElementById('runMailsDone'); if(md) md.textContent = m;
+  }
+
+  setRunPct(1, 'Connecting to Google Server...');
   llLog('info', `Launching: ${campName} — ${total} participants`);
+  await new Promise(r => setTimeout(r, 800));
+
+  setRunPct(2, 'Initializing workspace...');
+  llLog('info', `Preparing data streams...`);
+  await new Promise(r => setTimeout(r, 600));
 
   const payload = {
     campaignName: campName,
@@ -2407,7 +2470,8 @@ async function launchPipeline() {
 
           if (event.type === 'info') {
             llLog('info', event.message);
-            document.getElementById('runStatus').textContent = event.message;
+              const sEl = document.getElementById('runStatus');
+              if (sEl) sEl.textContent = event.message;
           } 
           else if (event.type === 'success' || event.type === 'error') {
             processed++;
@@ -2439,8 +2503,9 @@ async function launchPipeline() {
               CP.results.push({ name, email, certLink: '', certStatus: 'failed', mailStatus: 'skipped', error: r.error });
             }
 
-            setRunProgress(processed, total, `Processing: ${name} (${processed}/${total})`);
-            updateRunCounts(certsDone, mailsDone, failed);
+              const realPct = 2 + Math.round((processed / total) * 98);
+              setRunPct(realPct, `Processing: ${name} (${processed}/${total})`);
+              upCounts(certsDone, mailsDone);
           } 
           else if (event.type === 'done') {
             llLog('ok', event.message);
@@ -2510,44 +2575,72 @@ function llLog(type, msg) {
 }
 
 function showDone(certs, mails, failed, total) {
-  document.getElementById('runningState').style.display = 'none';
-  document.getElementById('doneState').style.display = 'block';
-  const dc = document.getElementById('dCerts');
-  const de = document.getElementById('dEmails');
-  const df = document.getElementById('dFailed');
-  if (dc) { dc.textContent = certs; dc.style.fontFamily = 'var(--font-display)'; dc.style.fontSize = '32px'; dc.style.color = 'var(--text)'; }
-  if (de) { de.textContent = mails; de.style.fontFamily = 'var(--font-display)'; de.style.fontSize = '32px'; de.style.color = 'var(--text)'; }
-  if (df) { df.textContent = failed; df.style.fontFamily = 'var(--font-display)'; df.style.fontSize = '32px'; df.style.color = failed > 0 ? 'var(--red)' : 'var(--text)'; }
-  document.getElementById('doneTitle').textContent = failed === 0 ? 'Pipeline Complete!' : `${certs} certs · ${mails} emails · ${failed} failed`;
-  const sharedStyle = 'font-size: 36px; font-weight: 800; line-height: 1; font-family: var(--font); margin-bottom: 6px; display: block;';
-  if (dc) { dc.textContent = certs; dc.style.cssText = sharedStyle + 'color: var(--cyan);'; }
-  if (de) { de.textContent = mails; de.style.cssText = sharedStyle + 'color: #a78bfa;'; }
-  if (df) { df.textContent = failed; df.style.cssText = sharedStyle + `color: ${failed > 0 ? 'var(--red)' : 'var(--text-3)'};`; }
-  
+  const doneState = document.getElementById('doneState');
+  if (doneState) {
+    doneState.style.display = 'block';
+    setTimeout(() => {
+      doneState.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+  }
+
   const dt = document.getElementById('doneTitle');
   if (dt) {
-    dt.textContent = failed === 0 ? 'Pipeline Complete!' : `Pipeline finished with ${failed} failed`;
-    dt.style.fontSize = '24px';
-    dt.style.fontWeight = '700';
-    dt.style.color = 'var(--text)';
-    dt.style.letterSpacing = '-0.3px';
-    dt.style.marginBottom = '8px';
+    dt.textContent = failed === 0 ? 'Pipeline Complete!' : `Completed with ${failed} failure(s)`;
   }
   
-  if (failed > 0) { const ring = document.getElementById('doneRing'); if (ring) { ring.style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)'; ring.style.boxShadow = '0 0 48px rgba(245,158,11,0.35)'; } }
   renderResultTable(CP.results);
   toast(`Done — ${certs} certs, ${mails} emails`, 'success', 6000);
 }
 
 function renderResultTable(results) {
-  const tbody = document.getElementById('resultTbody'); if (!tbody) return;
-  tbody.innerHTML = results.map(r => {
-    const cb = r.certStatus === 'success' ? `<span style="background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Generated</span>` : `<span style="background:var(--red-dim);color:var(--red);border:1px solid rgba(244,63,94,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Failed</span>`;
-    const mb = r.mailStatus === 'sent' ? `<span style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:600">Sent</span>` : r.mailStatus === 'skipped' ? `<span style="color:var(--text-3);font-size:11.5px">Skipped</span>` : `<span style="color:var(--red);font-size:11.5px">Failed</span>`;
-    const cert = r.certLink ? `<a href="${r.certLink}" target="_blank" style="color:var(--cyan);font-size:12.5px;max-width:200px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.certLink}</a>` : '—';
-    return `<tr data-name="${r.name}" data-email="${r.email || ''}"><td style="font-weight:600">${r.name}</td><td style="color:var(--text-2)">${r.email || '—'}</td><td>${cert}</td><td style="display:flex;gap:5px;flex-wrap:wrap">${cb}${mb}</td><td>${r.certLink ? `<button class="ic-btn" onclick="copyToClipboard('${r.certLink}','Link')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>` : ''}</td></tr>`;
-  }).join('');
+  const wrap = document.getElementById('resultTableWrap');
+  if (!wrap) return;
+
+  const headers = CP.headers || [];
+  const displayCols = headers.length > 0 ? headers : (CP.manualColumns || []);
+
+  wrap.innerHTML = `
+    <div style="display:grid; grid-template-columns:minmax(0, 1fr); width:100%;">
+      <div style="width:100%; box-sizing:border-box; overflow-x:auto; max-height:500px; border:1px solid var(--glass-border); border-radius:12px; scrollbar-width:thin; scrollbar-color:var(--glass-border-2) transparent; background:var(--surface);">
+        <table style="width:max-content; min-width:100%; border-collapse:separate; border-spacing:0; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="position:sticky;top:0;z-index:20;background:var(--surface);box-shadow:0 1px 0 var(--glass-border);">
+              <th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--glass-border);">#</th>
+              ${displayCols.map(h => `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--glass-border);">${h}</th>`).join('')}
+              <th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--glass-border);border-left:1px solid var(--glass-border);position:sticky;right:160px;z-index:21;background:var(--surface);width:140px;min-width:140px;">Mail Status</th>
+              <th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--glass-border);position:sticky;right:0;z-index:21;background:var(--surface);width:160px;min-width:160px;">Certificate Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${results.map((r, i) => {
+              const rowData = CP.rows[i] || {};
+              
+              const mailBadge = r.mailStatus === 'sent' 
+                ? `<span style="background:rgba(124,58,237,0.1);color:#a78bfa;border:1px solid rgba(124,58,237,0.2);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Sent</span>` 
+                : r.mailStatus === 'skipped' 
+                ? `<span style="background:rgba(255,255,255,0.05);color:var(--text-3);border:1px solid var(--glass-border);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Skipped</span>`
+                : `<span style="background:rgba(244,63,94,0.1);color:var(--red);border:1px solid rgba(244,63,94,0.2);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;" title="${(r.error || '').replace(/"/g, '&quot;')}">Failed</span>`;
+
+              const certLink = r.certLink 
+                ? `<a href="${r.certLink}" target="_blank" style="color:var(--cyan);text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:6px 12px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;transition:all 0.2s;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open PDF</a>` 
+                : `<span style="color:var(--red);font-size:13px;font-weight:500;" title="${(r.error || '').replace(/"/g, '&quot;')}">Failed</span>`;
+
+              return `
+              <tr style="transition:background 0.15s" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
+                <td style="padding:14px 16px;color:var(--text-3);font-size:12px;font-weight:600;border-top:1px solid rgba(255,255,255,0.04);">${i + 1}</td>
+                ${displayCols.map(h => `<td style="padding:14px 16px;color:var(--text-2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;border-top:1px solid rgba(255,255,255,0.04);" title="${(rowData[h] || '').toString().replace(/"/g, '&quot;')}">${(rowData[h] || '—')}</td>`).join('')}
+                
+                <td style="padding:14px 16px;border-left:1px solid var(--glass-border);border-top:1px solid rgba(255,255,255,0.04);position:sticky;right:160px;z-index:2;background:var(--surface);">${mailBadge}</td>
+                <td style="padding:14px 16px;border-top:1px solid rgba(255,255,255,0.04);position:sticky;right:0;z-index:2;background:var(--surface);">${certLink}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
 }
+
 
 function filterResultTable() { const q = document.getElementById('resultSearch').value.toLowerCase(); document.querySelectorAll('#resultTbody tr').forEach(tr => { tr.style.display = (!q || tr.dataset.name.toLowerCase().includes(q) || (tr.dataset.email || '').toLowerCase().includes(q)) ? '' : 'none'; }); }
 function downloadFullReport() { downloadCSV(CP.results.map(r => ({ Name: r.name, Email: r.email || '', 'Cert Status': r.certStatus, 'Email Status': r.mailStatus, 'Certificate Link': r.certLink || '', Error: r.error || '' })), `honourix-pipeline-${Date.now()}.csv`); }
