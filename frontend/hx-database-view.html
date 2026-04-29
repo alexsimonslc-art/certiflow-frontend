@@ -19,6 +19,14 @@
        DATABASE VIEW — Local Styles
     ════════════════════════════════════════════════════════ */
 
+    .title-glass-gradient {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 10%, rgba(255, 255, 255, 0.4) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+    }
+
     /* ── Page header ─────────────────────────────────────── */
     .dbv-header {
       display: flex;
@@ -1548,19 +1556,6 @@
     <div id="sidebarMount"></div>
 
     <div class="main-area">
-      <header class="top-header">
-        <div class="header-actions" id="headerActions" style="display:none">
-          <button class="btn btn-secondary btn-sm" onclick="refreshData()" id="refreshBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
-              <polyline points="23 4 23 10 17 10" />
-              <polyline points="1 20 1 14 7 14" />
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-            </svg>
-            Refresh
-          </button>
-        </div>
-      </header>
-
       <main class="page-content fade-in">
 
         <!-- Loading state -->
@@ -2125,7 +2120,6 @@
       document.getElementById('loadingState').style.display = 'none';
       document.getElementById('errorState').style.display = 'none';
       document.getElementById('mainContent').style.display = '';
-      document.getElementById('headerActions').style.display = '';
 
       // Breadcrumb + title + status
       const name = _data.formName || 'Form';
