@@ -2348,32 +2348,53 @@ async function launchPipeline() {
   const sp6 = document.getElementById('sp6');
   if (sp6) {
     sp6.innerHTML = `
+      <style>
+        #liveLog::-webkit-scrollbar { width: 6px; }
+        #liveLog::-webkit-scrollbar-track { background: transparent; }
+        #liveLog::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        #liveLog::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+        @keyframes typingLine {
+          0% { max-width: 0; opacity: 0; }
+          100% { max-width: 100%; opacity: 1; }
+        }
+        @keyframes pulseDot {
+          0%, 100% { opacity: 1; box-shadow: 0 0 8px currentColor; }
+          50% { opacity: 0.4; box-shadow: 0 0 3px currentColor; }
+        }
+      </style>
       <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
         <div style="text-align: center; margin-bottom: 8px;">
-          <div id="runPct" style="font-size: 64px; font-family: var(--font-display); font-weight: 800; color: var(--text); line-height: 1;">0%</div>
-          <div id="runStatus" style="font-size: 16px; color: var(--cyan); font-weight: 600; margin-top: 12px; letter-spacing: 0.5px;">Connecting to Google Server...</div>
+          <div id="runPct" style="font-size: 72px; font-family: var(--font-display); font-weight: 800; color: transparent; background: linear-gradient(135deg, #00d4ff, #7c3aed); -webkit-background-clip: text; background-clip: text; line-height: 1; letter-spacing: -2px; text-shadow: 0 4px 24px rgba(0,212,255,0.2);">0%</div>
+          <div id="runStatus" style="font-size: 15px; color: var(--text-2); font-weight: 500; margin-top: 12px; letter-spacing: 0.5px;">Connecting to Google Server...</div>
         </div>
 
-        <div style="display: flex; justify-content: center; gap: 40px; background: var(--surface-2); padding: 24px; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
-          <div style="text-align: center; flex: 1;">
-            <div style="font-size: 32px; font-weight: 700; color: var(--cyan); font-family: var(--font-mono);">[ <span id="runCertsDone">0</span> / <span class="totalCount">${total}</span> ]</div>
-            <div style="font-size: 14px; color: var(--text-2); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Certificates Created</div>
+        <div style="display: flex; justify-content: center; gap: 24px;">
+          <div style="flex: 1; background: var(--surface); backdrop-filter: blur(20px); padding: 24px; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; transition: transform 0.2s;">
+            <div style="font-size: 38px; font-weight: 800; color: var(--cyan); font-family: var(--font-display); line-height: 1; display:flex; align-items:baseline; gap:6px;"><span id="runCertsDone">0</span><span style="font-size:20px;color:var(--text-3);font-weight:600">/ <span class="totalCount">${total}</span></span></div>
+            <div style="font-size: 12.5px; color: var(--text-2); margin-top: 10px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">Certificates Created</div>
           </div>
-          <div style="width: 1px; background: var(--glass-border);"></div>
-          <div style="text-align: center; flex: 1;">
-            <div style="font-size: 32px; font-weight: 700; color: #a78bfa; font-family: var(--font-mono);">[ <span id="runMailsDone">0</span> / <span class="totalCount">${total}</span> ]</div>
-            <div style="font-size: 14px; color: var(--text-2); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Mails Sent</div>
+          <div style="flex: 1; background: var(--surface); backdrop-filter: blur(20px); padding: 24px; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; transition: transform 0.2s;">
+            <div style="font-size: 38px; font-weight: 800; color: #a78bfa; font-family: var(--font-display); line-height: 1; display:flex; align-items:baseline; gap:6px;"><span id="runMailsDone">0</span><span style="font-size:20px;color:var(--text-3);font-weight:600">/ <span class="totalCount">${total}</span></span></div>
+            <div style="font-size: 12.5px; color: var(--text-2); margin-top: 10px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;">Mails Sent</div>
           </div>
         </div>
 
-        <div style="height: 10px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);">
+        <div style="height: 8px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); margin-top: 8px;">
           <div id="runBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #00d4ff, #7c3aed); border-radius: 99px; transition: width 0.3s ease; box-shadow: 0 0 12px rgba(0,212,255,0.4);"></div>
         </div>
 
-        <div id="liveLog" class="styled-log" style="background:rgba(2,4,8,0.8); border:1px solid var(--glass-border); border-radius:12px; padding:20px; font-family:var(--font-mono); font-size:13.5px; color:#4a6080; height:320px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; box-shadow:inset 0 2px 16px rgba(0,0,0,0.2);"></div>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; padding-left: 4px; display:flex; align-items:center; gap:8px;">
+             <span style="width:8px;height:8px;background:var(--cyan);border-radius:50%;display:inline-block;animation:pulseDot 1.5s infinite;color:var(--cyan);"></span> Live Log
+          </div>
+          <div id="liveLog" style="background:rgba(4,8,16,0.6); backdrop-filter:blur(12px); border:1px solid var(--glass-border); border-radius:14px; padding:16px 20px; font-family:var(--font-mono); font-size:13px; height:280px; overflow-y:auto; display:flex; flex-direction:column; box-shadow:inset 0 2px 20px rgba(0,0,0,0.4); scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.15) transparent;"></div>
+        </div>
 
         <div id="doneState" style="display: none; animation: fadeInUp 0.6s ease; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--glass-border);">
-          <h2 id="doneTitle" style="font-family: var(--font-display); font-size: 36px; font-weight: 800; color: var(--text); margin-bottom: 28px; text-align: center; letter-spacing: -0.5px;">Results</h2>
+          <div style="text-align:center;margin-bottom:32px;">
+            <h2 id="doneTitle" style="font-family: var(--font-display); font-size: 42px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Results</h2>
+            <p id="doneSub" style="color:var(--text-2);font-size:15px;">Pipeline completed successfully.</p>
+          </div>
           <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 32px;">
             <button class="btn btn-primary btn-lg" onclick="downloadFullReport()" style="box-shadow: 0 4px 20px rgba(0,212,255,0.25);">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -2556,20 +2577,16 @@ function updateRunCounts(c, m, f) {
 function llLog(type, msg) {
   const win = document.getElementById('liveLog');
   if (!win) return;
-  if (!win.classList.contains('log-window')) {
-    win.classList.add('styled-log');
-    win.style.cssText = 'background:rgba(2,4,8,0.8); border:1px solid var(--glass-border); border-radius:12px; padding:16px; font-family:var(--font-mono); font-size:13px; color:#4a6080; height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; box-shadow:inset 0 2px 10px rgba(0,0,0,0.2);';
-  }
   const ts = new Date().toLocaleTimeString('en-IN', { hour12: false });
   const el = document.createElement('div');
-  let color = '#4a6080';
+  let color = '#7a90b0';
   let icon = '·';
   if (type === 'cert' || type === 'ok') { color = '#10b981'; icon = '✓'; }
   else if (type === 'mail' || type === 'info') { color = '#00d4ff'; icon = '✉'; }
   else if (type === 'err') { color = '#f43f5e'; icon = '✗'; }
   else if (type === 'warn') { color = '#f59e0b'; icon = '⚠'; }
-  el.style.cssText = `color:${color}; display:flex; align-items:flex-start; gap:8px; line-height:1.5; padding:2px 0; border-bottom:1px solid rgba(255,255,255,0.03);`;
-  el.innerHTML = `<span style="color:#2d4060;flex-shrink:0;font-size:11.5px;margin-top:2px;">[${ts}]</span><span style="flex-shrink:0;font-weight:700;">${icon}</span><span style="flex:1;">${msg}</span>`;
+  el.style.cssText = `color:${color}; display:flex; align-items:flex-start; gap:8px; line-height:1.5; padding:3px 0; border-bottom:1px solid rgba(255,255,255,0.03);`;
+  el.innerHTML = `<span style="color:#4a6080;flex-shrink:0;font-size:11.5px;margin-top:2px;">[${ts}]</span><span style="flex-shrink:0;font-weight:700;color:${color}">${icon}</span><span style="flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; animation:typingLine 0.4s cubic-bezier(0.2,1,0.3,1) forwards;">${msg}</span>`;
   win.appendChild(el);
   win.scrollTop = win.scrollHeight;
 }
@@ -2584,8 +2601,20 @@ function showDone(certs, mails, failed, total) {
   }
 
   const dt = document.getElementById('doneTitle');
+  const ds = document.getElementById('doneSub');
   if (dt) {
-    dt.textContent = failed === 0 ? 'Pipeline Complete!' : `Completed with ${failed} failure(s)`;
+    if (failed === 0) {
+      dt.textContent = 'Pipeline Complete!';
+      dt.style.background = 'linear-gradient(135deg, #10b981, #00d4ff)';
+    } else {
+      dt.textContent = \`Completed with \${failed} failure(s)\`;
+      dt.style.background = 'linear-gradient(135deg, #f59e0b, #ef4444)';
+    }
+    dt.style.webkitBackgroundClip = 'text';
+    dt.style.backgroundClip = 'text';
+  }
+  if (ds) {
+    ds.textContent = \`\${certs} certificates generated, \${mails} emails sent out of \${total} participants.\`;
   }
   
   renderResultTable(CP.results);
