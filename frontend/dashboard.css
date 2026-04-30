@@ -284,6 +284,7 @@ ul, ol { list-style: none; }
   min-height: 100vh;
   position: relative;
   z-index: 1;
+  min-width: 0; /* FIX: Prevents content from overflowing the screen on zoom/small screens */
 }
 
 /* ── Top Header ─────────────────────────────────────────────────── */
