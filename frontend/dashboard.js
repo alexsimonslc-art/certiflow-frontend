@@ -95,6 +95,14 @@ function getLocalStats() {
 
 /* ── Render Sidebar ──────────────────────────────────────────── */
 function renderSidebar(activePage) {
+  const autoCollapsedPages = new Set([
+    'cert-tool.html',
+    'mail-tool.html',
+    'combined-tool.html',
+    'mini-site.html',
+    'hx-forms.html',
+    'hx-database.html',
+  ]);
   const navItems = [
     { page: 'dashboard.html', icon: 'layout-dashboard', label: 'Overview', section: null },
     { page: 'cert-tool.html',     icon: 'file-badge',        label: 'Certificates',      section: 'Tools' },
@@ -129,7 +137,7 @@ function renderSidebar(activePage) {
     const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
     navHtml += `
       <a class="nav-item${item.page === activePage ? ' active' : ''}"
-         href="${item.page}" data-page="${item.page}">
+         href="${item.page}" data-page="${item.page}" data-nav-label="${item.label}" title="${item.label}">
         <i data-lucide="${item.icon}"></i>
         <span class="nav-label">${item.label}</span>
         ${badge}
@@ -137,7 +145,7 @@ function renderSidebar(activePage) {
   });
 
     return `
-  <aside class="sidebar" id="appSidebar">
+  <aside class="sidebar" id="appSidebar" data-auto-collapsed="${autoCollapsedPages.has(activePage) ? '1' : '0'}">
     <div class="sidebar-logo">
       <div class="logo-mark">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -238,17 +246,19 @@ function initSidebar() {
   const collapseBtn  = document.getElementById('sidebarCollapseBtn');
  
 
-  function setSidebarCollapsed(collapsed) {
+  function setSidebarCollapsed(collapsed, options = {}) {
+  const { persist = true } = options;
   if (!sidebar) return;
   sidebar.classList.toggle('collapsed', collapsed);
   if (mainArea) mainArea.classList.toggle('sidebar-collapsed', collapsed);
-  localStorage.setItem('hx_sidebar_collapsed', collapsed ? '1' : '0');
+  if (persist) localStorage.setItem('hx_sidebar_collapsed', collapsed ? '1' : '0');
   // ✅ Do NOT touch collapseBtn innerHTML — icon stays as ☰ always
   }
 
 
-  // Restore saved state
-  setSidebarCollapsed(localStorage.getItem('hx_sidebar_collapsed') === '1');
+  // Tool workspaces open collapsed by default; Campaigns and Settings keep the user's saved state.
+  const shouldAutoCollapse = sidebar?.dataset.autoCollapsed === '1';
+  setSidebarCollapsed(shouldAutoCollapse || localStorage.getItem('hx_sidebar_collapsed') === '1', { persist: false });
 
   // ✅ Wire up the hamburger button click
   if (collapseBtn) {
