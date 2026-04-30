@@ -43,6 +43,12 @@ function msb_hexRgb(hex) {
   return r ? [parseInt(r[1], 16), parseInt(r[2], 16), parseInt(r[3], 16)] : [0, 212, 255];
 }
 
+function msb_attr(value) {
+  return String(value || '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
+}
+
 /** Wrap a block section in a sectioncontainer with optional bg override */
 function msb_wrap(content, bg, extraStyle) {
   return `<div style="width:100%;${bg ? `background:${bg};` : ''}${extraStyle || ''}">${content}</div>`;
@@ -411,8 +417,12 @@ function msb_form(block, cfg) {
   const [br, bg_, bb] = msb_hexRgb(btnBg);
   const isOpen = cfg.registrationOpen !== false;
 
-  // No form connected yet
   const hasUrl = p.connectType === 'url' && p.connectUrl;
+  const hxSlug = p.hxFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '');
+  const cleanHxSlug = hxSlug ? (() => { try { return decodeURIComponent(hxSlug); } catch { return hxSlug; } })() : '';
+  const hxUrl = p.connectType === 'hxform' && cleanHxSlug
+    ? `/hx-form-view.html?f=${encodeURIComponent(cleanHxSlug)}&embed=1`
+    : '';
 
   return msb_wrap(`
 <div style="padding:48px clamp(20px,5%,56px);font-family:'${t.font}',sans-serif;text-align:center">
@@ -421,7 +431,24 @@ function msb_form(block, cfg) {
   ${p.subtitle ? `<p style="margin:-12px 0 28px;font-size:15px;color:${p.subtitleColor || t.sub};line-height:1.65">${p.subtitle}</p>` : ''}
 
   ${isOpen ? `
-  ${hasUrl ? `
+  ${hxUrl ? `
+  <!-- Connected HX Form -->
+  <div style="max-width:760px;margin:0 auto;text-align:left">
+    <div style="margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:9px;color:${t.sub};font-size:13px;font-weight:600">
+        <span style="width:9px;height:9px;border-radius:99px;background:#10b981;box-shadow:0 0 10px rgba(16,185,129,0.6)"></span>
+        ${p.hxFormName ? msb_attr(p.hxFormName) : 'HX Form connected'}
+      </div>
+      <a href="${hxUrl.replace('&embed=1', '')}" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:7px;color:${t.accent};font-size:12.5px;font-weight:700;text-decoration:none">
+        Open full form
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+    <iframe src="${hxUrl}" title="${msb_attr(p.hxFormName || 'Registration form')}" loading="lazy"
+      style="display:block;width:100%;height:${p.hxEmbedHeight || 820}px;border:1px solid ${t.border2};border-radius:18px;background:${t.bgCard};box-shadow:${t.shadow}"></iframe>
+  </div>
+  ` : hasUrl ? `
   <!-- Connected form button -->
   <a href="${p.connectUrl}" target="_blank" rel="noopener"
     style="display:inline-flex;align-items:center;gap:10px;padding:15px 36px;background:${btnBg};color:#fff;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;font-family:'${t.font}',sans-serif;box-shadow:0 6px 28px rgba(${br},${bg_},${bb},0.32);transition:opacity 0.15s">
@@ -441,7 +468,9 @@ function msb_form(block, cfg) {
   `}
   ` : `
   <div style="max-width:360px;margin:0 auto;padding:22px 20px;border-radius:12px;background:rgba(244,63,94,0.07);border:1px solid rgba(244,63,94,0.2)">
-    <div style="font-size:22px;margin-bottom:8px">🚫</div>
+    <div style="width:44px;height:44px;border-radius:12px;background:rgba(244,63,94,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2" style="width:21px;height:21px"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+    </div>
     <div style="font-size:15px;font-weight:600;color:#f43f5e;margin-bottom:4px">Registrations Closed</div>
     <div style="font-size:13px;color:${t.sub}">Registration is currently closed.</div>
   </div>`}

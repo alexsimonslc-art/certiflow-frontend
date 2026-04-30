@@ -1437,7 +1437,15 @@
           </select>
           <div class="mse-prop-hint">Only published HX Forms appear here</div>
         </div>
-        <script>setTimeout(()=>mseLoadHxForms('${block.id}','${(p.connectUrl || '').replace(/'/g, "\\'")}'),0);<\/script>`}
+        <script>setTimeout(()=>mseLoadHxForms('${block.id}','${(p.hxFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '')).replace(/'/g, "\\'")}'),0);<\/script>`}
+
+        ${(p.connectType || 'url') === 'hxform' ? `
+        <div class="mse-prop-row">
+          <div class="mse-prop-label">Embed Height</div>
+          <input class="mse-prop-input" type="number" min="520" max="1400" step="20" value="${p.hxEmbedHeight || 820}"
+            oninput="MSState.updateBlock('${block.id}',{hxEmbedHeight:Math.max(520,Math.min(1400,+this.value||820))});refreshCanvas()"/>
+          <div class="mse-prop-hint">Adjust if your form needs more vertical space on the public mini site</div>
+        </div>` : ''}
 
         <div class="mse-prop-row">
           <div class="mse-prop-label">Button Label</div>
@@ -2132,28 +2140,38 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
        TOAST
     ════════════════════════════════════════════════════════════════ */
     /* ── HX Forms live picklist ──────────────────────────────── */
-    async function mseLoadHxForms(blockId, selectedUrl) {
+    async function mseLoadHxForms(blockId, selectedSlug) {
       const sel = document.getElementById('hxfPicker_' + blockId);
       if (!sel) return;
       try {
         const token = localStorage.getItem('Honourix_token');
-        const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
+        const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxforms/list', {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const { forms } = await res.json();
         const pub = (forms || []).filter(f => f.status === 'published');
-        sel.innerHTML = '<option value="">— Select a form —</option>' +
+        sel.innerHTML = '<option value="">Select a form</option>' +
           pub.map(f => {
-            const url = window.location.origin + '/hx-form-view.html?f=' + f.slug;
-            return `<option value="${url}" ${url === selectedUrl ? 'selected' : ''}>${f.name} (${f.submissionCount} responses)</option>`;
+            const responses = f.submission_count || f.submissionCount || 0;
+            const safeName = String(f.name || '').replace(/"/g, '&quot;');
+            return `<option value="${f.slug}" data-id="${f.id}" data-name="${safeName}" ${f.slug === selectedSlug ? 'selected' : ''}>${f.name} (${responses} responses)</option>`;
           }).join('');
         if (!pub.length) sel.innerHTML = '<option value="">No published HX Forms found</option>';
       } catch {
-        sel.innerHTML = '<option value="">Could not load forms — check login</option>';
+        sel.innerHTML = '<option value="">Could not load forms - check login</option>';
       }
     }
-    function msePickHxForm(blockId, url) {
-      MSState.updateBlock(blockId, { connectUrl: url });
+    function msePickHxForm(blockId, slug) {
+      const sel = document.getElementById('hxfPicker_' + blockId);
+      const opt = sel?.selectedOptions?.[0];
+      const url = slug ? window.location.origin + '/hx-form-view.html?f=' + slug : '';
+      MSState.updateBlock(blockId, {
+        connectType: 'hxform',
+        hxFormId: opt?.dataset.id || '',
+        hxFormSlug: slug || '',
+        hxFormName: opt?.dataset.name || opt?.textContent?.replace(/\s*\([^)]*\)\s*$/, '') || '',
+        connectUrl: url,
+      });
       refreshCanvas();
     }
 
