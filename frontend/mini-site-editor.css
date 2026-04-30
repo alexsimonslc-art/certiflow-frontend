@@ -437,6 +437,12 @@ textarea {
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.85);
 }
 
+.mse-analytics-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    LEFT PANEL — Block Palette + Layers
 ═══════════════════════════════════════════════════════════════ */
@@ -2206,6 +2212,10 @@ textarea {
   border: 1px solid rgba(16, 185, 129, 0.28);
   font-size: 12px;
   font-weight: 700;
+}
+.mse-ga-badge svg {
+  width: 13px;
+  height: 13px;
 }
 .mse-ga-remove { color: var(--text-3); font-size: 12px; font-weight: 700; transition: color 0.25s var(--ease); }
 .mse-ga-remove:hover { color: var(--red); }

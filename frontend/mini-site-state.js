@@ -370,7 +370,7 @@ const MSState = {
     const token = localStorage.getItem('Honourix_token') || '';
     if (!token) return; // not logged in — skip silently
 
-    await fetch(`${MSS_API}/save`, {
+    const res = await fetch(`${MSS_API}/save`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({
@@ -382,6 +382,10 @@ const MSState = {
         config:           configPayload,
       }),
     });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `Server error ${res.status}`);
+    }
   },
 
   /* ── Block CRUD ─── */

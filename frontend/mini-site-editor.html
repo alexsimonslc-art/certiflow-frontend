@@ -91,7 +91,13 @@
 
         <button class="mse-analytics-btn" id="analyticsBtn" onclick="openGAModal()" title="Connect Google Analytics">
           <span class="mse-analytics-dot"></span>
-          <span>📊 Analytics</span>
+          <svg class="mse-analytics-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v18h18" />
+            <rect x="7" y="12" width="3" height="5" rx="1" />
+            <rect x="12" y="8" width="3" height="9" rx="1" />
+            <rect x="17" y="5" width="3" height="12" rx="1" />
+          </svg>
+          <span>Analytics</span>
         </button>
         <button class="mse-save-btn" onclick="doSave()" title="Save (Ctrl+S)">Save</button>
         <button class="mse-publish-btn" onclick="openPublish()" id="publishBtn">
@@ -739,7 +745,12 @@
 
         <div class="mse-ga-input-section" id="gaInputSection">
           <div class="mse-ga-connected-row" id="gaConnectedRow">
-            <span class="mse-ga-badge">✅ Connected</span>
+            <span class="mse-ga-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              Connected
+            </span>
             <button class="mse-ga-remove" onclick="removeGAId()">Remove</button>
           </div>
           <label class="mse-ga-label" for="gaMeasurementInput">Your GA4 Measurement ID</label>
@@ -749,7 +760,14 @@
           </div>
           <div class="mse-ga-message" id="gaMessage"></div>
           <div class="mse-ga-helper">Your visitors' data goes only to YOUR Google Analytics account. Other users cannot see your analytics.</div>
-          <button class="mse-btn mse-btn-secondary mse-ga-dashboard" onclick="openGADashboard()">Open Analytics Dashboard ↗</button>
+          <button class="mse-btn mse-btn-secondary mse-ga-dashboard" onclick="openGADashboard()">
+            Open Analytics Dashboard
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -1580,7 +1598,7 @@
       document.getElementById('gaStepDesc').textContent = step.desc;
       document.getElementById('gaBackBtn').disabled = gaStepIndex === 0;
       document.getElementById('gaBackBtn').style.opacity = gaStepIndex === 0 ? '0.45' : '1';
-      document.getElementById('gaNextBtn').textContent = gaStepIndex === GA_STEPS.length - 1 ? 'Finish →' : 'Next';
+      document.getElementById('gaNextBtn').textContent = gaStepIndex === GA_STEPS.length - 1 ? 'Finish' : 'Next';
     }
 
     function gaNextStep() {
@@ -1616,10 +1634,10 @@
       const value = (input.value || '').trim().toUpperCase();
       input.value = value;
       if (!/^G-[A-Z0-9]{6,12}$/.test(value)) {
-        setGAMessage('⚠️ Invalid format. Should look like G-ABC123XYZ', 'error');
+        setGAMessage('Invalid format. Should look like G-ABC123XYZ', 'error');
         return;
       }
-      setGAMessage('✅ Valid format! Saving...', 'success');
+      setGAMessage('Valid format. Saving...', 'success');
       MSState.updateConfig({ gaId: value });
       MSState.save();
       const ok = await MSState.saveToBackendNow();
@@ -1629,8 +1647,8 @@
       }
       updateAnalyticsButton();
       document.getElementById('gaConnectedRow').style.display = 'flex';
-      setGAMessage('🎉 Google Analytics connected!', 'success');
-      mseToast('✅ Google Analytics connected and saved!', 'success');
+      setGAMessage('Google Analytics connected.', 'success');
+      mseToast('Google Analytics connected and saved.', 'success');
     }
 
     async function removeGAId() {
@@ -2048,7 +2066,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         updateSaveStatus('saved');
         document.getElementById('saveStatusText').textContent = 'Live';
         document.getElementById('saveStatus').classList.add('live');
-        mseToast('Site published! 🎉', 'success', 4000);
+        mseToast('Site published!', 'success', 4000);
         setTimeout(closePublish, 2000);
 
       } catch (err) {
