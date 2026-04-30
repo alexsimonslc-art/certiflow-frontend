@@ -275,6 +275,22 @@
       if (window.MSForm?.boot) window.MSForm.boot();
     }
 
+    function injectGA4(gaId) {
+      if (!gaId || !/^G-[A-Z0-9]+$/.test(gaId)) return;
+      if (document.querySelector(`script[data-ga4-id="${gaId}"]`)) return;
+
+      const s = document.createElement('script');
+      s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`;
+      s.async = true;
+      s.dataset.ga4Id = gaId;
+      document.head.appendChild(s);
+
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', gaId);
+    }
+
     /* ════════════════════════════════════════════════════════════════
        TOPBAR + FOOTER WIRING
     ════════════════════════════════════════════════════════════════ */
@@ -383,7 +399,7 @@
       try {
         const { data, error } = await sb
           .from('mini_sites')
-          .select('id, name, slug, status, config, registration_open, submission_count')
+          .select('id, name, slug, status, config, registration_open, submission_count, ga_id')
           .eq('slug', slug)
           .eq('status', 'published')
           .single();
@@ -395,6 +411,7 @@
             slug:             data.slug,
             registrationOpen: data.registration_open !== false,
             submissionCount:  data.submission_count || 0,
+            gaId:             data.ga_id || null,
             config:           { ...data.config, blocks: data.config?.blocks || [] },
           };
           console.info('[site.html] Loaded from Supabase (fast path)');
@@ -435,6 +452,7 @@
               slug:             local.slug,
               registrationOpen: local.config?.registrationOpen !== false,
               submissionCount:  0,
+              gaId:             local.gaId || local.ga_id || local.config?.gaId || null,
               config:           { ...local.config, blocks: local.config?.blocks || [] },
             };
           }
@@ -455,6 +473,7 @@
       window.__MS_SHARE_URL = window.location.href;
 
       applyTheme(siteData.config || {});
+      injectGA4(siteData.gaId || siteData.ga_id || siteData.config?.gaId);
       loadFont(siteData.config?.fontFamily);
       setMeta(siteData.config || { name: siteData.name }, siteData.config?.blocks || []);
       renderSite(siteData);

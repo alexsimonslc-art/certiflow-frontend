@@ -2703,7 +2703,8 @@ body::after {
 
 .sidebar.collapsed {
   width: var(--sidebar-collapsed-w) !important;
-  overflow: visible;
+  /* Keep width change */
+  /* Remove overflow: visible; to allow sidebar-nav to scroll */
 }
 
 .sidebar.collapsed .logo-name {
@@ -2743,6 +2744,8 @@ body::after {
   border-radius: 12px;
   background-clip: padding-box;
   box-sizing: border-box;
+  /* Create a new stacking context to prevent rendering glitches with tooltips over complex backgrounds */
+  isolation: isolate;
 }
 
 .sidebar.collapsed .nav-item:hover {

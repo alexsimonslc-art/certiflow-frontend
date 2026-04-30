@@ -282,6 +282,7 @@ const MSState = {
           slug:      backendSite.slug,
           status:    backendSite.status,
           updatedAt: backendSite.updated_at,
+          gaId:      backendSite.ga_id || null,
           config:    backendSite.config || {},
         };
         if (idx >= 0) local[idx] = merged;
@@ -315,6 +316,7 @@ const MSState = {
       activePalette:    site.config?.activePalette || null,
       activeFontPair:   site.config?.activeFontPair || null,
       passConfig:       site.config?.passConfig || null,
+      gaId:             site.gaId || site.ga_id || site.config?.gaId || null,
       status:           site.status || 'draft',
     };
     this.blocks  = (site.config?.blocks || []).map(b => JSON.parse(JSON.stringify(b)));
@@ -349,6 +351,7 @@ const MSState = {
       slug:      this.config.slug,
       status:    this.config.status,
       updatedAt: new Date().toISOString(),
+      gaId:      this.config.gaId || null,
       config:    configPayload,
     };
     localStorage.setItem(mss_storageKey(), JSON.stringify(sites));
@@ -375,6 +378,7 @@ const MSState = {
         name:             this.config.name,
         slug:             this.config.slug,
         status:           this.config.status || 'draft',
+        gaId:             this.config.gaId || null,
         config:           configPayload,
       }),
     });
@@ -482,6 +486,7 @@ const MSState = {
         name:             this.config.name,
         status:           'published',
         registrationOpen: this.config.registrationOpen !== false,
+        gaId:             this.config.gaId || null,
         config:           configPayload,
       }),
     });

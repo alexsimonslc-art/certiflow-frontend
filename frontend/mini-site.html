@@ -576,6 +576,14 @@
       const statusLabel = site.status === 'published' ? 'Live' : 'Draft';
       const updated = timeAgo(site.updatedAt);
       const url = `honourix.app/s/${site.slug}`;
+      const hasGA = !!(site.gaId || site.ga_id || site.config?.gaId);
+      const gaAction = hasGA
+        ? `<button class="ms-ga-chip connected" onclick="openAnalyticsDashboard(event)" title="Open Google Analytics">
+            <span class="ms-ga-dot"></span><span>📊 GA Connected · Open Analytics</span>
+          </button>`
+        : `<button class="ms-ga-chip" onclick="openAnalyticsSetup(event,'${site.id}')" title="Connect Google Analytics">
+            <span>📊 Analytics — Not connected</span>
+          </button>`;
 
       return `<div class="ms-site-card" data-id="${site.id}">
     <div class="ms-site-card-preview" style="background:${getTemplateBg(site.template)}">
@@ -594,6 +602,7 @@
       </div>
     </div>
     <div class="ms-site-card-actions">
+      ${gaAction}
       <button class="ms-site-action-btn" onclick="openEditor('${site.id}')" title="Edit">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         Edit
@@ -807,6 +816,7 @@
         slug,
         template: pendingTemplate,
         status: 'draft',
+        gaId: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         config: getDefaultConfig(pendingTemplate, name),
@@ -822,6 +832,16 @@
     /* ── Site actions ── */
     function openEditor(id) {
       window.location.href = `mini-site-editor.html?id=${id}`;
+    }
+
+    function openAnalyticsSetup(event, id) {
+      event.stopPropagation();
+      window.location.href = `mini-site-editor.html?id=${id}&analytics=1`;
+    }
+
+    function openAnalyticsDashboard(event) {
+      event.stopPropagation();
+      window.open('https://analytics.google.com', '_blank', 'noopener');
     }
 
     function copyLink(slug) {
@@ -927,6 +947,7 @@
           slug: s.slug,
           status: s.status,
           updatedAt: s.updated_at,
+          gaId: s.ga_id || null,
           config: s.config || {},
         }));
 
