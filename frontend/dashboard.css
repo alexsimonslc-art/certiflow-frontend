@@ -1429,6 +1429,7 @@ body::after {
 .sidebar.collapsed .nav-item {
   justify-content: center;
   padding: 11px;
+  overflow: visible;
 }
 
 .sidebar.collapsed .nav-item::after {
@@ -1455,20 +1456,11 @@ body::after {
   z-index: 200;
 }
 
-.sidebar.collapsed .nav-item::before {
-  z-index: 1;
-}
-
 .sidebar.collapsed .nav-item:hover::after,
 .sidebar.collapsed .nav-item:focus-visible::after {
   opacity: 1;
   visibility: visible;
   transform: translateY(-50%) translateX(0);
-}
-
-.sidebar.collapsed .nav-item.active:hover::before,
-.sidebar.collapsed .nav-item.active:focus-visible::before {
-  content: '';
 }
 .sidebar.collapsed .nav-item i,
 .sidebar.collapsed .nav-item svg {

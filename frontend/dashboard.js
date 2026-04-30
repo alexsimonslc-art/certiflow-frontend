@@ -137,7 +137,7 @@ function renderSidebar(activePage) {
     const badge = item.badge ? `<span class="nav-badge">${item.badge}</span>` : '';
     navHtml += `
       <a class="nav-item${item.page === activePage ? ' active' : ''}"
-         href="${item.page}" data-page="${item.page}" data-nav-label="${item.label}" title="${item.label}">
+         href="${item.page}" data-page="${item.page}" data-nav-label="${item.label}" aria-label="${item.label}">
         <i data-lucide="${item.icon}"></i>
         <span class="nav-label">${item.label}</span>
         ${badge}
