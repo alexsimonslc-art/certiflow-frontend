@@ -1798,6 +1798,25 @@
                     </svg>
                     <h3>No results</h3>
                     <p>No responses match your search or filters.</p>
+              <div style="display:grid; grid-template-columns:minmax(0, 1fr); width:100%;">
+                <div class="dbv-table-wrap">
+                  <table class="dbv-table" id="dataTable">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                  </table>
+                  <div id="tableEmpty" style="display:none">
+                    <div class="dbv-table-empty">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                      </svg>
+                      <h3>No results</h3>
+                      <p>No responses match your search or filters.</p>
+                    </div>
+                  </div>
+                  <div class="dbv-pagination" id="paginationBar" style="display:none">
+                    <div class="dbv-pag-info" id="pagInfo"></div>
+                    <div class="dbv-pag-btns" id="pagBtns"></div>
                   </div>
                 </div>
                 <div class="dbv-pagination" id="paginationBar" style="display:none">

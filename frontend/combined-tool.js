@@ -2359,26 +2359,22 @@ function rvRenderCert(idx) {
 function buildReview() {
   const n = CP.rows.length, mappings = getAllMappings(), camp = document.getElementById('cpName').value;
 
-  // Stats row
-  const rvP = document.getElementById('rvParticipants');
-  const rvC = document.getElementById('rvCerts');
-  const rvE = document.getElementById('rvEmails');
-  if (rvP) { rvP.textContent = n; rvP.style.fontFamily = 'var(--font-display)'; rvP.style.fontSize = '26px'; rvP.style.fontWeight = '700'; rvP.style.color = 'var(--text)'; }
-  if (rvC) { rvC.textContent = n; rvC.style.fontFamily = 'var(--font-display)'; rvC.style.fontSize = '26px'; rvC.style.fontWeight = '700'; rvC.style.color = 'var(--text)'; }
-  if (rvE) { rvE.textContent = n; rvE.style.fontFamily = 'var(--font-display)'; rvE.style.fontSize = '26px'; rvE.style.fontWeight = '700'; rvE.style.color = 'var(--text)'; }
-
   // Email preview — first recipient
   rvPrevIdx = 0;
   rvRenderAt(0);
+
+  const b64clean = ED.bgBase64 ? ED.bgBase64.split(',')[1] || ED.bgBase64 : null;
+  const bgKB = b64clean ? Math.round(b64clean.length * 0.75 / 1024) : 0;
+  const estMB = bgKB > 0 ? ((bgKB * n * 1.15) / 1024).toFixed(1) : '—';
 
   // Config summary table
   const rows = [
     { k: 'Campaign', v: camp }, { k: 'Participants', v: String(n) },
     { k: 'Data source', v: CP.sheetId ? `Sheet (${CP.sheetId.slice(0, 18)}…)` : CP.srcType === 'manual' ? 'Manual entry' : 'Uploaded file' },
     { k: 'Name column', v: mappings.name }, { k: 'Email column', v: mappings.email },
-    { k: 'Custom mappings', v: `${CP.customMappings.filter(m => m.col && m.ph).length} field(s)` },
     { k: 'Certificate fields', v: `${ED.fields.length} text field(s)` },
     { k: 'Canvas size', v: `${ED.w} × ${ED.h} px` },
+    { k: 'Est. total size', v: `~${estMB} MB (approx)` },
     { k: 'Email subject', v: document.getElementById('mSubject')?.value || '—' },
     { k: 'Write links back', v: document.getElementById('writeBackToggle')?.classList.contains('on') ? 'Yes' : 'No' },
   ];
