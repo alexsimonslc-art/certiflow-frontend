@@ -22,7 +22,7 @@ function getUser() {
 }
 
 function requireAuth() {
-  const params   = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.search);
   const urlToken = params.get('token');
   if (urlToken) {
     localStorage.setItem('Honourix_token', urlToken);
@@ -74,22 +74,22 @@ async function apiFetch(path, options = {}) {
 
 /* ── Local Stats ─────────────────────────────────────────────── */
 function getLocalStats() {
-  const campaigns    = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
-  const totalCerts   = campaigns.filter(c => c.type==='cert'||c.type==='combined').reduce((s,c)=>s+(c.success||0),0);
-  const totalMails   = campaigns.filter(c => c.type==='mail'||c.type==='combined').reduce((s,c)=>s+(c.success||0),0);
-  const totalSuccess = campaigns.reduce((s,c)=>s+(c.success||0),0);
-  const totalItems   = campaigns.reduce((s,c)=>s+(c.total||0),0);
-  const successRate  = totalItems > 0 ? Math.round(totalSuccess/totalItems*100) : 0;
-  const now          = new Date();
-  const thisMonth    = campaigns.filter(c => {
+  const campaigns = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
+  const totalCerts = campaigns.filter(c => c.type === 'cert' || c.type === 'combined').reduce((s, c) => s + (c.success || 0), 0);
+  const totalMails = campaigns.filter(c => c.type === 'mail' || c.type === 'combined').reduce((s, c) => s + (c.success || 0), 0);
+  const totalSuccess = campaigns.reduce((s, c) => s + (c.success || 0), 0);
+  const totalItems = campaigns.reduce((s, c) => s + (c.total || 0), 0);
+  const successRate = totalItems > 0 ? Math.round(totalSuccess / totalItems * 100) : 0;
+  const now = new Date();
+  const thisMonth = campaigns.filter(c => {
     const d = new Date(c.date);
-    return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   });
   return {
     totalCerts, totalMails, successRate,
     totalCampaigns: campaigns.length,
-    monthCerts: thisMonth.filter(c=>c.type==='cert'||c.type==='combined').reduce((s,c)=>s+(c.success||0),0),
-    monthMails: thisMonth.filter(c=>c.type==='mail'||c.type==='combined').reduce((s,c)=>s+(c.success||0),0),
+    monthCerts: thisMonth.filter(c => c.type === 'cert' || c.type === 'combined').reduce((s, c) => s + (c.success || 0), 0),
+    monthMails: thisMonth.filter(c => c.type === 'mail' || c.type === 'combined').reduce((s, c) => s + (c.success || 0), 0),
   };
 }
 
@@ -105,14 +105,14 @@ function renderSidebar(activePage) {
   ]);
   const navItems = [
     { page: 'dashboard.html', icon: 'layout-dashboard', label: 'Overview', section: null },
-    { page: 'cert-tool.html',     icon: 'file-badge',        label: 'Certificates',      section: 'Tools' },
-    { page: 'mail-tool.html',     icon: 'mail',              label: 'Bulk Mail',         section: null },
-    { page: 'combined-tool.html', icon: 'zap',               label: 'Combined Pipeline', section: null },
-    { page: 'mini-site.html',     icon: 'layout-template',   label: 'Mini Sites',        section: null },
-    { page: 'hx-forms.html',      icon: 'file-text',         label: 'HX Forms',          section: null },
-    { page: 'hx-database.html',    icon: 'database',          label: 'Database',          section: null },
-    { page: 'campaigns.html',     icon: 'folder-open',       label: 'Campaigns',         section: 'Manage' },
-    { page: 'settings.html',      icon: 'settings',          label: 'Settings',          section: null },
+    { page: 'cert-tool.html', icon: 'file-badge', label: 'Certificates', section: 'Tools' },
+    { page: 'mail-tool.html', icon: 'mail', label: 'Bulk Mail', section: null },
+    { page: 'combined-tool.html', icon: 'zap', label: 'Combined Pipeline', section: null },
+    { page: 'mini-site.html', icon: 'layout-template', label: 'Mini Sites', section: null },
+    { page: 'hx-forms.html', icon: 'file-text', label: 'HX Forms', section: null },
+    { page: 'hx-database.html', icon: 'database', label: 'Database', section: null },
+    { page: 'campaigns.html', icon: 'folder-open', label: 'Campaigns', section: 'Manage' },
+    { page: 'settings.html', icon: 'settings', label: 'Settings', section: null },
   ];
 
   let navHtml = '';
@@ -144,7 +144,7 @@ function renderSidebar(activePage) {
       </a>`;
   });
 
-    return `
+  return `
   <aside class="sidebar" id="appSidebar" data-auto-collapsed="${autoCollapsedPages.has(activePage) ? '1' : '0'}">
     <div class="sidebar-logo">
       <div class="logo-mark">
@@ -197,11 +197,11 @@ function initSidebar() {
   if (!user) return;
 
   // Populate user info
-  const nameEl   = document.getElementById('sidebarUserName');
+  const nameEl = document.getElementById('sidebarUserName');
   const avatarEl = document.getElementById('sidebarAvatar');
-  const planEl   = document.getElementById('sidebarUserPlan');
-  if (nameEl)   nameEl.textContent = user.name || user.email.split('@')[0];
-  if (planEl)   planEl.textContent = user.accountType === 'organization' ? 'Organization' : 'Personal';
+  const planEl = document.getElementById('sidebarUserPlan');
+  if (nameEl) nameEl.textContent = user.name || user.email.split('@')[0];
+  if (planEl) planEl.textContent = user.accountType === 'organization' ? 'Organization' : 'Personal';
   if (avatarEl) {
     avatarEl.innerHTML = user.picture
       ? `<img src="${user.picture}" alt="avatar"/>`
@@ -223,7 +223,7 @@ function initSidebar() {
         pill.textContent = 'PRO';
         wrap.appendChild(pill);
       }
-    } catch (_) {}
+    } catch (_) { }
   })();
 
   // Logout button → show confirm dialog
@@ -241,18 +241,18 @@ function initSidebar() {
   }
 
   // ── Sidebar collapse / expand ──
-  const sidebar      = document.getElementById('appSidebar');
-  const mainArea     = document.querySelector('.main-area');
-  const collapseBtn  = document.getElementById('sidebarCollapseBtn');
- 
+  const sidebar = document.getElementById('appSidebar');
+  const mainArea = document.querySelector('.main-area');
+  const collapseBtn = document.getElementById('sidebarCollapseBtn');
+
 
   function setSidebarCollapsed(collapsed, options = {}) {
-  const { persist = true } = options;
-  if (!sidebar) return;
-  sidebar.classList.toggle('collapsed', collapsed);
-  if (mainArea) mainArea.classList.toggle('sidebar-collapsed', collapsed);
-  if (persist) localStorage.setItem('hx_sidebar_collapsed', collapsed ? '1' : '0');
-  // ✅ Do NOT touch collapseBtn innerHTML — icon stays as ☰ always
+    const { persist = true } = options;
+    if (!sidebar) return;
+    sidebar.classList.toggle('collapsed', collapsed);
+    if (mainArea) mainArea.classList.toggle('sidebar-collapsed', collapsed);
+    if (persist) localStorage.setItem('hx_sidebar_collapsed', collapsed ? '1' : '0');
+    // ✅ Do NOT touch collapseBtn innerHTML — icon stays as ☰ always
   }
 
 
@@ -347,7 +347,7 @@ function showConfirm(title, message, onYes) {
     </div>`;
 
   document.body.appendChild(overlay);
-  document.getElementById('cfNo').onclick  = () => overlay.remove();
+  document.getElementById('cfNo').onclick = () => overlay.remove();
   document.getElementById('cfYes').onclick = () => { overlay.remove(); onYes(); };
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
 }
@@ -358,10 +358,10 @@ function toast(message, type = 'info', duration = 3500) {
   if (existing) existing.remove();
 
   const colors = {
-    success: { bg:'rgba(16,185,129,0.12)', border:'rgba(16,185,129,0.3)', icon:'#10b981', sym:'✓' },
-    error:   { bg:'rgba(244,63,94,0.12)',  border:'rgba(244,63,94,0.3)',  icon:'#f43f5e', sym:'✕' },
-    info:    { bg:'rgba(0,212,255,0.10)',  border:'rgba(0,212,255,0.25)', icon:'#00d4ff', sym:'ℹ' },
-    warn:    { bg:'rgba(245,158,11,0.12)', border:'rgba(245,158,11,0.3)', icon:'#f59e0b', sym:'⚠' },
+    success: { bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.3)', icon: '#10b981', sym: '✓' },
+    error: { bg: 'rgba(244,63,94,0.12)', border: 'rgba(244,63,94,0.3)', icon: '#f43f5e', sym: '✕' },
+    info: { bg: 'rgba(0,212,255,0.10)', border: 'rgba(0,212,255,0.25)', icon: '#00d4ff', sym: 'ℹ' },
+    warn: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: '#f59e0b', sym: '⚠' },
   };
   const c = colors[type] || colors.info;
 
@@ -394,17 +394,17 @@ function fmtNum(n) {
 }
 
 function formatDate(iso) {
-  return new Date(iso).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+  return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function downloadCSV(data, filename) {
   if (!data || !data.length) return;
   const headers = Object.keys(data[0]);
-  const rows    = data.map(row =>
-    headers.map(h => `"${(row[h]||'').toString().replace(/"/g,'""')}"`).join(',')
+  const rows = data.map(row =>
+    headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(',')
   );
-  const blob = new Blob([[headers.join(','), ...rows].join('\n')], { type:'text/csv' });
-  const a    = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: filename });
+  const blob = new Blob([[headers.join(','), ...rows].join('\n')], { type: 'text/csv' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: filename });
   a.click();
   URL.revokeObjectURL(a.href);
 }
@@ -418,6 +418,29 @@ function copyToClipboard(text, label = 'Copied') {
 /* ── DOMContentLoaded — runs on every page ───────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof lucide !== 'undefined') lucide.createIcons();
+
+  // Add smooth page transition to eliminate the "glitch" of reloading
+  const navLinks = document.querySelectorAll('.sidebar a.nav-item, .sidebar a.user-row-info');
+  navLinks.forEach(link => {
+    link.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+
+      // Ignore links that don't navigate away or open in new tabs
+      if (!href || href.startsWith('#') || this.target === '_blank') {
+        return;
+      }
+
+      // If we are already on the page, do nothing.
+      if (window.location.pathname.endsWith(href)) {
+        e.preventDefault();
+        return;
+      }
+
+      e.preventDefault();
+      document.body.classList.add('page-fade-out');
+      setTimeout(() => { window.location.href = href; }, 300); // This duration should match the CSS animation
+    });
+  });
 });
 
 /* ── Google Picker ───────────────────────────────────────────── */
@@ -429,9 +452,9 @@ async function openGooglePicker(type, callback) {
 
   gapi.load('picker', () => {
     const mimeTypes = {
-      sheet:        'application/vnd.google-apps.spreadsheet',
+      sheet: 'application/vnd.google-apps.spreadsheet',
       presentation: 'application/vnd.google-apps.presentation',
-      folder:       'application/vnd.google-apps.folder',
+      folder: 'application/vnd.google-apps.folder',
     };
     const view = type === 'folder'
       ? new google.picker.DocsView(google.picker.ViewId.FOLDERS).setSelectFolderEnabled(true)
@@ -468,14 +491,14 @@ document.addEventListener('keydown', (e) => {
 
     // Replace '.collapse-btn' with the actual ID or Class of your collapse button!
     const collapseBtn = document.querySelector('.collapse-btn') || document.getElementById('sidebarCollapseBtn');
-    
+
     if (collapseBtn) {
       collapseBtn.click(); // Fakes a mouse click on the button
     } else {
       // Fallback: Directly toggle the collapsed class on the sidebar itself
       const sidebar = document.querySelector('.app-sidebar');
       if (sidebar) {
-        sidebar.classList.toggle('collapsed'); 
+        sidebar.classList.toggle('collapsed');
       }
     }
   }
