@@ -2713,6 +2713,9 @@ body::after {
   box-sizing: border-box;
   /* Create a new stacking context to prevent rendering glitches with tooltips over complex backgrounds */
   isolation: isolate;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
 }
 
 .sidebar.collapsed .nav-item:hover {
@@ -2720,6 +2723,13 @@ body::after {
   background: transparent !important;
   color: var(--text) !important;
   box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+.sidebar.collapsed .nav-item:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
 }
 
 .sidebar.collapsed .nav-item::after {
