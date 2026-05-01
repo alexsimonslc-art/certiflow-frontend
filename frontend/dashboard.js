@@ -419,6 +419,12 @@ function copyToClipboard(text, label = 'Copied') {
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 
+  // Add a specific class to the body for the overview page for custom styling
+  const currentPage = window.location.pathname.split('/').pop();
+  if (currentPage === 'dashboard.html' || currentPage === '') {
+    document.body.classList.add('is-overview-page');
+  }
+
   // Add smooth page transition to eliminate the "glitch" of reloading
   const navLinks = document.querySelectorAll('.sidebar a.nav-item, .sidebar a.user-row-info');
   navLinks.forEach(link => {

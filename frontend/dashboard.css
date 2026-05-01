@@ -3459,3 +3459,12 @@ select optgroup {
   transform: translateY(-2px) !important;
   color: #fff !important;
 }
+
+/* ── Overview Page Gradient Background ────────────────────────── */
+/* This adds a subtle, professional gradient to the overview page,
+   keeping the background mostly dark as requested. */
+body.is-overview-page::before {
+  background:
+    radial-gradient(ellipse 80% 70% at 15% 15%, rgba(0, 212, 255, 0.12) 0%, rgba(124, 58, 237, 0.05) 50%, transparent 70%) !important;
+  opacity: 1 !important;
+}
