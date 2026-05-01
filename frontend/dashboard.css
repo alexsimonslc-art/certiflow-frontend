@@ -269,6 +269,16 @@ ol {
   padding: 4px 2px;
 }
 
+.user-row:hover {
+  background: var(--glass);
+}
+
+/* When collapsed, remove horizontal padding from the footer to allow true centering */
+.sidebar.collapsed .sidebar-footer {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .user-avatar {
   width: 30px;
   height: 30px;
@@ -2744,45 +2754,6 @@ body::after {
   isolation: isolate;
 }
 
-.sidebar.collapsed .nav-item:hover {
-  background: rgba(0, 212, 255, 0.08) !important;
-  color: var(--text) !important;
-  box-shadow: inset 0 0 0 1px rgba(0, 212, 255, 0.16);
-}
-
-.sidebar.collapsed .nav-item::after {
-  content: attr(data-nav-label);
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  transform: translateY(-50%) translateX(-4px);
-  min-width: max-content;
-  max-width: 220px;
-  padding: 7px 10px;
-  border-radius: 7px;
-  background: rgba(6, 12, 24, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
-  color: var(--text);
-  font-size: 12.5px;
-  font-weight: 600;
-  line-height: 1.2;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
-  z-index: 200;
-  backdrop-filter: none;
-  /* Prevents rendering glitches with filtered backgrounds */
-}
-
-.sidebar.collapsed .nav-item:hover::after,
-.sidebar.collapsed .nav-item:focus-visible::after {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(-50%) translateX(0);
-}
-
 .sidebar.collapsed .nav-item i,
 .sidebar.collapsed .nav-item svg {
   margin: 0;
@@ -2853,6 +2824,10 @@ body::after {
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.22s ease;
+}
+
+.user-row:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
 }
 
 /* ── Red Logout Button ──────────────────────────────────────────── */
@@ -3055,7 +3030,7 @@ body::after {
   gap: 9px;
   flex: 1;
   min-width: 0;
-  padding: 1px 8px;
+  padding: 2px 8px;
   border-radius: var(--radius-sm);
   text-decoration: none;
   cursor: pointer;
@@ -3302,28 +3277,34 @@ select optgroup {
 
 .sidebar.collapsed .user-row {
   justify-content: center !important;
-  padding: 0 !important;
+  padding: 4px !important;
 }
 
 .sidebar.collapsed .user-row-info {
   flex: none !important;
   justify-content: center !important;
-  padding: 4px !important;
-  width: 100% !important;
+  /* Make it a fixed-size square for robust centering */
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  border-radius: 10px;
+  margin: 4px 0;
+  /* Add some vertical margin for spacing */
 }
 
 .sidebar.collapsed .user-avatar {
-  margin: 0 auto !important;
+  /* Centering is now handled by the parent flex container */
+  margin: 0 !important;
 }
 
 /* ── Page Transition Effect ─────────────────────────────────────── */
 /* This creates a smooth fade-in/fade-out between page loads,
    hiding the abrupt content reload and making navigation feel seamless. */
-.main-area {
+body {
   animation: pageFadeIn 0.4s ease-out;
 }
 
-.main-area.page-fade-out {
+body.page-fade-out {
   animation: pageFadeOut 0.3s ease-in forwards;
 }
 
