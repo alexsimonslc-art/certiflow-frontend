@@ -2701,8 +2701,8 @@ body::after {
 
 .sidebar.collapsed {
   width: var(--sidebar-collapsed-w) !important;
-  /* Keep width change */
-  /* Remove overflow: visible; to allow sidebar-nav to scroll */
+  /* Allow tooltips to pop out from the collapsed sidebar */
+  overflow: visible !important;
 }
 
 .sidebar.collapsed .logo-name {
