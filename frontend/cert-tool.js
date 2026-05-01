@@ -213,7 +213,7 @@ async function loadHxFormData(formId) {
     el.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);margin-bottom:16px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
-        <span style="font-size:14px"><strong>${CP.rows.length} responses</strong> imported from <strong>${data.formName}</strong></span>
+        <span style="font-size:14px"><strong>${CS.rows.length} responses</strong> imported from <strong>${data.formName}</strong></span>
       </div>
       <div style="width:100%;max-width:100%;box-sizing:border-box;overflow-x:auto;overflow-y:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;display:block">
         <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left;table-layout:auto">
