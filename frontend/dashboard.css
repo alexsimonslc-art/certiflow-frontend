@@ -2702,6 +2702,7 @@ body::after {
 
 .sidebar.collapsed {
   width: var(--sidebar-collapsed-w) !important;
+  overflow: visible !important;
   /* Keep width change */
   /* Remove overflow: visible; to allow sidebar-nav to scroll */
 }
