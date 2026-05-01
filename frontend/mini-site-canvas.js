@@ -164,9 +164,9 @@ function msc_miniTextarea(label, value, oninput, placeholder) {
 function msc_themeDefaults() {
   const isDark = MSState.config.theme !== 'light';
   return {
-    text:   isDark ? '#eef4ff' : '#1e293b',
-    sub:    isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)',
-    muted:  isDark ? 'rgba(255,255,255,0.3)'  : 'rgba(0,0,0,0.3)',
+    text: isDark ? '#eef4ff' : '#1e293b',
+    sub: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)',
+    muted: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
     accent: MSState.config.accentColor || '#00d4ff',
   };
 }
@@ -174,8 +174,8 @@ function msc_themeDefaults() {
 /** Swatch + hex input + Reset row for a single block text-colour prop. */
 function msc_colorRow(bid, prop, label, defaultColor) {
   const block = MSState.getBlock(bid);
-  const val   = (block?.props[prop]) || '';
-  const disp  = val || defaultColor || '#888888';
+  const val = (block?.props[prop]) || '';
+  const disp = val || defaultColor || '#888888';
   return `
 <div class="mse-prop-row" style="margin-bottom:6px">
   <div class="mse-prop-label">${label}</div>
@@ -278,9 +278,9 @@ function renderBlockProps(block) {
       onclick="msc_set('${bid}','logoBorder',${p.logoBorder === false});updateRightPanel()"></div>
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor',   'Site Name',  '#ffffff'],
-    ['taglineColor', 'Tagline',    'rgba(255,255,255,0.68)'],
-  ])}
+      ['titleColor', 'Site Name', '#ffffff'],
+      ['taglineColor', 'Tagline', 'rgba(255,255,255,0.68)'],
+    ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
@@ -305,9 +305,9 @@ function renderBlockProps(block) {
     </div>
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor', 'Section Title', td.text],
-    ['textColor',  'Content Text',  td.sub],
-  ])}
+      ['titleColor', 'Section Title', td.text],
+      ['textColor', 'Content Text', td.sub],
+    ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
@@ -333,10 +333,10 @@ function renderBlockProps(block) {
     ${msc_addBtn('Add Announcement', `msc_addItem('${bid}','items',{id:'a${msc_uid()}',text:'New announcement',date:'',pinned:false})`)}
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor',    'Section Title', td.text],
-    ['itemTextColor', 'Item Text',     td.text],
-    ['itemDateColor', 'Item Date',     td.muted],
-  ])}
+        ['titleColor', 'Section Title', td.text],
+        ['itemTextColor', 'Item Text', td.text],
+        ['itemDateColor', 'Item Date', td.muted],
+      ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -399,9 +399,9 @@ function renderBlockProps(block) {
       oninput="msc_set('${bid}','onlineLink',this.value)"/>
   </div>`}
   ${msc_colorSection(bid, [
-    ['valueColor', 'Value Text',  td.text],
-    ['labelColor', 'Label Text',  td.muted],
-  ])}
+      ['valueColor', 'Value Text', td.text],
+      ['labelColor', 'Label Text', td.muted],
+    ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
@@ -441,11 +441,11 @@ function renderBlockProps(block) {
     ${msc_addBtn('Add Person', `msc_addItem('${bid}','items',{id:'sp${msc_uid()}',name:'',role:'',photo:'',bio:''})`)}
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor', 'Section Title', td.text],
-    ['nameColor',  'Speaker Name',  td.text],
-    ['roleColor',  'Role / Title',  td.accent],
-    ['bioColor',   'Bio Text',      td.sub],
-  ])}
+        ['titleColor', 'Section Title', td.text],
+        ['nameColor', 'Speaker Name', td.text],
+        ['roleColor', 'Role / Title', td.accent],
+        ['bioColor', 'Bio Text', td.sub],
+      ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -467,10 +467,10 @@ function renderBlockProps(block) {
     ${msc_addBtn('Add Question', `msc_addItem('${bid}','items',{id:'q${msc_uid()}',question:'',answer:''})`)}
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor',    'Section Title', td.text],
-    ['questionColor', 'Question',      td.text],
-    ['answerColor',   'Answer',        td.sub],
-  ])}
+        ['titleColor', 'Section Title', td.text],
+        ['questionColor', 'Question', td.text],
+        ['answerColor', 'Answer', td.sub],
+      ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -551,9 +551,9 @@ function renderBlockProps(block) {
     ${msc_addBtn('Add Tier', `msc_addTier('${bid}')`)}
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor',    'Section Title', td.text],
-    ['tierNameColor', 'Tier Name',     td.muted],
-  ])}
+        ['titleColor', 'Section Title', td.text],
+        ['tierNameColor', 'Tier Name', td.muted],
+      ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -587,7 +587,7 @@ function renderBlockProps(block) {
           ${(p.connectType || 'url') === t ? '<div style=\"width:6px;height:6px;border-radius:50%;background:var(--cyan)\"></div>' : ''}
         </div>
         <div>
-          <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms (coming soon)'}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms'}</div>
           <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Forms built with our Form Builder'}</div>
         </div>
       </label>`).join('')}
@@ -602,11 +602,22 @@ function renderBlockProps(block) {
     <div class="mse-prop-hint">Paste your Google Forms, Typeform, or any other form link</div>
   </div>` : `
   <div class="mse-prop-row">
-    <div style="text-align:center;padding:14px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.18);border-radius:9px">
-      <div style="font-size:13px;font-weight:600;color:#a78bfa;margin-bottom:4px">HX Forms — Coming Soon</div>
-      <div style="font-size:12px;color:var(--text-3)">Build forms in our Form Builder and link them here.</div>
-    </div>
-  </div>`}
+    <div class="mse-prop-label">Select HX Form</div>
+    <select class="mse-prop-input pr-select" id="hxfPicker_${bid}"
+            onchange="if(typeof msePickHxForm==='function') { msePickHxForm('${bid}',this.value); } else { msc_set('${bid}', 'hxFormSlug', this.value); msc_set('${bid}', 'connectUrl', window.location.origin + '/hx-form-view.html?f=' + this.value); }">
+      <option value="">Loading your forms…</option>
+    </select>
+    <div class="mse-prop-hint">Only published HX Forms appear here</div>
+  </div>
+  <div class="mse-prop-row">
+    <div class="mse-prop-label">Embed Height</div>
+    <input class="mse-prop-input" type="number" min="520" max="1400" step="20" value="${p.hxEmbedHeight || 820}"
+      oninput="msc_set('${bid}','hxEmbedHeight',Math.max(520,Math.min(1400,+this.value||820)))"/>
+    <div class="mse-prop-hint">Adjust if your form needs more vertical space on the public mini site</div>
+  </div>
+  <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" 
+       onload="(typeof mseLoadHxForms==='function') && mseLoadHxForms('${bid}','${(p.hxFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '')).replace(/'/g, "\\\\\\'")}');" 
+       style="display:none">`}
 
   <div class="mse-prop-row">
     <div class="mse-prop-label">Button Label</div>
@@ -627,9 +638,9 @@ function renderBlockProps(block) {
   </div>
 
   ${msc_colorSection(bid, [
-    ['titleColor',    'Block Title', td.text],
-    ['subtitleColor', 'Subtitle',    td.sub],
-  ])}
+        ['titleColor', 'Block Title', td.text],
+        ['subtitleColor', 'Subtitle', td.sub],
+      ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -676,10 +687,10 @@ function renderBlockProps(block) {
     ${msc_addBtn('Add Document', `msc_addItem('${bid}','items',{id:'d${msc_uid()}',label:'',desc:'',url:'',linkType:'drive'})`)}
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor',     'Section Title', td.text],
-    ['itemLabelColor', 'Item Label',    td.text],
-    ['itemDescColor',  'Item Desc',     td.muted],
-  ])}
+        ['titleColor', 'Section Title', td.text],
+        ['itemLabelColor', 'Item Label', td.text],
+        ['itemDescColor', 'Item Desc', td.muted],
+      ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -729,9 +740,9 @@ function renderBlockProps(block) {
     ${!atMax ? msc_addBtn('Add Video', `msc_addItem('${bid}','items',{id:'v${msc_uid()}',url:'',title:'',thumbnail:''})`) : ''}
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor',      'Section Title', td.text],
-    ['videoTitleColor', 'Video Title',   td.text],
-  ])}
+            ['titleColor', 'Section Title', td.text],
+            ['videoTitleColor', 'Video Title', td.text],
+          ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
@@ -770,8 +781,8 @@ function renderBlockProps(block) {
     ${msc_addBtn('Add Social Link', `msc_addItem('${bid}','links',{id:'sl${msc_uid()}',platform:'instagram',url:''})`)}
   </div>
   ${msc_colorSection(bid, [
-    ['titleColor', 'Section Title', td.text],
-  ])}
+        ['titleColor', 'Section Title', td.text],
+      ])}
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
     }
