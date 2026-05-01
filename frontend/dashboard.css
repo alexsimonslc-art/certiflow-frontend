@@ -566,6 +566,10 @@ ol {
   pointer-events: none;
 }
 
+.card:hover {
+  border-color: var(--glass-border-2);
+}
+
 .card-sm {
   padding: 18px 22px;
 }
@@ -2607,6 +2611,18 @@ body::after {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.06) inset,
     0 8px 32px rgba(0, 0, 0, 0.25) !important;
+}
+
+.card:hover,
+.stat-card:hover,
+.tool-launch-card:hover {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.055) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 16px 48px rgba(0, 0, 0, 0.35) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* Glossy sheen on cards */
