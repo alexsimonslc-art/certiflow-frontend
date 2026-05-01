@@ -234,6 +234,12 @@ ol {
   position: relative;
 }
 
+/* This rule is now specific to the EXPANDED sidebar to prevent hover glitches on collapsed icons */
+.sidebar:not(.collapsed) .nav-item:hover {
+  background: var(--glass);
+  color: var(--text);
+}
+
 .nav-item.active {
   background: var(--cyan-dim);
   color: var(--cyan);
@@ -3005,8 +3011,7 @@ body::after {
   color: var(--text-2) !important;
 }
 
-.sidebar:not(.collapsed) .nav-item:hover {
-  background: var(--glass);
+.nav-item:hover {
   color: var(--text) !important;
 }
 
