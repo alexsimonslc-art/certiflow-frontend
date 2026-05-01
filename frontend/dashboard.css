@@ -2590,13 +2590,6 @@ body::after {
   opacity: 0.6;
 }
 
-/* ── Disable background overlays (removes vertical light band) ── */
-body::before,
-body::after {
-  background: none !important;
-  opacity: 0 !important;
-}
-
 /* ── True Glassmorphism Cards ───────────────────────────────────── */
 .card,
 .stat-card,
