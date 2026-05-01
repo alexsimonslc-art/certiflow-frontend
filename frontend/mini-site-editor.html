@@ -529,12 +529,14 @@
               <div style="flex:1">
                 <div class="mse-prop-label">Banner Color</div>
                 <input type="color" id="msPassBannerColor" value="#1a1a2e"
-                  oninput="mseUpdatePassConfig({passBannerColor:this.value})" style="width:100%;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer" />
+                  oninput="mseUpdatePassConfig({passBannerColor:this.value})"
+                  style="width:100%;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer" />
               </div>
               <div style="flex:1">
                 <div class="mse-prop-label">Text Color</div>
                 <input type="color" id="msPassTextColor" value="#ffffff"
-                  oninput="mseUpdatePassConfig({passTextColor:this.value})" style="width:100%;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer" />
+                  oninput="mseUpdatePassConfig({passTextColor:this.value})"
+                  style="width:100%;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer" />
               </div>
             </div>
             <div class="mse-prop-row">
@@ -552,11 +554,14 @@
               <div class="mse-toggle" id="msPassShowAttendance" onclick="mseTogglePassAttendance()"></div>
             </div>
             <div class="mse-prop-hint" style="margin-bottom:6px">Adds a Scanner button to the site list</div>
-            <div id="msPassStaffCodeBox" style="display:none;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.18);border-radius:8px;padding:10px;margin-top:6px">
+            <div id="msPassStaffCodeBox"
+              style="display:none;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.18);border-radius:8px;padding:10px;margin-top:6px">
               <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">Staff Scanner Code</div>
               <div style="display:flex;align-items:center;gap:8px">
-                <span id="msPassStaffCodeDisplay" style="font-family:monospace;font-size:16px;font-weight:700;color:var(--cyan);letter-spacing:3px"></span>
-                <button id="msPassCodeCopyBtn" onclick="mseCopyPassCode()" style="padding:3px 10px;background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.25);color:var(--cyan);border-radius:5px;font-size:11px;cursor:pointer">Copy</button>
+                <span id="msPassStaffCodeDisplay"
+                  style="font-family:monospace;font-size:16px;font-weight:700;color:var(--cyan);letter-spacing:3px"></span>
+                <button id="msPassCodeCopyBtn" onclick="mseCopyPassCode()"
+                  style="padding:3px 10px;background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.25);color:var(--cyan);border-radius:5px;font-size:11px;cursor:pointer">Copy</button>
               </div>
             </div>
           </div>
@@ -755,11 +760,13 @@
           </div>
           <label class="mse-ga-label" for="gaMeasurementInput">Your GA4 Measurement ID</label>
           <div class="mse-ga-input-row">
-            <input id="gaMeasurementInput" class="mse-ga-input" placeholder="G-XXXXXXXXXX" autocomplete="off" spellcheck="false" />
+            <input id="gaMeasurementInput" class="mse-ga-input" placeholder="G-XXXXXXXXXX" autocomplete="off"
+              spellcheck="false" />
             <button class="mse-btn mse-btn-primary" id="gaVerifyBtn" onclick="verifyAndSaveGA()">Verify & Save</button>
           </div>
           <div class="mse-ga-message" id="gaMessage"></div>
-          <div class="mse-ga-helper">Your visitors' data goes only to YOUR Google Analytics account. Other users cannot see your analytics.</div>
+          <div class="mse-ga-helper">Your visitors' data goes only to YOUR Google Analytics account. Other users cannot
+            see your analytics.</div>
           <button class="mse-btn mse-btn-secondary mse-ga-dashboard" onclick="openGADashboard()">
             Open Analytics Dashboard
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1806,12 +1813,12 @@
       // Populate fields (don't override focused inputs)
       const setVal = (id, val) => { const el = document.getElementById(id); if (el && document.activeElement !== el) el.value = val || ''; };
       setVal('msPassEventName', pc.passEventName);
-      setVal('msPassVenue',     pc.passVenue);
-      setVal('msPassDate',      pc.passDate);
-      setVal('msPassTime',      pc.passTime);
-      setVal('msPassRules',     pc.passRules);
+      setVal('msPassVenue', pc.passVenue);
+      setVal('msPassDate', pc.passDate);
+      setVal('msPassTime', pc.passTime);
+      setVal('msPassRules', pc.passRules);
       setVal('msPassNameField', pc.passNameField);
-      setVal('msPassEmailField',pc.passEmailField);
+      setVal('msPassEmailField', pc.passEmailField);
       const bannerEl = document.getElementById('msPassBannerColor');
       if (bannerEl) bannerEl.value = pc.passBannerColor || '#1a1a2e';
       const textEl = document.getElementById('msPassTextColor');
@@ -2149,14 +2156,14 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const { forms } = await res.json();
-        const pub = (forms || []).filter(f => f.status === 'published');
+        const allForms = forms || [];
         sel.innerHTML = '<option value="">Select a form</option>' +
-          pub.map(f => {
+          allForms.map(f => {
             const responses = f.submission_count || f.submissionCount || 0;
             const safeName = String(f.name || '').replace(/"/g, '&quot;');
             return `<option value="${f.slug}" data-id="${f.id}" data-name="${safeName}" ${f.slug === selectedSlug ? 'selected' : ''}>${f.name} (${responses} responses)</option>`;
           }).join('');
-        if (!pub.length) sel.innerHTML = '<option value="">No published HX Forms found</option>';
+        if (!allForms.length) sel.innerHTML = '<option value="">No HX Forms found</option>';
       } catch {
         sel.innerHTML = '<option value="">Could not load forms - check login</option>';
       }
@@ -2314,8 +2321,8 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       appendGalMessage(
         `Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered site generation, block editing, and design assistance.<br><br>` +
         `<div style="display:flex;flex-direction:column;gap:6px;margin-top:2px">` +
-          `<a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>` +
-          `<button class="gal-ai-sug" onclick="showGalProDetails(this)" style="text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;">What's included in Pro?</button>` +
+        `<a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>` +
+        `<button class="gal-ai-sug" onclick="showGalProDetails(this)" style="text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;">What's included in Pro?</button>` +
         `</div>`,
         'bot'
       );

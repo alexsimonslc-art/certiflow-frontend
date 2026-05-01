@@ -603,11 +603,10 @@ function renderBlockProps(block) {
   </div>` : `
   <div class="mse-prop-row">
     <div class="mse-prop-label">Select HX Form</div>
-    <select class="mse-prop-input pr-select" id="hxfPicker_${bid}"
+    <select class="mse-prop-select" id="hxfPicker_${bid}"
             onchange="if(typeof msePickHxForm==='function') { msePickHxForm('${bid}',this.value); } else { msc_set('${bid}', 'hxFormSlug', this.value); msc_set('${bid}', 'connectUrl', window.location.origin + '/hx-form-view.html?f=' + this.value); }">
       <option value="">Loading your forms…</option>
     </select>
-    <div class="mse-prop-hint">Only published HX Forms appear here</div>
   </div>
   <div class="mse-prop-row">
     <div class="mse-prop-label">Embed Height</div>
