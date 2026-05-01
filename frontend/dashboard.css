@@ -330,7 +330,6 @@ ol {
 }
 
 .user-plan {
-  /* Ensure plan text is visible and styled */
   font-size: 11px;
   color: var(--text-3);
 }
@@ -2702,7 +2701,6 @@ body::after {
 
 .sidebar.collapsed {
   width: var(--sidebar-collapsed-w) !important;
-  overflow: visible !important;
   /* Keep width change */
   /* Remove overflow: visible; to allow sidebar-nav to scroll */
 }
@@ -2748,14 +2746,11 @@ body::after {
   isolation: isolate;
 }
 
-/* Ensure nav-item hover background is consistent */
-.nav-item:hover {
-  background: var(--glass);
-  color: var(--text);
-}
-
 .sidebar.collapsed .nav-item:hover {
+  /* Remove the background and box-shadow to eliminate the "white transparent box" glitch */
   background: transparent !important;
+  color: var(--text) !important;
+  box-shadow: none !important;
 }
 
 .sidebar.collapsed .nav-item::after {
@@ -2797,10 +2792,8 @@ body::after {
 }
 
 .sidebar.collapsed .user-row {
-  /* Ensure the entire user row is centered when collapsed */
-  justify-content: center !important;
-  padding: 0 !important;
-  /* Remove internal padding to allow full centering of its child */
+  justify-content: center;
+  padding: 10px;
 }
 
 .sidebar.collapsed .sidebar-logo {
@@ -3307,45 +3300,25 @@ select optgroup {
   color: #e8f0fd !important;
 }
 
-/* ── Collapsed Sidebar Profile Area Centering ───────────────────── */
-.sidebar.collapsed .sidebar-logout-btn {
-  /* Hide logout button when collapsed */
+/* ── Fix: Center Avatar & Hide Logout in Collapsed Sidebar ── */
+.sidebar.collapsed .logout-btn {
   display: none !important;
 }
 
 .sidebar.collapsed .user-row {
-  /* Center the entire user-row when collapsed */
   justify-content: center !important;
   padding: 0 !important;
-  /* Remove padding to allow full width for centering */
 }
 
 .sidebar.collapsed .user-row-info {
-  /* Make user-row-info a centered block */
-  display: block !important;
-  /* Change to block to allow margin auto on its child */
   flex: none !important;
-  width: auto !important;
-  /* Let it shrink-wrap its content */
-  height: auto !important;
-  padding: 0 !important;
-  margin: 8px 0 !important;
-  /* Add vertical margin for spacing */
-  border-radius: 10px !important;
-  background: transparent !important;
-  /* No background for this container itself */
-  border: none !important;
+  justify-content: center !important;
+  padding: 4px !important;
+  width: 100% !important;
 }
 
-.sidebar.collapsed .user-avatar,
-.sidebar.collapsed .user-avatar-wrap {
-  /* Center the avatar/wrap within user-row-info */
+.sidebar.collapsed .user-avatar {
   margin: 0 auto !important;
-  /* Center horizontally */
-  width: 30px !important;
-  /* Explicitly set avatar size */
-  height: 30px !important;
-  /* Explicitly set avatar size */
 }
 
 /* ── Page Transition Effect ─────────────────────────────────────── */
