@@ -2613,10 +2613,8 @@ body::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.05) 0%,
-      rgba(255, 255, 255, 0.01) 50%,
-      transparent 100%);
+  background: none;
+  opacity: 0;
   border-radius: inherit;
   pointer-events: none;
   z-index: 0;
