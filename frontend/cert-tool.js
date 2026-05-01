@@ -256,13 +256,16 @@ async function loadSheet() {
 
 function renderSheetPreview() {
   const el = document.getElementById('sheetResult');
-  const preview = CS.rows; // FIX: Show all rows
-  el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
+  const headers = CS.headers || [];
+  const rows = CS.rows || [];
+  const theadHtml = headers.map(h => `<th style="padding:12px 16px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap">${h}</th>`).join('');
+  const tbodyHtml = rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">${headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g, '&lt;')}</td>`).join('')}</tr>`).join('');
+
   el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);margin-bottom:16px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
-      <span style="font-size:14px"><strong>Data loaded</strong> — ${msg}</span>
+      <span style="font-size:14px"><strong>Data loaded</strong> — ${rows.length} participants</span>
     </div>
     <div style="width:100%;max-width:100%;box-sizing:border-box;overflow-x:auto;overflow-y:auto;max-height:280px;border:1px solid var(--glass-border);border-radius:10px;background:var(--surface);scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent;display:block">
       <table style="width:max-content;min-width:100%;border-collapse:collapse;text-align:left;table-layout:auto">
@@ -272,7 +275,6 @@ function renderSheetPreview() {
         <tbody>${tbodyHtml}</tbody>
       </table>
     </div>`;
-
 }
 
 function handleFile(e) {
