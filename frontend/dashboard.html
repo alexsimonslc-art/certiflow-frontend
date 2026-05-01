@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — Honourix</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="dashboard.css"/>
-  <link rel="stylesheet" href="dashboard-patch.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="dashboard-patch.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
     /* ── Dashboard-specific ─────────────────────────────────────── */
@@ -17,6 +20,7 @@
       gap: 16px;
       margin-bottom: 28px;
     }
+
     .tool-launch-card {
       border-radius: var(--radius-lg);
       padding: 22px 22px 18px;
@@ -29,40 +33,130 @@
       position: relative;
       overflow: hidden;
     }
-    .tool-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .tool-card-icon {
-      width: 42px; height: 42px;
-      border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .tool-card-icon svg { width: 19px; height: 19px; }
-    .tool-card-icon.cyan   { background: var(--cyan-dim);   color: var(--cyan); }
-    .tool-card-icon.purple { background: var(--purple-dim); color: #a78bfa; }
-    .tool-card-icon.green  { background: var(--green-dim);  color: var(--green); }
-    .tool-card-title { font-size: 19.5px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
-    .tool-card-desc  { font-size: 13.5px; color: var(--text-2); line-height: 1.55; }
-    .tool-card-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.07);
-      font-size: 12.5px; color: var(--cyan);
-    }
-    .tool-card-footer svg { width: 14px; height: 14px; }
 
-    .activity-list { display: flex; flex-direction: column; }
-    .activity-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 13px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+    .tool-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .activity-dot.green  { background: var(--green);  box-shadow: 0 0 6px var(--green); }
-    .activity-dot.cyan   { background: var(--cyan);   box-shadow: 0 0 6px var(--cyan); }
-    .activity-dot.gold   { background: var(--gold); }
-    .activity-dot.red    { background: var(--red); }
-    .activity-text { flex: 1; font-size: 13px; color: var(--text-2); line-height: 1.4; }
-    .activity-text strong { color: var(--text); display: block; font-size: 13.5px; }
-    .activity-time { font-size: 11.5px; color: var(--text-3); white-space: nowrap; }
+
+    .tool-card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tool-card-icon svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .tool-card-icon.cyan {
+      background: var(--cyan-dim);
+      color: var(--cyan);
+    }
+
+    .tool-card-icon.purple {
+      background: var(--purple-dim);
+      color: #a78bfa;
+    }
+
+    .tool-card-icon.green {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+
+    .tool-card-title {
+      font-size: 19.5px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .tool-card-desc {
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    .tool-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      font-size: 12.5px;
+      color: var(--cyan);
+    }
+
+    .tool-card-footer svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.green {
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    .activity-dot.cyan {
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    .activity-dot.gold {
+      background: var(--gold);
+    }
+
+    .activity-dot.red {
+      background: var(--red);
+    }
+
+    .activity-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.4;
+    }
+
+    .activity-text strong {
+      color: var(--text);
+      display: block;
+      font-size: 13.5px;
+    }
+
+    .activity-time {
+      font-size: 11.5px;
+      color: var(--text-3);
+      white-space: nowrap;
+    }
 
     /* ── Compact Single-Line Stats ── */
     .quick-stat-row {
@@ -71,11 +165,30 @@
       gap: 14px;
       margin-bottom: 32px;
     }
-    .stat-card.compact { padding: 16px 20px; }
-    .stat-card.compact .stat-num { font-size: 24px; margin-bottom: 2px; }
-    .stat-card.compact .stat-top { margin-bottom: 10px; }
-    .stat-card.compact .stat-icon { width: 34px; height: 34px; border-radius: 8px; }
-    .stat-card.compact .stat-icon svg { width: 16px; height: 16px; }
+
+    .stat-card.compact {
+      padding: 16px 20px;
+    }
+
+    .stat-card.compact .stat-num {
+      font-size: 24px;
+      margin-bottom: 2px;
+    }
+
+    .stat-card.compact .stat-top {
+      margin-bottom: 10px;
+    }
+
+    .stat-card.compact .stat-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+    }
+
+    .stat-card.compact .stat-icon svg {
+      width: 16px;
+      height: 16px;
+    }
 
     /* ── 3-Column Tools Grid ── */
     .tool-card-grid {
@@ -92,7 +205,7 @@
       max-height: 200px;
       min-height: 140px;
       border-radius: var(--radius-lg);
-      background: rgba(255,255,255,0.02);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--glass-border);
       margin-bottom: 28px;
       position: relative;
@@ -100,436 +213,719 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
-    .dashboard-carousel img, .dashboard-carousel video {
-      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.6; mix-blend-mode: overlay;
+
+    .dashboard-carousel img,
+    .dashboard-carousel video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0.6;
+      mix-blend-mode: overlay;
     }
+
     .carousel-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(6,10,18,0.95) 0%, rgba(6,10,18,0.2) 100%);
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(6, 10, 18, 0.95) 0%, rgba(6, 10, 18, 0.2) 100%);
       z-index: 1;
     }
+
     .carousel-content {
-      position: relative; z-index: 2; padding: 0 40px; width: 100%;
+      position: relative;
+      z-index: 2;
+      padding: 0 40px;
+      width: 100%;
     }
-    .carousel-title { font-family: var(--font-display); font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 4px; letter-spacing: -0.5px; }
-    .carousel-subtitle { font-size: 15px; color: var(--text-2); max-width: 600px; line-height: 1.5; }
+
+    .carousel-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .carousel-subtitle {
+      font-size: 15px;
+      color: var(--text-2);
+      max-width: 600px;
+      line-height: 1.5;
+    }
 
     /* Main 2-column grid */
-    .content-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+    }
 
     /* Campaign table */
-    .campaign-table { width: 100%; border-collapse: collapse; }
+    .campaign-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
     .campaign-table th {
       padding: 10px 16px;
-      background: rgba(255,255,255,0.025);
-      font-size: 11px; font-weight: 700; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.6px;
+      background: rgba(255, 255, 255, 0.025);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
       text-align: left;
     }
+
     .campaign-table td {
-      padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.05);
-      font-size: 13px; color: var(--text-2);
+      padding: 12px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+      color: var(--text-2);
     }
-    .campaign-table tr:hover td { background: rgba(255,255,255,0.025); }
+
+    .campaign-table tr:hover td {
+      background: rgba(255, 255, 255, 0.025);
+    }
 
     /* Usage bars */
-    .limit-bar-wrap { margin-bottom: 18px; }
+    .limit-bar-wrap {
+      margin-bottom: 18px;
+    }
+
     .limit-label {
-      display: flex; justify-content: space-between;
-      font-size: 12.5px; color: var(--text-2); margin-bottom: 7px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: var(--text-2);
+      margin-bottom: 7px;
       font-weight: 500;
     }
-    .limit-bar { height: 5px; background: rgba(255,255,255,0.07); border-radius: 99px; overflow: hidden; }
-    .limit-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
-    .limit-fill.cyan { background: linear-gradient(90deg, var(--cyan), #7c3aed); }
-    .limit-fill.gold { background: linear-gradient(90deg, var(--gold), #ef4444); }
 
-    @media (max-width: 1100px) { .content-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 900px)  { .tool-card-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 560px)  {
-      .tool-card-grid { grid-template-columns: 1fr; }
-      .quick-stat-row { grid-template-columns: 1fr 1fr; }
+    .limit-bar {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .limit-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+
+    .limit-fill.cyan {
+      background: linear-gradient(90deg, var(--cyan), #7c3aed);
+    }
+
+    .limit-fill.gold {
+      background: linear-gradient(90deg, var(--gold), #ef4444);
+    }
+
+    @media (max-width: 1100px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .tool-card-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .tool-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-stat-row {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
-<script>(function(){if(window.innerWidth<768){document.body.innerHTML='<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>';}})();</script>
-<div class="app-layout">
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
+  <div class="app-layout">
 
-  <!-- Sidebar injected by JS -->
-  <div id="sidebarMount"></div>
+    <!-- Sidebar injected by JS -->
+    <div id="sidebarMount"></div>
 
-  <div class="main-area">
-    <!-- Top Header — sidebar toggle repurposed, no useless extra button -->
+    <div class="main-area">
+      <!-- Top Header — sidebar toggle repurposed, no useless extra button -->
 
-    
 
-    <main class="page-content fade-in">
 
-      
+      <main class="page-content fade-in">
 
-      <div style="margin-bottom:32px;">
-        <h1 class="page-title" id="welcomeTitle">Good morning</h1>
-        <p class="page-subtitle" id="welcomeSubtitle">Here is your workspace overview.</p>
-      
-      </div>
 
-      <div class="dashboard-carousel" style="aspect-ratio: 1700/200; max-height: 200px; min-height: 140px; margin-bottom: 32px; border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
-        <video autoplay loop muted playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.6; mix-blend-mode:overlay;"><source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connections-loop-28825-large.mp4" type="video/mp4"></video>
-        <div style="position:absolute; inset:0; background: linear-gradient(90deg, rgba(4,8,15,0.8) 0%, rgba(4,8,15,0.1) 100%);"></div>
-      </div>
 
-      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 40px;">
-        
-        <div class="card" style="padding: 18px 20px;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <div style="width:30px; height:30px; border-radius:8px; background:var(--cyan-dim); color:var(--cyan); display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-            <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Certs Generated</div>
-          </div>
-          <div id="totalCerts" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0</div>
-        </div>
-        
-        <div class="card" style="padding: 18px 20px;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <div style="width:30px; height:30px; border-radius:8px; background:var(--purple-dim); color:#a78bfa; display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-            <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Bulk Mail Sent</div>
-          </div>
-          <div id="mailUsageStat" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0 / 500</div>
-        </div>
-        
-        <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between;">
-          
-          <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px;">
-            <div style="width:34px; height:34px; border-radius:8px; background:var(--green-dim); color:var(--green); display:flex; align-items:center; justify-content:center; flex-shrink: 0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 2px;">
-              <div id="storageLabel" style="font-size:13px; font-weight:600; color:var(--text-2); line-height: 1;">Drive Storage</div>
-              <div id="storagePlanBadge"><span class="badge badge-gray" style="font-size:10px; padding:3px 7px;">Syncing...</span></div>
-            </div>
-          </div>
-          
-          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top: 4px;">
-            <div id="storageUsage" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">
-              <span style="font-size:14px; color:var(--text-3); font-weight:500;">—</span>
-            </div>
-            <div id="totalStorageLabel" style="font-size:13.5px; font-weight:600; color:var(--text-3); line-height:1;"></div>
-          </div>
+        <div style="margin-bottom:32px;">
+          <h1 class="page-title" id="welcomeTitle">Good morning</h1>
+          <p class="page-subtitle" id="welcomeSubtitle">Here is your workspace overview.</p>
 
         </div>
-        
-        <div class="card" style="padding: 18px 20px;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <div style="width:30px; height:30px; border-radius:8px; background:rgba(244,63,94,0.12); color:#f43f5e; display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-            <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Total Forms</div>
-          </div>
-          <div id="formsUsage" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0 <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Responses</span></div>
-        </div>
-        
-        <div class="card" style="padding: 18px 20px;">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <div style="width:30px; height:30px; border-radius:8px; background:var(--gold-dim); color:var(--gold); display:flex; align-items:center; justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-            <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Mini Sites</div>
-          </div>
-          <div id="sitesUsage" style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0 <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Views/wk</span></div>
-        </div>
 
-      </div>
-
-      <div>
-        <h2 style="font-family:var(--font); font-size:22px; font-weight:700; color:var(--text); margin-bottom:20px;">Your Workspace Tools</h2>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 36px;">
-
-          <a href="cert-tool.html" class="tool-launch-card card">
-            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-              <div style="width:42px;height:42px;border-radius:11px;background:var(--cyan-dim);color:var(--cyan);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-              <span class="badge badge-cyan">Drive API</span>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Certificate Generator</div>
-              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Generate personalized PDF certificates from a Google Sheets roster and Slides template in bulk.</div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:var(--cyan);"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </a>
-
-          <a href="mail-tool.html" class="tool-launch-card card">
-            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-              <div style="width:42px;height:42px;border-radius:11px;background:var(--purple-dim);color:#a78bfa;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-              <span class="badge badge-purple">Gmail API</span>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Bulk Mail Sender</div>
-              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Send personalized HTML emails from your own Gmail to hundreds of recipients with merge fields.</div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#a78bfa;"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </a>
-
-          <a href="combined-tool.html" class="tool-launch-card card">
-            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-              <div style="width:42px;height:42px;border-radius:11px;background:var(--green-dim);color:var(--green);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-              <span class="badge badge-green">Full Pipeline</span>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Combined Pipeline</div>
-              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Generate certificates AND send them by email in one automated workflow. Perfect for events.</div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:var(--green);"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </a>
-
-          <a href="mini-site.html" class="tool-launch-card card" style="position:relative;">
-            <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 90% 20%,rgba(245,158,11,0.06),transparent);pointer-events:none"></div>
-            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; position:relative; z-index:2;">
-              <div style="width:42px;height:42px;border-radius:11px;background:rgba(245,158,11,0.12);color:#f59e0b;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-              <span class="badge" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)">New</span>
-            </div>
-            <div style="flex:1; position:relative; z-index:2;">
-              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Mini Sites</div>
-              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Build a beautiful event page in minutes. Collect registrations, share a link, go live instantly.</div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#f59e0b; position:relative; z-index:2;"><span>Open builder</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </a>
-
-          <a href="hx-forms.html" class="tool-launch-card card">
-            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-              <div style="width:42px;height:42px;border-radius:11px;background:rgba(244,63,94,0.12);color:#f43f5e;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-              <span class="badge badge-red" style="border:1px solid rgba(244,63,94,0.2)">HX Forms</span>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Form Builder</div>
-              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Create dynamic registration forms. Submissions flow directly to your connected database.</div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#f43f5e;"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </a>
-
-          <a href="hx-database.html" class="tool-launch-card card">
-            <div class="tool-card-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-              <div style="width:42px;height:42px;border-radius:11px;background:rgba(59,130,246,0.12);color:#3b82f6;display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
-              <span class="badge" style="background:rgba(59,130,246,0.12);color:#3b82f6;border:1px solid rgba(59,130,246,0.2)">HX DB</span>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Database</div>
-              <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Manage all your contacts, form submissions, and campaign logs in one secure place.</div>
-            </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#3b82f6;"><span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </a>
-
-        </div>
-      </div>
-
-      <div style="width: 100%; max-height: 180px; min-height: 120px; border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid rgba(124,58,237,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.2); margin-bottom: 32px;">
-        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1700&q=80" alt="Pro Banner" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.4; mix-blend-mode:overlay;">
-        <div style="position:absolute; inset:0; background: linear-gradient(90deg, rgba(6,10,18,0.95) 0%, rgba(124,58,237,0.3) 100%);"></div>
-        <div style="position:relative; z-index:2; padding: 36px 40px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
-          <div>
-            <div style="font-family:var(--font); font-size:24px; font-weight:800; color:#fff; margin-bottom:4px;">Upgrade to Honourix Pro</div>
-            <div style="font-size:14.5px; color:#e2e8f0; max-width:600px; line-height:1.5;">Unlock unlimited campaigns, premium templates, custom domains, and 100GB of storage.</div>
-          </div>
-          <a href="settings.html" class="btn btn-primary" style="padding:12px 24px; font-size:14px;">Upgrade Now</a>
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 320px; gap: 20px;">
-
-        <div class="card" style="padding:0; overflow:hidden;">
-          <div style="padding:18px 22px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; justify-content:space-between; align-items:center;">
-            <div class="card-title" style="margin:0;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Recent Campaigns
-            </div>
-            <a href="campaigns.html" class="btn btn-ghost btn-sm" style="font-size:12px;color:var(--cyan);">View all →</a>
-          </div>
-          <div id="campaignsTable">
-            <div class="empty-state">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <h3>No campaigns yet</h3>
-              <p>Run your first certificate or email campaign to see activity here.</p>
-            </div>
+        <div class="dashboard-carousel"
+          style="aspect-ratio: 1700/200; max-height: 200px; min-height: 140px; margin-bottom: 32px; border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+          <video autoplay loop muted playsinline
+            style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.6; mix-blend-mode:overlay;">
+            <source
+              src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connections-loop-28825-large.mp4"
+              type="video/mp4">
+          </video>
+          <div
+            style="position:absolute; inset:0; background: linear-gradient(90deg, rgba(4,8,15,0.8) 0%, rgba(4,8,15,0.1) 100%);">
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-title" style="margin-bottom:14px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Quick Links
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 40px;">
+
+          <div class="card" style="padding: 18px 20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div
+                style="width:30px; height:30px; border-radius:8px; background:var(--cyan-dim); color:var(--cyan); display:flex; align-items:center; justify-content:center;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="6" />
+                  <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+                </svg></div>
+              <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Certs Generated</div>
+            </div>
+            <div id="totalCerts"
+              style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0
+            </div>
           </div>
-          <div style="display:flex; flex-direction:column; gap:5px;">
-            <a href="https://drive.google.com" target="_blank" class="btn btn-ghost btn-sm" style="justify-content:flex-start; gap:10px; color:var(--text-2);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-              Google Drive
+
+          <div class="card" style="padding: 18px 20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div
+                style="width:30px; height:30px; border-radius:8px; background:var(--purple-dim); color:#a78bfa; display:flex; align-items:center; justify-content:center;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg></div>
+              <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Bulk Mail Sent</div>
+            </div>
+            <div id="mailUsageStat"
+              style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0 /
+              500</div>
+          </div>
+
+          <div class="card"
+            style="padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between;">
+
+            <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px;">
+              <div
+                style="width:34px; height:34px; border-radius:8px; background:var(--green-dim); color:var(--green); display:flex; align-items:center; justify-content:center; flex-shrink: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 2px;">
+                <div id="storageLabel" style="font-size:13px; font-weight:600; color:var(--text-2); line-height: 1;">
+                  Drive Storage</div>
+                <div id="storagePlanBadge"><span class="badge badge-gray"
+                    style="font-size:10px; padding:3px 7px;">Syncing...</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top: 4px;">
+              <div id="storageUsage"
+                style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">
+                <span style="font-size:14px; color:var(--text-3); font-weight:500;">—</span>
+              </div>
+              <div id="totalStorageLabel"
+                style="font-size:13.5px; font-weight:600; color:var(--text-3); line-height:1;"></div>
+            </div>
+
+          </div>
+
+          <div class="card" style="padding: 18px 20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div
+                style="width:30px; height:30px; border-radius:8px; background:rgba(244,63,94,0.12); color:#f43f5e; display:flex; align-items:center; justify-content:center;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M9 21V9" />
+                </svg></div>
+              <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Total Forms</div>
+            </div>
+            <div id="formsUsage"
+              style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0
+              <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Responses</span>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 18px 20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <div
+                style="width:30px; height:30px; border-radius:8px; background:var(--gold-dim); color:var(--gold); display:flex; align-items:center; justify-content:center;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg></div>
+              <div style="font-size:12.5px; font-weight:600; color:var(--text-2);">Mini Sites</div>
+            </div>
+            <div id="sitesUsage"
+              style="font-family:var(--font); font-size:26px; font-weight:700; color:var(--text); line-height:1;">0
+              <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Views/wk</span></div>
+          </div>
+
+        </div>
+
+        <div>
+          <h2 style="font-family:var(--font); font-size:22px; font-weight:700; color:var(--text); margin-bottom:20px;">
+            Your Workspace Tools</h2>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 36px;">
+
+            <a href="cert-tool.html" class="tool-launch-card card">
+              <div class="tool-card-header"
+                style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                <div
+                  style="width:42px;height:42px;border-radius:11px;background:var(--cyan-dim);color:var(--cyan);display:flex;align-items:center;justify-content:center;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="8" r="6" />
+                    <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+                  </svg></div>
+                <span class="badge badge-cyan">Drive API</span>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Certificate
+                  Generator</div>
+                <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Generate personalized PDF
+                  certificates from a Google Sheets roster and Slides template in bulk.</div>
+              </div>
+              <div
+                style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:var(--cyan);">
+                <span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
             </a>
-            <a href="https://docs.google.com/spreadsheets" target="_blank" class="btn btn-ghost btn-sm" style="justify-content:flex-start; gap:10px; color:var(--text-2);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-              Google Sheets
+
+            <a href="mail-tool.html" class="tool-launch-card card">
+              <div class="tool-card-header"
+                style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                <div
+                  style="width:42px;height:42px;border-radius:11px;background:var(--purple-dim);color:#a78bfa;display:flex;align-items:center;justify-content:center;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg></div>
+                <span class="badge badge-purple">Gmail API</span>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Bulk Mail Sender
+                </div>
+                <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Send personalized HTML emails from
+                  your own Gmail to hundreds of recipients with merge fields.</div>
+              </div>
+              <div
+                style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#a78bfa;">
+                <span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
             </a>
-            <a href="cert-tool.html" class="btn btn-ghost btn-sm" style="justify-content:flex-start; gap:10px; color:var(--text-2);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
-              Certificate Editor
+
+            <a href="combined-tool.html" class="tool-launch-card card">
+              <div class="tool-card-header"
+                style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                <div
+                  style="width:42px;height:42px;border-radius:11px;background:var(--green-dim);color:var(--green);display:flex;align-items:center;justify-content:center;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg></div>
+                <span class="badge badge-green">Full Pipeline</span>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Combined Pipeline
+                </div>
+                <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Generate certificates AND send them
+                  by email in one automated workflow. Perfect for events.</div>
+              </div>
+              <div
+                style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:var(--green);">
+                <span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
             </a>
-            <a href="mini-site.html" class="btn btn-ghost btn-sm" style="justify-content:flex-start; gap:10px; color:var(--text-2);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              Site Builder
+
+            <a href="mini-site.html" class="tool-launch-card card" style="position:relative;">
+              <div
+                style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 90% 20%,rgba(245,158,11,0.06),transparent);pointer-events:none">
+              </div>
+              <div class="tool-card-header"
+                style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; position:relative; z-index:2;">
+                <div
+                  style="width:42px;height:42px;border-radius:11px;background:rgba(245,158,11,0.12);color:#f59e0b;display:flex;align-items:center;justify-content:center;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg></div>
+                <span class="badge"
+                  style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)">New</span>
+              </div>
+              <div style="flex:1; position:relative; z-index:2;">
+                <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Mini Sites</div>
+                <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Build a beautiful event page in
+                  minutes. Collect registrations, share a link, go live instantly.</div>
+              </div>
+              <div
+                style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#f59e0b; position:relative; z-index:2;">
+                <span>Open builder</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
             </a>
-            <a href="hx-forms.html" class="btn btn-ghost btn-sm" style="justify-content:flex-start; gap:10px; color:var(--text-2);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-              HX Forms
+
+            <a href="hx-forms.html" class="tool-launch-card card">
+              <div class="tool-card-header"
+                style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                <div
+                  style="width:42px;height:42px;border-radius:11px;background:rgba(244,63,94,0.12);color:#f43f5e;display:flex;align-items:center;justify-content:center;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M3 9h18M9 21V9" />
+                  </svg></div>
+                <span class="badge badge-red" style="border:1px solid rgba(244,63,94,0.2)">HX Forms</span>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Form Builder</div>
+                <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Create dynamic registration forms.
+                  Submissions flow directly to your connected database.</div>
+              </div>
+              <div
+                style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#f43f5e;">
+                <span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
             </a>
+
+            <a href="hx-database.html" class="tool-launch-card card">
+              <div class="tool-card-header"
+                style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                <div
+                  style="width:42px;height:42px;border-radius:11px;background:rgba(59,130,246,0.12);color:#3b82f6;display:flex;align-items:center;justify-content:center;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <ellipse cx="12" cy="5" rx="9" ry="3" />
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                  </svg></div>
+                <span class="badge"
+                  style="background:rgba(59,130,246,0.12);color:#3b82f6;border:1px solid rgba(59,130,246,0.2)">HX
+                  DB</span>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:19px; font-weight:700; color:var(--text); margin-bottom:4px;">Database</div>
+                <div style="font-size:13.5px; color:var(--text-2); line-height:1.5;">Manage all your contacts, form
+                  submissions, and campaign logs in one secure place.</div>
+              </div>
+              <div
+                style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid rgba(255,255,255,0.07); font-size:12.5px; font-weight:500; color:#3b82f6;">
+                <span>Open tool</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg></div>
+            </a>
+
           </div>
         </div>
 
-      </div>
-
-      <footer style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center; color:var(--text-3); font-size: 12.5px; padding-bottom: 20px;">
-        <div>&copy; 2026 Honourix Workspace. All rights reserved.</div>
-        <div style="display:flex; align-items:center; gap:20px;">
-          <span style="display:flex; align-items:center; gap:8px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);"></div> System Operational</span>
-          <a href="#" style="transition:color 0.2s;">Support</a>
-          <a href="#" style="transition:color 0.2s;">Documentation</a>
+        <div
+          style="width: 100%; max-height: 180px; min-height: 120px; border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid rgba(124,58,237,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.2); margin-bottom: 32px;">
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1700&q=80"
+            alt="Pro Banner"
+            style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.4; mix-blend-mode:overlay;">
+          <div
+            style="position:absolute; inset:0; background: linear-gradient(90deg, rgba(6,10,18,0.95) 0%, rgba(124,58,237,0.3) 100%);">
+          </div>
+          <div
+            style="position:relative; z-index:2; padding: 36px 40px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+            <div>
+              <div style="font-family:var(--font); font-size:24px; font-weight:800; color:#fff; margin-bottom:4px;">
+                Upgrade to Honourix Pro</div>
+              <div style="font-size:14.5px; color:#e2e8f0; max-width:600px; line-height:1.5;">Unlock unlimited
+                campaigns, premium templates, custom domains, and 100GB of storage.</div>
+            </div>
+            <a href="settings.html" class="btn btn-primary" style="padding:12px 24px; font-size:14px;">Upgrade Now</a>
+          </div>
         </div>
-      </footer>
 
-    </main>
+        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 20px;">
+
+          <div class="card" style="padding:0; overflow:hidden;">
+            <div
+              style="padding:18px 22px 14px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; justify-content:space-between; align-items:center;">
+              <div class="card-title" style="margin:0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                Recent Campaigns
+              </div>
+              <a href="campaigns.html" class="btn btn-ghost btn-sm" style="font-size:12px;color:var(--cyan);">View all
+                →</a>
+            </div>
+            <div id="campaignsTable">
+              <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <h3>No campaigns yet</h3>
+                <p>Run your first certificate or email campaign to see activity here.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              Quick Links
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+              <a href="https://drive.google.com" target="_blank" class="btn btn-ghost btn-sm"
+                style="justify-content:flex-start; gap:10px; color:var(--text-2);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+                Google Drive
+              </a>
+              <a href="https://docs.google.com/spreadsheets" target="_blank" class="btn btn-ghost btn-sm"
+                style="justify-content:flex-start; gap:10px; color:var(--text-2);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="3" y1="9" x2="21" y2="9" />
+                  <line x1="3" y1="15" x2="21" y2="15" />
+                  <line x1="9" y1="3" x2="9" y2="21" />
+                </svg>
+                Google Sheets
+              </a>
+              <a href="cert-tool.html" class="btn btn-ghost btn-sm"
+                style="justify-content:flex-start; gap:10px; color:var(--text-2);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="6" />
+                  <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+                </svg>
+                Certificate Editor
+              </a>
+              <a href="mini-site.html" class="btn btn-ghost btn-sm"
+                style="justify-content:flex-start; gap:10px; color:var(--text-2);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                Site Builder
+              </a>
+              <a href="hx-forms.html" class="btn btn-ghost btn-sm"
+                style="justify-content:flex-start; gap:10px; color:var(--text-2);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M9 21V9" />
+                </svg>
+                HX Forms
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <footer
+          style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center; color:var(--text-3); font-size: 12.5px; padding-bottom: 20px;">
+          <div>&copy; 2026 Honourix Workspace. All rights reserved.</div>
+          <div style="display:flex; align-items:center; gap:20px;">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <div
+                style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);">
+              </div> System Operational
+            </span>
+            <a href="#" style="transition:color 0.2s;">Support</a>
+            <a href="#" style="transition:color 0.2s;">Documentation</a>
+          </div>
+        </footer>
+
+      </main>
+    </div>
   </div>
-</div>
 
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="dashboard.js"></script>
-<script>
-  // ── STEP 1: Capture token from URL + auth guard (MUST be first)
-  requireAuth();
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="dashboard.js"></script>
+  <script>
+    // ── STEP 1: Capture token from URL + auth guard (MUST be first)
+    requireAuth();
 
-  // ── STEP 2: Inject sidebar then init (MUST be in this order)
-  document.getElementById('sidebarMount').outerHTML = renderSidebar('dashboard.html');
-  initSidebar();
+    // ── STEP 2: Inject sidebar then init (MUST be in this order)
+    document.getElementById('sidebarMount').outerHTML = renderSidebar('dashboard.html');
+    initSidebar();
 
-  // ── STEP 3: Greeting
-  const user = getUser();
-  if (user) {
-    const hour     = new Date().getHours();
-    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-    const first    = (user.name || 'there').split(' ')[0];
-    document.getElementById('welcomeTitle').textContent    = `${greeting}, ${first} 👋`;
-    document.getElementById('welcomeSubtitle').textContent = `Welcome back. Here's what's happening.`;
-  }
+    // ── STEP 3: Greeting
+    const user = getUser();
+    if (user) {
+      const hour = new Date().getHours();
+      const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+      const first = (user.name || 'there').split(' ')[0];
+      document.getElementById('welcomeTitle').textContent = `${greeting}, ${first} 👋`;
+      document.getElementById('welcomeSubtitle').textContent = `Welcome back. Here's what's happening.`;
+    }
 
-  // ── STEP 4: Stats
-  // ── STEP 4: Stats
-  function renderStats(data) {
-    const safe = n => (n >= 0 ? fmtNum(n) : '0');
-    
-    // 1. Certs & Mails
-    document.getElementById('totalCerts').textContent = safe(data.totalCerts);
-    const limit = data.monthlyEmailLimit || 500;
-    document.getElementById('mailUsageStat').textContent = `${safe(data.monthMails)} / ${limit}`;
+    // ── STEP 4: Stats
+    // ── STEP 4: Stats
+    function renderStats(data) {
+      const safe = n => (n >= 0 ? fmtNum(n) : '0');
 
-    // 2. Forms & Sites
-    document.getElementById('formsUsage').innerHTML = `${safe(data.totalForms || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Forms</span>`;
-    document.getElementById('sitesUsage').innerHTML = `${safe(data.totalSites || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Sites</span>`;
-  }
+      // 1. Certs & Mails
+      document.getElementById('totalCerts').textContent = safe(data.totalCerts);
+      const limit = data.monthlyEmailLimit || 500;
+      document.getElementById('mailUsageStat').textContent = `${safe(data.monthMails)} / ${limit}`;
 
-  async function loadStats() {
-    const local = getLocalStats();
-    renderStats({ ...local, monthlyEmailLimit: 500 });
+      // 2. Forms & Sites
+      document.getElementById('formsUsage').innerHTML = `${safe(data.totalForms || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Forms</span>`;
+      document.getElementById('sitesUsage').innerHTML = `${safe(data.totalSites || 0)} <span style="font-size:13px; font-weight:500; color:var(--text-3); margin-left:4px;">Sites</span>`;
+    }
 
-    // 1. Fetch Campaigns (Certs & Mails count)
-    try {
-      const campData = await apiFetch('/api/campaigns', { silent: true });
-      if (campData?.campaigns) {
-        const camps = campData.campaigns;
-        local.totalCerts = camps
-          .filter(c => c.type === 'cert' || c.type === 'combined')
-          .reduce((s, c) => s + (c.sent_count || 0), 0);
-        local.totalMails = camps
-          .filter(c => c.type === 'mail' || c.type === 'combined')
-          .reduce((s, c) => s + (c.sent_count || 0), 0);
-        renderStats({ ...local, monthlyEmailLimit: 500 });
-      }
-    } catch { /* use local fallback */ }
+    async function loadStats() {
+      const local = getLocalStats();
+      renderStats({ ...local, monthlyEmailLimit: 500 });
 
-    // 2. Fetch Usage (Forms & Sites count)
-    let usageData = {};
-    try {
-      usageData = await apiFetch('/api/settings/usage', { silent: true }) || {};
-    } catch { }
+      // 1. Fetch Campaigns (Certs & Mails count)
+      try {
+        const campData = await apiFetch('/api/campaigns', { silent: true });
+        if (campData?.campaigns) {
+          const camps = campData.campaigns;
+          local.totalCerts = camps
+            .filter(c => c.type === 'cert' || c.type === 'combined')
+            .reduce((s, c) => s + (c.sent_count || 0), 0);
+          local.totalMails = camps
+            .filter(c => c.type === 'mail' || c.type === 'combined')
+            .reduce((s, c) => s + (c.sent_count || 0), 0);
+          renderStats({ ...local, monthlyEmailLimit: 500 });
+        }
+      } catch { /* use local fallback */ }
 
-    // 3. Fetch Plan (Free vs Pro for the Chip)
-    try {
-      const planData = await apiFetch('/api/settings/plan', { silent: true });
-      const badgeContainer = document.getElementById('storagePlanBadge');
-      if (badgeContainer && planData) {
-         if (planData.plan === 'pro') {
+      // 2. Fetch Usage (Forms & Sites count)
+      let usageData = {};
+      try {
+        usageData = await apiFetch('/api/settings/usage', { silent: true }) || {};
+      } catch { }
+
+      // 3. Fetch Plan (Free vs Pro for the Chip)
+      try {
+        const planData = await apiFetch('/api/settings/plan', { silent: true });
+        const badgeContainer = document.getElementById('storagePlanBadge');
+        if (badgeContainer && planData) {
+          if (planData.plan === 'pro') {
             badgeContainer.innerHTML = '<span class="badge badge-cyan" style="font-size:10px; padding:3px 7px;">Pro Plan</span>';
-         } else {
+          } else {
             badgeContainer.innerHTML = '<span class="badge badge-gray" style="font-size:10px; padding:3px 7px;">Free Plan</span>';
-         }
-      }
-    } catch { }
-
-    // 4. Fetch Quota (Emails limit & Drive Storage)
-    try {
-      const data = await apiFetch('/api/quota', { silent: true });
-      if (data) {
-        renderStats({
-          ...local,
-          monthlyEmailLimit: data.dailyLimit || 500,
-          monthMails: data.sentToday || local.monthMails,
-          totalForms: usageData.formsCount || 0, 
-          totalSites: usageData.sitesCount || 0  
-        });
-
-        // Map Drive Storage
-        if (data.driveUsed !== undefined) {
-          const usedGB = (data.driveUsed / (1024 * 1024 * 1024)).toFixed(2);
-          const limitGB = (data.driveTotal / (1024 * 1024 * 1024)).toFixed(0);
-          
-          document.getElementById('storageUsage').innerHTML = `${usedGB} <span style="font-size:15px; font-weight:600; color:var(--text-3); margin-left:2px;">GB</span>`;
-          
-          const totalStorageEl = document.getElementById('totalStorageLabel');
-          if (totalStorageEl) {
-             totalStorageEl.textContent = `of ${limitGB} GB`;
           }
         }
+      } catch { }
+
+      // 4. Fetch Quota (Emails limit & Drive Storage)
+      try {
+        const data = await apiFetch('/api/quota', { silent: true });
+        if (data) {
+          renderStats({
+            ...local,
+            monthlyEmailLimit: data.dailyLimit || 500,
+            monthMails: data.sentToday || local.monthMails,
+            totalForms: usageData.formsCount || 0,
+            totalSites: usageData.sitesCount || 0
+          });
+
+          // Map Drive Storage
+          if (data.driveUsed !== undefined) {
+            const usedGB = (data.driveUsed / (1024 * 1024 * 1024)).toFixed(2);
+            const limitGB = (data.driveTotal / (1024 * 1024 * 1024)).toFixed(0);
+
+            document.getElementById('storageUsage').innerHTML = `${usedGB} <span style="font-size:15px; font-weight:600; color:var(--text-3); margin-left:2px;">GB</span>`;
+
+            const totalStorageEl = document.getElementById('totalStorageLabel');
+            if (totalStorageEl) {
+              totalStorageEl.textContent = `of ${limitGB} GB`;
+            }
+          }
+        }
+      } catch {
+        document.getElementById('storageUsage').innerHTML = `<span style="font-size:14px; color:var(--text-3); font-weight:500;">API Error</span>`;
       }
-    } catch {
-      document.getElementById('storageUsage').innerHTML = `<span style="font-size:14px; color:var(--text-3); font-weight:500;">API Error</span>`;
     }
-  }
-  
-  loadStats();
 
-  // ── STEP 5: Campaigns table
-  function renderCampaignsTable() {
-    const campaigns = JSON.parse(localStorage.getItem('hx_campaigns') || '[]')
-      .sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0,5);
-    const el = document.getElementById('campaignsTable');
-    if (!campaigns.length) return;
-    const typeColor = { cert:'cyan', mail:'purple', combined:'green' };
-    el.innerHTML = `
-      <table class="campaign-table">
-        <thead><tr>
-          <th>Campaign</th><th>Type</th><th>Date</th><th>Total</th><th>Success</th>
-        </tr></thead>
-        <tbody>
-          ${campaigns.map(c => {
-            const col = typeColor[c.type] || 'cyan';
-            const pct = c.total > 0 ? Math.round((c.success||0)/c.total*100) : 0;
-            const dt  = new Date(c.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'});
-            return `<tr>
-              <td style="color:var(--text);font-weight:600;">${c.name||'Untitled'}</td>
-              <td><span class="badge badge-${col}" style="font-size:11px;">${c.type}</span></td>
-              <td>${dt}</td><td>${c.total||0}</td>
-              <td><span style="color:${pct===100?'var(--green)':pct>50?'var(--gold)':'var(--red)'};font-weight:600;">
-                ${c.success||0} <span style="color:var(--text-3);font-size:11px;">(${pct}%)</span>
-              </span></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>`;
-  }
-  renderCampaignsTable();
+    loadStats();
 
-  lucide.createIcons();
-</script>
+    // ── STEP 5: Campaigns table
+    async function renderCampaignsTable() {
+      const el = document.getElementById('campaignsTable');
+      try {
+        const data = await apiFetch('/api/campaigns', { silent: true });
+        // If there's no data or no campaigns, leave the default empty state message.
+        if (!data || !data.campaigns || data.campaigns.length === 0) {
+          return;
+        }
+
+        // Sort by creation date and take the most recent 5
+        const campaigns = data.campaigns
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, 5);
+
+        const typeColor = { cert: 'cyan', certificate: 'cyan', mail: 'purple', combined: 'green' };
+        el.innerHTML = `
+        <table class="campaign-table">
+          <thead><tr>
+            <th>Campaign</th><th>Type</th><th>Date</th><th>Total</th><th>Success</th>
+          </tr></thead>
+          <tbody>
+            ${campaigns.map(c => {
+          const col = typeColor[c.type] || 'cyan';
+          const total = c.total_count || 0;
+          const success = c.sent_count || 0;
+          const pct = total > 0 ? Math.round(success / total * 100) : 0;
+          const dt = new Date(c.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' });
+          return `<tr>
+                  <td style="color:var(--text);font-weight:600;">${c.name || 'Untitled'}</td>
+                  <td><span class="badge badge-${col}" style="font-size:11px;">${c.type}</span></td>
+                  <td>${dt}</td><td>${total}</td>
+                  <td><span style="color:${pct === 100 ? 'var(--green)' : pct > 50 ? 'var(--gold)' : 'var(--red)'};font-weight:600;">
+                    ${success} <span style="color:var(--text-3);font-size:11px;">(${pct}%)</span>
+                  </span></td>
+                </tr>`;
+        }).join('')}
+          </tbody>
+        </table>`;
+      } catch (error) {
+        console.error("Failed to load campaigns:", error);
+        el.innerHTML = `<div class="empty-state" style="padding: 40px 24px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <h3>Could not load campaigns</h3>
+              <p>There was an error fetching your campaign history from the server.</p>
+            </div>`;
+      }
+    }
+    renderCampaignsTable();
+
+    lucide.createIcons();
+  </script>
 </body>
+
 </html>
