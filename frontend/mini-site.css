@@ -134,6 +134,12 @@
   animation: msFadeIn 0.3s var(--ease) both;
 }
 
+.ms-template-card:hover {
+  border-color: rgba(0, 212, 255, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 212, 255, 0.15);
+}
+
 /* Template preview area */
 .ms-template-preview {
   position: relative;
@@ -502,6 +508,11 @@
   border-radius: 14px;
   overflow: hidden;
   transition: var(--transition);
+}
+
+.ms-site-card:hover {
+  border-color: var(--glass-border-2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .ms-site-card-preview {
