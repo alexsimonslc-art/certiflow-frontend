@@ -2361,24 +2361,24 @@
       const hIdx2 = headers.indexOf(secondaryFieldLabel);
       if (hIdx2 < 0) return;
 
-      const matrix = {};
+      const matSol = {};
       const secLabelsSet = new Set();
 
       rows.forEach(r => {
         const primVal = r[hIdx] ? String(r[hIdx]).trim() : '(blank)';
         const secVal = r[hIdx2] ? String(r[hIdx2]).trim() : '(blank)';
-        if (!matrix[primVal]) matrix[primVal] = {};
-        matrix[primVal][secVal] = (matrix[primVal][secVal] || 0) + 1;
+        if (!matSol[primVal]) matSol[primVal] = {};
+        matSol[primVal][secVal] = (matSol[primVal][secVal] || 0) + 1;
         secLabelsSet.add(secVal);
       });
 
-      const primaryLabels = Object.keys(matrix).sort();
+      const primaryLabels = Object.keys(matSol).sort();
       const secondaryLabels = Array.from(secLabelsSet).sort();
 
       const datasets = secondaryLabels.map((secLabel, i) => {
         return {
           label: secLabel,
-          data: primaryLabels.map(primLabel => matrix[primLabel][secLabel] || 0),
+          data: primaryLabels.map(primLabel => matSol[primLabel][secLabel] || 0),
           backgroundColor: CHART_COLORS[i % CHART_COLORS.length],
           borderRadius: 4
         };
@@ -2863,10 +2863,10 @@
       const rowLabels = rIdx !== -1 ? [...new Set(pivotData.map(r => String(r[rIdx] || '(blank)')))].sort() : ['Total'];
       const colLabels = cIdx !== -1 ? [...new Set(pivotData.map(r => String(r[cIdx] || '(blank)')))].sort() : ['Total'];
 
-      const matrix = {};
+      const matSol = {};
       rowLabels.forEach(r => {
-        matrix[r] = {};
-        colLabels.forEach(c => { matrix[r][c] = 0; });
+        matSol[r] = {};
+        colLabels.forEach(c => { matSol[r][c] = 0; });
       });
 
       const rTotals = {}, cTotals = {};
@@ -2878,8 +2878,8 @@
         const rv = rIdx !== -1 ? String(row[rIdx] || '(blank)') : 'Total';
         const cv = cIdx !== -1 ? String(row[cIdx] || '(blank)') : 'Total';
 
-        if (matrix[rv] && matrix[rv][cv] !== undefined) {
-          matrix[rv][cv]++;
+        if (matSol[rv] && matSol[rv][cv] !== undefined) {
+          matSol[rv][cv]++;
           rTotals[rv]++;
           cTotals[cv]++;
           grand++;
@@ -2903,7 +2903,7 @@
         ${rowLabels.map(rv => `
           <tr>
             <td>${escHtml(rv)}</td>
-            ${colLabels.map(cv => `<td>${matrix[rv][cv] || 0}</td>`).join('')}
+            ${colLabels.map(cv => `<td>${matSol[rv][cv] || 0}</td>`).join('')}
             <td class="total-col">${rTotals[rv]}</td>
           </tr>`).join('')}
         <tr class="total-row">
