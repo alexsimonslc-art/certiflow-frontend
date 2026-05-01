@@ -234,11 +234,6 @@ ol {
   position: relative;
 }
 
-.nav-item:hover {
-  background: var(--glass);
-  color: var(--text);
-}
-
 .nav-item.active {
   background: var(--cyan-dim);
   color: var(--cyan);
@@ -380,11 +375,6 @@ ol {
   text-decoration: none;
   transition: all 0.2s ease;
   border: 1px solid transparent;
-}
-
-.nav-item:hover {
-  background: var(--glass);
-  color: var(--text);
 }
 
 .nav-item.active {
@@ -3015,7 +3005,8 @@ body::after {
   color: var(--text-2) !important;
 }
 
-.nav-item:hover {
+.sidebar:not(.collapsed) .nav-item:hover {
+  background: var(--glass);
   color: var(--text) !important;
 }
 
