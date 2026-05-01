@@ -437,7 +437,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       e.preventDefault();
-      document.body.classList.add('page-fade-out');
+      // Apply the fade-out effect only to the main content area
+      const mainContent = document.querySelector('.main-area');
+      if (mainContent) {
+        mainContent.classList.add('page-fade-out');
+      }
       setTimeout(() => { window.location.href = href; }, 300); // This duration should match the CSS animation
     });
   });
