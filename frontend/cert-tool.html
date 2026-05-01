@@ -1319,5 +1319,85 @@
 <!-- ── File Naming Modal ───────────────────────────── -->
 <script src="dashboard.js"></script>
 <script src="cert-tool.js"></script>
+<script>
+  /* ── HX Form Data Logic — missing from cert-tool.js ── */
+
+  // Extend the switchSrc function to handle the HX Form source
+  const _origSwitchSrc = typeof switchSrc === 'function' ? switchSrc : null;
+  window.switchSrc = function(mode) {
+    // Call original if it exists
+    if (_origSwitchSrc) _origSwitchSrc(mode);
+    
+    // Ensure panels are toggled correctly
+    const hxPanel = document.getElementById('srcHxForm');
+    if (hxPanel) hxPanel.style.display = (mode === 'hxform') ? 'block' : 'none';
+    
+    // Update option active states
+    ['srcSheetsOpt', 'srcFileOpt', 'srcManualOpt', 'srcHxFormOpt'].forEach(id => {
+      document.getElementById(id)?.classList.remove('active');
+    });
+    const activeId = { sheets: 'srcSheetsOpt', file: 'srcFileOpt', manual: 'srcManualOpt', hxform: 'srcHxFormOpt' }[mode];
+    document.getElementById(activeId)?.classList.add('active');
+
+    if (mode === 'hxform') loadHxFormList();
+  };
+
+  // Load the list of available forms from the database
+  async function loadHxFormList() {
+    const sel = document.getElementById('hxFormSelect');
+    if (!sel || sel.dataset.loaded) return;
+    try {
+      const data = await apiFetch('/api/hxdb/summary', { silent: true });
+      const eligible = (data?.forms || []).filter(f => f.submissionCount > 0);
+      
+      sel.innerHTML = '<option value="">Select a form…</option>' +
+        eligible.map(f => `<option value="${f.id}">${f.name} (${f.submissionCount} responses)</option>`).join('');
+      
+      if (!eligible.length) sel.innerHTML = '<option value="">No forms with submissions found</option>';
+      sel.dataset.loaded = '1';
+    } catch (e) { 
+      sel.innerHTML = '<option value="">Could not load forms</option>'; 
+    }
+  }
+
+  // Fetch actual submission data for the selected form
+  async function loadHxFormData(formId) {
+    if (!formId) return;
+    const sel = document.getElementById('hxFormSelect');
+    const el = document.getElementById('hxFormResult');
+    sel.disabled = true;
+
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--glass);margin-top:4px;font-size:14px;color:var(--text-2)">
+      <svg style="flex-shrink:0;animation:spin 0.9s linear infinite" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      Loading form data...
+    </div>`;
+    el.style.display = 'block';
+
+    try {
+      const data = await apiFetch(`/api/hxdb/data/${formId}`);
+      if (!data || !data.rows?.length) { 
+        toast('No submissions found in this form', 'warning'); 
+        el.style.display = 'none'; 
+        return; 
+      }
+
+      // Map to global variables used by cert-tool.js
+      window.headers = data.headers;
+      window.rows = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
+      window.sheetId = null; // Disable write-back for HX Form source
+
+      // Re-use existing rendering functions from cert-tool.js
+      if (typeof showSheetPreview === 'function') showSheetPreview();
+      if (typeof populateDropdowns === 'function') populateDropdowns();
+      
+      toast(`${window.rows.length} participants loaded from form`, 'success');
+    } catch (e) {
+      el.style.display = 'none';
+      toast('Could not load form data: ' + e.message, 'error');
+    } finally {
+      sel.disabled = false;
+    }
+  }
+</script>
 </body>
 </html>
