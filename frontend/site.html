@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Dynamic meta — updated by JS after config loads -->
-  <title>Loading… — Honourix</title>
+  <title>Loading… — GalSol</title>
   <meta name="description" content="" />
   <meta property="og:title" content="" />
   <meta property="og:description" content="" />
@@ -83,7 +83,7 @@
         d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </svg>
     <span>on</span>
-    <a href="/index.html" style="font-weight:700;color:var(--cyan)">Honourix</a>
+    <a href="/index.html" style="font-weight:700;color:var(--cyan)">GalSol</a>
     <div class="ms-footer-dot"></div>
     <a href="/mini-site.html">Create your own event page →</a>
   </footer>
@@ -104,7 +104,7 @@
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
         <polyline points="9 22 9 12 15 12 15 22" />
       </svg>
-      Go to Honourix
+      Go to GalSol
     </a>
   </div>
 
@@ -135,7 +135,7 @@
        CONFIGURATION
     ════════════════════════════════════════════════════════════════ */
     const MS_API_BASE = 'https://certiflow-backend-73xk.onrender.com';
-    const SUPABASE_URL  = 'https://lbvcrhequonhggsguqqz.supabase.co';   // ← your project URL
+    const SUPABASE_URL = 'https://lbvcrhequonhggsguqqz.supabase.co';   // ← your project URL
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxidmNyaGVxdW9uaGdnc2d1cXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MjAxNTgsImV4cCI6MjA5MDE5NjE1OH0.cSL32z9OS94E-UUghgwqeck9czs1IqO9o-yek5TeF9w';                       // ← safe public key
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -212,7 +212,7 @@
       const tagline = cover?.props?.tagline || '';
       const coverImg = cover?.props?.coverImage || '';
 
-      document.title = `${name} — Honourix`;
+      document.title = `${name} — GalSol`;
       const setTag = (sel, val) => {
         const el = document.querySelector(sel);
         if (el) el.setAttribute(el.tagName === 'META' ? 'content' : 'href', val);
@@ -258,7 +258,7 @@
         content.innerHTML = blocks.map(b => renderMSBlock(b, config)).join('');
         // Re-fire SVG onload handlers — innerHTML silently strips <script> but SVG onload survives
         content.querySelectorAll('svg[onload]').forEach(svg => {
-          try { new Function(svg.getAttribute('onload'))(); } catch(e) { console.warn('carousel init error', e); }
+          try { new Function(svg.getAttribute('onload'))(); } catch (e) { console.warn('carousel init error', e); }
         });
       }
 
@@ -286,7 +286,7 @@
       document.head.appendChild(s);
 
       window.dataLayer = window.dataLayer || [];
-      window.gtag = window.gtag || function gtag(){ window.dataLayer.push(arguments); };
+      window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
       window.gtag('js', new Date());
       window.gtag('config', gaId);
     }
@@ -394,7 +394,7 @@
       showSkeleton();
       setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 600);
 
-// ── 1. Try Supabase directly (always on, no cold start, safe public read)
+      // ── 1. Try Supabase directly (always on, no cold start, safe public read)
       let siteData = null;
       try {
         const { data, error } = await sb
@@ -406,13 +406,13 @@
 
         if (data && !error) {
           siteData = {
-            id:               data.id,
-            name:             data.name,
-            slug:             data.slug,
+            id: data.id,
+            name: data.name,
+            slug: data.slug,
             registrationOpen: data.registration_open !== false,
-            submissionCount:  data.submission_count || 0,
-            gaId:             data.ga_id || null,
-            config:           { ...data.config, blocks: data.config?.blocks || [] },
+            submissionCount: data.submission_count || 0,
+            gaId: data.ga_id || null,
+            config: { ...data.config, blocks: data.config?.blocks || [] },
           };
           console.info('[site.html] Loaded from Supabase (fast path)');
         }
@@ -442,18 +442,18 @@
       // ── 3. Last resort: localStorage (organiser on their own device only)
       if (!siteData) {
         try {
-          const stored = JSON.parse(localStorage.getItem('hx_minisites') || '[]');
-          const local  = stored.find(s => s.slug === slug);
+          const stored = JSON.parse(localStorage.getItem('gs_minisites') || '[]');
+          const local = stored.find(s => s.slug === slug);
           if (local) {
             console.info('[site.html] Loaded from localStorage (last resort)');
             siteData = {
-              id:               local.id,
-              name:             local.name,
-              slug:             local.slug,
+              id: local.id,
+              name: local.name,
+              slug: local.slug,
               registrationOpen: local.config?.registrationOpen !== false,
-              submissionCount:  0,
-              gaId:             local.gaId || local.ga_id || local.config?.gaId || null,
-              config:           { ...local.config, blocks: local.config?.blocks || [] },
+              submissionCount: 0,
+              gaId: local.gaId || local.ga_id || local.config?.gaId || null,
+              config: { ...local.config, blocks: local.config?.blocks || [] },
             };
           }
         } catch (_) { }

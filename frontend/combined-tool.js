@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix — Combined Pipeline  |  combined-tool.js
+   GalSol — Combined Pipeline  |  combined-tool.js
    FIXED: dropdown styling, email editor, manual entry
 ================================================================ */
 
@@ -162,19 +162,19 @@ function switchDataSrc(type) {
   document.getElementById('panelSheets').style.display = type === 'sheets' ? 'block' : 'none';
   document.getElementById('panelFile').style.display = type === 'file' ? 'block' : 'none';
   document.getElementById('panelManual').style.display = type === 'manual' ? 'block' : 'none';
-  document.getElementById('panelHxForm').style.display = type === 'hxform' ? 'block' : 'none';
+  document.getElementById('panelHxForm').style.display = type === 'gsform' ? 'block' : 'none';
   document.getElementById('srcSheetsBtn').className = 'src-opt' + (type === 'sheets' ? ' active' : '');
   document.getElementById('srcFileBtn').className = 'src-opt' + (type === 'file' ? ' active' : '');
   document.getElementById('srcManualBtn').className = 'src-opt' + (type === 'manual' ? ' active' : '');
-  document.getElementById('srcHxFormBtn').className = 'src-opt' + (type === 'hxform' ? ' active' : '');
-  if (type === 'hxform') cpLoadHxFormList();
+  document.getElementById('srcHxFormBtn').className = 'src-opt' + (type === 'gsform' ? ' active' : '');
+  if (type === 'gsform') cpLoadHxFormList();
 }
 async function cpLoadHxFormList() {
   const sel = document.getElementById('cpHxFormSelect');
   if (!sel || sel.dataset.loaded) return;
   try {
-    const token = localStorage.getItem('Honourix_token');
-    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
+    const token = localStorage.getItem('GalSol_token');
+    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/gsdb/summary', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const { forms } = await res.json();
@@ -189,7 +189,7 @@ async function cpLoadHxFormList() {
 async function cpLoadHxFormData(formId) {
   if (!formId) return;
   const sel = document.getElementById('cpHxFormSelect');
-  const el = document.getElementById('hxFormLoadedMsg');
+  const el = document.getElementById('gsFormLoadedMsg');
   sel.disabled = true;
 
   el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--glass);font-size:14px;color:var(--text-2)">
@@ -199,8 +199,8 @@ async function cpLoadHxFormData(formId) {
   el.style.display = 'block';
 
   try {
-    const token = localStorage.getItem('Honourix_token');
-    const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
+    const token = localStorage.getItem('GalSol_token');
+    const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/gsdb/data/${formId}`, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     if (!res.ok) throw new Error((await res.json()).error || 'Failed');
@@ -1242,29 +1242,29 @@ function initStep4() {
 }
 
 const ME_DEFS = {
-  logo: { label: 'Logo / Banner', defaults: () => ({ text: 'HONOURIX', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }) },
+  logo: { label: 'Logo / Banner', defaults: () => ({ text: 'GalSol', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }) },
   header: { label: 'Heading', defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }) },
   text: { label: 'Text', defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }) },
   button: { label: 'Button', defaults: () => ({ text: 'Click Here', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 }) },
   image: { label: 'Image', defaults: () => ({ src: '', alt: 'Image', width: 100, bgColor: '#f8fafc', paddingV: 20, paddingH: 40, borderRadius: 8 }) },
   divider: { label: 'Divider', defaults: () => ({ color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 }) },
   spacer: { label: 'Spacer', defaults: () => ({ height: 40, bgColor: '#ffffff' }) },
-  footer: { label: 'Footer', defaults: () => ({ text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) },
+  footer: { label: 'Footer', defaults: () => ({ text: 'This email was sent via GalSol. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) },
   social: { label: 'Social Links', defaults: () => ({ platforms: [{ name: 'LinkedIn', url: '', icon: 'linkedin' }, { name: 'Twitter/X', url: '', icon: 'x' }, { name: 'Instagram', url: '', icon: 'instagram' }], bgColor: '#ffffff', align: 'center', paddingV: 20, paddingH: 40, iconSize: 32, style: 'plain', color: '#475569' }) },
   table: { label: 'Table', defaults: () => ({ rows: 3, cols: 3, data: [['Header 1', 'Header 2', 'Header 3'], ['Cell', 'Cell', 'Cell'], ['Cell', 'Cell', 'Cell']], headerRow: true, borderWidth: 1, borderColor: '#e2e8f0', headerBg: '#f1f5f9', headerColor: '#1e293b', cellBg: '#ffffff', cellColor: '#475569', cellPadding: 10, fontSize: 14, bgColor: '#ffffff', paddingV: 20, paddingH: 40, width: '100%' }) },
 };
 
 const ME_TEMPLATES = {
-  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [{ type: 'logo', props: { text: 'HONOURIX', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready 🎉', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via Honourix. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } }] },
+  cert: { name: 'Certificate Dispatch', desc: 'Cert link + personalization', blocks: [{ type: 'logo', props: { text: 'GalSol', tagline: 'Certificate Platform', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Your Certificate is Ready 🎉', fontSize: 26, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nCongratulations on completing your course. We are delighted to share your personalized certificate with you.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Download Certificate', link: '{{Certificate Link}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'This email was sent via GalSol. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 } }] },
   event: { name: 'Event Invitation', desc: 'Banner + date + RSVP', blocks: [{ type: 'logo', props: { text: 'EVENT', tagline: '', bgColor: '#7c3aed', color: '#ffffff', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "You're Invited, {{name}}!", fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We warmly invite you to join us for our upcoming event. Mark your calendar and join us for an unforgettable experience.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'RSVP Now', link: '#', btnBg: '#7c3aed', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } }] },
-  thankyou: { name: 'Thank You', desc: 'Warm appreciation note', blocks: [{ type: 'logo', props: { text: 'THANK YOU', tagline: '', bgColor: '#10b981', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Thank You, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#d1fae5', bgColor: '#ffffff', paddingV: 16, thickness: 2 } }, { type: 'footer', props: { text: 'With gratitude,\nThe Honourix Team', bgColor: '#f0fdf4', color: '#6b7280', fontSize: 13, align: 'center', paddingV: 24, paddingH: 40 } }] },
+  thankyou: { name: 'Thank You', desc: 'Warm appreciation note', blocks: [{ type: 'logo', props: { text: 'THANK YOU', tagline: '', bgColor: '#10b981', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Thank You, {{name}}!', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'We wanted to take a moment to express our sincere gratitude for your participation and dedication.\n\nYour contribution has made a real difference, and we truly appreciate everything you bring to the table.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#d1fae5', bgColor: '#ffffff', paddingV: 16, thickness: 2 } }, { type: 'footer', props: { text: 'With gratitude,\nThe GalSol Team', bgColor: '#f0fdf4', color: '#6b7280', fontSize: 13, align: 'center', paddingV: 24, paddingH: 40 } }] },
   announcement: { name: 'Announcement', desc: 'Bold headline + CTA', blocks: [{ type: 'logo', props: { text: 'ANNOUNCEMENT', tagline: '', bgColor: '#0f172a', color: '#f59e0b', fontSize: 16, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Important Update', fontSize: 30, fontWeight: 800, color: '#0f172a', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Dear {{name}},\n\nWe have an important announcement to share with you. Please read the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Learn More', link: '#', btnBg: '#f59e0b', btnColor: '#000000', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 8, fontSize: 15, fontWeight: 700 } }] },
-  plain: { name: 'Plain Professional', desc: 'Clean text-only email', blocks: [{ type: 'spacer', props: { height: 24, bgColor: '#ffffff' } }, { type: 'text', props: { text: 'Hi {{name}},', fontSize: 18, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.6 } }, { type: 'text', props: { text: 'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.8 } }, { type: 'text', props: { text: 'Best regards,\nThe Honourix Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.7 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'Sent via Honourix', bgColor: '#f8fafc', color: '#9ca3af', fontSize: 12, align: 'center', paddingV: 20, paddingH: 40 } }] },
-  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [{ type: 'logo', props: { text: 'HONOURIX', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}! 🎉', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }] },
+  plain: { name: 'Plain Professional', desc: 'Clean text-only email', blocks: [{ type: 'spacer', props: { height: 24, bgColor: '#ffffff' } }, { type: 'text', props: { text: 'Hi {{name}},', fontSize: 18, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.6 } }, { type: 'text', props: { text: 'I hope this email finds you well.\n\nThis is the main body of your email. Keep it short, professional, and to the point.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.8 } }, { type: 'text', props: { text: 'Best regards,\nThe GalSol Team', fontSize: 15, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 12, paddingH: 40, lineHeight: 1.7 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 16, thickness: 1 } }, { type: 'footer', props: { text: 'Sent via GalSol', bgColor: '#f8fafc', color: '#9ca3af', fontSize: 12, align: 'center', paddingV: 20, paddingH: 40 } }] },
+  welcome: { name: 'Welcome Email', desc: 'Warm onboarding email', blocks: [{ type: 'logo', props: { text: 'GalSol', tagline: 'Welcome aboard!', bgColor: '#6366f1', color: '#ffffff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Welcome, {{name}}! 🎉', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "We're thrilled to have you on board. You've just taken the first step toward something amazing.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Get Started Now', link: '#', btnBg: 'linear-gradient(135deg,#6366f1,#8b5cf6)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }] },
   promo: { name: 'Promotional', desc: 'Bold offer with CTA', blocks: [{ type: 'logo', props: { text: 'SALE', tagline: 'Limited Time Offer', bgColor: '#1a0533', color: '#ec4899', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: 'Exclusive Offer for You, {{name}}!', fontSize: 28, fontWeight: 800, color: '#ffffff', bgColor: 'linear-gradient(135deg,#ec4899,#f97316)', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: "Don't miss out on this limited-time offer. We've curated something special just for you.", fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'center', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Claim Your Offer →', link: '#', btnBg: 'linear-gradient(135deg,#ec4899,#f97316)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 30, fontSize: 16, fontWeight: 700 } }] },
   newsletter: { name: 'Newsletter', desc: 'Clean content digest', blocks: [{ type: 'logo', props: { text: 'THE DIGEST', tagline: 'Weekly Newsletter', bgColor: '#0f172a', color: '#0ea5e9', fontSize: 18, fontWeight: 800, align: 'center', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: "This Week's Highlights", fontSize: 24, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 28, paddingH: 40 } }, { type: 'divider', props: { color: '#0ea5e9', bgColor: '#ffffff', paddingV: 4, thickness: 2 } }, { type: 'text', props: { text: 'Hi {{name}},\n\nHere\'s what happened this week that you need to know about:', fontSize: 15, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 16, paddingH: 40, lineHeight: 1.75 } }] },
-  saas: { name: 'SaaS Onboarding', desc: 'Modern product email', blocks: [{ type: 'logo', props: { text: 'HONOURIX', tagline: 'Your workspace is ready', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: "You're all set, {{name}}!", fontSize: 28, fontWeight: 700, color: '#f8fafc', bgColor: '#1e293b', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Your account is active and ready to use. Here\'s a quick overview of what you can do:', fontSize: 16, color: '#cbd5e1', bgColor: '#1e293b', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Open Dashboard', link: '#', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#1e293b', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }] },
-  classic: { name: 'Classic Business', desc: 'Formal business email', blocks: [{ type: 'logo', props: { text: 'HONOURIX', tagline: 'Business Communication', bgColor: '#334155', color: '#f8fafc', fontSize: 18, fontWeight: 700, align: 'left', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Dear {{name}},', fontSize: 22, fontWeight: 600, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 32, paddingH: 40 } }, { type: 'text', props: { text: 'I am writing to inform you about an important matter regarding your account with us. Please review the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 } }] }
+  saas: { name: 'SaaS Onboarding', desc: 'Modern product email', blocks: [{ type: 'logo', props: { text: 'GalSol', tagline: 'Your workspace is ready', bgColor: '#0d1728', color: '#00d4ff', fontSize: 20, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 } }, { type: 'header', props: { text: "You're all set, {{name}}!", fontSize: 28, fontWeight: 700, color: '#f8fafc', bgColor: '#1e293b', align: 'center', paddingV: 36, paddingH: 40 } }, { type: 'text', props: { text: 'Your account is active and ready to use. Here\'s a quick overview of what you can do:', fontSize: 16, color: '#cbd5e1', bgColor: '#1e293b', align: 'left', paddingV: 8, paddingH: 40, lineHeight: 1.75 } }, { type: 'button', props: { text: 'Open Dashboard', link: '#', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#1e293b', align: 'center', paddingV: 28, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 } }] },
+  classic: { name: 'Classic Business', desc: 'Formal business email', blocks: [{ type: 'logo', props: { text: 'GalSol', tagline: 'Business Communication', bgColor: '#334155', color: '#f8fafc', fontSize: 18, fontWeight: 700, align: 'left', paddingV: 24, paddingH: 40 } }, { type: 'header', props: { text: 'Dear {{name}},', fontSize: 22, fontWeight: 600, color: '#1e293b', bgColor: '#ffffff', align: 'left', paddingV: 32, paddingH: 40 } }, { type: 'text', props: { text: 'I am writing to inform you about an important matter regarding your account with us. Please review the following information carefully.', fontSize: 16, color: '#374151', bgColor: '#ffffff', align: 'left', paddingV: 4, paddingH: 40, lineHeight: 1.8 } }, { type: 'divider', props: { color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 } }] }
 };
 const ME_TPL_CATS = { cert: 'certificate', event: 'event', thankyou: 'welcome', announcement: 'promo', plain: 'welcome', welcome: 'welcome', promo: 'promo', newsletter: 'newsletter', saas: 'welcome', classic: 'welcome' };
 let meTplGateSelected = null;
@@ -1880,7 +1880,7 @@ let meAiIsLoading = false;
 
   window.galAiSetGreetName = function () {
     try {
-      const token = localStorage.getItem('Honourix_token');
+      const token = localStorage.getItem('GalSol_token');
       if (!token) return;
       const payload = JSON.parse(atob(token.split('.')[1]));
       const firstName = (payload.name || '').split(' ')[0] || 'there';
@@ -1998,7 +1998,7 @@ let _galAiIsPro = null;
 async function _galAiCheckPro() {
   if (_galAiIsPro !== null) return _galAiIsPro;
   try {
-    const token = localStorage.getItem('Honourix_token');
+    const token = localStorage.getItem('GalSol_token');
     const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
@@ -2072,7 +2072,7 @@ async function meAiSend() {
   meAiChatHistory.push({ role: 'user', content: msg });
 
   try {
-    const token = localStorage.getItem('Honourix_token');
+    const token = localStorage.getItem('GalSol_token');
     const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/generate-email', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({
@@ -2525,7 +2525,7 @@ async function launchPipeline() {
   };
 
   try {
-    const token = localStorage.getItem('Honourix_token');
+    const token = localStorage.getItem('GalSol_token');
     const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/certificates/generate', {
       method: 'POST',
       headers: {
@@ -2736,7 +2736,7 @@ function renderResultTable(results) {
 
 
 function filterResultTable() { const q = document.getElementById('resultSearch').value.toLowerCase(); document.querySelectorAll('#resultTbody tr').forEach(tr => { tr.style.display = (!q || tr.dataset.name.toLowerCase().includes(q) || (tr.dataset.email || '').toLowerCase().includes(q)) ? '' : 'none'; }); }
-function downloadFullReport() { downloadCSV(CP.results.map(r => ({ Name: r.name, Email: r.email || '', 'Cert Status': r.certStatus, 'Email Status': r.mailStatus, 'Certificate Link': r.certLink || '', Error: r.error || '' })), `honourix-pipeline-${Date.now()}.csv`); }
+function downloadFullReport() { downloadCSV(CP.results.map(r => ({ Name: r.name, Email: r.email || '', 'Cert Status': r.certStatus, 'Email Status': r.mailStatus, 'Certificate Link': r.certLink || '', Error: r.error || '' })), `GalSol-pipeline-${Date.now()}.csv`); }
 
 async function saveCampaignHistory(rec) {
   const mappings = getAllMappings();
@@ -2780,7 +2780,7 @@ function resetAll() {
   ED.fields = []; ED.bgImg = null; ED.bgBase64 = null; ED.selId = null; ED.ready = false;
   ME.blocks = []; ME.selectedId = null; ME.initialized = false;
   ['cpName', 'sheetId', 'emailSubject', 'emailTemplate'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  ['sheetLoadedMsg', 'fileLoadedMsg', 'manualLoadedMsg', 'hxFormLoadedMsg'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  ['sheetLoadedMsg', 'fileLoadedMsg', 'manualLoadedMsg', 'gsFormLoadedMsg'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
   document.getElementById('customMappings').innerHTML = '';
   if (ME.cm) ME.cm.setValue('');
   goStep(1, true);

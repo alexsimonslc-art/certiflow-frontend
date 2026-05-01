@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix — Mini Site Builder  |  mini-site-theme.js
+   GalSol — Mini Site Builder  |  mini-site-theme.js
    Batch 4 Part B — Color palettes · Font pairings ·
    Visual theme picker · QR code · Overrides site settings tab
 ================================================================ */
@@ -548,4 +548,4 @@ function mst_wireCardHovers() {
   });
 }
 
-console.log('[Honourix] mini-site-theme.js loaded ✓');
+console.log('[GalSol] mini-site-theme.js loaded ✓');

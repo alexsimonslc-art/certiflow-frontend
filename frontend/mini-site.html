@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Sites — Honourix</title>
+  <title>Mini Sites — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -20,7 +20,7 @@
     <div id="sidebarMount"></div>
 
     <div class="main-area">
-      
+
 
       <main class="page-content fade-in">
 
@@ -42,10 +42,11 @@
 
         <div id="mySitesSection" style="margin-bottom: 44px; display: none;">
           <div class="ms-section-header" style="display: flex; align-items: center; justify-content: space-between;">
-            
+
             <div style="display: flex; align-items: center; gap: 10px;">
               <div class="ms-section-title" style="display: flex; align-items: center; gap: 8px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="width: 18px; height: 18px;">
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                   <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
@@ -55,7 +56,8 @@
             </div>
 
             <div class="ms-site-counter" id="siteCounter" style="display: flex; align-items: center; gap: 6px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width: 13px; height: 13px;">
                 <rect x="3" y="3" width="7" height="7" rx="1" />
                 <rect x="14" y="3" width="7" height="7" rx="1" />
                 <rect x="14" y="14" width="7" height="7" rx="1" />
@@ -63,9 +65,9 @@
               </svg>
               <span id="siteCountText">0 / 10 sites</span>
             </div>
-            
+
           </div>
-          
+
           <div class="ms-sites-grid" id="mySitesGrid"></div>
         </div>
 
@@ -450,7 +452,7 @@
         <div class="form-group" style="margin-bottom:24px">
           <label class="form-label">Site URL Slug</label>
           <div class="ms-slug-input-wrap">
-            <span class="ms-slug-prefix">honourix.app/s/</span>
+            <span class="ms-slug-prefix">GalSol.app/s/</span>
             <input type="text" id="newSiteSlug" class="ms-slug-input" placeholder="techfest-2026"
               oninput="this._userEdited=true; validateSlug(this)" onkeydown="if(event.key==='Enter') confirmCreate()" />
           </div>
@@ -567,15 +569,15 @@
         .join('');
     }
 
-      // end _renderMySites
-    
+    // end _renderMySites
+
 
     function renderSiteCard(site) {
       const statusColor = site.status === 'published'
         ? 'var(--green)' : 'var(--gold)';
       const statusLabel = site.status === 'published' ? 'Live' : 'Draft';
       const updated = timeAgo(site.updatedAt);
-      const url = `honourix.app/s/${site.slug}`;
+      const url = `GalSol.app/s/${site.slug}`;
 
       return `<div class="ms-site-card" data-id="${site.id}">
     <div class="ms-site-card-preview" style="background:${getTemplateBg(site.template)}">
@@ -690,7 +692,7 @@
     async function validateSlug(input) {
       let slug = input.value.trim();
       const status = document.getElementById('slugStatus');
-      
+
       if (!slug) { status.innerHTML = ''; return; }
 
       const clean = slug.replace(/[^a-z0-9-]/g, '');
@@ -729,13 +731,13 @@
       // 3. Check Global Database
       clearTimeout(slugCheckTimer);
       slugCheckTimer = setTimeout(async () => {
-        
+
         // Double check: Did the user type a new letter while waiting 500ms?
         if (currentSlugCheck !== slug) return;
 
         try {
           const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/minisite/check-slug?slug=${encodeURIComponent(slug)}`);
-          
+
           // CRITICAL FIX: Did the user type a new letter while the backend was answering?
           // If yes, throw this old answer in the trash immediately!
           if (currentSlugCheck !== slug || input.value.trim() !== slug) return;
@@ -750,23 +752,23 @@
               return;
             }
           }
-          
+
           // Success UI
           status.innerHTML = `<div style="display:flex; align-items:center; gap:6px; color:var(--green); font-size:13px; font-weight:600; margin-top:10px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            Available: honourix.app/s/${slug}
+            Available: GalSol.app/s/${slug}
           </div>`;
 
         } catch (e) {
           // If backend connection fails, ignore outdated responses
           if (currentSlugCheck !== slug || input.value.trim() !== slug) return;
-          
+
           status.innerHTML = `<div style="display:flex; align-items:center; gap:6px; color:var(--green); font-size:13px; font-weight:600; margin-top:10px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            Available: honourix.app/s/${slug}
+            Available: GalSol.app/s/${slug}
           </div>`;
         }
-      }, 500); 
+      }, 500);
     }
 
     async function confirmCreate() {
@@ -785,19 +787,19 @@
         // Final Global Verification before saving
         const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/minisite/check-slug?slug=${encodeURIComponent(slug)}`);
         if (res.ok) {
-           const data = await res.json();
-           if (!data.available) {
-              toast('This URL slug is taken by someone else. Please choose another.', 'error');
-              document.getElementById('slugStatus').className = 'ms-slug-status ms-slug-taken';
-              document.getElementById('slugStatus').textContent = '✕ Taken by another user';
-              btn.innerHTML = originalText;
-              btn.disabled = false;
-              return;
-           }
+          const data = await res.json();
+          if (!data.available) {
+            toast('This URL slug is taken by someone else. Please choose another.', 'error');
+            document.getElementById('slugStatus').className = 'ms-slug-status ms-slug-taken';
+            document.getElementById('slugStatus').textContent = '✕ Taken by another user';
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            return;
+          }
         }
-      } catch(e) {
-         console.warn("Global check failed, falling back to local check.", e);
-         slug = ensureUniqueSlug(slug);
+      } catch (e) {
+        console.warn("Global check failed, falling back to local check.", e);
+        slug = ensureUniqueSlug(slug);
       }
 
       // Safe to create!
@@ -826,7 +828,7 @@
     }
 
     function copyLink(slug) {
-      copyToClipboard(`https://honourix.app/s/${slug}`, 'Site URL');
+      copyToClipboard(`https://GalSol.app/s/${slug}`, 'Site URL');
     }
 
     function duplicateSite(id) {
@@ -877,21 +879,21 @@
 
     /* ================================================================
        PATCH for mini-site.html — replace wherever you load sites
-       Find: localStorage.getItem('hx_minisites')
+       Find: localStorage.getItem('gs_minisites')
        Replace with: the function below
     ================================================================ */
 
     /* ── User-scoped storage helpers (same as state.js) ── */
     function msl_getUserId() {
       try {
-        const token = localStorage.getItem('Honourix_token') || '';
+        const token = localStorage.getItem('GalSol_token') || '';
         if (!token) return 'anon';
         const p = JSON.parse(atob(token.split('.')[1]));
         return p.googleId || p.sub || p.id || 'anon';
       } catch (e) { return 'anon'; }
     }
     function msl_storageKey() {
-      return 'hx_minisites_' + msl_getUserId();
+      return 'gs_minisites_' + msl_getUserId();
     }
 
     /**
@@ -912,7 +914,7 @@
 
       // Then sync from backend
       try {
-        const token = localStorage.getItem('Honourix_token') || '';
+        const token = localStorage.getItem('GalSol_token') || '';
         if (!token) return;
 
         const res = await fetch(
@@ -975,7 +977,7 @@
 
       // Remove from backend
       try {
-        const token = localStorage.getItem('Honourix_token') || '';
+        const token = localStorage.getItem('GalSol_token') || '';
         if (!token) return;
         await fetch(
           `https://certiflow-backend-73xk.onrender.com/api/minisite/${siteId}`,
@@ -1073,7 +1075,7 @@
     function doLogout() {
       // Just remove the token — scoped localStorage stays for when they log back in
       // Never call localStorage.clear() — that wipes OTHER users' scoped data too
-      localStorage.removeItem('Honourix_token');
+      localStorage.removeItem('GalSol_token');
       window.location.href = 'login.html';
     }
 

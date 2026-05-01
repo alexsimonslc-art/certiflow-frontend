@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Certificate Generator — Honourix</title>
+  <title>Certificate Generator — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -1266,7 +1266,7 @@
 </head>
 
 <body>
-  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">GalSol Platform</p></div>'; } })();</script>
   <div class="app-layout">
     <div id="sidebarMount"></div>
 
@@ -1369,8 +1369,8 @@
                       <div class="src-opt-desc">Type recipients directly</div>
                     </div>
 
-                    <!-- HX Form -->
-                    <div class="src-opt" id="srcHxFormOpt" onclick="switchSrc('hxform')">
+                    <!-- GS Form -->
+                    <div class="src-opt" id="srcHxFormOpt" onclick="switchSrc('gsform')">
                       <div class="src-opt-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1379,7 +1379,7 @@
                           <line x1="16" y1="17" x2="8" y2="17" />
                         </svg>
                       </div>
-                      <div class="src-opt-title">HX Form</div>
+                      <div class="src-opt-title">GS Form</div>
                       <div class="src-opt-desc">Import responses as recipients</div>
                     </div>
 
@@ -1476,17 +1476,17 @@
                     <div id="manualAppliedMsg" style="display:none"></div>
                   </div>
 
-                  <!-- HX Form panel -->
+                  <!-- GS Form panel -->
                   <div id="srcHxForm" style="display:none">
                     <div class="form-group" style="margin-bottom:14px">
-                      <label class="form-label">Select HX Form <span class="req">*</span></label>
-                      <select id="hxFormSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"
+                      <label class="form-label">Select GS Form <span class="req">*</span></label>
+                      <select id="gsFormSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"
                         onchange="loadHxFormData(this.value)">
                         <option value="">Loading your forms…</option>
                       </select>
-                      <span class="form-hint">Shows published HX Forms that have at least one submission</span>
+                      <span class="form-hint">Shows published GS Forms that have at least one submission</span>
                     </div>
-                    <div id="hxFormResult" style="display:none"></div>
+                    <div id="gsFormResult" style="display:none"></div>
                   </div>
                 </div>
               </div>
@@ -1535,7 +1535,7 @@
                   </svg>
                   Your data stays private
                 </div>
-                <p style="font-size:13.5px;color:var(--text-2);line-height:1.65">Honourix reads your Sheet using your
+                <p style="font-size:13.5px;color:var(--text-2);line-height:1.65">GalSol reads your Sheet using your
                   own Google OAuth token. No data passes through our servers — everything runs via Google's secure APIs.
                 </p>
               </div>

@@ -1,14 +1,14 @@
 /* ================================================================
-   Honourix — Mini Site  |  mini-site-form.js
+   GalSol — Mini Site  |  mini-site-form.js
    Multi-section form engine with conditional routing.
    Runs only in site.html (public visitor page).
 ================================================================ */
 (function () {
   'use strict';
 
-  const API_BASE    = 'https://certiflow-backend-73xk.onrender.com';
+  const API_BASE = 'https://certiflow-backend-73xk.onrender.com';
   const SUBMIT_PATH = '/api/minisite/submit';
-  const STORAGE_KEY = 'hx_ms_submitted';
+  const STORAGE_KEY = 'gs_ms_submitted';
   const MAX_RETRIES = 2;
   const RETRY_DELAY = 1200;
 
@@ -28,7 +28,7 @@
       d[fp] = Date.now();
       const keys = Object.keys(d); if (keys.length > 20) delete d[keys[0]];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
-    } catch {}
+    } catch { }
   }
   function buildFingerprint(siteId, data) {
     const str = siteId + '::' + (data['Email Address'] || data.email || '') + '::' + (data['Phone Number'] || '');
@@ -52,7 +52,7 @@
   function fileToBase64(file) {
     return new Promise((res, rej) => {
       const r = new FileReader();
-      r.onload  = () => res(r.result.split(',')[1]);
+      r.onload = () => res(r.result.split(',')[1]);
       r.onerror = () => rej(new Error('File read failed'));
       r.readAsDataURL(file);
     });
@@ -97,7 +97,7 @@
     },
     'linear-scale'(v, f) {
       const n = Number(v); if (isNaN(n)) return 'Please select a value.';
-      if (n < (f.min||1) || n > (f.max||5)) return `Select between ${f.min||1} and ${f.max||5}.`;
+      if (n < (f.min || 1) || n > (f.max || 5)) return `Select between ${f.min || 1} and ${f.max || 5}.`;
       return null;
     },
     file(v, f) {
@@ -196,7 +196,7 @@
           try {
             const b64 = await fileToBase64(file);
             answers[key] = { _type: 'file', fileName: file.name, mimeType: file.type, size: file.size, base64: b64 };
-          } catch { answers[key] = `${file.name} (${Math.round(file.size/1024)}KB)`; }
+          } catch { answers[key] = `${file.name} (${Math.round(file.size / 1024)}KB)`; }
         } else { answers[key] = ''; }
       } else if (f.type === 'rating') {
         const inp = sectionEl.querySelector(`input[name="${f.id}"][type="hidden"]`);
@@ -246,8 +246,8 @@
   /* ─── RENDER SECTION ─────────────────────────────────────────── */
   function showSection(form, state, idx, dir) {
     const sections = state.sections;
-    const total    = sections.length;
-    const sectEls  = form.querySelectorAll('.ms-form-section');
+    const total = sections.length;
+    const sectEls = form.querySelectorAll('.ms-form-section');
 
     // Hide all
     sectEls.forEach(el => { el.style.display = 'none'; el.className = 'ms-form-section'; });
@@ -262,13 +262,13 @@
     const progWrap = form.querySelector('.ms-form-progress');
     const progFill = form.querySelector('.ms-form-progress-fill');
     const progLabel = form.querySelector('.ms-form-section-label');
-    const progText  = form.querySelector('.ms-form-progress-text');
+    const progText = form.querySelector('.ms-form-progress-text');
     if (progWrap) {
       progWrap.style.display = 'block';
       const pct = Math.round(((idx + 1) / total) * 100);
       if (progFill) progFill.style.width = pct + '%';
       if (progLabel) progLabel.textContent = sections[idx]?.title || `Section ${idx + 1}`;
-      if (progText)  progText.textContent  = `${idx + 1} of ${total}`;
+      if (progText) progText.textContent = `${idx + 1} of ${total}`;
     }
 
     // Update back button
@@ -303,8 +303,8 @@
   function showSuccessCard(form) {
     const accent = window.__MS_ACCENT || '#00d4ff';
     const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(accent);
-    const rgb = r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : '0,212,255';
-    const msg  = form.dataset.msSuccessMsg || 'Your registration has been received. We will be in touch!';
+    const rgb = r ? `${parseInt(r[1], 16)},${parseInt(r[2], 16)},${parseInt(r[3], 16)}` : '0,212,255';
+    const msg = form.dataset.msSuccessMsg || 'Your registration has been received. We will be in touch!';
     const shareUrl = window.__MS_SHARE_URL || '';
 
     form.style.transition = 'opacity 0.3s,transform 0.3s';
@@ -372,12 +372,12 @@
 
       const payload = {
         siteId,
-        sheetId:     form.dataset.msForm   || '',
-        slug:        window.__MS_SLUG       || '',
-        data:        flatData,
-        files:       Object.keys(fileUploads).length ? fileUploads : undefined,
+        sheetId: form.dataset.msForm || '',
+        slug: window.__MS_SLUG || '',
+        data: flatData,
+        files: Object.keys(fileUploads).length ? fileUploads : undefined,
         meta: {
-          sections:    visitedIds,
+          sections: visitedIds,
           submittedAt: new Date().toISOString(),
         },
         userAgent: navigator.userAgent.slice(0, 120),
@@ -463,8 +463,8 @@
         // Honeypot
         if (form.querySelector('[name="hp_field"]')?.value) { showSuccessCard(form); return; }
 
-        const sec    = st.sections[st.currentIdx];
-        const secEl  = form.querySelector(`.ms-form-section[data-section-idx="${st.currentIdx}"]`);
+        const sec = st.sections[st.currentIdx];
+        const secEl = form.querySelector(`.ms-form-section[data-section-idx="${st.currentIdx}"]`);
         const isSubmit = nextBtn.dataset.isSubmit === '1';
 
         const valid = validateSection(secEl, sec);
@@ -509,7 +509,7 @@
     form.querySelectorAll('.msf-rating').forEach(wrap => {
       const name = wrap.dataset.name;
       const hidden = wrap.querySelector(`input[name="${name}"]`);
-      const stars  = wrap.querySelectorAll('.msf-rating-star');
+      const stars = wrap.querySelectorAll('.msf-rating-star');
       stars.forEach((star, i) => {
         star.addEventListener('click', () => {
           const val = i + 1;
@@ -596,7 +596,7 @@
     const W = 860, H = 380;
     const cfg = pass.config || {};
     const bannerColor = cfg.passBannerColor || '#1a1a2e';
-    const textColor   = cfg.passTextColor   || '#ffffff';
+    const textColor = cfg.passTextColor || '#ffffff';
 
     ctx.clearRect(0, 0, W, H);
 
@@ -624,9 +624,9 @@
 
     // Venue + date strip
     const venue = cfg.passVenue || '';
-    const date  = cfg.passDate  ? new Date(cfg.passDate).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '';
-    const time  = cfg.passTime  || '';
-    const meta  = [venue, date, time].filter(Boolean).join('  •  ');
+    const date = cfg.passDate ? new Date(cfg.passDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
+    const time = cfg.passTime || '';
+    const meta = [venue, date, time].filter(Boolean).join('  •  ');
     ctx.font = '14px system-ui,sans-serif';
     ctx.fillStyle = msfAlpha(textColor, 0.65);
     ctx.fillText(meta, 36, 82);
@@ -721,13 +721,13 @@
   function msfDarken(hex, amt) {
     let [r, g, b] = msfHexRgb(hex);
     r = Math.max(0, r - amt); g = Math.max(0, g - amt); b = Math.max(0, b - amt);
-    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   }
 
   function msfHexRgb(hex) {
     hex = (hex || '#1a1a2e').replace('#', '');
     if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-    return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+    return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)];
   }
 
   /* ─── BOOT ───────────────────────────────────────────────────── */

@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────
-   Honourix — app.js
+   GalSol — app.js
    Frontend behavior for Landing + Login
 ───────────────────────────────────────── */
 
@@ -178,7 +178,7 @@ function completeOrgSetup() {
   }
 
   // Store org details in sessionStorage for post-OAuth use
-  sessionStorage.setItem('Honourix_org', JSON.stringify({
+  sessionStorage.setItem('GalSol_org', JSON.stringify({
     type: state.orgType,
     name: orgName.value.trim(),
     website: document.getElementById('orgWebsite')?.value.trim() || '',
@@ -211,17 +211,17 @@ function goBackFromPermissions() {
 ───────────────────────────── */
 function handleGoogleLogin() {
   // Store account type before redirect
-  sessionStorage.setItem('Honourix_account_type', state.accountType);
+  sessionStorage.setItem('GalSol_account_type', state.accountType);
 
   // In production: redirect to your backend's /auth/google endpoint
   // window.location.href = '/auth/google';
-  
+
   // For now, simulate with an overlay
   showOAuthLoader();
 }
 
 function triggerGoogleOAuth() {
-  sessionStorage.setItem('Honourix_account_type', state.accountType);
+  sessionStorage.setItem('GalSol_account_type', state.accountType);
   window.location.href = `https://certiflow-backend-73xk.onrender.com/auth/google?type=${state.accountType}`;
 }
 

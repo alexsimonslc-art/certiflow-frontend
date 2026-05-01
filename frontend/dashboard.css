@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix v2 — Premium Design System
+   GalSol v2 — Premium Design System
    dashboard.css  |  Shared across all dashboard pages
    ================================================================ */
 
@@ -2205,7 +2205,7 @@ ol {
 }
 
 /* ================================================================
-   Honourix — dashboard-patch.css
+   GalSol — dashboard-patch.css
    Drop this <link> AFTER dashboard.css to fix text contrast
    and apply combined-tool improvements everywhere.
 ================================================================ */
@@ -2554,7 +2554,7 @@ body {
 }
 
 /* ================================================================
-   Honourix — Dashboard Visual Patch  (v2.1)
+   GalSol — Dashboard Visual Patch  (v2.1)
    dashboard-patch.css  |  Overrides & enhancements for all pages
    ================================================================ */
 

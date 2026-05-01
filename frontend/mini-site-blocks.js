@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix — Mini Site Builder  |  mini-site-blocks.js
+   GalSol — Mini Site Builder  |  mini-site-blocks.js
    Production block renderers — used by editor canvas + site.html
    All output is standalone HTML with inline styles (no CSS deps)
 ================================================================ */
@@ -227,7 +227,7 @@ function msb_speakers(block, cfg) {
   const p = block.props, t = msb_theme(cfg);
   const bg = p.bgColor || t.bgAlt;
   const items = p.items || [];
-  const uid = block.id || ('sp' + Math.random().toString(36).slice(2,7));
+  const uid = block.id || ('sp' + Math.random().toString(36).slice(2, 7));
   const isList = p.layout === 'list';
 
   const gridCard = (sp) => `
@@ -247,8 +247,8 @@ function msb_speakers(block, cfg) {
 
   const listCard = (sp) => `
 <div style="display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:12px;background:${t.bgCard};border:1px solid ${t.border}">
-  <div style="width:52px;height:52px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba('+t.accentRgb+',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;flex-shrink:0">
-    ${sp.photo ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover" alt="${sp.name || ''}"/>` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${t.accent}">${(sp.name||'?')[0]}</div>`}
+  <div style="width:52px;height:52px;border-radius:50%;background:${sp.photo ? 'transparent' : 'rgba(' + t.accentRgb + ',0.12)'};border:2px solid rgba(${t.accentRgb},0.2);overflow:hidden;flex-shrink:0">
+    ${sp.photo ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover" alt="${sp.name || ''}"/>` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${t.accent}">${(sp.name || '?')[0]}</div>`}
   </div>
   <div>
     <div style="font-size:15px;font-weight:700;color:${p.nameColor || t.text}">${sp.name || 'Speaker'}</div>
@@ -259,7 +259,7 @@ function msb_speakers(block, cfg) {
 
   const dots = items.length > 1 ? `
 <div id="spkDots_${uid}" style="display:none;justify-content:center;gap:6px;margin-top:16px">
-  ${items.map((_,i) => `<div id="spkDot_${uid}_${i}" style="width:${i===0?'20px':'6px'};height:6px;border-radius:99px;background:${i===0?t.accent:'rgba(255,255,255,0.2)'};transition:all 0.3s ease;cursor:pointer" onclick="spkGoTo_${uid}(${i})"></div>`).join('')}
+  ${items.map((_, i) => `<div id="spkDot_${uid}_${i}" style="width:${i === 0 ? '20px' : '6px'};height:6px;border-radius:99px;background:${i === 0 ? t.accent : 'rgba(255,255,255,0.2)'};transition:all 0.3s ease;cursor:pointer" onclick="spkGoTo_${uid}(${i})"></div>`).join('')}
 </div>` : '';
 
   const carousel = `
@@ -341,10 +341,10 @@ function msb_speakers(block, cfg) {
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
   ${msb_title(p.title || 'Speakers', t, p.alignment || 'center', p.titleColor)}
   ${items.length
-    ? (isList
+      ? (isList
         ? `<div style="display:flex;flex-direction:column;gap:14px">${items.map(listCard).join('')}</div>`
         : carousel)
-    : `<div style="color:${t.muted};font-size:14px;padding:8px 0">Add speakers in the properties panel.</div>`}
+      : `<div style="color:${t.muted};font-size:14px;padding:8px 0">Add speakers in the properties panel.</div>`}
 </div>`, bg);
 }
 /* ═══════════════════════════════════════════════════════════════
@@ -418,10 +418,10 @@ function msb_form(block, cfg) {
   const isOpen = cfg.registrationOpen !== false;
 
   const hasUrl = p.connectType === 'url' && p.connectUrl;
-  const hxSlug = p.hxFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '');
-  const cleanHxSlug = hxSlug ? (() => { try { return decodeURIComponent(hxSlug); } catch { return hxSlug; } })() : '';
-  const hxUrl = p.connectType === 'hxform' && cleanHxSlug
-    ? `/hx-form-view.html?f=${encodeURIComponent(cleanHxSlug)}&embed=1`
+  const gsSlug = p.gsFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '');
+  const cleanHxSlug = gsSlug ? (() => { try { return decodeURIComponent(gsSlug); } catch { return gsSlug; } })() : '';
+  const gsUrl = p.connectType === 'gsform' && cleanHxSlug
+    ? `/gs-form-view.html?f=${encodeURIComponent(cleanHxSlug)}&embed=1`
     : '';
 
   return msb_wrap(`
@@ -431,22 +431,22 @@ function msb_form(block, cfg) {
   ${p.subtitle ? `<p style="margin:-12px 0 28px;font-size:15px;color:${p.subtitleColor || t.sub};line-height:1.65">${p.subtitle}</p>` : ''}
 
   ${isOpen ? `
-  ${hxUrl ? `
-  <!-- Connected HX Form -->
+  ${gsUrl ? `
+  <!-- Connected GS Form -->
   <div style="max-width:760px;margin:0 auto;text-align:left">
     <div style="margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:9px;color:${t.sub};font-size:13px;font-weight:600">
         <span style="width:9px;height:9px;border-radius:99px;background:#10b981;box-shadow:0 0 10px rgba(16,185,129,0.6)"></span>
-        ${p.hxFormName ? msb_attr(p.hxFormName) : 'HX Form connected'}
+        ${p.gsFormName ? msb_attr(p.gsFormName) : 'GS Form connected'}
       </div>
-      <a href="${hxUrl.replace('&embed=1', '')}" target="_blank" rel="noopener"
+      <a href="${gsUrl.replace('&embed=1', '')}" target="_blank" rel="noopener"
         style="display:inline-flex;align-items:center;gap:7px;color:${t.accent};font-size:12.5px;font-weight:700;text-decoration:none">
         Open full form
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>
     </div>
-    <iframe src="${hxUrl}" title="${msb_attr(p.hxFormName || 'Registration form')}" loading="lazy"
-      style="display:block;width:100%;height:${p.hxEmbedHeight || 820}px;border:1px solid ${t.border2};border-radius:18px;background:${t.bgCard};box-shadow:${t.shadow}"></iframe>
+    <iframe src="${gsUrl}" title="${msb_attr(p.gsFormName || 'Registration form')}" loading="lazy"
+      style="display:block;width:100%;height:${p.gsEmbedHeight || 820}px;border:1px solid ${t.border2};border-radius:18px;background:${t.bgCard};box-shadow:${t.shadow}"></iframe>
   </div>
   ` : hasUrl ? `
   <!-- Connected form button -->

@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix — Mini Site Builder  |  mini-site-state.js
+   GalSol — Mini Site Builder  |  mini-site-state.js
    Block registry · State management · Undo/Redo · Persistence
 ================================================================ */
 
@@ -93,7 +93,7 @@ const BLOCK_REG = {
 
   form: {
     label: 'Registration Form', icon: 'clipboard-list', cat: 'engagement',
-    desc: 'Link to any form — Google Forms, Typeform, or HX Forms',
+    desc: 'Link to any form — Google Forms, Typeform, or GS Forms',
     defaults: () => ({
       title: 'Register Now',
       subtitle: 'Secure your spot — it only takes a minute.',
@@ -101,7 +101,7 @@ const BLOCK_REG = {
       buttonColor: '',
       connectType: 'url',
       connectUrl: '',
-      hxFormId: '',
+      gsFormId: '',
       bgColor: '',
       titleColor: '', subtitleColor: '',
     }),
@@ -154,10 +154,10 @@ const BLOCK_REG = {
 
 /* ── Category metadata ─────────────────────────────────────── */
 const BLOCK_CATS = {
-  structure:  { label: 'Structure',   color: '#00d4ff' },
-  event:      { label: 'Event Info',  color: '#f59e0b' },
-  engagement: { label: 'Engagement',  color: '#a78bfa' },
-  layout:     { label: 'Layout',      color: '#5a7394' },
+  structure: { label: 'Structure', color: '#00d4ff' },
+  event: { label: 'Event Info', color: '#f59e0b' },
+  engagement: { label: 'Engagement', color: '#a78bfa' },
+  layout: { label: 'Layout', color: '#5a7394' },
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -168,7 +168,7 @@ const BLOCK_CATS = {
 /** Extract the logged-in user's unique ID from their JWT. */
 function mss_getUserId() {
   try {
-    const token = localStorage.getItem('Honourix_token') || '';
+    const token = localStorage.getItem('GalSol_token') || '';
     if (!token) return 'anon';
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.googleId || payload.sub || payload.id || 'anon';
@@ -179,7 +179,7 @@ function mss_getUserId() {
 
 /** Per-user localStorage key — different for every Google account. */
 function mss_storageKey() {
-  return 'hx_minisites_' + mss_getUserId();
+  return 'gs_minisites_' + mss_getUserId();
 }
 
 /** Backend base URL. */
@@ -187,27 +187,27 @@ const MSS_API = 'https://certiflow-backend-73xk.onrender.com/api/minisite';
 
 /** Auth header helper. */
 function mss_authHeader() {
-  const token = localStorage.getItem('Honourix_token') || '';
+  const token = localStorage.getItem('GalSol_token') || '';
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-/* ── One-time migration: move old hx_minisites → user-scoped key ── */
+/* ── One-time migration: move old gs_minisites → user-scoped key ── */
 (function mss_migrate() {
   try {
     const userId = mss_getUserId();
     if (userId === 'anon') return; // not logged in yet
-    const newKey = 'hx_minisites_' + userId;
+    const newKey = 'gs_minisites_' + userId;
     // Already migrated if new key has data
     if (localStorage.getItem(newKey)) return;
     // Check old unscoped key
-    const old = localStorage.getItem('hx_minisites');
+    const old = localStorage.getItem('gs_minisites');
     if (!old) return;
     const sites = JSON.parse(old);
     if (!Array.isArray(sites) || !sites.length) return;
     // Copy to new scoped key
     localStorage.setItem(newKey, old);
     console.log('[MSState] Migrated', sites.length, 'sites to scoped key:', newKey);
-  } catch(e) {}
+  } catch (e) { }
 })();
 
 /* ═══════════════════════════════════════════════════════════════
@@ -239,12 +239,12 @@ const MSState = {
 
     // Try localStorage first for instant load, then sync from backend
     const sites = JSON.parse(localStorage.getItem(mss_storageKey()) || '[]');
-    const site   = sites.find(s => s.id === this.siteId);
+    const site = sites.find(s => s.id === this.siteId);
 
     if (site) {
       this._applySiteData(site);
       // Background sync from backend to pick up any changes from other devices
-      this._fetchFromBackend().catch(() => {/* silently ignore if offline */});
+      this._fetchFromBackend().catch(() => {/* silently ignore if offline */ });
       return true;
     }
 
@@ -260,7 +260,7 @@ const MSState = {
   /** Fetch this site's config from backend and apply it. */
   async _fetchFromBackend() {
     try {
-      const token = localStorage.getItem('Honourix_token') || '';
+      const token = localStorage.getItem('GalSol_token') || '';
       if (!token) return false;
 
       // Fetch the full site list and find our site
@@ -277,13 +277,13 @@ const MSState = {
       sites.forEach(backendSite => {
         const idx = local.findIndex(s => s.id === backendSite.id);
         const merged = {
-          id:        backendSite.id,
-          name:      backendSite.name,
-          slug:      backendSite.slug,
-          status:    backendSite.status,
+          id: backendSite.id,
+          name: backendSite.name,
+          slug: backendSite.slug,
+          status: backendSite.status,
           updatedAt: backendSite.updated_at,
-          gaId:      backendSite.ga_id || null,
-          config:    backendSite.config || {},
+          gaId: backendSite.ga_id || null,
+          config: backendSite.config || {},
         };
         if (idx >= 0) local[idx] = merged;
         else local.push(merged);
@@ -304,22 +304,22 @@ const MSState = {
   /** Apply a site data object to this MSState instance. */
   _applySiteData(site) {
     this.config = {
-      name:             site.name || 'Untitled Site',
-      slug:             site.slug || '',
-      template:         site.template || 'blank',
-      theme:            site.config?.theme || 'dark',
-      accentColor:      site.config?.accentColor || '#00d4ff',
-      fontFamily:       site.config?.fontFamily || 'Plus Jakarta Sans',
-      fontHeading:      site.config?.fontHeading || '',
-      logoShape:        site.config?.logoShape || 'circle',
+      name: site.name || 'Untitled Site',
+      slug: site.slug || '',
+      template: site.template || 'blank',
+      theme: site.config?.theme || 'dark',
+      accentColor: site.config?.accentColor || '#00d4ff',
+      fontFamily: site.config?.fontFamily || 'Plus Jakarta Sans',
+      fontHeading: site.config?.fontHeading || '',
+      logoShape: site.config?.logoShape || 'circle',
       registrationOpen: site.config?.registrationOpen !== false,
-      activePalette:    site.config?.activePalette || null,
-      activeFontPair:   site.config?.activeFontPair || null,
-      passConfig:       site.config?.passConfig || null,
-      gaId:             site.gaId || site.ga_id || site.config?.gaId || null,
-      status:           site.status || 'draft',
+      activePalette: site.config?.activePalette || null,
+      activeFontPair: site.config?.activeFontPair || null,
+      passConfig: site.config?.passConfig || null,
+      gaId: site.gaId || site.ga_id || site.config?.gaId || null,
+      status: site.status || 'draft',
     };
-    this.blocks  = (site.config?.blocks || []).map(b => JSON.parse(JSON.stringify(b)));
+    this.blocks = (site.config?.blocks || []).map(b => JSON.parse(JSON.stringify(b)));
     this.histIdx = -1;
     this.history = [];
     this._pushHistory();
@@ -329,30 +329,30 @@ const MSState = {
   save() {
     // 1. Write to user-scoped localStorage
     const sites = JSON.parse(localStorage.getItem(mss_storageKey()) || '[]');
-    const idx   = sites.findIndex(s => s.id === this.siteId);
+    const idx = sites.findIndex(s => s.id === this.siteId);
     if (idx < 0) return false;
 
     const configPayload = {
-      theme:            this.config.theme,
-      accentColor:      this.config.accentColor,
-      fontFamily:       this.config.fontFamily,
-      fontHeading:      this.config.fontHeading || '',
-      logoShape:        this.config.logoShape,
+      theme: this.config.theme,
+      accentColor: this.config.accentColor,
+      fontFamily: this.config.fontFamily,
+      fontHeading: this.config.fontHeading || '',
+      logoShape: this.config.logoShape,
       registrationOpen: this.config.registrationOpen,
-      activePalette:    this.config.activePalette || null,
-      activeFontPair:   this.config.activeFontPair || null,
-      passConfig:       this.config.passConfig || null,
-      blocks:           this.blocks.map(b => JSON.parse(JSON.stringify(b))),
+      activePalette: this.config.activePalette || null,
+      activeFontPair: this.config.activeFontPair || null,
+      passConfig: this.config.passConfig || null,
+      blocks: this.blocks.map(b => JSON.parse(JSON.stringify(b))),
     };
 
     sites[idx] = {
       ...sites[idx],
-      name:      this.config.name,
-      slug:      this.config.slug,
-      status:    this.config.status,
+      name: this.config.name,
+      slug: this.config.slug,
+      status: this.config.status,
       updatedAt: new Date().toISOString(),
-      gaId:      this.config.gaId || null,
-      config:    configPayload,
+      gaId: this.config.gaId || null,
+      config: configPayload,
     };
     localStorage.setItem(mss_storageKey(), JSON.stringify(sites));
     this.dirty = false;
@@ -367,19 +367,19 @@ const MSState = {
 
   /** POST config to /api/minisite/save — keeps Supabase in sync. */
   async _saveToBackend(configPayload) {
-    const token = localStorage.getItem('Honourix_token') || '';
+    const token = localStorage.getItem('GalSol_token') || '';
     if (!token) return; // not logged in — skip silently
 
     const res = await fetch(`${MSS_API}/save`, {
-      method:  'POST',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({
-        id:               this.siteId,
-        name:             this.config.name,
-        slug:             this.config.slug,
-        status:           this.config.status || 'draft',
-        gaId:             this.config.gaId || null,
-        config:           configPayload,
+        id: this.siteId,
+        name: this.config.name,
+        slug: this.config.slug,
+        status: this.config.status || 'draft',
+        gaId: this.config.gaId || null,
+        config: configPayload,
       }),
     });
     if (!res.ok) {
@@ -393,7 +393,7 @@ const MSState = {
     const def = BLOCK_REG[type];
     if (!def) return null;
     const block = {
-      id:    'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      id: 'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
       type,
       props: def.defaults(),
     };
@@ -465,33 +465,33 @@ const MSState = {
     this.save(); // also saves to backend via _saveToBackend
 
     const configPayload = {
-      theme:            this.config.theme,
-      accentColor:      this.config.accentColor,
-      fontFamily:       this.config.fontFamily,
-      fontHeading:      this.config.fontHeading || '',
-      logoShape:        this.config.logoShape,
+      theme: this.config.theme,
+      accentColor: this.config.accentColor,
+      fontFamily: this.config.fontFamily,
+      fontHeading: this.config.fontHeading || '',
+      logoShape: this.config.logoShape,
       registrationOpen: this.config.registrationOpen !== false,
-      activePalette:    this.config.activePalette || null,
-      activeFontPair:   this.config.activeFontPair || null,
-      passConfig:       this.config.passConfig || null,
-      blocks:           this.blocks.map(b => JSON.parse(JSON.stringify(b))),
+      activePalette: this.config.activePalette || null,
+      activeFontPair: this.config.activeFontPair || null,
+      passConfig: this.config.passConfig || null,
+      blocks: this.blocks.map(b => JSON.parse(JSON.stringify(b))),
     };
 
-    const token = localStorage.getItem('Honourix_token') || '';
+    const token = localStorage.getItem('GalSol_token') || '';
     const res = await fetch(`${MSS_API}/publish`, {
-      method:  'POST',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({
-        siteId:           this.siteId,
-        slug:             this.config.slug,
-        name:             this.config.name,
-        status:           'published',
+        siteId: this.siteId,
+        slug: this.config.slug,
+        name: this.config.name,
+        status: 'published',
         registrationOpen: this.config.registrationOpen !== false,
-        gaId:             this.config.gaId || null,
-        config:           configPayload,
+        gaId: this.config.gaId || null,
+        config: configPayload,
       }),
     });
 
@@ -519,8 +519,8 @@ const MSState = {
     this._notify('select');
   },
 
-  getBlock(id)    { return this.blocks.find(b => b.id === id) || null; },
-  getSelected()   { return this.selectedId ? this.getBlock(this.selectedId) : null; },
+  getBlock(id) { return this.blocks.find(b => b.id === id) || null; },
+  getSelected() { return this.selectedId ? this.getBlock(this.selectedId) : null; },
 
   /* ── History ─── */
   _pushHistory() {
@@ -539,7 +539,7 @@ const MSState = {
       const snap = JSON.parse(this.history[this.histIdx]);
       this.config = snap.config;
       this.blocks = snap.blocks;
-      this.dirty  = true;
+      this.dirty = true;
       this._notify('history');
     } catch { }
   },
@@ -562,18 +562,18 @@ const MSState = {
       this._backendDirty = false;
       this._lastBackendSave = Date.now();
       return true;
-    } catch(e) {
+    } catch (e) {
       console.warn('[MSState] saveToBackendNow failed:', e.message);
       return false;
     }
   },
-  
+
 };
 
 function toggleAiChat() {
   const chatbox = document.getElementById('mseAiChatbox');
   const trigger = document.getElementById('mseAiTrigger');
-  
+
   if (chatbox.classList.contains('open')) {
     chatbox.classList.remove('open');
     trigger.innerHTML = `<span class="mse-ai-sparkle" style="font-size:14px;">✨</span> Ask Gemini <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-left:4px;"><polyline points="18 15 12 9 6 15"/></svg>`;

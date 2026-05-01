@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix v2 — Certificate Generator
+   GalSol v2 — Certificate Generator
    cert-tool.js
    ================================================================ */
 
@@ -162,7 +162,7 @@ function switchSrc(type) {
     if (document.getElementById('manualBody').children.length === 0) {
       manualAddRow(); manualAddRow();
     }
-  } else if (type === 'hxform') {
+  } else if (type === 'gsform') {
     document.getElementById('srcHxForm').style.display = 'block';
     document.getElementById('srcHxFormOpt').className = 'src-opt active';
     loadHxFormList_cert();
@@ -170,11 +170,11 @@ function switchSrc(type) {
 }
 
 async function loadHxFormList_cert() {
-  const sel = document.getElementById('hxFormSelect');
+  const sel = document.getElementById('gsFormSelect');
   if (!sel || sel.dataset.loaded) return;
   try {
-    const token = localStorage.getItem('Honourix_token');
-    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
+    const token = localStorage.getItem('GalSol_token');
+    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/gsdb/summary', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const { forms } = await res.json();
@@ -188,8 +188,8 @@ async function loadHxFormList_cert() {
 
 async function loadHxFormData(formId) {
   if (!formId) return;
-  const sel = document.getElementById('hxFormSelect');
-  const el = document.getElementById('hxFormResult');
+  const sel = document.getElementById('gsFormSelect');
+  const el = document.getElementById('gsFormResult');
   sel.disabled = true;
   el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--glass);margin-top:4px;font-size:14px;color:var(--text-2)">
     <svg style="flex-shrink:0;animation:spin 0.9s linear infinite" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
@@ -197,8 +197,8 @@ async function loadHxFormData(formId) {
   </div>`;
   el.style.display = 'block';
   try {
-    const token = localStorage.getItem('Honourix_token');
-    const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
+    const token = localStorage.getItem('GalSol_token');
+    const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/gsdb/data/${formId}`, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     if (!res.ok) throw new Error((await res.json()).error || 'Failed');
@@ -207,7 +207,7 @@ async function loadHxFormData(formId) {
     CS.headers = data.headers;
     CS.rows = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
     window.allCols = CS.headers;
-    const el = document.getElementById('hxFormResult');
+    const el = document.getElementById('gsFormResult');
     const preview = CS.rows; // FIX: Show all rows
     el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
     el.innerHTML = `
@@ -1137,11 +1137,11 @@ function clearAll() {
 
 /* ── Save / Load Template ────────────────────────────────────────── */
 function saveTemplate() {
-  localStorage.setItem('hx_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64, fields: ED.fields }));
+  localStorage.setItem('gs_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64, fields: ED.fields }));
 }
 
 function loadSavedTemplate() {
-  const raw = localStorage.getItem('hx_template');
+  const raw = localStorage.getItem('gs_template');
   if (!raw) return;
   try {
     const t = JSON.parse(raw);
@@ -1244,7 +1244,7 @@ function buildStep3Writeback() {
     desc.textContent = 'After generation, certificate links will be written back to your Google Sheet as a new column at the end of your data.';
     if (options) options.style.display = 'block';
   } else {
-    const srcLabel = CS.srcType === 'file' ? 'CSV/Excel upload' : CS.srcType === 'manual' ? 'manual entry' : CS.srcType === 'hxform' ? 'HX Form' : 'this source';
+    const srcLabel = CS.srcType === 'file' ? 'CSV/Excel upload' : CS.srcType === 'manual' ? 'manual entry' : CS.srcType === 'gsform' ? 'GS Form' : 'this source';
     badge.textContent = 'N/A for this source';
     badge.style.cssText = 'font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--glass-border)';
     desc.textContent = `Write-back is only available when data is imported via Google Sheets ID. You imported data via ${srcLabel}, so this option is not applicable.`;
@@ -1453,7 +1453,7 @@ async function startGeneration() {
     document.getElementById('genPct').textContent = '0%';
     document.getElementById('genStatus').textContent = 'Connecting to server...';
 
-    const token = localStorage.getItem('Honourix_token');
+    const token = localStorage.getItem('GalSol_token');
     const apiUrl = 'https://certiflow-backend-73xk.onrender.com/api/certificates/generate';
 
     // Send payload and wait for the stream connection
@@ -1596,9 +1596,9 @@ async function saveCampaignToDatabase() {
       }),
     });
     // Keep localStorage in sync so the home-page stat card stays accurate
-    const stored = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
+    const stored = JSON.parse(localStorage.getItem('gs_campaigns') || '[]');
     stored.push({ type: 'cert', name, total, success: ok, ts: Date.now() });
-    localStorage.setItem('hx_campaigns', JSON.stringify(stored));
+    localStorage.setItem('gs_campaigns', JSON.stringify(stored));
   } catch (e) {
     console.error('Campaign database save failed', e);
     toast('Campaign save failed: ' + e.message, 'error', 6000);
@@ -1683,7 +1683,7 @@ function downloadResults() {
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Certificates');
-  XLSX.writeFile(wb, `Honourix-certs-${Date.now()}.xlsx`);
+  XLSX.writeFile(wb, `GalSol-certs-${Date.now()}.xlsx`);
   toast('Excel file downloaded!', 'success', 3000);
 }
 
@@ -1709,9 +1709,9 @@ function startNew() {
   const fileRes = document.getElementById('fileResult'); if (fileRes) fileRes.style.display = 'none';
   document.querySelectorAll('input[type="file"]').forEach(i => i.value = '');
 
-  // Reset HX Form UI
-  const hxRes = document.getElementById('hxFormResult'); if (hxRes) hxRes.style.display = 'none';
-  const hxSel = document.getElementById('hxFormSelect'); if (hxSel) hxSel.value = '';
+  // Reset GS Form UI
+  const gsRes = document.getElementById('gsFormResult'); if (gsRes) gsRes.style.display = 'none';
+  const gsSel = document.getElementById('gsFormSelect'); if (gsSel) gsSel.value = '';
 
   // Reset Manual Entry UI
   const manMsg = document.getElementById('manualAppliedMsg'); if (manMsg) manMsg.style.display = 'none';

@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix — Mini Site Builder  |  mini-site-canvas.js
+   GalSol — Mini Site Builder  |  mini-site-canvas.js
    Batch 3 Part 2 — Full property panel for every block type.
    Loaded LAST in mini-site-editor.html — overrides renderBlockProps.
 ================================================================ */
@@ -579,7 +579,7 @@ function renderBlockProps(block) {
   <div class="mse-prop-row">
     <div class="mse-prop-label">Form Source</div>
     <div style="display:flex;flex-direction:column;gap:6px">
-      ${['url', 'hxform'].map(t => `
+      ${['url', 'gsform'].map(t => `
       <label style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;border:1.5px solid ${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.5)' : 'rgba(255,255,255,0.12)'};background:${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.08)' : 'rgba(255,255,255,0.04)'};transition:all 0.15s">
         <input type="radio" name="ct_${bid}" value="${t}" ${(p.connectType || 'url') === t ? 'checked' : ''} style="display:none"
           onchange="msc_set('${bid}','connectType','${t}');updateRightPanel()"/>
@@ -587,7 +587,7 @@ function renderBlockProps(block) {
           ${(p.connectType || 'url') === t ? '<div style=\"width:6px;height:6px;border-radius:50%;background:var(--cyan)\"></div>' : ''}
         </div>
         <div>
-          <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms'}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'GS Forms'}</div>
           <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Forms built with our Form Builder'}</div>
         </div>
       </label>`).join('')}
@@ -602,20 +602,20 @@ function renderBlockProps(block) {
     <div class="mse-prop-hint">Paste your Google Forms, Typeform, or any other form link</div>
   </div>` : `
   <div class="mse-prop-row">
-    <div class="mse-prop-label">Select HX Form</div>
-    <select class="mse-prop-select" id="hxfPicker_${bid}"
-            onchange="if(typeof msePickHxForm==='function') { msePickHxForm('${bid}',this.value); } else { msc_set('${bid}', 'hxFormSlug', this.value); msc_set('${bid}', 'connectUrl', window.location.origin + '/hx-form-view.html?f=' + this.value); }">
+    <div class="mse-prop-label">Select GS Form</div>
+    <select class="mse-prop-select" id="gsfPicker_${bid}"
+            onchange="if(typeof msePickHxForm==='function') { msePickHxForm('${bid}',this.value); } else { msc_set('${bid}', 'gsFormSlug', this.value); msc_set('${bid}', 'connectUrl', window.location.origin + '/gs-form-view.html?f=' + this.value); }">
       <option value="">Loading your forms…</option>
     </select>
   </div>
   <div class="mse-prop-row">
     <div class="mse-prop-label">Embed Height</div>
-    <input class="mse-prop-input" type="number" min="520" max="1400" step="20" value="${p.hxEmbedHeight || 820}"
-      oninput="msc_set('${bid}','hxEmbedHeight',Math.max(520,Math.min(1400,+this.value||820)))"/>
+    <input class="mse-prop-input" type="number" min="520" max="1400" step="20" value="${p.gsEmbedHeight || 820}"
+      oninput="msc_set('${bid}','gsEmbedHeight',Math.max(520,Math.min(1400,+this.value||820)))"/>
     <div class="mse-prop-hint">Adjust if your form needs more vertical space on the public mini site</div>
   </div>
   <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" 
-       onload="(typeof mseLoadHxForms==='function') && mseLoadHxForms('${bid}','${(p.hxFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '')).replace(/'/g, "\\\\\\'")}');" 
+       onload="(typeof mseLoadHxForms==='function') && mseLoadHxForms('${bid}','${(p.gsFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '')).replace(/'/g, "\\\\\\'")}');" 
        style="display:none">`}
 
   <div class="mse-prop-row">
@@ -926,4 +926,4 @@ function msc_onVideoUrl(blockId, idx, url) {
 /* ═══════════════════════════════════════════════════════════════
    CONFIRM: mini-site-canvas.js fully loaded
 ═══════════════════════════════════════════════════════════════ */
-console.log('[Honourix] mini-site-canvas.js loaded — renderBlockProps overridden ✓');
+console.log('[GalSol] mini-site-canvas.js loaded — renderBlockProps overridden ✓');

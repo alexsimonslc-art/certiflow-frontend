@@ -1551,12 +1551,12 @@
 </head>
 
 <body>
-  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">GalSol Platform</p></div>'; } })();</script>
   <div class="app-layout">
     <div id="sidebarMount"></div>
 
     <div class="main-area">
-      
+
 
       <main class="page-content fade-in">
 
@@ -1606,7 +1606,7 @@
               Could not load data</h3>
             <p style="font-size:14px;color:var(--text-2);max-width:360px;line-height:1.6;margin-bottom:22px"
               id="errorMsg">Something went wrong.</p>
-            <a href="hx-database.html" class="btn btn-secondary">← Back to Database</a>
+            <a href="gs-database.html" class="btn btn-secondary">← Back to Database</a>
           </div>
         </div>
 
@@ -1616,7 +1616,7 @@
           <!-- Page header -->
           <div class="dbv-header">
             <div class="dbv-header-left">
-              <a href="hx-database.html" class="dbv-back">
+              <a href="gs-database.html" class="dbv-back">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
@@ -1643,7 +1643,8 @@
                 Export CSV
               </button>
               <button class="btn btn-secondary btn-sm" onclick="refreshData()" id="refreshBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="width:13px;height:13px">
                   <polyline points="23 4 23 10 17 10" />
                   <polyline points="1 20 1 14 7 14" />
                   <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
@@ -1798,86 +1799,87 @@
                     </svg>
                     <h3>No results</h3>
                     <p>No responses match your search or filters.</p>
-              <div style="display:grid; grid-template-columns:minmax(0, 1fr); width:100%;">
-                <div class="dbv-table-wrap">
-                  <table class="dbv-table" id="dataTable">
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                  </table>
-                  <div id="tableEmpty" style="display:none">
-                    <div class="dbv-table-empty">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                      </svg>
-                      <h3>No results</h3>
-                      <p>No responses match your search or filters.</p>
+                    <div style="display:grid; grid-template-columns:minmax(0, 1fr); width:100%;">
+                      <div class="dbv-table-wrap">
+                        <table class="dbv-table" id="dataTable">
+                          <thead id="tableHead"></thead>
+                          <tbody id="tableBody"></tbody>
+                        </table>
+                        <div id="tableEmpty" style="display:none">
+                          <div class="dbv-table-empty">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                              <circle cx="11" cy="11" r="8" />
+                              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <h3>No results</h3>
+                            <p>No responses match your search or filters.</p>
+                          </div>
+                        </div>
+                        <div class="dbv-pagination" id="paginationBar" style="display:none">
+                          <div class="dbv-pag-info" id="pagInfo"></div>
+                          <div class="dbv-pag-btns" id="pagBtns"></div>
+                        </div>
+                      </div>
+                      <div class="dbv-pagination" id="paginationBar" style="display:none">
+                        <div class="dbv-pag-info" id="pagInfo"></div>
+                        <div class="dbv-pag-btns" id="pagBtns"></div>
+                      </div>
                     </div>
                   </div>
-                  <div class="dbv-pagination" id="paginationBar" style="display:none">
-                    <div class="dbv-pag-info" id="pagInfo"></div>
-                    <div class="dbv-pag-btns" id="pagBtns"></div>
+
+                  <!-- PIVOT sub-tab -->
+                  <div id="subPanelPivot" style="display:none">
+                    <div class="dbv-pivot-controls">
+                      <div class="dbv-pivot-select-wrap">
+                        <div class="dbv-pivot-label">Filter</div>
+                        <select class="dbv-pivot-select" id="pivotFilterField" onchange="togglePivotFilterValue()"
+                          style="min-width: 140px;">
+                          <option value="">— No Filter —</option>
+                        </select>
+                      </div>
+                      <div class="dbv-pivot-select-wrap" id="pivotFilterValueWrap" style="display:none">
+                        <div class="dbv-pivot-label">Filter Value</div>
+                        <input class="dbv-table-search" id="pivotFilterValue" type="text" placeholder="Search..."
+                          oninput="renderPivot()" style="width: 140px; padding: 8px 12px;" />
+                      </div>
+                      <div class="dbv-pivot-select-wrap">
+                        <div class="dbv-pivot-label">Row</div>
+                        <select class="dbv-pivot-select" id="pivotRow" onchange="renderPivot()">
+                          <option value="">— Select field —</option>
+                        </select>
+                      </div>
+                      <div style="padding-bottom:10px;color:var(--text-3);font-size:13px;">×</div>
+                      <div class="dbv-pivot-select-wrap">
+                        <div class="dbv-pivot-label">Column</div>
+                        <select class="dbv-pivot-select" id="pivotCol" onchange="renderPivot()">
+                          <option value="">— Select field —</option>
+                        </select>
+                      </div>
+                      <div class="dbv-pivot-select-wrap">
+                        <div class="dbv-pivot-label">Values</div>
+                        <select class="dbv-pivot-select" id="pivotVal" onchange="renderPivot()">
+                          <option value="count">Count</option>
+                        </select>
+                      </div>
+                      <button class="dbv-btn green" onclick="exportPivotCSV()" style="margin-bottom:1px">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export
+                      </button>
+                    </div>
+                    <div class="dbv-table-wrap">
+                      <div class="dbv-pivot-wrap" id="pivotOutput">
+                        <div class="dbv-pivot-no-data">Select row and column fields above to build the pivot table.
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="dbv-pagination" id="paginationBar" style="display:none">
-                  <div class="dbv-pag-info" id="pagInfo"></div>
-                  <div class="dbv-pag-btns" id="pagBtns"></div>
-                </div>
-              </div>
-            </div>
 
-            <!-- PIVOT sub-tab -->
-            <div id="subPanelPivot" style="display:none">
-              <div class="dbv-pivot-controls">
-                <div class="dbv-pivot-select-wrap">
-                  <div class="dbv-pivot-label">Filter</div>
-                  <select class="dbv-pivot-select" id="pivotFilterField" onchange="togglePivotFilterValue()"
-                    style="min-width: 140px;">
-                    <option value="">— No Filter —</option>
-                  </select>
-                </div>
-                <div class="dbv-pivot-select-wrap" id="pivotFilterValueWrap" style="display:none">
-                  <div class="dbv-pivot-label">Filter Value</div>
-                  <input class="dbv-table-search" id="pivotFilterValue" type="text" placeholder="Search..."
-                    oninput="renderPivot()" style="width: 140px; padding: 8px 12px;" />
-                </div>
-                <div class="dbv-pivot-select-wrap">
-                  <div class="dbv-pivot-label">Row</div>
-                  <select class="dbv-pivot-select" id="pivotRow" onchange="renderPivot()">
-                    <option value="">— Select field —</option>
-                  </select>
-                </div>
-                <div style="padding-bottom:10px;color:var(--text-3);font-size:13px;">×</div>
-                <div class="dbv-pivot-select-wrap">
-                  <div class="dbv-pivot-label">Column</div>
-                  <select class="dbv-pivot-select" id="pivotCol" onchange="renderPivot()">
-                    <option value="">— Select field —</option>
-                  </select>
-                </div>
-                <div class="dbv-pivot-select-wrap">
-                  <div class="dbv-pivot-label">Values</div>
-                  <select class="dbv-pivot-select" id="pivotVal" onchange="renderPivot()">
-                    <option value="count">Count</option>
-                  </select>
-                </div>
-                <button class="dbv-btn green" onclick="exportPivotCSV()" style="margin-bottom:1px">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  Export
-                </button>
-              </div>
-              <div class="dbv-table-wrap">
-                <div class="dbv-pivot-wrap" id="pivotOutput">
-                  <div class="dbv-pivot-no-data">Select row and column fields above to build the pivot table.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /mainContent -->
+              </div><!-- /mainContent -->
       </main>
     </div>
   </div>
@@ -1984,7 +1986,7 @@
     ════════════════════════════════════════════════════════════════ */
 
     requireAuth();
-    document.getElementById('sidebarMount').outerHTML = renderSidebar('hx-database.html');
+    document.getElementById('sidebarMount').outerHTML = renderSidebar('gs-database.html');
     initSidebar();
 
 
@@ -2016,7 +2018,7 @@
         return;
       }
       // Always force-refresh on page enter so charts render immediately
-      sessionStorage.removeItem(`hxdb_${_formId}`);
+      sessionStorage.removeItem(`gsdb_${_formId}`);
       await loadData(true);
       startLiveWatcher();
     })();
@@ -2064,7 +2066,7 @@
     }
 
     async function loadData(force = false) {
-      const cacheKey = `hxdb_${_formId}`;
+      const cacheKey = `gsdb_${_formId}`;
       const cached = !force && sessionStorage.getItem(cacheKey);
       if (cached) {
         // Cached — quick fake progress then render
@@ -2083,7 +2085,7 @@
       startFakeProgress();
 
       try {
-        const res = await fetch(`${API}/api/hxdb/data/${_formId}`, {
+        const res = await fetch(`${API}/api/gsdb/data/${_formId}`, {
           headers: { 'Authorization': 'Bearer ' + getToken() },
         });
         if (!res.ok) {
@@ -2102,7 +2104,7 @@
     async function refreshData() {
       const icon = document.getElementById('refreshIcon');
       icon?.classList.add('spinning');
-      sessionStorage.removeItem(`hxdb_${_formId}`);
+      sessionStorage.removeItem(`gsdb_${_formId}`);
       await loadData(true);
       icon?.classList.remove('spinning');
       document.getElementById('liveBanner').classList.remove('visible');
@@ -2116,7 +2118,7 @@
       _liveTimer = setInterval(async () => {
         try {
           // Lightweight: fetch just the submission_count from our summary endpoint
-          const res = await fetch(`${API}/api/hxdb/summary`, {
+          const res = await fetch(`${API}/api/gsdb/summary`, {
             headers: { 'Authorization': 'Bearer ' + getToken() },
           });
           if (!res.ok) return;
@@ -2538,7 +2540,7 @@
       });
 
       try {
-        const res = await fetch(`${API}/api/hxforms/${_formId}/layout`, {
+        const res = await fetch(`${API}/api/gsforms/${_formId}/layout`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
           body: JSON.stringify({ layout })
@@ -2548,7 +2550,7 @@
 
         if (_data) {
           _data.layout = layout;
-          sessionStorage.setItem(`hxdb_${_formId}`, JSON.stringify(_data));
+          sessionStorage.setItem(`gsdb_${_formId}`, JSON.stringify(_data));
         }
 
         toast('Dashboard layout saved!', 'success');

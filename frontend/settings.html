@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Settings — Honourix</title>
+  <title>Settings — GalSol</title>
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="dashboard-patch.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -454,7 +454,7 @@
 </head>
 
 <body>
-  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">GalSol Platform</p></div>'; } })();</script>
   <div class="app-layout">
     <div id="sidebarMount"></div>
 
@@ -541,7 +541,7 @@
                   </div>
                   <div class="s-row">
                     <div class="s-row-info">
-                      <strong>Sign out of Honourix</strong>
+                      <strong>Sign out of GalSol</strong>
                       <span>Revoke session and return to home page</span>
                     </div>
                     <button class="btn btn-danger btn-sm" onclick="logout()">Sign Out</button>
@@ -790,7 +790,7 @@
               <div class="s-section">
                 <div class="s-section-title">Google Permissions</div>
                 <p style="font-size:13px;color:var(--text-3);margin-bottom:20px">
-                  Honourix requires these Google permissions to function. If any are missing, click Re-authorize to
+                  GalSol requires these Google permissions to function. If any are missing, click Re-authorize to
                   grant them.
                 </p>
                 <div id="permList">
@@ -861,7 +861,7 @@
 
     /* ──────────────────────────── General tab ──── */
     function loadPrefs() {
-      const prefs = JSON.parse(localStorage.getItem('hx_prefs') || '{"writeback":true,"emailConf":true,"stagger":true,"saveTemplate":true}');
+      const prefs = JSON.parse(localStorage.getItem('gs_prefs') || '{"writeback":true,"emailConf":true,"stagger":true,"saveTemplate":true}');
       Object.keys(prefs).forEach(k => {
         const el = document.getElementById('toggle' + k.charAt(0).toUpperCase() + k.slice(1));
         if (el) el.classList.toggle('on', prefs[k]);
@@ -869,13 +869,13 @@
     }
     function togglePref(key, el) {
       el.classList.toggle('on');
-      const prefs = JSON.parse(localStorage.getItem('hx_prefs') || '{}');
+      const prefs = JSON.parse(localStorage.getItem('gs_prefs') || '{}');
       prefs[key] = el.classList.contains('on');
-      localStorage.setItem('hx_prefs', JSON.stringify(prefs));
+      localStorage.setItem('gs_prefs', JSON.stringify(prefs));
       toast('Preference saved', 'success', 1500);
     }
-    function clearTemplate() { localStorage.removeItem('hx_template'); toast('Saved template cleared', 'success'); }
-    function clearCampaigns() { localStorage.removeItem('hx_campaigns'); toast('Campaign history cleared', 'success'); }
+    function clearTemplate() { localStorage.removeItem('gs_template'); toast('Saved template cleared', 'success'); }
+    function clearCampaigns() { localStorage.removeItem('gs_campaigns'); toast('Campaign history cleared', 'success'); }
 
     /* ──────────────────────────── Account tab ──── */
     async function loadAccount() {
@@ -1056,7 +1056,7 @@
           amount: data.amount,
           currency: data.currency,
           order_id: data.orderId,
-          name: 'Honourix',
+          name: 'GalSol',
           description: 'Pro Plan — 3 months',
           theme: { color: '#7C6EFA' },
           prefill: {

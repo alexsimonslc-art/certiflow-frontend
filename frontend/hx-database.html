@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Database — Honourix</title>
+  <title>Database — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -570,12 +570,12 @@
 </head>
 
 <body>
-<script>(function(){if(window.innerWidth<768){document.body.innerHTML='<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>';}})();</script>
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">GalSol Platform</p></div>'; } })();</script>
   <div class="app-layout">
     <div id="sidebarMount"></div>
 
     <div class="main-area">
-      
+
       <main class="page-content fade-in">
         <div style="margin-bottom:24px">
           <h1 class="page-title">Database</h1>
@@ -607,7 +607,7 @@
               <button class="db-filter-btn" onclick="setFilter(this,'closed')">Closed</button>
             </div>
           </div>
-          
+
           <button class="btn btn-secondary btn-sm" onclick="loadForms(true)" id="refreshBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
               <polyline points="23 4 23 10 17 10" />
@@ -616,7 +616,7 @@
             </svg>
             Refresh
           </button>
-          
+
         </div>
 
         <!-- Grid -->
@@ -636,7 +636,7 @@
     requireAuth();
     document.getElementById('sidebarMount').innerHTML = '';
     const _sidebarEl = document.createElement('div');
-    _sidebarEl.innerHTML = renderSidebar('hx-database.html');
+    _sidebarEl.innerHTML = renderSidebar('gs-database.html');
     document.getElementById('sidebarMount').replaceWith(_sidebarEl.firstElementChild);
     initSidebar();
 
@@ -649,7 +649,7 @@
       if (refreshBtn) { refreshBtn.disabled = true; refreshBtn.querySelector('svg')?.classList.add('spinning'); }
 
       try {
-        const res = await fetch(`${API}/api/hxdb/summary`, {
+        const res = await fetch(`${API}/api/gsdb/summary`, {
           headers: { 'Authorization': 'Bearer ' + getToken() },
         });
         if (!res.ok) throw new Error((await res.json()).error || res.status);
@@ -725,9 +725,9 @@
         <div class="db-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
         <h3>${_forms.length === 0 ? 'No forms yet' : 'No forms match your filter'}</h3>
         <p>${_forms.length === 0
-            ? 'Create a form in HX Forms and publish it to start collecting responses.'
+            ? 'Create a form in GS Forms and publish it to start collecting responses.'
             : 'Try a different filter or search term.'}</p>
-        ${_forms.length === 0 ? `<a href="hx-forms.html" class="btn btn-primary" style="margin-top:16px">Go to HX Forms →</a>` : ''}
+        ${_forms.length === 0 ? `<a href="gs-forms.html" class="btn btn-primary" style="margin-top:16px">Go to GS Forms →</a>` : ''}
       </div>`;
         return;
       }
@@ -794,7 +794,7 @@
     }
 
     function viewData(formId) {
-      window.location.href = `hx-database-view.html?form=${formId}`;
+      window.location.href = `gs-database-view.html?form=${formId}`;
     }
 
     function setFilter(btn, filter) {

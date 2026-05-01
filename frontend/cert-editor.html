@@ -1,20 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Certificate Designer — Honourix</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificate Designer — GalSol</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="dashboard.css"/>
-  <link rel="stylesheet" href="dashboard-patch.css"/>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="dashboard-patch.css" />
   <style>
-    .editor-layout { display: grid; grid-template-columns: 260px 1fr 260px; gap: 0; height: calc(100vh - 64px); overflow: hidden; }
-    .editor-panel { background: #0a1020; border-right: 1px solid rgba(255,255,255,0.07); overflow-y: auto; padding: 16px; }
-    .editor-panel-right { background: #0a1020; border-left: 1px solid rgba(255,255,255,0.07); overflow-y: auto; padding: 16px; }
-    .editor-canvas-wrap { display: flex; align-items: center; justify-content: center; background: #060a12; overflow: auto; padding: 32px; }
-    .canvas-container { position: relative; box-shadow: 0 20px 80px rgba(0,0,0,0.6); flex-shrink: 0; }
-    .cert-canvas { display: block; cursor: crosshair; }
-    .field-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .editor-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr 260px;
+      gap: 0;
+      height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+
+    .editor-panel {
+      background: #0a1020;
+      border-right: 1px solid rgba(255, 255, 255, 0.07);
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .editor-panel-right {
+      background: #0a1020;
+      border-left: 1px solid rgba(255, 255, 255, 0.07);
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .editor-canvas-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #060a12;
+      overflow: auto;
+      padding: 32px;
+    }
+
+    .canvas-container {
+      position: relative;
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+      flex-shrink: 0;
+    }
+
+    .cert-canvas {
+      display: block;
+      cursor: crosshair;
+    }
+
+    .field-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
     .text-field-handle {
       position: absolute;
       pointer-events: all;
@@ -25,264 +70,496 @@
       user-select: none;
       transition: border-color 0.15s;
       white-space: nowrap;
-      display: flex; align-items: center;
+      display: flex;
+      align-items: center;
     }
-    .text-field-handle:hover { border-color: rgba(0,212,255,0.5); }
-    .text-field-handle.selected { border-color: #00d4ff; background: rgba(0,212,255,0.08); }
+
+    .text-field-handle:hover {
+      border-color: rgba(0, 212, 255, 0.5);
+    }
+
+    .text-field-handle.selected {
+      border-color: #00d4ff;
+      background: rgba(0, 212, 255, 0.08);
+    }
+
     .text-field-handle .field-del {
-      position: absolute; top: -10px; right: -10px;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: #ef4444; color: #fff; font-size: 10px;
-      display: none; align-items: center; justify-content: center;
-      cursor: pointer; z-index: 10;
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ef4444;
+      color: #fff;
+      font-size: 10px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
     }
-    .text-field-handle.selected .field-del { display: flex; }
-    .panel-section { margin-bottom: 20px; }
-    .panel-section-title { font-size: 0.72rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
-    .prop-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; }
-    .prop-label { font-size: 0.8rem; color: #64748b; flex-shrink: 0; }
-    .prop-input { flex: 1; background: #0d1626; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #e2e8f0; padding: 5px 8px; font-size: 0.82rem; font-family: 'DM Sans', sans-serif; min-width: 0; }
-    .prop-input:focus { outline: none; border-color: #00d4ff; }
-    select.prop-input option { background: #0d1626; }
-    .color-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-    .color-preview { width: 32px; height: 32px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; flex-shrink: 0; }
-    .toggle-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
-    .toggle-btn.active { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); color: #00d4ff; }
-    .field-list-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: all 0.15s; }
-    .field-list-item:hover { border-color: rgba(0,212,255,0.3); }
-    .field-list-item.selected { border-color: #00d4ff; background: rgba(0,212,255,0.08); }
-    .field-list-dot { width: 8px; height: 8px; border-radius: 50%; background: #00d4ff; flex-shrink: 0; }
-    .field-list-name { font-size: 0.82rem; color: #e2e8f0; flex: 1; }
-    .field-list-ph { font-size: 0.72rem; color: #475569; font-family: monospace; }
-    .upload-bg { border: 2px dashed rgba(255,255,255,0.1); border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-bottom: 12px; }
-    .upload-bg:hover { border-color: rgba(0,212,255,0.4); }
-    .upload-bg p { font-size: 0.8rem; color: #64748b; margin-top: 6px; }
-    .empty-fields { text-align: center; padding: 20px 0; color: #334155; font-size: 0.82rem; }
-    .align-btns { display: flex; gap: 4px; }
-    .align-btn { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 5px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; text-align: center; transition: all 0.15s; }
-    .align-btn.active { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); color: #00d4ff; }
-    .no-field-selected { text-align: center; padding: 32px 16px; color: #334155; font-size: 0.82rem; line-height: 1.6; }
-    @media (max-width: 900px) { .editor-layout { grid-template-columns: 1fr; } .editor-panel-right { display: none; } }
+
+    .text-field-handle.selected .field-del {
+      display: flex;
+    }
+
+    .panel-section {
+      margin-bottom: 20px;
+    }
+
+    .panel-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    .prop-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .prop-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .prop-input {
+      flex: 1;
+      background: #0d1626;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #e2e8f0;
+      padding: 5px 8px;
+      font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif;
+      min-width: 0;
+    }
+
+    .prop-input:focus {
+      outline: none;
+      border-color: #00d4ff;
+    }
+
+    select.prop-input option {
+      background: #0d1626;
+    }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .color-preview {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .toggle-btn.active {
+      background: rgba(0, 212, 255, 0.15);
+      border-color: rgba(0, 212, 255, 0.4);
+      color: #00d4ff;
+    }
+
+    .field-list-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .field-list-item:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+    }
+
+    .field-list-item.selected {
+      border-color: #00d4ff;
+      background: rgba(0, 212, 255, 0.08);
+    }
+
+    .field-list-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00d4ff;
+      flex-shrink: 0;
+    }
+
+    .field-list-name {
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      flex: 1;
+    }
+
+    .field-list-ph {
+      font-size: 0.72rem;
+      color: #475569;
+      font-family: monospace;
+    }
+
+    .upload-bg {
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      margin-bottom: 12px;
+    }
+
+    .upload-bg:hover {
+      border-color: rgba(0, 212, 255, 0.4);
+    }
+
+    .upload-bg p {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 6px;
+    }
+
+    .empty-fields {
+      text-align: center;
+      padding: 20px 0;
+      color: #334155;
+      font-size: 0.82rem;
+    }
+
+    .align-btns {
+      display: flex;
+      gap: 4px;
+    }
+
+    .align-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      padding: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .align-btn.active {
+      background: rgba(0, 212, 255, 0.15);
+      border-color: rgba(0, 212, 255, 0.4);
+      color: #00d4ff;
+    }
+
+    .no-field-selected {
+      text-align: center;
+      padding: 32px 16px;
+      color: #334155;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .editor-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .editor-panel-right {
+        display: none;
+      }
+    }
   </style>
 </head>
+
 <body class="app-body">
 
-<aside class="app-sidebar" id="appSidebar">
-  <div class="sidebar-header">
-    <a href="dashboard.html" class="sidebar-logo">
-      <div class="sidebar-logo-icon">⚡</div><span>Honourix</span>
-    </a>
-  </div>
-  <nav class="sidebar-nav">
-    <a href="dashboard.html"   class="nav-item" data-page="dashboard.html">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-      Dashboard
-    </a>
-    <a href="cert-editor.html" class="nav-item active" data-page="cert-editor.html">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
-      Template Editor
-    </a>
-    <a href="cert-tool.html"   class="nav-item" data-page="cert-tool.html">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg>
-      Generate
-    </a>
-    <a href="mail-tool.html"   class="nav-item" data-page="mail-tool.html">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
-      Bulk Mail
-    </a>
-  </nav>
-  <div class="sidebar-footer">
-    <div class="sidebar-user">
-      <div class="sidebar-avatar" id="sidebarAvatar">A</div>
-      <div class="sidebar-user-info">
-        <span id="sidebarUserName">Loading...</span>
-        <small id="sidebarUserPlan">Personal</small>
-      </div>
+  <aside class="app-sidebar" id="appSidebar">
+    <div class="sidebar-header">
+      <a href="dashboard.html" class="sidebar-logo">
+        <div class="sidebar-logo-icon">⚡</div><span>GalSol</span>
+      </a>
     </div>
-    <button class="sidebar-logout" onclick="logout()">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
-      Sign out
-    </button>
-  </div>
-</aside>
-
-<main class="app-main">
-  <div class="app-topbar">
-    <button class="topbar-toggle" id="sidebarToggle">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
-    </button>
-    <div class="topbar-title">
-      <h1>Certificate Designer</h1>
-      <span>Design your template visually — no Slides needed</span>
-    </div>
-    <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
-      <button class="btn-ghost btn-sm" onclick="clearAll()">Clear</button>
-      <button class="btn-secondary btn-sm" onclick="previewTemplate()">Preview</button>
-      <button class="btn-primary btn-sm" onclick="saveTemplate()">💾 Save Template</button>
-    </div>
-  </div>
-
-  <div class="editor-layout">
-
-    <!-- LEFT PANEL: Canvas settings + field list -->
-    <div class="editor-panel">
-
-      <div class="panel-section">
-        <div class="panel-section-title">Canvas Size</div>
-        <div class="prop-row">
-          <span class="prop-label">Size</span>
-          <select class="prop-input" id="canvasSize" onchange="changeCanvasSize()">
-            <option value="1122,794">A4 Landscape (default)</option>
-            <option value="794,1122">A4 Portrait</option>
-            <option value="1056,816">Letter Landscape</option>
-            <option value="1024,768">Presentation</option>
-          </select>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item" data-page="dashboard.html">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+        </svg>
+        Dashboard
+      </a>
+      <a href="cert-editor.html" class="nav-item active" data-page="cert-editor.html">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+        </svg>
+        Template Editor
+      </a>
+      <a href="cert-tool.html" class="nav-item" data-page="cert-tool.html">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" />
+        </svg>
+        Generate
+      </a>
+      <a href="mail-tool.html" class="nav-item" data-page="mail-tool.html">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+        </svg>
+        Bulk Mail
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+        <div class="sidebar-user-info">
+          <span id="sidebarUserName">Loading...</span>
+          <small id="sidebarUserPlan">Personal</small>
         </div>
       </div>
-
-      <div class="panel-section">
-        <div class="panel-section-title">Background</div>
-        <div class="upload-bg" onclick="document.getElementById('bgUpload').click()">
-          <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBackground(event)">
-          <div style="font-size:1.5rem">🖼️</div>
-          <p>Click to upload background image<br>(PNG or JPG)</p>
-        </div>
-        <div class="prop-row">
-          <span class="prop-label">BG Color</span>
-          <input type="color" id="bgColor" value="#ffffff" class="prop-input" style="height:32px; padding:2px;" onchange="changeBgColor()">
-        </div>
-        <button class="btn-ghost btn-sm" style="width:100%" onclick="clearBackground()">Remove Background Image</button>
-      </div>
-
-      <div class="panel-section">
-        <div class="panel-section-title">Text Fields</div>
-        <div id="fieldList"><div class="empty-fields">No fields yet.<br>Click "+ Add Field" to start.</div></div>
-        <button class="btn-secondary btn-sm" style="width:100%; margin-top:8px" onclick="openAddFieldModal()">+ Add Text Field</button>
-      </div>
-
-      <div class="panel-section">
-        <div class="panel-section-title">Template</div>
-        <button class="btn-ghost btn-sm" style="width:100%; margin-bottom:8px" onclick="loadSavedTemplate()">📂 Load Saved</button>
-        <button class="btn-danger btn-sm" style="width:100%" onclick="clearAll()">🗑 Clear All</button>
-      </div>
-
+      <button class="sidebar-logout" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+        </svg>
+        Sign out
+      </button>
     </div>
+  </aside>
 
-    <!-- CENTER: Canvas -->
-    <div class="editor-canvas-wrap" id="canvasWrap">
-      <div class="canvas-container" id="canvasContainer">
-        <canvas id="certCanvas" class="cert-canvas"></canvas>
-        <div class="field-overlay" id="fieldOverlay"></div>
+  <main class="app-main">
+    <div class="app-topbar">
+      <button class="topbar-toggle" id="sidebarToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+      <div class="topbar-title">
+        <h1>Certificate Designer</h1>
+        <span>Design your template visually — no Slides needed</span>
+      </div>
+      <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+        <button class="btn-ghost btn-sm" onclick="clearAll()">Clear</button>
+        <button class="btn-secondary btn-sm" onclick="previewTemplate()">Preview</button>
+        <button class="btn-primary btn-sm" onclick="saveTemplate()">💾 Save Template</button>
       </div>
     </div>
 
-    <!-- RIGHT PANEL: Field properties -->
-    <div class="editor-panel-right" id="propsPanel">
-      <div class="panel-section-title">Field Properties</div>
-      <div id="noFieldSelected" class="no-field-selected">
-        ← Click a field on the canvas to edit its properties
-      </div>
-      <div id="fieldProps" style="display:none">
+    <div class="editor-layout">
+
+      <!-- LEFT PANEL: Canvas settings + field list -->
+      <div class="editor-panel">
 
         <div class="panel-section">
-          <div class="panel-section-title">Content</div>
-          <div class="prop-row">
-            <span class="prop-label">Placeholder</span>
-            <input class="prop-input" id="propPlaceholder" placeholder="{{name}}" onchange="updateFieldProp('placeholder', this.value)" oninput="updateFieldProp('placeholder', this.value)">
-          </div>
-          <div class="prop-row">
-            <span class="prop-label">Maps to</span>
-            <select class="prop-input" id="propColumn" onchange="updateFieldProp('column', this.value)">
-              <option value="">Not mapped</option>
-            </select>
-          </div>
-          <div class="prop-row">
-            <span class="prop-label">Preview text</span>
-            <input class="prop-input" id="propPreview" placeholder="Sample text" onchange="updateFieldProp('previewText', this.value)" oninput="updateFieldProp('previewText', this.value)">
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <div class="panel-section-title">Typography</div>
-          <div class="prop-row">
-            <span class="prop-label">Font</span>
-            <select class="prop-input" id="propFont" onchange="updateFieldProp('fontFamily', this.value)">
-              <option value="Helvetica">Helvetica</option>
-              <option value="Times New Roman">Times New Roman</option>
-              <option value="Helvetica Bold">Helvetica Bold</option>
-              <option value="Times Bold">Times Bold</option>
-              <option value="Courier">Courier</option>
-            </select>
-          </div>
+          <div class="panel-section-title">Canvas Size</div>
           <div class="prop-row">
             <span class="prop-label">Size</span>
-            <input type="number" class="prop-input" id="propSize" min="6" max="200" value="32" onchange="updateFieldProp('fontSize', parseInt(this.value))" style="max-width:80px">
-            <span style="font-size:0.78rem; color:#475569">px</span>
-          </div>
-          <div class="color-row">
-            <span class="prop-label">Color</span>
-            <input type="color" id="propColor" value="#000000" class="prop-input" style="height:32px;padding:2px;" onchange="updateFieldProp('color', this.value)">
-            <span id="propColorHex" style="font-size:0.78rem;color:#64748b;font-family:monospace">#000000</span>
-          </div>
-          <div class="prop-row">
-            <span class="prop-label">Align</span>
-            <div class="align-btns">
-              <button class="align-btn active" id="alignLeft"   onclick="setAlign('left')">L</button>
-              <button class="align-btn"        id="alignCenter" onclick="setAlign('center')">C</button>
-              <button class="align-btn"        id="alignRight"  onclick="setAlign('right')">R</button>
-            </div>
+            <select class="prop-input" id="canvasSize" onchange="changeCanvasSize()">
+              <option value="1122,794">A4 Landscape (default)</option>
+              <option value="794,1122">A4 Portrait</option>
+              <option value="1056,816">Letter Landscape</option>
+              <option value="1024,768">Presentation</option>
+            </select>
           </div>
         </div>
 
         <div class="panel-section">
-          <div class="panel-section-title">Position & Size</div>
-          <div class="prop-row">
-            <span class="prop-label">X %</span>
-            <input type="number" class="prop-input" id="propX" min="0" max="100" step="0.5" onchange="updateFieldProp('x', parseFloat(this.value))">
+          <div class="panel-section-title">Background</div>
+          <div class="upload-bg" onclick="document.getElementById('bgUpload').click()">
+            <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBackground(event)">
+            <div style="font-size:1.5rem">🖼️</div>
+            <p>Click to upload background image<br>(PNG or JPG)</p>
           </div>
           <div class="prop-row">
-            <span class="prop-label">Y %</span>
-            <input type="number" class="prop-input" id="propY" min="0" max="100" step="0.5" onchange="updateFieldProp('y', parseFloat(this.value))">
+            <span class="prop-label">BG Color</span>
+            <input type="color" id="bgColor" value="#ffffff" class="prop-input" style="height:32px; padding:2px;"
+              onchange="changeBgColor()">
           </div>
-          <div class="prop-row">
-            <span class="prop-label">Width %</span>
-            <input type="number" class="prop-input" id="propWidth" min="5" max="100" step="1" onchange="updateFieldProp('width', parseFloat(this.value))">
-          </div>
+          <button class="btn-ghost btn-sm" style="width:100%" onclick="clearBackground()">Remove Background
+            Image</button>
         </div>
 
-        <button class="btn-danger btn-sm" style="width:100%;margin-top:8px" onclick="deleteSelectedField()">🗑 Delete Field</button>
+        <div class="panel-section">
+          <div class="panel-section-title">Text Fields</div>
+          <div id="fieldList">
+            <div class="empty-fields">No fields yet.<br>Click "+ Add Field" to start.</div>
+          </div>
+          <button class="btn-secondary btn-sm" style="width:100%; margin-top:8px" onclick="openAddFieldModal()">+ Add
+            Text Field</button>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section-title">Template</div>
+          <button class="btn-ghost btn-sm" style="width:100%; margin-bottom:8px" onclick="loadSavedTemplate()">📂 Load
+            Saved</button>
+          <button class="btn-danger btn-sm" style="width:100%" onclick="clearAll()">🗑 Clear All</button>
+        </div>
+
+      </div>
+
+      <!-- CENTER: Canvas -->
+      <div class="editor-canvas-wrap" id="canvasWrap">
+        <div class="canvas-container" id="canvasContainer">
+          <canvas id="certCanvas" class="cert-canvas"></canvas>
+          <div class="field-overlay" id="fieldOverlay"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Field properties -->
+      <div class="editor-panel-right" id="propsPanel">
+        <div class="panel-section-title">Field Properties</div>
+        <div id="noFieldSelected" class="no-field-selected">
+          ← Click a field on the canvas to edit its properties
+        </div>
+        <div id="fieldProps" style="display:none">
+
+          <div class="panel-section">
+            <div class="panel-section-title">Content</div>
+            <div class="prop-row">
+              <span class="prop-label">Placeholder</span>
+              <input class="prop-input" id="propPlaceholder" placeholder="{{name}}"
+                onchange="updateFieldProp('placeholder', this.value)"
+                oninput="updateFieldProp('placeholder', this.value)">
+            </div>
+            <div class="prop-row">
+              <span class="prop-label">Maps to</span>
+              <select class="prop-input" id="propColumn" onchange="updateFieldProp('column', this.value)">
+                <option value="">Not mapped</option>
+              </select>
+            </div>
+            <div class="prop-row">
+              <span class="prop-label">Preview text</span>
+              <input class="prop-input" id="propPreview" placeholder="Sample text"
+                onchange="updateFieldProp('previewText', this.value)"
+                oninput="updateFieldProp('previewText', this.value)">
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-section-title">Typography</div>
+            <div class="prop-row">
+              <span class="prop-label">Font</span>
+              <select class="prop-input" id="propFont" onchange="updateFieldProp('fontFamily', this.value)">
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Helvetica Bold">Helvetica Bold</option>
+                <option value="Times Bold">Times Bold</option>
+                <option value="Courier">Courier</option>
+              </select>
+            </div>
+            <div class="prop-row">
+              <span class="prop-label">Size</span>
+              <input type="number" class="prop-input" id="propSize" min="6" max="200" value="32"
+                onchange="updateFieldProp('fontSize', parseInt(this.value))" style="max-width:80px">
+              <span style="font-size:0.78rem; color:#475569">px</span>
+            </div>
+            <div class="color-row">
+              <span class="prop-label">Color</span>
+              <input type="color" id="propColor" value="#000000" class="prop-input" style="height:32px;padding:2px;"
+                onchange="updateFieldProp('color', this.value)">
+              <span id="propColorHex" style="font-size:0.78rem;color:#64748b;font-family:monospace">#000000</span>
+            </div>
+            <div class="prop-row">
+              <span class="prop-label">Align</span>
+              <div class="align-btns">
+                <button class="align-btn active" id="alignLeft" onclick="setAlign('left')">L</button>
+                <button class="align-btn" id="alignCenter" onclick="setAlign('center')">C</button>
+                <button class="align-btn" id="alignRight" onclick="setAlign('right')">R</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-section-title">Position & Size</div>
+            <div class="prop-row">
+              <span class="prop-label">X %</span>
+              <input type="number" class="prop-input" id="propX" min="0" max="100" step="0.5"
+                onchange="updateFieldProp('x', parseFloat(this.value))">
+            </div>
+            <div class="prop-row">
+              <span class="prop-label">Y %</span>
+              <input type="number" class="prop-input" id="propY" min="0" max="100" step="0.5"
+                onchange="updateFieldProp('y', parseFloat(this.value))">
+            </div>
+            <div class="prop-row">
+              <span class="prop-label">Width %</span>
+              <input type="number" class="prop-input" id="propWidth" min="5" max="100" step="1"
+                onchange="updateFieldProp('width', parseFloat(this.value))">
+            </div>
+          </div>
+
+          <button class="btn-danger btn-sm" style="width:100%;margin-top:8px" onclick="deleteSelectedField()">🗑 Delete
+            Field</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Add Field Modal -->
+  <!-- ✅ Clean — no inline display style -->
+  <div id="addFieldModal"
+    style="position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:500; align-items:center; justify-content:center; display:none;">
+    <div
+      style="background:#0d1626; border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:32px; width:360px; max-width:90vw;">
+      <h3 style="margin-bottom:20px; font-size:1.1rem;">Add Text Field</h3>
+      <div class="prop-row" style="flex-direction:column; align-items:flex-start; gap:6px">
+        <span class="prop-label">Placeholder</span>
+        <select class="prop-input" id="newFieldPh" style="width:100%">
+          <option value="{{name}}">{{name}} — Participant Name</option>
+          <option value="{{email}}">{{email}} — Email</option>
+          <option value="{{course}}">{{course}} — Course</option>
+          <option value="{{date}}">{{date}} — Date</option>
+          <option value="{{score}}">{{score}} — Score</option>
+          <option value="{{org}}">{{org}} — Organization</option>
+          <option value="custom">Custom…</option>
+        </select>
+        <input class="prop-input" id="newFieldCustom" placeholder="Enter custom placeholder e.g. {{event}}"
+          style="width:100%; display:none; margin-top:6px">
+      </div>
+      <div style="display:flex; gap:8px; margin-top:20px;">
+        <button class="btn-primary" style="flex:1" onclick="addField()">Add Field</button>
+        <button class="btn-ghost" onclick="closeAddFieldModal()">Cancel</button>
       </div>
     </div>
-
   </div>
-</main>
 
-<!-- Add Field Modal -->
-<!-- ✅ Clean — no inline display style -->
-<div id="addFieldModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:500; align-items:center; justify-content:center; display:none;">
-  <div style="background:#0d1626; border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:32px; width:360px; max-width:90vw;">
-    <h3 style="margin-bottom:20px; font-size:1.1rem;">Add Text Field</h3>
-    <div class="prop-row" style="flex-direction:column; align-items:flex-start; gap:6px">
-      <span class="prop-label">Placeholder</span>
-      <select class="prop-input" id="newFieldPh" style="width:100%">
-        <option value="{{name}}">{{name}} — Participant Name</option>
-        <option value="{{email}}">{{email}} — Email</option>
-        <option value="{{course}}">{{course}} — Course</option>
-        <option value="{{date}}">{{date}} — Date</option>
-        <option value="{{score}}">{{score}} — Score</option>
-        <option value="{{org}}">{{org}} — Organization</option>
-        <option value="custom">Custom…</option>
-      </select>
-      <input class="prop-input" id="newFieldCustom" placeholder="Enter custom placeholder e.g. {{event}}" style="width:100%; display:none; margin-top:6px">
-    </div>
-    <div style="display:flex; gap:8px; margin-top:20px;">
-      <button class="btn-primary" style="flex:1" onclick="addField()">Add Field</button>
-      <button class="btn-ghost" onclick="closeAddFieldModal()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<script src="dashboard.js"></script>
-<script src="cert-editor.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="cert-editor.js"></script>
 </body>
+
 </html>

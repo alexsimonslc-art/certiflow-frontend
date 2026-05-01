@@ -1,322 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign In — Honourix</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="login.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="login.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
+    rel="stylesheet" />
 </head>
+
 <body>
 
-<!-- ── BACK LINK ── -->
-<a href="index.html" class="back-link">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-  Back
-</a>
+  <!-- ── BACK LINK ── -->
+  <a href="index.html" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+    Back
+  </a>
 
-<!-- ══════════ LAYOUT ══════════ -->
-<div class="layout">
+  <!-- ══════════ LAYOUT ══════════ -->
+  <div class="layout">
 
-  <!-- ── LEFT: FORM PANEL ── -->
-  <div class="form-panel">
-    <div class="form-inner">
+    <!-- ── LEFT: FORM PANEL ── -->
+    <div class="form-panel">
+      <div class="form-inner">
 
-      <!-- Logo -->
-      <div class="logo">
-        <div class="logo-mark">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <span class="logo-name">Honourix</span>
-      </div>
-
-      <!-- ── STEP 1: Account type ── -->
-      <div class="step active" id="step1">
-        <div class="step-header">
-          <h1 class="step-title">Welcome back</h1>
-          <p class="step-sub">Sign in to access your tools and campaigns.</p>
-        </div>
-
-        <p class="field-label">I am signing in as a</p>
-        <div class="type-grid">
-          <button class="type-card active" id="cardPersonal" onclick="selectType('personal')">
-            <div class="type-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <div class="type-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <span class="type-name">Personal</span>
-            <span class="type-desc">Freelancers &amp; individuals</span>
-          </button>
-          <button class="type-card" id="cardOrg" onclick="selectType('org')">
-            <div class="type-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <div class="type-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            </div>
-            <span class="type-name">Organization</span>
-            <span class="type-desc">Colleges, NGOs &amp; companies</span>
-          </button>
-        </div>
-
-        <button class="btn-primary" onclick="goStep2()">
-          Continue
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </button>
-        <p class="terms">By continuing, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
-      </div>
-
-      <!-- ── STEP 2: Org type ── -->
-      <div class="step" id="step2">
-        <button class="back-step" onclick="goStep(1)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-          Back
-        </button>
-        <div class="step-header">
-          <h1 class="step-title">Your Organization</h1>
-          <p class="step-sub">Help us tailor Honourix for your team.</p>
-        </div>
-
-        <p class="field-label" style="text-align:left; margin-bottom:10px;">Organization type</p>
-        <div class="org-grid">
-          <button class="org-card active" onclick="selectOrg(this)">
-            <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-            <span>College / University</span>
-          </button>
-          <button class="org-card" onclick="selectOrg(this)">
-            <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-            <span>NGO / Non-profit</span>
-          </button>
-          <button class="org-card" onclick="selectOrg(this)">
-            <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-            <span>Startup / Company</span>
-          </button>
-          <button class="org-card" onclick="selectOrg(this)">
-            <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="10" width="18" height="11"/><path d="M3 10l9-7 9 7"/></svg></div>
-            <span>Government Body</span>
-          </button>
-          <button class="org-card" onclick="selectOrg(this)">
-            <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-            <span>Event Organizer</span>
-          </button>
-          <button class="org-card" onclick="selectOrg(this)">
-            <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-            <span>Other</span>
-          </button>
-        </div>
-
-        <button class="btn-primary" onclick="goStep(3)">
-          Continue
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </button>
-      </div>
-
-      <!-- ── STEP 3: Permissions ── -->
-      <div class="step" id="step3">
-        <button class="back-step" onclick="goStep(1)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-          Back
-        </button>
-        <div class="step-header">
-          <h1 class="step-title">Permissions</h1>
-          <p class="step-sub">Honourix needs these Google permissions. Revoke anytime.</p>
-        </div>
-
-        <div class="perm-list">
-          <div class="perm-row">
-            <div class="perm-icon-wrap perm-gmail">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </div>
-            <div class="perm-body">
-              <strong>Gmail</strong>
-              <span>Send certificate emails</span>
-            </div>
-            <span class="badge badge-req">Required</span>
+        <!-- Logo -->
+        <div class="logo">
+          <div class="logo-mark">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
           </div>
-          <div class="perm-row">
-            <div class="perm-icon-wrap perm-drive">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 20H2l5.5-9.5L14 20"/><path d="M14 20l-4-7 5.5-9.5"/><path d="M8.5 10.5L2 20"/></svg>
-            </div>
-            <div class="perm-body">
-              <strong>Google Drive</strong>
-              <span>Save generated PDFs</span>
-            </div>
-            <span class="badge badge-req">Required</span>
-          </div>
-          <div class="perm-row">
-            <div class="perm-icon-wrap perm-sheets">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-            </div>
-            <div class="perm-body">
-              <strong>Sheets</strong>
-              <span>Read recipient data</span>
-            </div>
-            <span class="badge badge-req">Required</span>
-          </div>
-          <div class="perm-row">
-            <div class="perm-icon-wrap perm-slides">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-            </div>
-            <div class="perm-body">
-              <strong>Slides</strong>
-              <span>Read certificate templates</span>
-            </div>
-            <span class="badge badge-min">Minimal</span>
-          </div>
-          <div class="perm-row">
-            <div class="perm-icon-wrap perm-profile">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <div class="perm-body">
-              <strong>Profile</strong>
-              <span>Name &amp; email for account setup only</span>
-            </div>
-            <span class="badge badge-min">Read-only</span>
-          </div>
+          <span class="logo-name">GalSol</span>
         </div>
 
-        <div class="security-note">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Your files never touch our servers — all operations run directly via Google APIs on your account.</span>
+        <!-- ── STEP 1: Account type ── -->
+        <div class="step active" id="step1">
+          <div class="step-header">
+            <h1 class="step-title">Welcome back</h1>
+            <p class="step-sub">Sign in to access your tools and campaigns.</p>
+          </div>
+
+          <p class="field-label">I am signing in as a</p>
+          <div class="type-grid">
+            <button class="type-card active" id="cardPersonal" onclick="selectType('personal')">
+              <div class="type-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="3">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg></div>
+              <div class="type-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <span class="type-name">Personal</span>
+              <span class="type-desc">Freelancers &amp; individuals</span>
+            </button>
+            <button class="type-card" id="cardOrg" onclick="selectType('org')">
+              <div class="type-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="3">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg></div>
+              <div class="type-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+              </div>
+              <span class="type-name">Organization</span>
+              <span class="type-desc">Colleges, NGOs &amp; companies</span>
+            </button>
+          </div>
+
+          <button class="btn-primary" onclick="goStep2()">
+            Continue
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+          <p class="terms">By continuing, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
         </div>
 
-        <button class="btn-google" onclick="authorizeWithGoogle()">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Authorize with Google
-        </button>
+        <!-- ── STEP 2: Org type ── -->
+        <div class="step" id="step2">
+          <button class="back-step" onclick="goStep(1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Back
+          </button>
+          <div class="step-header">
+            <h1 class="step-title">Your Organization</h1>
+            <p class="step-sub">Help us tailor GalSol for your team.</p>
+          </div>
 
-        <p class="terms">Revoke access anytime from your <a href="https://myaccount.google.com/permissions" target="_blank">Google Account settings</a>.</p>
+          <p class="field-label" style="text-align:left; margin-bottom:10px;">Organization type</p>
+          <div class="org-grid">
+            <button class="org-card active" onclick="selectOrg(this)">
+              <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.5">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg></div>
+              <span>College / University</span>
+            </button>
+            <button class="org-card" onclick="selectOrg(this)">
+              <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.5">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg></div>
+              <span>NGO / Non-profit</span>
+            </button>
+            <button class="org-card" onclick="selectOrg(this)">
+              <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.5">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg></div>
+              <span>Startup / Company</span>
+            </button>
+            <button class="org-card" onclick="selectOrg(this)">
+              <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.5">
+                  <rect x="3" y="10" width="18" height="11" />
+                  <path d="M3 10l9-7 9 7" />
+                </svg></div>
+              <span>Government Body</span>
+            </button>
+            <button class="org-card" onclick="selectOrg(this)">
+              <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.5">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg></div>
+              <span>Event Organizer</span>
+            </button>
+            <button class="org-card" onclick="selectOrg(this)">
+              <div class="org-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.5">
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+                </svg></div>
+              <span>Other</span>
+            </button>
+          </div>
+
+          <button class="btn-primary" onclick="goStep(3)">
+            Continue
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- ── STEP 3: Permissions ── -->
+        <div class="step" id="step3">
+          <button class="back-step" onclick="goStep(1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Back
+          </button>
+          <div class="step-header">
+            <h1 class="step-title">Permissions</h1>
+            <p class="step-sub">GalSol needs these Google permissions. Revoke anytime.</p>
+          </div>
+
+          <div class="perm-list">
+            <div class="perm-row">
+              <div class="perm-icon-wrap perm-gmail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+              </div>
+              <div class="perm-body">
+                <strong>Gmail</strong>
+                <span>Send certificate emails</span>
+              </div>
+              <span class="badge badge-req">Required</span>
+            </div>
+            <div class="perm-row">
+              <div class="perm-icon-wrap perm-drive">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M22 20H2l5.5-9.5L14 20" />
+                  <path d="M14 20l-4-7 5.5-9.5" />
+                  <path d="M8.5 10.5L2 20" />
+                </svg>
+              </div>
+              <div class="perm-body">
+                <strong>Google Drive</strong>
+                <span>Save generated PDFs</span>
+              </div>
+              <span class="badge badge-req">Required</span>
+            </div>
+            <div class="perm-row">
+              <div class="perm-icon-wrap perm-sheets">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="3" y1="9" x2="21" y2="9" />
+                  <line x1="3" y1="15" x2="21" y2="15" />
+                  <line x1="9" y1="3" x2="9" y2="21" />
+                </svg>
+              </div>
+              <div class="perm-body">
+                <strong>Sheets</strong>
+                <span>Read recipient data</span>
+              </div>
+              <span class="badge badge-req">Required</span>
+            </div>
+            <div class="perm-row">
+              <div class="perm-icon-wrap perm-slides">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <line x1="8" y1="20" x2="16" y2="20" />
+                  <line x1="12" y1="4" x2="12" y2="20" />
+                </svg>
+              </div>
+              <div class="perm-body">
+                <strong>Slides</strong>
+                <span>Read certificate templates</span>
+              </div>
+              <span class="badge badge-min">Minimal</span>
+            </div>
+            <div class="perm-row">
+              <div class="perm-icon-wrap perm-profile">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <div class="perm-body">
+                <strong>Profile</strong>
+                <span>Name &amp; email for account setup only</span>
+              </div>
+              <span class="badge badge-min">Read-only</span>
+            </div>
+          </div>
+
+          <div class="security-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <span>Your files never touch our servers — all operations run directly via Google APIs on your
+              account.</span>
+          </div>
+
+          <button class="btn-google" onclick="authorizeWithGoogle()">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+              <path fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>
+            Authorize with Google
+          </button>
+
+          <p class="terms">Revoke access anytime from your <a href="https://myaccount.google.com/permissions"
+              target="_blank">Google Account settings</a>.</p>
+        </div>
+
+      </div><!-- /form-inner -->
+    </div><!-- /form-panel -->
+
+    <!-- ── RIGHT: VISUAL PANEL ── -->
+    <div class="visual-panel" id="visualPanel">
+
+      <!-- Animated gradient background layers -->
+      <div class="vp-bg">
+        <div class="vp-orb vp-o1"></div>
+        <div class="vp-orb vp-o2"></div>
+        <div class="vp-orb vp-o3"></div>
       </div>
 
-    </div><!-- /form-inner -->
-  </div><!-- /form-panel -->
+      <!-- Grid pattern -->
+      <div class="vp-grid"></div>
 
-  <!-- ── RIGHT: VISUAL PANEL ── -->
-  <div class="visual-panel" id="visualPanel">
+      <!-- Diagonal lines overlay -->
+      <div class="vp-lines"></div>
 
-    <!-- Animated gradient background layers -->
-    <div class="vp-bg">
-      <div class="vp-orb vp-o1"></div>
-      <div class="vp-orb vp-o2"></div>
-      <div class="vp-orb vp-o3"></div>
-    </div>
-
-    <!-- Grid pattern -->
-    <div class="vp-grid"></div>
-
-    <!-- Diagonal lines overlay -->
-    <div class="vp-lines"></div>
-
-    <!-- Pulsing rings -->
-    <div class="vp-rings">
-      <div class="vp-ring r1"></div>
-      <div class="vp-ring r2"></div>
-      <div class="vp-ring r3"></div>
-      <div class="vp-ring r4"></div>
-    </div>
-
-    <!-- Moving particles -->
-    <div class="vp-particles" id="particles"></div>
-
-    <!-- Center card -->
-    <div class="vp-card" id="vpCard">
-      <div class="vp-card-glow"></div>
-      <div class="vp-logo">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Honourix
+      <!-- Pulsing rings -->
+      <div class="vp-rings">
+        <div class="vp-ring r1"></div>
+        <div class="vp-ring r2"></div>
+        <div class="vp-ring r3"></div>
+        <div class="vp-ring r4"></div>
       </div>
-      <h2 class="vp-title">Certificates at<br><span class="vp-accent">the speed of code</span></h2>
-      <p class="vp-desc">Automate bulk certificates &amp; emails using your own Google Workspace. No code required.</p>
-      <div class="vp-stats">
-        <div class="vp-stat">
-          <span class="stat-num">10k+</span>
-          <span class="stat-lbl">Certificates sent</span>
+
+      <!-- Moving particles -->
+      <div class="vp-particles" id="particles"></div>
+
+      <!-- Center card -->
+      <div class="vp-card" id="vpCard">
+        <div class="vp-card-glow"></div>
+        <div class="vp-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg>
+          GalSol
         </div>
-        <div class="vp-stat-divider"></div>
-        <div class="vp-stat">
-          <span class="stat-num">500+</span>
-          <span class="stat-lbl">Organisations</span>
-        </div>
-        <div class="vp-stat-divider"></div>
-        <div class="vp-stat">
-          <span class="stat-num">99%</span>
-          <span class="stat-lbl">Delivery rate</span>
+        <h2 class="vp-title">Certificates at<br><span class="vp-accent">the speed of code</span></h2>
+        <p class="vp-desc">Automate bulk certificates &amp; emails using your own Google Workspace. No code required.
+        </p>
+        <div class="vp-stats">
+          <div class="vp-stat">
+            <span class="stat-num">10k+</span>
+            <span class="stat-lbl">Certificates sent</span>
+          </div>
+          <div class="vp-stat-divider"></div>
+          <div class="vp-stat">
+            <span class="stat-num">500+</span>
+            <span class="stat-lbl">Organisations</span>
+          </div>
+          <div class="vp-stat-divider"></div>
+          <div class="vp-stat">
+            <span class="stat-num">99%</span>
+            <span class="stat-lbl">Delivery rate</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Floating feature pills -->
-    <div class="fp fp-1">
-      <div class="fp-dot fp-dot-red"></div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea4335" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      Bulk Email
-    </div>
-    <div class="fp fp-2">
-      <div class="fp-dot fp-dot-cyan"></div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8"><circle cx="12" cy="8" r="5"/><path d="M8 14l-2 7h12l-2-7"/><line x1="12" y1="13" x2="12" y2="21"/></svg>
-      Certificates
-    </div>
-    <div class="fp fp-3">
-      <div class="fp-dot fp-dot-green"></div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34a853" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-      Sheets Import
-    </div>
-    <div class="fp fp-4">
-      <div class="fp-dot fp-dot-blue"></div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.8"><path d="M22 20H2l5.5-9.5L14 20"/><path d="M14 20l-4-7 5.5-9.5"/></svg>
-      Drive Upload
-    </div>
-    <div class="fp fp-5">
-      <div class="fp-dot fp-dot-violet"></div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      Zero Code
-    </div>
+      <!-- Floating feature pills -->
+      <div class="fp fp-1">
+        <div class="fp-dot fp-dot-red"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea4335" stroke-width="1.8">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+          <polyline points="22,6 12,13 2,6" />
+        </svg>
+        Bulk Email
+      </div>
+      <div class="fp fp-2">
+        <div class="fp-dot fp-dot-cyan"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="1.8">
+          <circle cx="12" cy="8" r="5" />
+          <path d="M8 14l-2 7h12l-2-7" />
+          <line x1="12" y1="13" x2="12" y2="21" />
+        </svg>
+        Certificates
+      </div>
+      <div class="fp fp-3">
+        <div class="fp-dot fp-dot-green"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34a853" stroke-width="1.8">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="9" y1="3" x2="9" y2="21" />
+        </svg>
+        Sheets Import
+      </div>
+      <div class="fp fp-4">
+        <div class="fp-dot fp-dot-blue"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="1.8">
+          <path d="M22 20H2l5.5-9.5L14 20" />
+          <path d="M14 20l-4-7 5.5-9.5" />
+        </svg>
+        Drive Upload
+      </div>
+      <div class="fp fp-5">
+        <div class="fp-dot fp-dot-violet"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.8">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+        Zero Code
+      </div>
 
-  </div><!-- /visual-panel -->
+    </div><!-- /visual-panel -->
 
-</div><!-- /layout -->
+  </div><!-- /layout -->
 
-<script>
-  /* ── State ── */
-  let selectedType = 'personal';
+  <script>
+    /* ── State ── */
+    let selectedType = 'personal';
 
-  /* ── Step navigation ── */
-  function goStep(n) {
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step' + n).classList.add('active');
-  }
+    /* ── Step navigation ── */
+    function goStep(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step' + n).classList.add('active');
+    }
 
-  function goStep2() {
-    goStep(selectedType === 'org' ? 2 : 3);
-  }
+    function goStep2() {
+      goStep(selectedType === 'org' ? 2 : 3);
+    }
 
-  /* ── Type selection ── */
-  function selectType(type) {
-    selectedType = type;
-    document.getElementById('cardPersonal').classList.toggle('active', type === 'personal');
-    document.getElementById('cardOrg').classList.toggle('active', type === 'org');
-  }
+    /* ── Type selection ── */
+    function selectType(type) {
+      selectedType = type;
+      document.getElementById('cardPersonal').classList.toggle('active', type === 'personal');
+      document.getElementById('cardOrg').classList.toggle('active', type === 'org');
+    }
 
-  /* ── Org selection ── */
-  function selectOrg(el) {
-    document.querySelectorAll('.org-card').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-  }
+    /* ── Org selection ── */
+    function selectOrg(el) {
+      document.querySelectorAll('.org-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
 
-  /* ── Google OAuth ── */
-  function authorizeWithGoogle() {
-    const API = 'https://certiflow-backend-73xk.onrender.com';
-    window.location.href = `${API}/auth/google?accountType=${selectedType}`;
-  }
+    /* ── Google OAuth ── */
+    function authorizeWithGoogle() {
+      const API = 'https://certiflow-backend-73xk.onrender.com';
+      window.location.href = `${API}/auth/google?accountType=${selectedType}`;
+    }
 
-  /* ── Particle generator ── */
-  (function spawnParticles() {
-    const container = document.getElementById('particles');
-    for (let i = 0; i < 28; i++) {
-      const dot = document.createElement('div');
-      dot.className = 'particle';
-      dot.style.cssText = `
+    /* ── Particle generator ── */
+    (function spawnParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 28; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'particle';
+        dot.style.cssText = `
         left: ${Math.random() * 100}%;
         top: ${Math.random() * 100}%;
         width: ${Math.random() * 3 + 1}px;
@@ -325,23 +433,24 @@
         animation-delay: ${Math.random() * -14}s;
         opacity: ${Math.random() * 0.5 + 0.1};
       `;
-      container.appendChild(dot);
-    }
-  })();
+        container.appendChild(dot);
+      }
+    })();
 
-  /* ── Card tilt on mouse move ── */
-  const panel = document.getElementById('visualPanel');
-  const card  = document.getElementById('vpCard');
+    /* ── Card tilt on mouse move ── */
+    const panel = document.getElementById('visualPanel');
+    const card = document.getElementById('vpCard');
 
-  panel.addEventListener('mousemove', e => {
-    const r = panel.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width  - 0.5;
-    const y = (e.clientY - r.top)  / r.height - 0.5;
-    card.style.transform = `perspective(900px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateZ(10px)`;
-  });
-  panel.addEventListener('mouseleave', () => {
-    card.style.transform = 'perspective(900px) rotateY(0) rotateX(0) translateZ(0)';
-  });
-</script>
+    panel.addEventListener('mousemove', e => {
+      const r = panel.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `perspective(900px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateZ(10px)`;
+    });
+    panel.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(900px) rotateY(0) rotateX(0) translateZ(0)';
+    });
+  </script>
 </body>
+
 </html>

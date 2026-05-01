@@ -1,9 +1,9 @@
-# Honourix — Developer Setup Guide
+# GalSol — Developer Setup Guide
 
 ## Project Structure
 
 ```
-Honourix/
+GalSol/
 ├── frontend/
 │   ├── index.html        ← Landing page
 │   ├── login.html        ← Login / onboarding page
@@ -30,7 +30,7 @@ Honourix/
 ## Answering Your Questions
 
 ### Is it possible?
-**Yes, absolutely.** Honourix works by using Google OAuth 2.0.
+**Yes, absolutely.** GalSol works by using Google OAuth 2.0.
 When a user signs in, they authorize your app to act on their behalf using their Gmail,
 Drive, Sheets, and Slides. All API calls go through Google's infrastructure.
 You are just the middleman — you never store their emails or files.
@@ -61,7 +61,7 @@ Your server just coordinates the API calls. A basic $0/month setup handles 100+ 
 ## Step 1: Google Cloud Console Setup
 
 1. Go to https://console.cloud.google.com
-2. Create a new project: "Honourix"
+2. Create a new project: "GalSol"
 3. Enable these APIs:
    - Gmail API
    - Google Drive API
@@ -172,7 +172,7 @@ create table campaigns (
 ### Frontend → Vercel (Free)
 ```bash
 npm install -g vercel
-cd Honourix/frontend
+cd GalSol/frontend
 vercel deploy
 ```
 Set environment variable:
@@ -198,7 +198,7 @@ In `app.js`, replace the placeholder OAuth redirect with:
 
 ```javascript
 function triggerGoogleOAuth() {
-  const type = sessionStorage.getItem('Honourix_account_type') || 'personal';
+  const type = sessionStorage.getItem('GalSol_account_type') || 'personal';
   window.location.href = `https://your-backend.onrender.com/auth/google?type=${type}`;
 }
 ```
@@ -212,7 +212,7 @@ Frontend stores the JWT:
 ```javascript
 const token = new URLSearchParams(window.location.search).get('token');
 if (token) {
-  localStorage.setItem('Honourix_token', token);
+  localStorage.setItem('GalSol_token', token);
   window.location.href = '/dashboard';
 }
 ```
@@ -275,7 +275,7 @@ async function generateCertificate(auth, { participantName, templateId, folderId
 
 ## Questions / Support
 
-For questions about building Honourix, open an issue or refer to:
+For questions about building GalSol, open an issue or refer to:
 - Google OAuth: https://developers.google.com/identity/protocols/oauth2
 - Gmail API: https://developers.google.com/gmail/api
 - Google Drive API: https://developers.google.com/drive/api

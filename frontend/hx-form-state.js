@@ -1,46 +1,46 @@
 /* ================================================================
-   Honourix — HX Forms  |  hx-form-state.js
+   GalSol — GS Forms  |  gs-form-state.js
    Form builder state · localStorage · Supabase sync
    Same save architecture as mini-site-state.js:
      · Every change → localStorage instantly  (undo/redo smooth)
      · Supabase      → every 5 minutes OR on publish
 ================================================================ */
 
-const HXF_API = 'https://certiflow-backend-73xk.onrender.com/api/hxforms';
+const GSF_API = 'https://certiflow-backend-73xk.onrender.com/api/gsforms';
 
 /* ── User identity (read JWT from localStorage) ─────────────────── */
-function hxf_getUserId() {
+function gsf_getUserId() {
   try {
-    const token = localStorage.getItem('Honourix_token');
+    const token = localStorage.getItem('GalSol_token');
     if (!token) return 'anon';
     return JSON.parse(atob(token.split('.')[1])).googleId || 'anon';
   } catch { return 'anon'; }
 }
 
-function hxf_getToken() {
-  return localStorage.getItem('Honourix_token') || '';
+function gsf_getToken() {
+  return localStorage.getItem('GalSol_token') || '';
 }
 
-function hxf_storageKey() {
-  return 'hx_forms_' + hxf_getUserId();
+function gsf_storageKey() {
+  return 'gs_forms_' + gsf_getUserId();
 }
 
 /* ── Default field templates ────────────────────────────────────── */
-const HXF_FIELD_DEFAULTS = {
-  text:          () => ({ label: 'Short Answer',    placeholder: 'Your answer',          required: false, validation: {} }),
-  textarea:      () => ({ label: 'Paragraph',        placeholder: 'Write your answer…',   required: false, validation: {} }),
-  email:         () => ({ label: 'Email Address',    placeholder: 'you@example.com',      required: true,  validation: {} }),
-  phone:         () => ({ label: 'Phone Number',     placeholder: '+91 98765 43210',      required: false, validation: {} }),
-  number:        () => ({ label: 'Number',           placeholder: '0',                    required: false, validation: { min: null, max: null } }),
-  dropdown:      () => ({ label: 'Dropdown',         placeholder: 'Select an option',     required: false, options: ['Option 1', 'Option 2', 'Option 3'] }),
-  radio:         () => ({ label: 'Multiple Choice',  placeholder: '',                     required: false, options: ['Option 1', 'Option 2', 'Option 3'] }),
-  checkbox:      () => ({ label: 'Checkboxes',       placeholder: '',                     required: false, options: ['Option 1', 'Option 2'] }),
-  date:          () => ({ label: 'Date',             placeholder: '',                     required: false, validation: {} }),
-  time:          () => ({ label: 'Time',             placeholder: '',                     required: false, validation: {} }),
-  file_upload:   () => ({ label: 'File Upload',      placeholder: 'Upload a file',        required: false, accept: '*', maxMB: 10 }),
-  linear_scale:  () => ({ label: 'Rating',           placeholder: '',                     required: false, min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars' }),
-  section_break: () => ({ label: 'Section Title',    description: 'Add a description for this section.', required: false }),
-  event_pass:    () => ({
+const GSF_FIELD_DEFAULTS = {
+  text: () => ({ label: 'Short Answer', placeholder: 'Your answer', required: false, validation: {} }),
+  textarea: () => ({ label: 'Paragraph', placeholder: 'Write your answer…', required: false, validation: {} }),
+  email: () => ({ label: 'Email Address', placeholder: 'you@example.com', required: true, validation: {} }),
+  phone: () => ({ label: 'Phone Number', placeholder: '+91 98765 43210', required: false, validation: {} }),
+  number: () => ({ label: 'Number', placeholder: '0', required: false, validation: { min: null, max: null } }),
+  dropdown: () => ({ label: 'Dropdown', placeholder: 'Select an option', required: false, options: ['Option 1', 'Option 2', 'Option 3'] }),
+  radio: () => ({ label: 'Multiple Choice', placeholder: '', required: false, options: ['Option 1', 'Option 2', 'Option 3'] }),
+  checkbox: () => ({ label: 'Checkboxes', placeholder: '', required: false, options: ['Option 1', 'Option 2'] }),
+  date: () => ({ label: 'Date', placeholder: '', required: false, validation: {} }),
+  time: () => ({ label: 'Time', placeholder: '', required: false, validation: {} }),
+  file_upload: () => ({ label: 'File Upload', placeholder: 'Upload a file', required: false, accept: '*', maxMB: 10 }),
+  linear_scale: () => ({ label: 'Rating', placeholder: '', required: false, min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars' }),
+  section_break: () => ({ label: 'Section Title', description: 'Add a description for this section.', required: false }),
+  event_pass: () => ({
     label: 'Entry Pass',
     passEventName: '',
     passSubtitle: 'Present this pass at the venue entrance',
@@ -61,7 +61,7 @@ const HXF_FIELD_DEFAULTS = {
 };
 
 /* ── Form config templates ──────────────────────────────────────── */
-const HXF_TEMPLATES = {
+const GSF_TEMPLATES = {
 
   blank: {
     label: 'Blank Form', icon: 'file-plus', color: 'cyan',
@@ -80,12 +80,12 @@ const HXF_TEMPLATES = {
     label: 'Event Registration', icon: 'calendar', color: 'purple',
     config: () => ({
       fields: [
-        { id: hxf_uid(), type: 'text',     ...HXF_FIELD_DEFAULTS.text(),     label: 'Full Name',         required: true },
-        { id: hxf_uid(), type: 'email',    ...HXF_FIELD_DEFAULTS.email(),    label: 'Email Address',     required: true },
-        { id: hxf_uid(), type: 'phone',    ...HXF_FIELD_DEFAULTS.phone(),    label: 'Phone Number',      required: false },
-        { id: hxf_uid(), type: 'text',     ...HXF_FIELD_DEFAULTS.text(),     label: 'College / Organisation', placeholder: 'Enter your institution name', required: true },
-        { id: hxf_uid(), type: 'dropdown', ...HXF_FIELD_DEFAULTS.dropdown(), label: 'Department / Stream', options: ['CSE', 'ECE', 'Mechanical', 'Civil', 'MBA', 'Other'], required: false },
-        { id: hxf_uid(), type: 'number',   ...HXF_FIELD_DEFAULTS.number(),   label: 'Year of Study',     placeholder: '1', validation: { min: 1, max: 6 }, required: false },
+        { id: gsf_uid(), type: 'text', ...GSF_FIELD_DEFAULTS.text(), label: 'Full Name', required: true },
+        { id: gsf_uid(), type: 'email', ...GSF_FIELD_DEFAULTS.email(), label: 'Email Address', required: true },
+        { id: gsf_uid(), type: 'phone', ...GSF_FIELD_DEFAULTS.phone(), label: 'Phone Number', required: false },
+        { id: gsf_uid(), type: 'text', ...GSF_FIELD_DEFAULTS.text(), label: 'College / Organisation', placeholder: 'Enter your institution name', required: true },
+        { id: gsf_uid(), type: 'dropdown', ...GSF_FIELD_DEFAULTS.dropdown(), label: 'Department / Stream', options: ['CSE', 'ECE', 'Mechanical', 'Civil', 'MBA', 'Other'], required: false },
+        { id: gsf_uid(), type: 'number', ...GSF_FIELD_DEFAULTS.number(), label: 'Year of Study', placeholder: '1', validation: { min: 1, max: 6 }, required: false },
       ],
       settings: {
         title: 'Event Registration', description: 'Fill in your details to register for the event.',
@@ -100,13 +100,13 @@ const HXF_TEMPLATES = {
     label: 'Workshop Registration', icon: 'book-open', color: 'green',
     config: () => ({
       fields: [
-        { id: hxf_uid(), type: 'text',     ...HXF_FIELD_DEFAULTS.text(),     label: 'Full Name',         required: true },
-        { id: hxf_uid(), type: 'email',    ...HXF_FIELD_DEFAULTS.email(),    label: 'Email Address',     required: true },
-        { id: hxf_uid(), type: 'phone',    ...HXF_FIELD_DEFAULTS.phone(),    label: 'Phone Number',      required: false },
-        { id: hxf_uid(), type: 'text',     ...HXF_FIELD_DEFAULTS.text(),     label: 'College / Organisation', placeholder: 'Enter your institution name', required: true },
-        { id: hxf_uid(), type: 'dropdown', ...HXF_FIELD_DEFAULTS.dropdown(), label: 'Department',        options: ['CSE', 'ECE', 'Mechanical', 'Civil', 'MBA', 'Other'], required: false },
-        { id: hxf_uid(), type: 'textarea', ...HXF_FIELD_DEFAULTS.textarea(), label: 'Why do you want to attend?', placeholder: 'Tell us in a few words…', required: false },
-        { id: hxf_uid(), type: 'radio',    ...HXF_FIELD_DEFAULTS.radio(),    label: 'Experience Level',  options: ['Beginner', 'Intermediate', 'Advanced'], required: true },
+        { id: gsf_uid(), type: 'text', ...GSF_FIELD_DEFAULTS.text(), label: 'Full Name', required: true },
+        { id: gsf_uid(), type: 'email', ...GSF_FIELD_DEFAULTS.email(), label: 'Email Address', required: true },
+        { id: gsf_uid(), type: 'phone', ...GSF_FIELD_DEFAULTS.phone(), label: 'Phone Number', required: false },
+        { id: gsf_uid(), type: 'text', ...GSF_FIELD_DEFAULTS.text(), label: 'College / Organisation', placeholder: 'Enter your institution name', required: true },
+        { id: gsf_uid(), type: 'dropdown', ...GSF_FIELD_DEFAULTS.dropdown(), label: 'Department', options: ['CSE', 'ECE', 'Mechanical', 'Civil', 'MBA', 'Other'], required: false },
+        { id: gsf_uid(), type: 'textarea', ...GSF_FIELD_DEFAULTS.textarea(), label: 'Why do you want to attend?', placeholder: 'Tell us in a few words…', required: false },
+        { id: gsf_uid(), type: 'radio', ...GSF_FIELD_DEFAULTS.radio(), label: 'Experience Level', options: ['Beginner', 'Intermediate', 'Advanced'], required: true },
       ],
       settings: {
         title: 'Workshop Registration', description: 'Register your spot for the workshop.',
@@ -121,13 +121,13 @@ const HXF_TEMPLATES = {
     label: 'Event Feedback', icon: 'message-square', color: 'gold',
     config: () => ({
       fields: [
-        { id: hxf_uid(), type: 'linear_scale', ...HXF_FIELD_DEFAULTS.linear_scale(), label: 'Overall Experience',      min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars', required: true },
-        { id: hxf_uid(), type: 'linear_scale', ...HXF_FIELD_DEFAULTS.linear_scale(), label: 'Content Quality',          min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars', required: true },
-        { id: hxf_uid(), type: 'linear_scale', ...HXF_FIELD_DEFAULTS.linear_scale(), label: 'Speaker / Presenter',      min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars', required: false },
-        { id: hxf_uid(), type: 'textarea',     ...HXF_FIELD_DEFAULTS.textarea(),     label: 'What did you like most?', placeholder: 'Share your highlights…', required: false },
-        { id: hxf_uid(), type: 'textarea',     ...HXF_FIELD_DEFAULTS.textarea(),     label: 'What could be improved?', placeholder: 'Your suggestions…', required: false },
-        { id: hxf_uid(), type: 'radio',        ...HXF_FIELD_DEFAULTS.radio(),        label: 'Would you recommend this event?', options: ['Definitely yes', 'Probably yes', 'Not sure', 'No'], required: false },
-        { id: hxf_uid(), type: 'email',        ...HXF_FIELD_DEFAULTS.email(),        label: 'Email (optional)',        required: false },
+        { id: gsf_uid(), type: 'linear_scale', ...GSF_FIELD_DEFAULTS.linear_scale(), label: 'Overall Experience', min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars', required: true },
+        { id: gsf_uid(), type: 'linear_scale', ...GSF_FIELD_DEFAULTS.linear_scale(), label: 'Content Quality', min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars', required: true },
+        { id: gsf_uid(), type: 'linear_scale', ...GSF_FIELD_DEFAULTS.linear_scale(), label: 'Speaker / Presenter', min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars', required: false },
+        { id: gsf_uid(), type: 'textarea', ...GSF_FIELD_DEFAULTS.textarea(), label: 'What did you like most?', placeholder: 'Share your highlights…', required: false },
+        { id: gsf_uid(), type: 'textarea', ...GSF_FIELD_DEFAULTS.textarea(), label: 'What could be improved?', placeholder: 'Your suggestions…', required: false },
+        { id: gsf_uid(), type: 'radio', ...GSF_FIELD_DEFAULTS.radio(), label: 'Would you recommend this event?', options: ['Definitely yes', 'Probably yes', 'Not sure', 'No'], required: false },
+        { id: gsf_uid(), type: 'email', ...GSF_FIELD_DEFAULTS.email(), label: 'Email (optional)', required: false },
       ],
       settings: {
         title: 'Event Feedback', description: 'We value your feedback. This will only take 2 minutes.',
@@ -142,11 +142,11 @@ const HXF_TEMPLATES = {
     label: 'RSVP', icon: 'check-circle', color: 'green',
     config: () => ({
       fields: [
-        { id: hxf_uid(), type: 'text',     ...HXF_FIELD_DEFAULTS.text(),     label: 'Full Name',       required: true },
-        { id: hxf_uid(), type: 'email',    ...HXF_FIELD_DEFAULTS.email(),    label: 'Email Address',   required: true },
-        { id: hxf_uid(), type: 'radio',    ...HXF_FIELD_DEFAULTS.radio(),    label: 'Will you attend?', options: ['Yes, I will attend', 'No, I cannot attend', 'Maybe'], required: true },
-        { id: hxf_uid(), type: 'number',   ...HXF_FIELD_DEFAULTS.number(),   label: 'Number of guests (including yourself)', placeholder: '1', validation: { min: 1, max: 10 }, required: false },
-        { id: hxf_uid(), type: 'textarea', ...HXF_FIELD_DEFAULTS.textarea(), label: 'Any message for us?', placeholder: 'Optional', required: false },
+        { id: gsf_uid(), type: 'text', ...GSF_FIELD_DEFAULTS.text(), label: 'Full Name', required: true },
+        { id: gsf_uid(), type: 'email', ...GSF_FIELD_DEFAULTS.email(), label: 'Email Address', required: true },
+        { id: gsf_uid(), type: 'radio', ...GSF_FIELD_DEFAULTS.radio(), label: 'Will you attend?', options: ['Yes, I will attend', 'No, I cannot attend', 'Maybe'], required: true },
+        { id: gsf_uid(), type: 'number', ...GSF_FIELD_DEFAULTS.number(), label: 'Number of guests (including yourself)', placeholder: '1', validation: { min: 1, max: 10 }, required: false },
+        { id: gsf_uid(), type: 'textarea', ...GSF_FIELD_DEFAULTS.textarea(), label: 'Any message for us?', placeholder: 'Optional', required: false },
       ],
       settings: {
         title: 'RSVP', description: 'Let us know if you are coming.',
@@ -160,33 +160,33 @@ const HXF_TEMPLATES = {
 };
 
 /* ── Tiny unique ID ─────────────────────────────────────────────── */
-function hxf_uid() {
+function gsf_uid() {
   return 'f_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
-function hxf_isLocalId(id) {
+function gsf_isLocalId(id) {
   if (!id) return false;
   return !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 }
 
 /* ================================================================
-   HXFState — per-form builder state object
+   GSFState — per-form builder state object
    Usage:
-     const state = Object.create(HXFState);
+     const state = Object.create(GSFState);
      await state.init(formId);   // null = new form
 ================================================================ */
-const HXFState = {
+const GSFState = {
 
-  formId:          null,
-  name:            'Untitled Form',
-  slug:            '',
-  status:          'draft',
-  config:          null,   // { fields, settings, theme }
-  dirty:           false,
-  _backendDirty:   false,
-  _lastSaveTime:   null,
+  formId: null,
+  name: 'Untitled Form',
+  slug: '',
+  status: 'draft',
+  config: null,   // { fields, settings, theme }
+  dirty: false,
+  _backendDirty: false,
+  _lastSaveTime: null,
   _lastBackendSave: null,
-  _interval:       null,
+  _interval: null,
 
   /* ── init ──────────────────────────────────────────────────── */
   async init(formId) {
@@ -194,8 +194,8 @@ const HXFState = {
 
     if (!formId) {
       // New form — start blank
-      this.config = HXF_TEMPLATES.blank.config();
-      this.name   = 'Untitled Form';
+      this.config = GSF_TEMPLATES.blank.config();
+      this.name = 'Untitled Form';
       this.status = 'draft';
       this._startInterval();
       return true;
@@ -208,7 +208,7 @@ const HXFState = {
       this._applyForm(local);
       this._startInterval();
       // Sync from backend in background
-      this._fetchFromBackend(formId).catch(() => {});
+      this._fetchFromBackend(formId).catch(() => { });
       return true;
     }
 
@@ -221,7 +221,7 @@ const HXFState = {
         return true;
       }
     } catch (e) {
-      console.warn('[HXFState] init fetch failed:', e.message);
+      console.warn('[GSFState] init fetch failed:', e.message);
     }
 
     return false; // form not found
@@ -230,29 +230,29 @@ const HXFState = {
   /* ── _applyForm ─────────────────────────────────────────────── */
   _applyForm(form) {
     this.formId = form.id;
-    this.name   = form.name;
-    this.slug   = form.slug;
+    this.name = form.name;
+    this.slug = form.slug;
     this.status = form.status || 'draft';
-    this.config = form.config || HXF_TEMPLATES.blank.config();
+    this.config = form.config || GSF_TEMPLATES.blank.config();
   },
 
   /* ── save (localStorage instant, Supabase flagged) ─────────── */
   save() {
     if (!this.config) return;
     const forms = this._loadLocal();
-    const idx   = this.formId ? forms.findIndex(f => f.id === this.formId) : -1;
+    const idx = this.formId ? forms.findIndex(f => f.id === this.formId) : -1;
     const entry = {
-      id:         this.formId,
-      name:       this.name,
-      slug:       this.slug,
-      status:     this.status,
-      config:     this.config,
+      id: this.formId,
+      name: this.name,
+      slug: this.slug,
+      status: this.status,
+      config: this.config,
       updated_at: new Date().toISOString(),
     };
     if (idx > -1) forms[idx] = entry;
     else forms.unshift(entry);
-    localStorage.setItem(hxf_storageKey(), JSON.stringify(forms));
-    this.dirty        = false;
+    localStorage.setItem(gsf_storageKey(), JSON.stringify(forms));
+    this.dirty = false;
     this._backendDirty = true;
     this._lastSaveTime = Date.now();
   },
@@ -263,52 +263,52 @@ const HXFState = {
     try {
       // If formId is a local non-UUID (e.g. "f_mo5jaokfun6m"), treat as NEW form.
       // Never send a local ID to Supabase — it expects UUID or null.
-      const isLocal   = hxf_isLocalId(this.formId);
-      const localId   = isLocal ? this.formId : null; // remember to swap in localStorage
-      const sendId    = isLocal ? undefined : this.formId;
- 
-      const res = await fetch(`${HXF_API}/save`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + hxf_getToken() },
-        body:    JSON.stringify({
-          id:     sendId,   // undefined → backend does INSERT, returns real UUID
-          name:   this.name,
-          slug:   this.slug,
+      const isLocal = gsf_isLocalId(this.formId);
+      const localId = isLocal ? this.formId : null; // remember to swap in localStorage
+      const sendId = isLocal ? undefined : this.formId;
+
+      const res = await fetch(`${GSF_API}/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + gsf_getToken() },
+        body: JSON.stringify({
+          id: sendId,   // undefined → backend does INSERT, returns real UUID
+          name: this.name,
+          slug: this.slug,
           config: this.config,
         }),
       });
       if (!res.ok) throw new Error((await res.json()).error || res.status);
       const data = await res.json();
- 
+
       // Capture real UUID returned from Supabase
       if (data.form?.id && (isLocal || !this.formId)) {
-        const realId   = data.form.id;
+        const realId = data.form.id;
         const realSlug = data.form.slug;
- 
+
         // Swap old local ID for real UUID in localStorage
         const forms = this._loadLocal();
-        const idx   = forms.findIndex(f => f.id === (localId || this.formId));
+        const idx = forms.findIndex(f => f.id === (localId || this.formId));
         if (idx > -1) {
           forms[idx] = { ...forms[idx], id: realId, slug: realSlug };
-          localStorage.setItem(hxf_storageKey(), JSON.stringify(forms));
+          localStorage.setItem(gsf_storageKey(), JSON.stringify(forms));
         }
- 
+
         this.formId = realId;
-        this.slug   = realSlug;
- 
+        this.slug = realSlug;
+
         // Update browser URL so refresh still works with the real UUID
         const url = new URL(window.location.href);
         url.searchParams.set('id', realId);
         window.history.replaceState({}, '', url.toString());
- 
-        console.info('[HXFState] New form saved — real UUID:', realId);
+
+        console.info('[GSFState] New form saved — real UUID:', realId);
       }
- 
-      this._backendDirty    = false;
+
+      this._backendDirty = false;
       this._lastBackendSave = Date.now();
       return true;
     } catch (e) {
-      console.warn('[HXFState] saveToBackendNow failed:', e.message);
+      console.warn('[GSFState] saveToBackendNow failed:', e.message);
       return false;
     }
   },
@@ -322,9 +322,9 @@ const HXFState = {
     } else {
       await this.saveToBackendNow();
     }
-    const res = await fetch(`${HXF_API}/publish/${this.formId}`, {
-      method:  'POST',
-      headers: { 'Authorization': 'Bearer ' + hxf_getToken() },
+    const res = await fetch(`${GSF_API}/publish/${this.formId}`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + gsf_getToken() },
     });
     if (!res.ok) throw new Error((await res.json()).error || 'Publish failed');
     const data = await res.json();
@@ -335,9 +335,9 @@ const HXFState = {
 
   /* ── close ──────────────────────────────────────────────────── */
   async close() {
-    const res = await fetch(`${HXF_API}/close/${this.formId}`, {
-      method:  'POST',
-      headers: { 'Authorization': 'Bearer ' + hxf_getToken() },
+    const res = await fetch(`${GSF_API}/close/${this.formId}`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + gsf_getToken() },
     });
     if (!res.ok) throw new Error('Close failed');
     this.status = 'closed';
@@ -346,9 +346,9 @@ const HXFState = {
 
   /* ── reopen ─────────────────────────────────────────────────── */
   async reopen() {
-    const res = await fetch(`${HXF_API}/reopen/${this.formId}`, {
-      method:  'POST',
-      headers: { 'Authorization': 'Bearer ' + hxf_getToken() },
+    const res = await fetch(`${GSF_API}/reopen/${this.formId}`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + gsf_getToken() },
     });
     if (!res.ok) throw new Error('Reopen failed');
     this.status = 'published';
@@ -357,9 +357,9 @@ const HXFState = {
 
   /* ── Field helpers ──────────────────────────────────────────── */
   addField(type) {
-    const defaults = HXF_FIELD_DEFAULTS[type];
+    const defaults = GSF_FIELD_DEFAULTS[type];
     if (!defaults) return null;
-    const field = { id: hxf_uid(), type, ...defaults() };
+    const field = { id: gsf_uid(), type, ...defaults() };
     this.config.fields.push(field);
     this.dirty = true;
     this.save();
@@ -392,7 +392,7 @@ const HXFState = {
     const swap = direction === 'up' ? idx - 1 : idx + 1;
     if (swap < 0 || swap >= this.config.fields.length) return;
     [this.config.fields[idx], this.config.fields[swap]] =
-    [this.config.fields[swap], this.config.fields[idx]];
+      [this.config.fields[swap], this.config.fields[idx]];
     this.dirty = true;
     this.save();
   },
@@ -400,8 +400,8 @@ const HXFState = {
   duplicateField(fieldId) {
     const field = this.config.fields.find(f => f.id === fieldId);
     if (!field) return null;
-    const copy = { ...JSON.parse(JSON.stringify(field)), id: hxf_uid() };
-    const idx  = this.config.fields.findIndex(f => f.id === fieldId);
+    const copy = { ...JSON.parse(JSON.stringify(field)), id: gsf_uid() };
+    const idx = this.config.fields.findIndex(f => f.id === fieldId);
     this.config.fields.splice(idx + 1, 0, copy);
     this.dirty = true;
     this.save();
@@ -423,24 +423,24 @@ const HXFState = {
 
   /* ── Private: localStorage read ────────────────────────────── */
   _loadLocal() {
-    try { return JSON.parse(localStorage.getItem(hxf_storageKey()) || '[]'); }
+    try { return JSON.parse(localStorage.getItem(gsf_storageKey()) || '[]'); }
     catch { return []; }
   },
 
   /* ── Private: fetch from backend ───────────────────────────── */
   async _fetchFromBackend(formId) {
-    const res = await fetch(`${HXF_API}/get/${formId}`, {
-      headers: { 'Authorization': 'Bearer ' + hxf_getToken() },
+    const res = await fetch(`${GSF_API}/get/${formId}`, {
+      headers: { 'Authorization': 'Bearer ' + gsf_getToken() },
     });
     if (!res.ok) return null;
-    const data  = await res.json();
-    const form  = data.form;
+    const data = await res.json();
+    const form = data.form;
     if (!form) return null;
     // Merge into localStorage
     const forms = this._loadLocal();
-    const idx   = forms.findIndex(f => f.id === form.id);
+    const idx = forms.findIndex(f => f.id === form.id);
     if (idx > -1) forms[idx] = form; else forms.unshift(form);
-    localStorage.setItem(hxf_storageKey(), JSON.stringify(forms));
+    localStorage.setItem(gsf_storageKey(), JSON.stringify(forms));
     return form;
   },
 

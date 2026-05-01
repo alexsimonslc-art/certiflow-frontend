@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bulk Mail Sender — Honourix</title>
+  <title>Bulk Mail Sender — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -263,7 +263,7 @@
       }
     }
 
-    /* Adds the HX Form spinner logic */
+    /* Adds the GS Form spinner logic */
     @media (max-width: 1200px) {
       .tool-cols {
         grid-template-columns: 1fr 280px;
@@ -2235,7 +2235,7 @@
 </head>
 
 <body>
-  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">GalSol Platform</p></div>'; } })();</script>
   <div class="app-layout">
     <div id="sidebarMount"></div>
 
@@ -2321,7 +2321,7 @@
                     <div class="src-opt-title">Manual Entry</div>
                     <div class="src-opt-desc">Type recipients directly</div>
                   </div>
-                  <div class="src-opt" id="mSrcHxFormOpt" onclick="mSwitchSrc('hxform')">
+                  <div class="src-opt" id="mSrcHxFormOpt" onclick="mSwitchSrc('gsform')">
                     <div class="src-opt-icon">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -2330,7 +2330,7 @@
                         <line x1="16" y1="17" x2="8" y2="17" />
                       </svg>
                     </div>
-                    <div class="src-opt-title">HX Form</div>
+                    <div class="src-opt-title">GS Form</div>
                     <div class="src-opt-desc">Import responses as recipients</div>
                   </div>
                 </div>
@@ -2419,10 +2419,10 @@
                   <div id="mManualLoadedMsg" style="display:none;margin-top:8px"></div>
                 </div>
 
-                <!-- ── HX Form panel ── -->
+                <!-- ── GS Form panel ── -->
                 <div id="mSrcHxForm" style="display:none;margin-top:16px">
                   <div class="form-group" style="margin-bottom:0">
-                    <label class="form-label">Select HX Form <span class="req">*</span></label>
+                    <label class="form-label">Select GS Form <span class="req">*</span></label>
                     <select id="mHxFormSelect" class="form-select" style="font-size:15px;padding:12px 36px 12px 14px"
                       onchange="mLoadHxFormData(this.value)">
                       <option value="">Loading your forms…</option>

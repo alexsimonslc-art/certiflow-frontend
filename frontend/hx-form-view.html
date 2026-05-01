@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loading… — HX Forms</title>
+  <title>Loading… — GS Forms</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap"
@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     /* ════════════════════════════════════════════════════════════════
-     HX Forms — Public View  (self-contained, no dashboard deps)
+     GS Forms — Public View  (self-contained, no dashboard deps)
   ════════════════════════════════════════════════════════════════ */
     :root {
       --bg: #04080f;
@@ -68,7 +68,7 @@
     }
 
     /* ── Accent bar at top ──────────────────────────────────────── */
-    .hxfv-accent-bar {
+    .gsfv-accent-bar {
       height: 4px;
       width: 100%;
       position: fixed;
@@ -80,7 +80,7 @@
     }
 
     /* ── Page wrap ──────────────────────────────────────────────── */
-    .hxfv-page {
+    .gsfv-page {
       position: relative;
       z-index: 1;
       min-height: 100vh;
@@ -90,13 +90,13 @@
       padding: 56px 16px 80px;
     }
 
-    .hxfv-container {
+    .gsfv-container {
       width: 100%;
       max-width: 580px;
     }
 
     /* ── Loading skeleton ───────────────────────────────────────── */
-    .hxfv-skeleton {
+    .gsfv-skeleton {
       animation: skPulse 1.4s ease infinite;
     }
 
@@ -112,14 +112,14 @@
       }
     }
 
-    .hxfv-sk-line {
+    .gsfv-sk-line {
       height: 14px;
       border-radius: 6px;
       background: rgba(255, 255, 255, 0.08);
       margin-bottom: 12px;
     }
 
-    .hxfv-sk-box {
+    .gsfv-sk-box {
       height: 48px;
       border-radius: var(--radius);
       background: rgba(255, 255, 255, 0.06);
@@ -127,7 +127,7 @@
     }
 
     /* ── Error / Closed state ───────────────────────────────────── */
-    .hxfv-error-wrap {
+    .gsfv-error-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -135,7 +135,7 @@
       padding: 48px 16px;
     }
 
-    .hxfv-error-icon {
+    .gsfv-error-icon {
       width: 72px;
       height: 72px;
       border-radius: 20px;
@@ -145,27 +145,27 @@
       margin-bottom: 22px;
     }
 
-    .hxfv-error-icon svg {
+    .gsfv-error-icon svg {
       width: 32px;
       height: 32px;
     }
 
-    .hxfv-error-icon.not-found {
+    .gsfv-error-icon.not-found {
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-3);
     }
 
-    .hxfv-error-icon.closed {
+    .gsfv-error-icon.closed {
       background: rgba(244, 63, 94, 0.10);
       color: var(--red);
     }
 
-    .hxfv-error-icon.full {
+    .gsfv-error-icon.full {
       background: rgba(245, 158, 11, 0.10);
       color: #f59e0b;
     }
 
-    .hxfv-error-title {
+    .gsfv-error-title {
       font-family: var(--font-display);
       font-size: 22px;
       font-weight: 700;
@@ -173,14 +173,14 @@
       margin-bottom: 10px;
     }
 
-    .hxfv-error-sub {
+    .gsfv-error-sub {
       font-size: 14.5px;
       color: var(--text-2);
       line-height: 1.6;
       max-width: 360px;
     }
 
-    .hxfv-error-badge {
+    .gsfv-error-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -192,24 +192,24 @@
       letter-spacing: 0.3px;
     }
 
-    .hxfv-error-badge.closed {
+    .gsfv-error-badge.closed {
       background: var(--red-dim);
       color: var(--red);
       border: 1px solid rgba(244, 63, 94, 0.2);
     }
 
-    .hxfv-error-badge.full {
+    .gsfv-error-badge.full {
       background: rgba(245, 158, 11, 0.1);
       color: #f59e0b;
       border: 1px solid rgba(245, 158, 11, 0.2);
     }
 
     /* ── Form header ────────────────────────────────────────────── */
-    .hxfv-header {
+    .gsfv-header {
       margin-bottom: 32px;
     }
 
-    .hxfv-org-badge {
+    .gsfv-org-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -221,14 +221,14 @@
       text-transform: uppercase;
     }
 
-    .hxfv-org-dot {
+    .gsfv-org-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: var(--accent);
     }
 
-    .hxfv-title {
+    .gsfv-title {
       font-family: var(--font-display);
       font-size: clamp(22px, 5vw, 30px);
       font-weight: 800;
@@ -238,14 +238,14 @@
       margin-bottom: 12px;
     }
 
-    .hxfv-desc {
+    .gsfv-desc {
       font-size: 15px;
       color: var(--text-2);
       line-height: 1.65;
     }
 
     /* ── Field wrapper ──────────────────────────────────────────── */
-    .hxfv-field {
+    .gsfv-field {
       margin-bottom: 22px;
       animation: fieldIn 0.3s var(--ease) both;
     }
@@ -262,7 +262,7 @@
       }
     }
 
-    .hxfv-label {
+    .gsfv-label {
       display: flex;
       align-items: baseline;
       gap: 5px;
@@ -273,13 +273,13 @@
       line-height: 1.4;
     }
 
-    .hxfv-req {
+    .gsfv-req {
       color: var(--red);
       font-size: 13px;
       flex-shrink: 0;
     }
 
-    .hxfv-hint {
+    .gsfv-hint {
       font-size: 12.5px;
       color: var(--text-3);
       margin-top: -5px;
@@ -287,9 +287,9 @@
     }
 
     /* Base input */
-    .hxfv-input,
-    .hxfv-textarea,
-    .hxfv-select {
+    .gsfv-input,
+    .gsfv-textarea,
+    .gsfv-select {
       width: 100%;
       padding: 12px 14px;
       background: rgba(255, 255, 255, 0.05);
@@ -303,25 +303,25 @@
       -webkit-appearance: none;
     }
 
-    .hxfv-input:focus,
-    .hxfv-textarea:focus,
-    .hxfv-select:focus {
+    .gsfv-input:focus,
+    .gsfv-textarea:focus,
+    .gsfv-select:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 4px var(--accent-dim);
     }
 
-    .hxfv-input::placeholder,
-    .hxfv-textarea::placeholder {
+    .gsfv-input::placeholder,
+    .gsfv-textarea::placeholder {
       color: var(--text-3);
     }
 
-    .hxfv-textarea {
+    .gsfv-textarea {
       resize: vertical;
       min-height: 100px;
       line-height: 1.6;
     }
 
-    .hxfv-select {
+    .gsfv-select {
       cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2714%22 height=%2214%22 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%235a7394%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E");
       background-repeat: no-repeat;
@@ -329,20 +329,20 @@
       padding-right: 40px;
     }
 
-    .hxfv-select option {
+    .gsfv-select option {
       background: #0d1728;
       color: var(--text);
     }
 
     /* Field error state */
-    .hxfv-field.has-error .hxfv-input,
-    .hxfv-field.has-error .hxfv-textarea,
-    .hxfv-field.has-error .hxfv-select {
+    .gsfv-field.has-error .gsfv-input,
+    .gsfv-field.has-error .gsfv-textarea,
+    .gsfv-field.has-error .gsfv-select {
       border-color: rgba(244, 63, 94, 0.6);
       box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.08);
     }
 
-    .hxfv-error-msg {
+    .gsfv-error-msg {
       display: none;
       font-size: 12.5px;
       color: var(--red);
@@ -350,18 +350,18 @@
       font-weight: 500;
     }
 
-    .hxfv-field.has-error .hxfv-error-msg {
+    .gsfv-field.has-error .gsfv-error-msg {
       display: block;
     }
 
     /* ── Radio / Checkbox cards ─────────────────────────────────── */
-    .hxfv-options {
+    .gsfv-options {
       display: flex;
       flex-direction: column;
       gap: 7px;
     }
 
-    .hxfv-option-label {
+    .gsfv-option-label {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -375,17 +375,17 @@
       user-select: none;
     }
 
-    .hxfv-option-label:hover {
+    .gsfv-option-label:hover {
       border-color: var(--glass-b2);
       color: var(--text);
       background: rgba(255, 255, 255, 0.025);
     }
 
-    .hxfv-option-label input {
+    .gsfv-option-label input {
       display: none;
     }
 
-    .hxfv-option-indicator {
+    .gsfv-option-indicator {
       width: 18px;
       height: 18px;
       border-radius: 50%;
@@ -395,24 +395,24 @@
       position: relative;
     }
 
-    .hxfv-option-indicator.box {
+    .gsfv-option-indicator.box {
       border-radius: 5px;
     }
 
     /* Selected state — driven by JS class */
-    .hxfv-option-label.selected {
+    .gsfv-option-label.selected {
       border-color: var(--accent);
       background: var(--accent-dim);
       color: var(--text);
     }
 
-    .hxfv-option-label.selected .hxfv-option-indicator {
+    .gsfv-option-label.selected .gsfv-option-indicator {
       border-color: var(--accent);
       background: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-dim);
     }
 
-    .hxfv-option-label.selected .hxfv-option-indicator::after {
+    .gsfv-option-label.selected .gsfv-option-indicator::after {
       content: '✓';
       position: absolute;
       inset: 0;
@@ -424,18 +424,18 @@
       color: #000;
     }
 
-    .hxfv-field.has-error .hxfv-options .hxfv-option-label {
+    .gsfv-field.has-error .gsfv-options .gsfv-option-label {
       border-color: rgba(244, 63, 94, 0.3);
     }
 
     /* ── Linear scale — Stars ───────────────────────────────────── */
-    .hxfv-stars {
+    .gsfv-stars {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
 
-    .hxfv-star-btn {
+    .gsfv-star-btn {
       font-size: 28px;
       background: none;
       border: none;
@@ -446,15 +446,15 @@
       padding: 2px;
     }
 
-    .hxfv-star-btn:hover {
+    .gsfv-star-btn:hover {
       transform: scale(1.15);
     }
 
-    .hxfv-star-btn.active {
+    .gsfv-star-btn.active {
       color: var(--accent);
     }
 
-    .hxfv-scale-labels {
+    .gsfv-scale-labels {
       display: flex;
       justify-content: space-between;
       font-size: 11.5px;
@@ -463,13 +463,13 @@
     }
 
     /* ── Linear scale — Numbers ─────────────────────────────────── */
-    .hxfv-num-scale {
+    .gsfv-num-scale {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
     }
 
-    .hxfv-num-btn {
+    .gsfv-num-btn {
       width: 38px;
       height: 38px;
       border-radius: 9px;
@@ -483,13 +483,13 @@
       font-family: var(--font);
     }
 
-    .hxfv-num-btn:hover {
+    .gsfv-num-btn:hover {
       border-color: var(--accent);
       color: var(--accent);
       background: var(--accent-dim);
     }
 
-    .hxfv-num-btn.active {
+    .gsfv-num-btn.active {
       background: var(--accent);
       color: #000;
       border-color: var(--accent);
@@ -497,7 +497,7 @@
     }
 
     /* ── File upload ────────────────────────────────────────────── */
-    .hxfv-upload-zone {
+    .gsfv-upload-zone {
       border: 2px dashed var(--glass-b);
       border-radius: var(--radius);
       padding: 24px;
@@ -507,13 +507,13 @@
       position: relative;
     }
 
-    .hxfv-upload-zone:hover,
-    .hxfv-upload-zone.drag-over {
+    .gsfv-upload-zone:hover,
+    .gsfv-upload-zone.drag-over {
       border-color: var(--accent);
       background: var(--accent-dim);
     }
 
-    .hxfv-upload-zone input[type="file"] {
+    .gsfv-upload-zone input[type="file"] {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -522,27 +522,27 @@
       cursor: pointer;
     }
 
-    .hxfv-upload-icon {
+    .gsfv-upload-icon {
       font-size: 28px;
       margin-bottom: 8px;
     }
 
-    .hxfv-upload-text {
+    .gsfv-upload-text {
       font-size: 14px;
       color: var(--text-2);
     }
 
-    .hxfv-upload-text strong {
+    .gsfv-upload-text strong {
       color: var(--accent);
     }
 
-    .hxfv-upload-sub {
+    .gsfv-upload-sub {
       font-size: 12px;
       color: var(--text-3);
       margin-top: 4px;
     }
 
-    .hxfv-upload-preview {
+    .gsfv-upload-preview {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -555,7 +555,7 @@
       color: var(--text-2);
     }
 
-    .hxfv-upload-preview svg {
+    .gsfv-upload-preview svg {
       width: 15px;
       height: 15px;
       color: var(--accent);
@@ -563,13 +563,13 @@
     }
 
     /* ── Section break ──────────────────────────────────────────── */
-    .hxfv-section-break {
+    .gsfv-section-break {
       padding: 10px 0 6px;
       margin-bottom: 24px;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .hxfv-section-title {
+    .gsfv-section-title {
       font-family: var(--font-display);
       font-size: 18px;
       font-weight: 700;
@@ -577,14 +577,14 @@
       margin-bottom: 5px;
     }
 
-    .hxfv-section-desc {
+    .gsfv-section-desc {
       font-size: 14px;
       color: var(--text-2);
       line-height: 1.55;
     }
 
     /* ── Submit button ──────────────────────────────────────────── */
-    .hxfv-submit {
+    .gsfv-submit {
       width: 100%;
       padding: 14px;
       border-radius: 12px;
@@ -604,22 +604,22 @@
       gap: 8px;
     }
 
-    .hxfv-submit:hover {
+    .gsfv-submit:hover {
       box-shadow: 0 10px 36px rgba(0, 212, 255, 0.35);
       transform: translateY(-1px);
     }
 
-    .hxfv-submit:active {
+    .gsfv-submit:active {
       transform: translateY(0);
     }
 
-    .hxfv-submit:disabled {
+    .gsfv-submit:disabled {
       opacity: 0.65;
       cursor: not-allowed;
       transform: none;
     }
 
-    .hxfv-submit svg {
+    .gsfv-submit svg {
       width: 16px;
       height: 16px;
     }
@@ -630,7 +630,7 @@
       }
     }
 
-    .hxfv-submit.loading::before {
+    .gsfv-submit.loading::before {
       content: '';
       width: 16px;
       height: 16px;
@@ -641,7 +641,7 @@
     }
 
     /* ── Thank you state ────────────────────────────────────────── */
-    .hxfv-ty-wrap {
+    .gsfv-ty-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -662,7 +662,7 @@
       }
     }
 
-    .hxfv-ty-ring {
+    .gsfv-ty-ring {
       width: 72px;
       height: 72px;
       border-radius: 50%;
@@ -691,13 +691,13 @@
       }
     }
 
-    .hxfv-ty-ring svg {
+    .gsfv-ty-ring svg {
       width: 32px;
       height: 32px;
       color: #fff;
     }
 
-    .hxfv-ty-title {
+    .gsfv-ty-title {
       font-family: var(--font-display);
       font-size: 24px;
       font-weight: 800;
@@ -705,7 +705,7 @@
       margin-bottom: 10px;
     }
 
-    .hxfv-ty-msg {
+    .gsfv-ty-msg {
       font-size: 15px;
       color: var(--text-2);
       line-height: 1.6;
@@ -713,7 +713,7 @@
       margin-bottom: 28px;
     }
 
-    .hxfv-ty-another {
+    .gsfv-ty-another {
       padding: 11px 24px;
       border-radius: 10px;
       background: var(--glass);
@@ -726,13 +726,13 @@
       transition: all 0.18s;
     }
 
-    .hxfv-ty-another:hover {
+    .gsfv-ty-another:hover {
       color: var(--text);
       background: rgba(255, 255, 255, 0.07);
     }
 
     /* ── Footer ─────────────────────────────────────────────────── */
-    .hxfv-footer {
+    .gsfv-footer {
       position: relative;
       z-index: 1;
       text-align: center;
@@ -741,23 +741,23 @@
       color: var(--text-3);
     }
 
-    .hxfv-footer a {
+    .gsfv-footer a {
       color: var(--text-2);
       text-decoration: none;
       font-weight: 600;
     }
 
-    .hxfv-footer a:hover {
+    .gsfv-footer a:hover {
       color: var(--text);
     }
 
     /* ── Conditional field show/hide ───────────────────────────── */
-    .hxfv-field {
+    .gsfv-field {
       transition: opacity 0.28s ease, max-height 0.32s ease, margin-bottom 0.28s ease;
       overflow: hidden;
     }
 
-    .hxfv-field.cond-hidden {
+    .gsfv-field.cond-hidden {
       max-height: 0 !important;
       opacity: 0 !important;
       margin-bottom: 0 !important;
@@ -766,255 +766,443 @@
 
 
     /* ── Multi-page progress bar ────────────────────────────────── */
-  .hxfv-progress-wrap {
-    margin-bottom: 24px; display: none;
-  }
-  .hxfv-progress-meta {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 12.5px; color: var(--text-3); margin-bottom: 8px; font-weight: 500;
-  }
-  .hxfv-progress-meta strong { color: var(--text-2); }
-  .hxfv-progress-track {
-    height: 5px; background: rgba(255,255,255,0.08);
-    border-radius: 99px; overflow: hidden;
-  }
-  .hxfv-progress-fill {
-    height: 100%; border-radius: 99px;
-    background: var(--accent-grad);
-    transition: width 0.45s var(--ease);
-  }
- 
-  /* ── Page section title (for page 2+) ───────────────────────── */
-  .hxfv-page-hdr { margin-bottom: 26px; display: none; }
-  .hxfv-page-hdr-title {
-    font-family: var(--font-display); font-size: clamp(18px,4vw,24px);
-    font-weight: 700; color: var(--text); margin-bottom: 7px; line-height: 1.3;
-  }
-  .hxfv-page-hdr-desc { font-size: 14.5px; color: var(--text-2); line-height: 1.6; }
- 
-  /* ── Nav row: Back + Next/Submit ────────────────────────────── */
-  .hxfv-nav-row {
-    display: flex; gap: 10px; align-items: center; margin-top: 12px;
-  }
-  .hxfv-back-btn {
-    padding: 13px 20px; border-radius: 12px; font-size: 15px; font-weight: 700;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-    color: var(--text-2); cursor: pointer; font-family: var(--font);
-    transition: all 0.18s; display: none; flex-shrink: 0;
-    display: flex; align-items: center; gap: 7px;
-  }
-  .hxfv-back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.22); }
-  .hxfv-back-btn svg { width: 15px; height: 15px; }
-  /* submit button gets flex:1 when back is visible */
-  .hxfv-nav-row .hxfv-submit { margin-top: 0; flex: 1; }
- 
-  /* Page-in animation */
-  .hxfv-page-enter {
-    animation: pageIn 0.3s var(--ease) both;
-  }
-  @keyframes pageIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+    .gsfv-progress-wrap {
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .gsfv-progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      color: var(--text-3);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .gsfv-progress-meta strong {
+      color: var(--text-2);
+    }
+
+    .gsfv-progress-track {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .gsfv-progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--accent-grad);
+      transition: width 0.45s var(--ease);
+    }
+
+    /* ── Page section title (for page 2+) ───────────────────────── */
+    .gsfv-page-hdr {
+      margin-bottom: 26px;
+      display: none;
+    }
+
+    .gsfv-page-hdr-title {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 7px;
+      line-height: 1.3;
+    }
+
+    .gsfv-page-hdr-desc {
+      font-size: 14.5px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ── Nav row: Back + Next/Submit ────────────────────────────── */
+    .gsfv-nav-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .gsfv-back-btn {
+      padding: 13px 20px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-2);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.18s;
+      display: none;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .gsfv-back-btn:hover {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .gsfv-back-btn svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    /* submit button gets flex:1 when back is visible */
+    .gsfv-nav-row .gsfv-submit {
+      margin-top: 0;
+      flex: 1;
+    }
+
+    /* Page-in animation */
+    .gsfv-page-enter {
+      animation: pageIn 0.3s var(--ease) both;
+    }
+
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     /* ── Responsive ─────────────────────────────────────────────── */
     @media (max-width: 600px) {
-      .hxfv-page {
+      .gsfv-page {
         padding: 44px 12px 64px;
       }
 
-      .hxfv-title {
+      .gsfv-title {
         font-size: 22px;
       }
 
-      .hxfv-num-btn {
+      .gsfv-num-btn {
         width: 34px;
         height: 34px;
       }
     }
 
     /* ── Pass Modal ──────────────────────────────────────────────── */
-    .hxfv-pass-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.82); backdrop-filter: blur(18px);
-      z-index: 9000; align-items: center; justify-content: center;
+    .gsfv-pass-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(18px);
+      z-index: 9000;
+      align-items: center;
+      justify-content: center;
       padding: 16px;
     }
-    .hxfv-pass-overlay.open { display: flex; }
-    .hxfv-pass-modal {
-      background: #07111f; border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 20px; padding: 24px; max-width: 520px; width: 100%;
-      max-height: 92vh; overflow-y: auto;
-      box-shadow: 0 40px 100px rgba(0,0,0,0.7);
-      animation: passModalIn 0.3s cubic-bezier(0.16,1,0.3,1) both;
+
+    .gsfv-pass-overlay.open {
+      display: flex;
     }
+
+    .gsfv-pass-modal {
+      background: #07111f;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+      animation: passModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
     @keyframes passModalIn {
-      from { opacity:0; transform:scale(0.94) translateY(12px); }
-      to   { opacity:1; transform:scale(1) translateY(0); }
+      from {
+        opacity: 0;
+        transform: scale(0.94) translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
-    .hxfv-pass-modal-hdr {
-      display:flex; align-items:center; justify-content:space-between;
-      margin-bottom:18px;
+
+    .gsfv-pass-modal-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
     }
-    .hxfv-pass-modal-title {
-      font-family: var(--font-display); font-size:18px; font-weight:700; color:var(--text);
+
+    .gsfv-pass-modal-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
     }
-    .hxfv-pass-modal-close {
-      width:34px; height:34px; border-radius:9px; border:1px solid rgba(255,255,255,0.12);
-      background:rgba(255,255,255,0.05); color:var(--text-2); font-size:16px;
-      cursor:pointer; display:flex; align-items:center; justify-content:center;
+
+    .gsfv-pass-modal-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-2);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .hxfv-pass-canvas-wrap { display:flex; justify-content:center; margin-bottom:16px; }
-    .hxfv-pass-canvas-wrap canvas { border-radius:12px; max-width:100%; }
-    .hxfv-pass-actions { display:flex; gap:10px; justify-content:center; }
-    .hxfv-pass-btn {
-      padding:11px 22px; border-radius:10px; font-size:14px; font-weight:700;
-      cursor:pointer; border:none; font-family:var(--font); transition:all 0.18s;
+
+    .gsfv-pass-canvas-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
     }
-    .hxfv-pass-btn-dl {
-      background:var(--accent-grad); color:#fff;
-      box-shadow:0 4px 18px rgba(0,212,255,0.25);
+
+    .gsfv-pass-canvas-wrap canvas {
+      border-radius: 12px;
+      max-width: 100%;
     }
-    .hxfv-pass-btn-dl:hover { box-shadow:0 6px 28px rgba(0,212,255,0.4); }
-    .hxfv-pass-btn-close {
-      background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:var(--text-2);
+
+    .gsfv-pass-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .gsfv-pass-btn {
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font);
+      transition: all 0.18s;
+    }
+
+    .gsfv-pass-btn-dl {
+      background: var(--accent-grad);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(0, 212, 255, 0.25);
+    }
+
+    .gsfv-pass-btn-dl:hover {
+      box-shadow: 0 6px 28px rgba(0, 212, 255, 0.4);
+    }
+
+    .gsfv-pass-btn-close {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-2);
     }
 
     /* ── Field card wrapper (both modes) ──────────────────────────── */
-    .hxfv-field-card {
-      background: rgba(255,255,255,0.025);
-      border: 1px solid rgba(255,255,255,0.07);
+    .gsfv-field-card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 14px;
       padding: 18px 20px 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     }
 
     /* ── Light mode overrides ──────────────────────────────────── */
-    body.hxfv-light {
+    body.gsfv-light {
       --bg: #eef2f7;
       --surface: #ffffff;
-      --glass: rgba(0,0,0,0.02);
-      --glass-b: rgba(0,0,0,0.12);
-      --glass-b2: rgba(0,0,0,0.20);
+      --glass: rgba(0, 0, 0, 0.02);
+      --glass-b: rgba(0, 0, 0, 0.12);
+      --glass-b2: rgba(0, 0, 0, 0.20);
       --text: #111827;
       --text-2: #374151;
       --text-3: #6b7280;
-      --red-dim: rgba(244,63,94,0.08);
-      --accent-dim: rgba(0,180,220,0.10);
+      --red-dim: rgba(244, 63, 94, 0.08);
+      --accent-dim: rgba(0, 180, 220, 0.10);
     }
-    body.hxfv-light::before { display: none; }
+
+    body.gsfv-light::before {
+      display: none;
+    }
 
     /* inputs */
-    body.hxfv-light .hxfv-input,
-    body.hxfv-light .hxfv-textarea,
-    body.hxfv-light .hxfv-select {
+    body.gsfv-light .gsfv-input,
+    body.gsfv-light .gsfv-textarea,
+    body.gsfv-light .gsfv-select {
       background: #ffffff;
-      border-color: rgba(0,0,0,0.15);
+      border-color: rgba(0, 0, 0, 0.15);
       color: #111827;
     }
-    body.hxfv-light .hxfv-input:focus,
-    body.hxfv-light .hxfv-textarea:focus,
-    body.hxfv-light .hxfv-select:focus {
+
+    body.gsfv-light .gsfv-input:focus,
+    body.gsfv-light .gsfv-textarea:focus,
+    body.gsfv-light .gsfv-select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(0,180,220,0.10);
+      box-shadow: 0 0 0 4px rgba(0, 180, 220, 0.10);
     }
-    body.hxfv-light .hxfv-input::placeholder,
-    body.hxfv-light .hxfv-textarea::placeholder { color: #9ca3af; }
-    body.hxfv-light .hxfv-select {
+
+    body.gsfv-light .gsfv-input::placeholder,
+    body.gsfv-light .gsfv-textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    body.gsfv-light .gsfv-select {
       background-color: #ffffff;
       background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2714%22 height=%2214%22 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236b7280%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E");
     }
-    body.hxfv-light .hxfv-select option { background: #fff; color: #111827; }
 
-    /* option / radio / checkbox */
-    body.hxfv-light .hxfv-option-label {
-      background: #f9fafb;
-      border-color: rgba(0,0,0,0.12);
-      color: #374151;
-    }
-    body.hxfv-light .hxfv-option-label:hover {
-      background: #f3f4f6;
-      border-color: rgba(0,0,0,0.20);
+    body.gsfv-light .gsfv-select option {
+      background: #fff;
       color: #111827;
     }
-    body.hxfv-light .hxfv-option-label.selected {
+
+    /* option / radio / checkbox */
+    body.gsfv-light .gsfv-option-label {
+      background: #f9fafb;
+      border-color: rgba(0, 0, 0, 0.12);
+      color: #374151;
+    }
+
+    body.gsfv-light .gsfv-option-label:hover {
+      background: #f3f4f6;
+      border-color: rgba(0, 0, 0, 0.20);
+      color: #111827;
+    }
+
+    body.gsfv-light .gsfv-option-label.selected {
       background: var(--accent-dim);
       border-color: var(--accent);
       color: #111827;
     }
-    body.hxfv-light .hxfv-option-indicator { border-color: rgba(0,0,0,0.25); }
-    body.hxfv-light .hxfv-option-label.selected .hxfv-option-indicator {
+
+    body.gsfv-light .gsfv-option-indicator {
+      border-color: rgba(0, 0, 0, 0.25);
+    }
+
+    body.gsfv-light .gsfv-option-label.selected .gsfv-option-indicator {
       border-color: var(--accent);
       background: var(--accent);
     }
 
     /* field card */
-    body.hxfv-light .hxfv-field-card {
+    body.gsfv-light .gsfv-field-card {
       background: #ffffff;
-      border-color: rgba(0,0,0,0.06);
-      box-shadow: 0 2px 14px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.03);
+      border-color: rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.03);
     }
 
     /* star rating */
-    body.hxfv-light .hxfv-star-btn { color: rgba(0,0,0,0.15); }
+    body.gsfv-light .gsfv-star-btn {
+      color: rgba(0, 0, 0, 0.15);
+    }
 
     /* number scale */
-    body.hxfv-light .hxfv-num-btn { border-color: rgba(0,0,0,0.15); color: #6b7280; }
-    body.hxfv-light .hxfv-num-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-    body.hxfv-light .hxfv-num-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    body.gsfv-light .gsfv-num-btn {
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #6b7280;
+    }
+
+    body.gsfv-light .gsfv-num-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    body.gsfv-light .gsfv-num-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
 
     /* upload */
-    body.hxfv-light .hxfv-upload-zone { border-color: rgba(0,0,0,0.18); background: #fafafa; }
-    body.hxfv-light .hxfv-upload-preview { background: #f9fafb; border-color: rgba(0,0,0,0.10); color: #374151; }
+    body.gsfv-light .gsfv-upload-zone {
+      border-color: rgba(0, 0, 0, 0.18);
+      background: #fafafa;
+    }
+
+    body.gsfv-light .gsfv-upload-preview {
+      background: #f9fafb;
+      border-color: rgba(0, 0, 0, 0.10);
+      color: #374151;
+    }
 
     /* progress */
-    body.hxfv-light .hxfv-progress-track { background: rgba(0,0,0,0.08); }
-    body.hxfv-light .hxfv-progress-meta { color: #6b7280; }
+    body.gsfv-light .gsfv-progress-track {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    body.gsfv-light .gsfv-progress-meta {
+      color: #6b7280;
+    }
 
     /* section break */
-    body.hxfv-light .hxfv-section-break { border-top-color: rgba(0,0,0,0.12); }
+    body.gsfv-light .gsfv-section-break {
+      border-top-color: rgba(0, 0, 0, 0.12);
+    }
 
     /* back button */
-    body.hxfv-light .hxfv-back-btn {
-      background: rgba(0,0,0,0.04);
-      border-color: rgba(0,0,0,0.12);
+    body.gsfv-light .gsfv-back-btn {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.12);
       color: var(--text-2);
     }
-    body.hxfv-light .hxfv-back-btn:hover { color: var(--text); border-color: rgba(0,0,0,0.22); }
+
+    body.gsfv-light .gsfv-back-btn:hover {
+      color: var(--text);
+      border-color: rgba(0, 0, 0, 0.22);
+    }
 
     /* skeleton */
-    body.hxfv-light .hxfv-sk-line,
-    body.hxfv-light .hxfv-sk-box { background: rgba(0,0,0,0.07); }
+    body.gsfv-light .gsfv-sk-line,
+    body.gsfv-light .gsfv-sk-box {
+      background: rgba(0, 0, 0, 0.07);
+    }
 
     /* error icon */
-    body.hxfv-light .hxfv-error-icon.not-found { background: rgba(0,0,0,0.05); }
-    body.hxfv-light .hxfv-nav-row { border-top-color: rgba(0,0,0,0.08); }
+    body.gsfv-light .gsfv-error-icon.not-found {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    body.gsfv-light .gsfv-nav-row {
+      border-top-color: rgba(0, 0, 0, 0.08);
+    }
   </style>
 </head>
 
 <body>
 
   <!-- Accent bar -->
-  <div class="hxfv-accent-bar" id="accentBar"></div>
+  <div class="gsfv-accent-bar" id="accentBar"></div>
 
   <!-- ── Loading State ──────────────────────────────────────────── -->
-  <div class="hxfv-page" id="loadingState">
-    <div class="hxfv-container hxfv-skeleton">
-      <div class="hxfv-sk-line" style="width:60%;height:32px;margin-bottom:16px"></div>
-      <div class="hxfv-sk-line" style="width:85%;height:14px;margin-bottom:6px"></div>
-      <div class="hxfv-sk-line" style="width:70%;height:14px;margin-bottom:32px"></div>
-      <div class="hxfv-sk-box"></div>
-      <div class="hxfv-sk-box"></div>
-      <div class="hxfv-sk-box" style="height:90px"></div>
-      <div class="hxfv-sk-box"></div>
+  <div class="gsfv-page" id="loadingState">
+    <div class="gsfv-container gsfv-skeleton">
+      <div class="gsfv-sk-line" style="width:60%;height:32px;margin-bottom:16px"></div>
+      <div class="gsfv-sk-line" style="width:85%;height:14px;margin-bottom:6px"></div>
+      <div class="gsfv-sk-line" style="width:70%;height:14px;margin-bottom:32px"></div>
+      <div class="gsfv-sk-box"></div>
+      <div class="gsfv-sk-box"></div>
+      <div class="gsfv-sk-box" style="height:90px"></div>
+      <div class="gsfv-sk-box"></div>
     </div>
   </div>
 
   <!-- ── Error / Closed State ───────────────────────────────────── -->
-  <div class="hxfv-page" id="errorState" style="display:none">
-    <div class="hxfv-container">
-      <div class="hxfv-error-wrap">
-        <div class="hxfv-error-icon" id="errIcon">
+  <div class="gsfv-page" id="errorState" style="display:none">
+    <div class="gsfv-container">
+      <div class="gsfv-error-wrap">
+        <div class="gsfv-error-icon" id="errIcon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="12" />
@@ -1022,74 +1210,78 @@
           </svg>
         </div>
         <div id="errBadge"></div>
-        <div class="hxfv-error-title" id="errTitle">Something went wrong</div>
-        <div class="hxfv-error-sub" id="errSub">We couldn't load this form.</div>
+        <div class="gsfv-error-title" id="errTitle">Something went wrong</div>
+        <div class="gsfv-error-sub" id="errSub">We couldn't load this form.</div>
       </div>
     </div>
   </div>
 
   <!-- ── Form State ─────────────────────────────────────────────── -->
-  <div class="hxfv-page" id="formState" style="display:none">
-  <div class="hxfv-container">
- 
-    <!-- Progress bar (hidden when single page) -->
-    <div class="hxfv-progress-wrap" id="progressWrap">
-      <div class="hxfv-progress-meta">
-        <span>Step <strong id="pgNum">1</strong> of <strong id="pgTotal">1</strong></span>
-        <span id="pgPct">0%</span>
-      </div>
-      <div class="hxfv-progress-track">
-        <div class="hxfv-progress-fill" id="progressFill" style="width:0%"></div>
-      </div>
-    </div>
- 
-    <!-- Cover image (shown when set) -->
-    <div id="formCoverImage" style="display:none;width:100%;height:160px;border-radius:16px;background-size:cover;background-position:center;background-repeat:no-repeat;margin-bottom:22px"></div>
+  <div class="gsfv-page" id="formState" style="display:none">
+    <div class="gsfv-container">
 
-    <!-- Form title header (page 1 only) -->
-    <div class="hxfv-header" id="formMainHeader">
-      <div class="hxfv-org-badge">
-        <div class="hxfv-org-dot" id="orgDot"></div>
-        <span id="orgBadgeText">HX Forms</span>
+      <!-- Progress bar (hidden when single page) -->
+      <div class="gsfv-progress-wrap" id="progressWrap">
+        <div class="gsfv-progress-meta">
+          <span>Step <strong id="pgNum">1</strong> of <strong id="pgTotal">1</strong></span>
+          <span id="pgPct">0%</span>
+        </div>
+        <div class="gsfv-progress-track">
+          <div class="gsfv-progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
       </div>
-      <h1 class="hxfv-title" id="formTitle"></h1>
-      <p  class="hxfv-desc"  id="formDesc"  style="display:none"></p>
+
+      <!-- Cover image (shown when set) -->
+      <div id="formCoverImage"
+        style="display:none;width:100%;height:160px;border-radius:16px;background-size:cover;background-position:center;background-repeat:no-repeat;margin-bottom:22px">
+      </div>
+
+      <!-- Form title header (page 1 only) -->
+      <div class="gsfv-header" id="formMainHeader">
+        <div class="gsfv-org-badge">
+          <div class="gsfv-org-dot" id="orgDot"></div>
+          <span id="orgBadgeText">GS Forms</span>
+        </div>
+        <h1 class="gsfv-title" id="formTitle"></h1>
+        <p class="gsfv-desc" id="formDesc" style="display:none"></p>
+      </div>
+
+      <!-- Section title (page 2+, from Page Break label) -->
+      <div class="gsfv-page-hdr" id="pageHdr">
+        <div class="gsfv-page-hdr-title" id="pageHdrTitle"></div>
+        <div class="gsfv-page-hdr-desc" id="pageHdrDesc" style="display:none"></div>
+      </div>
+
+      <div id="fieldsContainer"></div>
+
+      <!-- Nav row: back + next/submit -->
+      <div class="gsfv-nav-row">
+        <button class="gsfv-back-btn" id="backBtn" onclick="prevPage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          Back
+        </button>
+        <button class="gsfv-submit" id="submitBtn">
+          <span id="submitLabel">Next</span>
+        </button>
+      </div>
+
     </div>
- 
-    <!-- Section title (page 2+, from Page Break label) -->
-    <div class="hxfv-page-hdr" id="pageHdr">
-      <div class="hxfv-page-hdr-title" id="pageHdrTitle"></div>
-      <div class="hxfv-page-hdr-desc"  id="pageHdrDesc"  style="display:none"></div>
-    </div>
- 
-    <div id="fieldsContainer"></div>
- 
-    <!-- Nav row: back + next/submit -->
-    <div class="hxfv-nav-row">
-      <button class="hxfv-back-btn" id="backBtn" onclick="prevPage()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        Back
-      </button>
-      <button class="hxfv-submit" id="submitBtn">
-        <span id="submitLabel">Next</span>
-      </button>
-    </div>
- 
   </div>
-</div>
 
   <!-- ── Thank You State ────────────────────────────────────────── -->
-  <div class="hxfv-page" id="thankYouState" style="display:none">
-    <div class="hxfv-container">
-      <div class="hxfv-ty-wrap">
-        <div class="hxfv-ty-ring">
+  <div class="gsfv-page" id="thankYouState" style="display:none">
+    <div class="gsfv-container">
+      <div class="gsfv-ty-wrap">
+        <div class="gsfv-ty-ring">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <div class="hxfv-ty-title">You're all set!</div>
-        <div class="hxfv-ty-msg" id="tyMessage"></div>
-        <button class="hxfv-ty-another" id="tyAnotherBtn" style="display:none" onclick="resetForm()">
+        <div class="gsfv-ty-title">You're all set!</div>
+        <div class="gsfv-ty-msg" id="tyMessage"></div>
+        <button class="gsfv-ty-another" id="tyAnotherBtn" style="display:none" onclick="resetForm()">
           Submit another response
         </button>
       </div>
@@ -1097,30 +1289,30 @@
   </div>
 
   <!-- ── Footer ─────────────────────────────────────────────────── -->
-  <footer class="hxfv-footer">
-    Powered by <a href="/index.html" target="_blank">Honourix</a>
+  <footer class="gsfv-footer">
+    Powered by <a href="/index.html" target="_blank">GalSol</a>
   </footer>
 
   <!-- ── Entry Pass Modal ──────────────────────────────────────── -->
-  <div class="hxfv-pass-overlay" id="passModal">
-    <div class="hxfv-pass-modal">
-      <div class="hxfv-pass-modal-hdr">
-        <div class="hxfv-pass-modal-title">🎫 Your Entry Pass</div>
-        <button class="hxfv-pass-modal-close" onclick="closePassModal()">✕</button>
+  <div class="gsfv-pass-overlay" id="passModal">
+    <div class="gsfv-pass-modal">
+      <div class="gsfv-pass-modal-hdr">
+        <div class="gsfv-pass-modal-title">🎫 Your Entry Pass</div>
+        <button class="gsfv-pass-modal-close" onclick="closePassModal()">✕</button>
       </div>
-      <div class="hxfv-pass-canvas-wrap">
+      <div class="gsfv-pass-canvas-wrap">
         <canvas id="passCanvas" width="900" height="380" style="width:100%;height:auto"></canvas>
       </div>
-      <div class="hxfv-pass-actions">
-        <button class="hxfv-pass-btn hxfv-pass-btn-dl" onclick="downloadPass()">⬇ Download Pass</button>
-        <button class="hxfv-pass-btn hxfv-pass-btn-close" onclick="closePassModal()">Close</button>
+      <div class="gsfv-pass-actions">
+        <button class="gsfv-pass-btn gsfv-pass-btn-dl" onclick="downloadPass()">⬇ Download Pass</button>
+        <button class="gsfv-pass-btn gsfv-pass-btn-close" onclick="closePassModal()">Close</button>
       </div>
     </div>
   </div>
 
   <script>
     /* ════════════════════════════════════════════════════════════════
-       HX Form View — Public renderer + submit logic
+       GS Form View — Public renderer + submit logic
     
        Data flow:
        1. Read slug from ?f=slug
@@ -1157,15 +1349,15 @@
     /* ════════════════════════════════════════════════════════════════
       MULTI-PAGE ENGINE
     ════════════════════════════════════════════════════════════════ */
-    let _pages       = [];   // [{ title, desc, fields[] }]
+    let _pages = [];   // [{ title, desc, fields[] }]
     let _currentPage = 0;
-    
+
     /** Split fields into pages at section_break boundaries */
     function buildPages() {
       const fields = formConfig?.config?.fields || [];
       _pages = [];
       let page = { title: null, desc: null, fields: [] };
-    
+
       fields.forEach(f => {
         if (f.type === 'section_break') {
           _pages.push(page);
@@ -1175,36 +1367,36 @@
         }
       });
       _pages.push(page);
-    
+
       // Drop empty pages (e.g. two consecutive page breaks)
       if (_pages.length > 1) {
         _pages = _pages.filter(p => p.fields.length > 0);
       }
       _currentPage = 0;
     }
-    
+
     /** Render a specific page */
     function showPage(n) {
       _currentPage = n;
-      const page    = _pages[n];
-      const total   = _pages.length;
+      const page = _pages[n];
+      const total = _pages.length;
       const isFirst = n === 0;
-      const isLast  = n === total - 1;
-      const s       = formConfig?.config?.settings || {};
-    
+      const isLast = n === total - 1;
+      const s = formConfig?.config?.settings || {};
+
       // Progress bar
       const progressWrap = document.getElementById('progressWrap');
       if (total > 1) {
         progressWrap.style.display = '';
         const pct = Math.round(((n + 1) / total) * 100);
         document.getElementById('progressFill').style.width = pct + '%';
-        document.getElementById('pgNum').textContent   = n + 1;
+        document.getElementById('pgNum').textContent = n + 1;
         document.getElementById('pgTotal').textContent = total;
-        document.getElementById('pgPct').textContent   = pct + '%';
+        document.getElementById('pgPct').textContent = pct + '%';
       } else {
         progressWrap.style.display = 'none';
       }
-    
+
       // Page 1: show form header; Page 2+: show section title
       document.getElementById('formMainHeader').style.display = isFirst ? '' : 'none';
       const pageHdr = document.getElementById('pageHdr');
@@ -1217,37 +1409,37 @@
       } else {
         pageHdr.style.display = 'none';
       }
-    
+
       // Render fields with animation
       const container = document.getElementById('fieldsContainer');
       container.innerHTML = page.fields.map(f => renderField(f)).join('');
-      container.classList.remove('hxfv-page-enter');
+      container.classList.remove('gsfv-page-enter');
       void container.offsetWidth; // reflow
-      container.classList.add('hxfv-page-enter');
+      container.classList.add('gsfv-page-enter');
       wireFields(page.fields);
       evaluateConditions();
-    
+
       // Back button
       const backBtn = document.getElementById('backBtn');
       backBtn.style.display = isFirst ? 'none' : 'flex';
-    
+
       // Submit/Next button label + action
       const labelEl = document.getElementById('submitLabel');
-      const btn     = document.getElementById('submitBtn');
+      const btn = document.getElementById('submitBtn');
       const passLabel = (isLast && s.passEnabled) ? '🎫 ' + (s.submitLabel || 'Submit & Get Pass') : null;
       labelEl.textContent = passLabel || (isLast ? (s.submitLabel || 'Submit') : 'Next →');
       btn.onclick = isLast ? handleSubmit : nextPage;
       // Style change: next vs submit
       btn.style.background = isLast ? 'var(--accent-grad)' : 'var(--accent-grad)';
-    
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    
+
     function nextPage() {
       if (!validate()) return;
       if (_currentPage < _pages.length - 1) showPage(_currentPage + 1);
     }
-    
+
     function prevPage() {
       if (_currentPage > 0) showPage(_currentPage - 1);
     }
@@ -1266,7 +1458,7 @@
       // 3. Load form config from Supabase (instant — always on)
       try {
         const { data, error } = await sb
-          .from('hx_forms')
+          .from('gs_forms')
           .select('id, name, slug, status, config, submission_count')
           .eq('slug', formSlug)
           .in('status', ['published', 'closed'])
@@ -1274,7 +1466,7 @@
 
         if (error || !data) {
           // 4. Fallback: try backend (in case Supabase hiccup)
-          const res = await fetch(`${BACKEND}/api/hxforms/view/${encodeURIComponent(formSlug)}`);
+          const res = await fetch(`${BACKEND}/api/gsforms/view/${encodeURIComponent(formSlug)}`);
           if (!res.ok) throw new Error('not-found');
           const json = await res.json();
           renderForm(json.form);
@@ -1327,18 +1519,18 @@
           return showError('closed',
             'Form closed',
             'This form stopped accepting responses on ' +
-              cd.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) + '.',
+            cd.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) + '.',
             'Closed'
           );
         }
       }
-      
+
       // Page title + meta
       const title = s.title || form.name || 'Form';
-      document.title = `${title} — HX Forms`;
-    
+      document.title = `${title} — GS Forms`;
+
       // Light mode
-      if (th.lightMode) document.body.classList.add('hxfv-light');
+      if (th.lightMode) document.body.classList.add('gsfv-light');
 
       // Dynamic font loading (based on user's font selection)
       loadCustomFonts(th);
@@ -1354,17 +1546,17 @@
       document.getElementById('formTitle').textContent = title;
       const descEl = document.getElementById('formDesc');
       if (s.description) { descEl.innerHTML = s.description; descEl.style.display = ''; }
-    
+
       // Allow multiple → show "submit another" after
       if (s.allowMultiple) document.getElementById('tyAnotherBtn').style.display = '';
-    
+
       // Build pages from section_breaks + show page 1
       buildPages();
       showPage(0);
-    
+
       // Show form
       document.getElementById('loadingState').style.display = 'none';
-      document.getElementById('formState').style.display    = '';
+      document.getElementById('formState').style.display = '';
     }
 
     /* ── Apply accent to CSS vars ──────────────────────────────────── */
@@ -1385,38 +1577,38 @@
       // Section break — no label wrapper
       if (f.type === 'section_break') {
         return `
-      <div class="hxfv-section-break">
-        ${f.label ? `<div class="hxfv-section-title">${esc(f.label)}</div>` : ''}
-        ${f.description ? `<div class="hxfv-section-desc">${esc(f.description)}</div>` : ''}
+      <div class="gsfv-section-break">
+        ${f.label ? `<div class="gsfv-section-title">${esc(f.label)}</div>` : ''}
+        ${f.description ? `<div class="gsfv-section-desc">${esc(f.description)}</div>` : ''}
       </div>`;
       }
 
-      const req = f.required ? `<span class="hxfv-req">*</span>` : '';
-      const errMsg = `<div class="hxfv-error-msg" id="err-${f.id}">This field is required.</div>`;
+      const req = f.required ? `<span class="gsfv-req">*</span>` : '';
+      const errMsg = `<div class="gsfv-error-msg" id="err-${f.id}">This field is required.</div>`;
       let input = '';
 
       switch (f.type) {
 
         case 'text':
-          input = `<input class="hxfv-input" id="fi-${f.id}" type="text"
+          input = `<input class="gsfv-input" id="fi-${f.id}" type="text"
                       placeholder="${escAttr(f.placeholder || '')}"
                       oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
           break;
 
         case 'email':
-          input = `<input class="hxfv-input" id="fi-${f.id}" type="email"
+          input = `<input class="gsfv-input" id="fi-${f.id}" type="email"
                       placeholder="${escAttr(f.placeholder || 'you@example.com')}"
                       oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
           break;
 
         case 'phone':
-          input = `<input class="hxfv-input" id="fi-${f.id}" type="tel"
+          input = `<input class="gsfv-input" id="fi-${f.id}" type="tel"
                       placeholder="${escAttr(f.placeholder || '+91 98765 43210')}"
                       oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
           break;
 
         case 'number':
-          input = `<input class="hxfv-input" id="fi-${f.id}" type="number"
+          input = `<input class="gsfv-input" id="fi-${f.id}" type="number"
                       placeholder="${escAttr(f.placeholder || '0')}"
                       ${f.validation?.min != null ? `min="${f.validation.min}"` : ''}
                       ${f.validation?.max != null ? `max="${f.validation.max}"` : ''}
@@ -1424,24 +1616,24 @@
           break;
 
         case 'textarea':
-          input = `<textarea class="hxfv-textarea" id="fi-${f.id}"
+          input = `<textarea class="gsfv-textarea" id="fi-${f.id}"
                          placeholder="${escAttr(f.placeholder || '')}"
                          oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"></textarea>`;
           break;
 
         case 'date':
-          input = `<input class="hxfv-input" id="fi-${f.id}" type="date"
+          input = `<input class="gsfv-input" id="fi-${f.id}" type="date"
                       onchange="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
           break;
 
         case 'time':
-          input = `<input class="hxfv-input" id="fi-${f.id}" type="time"
+          input = `<input class="gsfv-input" id="fi-${f.id}" type="time"
                       onchange="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
           break;
 
         case 'dropdown':
           const opts = (f.options || []).map(o => `<option value="${escAttr(o)}">${esc(o)}</option>`).join('');
-          input = `<select class="hxfv-select" id="fi-${f.id}"
+          input = `<select class="gsfv-select" id="fi-${f.id}"
                        onchange="fv['${f.id}']=this.value;clearErr('${f.id}')">
                  <option value="">— Select —</option>
                  ${opts}
@@ -1449,20 +1641,20 @@
           break;
 
         case 'radio':
-          input = `<div class="hxfv-options" id="fi-${f.id}">
+          input = `<div class="gsfv-options" id="fi-${f.id}">
         ${(f.options || []).map((o, i) => `
-          <label class="hxfv-option-label" onclick="pickRadio('${f.id}',${i},${(f.options || []).length})">
-            <div class="hxfv-option-indicator"></div>
+          <label class="gsfv-option-label" onclick="pickRadio('${f.id}',${i},${(f.options || []).length})">
+            <div class="gsfv-option-indicator"></div>
             <span>${esc(o)}</span>
           </label>`).join('')}
       </div>`;
           break;
 
         case 'checkbox':
-          input = `<div class="hxfv-options" id="fi-${f.id}">
+          input = `<div class="gsfv-options" id="fi-${f.id}">
         ${(f.options || []).map((o, i) => `
-          <label class="hxfv-option-label" onclick="pickCheckbox('${f.id}',${i})">
-            <div class="hxfv-option-indicator box"></div>
+          <label class="gsfv-option-label" onclick="pickCheckbox('${f.id}',${i})">
+            <div class="gsfv-option-indicator box"></div>
             <span>${esc(o)}</span>
           </label>`).join('')}
       </div>`;
@@ -1474,23 +1666,23 @@
           const max = f.max || 5;
           if ((f.style || 'stars') === 'stars') {
             input = `
-          <div class="hxfv-stars" id="fi-${f.id}">
+          <div class="gsfv-stars" id="fi-${f.id}">
             ${Array.from({ length: max }, (_, i) =>
-              `<button type="button" class="hxfv-star-btn" data-val="${i + 1}" onclick="pickStar('${f.id}',${i + 1},${max})">★</button>`
+              `<button type="button" class="gsfv-star-btn" data-val="${i + 1}" onclick="pickStar('${f.id}',${i + 1},${max})">★</button>`
             ).join('')}
           </div>
-          <div class="hxfv-scale-labels">
+          <div class="gsfv-scale-labels">
             <span>${esc(f.minLabel || 'Poor')}</span>
             <span>${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
           } else {
             input = `
-          <div class="hxfv-num-scale" id="fi-${f.id}">
+          <div class="gsfv-num-scale" id="fi-${f.id}">
             ${Array.from({ length: max }, (_, i) =>
-              `<button type="button" class="hxfv-num-btn" data-val="${i + 1}" onclick="pickNum('${f.id}',${i + 1},${max})">${i + 1}</button>`
+              `<button type="button" class="gsfv-num-btn" data-val="${i + 1}" onclick="pickNum('${f.id}',${i + 1},${max})">${i + 1}</button>`
             ).join('')}
           </div>
-          <div class="hxfv-scale-labels" style="max-width:${max * 44}px">
+          <div class="gsfv-scale-labels" style="max-width:${max * 44}px">
             <span>${esc(f.minLabel || 'Poor')}</span>
             <span>${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
@@ -1500,32 +1692,32 @@
         case 'file_upload':
           const accept = f.accept && f.accept !== '*' ? f.accept : '';
           input = `
-        <div class="hxfv-upload-zone" id="fi-${f.id}"
+        <div class="gsfv-upload-zone" id="fi-${f.id}"
              ondragover="this.classList.add('drag-over')"
              ondragleave="this.classList.remove('drag-over')"
              ondrop="handleDrop('${f.id}',event)">
           <input type="file" ${accept ? `accept="${escAttr(accept)}"` : ''}
                  onchange="handleFileChange('${f.id}',this)"/>
-          <div class="hxfv-upload-icon">📎</div>
-          <div class="hxfv-upload-text"><strong>Click to upload</strong> or drag & drop</div>
-          <div class="hxfv-upload-sub">${accept || 'Any file'} · Max ${f.maxMB || 10} MB</div>
+          <div class="gsfv-upload-icon">📎</div>
+          <div class="gsfv-upload-text"><strong>Click to upload</strong> or drag & drop</div>
+          <div class="gsfv-upload-sub">${accept || 'Any file'} · Max ${f.maxMB || 10} MB</div>
         </div>
-        <div class="hxfv-upload-preview" id="fp-${f.id}" style="display:none">
+        <div class="gsfv-upload-preview" id="fp-${f.id}" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           <span id="fn-${f.id}">No file</span>
         </div>`;
           break;
 
         default:
-          input = `<input class="hxfv-input" id="fi-${f.id}" type="text"
+          input = `<input class="gsfv-input" id="fi-${f.id}" type="text"
                       placeholder="${escAttr(f.placeholder || '')}"
                       oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
       }
 
       return `
-    <div class="hxfv-field" id="fw-${f.id}" data-field-id="${f.id}">
-      <div class="hxfv-field-card">
-        <div class="hxfv-label">${esc(f.label || 'Field')} ${req}</div>
+    <div class="gsfv-field" id="fw-${f.id}" data-field-id="${f.id}">
+      <div class="gsfv-field-card">
+        <div class="gsfv-label">${esc(f.label || 'Field')} ${req}</div>
         ${input}
         ${errMsg}
       </div>
@@ -1566,7 +1758,7 @@
       clearErr(fieldId);
       const container = document.getElementById('fi-' + fieldId);
       if (!container) return;
-      container.querySelectorAll('.hxfv-option-label').forEach((el, i) => {
+      container.querySelectorAll('.gsfv-option-label').forEach((el, i) => {
         el.classList.toggle('selected', i === idx);
       });
       evaluateConditions();
@@ -1583,7 +1775,7 @@
       clearErr(fieldId);
       const container = document.getElementById('fi-' + fieldId);
       if (!container) return;
-      container.querySelectorAll('.hxfv-option-label').forEach((el, i) => {
+      container.querySelectorAll('.gsfv-option-label').forEach((el, i) => {
         const optVal = (field?.options || [])[i] || '';
         el.classList.toggle('selected', arr.includes(optVal));
       });
@@ -1595,7 +1787,7 @@
       clearErr(fieldId);
       const container = document.getElementById('fi-' + fieldId);
       if (!container) return;
-      container.querySelectorAll('.hxfv-star-btn').forEach(btn => {
+      container.querySelectorAll('.gsfv-star-btn').forEach(btn => {
         btn.classList.toggle('active', +btn.dataset.val <= val);
       });
       evaluateConditions();
@@ -1606,7 +1798,7 @@
       clearErr(fieldId);
       const container = document.getElementById('fi-' + fieldId);
       if (!container) return;
-      container.querySelectorAll('.hxfv-num-btn').forEach(btn => {
+      container.querySelectorAll('.gsfv-num-btn').forEach(btn => {
         btn.classList.toggle('active', +btn.dataset.val === val);
       });
       evaluateConditions();
@@ -1645,11 +1837,11 @@
     ════════════════════════════════════════════════════════════════ */
     function validate() {
       // Only validate fields on the CURRENT page
-      const page   = _pages[_currentPage] || { fields: [] };
+      const page = _pages[_currentPage] || { fields: [] };
       const fields = page.fields;
       let valid = true;
       let firstErrId = null;
-    
+
       fields.forEach(f => {
         if (f.type === 'section_break') return;
         if (!isFieldVisible(f)) return;
@@ -1717,11 +1909,11 @@
     /* ── Option Caps: fetch live counts and disable full options ── */
     async function applyOptionCaps(slug) {
       try {
-        const res  = await fetch(`${HXF_PUBLIC}/public/caps?slug=${encodeURIComponent(slug)}`);
+        const res = await fetch(`${GSF_PUBLIC}/public/caps?slug=${encodeURIComponent(slug)}`);
         if (!res.ok) return;
         const { optionCounts, fields } = await res.json();
         (fields || []).forEach(field => {
-          if (!['radio','dropdown'].includes(field.type)) return;
+          if (!['radio', 'dropdown'].includes(field.type)) return;
           const caps = field.optionCaps || [];
           if (!caps.some(c => c)) return;
           const counts = optionCounts?.[field.id] || {};
@@ -1759,9 +1951,9 @@
       labelEl.textContent = '';
 
       // Build submission payload
-       const payload = { data: {} };
-       const fields  = formConfig?.config?.fields || [];
-       fields.forEach(f => {
+      const payload = { data: {} };
+      const fields = formConfig?.config?.fields || [];
+      fields.forEach(f => {
         if (f.type === 'section_break') return;
         if (!isFieldVisible(f)) return;
         if (f.type === 'file_upload') {
@@ -1782,7 +1974,7 @@
       });
 
       try {
-        const res = await fetch(`${BACKEND}/api/hxforms/submit/${encodeURIComponent(formSlug)}`, {
+        const res = await fetch(`${BACKEND}/api/gsforms/submit/${encodeURIComponent(formSlug)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -1841,17 +2033,17 @@
     /* ── Show thank you ─────────────────────────────────────────────── */
     function showThankYou(message) {
       // Mark as submitted for this browser session (duplicate guard)
-      sessionStorage.setItem('hxf_submitted_' + formSlug, '1');
-      document.getElementById('formState').style.display    = 'none';
+      sessionStorage.setItem('gsf_submitted_' + formSlug, '1');
+      document.getElementById('formState').style.display = 'none';
       document.getElementById('thankYouState').style.display = '';
       document.getElementById('tyMessage').textContent = message;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     /* ── Reset for "submit another" ────────────────────────────────── */
     function resetForm() {
-      formValues  = {};
+      formValues = {};
       fileObjects = {};
-      _pages      = [];
+      _pages = [];
       _currentPage = 0;
       document.getElementById('thankYouState').style.display = 'none';
       renderForm(formConfig);
@@ -1872,14 +2064,14 @@
         'full': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>`,
       };
 
-      document.getElementById('errIcon').className = `hxfv-error-icon ${type}`;
+      document.getElementById('errIcon').className = `gsfv-error-icon ${type}`;
       document.getElementById('errIcon').innerHTML = icons[type] || icons['not-found'];
       document.getElementById('errTitle').textContent = title;
       document.getElementById('errSub').textContent = sub;
 
       const badgeEl = document.getElementById('errBadge');
       if (badge) {
-        badgeEl.innerHTML = `<div class="hxfv-error-badge ${type}">● ${badge}</div>`;
+        badgeEl.innerHTML = `<div class="gsfv-error-badge ${type}">● ${badge}</div>`;
         badgeEl.style.display = '';
       } else {
         badgeEl.style.display = 'none';
@@ -1890,7 +2082,7 @@
        TOAST (minimal, self-contained)
     ════════════════════════════════════════════════════════════════ */
     function showToast(msg, type = 'error') {
-      const existing = document.getElementById('hxfv-toast');
+      const existing = document.getElementById('gsfv-toast');
       if (existing) existing.remove();
       const colors = {
         error: { bg: 'rgba(244,63,94,0.12)', border: 'rgba(244,63,94,0.3)', icon: '#f43f5e', sym: '✕' },
@@ -1899,7 +2091,7 @@
       };
       const c = colors[type] || colors.error;
       const el = document.createElement('div');
-      el.id = 'hxfv-toast';
+      el.id = 'gsfv-toast';
       el.style.cssText = `
     position:fixed;bottom:24px;right:20px;z-index:9999;
     background:${c.bg};border:1px solid ${c.border};
@@ -2020,12 +2212,12 @@
         }
         case 'radio': case 'checkbox': {
           const container = document.getElementById('fi-' + fid);
-          if (container) container.querySelectorAll('.hxfv-option-label').forEach(el => el.classList.remove('selected'));
+          if (container) container.querySelectorAll('.gsfv-option-label').forEach(el => el.classList.remove('selected'));
           break;
         }
         case 'linear_scale': {
           const container = document.getElementById('fi-' + fid);
-          if (container) container.querySelectorAll('.hxfv-star-btn, .hxfv-num-btn').forEach(el => el.classList.remove('active'));
+          if (container) container.querySelectorAll('.gsfv-star-btn, .gsfv-num-btn').forEach(el => el.classList.remove('active'));
           break;
         }
         case 'file_upload': {
@@ -2060,7 +2252,7 @@
         document.head.appendChild(link);
       }
       if (th.headingFont) document.documentElement.style.setProperty('--font-display', `'${th.headingFont}', sans-serif`);
-      if (th.bodyFont)    document.documentElement.style.setProperty('--font', `'${th.bodyFont}', sans-serif`);
+      if (th.bodyFont) document.documentElement.style.setProperty('--font', `'${th.bodyFont}', sans-serif`);
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -2080,13 +2272,13 @@
 
     function renderPassCanvas(pass) {
       const canvas = document.getElementById('passCanvas');
-      const ctx    = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d');
       const W = 900, H = 380;
       canvas.width = W; canvas.height = H;
 
-      const cfg         = pass.config || {};
+      const cfg = pass.config || {};
       const bannerColor = cfg.bannerColor || '#1a1a2e';
-      const textColor   = cfg.textColor   || '#ffffff';
+      const textColor = cfg.textColor || '#ffffff';
 
       // Background
       ctx.fillStyle = bannerColor;
@@ -2096,10 +2288,10 @@
       const qrImg = new Image();
       qrImg.onload = () => {
         // Left: white QR box
-        const qrPad  = 20;
+        const qrPad = 20;
         const qrSize = H - qrPad * 2;
-        const qrX    = qrPad;
-        const qrY    = qrPad;
+        const qrX = qrPad;
+        const qrY = qrPad;
         ctx.fillStyle = '#ffffff';
         roundRect(ctx, qrX, qrY, qrSize, qrSize, 12);
         ctx.fill();
@@ -2107,13 +2299,13 @@
 
         // "Scan to verify" text below QR
         ctx.fillStyle = 'rgba(255,255,255,0.55)';
-        ctx.font      = '12px sans-serif';
+        ctx.font = '12px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('Scan to verify', qrX + qrSize / 2, qrY + qrSize + 18);
 
         // Vertical divider
         ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-        ctx.lineWidth   = 1;
+        ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(320, 30); ctx.lineTo(320, H - 30); ctx.stroke();
 
         // Right section
@@ -2136,28 +2328,28 @@
 
         // Event name
         ctx.fillStyle = textColor;
-        ctx.font      = 'bold 26px sans-serif';
+        ctx.font = 'bold 26px sans-serif';
         cy += 6;
         wrapText(ctx, cfg.eventName || 'Event', rx, cy, rw, 32);
         cy += 38;
 
         // Attendee name
-        ctx.font      = '19px sans-serif';
+        ctx.font = '19px sans-serif';
         ctx.fillStyle = textColor;
         wrapText(ctx, pass.attendeeName || '—', rx, cy, rw, 26);
         cy += 32;
 
         // Venue / Date / Time
-        ctx.font      = '14px sans-serif';
+        ctx.font = '14px sans-serif';
         ctx.fillStyle = 'rgba(255,255,255,0.75)';
         if (cfg.venue) { ctx.fillText('📍 ' + cfg.venue, rx, cy); cy += 24; }
-        if (cfg.date)  { ctx.fillText('📅 ' + cfg.date,  rx, cy); cy += 24; }
-        if (cfg.time)  { ctx.fillText('🕐 ' + cfg.time,  rx, cy); cy += 24; }
+        if (cfg.date) { ctx.fillText('📅 ' + cfg.date, rx, cy); cy += 24; }
+        if (cfg.time) { ctx.fillText('🕐 ' + cfg.time, rx, cy); cy += 24; }
 
         // Divider
         cy += 6;
         ctx.strokeStyle = 'rgba(255,255,255,0.20)';
-        ctx.lineWidth   = 1;
+        ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(rx, cy); ctx.lineTo(W - 20, cy); ctx.stroke();
         cy += 14;
 
@@ -2165,9 +2357,9 @@
         const rules = (cfg.rules || []).slice(0, 3);
         if (rules.length) {
           ctx.fillStyle = 'rgba(255,255,255,0.6)';
-          ctx.font      = 'bold 12px sans-serif';
+          ctx.font = 'bold 12px sans-serif';
           ctx.fillText('ENTRY RULES', rx, cy); cy += 17;
-          ctx.font      = '12px sans-serif';
+          ctx.font = '12px sans-serif';
           rules.forEach(r => {
             ctx.fillText('• ' + r, rx, cy); cy += 17;
           });
@@ -2207,9 +2399,9 @@
     function downloadPass() {
       const canvas = document.getElementById('passCanvas');
       canvas.toBlob(blob => {
-        const a      = document.createElement('a');
-        a.href       = URL.createObjectURL(blob);
-        a.download   = `entry-pass-${(_passData?.submissionId||'pass').slice(0, 8)}.png`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `entry-pass-${(_passData?.submissionId || 'pass').slice(0, 8)}.png`;
         a.click();
         URL.revokeObjectURL(a.href);
       }, 'image/png');

@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix — Certificate Template Editor
+   GalSol — Certificate Template Editor
    frontend/cert-editor.js
    ================================================================ */
 
@@ -16,8 +16,8 @@ let editorState = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  canvas  = document.getElementById('certCanvas');
-  ctx     = canvas.getContext('2d');
+  canvas = document.getElementById('certCanvas');
+  ctx = canvas.getContext('2d');
   overlay = document.getElementById('fieldOverlay');
   requireAuth();
   initSidebar();
@@ -29,24 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ── Canvas Sizing ───────────────────────────────────────────────── */
 function resizeCanvas() {
   const wrap = document.getElementById('canvasWrap');
-  const maxW = wrap.clientWidth  - 64;
+  const maxW = wrap.clientWidth - 64;
   const maxH = wrap.clientHeight - 64;
   editorState.scale = Math.min(maxW / editorState.width, maxH / editorState.height, 1);
 
-  const w = editorState.width  * editorState.scale;
+  const w = editorState.width * editorState.scale;
   const h = editorState.height * editorState.scale;
 
   const container = document.getElementById('canvasContainer');
-  container.style.width  = w + 'px';
+  container.style.width = w + 'px';
   container.style.height = h + 'px';
-  canvas.width  = w;
+  canvas.width = w;
   canvas.height = h;
   redraw();
 }
 
 function changeCanvasSize() {
   const val = document.getElementById('canvasSize').value.split(',');
-  editorState.width  = parseInt(val[0]);
+  editorState.width = parseInt(val[0]);
   editorState.height = parseInt(val[1]);
   editorState.fields.forEach(f => {
     f.x = Math.min(f.x, 90);
@@ -72,9 +72,9 @@ function redraw() {
 function renderFieldHandles() {
   overlay.innerHTML = '';
   editorState.fields.forEach(field => {
-    const x        = (field.x / 100) * canvas.width;
-    const y        = (field.y / 100) * canvas.height;
-    const w        = (field.width / 100) * canvas.width;
+    const x = (field.x / 100) * canvas.width;
+    const y = (field.y / 100) * canvas.height;
+    const w = (field.width / 100) * canvas.width;
     const fontSize = field.fontSize * editorState.scale;
 
     const el = document.createElement('div');
@@ -113,15 +113,15 @@ function renderFieldHandles() {
 /* ── Drag ────────────────────────────────────────────────────────── */
 function startDrag(e, field, el) {
   const startX = e.clientX, startY = e.clientY;
-  const startFX = field.x,  startFY = field.y;
+  const startFX = field.x, startFY = field.y;
 
   function onMove(ev) {
-    const dx = ((ev.clientX - startX) / canvas.width)  * 100;
+    const dx = ((ev.clientX - startX) / canvas.width) * 100;
     const dy = ((ev.clientY - startY) / canvas.height) * 100;
     field.x = Math.max(0, Math.min(95, startFX + dx));
     field.y = Math.max(0, Math.min(95, startFY + dy));
-    el.style.left = (field.x / 100 * canvas.width)  + 'px';
-    el.style.top  = (field.y / 100 * canvas.height) + 'px';
+    el.style.left = (field.x / 100 * canvas.width) + 'px';
+    el.style.top = (field.y / 100 * canvas.height) + 'px';
     if (field.id === editorState.selectedId) {
       document.getElementById('propX').value = field.x.toFixed(1);
       document.getElementById('propY').value = field.y.toFixed(1);
@@ -129,10 +129,10 @@ function startDrag(e, field, el) {
   }
   function onUp() {
     document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup',   onUp);
+    document.removeEventListener('mouseup', onUp);
   }
   document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup',   onUp);
+  document.addEventListener('mouseup', onUp);
 }
 
 /* ── Add Field Modal ─────────────────────────────────────────────── */
@@ -163,10 +163,10 @@ function addField() {
   };
 
   const field = {
-    id:          'field_' + Date.now(),
+    id: 'field_' + Date.now(),
     placeholder: ph,
     previewText: previewTexts[ph] || ph.replace(/[{}]/g, ''),
-    column:      '',
+    column: '',
     x: 10,
     y: 30 + editorState.fields.length * 12,
     width: 80,
@@ -189,7 +189,7 @@ function deleteField(id) {
   if (editorState.selectedId === id) {
     editorState.selectedId = null;
     document.getElementById('noFieldSelected').style.display = '';
-    document.getElementById('fieldProps').style.display      = 'none';
+    document.getElementById('fieldProps').style.display = 'none';
   }
   renderFieldHandles();
 }
@@ -204,23 +204,23 @@ function selectField(id) {
   if (!field) return;
 
   document.getElementById('noFieldSelected').style.display = 'none';
-  document.getElementById('fieldProps').style.display      = '';
+  document.getElementById('fieldProps').style.display = '';
 
-  document.getElementById('propPlaceholder').value  = field.placeholder;
-  document.getElementById('propPreview').value       = field.previewText  || '';
-  document.getElementById('propFont').value          = field.fontFamily;
-  document.getElementById('propSize').value          = field.fontSize;
-  document.getElementById('propColor').value         = field.color;
+  document.getElementById('propPlaceholder').value = field.placeholder;
+  document.getElementById('propPreview').value = field.previewText || '';
+  document.getElementById('propFont').value = field.fontFamily;
+  document.getElementById('propSize').value = field.fontSize;
+  document.getElementById('propColor').value = field.color;
   document.getElementById('propColorHex').textContent = field.color;
-  document.getElementById('propX').value             = field.x.toFixed(1);
-  document.getElementById('propY').value             = field.y.toFixed(1);
-  document.getElementById('propWidth').value         = field.width;
+  document.getElementById('propX').value = field.x.toFixed(1);
+  document.getElementById('propY').value = field.y.toFixed(1);
+  document.getElementById('propWidth').value = field.width;
 
   ['alignLeft', 'alignCenter', 'alignRight'].forEach(bid =>
     document.getElementById(bid).classList.remove('active'));
   const activeBtn = field.align === 'center' ? 'alignCenter'
-                  : field.align === 'right'  ? 'alignRight'
-                  : 'alignLeft';
+    : field.align === 'right' ? 'alignRight'
+      : 'alignLeft';
   document.getElementById(activeBtn).classList.add('active');
 
   renderFieldHandles();
@@ -239,8 +239,8 @@ function setAlign(align) {
   ['alignLeft', 'alignCenter', 'alignRight'].forEach(bid =>
     document.getElementById(bid).classList.remove('active'));
   const activeBtn = align === 'center' ? 'alignCenter'
-                  : align === 'right'  ? 'alignRight'
-                  : 'alignLeft';
+    : align === 'right' ? 'alignRight'
+      : 'alignLeft';
   document.getElementById(activeBtn).classList.add('active');
 }
 
@@ -266,9 +266,9 @@ function uploadBackground(event) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (e) => {
-    const img  = new Image();
+    const img = new Image();
     img.onload = () => {
-      editorState.bgImage  = img;
+      editorState.bgImage = img;
       editorState.bgBase64 = e.target.result;
       redraw();
       toast('Background uploaded ✅', 'success', 2000);
@@ -284,7 +284,7 @@ function changeBgColor() {
 }
 
 function clearBackground() {
-  editorState.bgImage  = null;
+  editorState.bgImage = null;
   editorState.bgBase64 = null;
   document.getElementById('bgUpload').value = '';
   redraw();
@@ -294,26 +294,26 @@ function clearBackground() {
 /* ── Save / Load Template ────────────────────────────────────────── */
 function saveTemplate() {
   const template = {
-    width:            editorState.width,
-    height:           editorState.height,
-    bgColor:          editorState.bgColor,
+    width: editorState.width,
+    height: editorState.height,
+    bgColor: editorState.bgColor,
     backgroundBase64: editorState.bgBase64 || null,
-    fields:           editorState.fields.map(f => ({ ...f })),
-    savedAt:          new Date().toISOString(),
+    fields: editorState.fields.map(f => ({ ...f })),
+    savedAt: new Date().toISOString(),
   };
-  localStorage.setItem('Honourix_template', JSON.stringify(template));
+  localStorage.setItem('GalSol_template', JSON.stringify(template));
   toast('Template saved! ✅', 'success');
 }
 
 function loadSavedTemplate() {
-  const raw = localStorage.getItem('Honourix_template');
+  const raw = localStorage.getItem('GalSol_template');
   if (!raw) return;
   try {
     const t = JSON.parse(raw);
-    editorState.width   = t.width   || 1122;
-    editorState.height  = t.height  || 794;
+    editorState.width = t.width || 1122;
+    editorState.height = t.height || 794;
     editorState.bgColor = t.bgColor || '#ffffff';
-    editorState.fields  = t.fields  || [];
+    editorState.fields = t.fields || [];
     if (t.backgroundBase64) {
       editorState.bgBase64 = t.backgroundBase64;
       const img = new Image();
@@ -327,12 +327,12 @@ function loadSavedTemplate() {
 
 function clearAll() {
   if (!editorState.fields.length && !editorState.bgImage) return;
-  editorState.fields   = [];
-  editorState.bgImage  = null;
+  editorState.fields = [];
+  editorState.bgImage = null;
   editorState.bgBase64 = null;
   editorState.selectedId = null;
   document.getElementById('noFieldSelected').style.display = '';
-  document.getElementById('fieldProps').style.display      = 'none';
+  document.getElementById('fieldProps').style.display = 'none';
   redraw();
   toast('Canvas cleared', 'info', 2000);
 }

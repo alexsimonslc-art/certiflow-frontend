@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Form Builder - Honourix</title>
+  <title>Form Builder - GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -23,7 +23,7 @@
     }
 
     /* ── Shell ───────────────────────────────────────────────────── */
-    .hxfb-shell {
+    .gsfb-shell {
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -31,7 +31,7 @@
     }
 
     /* ── Topbar ──────────────────────────────────────────────────── */
-    .hxfb-topbar {
+    .gsfb-topbar {
       height: 54px;
       flex-shrink: 0;
       display: flex;
@@ -44,7 +44,7 @@
       z-index: 40;
     }
 
-    .hxfb-back {
+    .gsfb-back {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -61,29 +61,29 @@
       flex-shrink: 0;
     }
 
-    .hxfb-back:hover {
+    .gsfb-back:hover {
       color: var(--text);
       border-color: var(--glass-border-2);
     }
 
-    .hxfb-back svg {
+    .gsfb-back svg {
       width: 13px;
       height: 13px;
     }
 
-    .hxfb-divider {
+    .gsfb-divider {
       width: 1px;
       height: 20px;
       background: rgba(255, 255, 255, 0.08);
       flex-shrink: 0;
     }
 
-    .hxfb-name-wrap {
+    .gsfb-name-wrap {
       flex: 1;
       min-width: 0;
     }
 
-    .hxfb-name {
+    .gsfb-name {
       font-family: var(--font-display);
       font-size: 15px;
       font-weight: 700;
@@ -102,19 +102,19 @@
       text-overflow: ellipsis;
     }
 
-    .hxfb-name:hover {
+    .gsfb-name:hover {
       background: var(--glass);
       border-color: var(--glass-border);
     }
 
-    .hxfb-name:focus {
+    .gsfb-name:focus {
       background: var(--glass);
       border-color: rgba(0, 212, 255, 0.4);
       white-space: normal;
       overflow: visible;
     }
 
-    .hxfb-save-status {
+    .gsfb-save-status {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -123,7 +123,7 @@
       flex-shrink: 0;
     }
 
-    .hxfb-save-dot {
+    .gsfb-save-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
@@ -131,11 +131,11 @@
       transition: background 0.3s;
     }
 
-    .hxfb-save-dot.unsaved {
+    .gsfb-save-dot.unsaved {
       background: var(--gold);
     }
 
-    .hxfb-save-dot.saving {
+    .gsfb-save-dot.saving {
       background: var(--cyan);
       animation: pulseSaving 0.8s ease infinite;
     }
@@ -152,14 +152,14 @@
       }
     }
 
-    .hxfb-topbar-right {
+    .gsfb-topbar-right {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
     }
 
-    .hxfb-tb-btn {
+    .gsfb-tb-btn {
       display: flex;
       align-items: center;
       gap: 5px;
@@ -175,36 +175,36 @@
       font-family: var(--font);
     }
 
-    .hxfb-tb-btn:hover {
+    .gsfb-tb-btn:hover {
       color: var(--text);
       border-color: rgba(255, 255, 255, 0.2);
       background: rgba(255, 255, 255, 0.07);
     }
 
-    .hxfb-tb-btn svg {
+    .gsfb-tb-btn svg {
       width: 13px;
       height: 13px;
     }
 
-    .hxfb-tb-btn.cyan {
+    .gsfb-tb-btn.cyan {
       color: var(--cyan);
       border-color: rgba(0, 212, 255, 0.25);
       background: var(--cyan-dim);
     }
 
-    .hxfb-tb-btn.green {
+    .gsfb-tb-btn.green {
       color: var(--green);
       border-color: rgba(16, 185, 129, 0.25);
       background: var(--green-dim);
     }
 
-    .hxfb-tb-btn.red {
+    .gsfb-tb-btn.red {
       color: var(--red);
       border-color: rgba(244, 63, 94, 0.2);
       background: var(--red-dim);
     }
 
-    .hxfb-status-badge {
+    .gsfb-status-badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
@@ -214,19 +214,19 @@
       font-weight: 600;
     }
 
-    .hxfb-status-badge.published {
+    .gsfb-status-badge.published {
       background: var(--green-dim);
       color: var(--green);
       border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
-    .hxfb-status-badge.closed {
+    .gsfb-status-badge.closed {
       background: var(--red-dim);
       color: var(--red);
       border: 1px solid rgba(244, 63, 94, 0.2);
     }
 
-    .hxfb-publish-btn {
+    .gsfb-publish-btn {
       padding: 8px 16px;
       border-radius: 9px;
       font-size: 13px;
@@ -243,22 +243,22 @@
       gap: 6px;
     }
 
-    .hxfb-publish-btn:hover {
+    .gsfb-publish-btn:hover {
       box-shadow: 0 6px 24px rgba(0, 212, 255, 0.35);
     }
 
-    .hxfb-publish-btn:disabled {
+    .gsfb-publish-btn:disabled {
       opacity: 0.6;
       pointer-events: none;
     }
 
-    .hxfb-publish-btn svg {
+    .gsfb-publish-btn svg {
       width: 13px;
       height: 13px;
     }
 
     /* ── 3-column layout ─────────────────────────────────────────── */
-    .hxfb-layout {
+    .gsfb-layout {
       display: grid;
       grid-template-columns: 240px 1fr 340px;
       height: calc(100vh - 54px);
@@ -266,7 +266,7 @@
     }
 
     /* ── LEFT: Field Layers ──────────────────────────────────────── */
-    .hxfb-left {
+    .gsfb-left {
       border-right: 1px solid rgba(255, 255, 255, 0.08);
       background: rgba(4, 8, 18, 0.65);
       display: flex;
@@ -274,7 +274,7 @@
       overflow: hidden;
     }
 
-    .hxfb-layers-hdr {
+    .gsfb-layers-hdr {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -288,7 +288,7 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .hxfb-layer-count {
+    .gsfb-layer-count {
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-3);
       border-radius: 99px;
@@ -297,23 +297,23 @@
       font-weight: 600;
     }
 
-    .hxfb-layer-list {
+    .gsfb-layer-list {
       flex: 1;
       overflow-y: auto;
       padding: 8px 8px 4px;
     }
 
-    .hxfb-layer-list::-webkit-scrollbar {
+    .gsfb-layer-list::-webkit-scrollbar {
       width: 3px;
     }
 
-    .hxfb-layer-list::-webkit-scrollbar-thumb {
+    .gsfb-layer-list::-webkit-scrollbar-thumb {
       background: var(--glass-border);
       border-radius: 3px;
     }
 
     /* Layer item */
-    .hxfb-layer-item {
+    .gsfb-layer-item {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -326,29 +326,29 @@
       border: 1px solid transparent;
     }
 
-    .hxfb-layer-item:hover {
+    .gsfb-layer-item:hover {
       background: rgba(255, 255, 255, 0.04);
       border-color: rgba(255, 255, 255, 0.08);
     }
 
-    .hxfb-layer-item.selected {
+    .gsfb-layer-item.selected {
       background: var(--cyan-dim);
       border-color: rgba(0, 212, 255, 0.3);
     }
 
-    .hxfb-layer-item.dragging {
+    .gsfb-layer-item.dragging {
       opacity: 0.35;
     }
 
-    .hxfb-layer-item.drag-over-top {
+    .gsfb-layer-item.drag-over-top {
       border-top: 2px solid var(--cyan);
     }
 
-    .hxfb-layer-item.drag-over-bottom {
+    .gsfb-layer-item.drag-over-bottom {
       border-bottom: 2px solid var(--cyan);
     }
 
-    .hxfb-drag-handle {
+    .gsfb-drag-handle {
       color: var(--text-3);
       cursor: grab;
       font-size: 14px;
@@ -359,15 +359,15 @@
       transition: opacity 0.15s;
     }
 
-    .hxfb-layer-item:hover .hxfb-drag-handle {
+    .gsfb-layer-item:hover .gsfb-drag-handle {
       opacity: 1;
     }
 
-    .hxfb-layer-item:active .hxfb-drag-handle {
+    .gsfb-layer-item:active .gsfb-drag-handle {
       cursor: grabbing;
     }
 
-    .hxfb-layer-icon {
+    .gsfb-layer-icon {
       width: 26px;
       height: 26px;
       border-radius: 6px;
@@ -377,59 +377,59 @@
       justify-content: center;
     }
 
-    .hxfb-layer-icon svg {
+    .gsfb-layer-icon svg {
       width: 12px;
       height: 12px;
     }
 
-    .hxfb-layer-icon.text,
-    .hxfb-layer-icon.textarea,
-    .hxfb-layer-icon.dropdown {
+    .gsfb-layer-icon.text,
+    .gsfb-layer-icon.textarea,
+    .gsfb-layer-icon.dropdown {
       background: rgba(0, 212, 255, 0.12);
       color: var(--cyan);
     }
 
-    .hxfb-layer-icon.email,
-    .hxfb-layer-icon.radio {
+    .gsfb-layer-icon.email,
+    .gsfb-layer-icon.radio {
       background: rgba(124, 58, 237, 0.15);
       color: #a78bfa;
     }
 
-    .hxfb-layer-icon.phone,
-    .hxfb-layer-icon.checkbox {
+    .gsfb-layer-icon.phone,
+    .gsfb-layer-icon.checkbox {
       background: rgba(16, 185, 129, 0.12);
       color: var(--green);
     }
 
-    .hxfb-layer-icon.number,
-    .hxfb-layer-icon.date,
-    .hxfb-layer-icon.time {
+    .gsfb-layer-icon.number,
+    .gsfb-layer-icon.date,
+    .gsfb-layer-icon.time {
       background: rgba(245, 158, 11, 0.12);
       color: var(--gold);
     }
 
-    .hxfb-layer-icon.file_upload {
+    .gsfb-layer-icon.file_upload {
       background: rgba(0, 212, 255, 0.12);
       color: var(--cyan);
     }
 
-    .hxfb-layer-icon.linear_scale {
+    .gsfb-layer-icon.linear_scale {
       background: rgba(244, 63, 94, 0.12);
       color: var(--red);
     }
 
-    .hxfb-layer-icon.section_break {
+    .gsfb-layer-icon.section_break {
       background: rgba(124, 58, 237, 0.12);
       color: #a78bfa;
       border: 1px dashed rgba(124, 58, 237, 0.3);
     }
 
-    .hxfb-layer-info {
+    .gsfb-layer-info {
       flex: 1;
       min-width: 0;
     }
 
-    .hxfb-layer-lbl {
+    .gsfb-layer-lbl {
       font-size: 12.5px;
       font-weight: 600;
       color: var(--text);
@@ -438,31 +438,31 @@
       text-overflow: ellipsis;
     }
 
-    .hxfb-layer-sub {
+    .gsfb-layer-sub {
       font-size: 10.5px;
       color: var(--text-3);
       margin-top: 1px;
     }
 
-    .hxfb-layer-req {
+    .gsfb-layer-req {
       color: var(--red);
       font-size: 11px;
       margin-left: 2px;
     }
 
     /* Section break in layers = page break divider */
-    .hxfb-layer-item.is-page-break {
+    .gsfb-layer-item.is-page-break {
       background: rgba(124, 58, 237, 0.06);
       border: 1px dashed rgba(124, 58, 237, 0.25);
       margin: 5px 0;
     }
 
-    .hxfb-layer-item.is-page-break .hxfb-layer-lbl {
+    .gsfb-layer-item.is-page-break .gsfb-layer-lbl {
       color: #a78bfa;
     }
 
     /* Empty layers state */
-    .hxfb-layers-empty {
+    .gsfb-layers-empty {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -472,7 +472,7 @@
       font-size: 12.5px;
     }
 
-    .hxfb-layers-empty svg {
+    .gsfb-layers-empty svg {
       width: 28px;
       height: 28px;
       opacity: 0.3;
@@ -481,13 +481,13 @@
 
     /* Add field section at bottom */
     /* ── Left panel tabs ─────────────────────────────────────────── */
-    .hxfb-left-tabs {
+    .gsfb-left-tabs {
       display: flex;
       flex-shrink: 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
 
-    .hxfb-ltab {
+    .gsfb-ltab {
       flex: 1;
       display: flex;
       align-items: center;
@@ -507,14 +507,16 @@
       letter-spacing: 0.2px;
     }
 
-    .hxfb-ltab:hover { color: var(--text-2); }
+    .gsfb-ltab:hover {
+      color: var(--text-2);
+    }
 
-    .hxfb-ltab.active {
+    .gsfb-ltab.active {
       color: var(--cyan);
       border-bottom-color: var(--cyan);
     }
 
-    .hxfb-left-body {
+    .gsfb-left-body {
       flex: 1;
       overflow-y: auto;
       display: flex;
@@ -522,18 +524,24 @@
       min-height: 0;
     }
 
-    .hxfb-left-body::-webkit-scrollbar { width: 3px; }
-    .hxfb-left-body::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+    .gsfb-left-body::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .gsfb-left-body::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 3px;
+    }
 
     /* ── Field type cards (Add tab) ──────────────────────────────── */
-    .hxfb-field-cards-grid {
+    .gsfb-field-cards-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 7px;
       padding: 12px 10px;
     }
 
-    .hxfb-field-card {
+    .gsfb-field-card {
       background: rgba(255, 255, 255, 0.025);
       border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 10px;
@@ -552,7 +560,7 @@
       line-height: 1.3;
     }
 
-    .hxfb-field-card:hover {
+    .gsfb-field-card:hover {
       background: rgba(0, 212, 255, 0.07);
       border-color: rgba(0, 212, 255, 0.3);
       color: var(--text);
@@ -560,7 +568,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     }
 
-    .hxfb-field-card svg {
+    .gsfb-field-card svg {
       width: 20px;
       height: 20px;
       color: var(--cyan);
@@ -568,7 +576,7 @@
       flex-shrink: 0;
     }
 
-    .hxfb-field-card.card-full {
+    .gsfb-field-card.card-full {
       grid-column: 1 / -1;
       flex-direction: row;
       justify-content: center;
@@ -577,10 +585,13 @@
       gap: 9px;
     }
 
-    .hxfb-field-card.card-full svg { width: 15px; height: 15px; }
+    .gsfb-field-card.card-full svg {
+      width: 15px;
+      height: 15px;
+    }
 
     /*  CENTER: Interactive Preview  */
-    .hxfb-center {
+    .gsfb-center {
       overflow-y: auto;
       overflow-x: hidden;
       background:
@@ -592,16 +603,16 @@
       padding: 20px 16px 48px;
     }
 
-    .hxfb-center::-webkit-scrollbar {
+    .gsfb-center::-webkit-scrollbar {
       width: 4px;
     }
 
-    .hxfb-center::-webkit-scrollbar-thumb {
+    .gsfb-center::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
     }
 
-    .hxfb-pv-label {
+    .gsfb-pv-label {
       font-size: 10.5px;
       font-weight: 700;
       letter-spacing: 1px;
@@ -615,7 +626,7 @@
       justify-content: space-between;
     }
 
-    .hxfb-pv-page-info {
+    .gsfb-pv-page-info {
       font-size: 11px;
       color: var(--text-3);
       font-weight: 500;
@@ -623,7 +634,7 @@
       text-transform: none;
     }
 
-    .hxfb-pv-card {
+    .gsfb-pv-card {
       width: 100%;
       max-width: 520px;
       background: #080d1c;
@@ -633,22 +644,22 @@
       box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
     }
 
-    .hxfb-pv-accent {
+    .gsfb-pv-accent {
       height: 5px;
       background: var(--grad-primary);
       transition: background 0.3s;
     }
 
-    .hxfb-pv-body {
+    .gsfb-pv-body {
       padding: 22px 22px 18px;
     }
 
     /* Preview progress */
-    .hxfb-pv-prog {
+    .gsfb-pv-prog {
       margin-bottom: 18px;
     }
 
-    .hxfb-pv-prog-meta {
+    .gsfb-pv-prog-meta {
       display: flex;
       justify-content: space-between;
       font-size: 11.5px;
@@ -656,21 +667,21 @@
       margin-bottom: 6px;
     }
 
-    .hxfb-pv-prog-track {
+    .gsfb-pv-prog-track {
       height: 4px;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 99px;
       overflow: hidden;
     }
 
-    .hxfb-pv-prog-fill {
+    .gsfb-pv-prog-fill {
       height: 100%;
       border-radius: 99px;
       transition: width 0.4s;
     }
 
     /* Preview form elements */
-    .hxfb-pv-title {
+    .gsfb-pv-title {
       font-family: var(--font-display);
       font-size: clamp(17px, 3vw, 22px);
       font-weight: 700;
@@ -679,14 +690,14 @@
       line-height: 1.3;
     }
 
-    .hxfb-pv-desc {
+    .gsfb-pv-desc {
       font-size: 13.5px;
       color: var(--text-2);
       line-height: 1.6;
       margin-bottom: 20px;
     }
 
-    .hxfb-pv-page-title {
+    .gsfb-pv-page-title {
       font-family: var(--font-display);
       font-size: 18px;
       font-weight: 700;
@@ -694,18 +705,18 @@
       margin-bottom: 6px;
     }
 
-    .hxfb-pv-page-desc {
+    .gsfb-pv-page-desc {
       font-size: 13px;
       color: var(--text-2);
       line-height: 1.6;
       margin-bottom: 18px;
     }
 
-    .hxfb-pv-field {
+    .gsfb-pv-field {
       margin-bottom: 16px;
     }
 
-    .hxfb-pv-label {
+    .gsfb-pv-label {
       font-size: 13px;
       font-weight: 600;
       color: var(--text);
@@ -715,12 +726,12 @@
       gap: 4px;
     }
 
-    .hxfb-pv-req {
+    .gsfb-pv-req {
       color: var(--red);
       font-size: 12px;
     }
 
-    .hxfb-pv-input {
+    .gsfb-pv-input {
       width: 100%;
       padding: 10px 12px;
       border-radius: 9px;
@@ -733,15 +744,15 @@
       transition: border-color 0.15s;
     }
 
-    .hxfb-pv-input:focus {
+    .gsfb-pv-input:focus {
       border-color: rgba(0, 212, 255, 0.4);
     }
 
-    .hxfb-pv-input::placeholder {
+    .gsfb-pv-input::placeholder {
       color: var(--text-3);
     }
 
-    .hxfb-pv-textarea {
+    .gsfb-pv-textarea {
       width: 100%;
       padding: 10px 12px;
       border-radius: 9px;
@@ -755,7 +766,7 @@
       min-height: 72px;
     }
 
-    .hxfb-pv-select {
+    .gsfb-pv-select {
       width: 100%;
       padding: 10px 36px 10px 12px;
       border-radius: 9px;
@@ -772,11 +783,11 @@
       background-position: right 12px center;
     }
 
-    .hxfb-pv-select option {
+    .gsfb-pv-select option {
       background: #0d1728;
     }
 
-    .hxfb-pv-option {
+    .gsfb-pv-option {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -792,19 +803,19 @@
       background: rgba(255, 255, 255, 0.025);
     }
 
-    .hxfb-pv-option:hover {
+    .gsfb-pv-option:hover {
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(255, 255, 255, 0.18);
       color: var(--text);
     }
 
-    .hxfb-pv-option.sel {
+    .gsfb-pv-option.sel {
       background: var(--cyan-dim);
       border-color: var(--cyan);
       color: var(--text);
     }
 
-    .hxfb-pv-dot {
+    .gsfb-pv-dot {
       width: 16px;
       height: 16px;
       border-radius: 50%;
@@ -813,7 +824,7 @@
       transition: all 0.15s;
     }
 
-    .hxfb-pv-box {
+    .gsfb-pv-box {
       width: 16px;
       height: 16px;
       border-radius: 4px;
@@ -821,44 +832,44 @@
       flex-shrink: 0;
     }
 
-    .hxfb-pv-option.sel .hxfb-pv-dot {
+    .gsfb-pv-option.sel .gsfb-pv-dot {
       background: var(--cyan);
       border-color: var(--cyan);
       box-shadow: 0 0 0 3px var(--cyan-dim);
     }
 
-    .hxfb-pv-option.sel .hxfb-pv-box {
+    .gsfb-pv-option.sel .gsfb-pv-box {
       background: var(--cyan);
       border-color: var(--cyan);
     }
 
-    .hxfb-pv-stars {
+    .gsfb-pv-stars {
       display: flex;
       gap: 7px;
     }
 
-    .hxfb-pv-star {
+    .gsfb-pv-star {
       font-size: 24px;
       cursor: pointer;
       color: rgba(255, 255, 255, 0.15);
       transition: all 0.12s;
     }
 
-    .hxfb-pv-star.on {
+    .gsfb-pv-star.on {
       color: var(--gold);
     }
 
-    .hxfb-pv-star:hover {
+    .gsfb-pv-star:hover {
       transform: scale(1.15);
     }
 
-    .hxfb-pv-numscale {
+    .gsfb-pv-numscale {
       display: flex;
       gap: 5px;
       flex-wrap: wrap;
     }
 
-    .hxfb-pv-numbox {
+    .gsfb-pv-numbox {
       width: 36px;
       height: 36px;
       border-radius: 7px;
@@ -875,18 +886,18 @@
       justify-content: center;
     }
 
-    .hxfb-pv-numbox.on {
+    .gsfb-pv-numbox.on {
       background: var(--cyan);
       color: #000;
       border-color: var(--cyan);
     }
 
-    .hxfb-pv-numbox:hover {
+    .gsfb-pv-numbox:hover {
       border-color: var(--cyan);
       color: var(--cyan);
     }
 
-    .hxfb-pv-scale-labels {
+    .gsfb-pv-scale-labels {
       display: flex;
       justify-content: space-between;
       font-size: 11px;
@@ -894,7 +905,7 @@
       margin-top: 6px;
     }
 
-    .hxfb-pv-upload {
+    .gsfb-pv-upload {
       border: 2px dashed rgba(255, 255, 255, 0.12);
       border-radius: 9px;
       padding: 18px;
@@ -903,7 +914,7 @@
       font-size: 13px;
     }
 
-    .hxfb-pv-page-break {
+    .gsfb-pv-page-break {
       border-top: 2px dashed rgba(124, 58, 237, 0.3);
       padding: 8px 0 4px;
       margin: 6px 0 14px;
@@ -912,7 +923,7 @@
       gap: 8px;
     }
 
-    .hxfb-pv-page-badge {
+    .gsfb-pv-page-badge {
       background: rgba(124, 58, 237, 0.12);
       color: #a78bfa;
       border: 1px solid rgba(124, 58, 237, 0.25);
@@ -924,14 +935,14 @@
     }
 
     /* Preview nav row */
-    .hxfb-pv-nav {
+    .gsfb-pv-nav {
       display: flex;
       gap: 8px;
       margin-top: 16px;
       align-items: center;
     }
 
-    .hxfb-pv-back {
+    .gsfb-pv-back {
       padding: 10px 16px;
       border-radius: 9px;
       font-size: 13.5px;
@@ -944,11 +955,11 @@
       flex-shrink: 0;
     }
 
-    .hxfb-pv-back:hover {
+    .gsfb-pv-back:hover {
       color: var(--text);
     }
 
-    .hxfb-pv-submit {
+    .gsfb-pv-submit {
       flex: 1;
       padding: 12px;
       border-radius: 10px;
@@ -962,11 +973,11 @@
       transition: box-shadow 0.2s;
     }
 
-    .hxfb-pv-submit:hover {
+    .gsfb-pv-submit:hover {
       box-shadow: 0 8px 28px rgba(0, 212, 255, 0.35);
     }
 
-    .hxfb-pv-empty {
+    .gsfb-pv-empty {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -979,14 +990,14 @@
       gap: 8px;
     }
 
-    .hxfb-pv-empty svg {
+    .gsfb-pv-empty svg {
       width: 28px;
       height: 28px;
       opacity: 0.3;
     }
 
     /* ── RIGHT PANEL ─────────────────────────────────────────────── */
-    .hxfb-right {
+    .gsfb-right {
       border-left: 1px solid rgba(255, 255, 255, 0.08);
       background: rgba(4, 8, 18, 0.65);
       display: flex;
@@ -994,7 +1005,7 @@
       overflow: hidden;
     }
 
-    .hxfb-right-tabs {
+    .gsfb-right-tabs {
       display: flex;
       padding: 10px 12px 0;
       gap: 4px;
@@ -1002,7 +1013,7 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
 
-    .hxfb-rtab {
+    .gsfb-rtab {
       padding: 8px 14px;
       border-radius: 8px 8px 0 0;
       font-size: 13px;
@@ -1017,31 +1028,31 @@
       margin-bottom: -1px;
     }
 
-    .hxfb-rtab:hover {
+    .gsfb-rtab:hover {
       color: var(--text-2);
     }
 
-    .hxfb-rtab.active {
+    .gsfb-rtab.active {
       color: var(--cyan);
       border-bottom-color: var(--cyan);
     }
 
-    .hxfb-right-body {
+    .gsfb-right-body {
       flex: 1;
       overflow-y: auto;
       padding: 14px 12px;
     }
 
-    .hxfb-right-body::-webkit-scrollbar {
+    .gsfb-right-body::-webkit-scrollbar {
       width: 3px;
     }
 
-    .hxfb-right-body::-webkit-scrollbar-thumb {
+    .gsfb-right-body::-webkit-scrollbar-thumb {
       background: var(--glass-border);
       border-radius: 3px;
     }
 
-    .hxfb-no-sel {
+    .gsfb-no-sel {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1050,31 +1061,31 @@
       color: var(--text-3);
     }
 
-    .hxfb-no-sel svg {
+    .gsfb-no-sel svg {
       width: 32px;
       height: 32px;
       opacity: 0.25;
       margin-bottom: 10px;
     }
 
-    .hxfb-no-sel p {
+    .gsfb-no-sel p {
       font-size: 13px;
       line-height: 1.5;
     }
 
     /* Field editor prop controls */
-    .hxfb-prop {
+    .gsfb-prop {
       display: flex;
       flex-direction: column;
       gap: 5px;
       margin-bottom: 12px;
     }
 
-    .hxfb-prop:last-child {
+    .gsfb-prop:last-child {
       margin-bottom: 0;
     }
 
-    .hxfb-prop-label {
+    .gsfb-prop-label {
       font-size: 11px;
       font-weight: 700;
       color: var(--text-3);
@@ -1082,7 +1093,7 @@
       text-transform: uppercase;
     }
 
-    .hxfb-input {
+    .gsfb-input {
       padding: 8px 10px;
       border-radius: 8px;
       font-size: 13px;
@@ -1095,15 +1106,15 @@
       width: 100%;
     }
 
-    .hxfb-input:focus {
+    .gsfb-input:focus {
       border-color: rgba(0, 212, 255, 0.4);
     }
 
-    .hxfb-input::placeholder {
+    .gsfb-input::placeholder {
       color: var(--text-3);
     }
 
-    .hxfb-select {
+    .gsfb-select {
       padding: 8px 28px 8px 10px;
       border-radius: 8px;
       font-size: 12.5px;
@@ -1120,15 +1131,15 @@
       background-position: right 8px center;
     }
 
-    .hxfb-select:focus {
+    .gsfb-select:focus {
       border-color: rgba(0, 212, 255, 0.4);
     }
 
-    .hxfb-select option {
+    .gsfb-select option {
       background: #0d1728;
     }
 
-    .hxfb-toggle-row {
+    .gsfb-toggle-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1140,7 +1151,7 @@
       color: var(--text-2);
     }
 
-    .hxfb-toggle {
+    .gsfb-toggle {
       width: 36px;
       height: 20px;
       border-radius: 99px;
@@ -1152,12 +1163,12 @@
       flex-shrink: 0;
     }
 
-    .hxfb-toggle.on {
+    .gsfb-toggle.on {
       background: var(--grad-primary);
       border-color: transparent;
     }
 
-    .hxfb-toggle::after {
+    .gsfb-toggle::after {
       content: '';
       position: absolute;
       left: 3px;
@@ -1170,31 +1181,31 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
 
-    .hxfb-toggle.on::after {
+    .gsfb-toggle.on::after {
       transform: translateX(16px);
     }
 
-    .hxfb-grid-2 {
+    .gsfb-grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
 
     /* Options list */
-    .hxfb-options-list {
+    .gsfb-options-list {
       display: flex;
       flex-direction: column;
       gap: 5px;
       margin-bottom: 7px;
     }
 
-    .hxfb-option-row {
+    .gsfb-option-row {
       display: flex;
       align-items: center;
       gap: 5px;
     }
 
-    .hxfb-option-input {
+    .gsfb-option-input {
       flex: 1;
       padding: 7px 9px;
       border-radius: 7px;
@@ -1206,11 +1217,11 @@
       outline: none;
     }
 
-    .hxfb-option-input:focus {
+    .gsfb-option-input:focus {
       border-color: rgba(0, 212, 255, 0.35);
     }
 
-    .hxfb-option-del {
+    .gsfb-option-del {
       width: 24px;
       height: 24px;
       border-radius: 5px;
@@ -1225,17 +1236,17 @@
       transition: var(--transition);
     }
 
-    .hxfb-option-del:hover {
+    .gsfb-option-del:hover {
       color: var(--red);
       background: var(--red-dim);
     }
 
-    .hxfb-option-del svg {
+    .gsfb-option-del svg {
       width: 11px;
       height: 11px;
     }
 
-    .hxfb-add-option-btn {
+    .gsfb-add-option-btn {
       display: flex;
       align-items: center;
       gap: 5px;
@@ -1250,17 +1261,17 @@
       transition: opacity 0.15s;
     }
 
-    .hxfb-add-option-btn:hover {
+    .gsfb-add-option-btn:hover {
       opacity: 0.7;
     }
 
-    .hxfb-add-option-btn svg {
+    .gsfb-add-option-btn svg {
       width: 12px;
       height: 12px;
     }
 
     /* Field action buttons */
-    .hxfb-field-actions {
+    .gsfb-field-actions {
       display: flex;
       gap: 5px;
       padding-top: 12px;
@@ -1269,7 +1280,7 @@
       align-items: center;
     }
 
-    .hxfb-action-btn {
+    .gsfb-action-btn {
       display: flex;
       align-items: center;
       gap: 4px;
@@ -1285,32 +1296,32 @@
       font-family: var(--font);
     }
 
-    .hxfb-action-btn:hover {
+    .gsfb-action-btn:hover {
       color: var(--text);
       border-color: var(--glass-border-2);
     }
 
-    .hxfb-action-btn.danger:hover {
+    .gsfb-action-btn.danger:hover {
       color: var(--red);
       background: var(--red-dim);
       border-color: rgba(244, 63, 94, 0.2);
     }
 
-    .hxfb-action-btn svg {
+    .gsfb-action-btn svg {
       width: 12px;
       height: 12px;
     }
 
     /* Settings panel */
     /* Rich-text description editor */
-    .hxfb-rte-wrap {
+    .gsfb-rte-wrap {
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 9px;
       overflow: hidden;
       background: rgba(255, 255, 255, 0.05);
     }
 
-    .hxfb-rte-bar {
+    .gsfb-rte-bar {
       display: flex;
       gap: 3px;
       padding: 5px 7px;
@@ -1318,7 +1329,7 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .hxfb-rte-btn {
+    .gsfb-rte-btn {
       padding: 3px 9px;
       border-radius: 5px;
       border: none;
@@ -1330,12 +1341,12 @@
       transition: var(--transition);
     }
 
-    .hxfb-rte-btn:hover {
+    .gsfb-rte-btn:hover {
       background: rgba(0, 212, 255, 0.1);
       color: var(--cyan);
     }
 
-    .hxfb-rte-body {
+    .gsfb-rte-body {
       padding: 9px 11px;
       color: var(--text);
       font-size: 13px;
@@ -1344,22 +1355,22 @@
       min-height: 64px;
     }
 
-    .hxfb-rte-body:empty::before {
+    .gsfb-rte-body:empty::before {
       content: attr(placeholder);
       color: var(--text-3);
       pointer-events: none;
     }
 
-    .hxfb-rte-body ul,
-    .hxfb-rte-body ol {
+    .gsfb-rte-body ul,
+    .gsfb-rte-body ol {
       margin: 4px 0 4px 18px;
     }
 
-    .hxfb-settings-section {
+    .gsfb-settings-section {
       margin-bottom: 20px;
     }
 
-    .hxfb-settings-sec-title {
+    .gsfb-settings-sec-title {
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.8px;
@@ -1370,13 +1381,13 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
 
-    .hxfb-color-grid {
+    .gsfb-color-grid {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
 
-    .hxfb-color-pill {
+    .gsfb-color-pill {
       width: 26px;
       height: 26px;
       border-radius: 50%;
@@ -1385,23 +1396,23 @@
       transition: transform 0.15s, box-shadow 0.15s;
     }
 
-    .hxfb-color-pill:hover {
+    .gsfb-color-pill:hover {
       transform: scale(1.15);
     }
 
-    .hxfb-color-pill.selected {
+    .gsfb-color-pill.selected {
       border-color: #fff;
       box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
     }
 
     /* Condition rows */
-    .hxfb-cond-section {
+    .gsfb-cond-section {
       border-top: 1px solid rgba(255, 255, 255, 0.07);
       padding-top: 12px;
       margin-top: 4px;
     }
 
-    .hxfb-cond-section-label {
+    .gsfb-cond-section-label {
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.6px;
@@ -1413,33 +1424,33 @@
       margin-bottom: 9px;
     }
 
-    .hxfb-cond-section-label svg {
+    .gsfb-cond-section-label svg {
       width: 11px;
       height: 11px;
     }
 
-    .hxfb-cond-row {
+    .gsfb-cond-row {
       display: flex;
       align-items: center;
       gap: 4px;
       margin-bottom: 6px;
     }
 
-    .hxfb-cond-row .hxfb-select {
+    .gsfb-cond-row .gsfb-select {
       flex: 1;
       min-width: 0;
       padding: 6px 24px 6px 7px;
       font-size: 11.5px;
     }
 
-    .hxfb-cond-row .hxfb-input {
+    .gsfb-cond-row .gsfb-input {
       flex: 1;
       min-width: 0;
       padding: 6px 7px;
       font-size: 11.5px;
     }
 
-    .hxfb-cond-logic-row {
+    .gsfb-cond-logic-row {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -1448,13 +1459,13 @@
       margin: 5px 0;
     }
 
-    .hxfb-cond-logic-row .hxfb-select {
+    .gsfb-cond-logic-row .gsfb-select {
       width: auto;
       padding: 4px 22px 4px 7px;
       font-size: 11.5px;
     }
 
-    .hxfb-cond-always {
+    .gsfb-cond-always {
       font-size: 11.5px;
       color: var(--text-3);
       padding: 6px 9px;
@@ -1464,7 +1475,7 @@
       margin-bottom: 7px;
     }
 
-    .hxfb-cond-badge {
+    .gsfb-cond-badge {
       display: inline-flex;
       align-items: center;
       gap: 3px;
@@ -1479,7 +1490,7 @@
     }
 
     /* Modals */
-    .hxfb-modal-overlay {
+    .gsfb-modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
@@ -1490,11 +1501,11 @@
       justify-content: center;
     }
 
-    .hxfb-modal-overlay.open {
+    .gsfb-modal-overlay.open {
       display: flex;
     }
 
-    .hxfb-pub-modal {
+    .gsfb-pub-modal {
       background: #080f1e;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 22px;
@@ -1506,7 +1517,7 @@
       animation: modalIn 0.25s var(--ease) both;
     }
 
-    .hxfb-leave-modal {
+    .gsfb-leave-modal {
       background: #080f1e;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 18px;
@@ -1518,7 +1529,7 @@
       animation: modalIn 0.2s var(--ease) both;
     }
 
-    .hxfb-qr-modal {
+    .gsfb-qr-modal {
       background: #080f1e;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 20px;
@@ -1542,7 +1553,7 @@
       }
     }
 
-    .hxfb-pub-ring {
+    .gsfb-pub-ring {
       width: 64px;
       height: 64px;
       border-radius: 50%;
@@ -1555,7 +1566,7 @@
       animation: popIn 0.5s var(--ease) both;
     }
 
-    .hxfb-pub-ring svg {
+    .gsfb-pub-ring svg {
       width: 28px;
       height: 28px;
       color: #fff;
@@ -1577,9 +1588,9 @@
       }
     }
 
-    .hxfb-pub-title,
-    .hxfb-leave-title,
-    .hxfb-qr-title {
+    .gsfb-pub-title,
+    .gsfb-leave-title,
+    .gsfb-qr-title {
       font-family: var(--font-display);
       font-size: 20px;
       font-weight: 700;
@@ -1587,16 +1598,16 @@
       margin-bottom: 8px;
     }
 
-    .hxfb-pub-sub,
-    .hxfb-leave-sub,
-    .hxfb-qr-sub {
+    .gsfb-pub-sub,
+    .gsfb-leave-sub,
+    .gsfb-qr-sub {
       font-size: 14px;
       color: var(--text-2);
       line-height: 1.55;
       margin-bottom: 20px;
     }
 
-    .hxfb-pub-link-box {
+    .gsfb-pub-link-box {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -1607,7 +1618,7 @@
       margin-bottom: 20px;
     }
 
-    .hxfb-pub-link-url {
+    .gsfb-pub-link-url {
       flex: 1;
       font-size: 12px;
       color: var(--cyan);
@@ -1616,7 +1627,7 @@
       word-break: break-all;
     }
 
-    .hxfb-pub-copy {
+    .gsfb-pub-copy {
       padding: 5px 11px;
       border-radius: 6px;
       font-size: 12px;
@@ -1630,17 +1641,17 @@
       transition: var(--transition);
     }
 
-    .hxfb-pub-copy:hover {
+    .gsfb-pub-copy:hover {
       background: rgba(0, 212, 255, 0.2);
     }
 
-    .hxfb-modal-btns {
+    .gsfb-modal-btns {
       display: flex;
       gap: 8px;
       justify-content: center;
     }
 
-    .hxfb-qr-canvas-wrap {
+    .gsfb-qr-canvas-wrap {
       background: #fff;
       border-radius: 10px;
       padding: 14px;
@@ -1648,7 +1659,7 @@
       margin-bottom: 14px;
     }
 
-    .hxfb-qr-url {
+    .gsfb-qr-url {
       font-size: 11px;
       color: var(--text-3);
       font-family: var(--font-mono);
@@ -1661,47 +1672,50 @@
     }
 
     @media (max-width: 1100px) {
-      .hxfb-layout {
+      .gsfb-layout {
         grid-template-columns: 220px 1fr 300px;
       }
     }
 
     @media (max-width: 900px) {
-      .hxfb-layout {
+      .gsfb-layout {
         grid-template-columns: 1fr;
       }
 
-      .hxfb-center,
-      .hxfb-right {
+      .gsfb-center,
+      .gsfb-right {
         display: none;
       }
     }
 
     /* ── Canvas Theme Variables ── */
-    #hxfbCanvas {
-      --cc-card-bg: rgba(13,23,40,0.72);
-      --cc-card-border: rgba(255,255,255,0.08);
-      --cc-card-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    #gsfbCanvas {
+      --cc-card-bg: rgba(13, 23, 40, 0.72);
+      --cc-card-border: rgba(255, 255, 255, 0.08);
+      --cc-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
       --cc-text: #e8f0fd;
       --cc-text-2: #7a90b0;
       --cc-text-3: #3d5270;
       --cc-accent: #00d4ff;
-      --cc-input-border: rgba(255,255,255,0.12);
+      --cc-input-border: rgba(255, 255, 255, 0.12);
     }
-    #hxfbCanvas.theme-light {
+
+    #gsfbCanvas.theme-light {
       --cc-card-bg: #ffffff;
-      --cc-card-border: rgba(0,0,0,0.1);
-      --cc-card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --cc-card-border: rgba(0, 0, 0, 0.1);
+      --cc-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       --cc-text: #202124;
       --cc-text-2: #5f6368;
       --cc-text-3: #80868b;
-      --cc-input-border: rgba(0,0,0,0.15);
+      --cc-input-border: rgba(0, 0, 0, 0.15);
     }
-    .hxfb-center.theme-light {
-      background: repeating-conic-gradient(rgba(0,0,0,0.025) 0% 25%, transparent 0% 50%) 0 0/24px 24px, #f0f4f9;
+
+    .gsfb-center.theme-light {
+      background: repeating-conic-gradient(rgba(0, 0, 0, 0.025) 0% 25%, transparent 0% 50%) 0 0/24px 24px, #f0f4f9;
     }
+
     /* ── Header Card ── */
-    .hxfc-header-card {
+    .gsfc-header-card {
       background: var(--cc-card-bg);
       border: 1px solid var(--cc-card-border);
       border-radius: 12px;
@@ -1712,10 +1726,21 @@
       box-shadow: var(--cc-card-shadow);
       transition: all 0.18s;
     }
-    .hxfc-header-card:hover { border-color: rgba(0,212,255,0.25); }
-    .hxfc-header-accent { height: 10px; background: var(--grad-primary); }
-    .hxfc-header-inner { padding: 22px 28px 28px; }
-    .hxfc-header-title {
+
+    .gsfc-header-card:hover {
+      border-color: rgba(0, 212, 255, 0.25);
+    }
+
+    .gsfc-header-accent {
+      height: 10px;
+      background: var(--grad-primary);
+    }
+
+    .gsfc-header-inner {
+      padding: 22px 28px 28px;
+    }
+
+    .gsfc-header-title {
       font-family: var(--font-display);
       font-size: 28px;
       font-weight: 700;
@@ -1724,9 +1749,17 @@
       line-height: 1.25;
       user-select: none;
     }
-    .hxfc-header-desc { font-size: 14px; color: var(--cc-text-2); line-height: 1.6; margin: 0; user-select: none; }
+
+    .gsfc-header-desc {
+      font-size: 14px;
+      color: var(--cc-text-2);
+      line-height: 1.6;
+      margin: 0;
+      user-select: none;
+    }
+
     /* ── Field Cards ── */
-    .hxfc-card {
+    .gsfc-card {
       background: var(--cc-card-bg);
       border: 1px solid var(--cc-card-border);
       border-radius: 12px;
@@ -1737,82 +1770,255 @@
       box-shadow: var(--cc-card-shadow);
       overflow: hidden;
     }
-    .hxfc-card:hover { border-color: rgba(0,212,255,0.3); }
-    .hxfc-card.selected { border-color: var(--cc-accent); }
-    .hxfc-card-sel-bar {
-      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-      background: var(--cc-accent); border-radius: 12px 0 0 12px;
+
+    .gsfc-card:hover {
+      border-color: rgba(0, 212, 255, 0.3);
     }
-    .hxfc-card-inner { padding: 20px 24px 20px 24px; }
-    .hxfc-card.selected .hxfc-card-inner { padding-left: 28px; }
-    .hxfc-card-label { font-size: 15px; font-weight: 600; color: var(--cc-text); margin-bottom: 12px; user-select: none; pointer-events: none; }
-    .hxfc-req { color: #ef4444; margin-left: 3px; font-size: 15px; }
-    .hxfc-preview { color: var(--cc-text-3); font-size: 13.5px; user-select: none; pointer-events: none; }
-    .hxfc-text-preview { border-bottom: 1px dotted var(--cc-input-border); padding-bottom: 6px; width: 60%; min-height: 20px; }
-    .hxfc-long-preview { border-bottom: 1px dotted var(--cc-input-border); padding-bottom: 36px; width: 100%; min-height: 20px; }
-    .hxfc-radio-opt { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: var(--cc-text-2); font-size: 13.5px; }
-    .hxfc-radio-circle { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--cc-input-border); flex-shrink: 0; }
-    .hxfc-check-box { width: 16px; height: 16px; border-radius: 3px; border: 2px solid var(--cc-input-border); flex-shrink: 0; }
-    .hxfc-dropdown-preview { padding: 8px 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--cc-input-border); border-radius: 6px; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--cc-text-3); }
-    .hxfc-upload-preview { padding: 14px; border: 1.5px dashed var(--cc-input-border); border-radius: 8px; text-align: center; font-size: 13px; color: var(--cc-text-3); }
-    .hxfc-scale-preview { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .hxfc-scale-num { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--cc-input-border); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--cc-text-2); flex-shrink: 0; }
+
+    .gsfc-card.selected {
+      border-color: var(--cc-accent);
+    }
+
+    .gsfc-card-sel-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--cc-accent);
+      border-radius: 12px 0 0 12px;
+    }
+
+    .gsfc-card-inner {
+      padding: 20px 24px 20px 24px;
+    }
+
+    .gsfc-card.selected .gsfc-card-inner {
+      padding-left: 28px;
+    }
+
+    .gsfc-card-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--cc-text);
+      margin-bottom: 12px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .gsfc-req {
+      color: #ef4444;
+      margin-left: 3px;
+      font-size: 15px;
+    }
+
+    .gsfc-preview {
+      color: var(--cc-text-3);
+      font-size: 13.5px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .gsfc-text-preview {
+      border-bottom: 1px dotted var(--cc-input-border);
+      padding-bottom: 6px;
+      width: 60%;
+      min-height: 20px;
+    }
+
+    .gsfc-long-preview {
+      border-bottom: 1px dotted var(--cc-input-border);
+      padding-bottom: 36px;
+      width: 100%;
+      min-height: 20px;
+    }
+
+    .gsfc-radio-opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: var(--cc-text-2);
+      font-size: 13.5px;
+    }
+
+    .gsfc-radio-circle {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--cc-input-border);
+      flex-shrink: 0;
+    }
+
+    .gsfc-check-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 2px solid var(--cc-input-border);
+      flex-shrink: 0;
+    }
+
+    .gsfc-dropdown-preview {
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--cc-input-border);
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: var(--cc-text-3);
+    }
+
+    .gsfc-upload-preview {
+      padding: 14px;
+      border: 1.5px dashed var(--cc-input-border);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--cc-text-3);
+    }
+
+    .gsfc-scale-preview {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .gsfc-scale-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--cc-input-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--cc-text-2);
+      flex-shrink: 0;
+    }
+
     /* ── Card hover actions ── */
-    .hxfc-card-actions { display: none; position: absolute; top: 10px; right: 10px; gap: 5px; z-index: 2; }
-    .hxfc-card:hover .hxfc-card-actions, .hxfc-card.selected .hxfc-card-actions { display: flex; }
-    .hxfc-act-btn {
-      width: 28px; height: 28px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(13,23,40,0.85); color: #7a90b0; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 13px; transition: all 0.15s; line-height: 1;
+    .gsfc-card-actions {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      gap: 5px;
+      z-index: 2;
     }
-    .hxfc-act-btn:hover { background: rgba(255,255,255,0.12); color: #e8f0fd; }
-    .hxfc-act-btn.danger:hover { background: rgba(220,38,38,0.25); border-color: rgba(220,38,38,0.4); color: #ef4444; }
+
+    .gsfc-card:hover .gsfc-card-actions,
+    .gsfc-card.selected .gsfc-card-actions {
+      display: flex;
+    }
+
+    .gsfc-act-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(13, 23, 40, 0.85);
+      color: #7a90b0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.15s;
+      line-height: 1;
+    }
+
+    .gsfc-act-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #e8f0fd;
+    }
+
+    .gsfc-act-btn.danger:hover {
+      background: rgba(220, 38, 38, 0.25);
+      border-color: rgba(220, 38, 38, 0.4);
+      color: #ef4444;
+    }
+
     /* ── Page break card ── */
-    .hxfc-page-break {
-      background: rgba(124,58,237,0.08);
-      border: 1px solid rgba(124,58,237,0.3);
+    .gsfc-page-break {
+      background: rgba(124, 58, 237, 0.08);
+      border: 1px solid rgba(124, 58, 237, 0.3);
       border-radius: 12px;
       margin-bottom: 12px;
       cursor: pointer;
       overflow: hidden;
       transition: all 0.18s;
     }
-    .hxfc-page-break:hover { border-color: rgba(167,139,250,0.5); }
-    .hxfc-page-break.selected { border-color: #a78bfa; box-shadow: 0 0 0 1px rgba(167,139,250,0.3); }
-    .hxfc-page-break-badge { background: rgba(124,58,237,0.2); padding: 8px 20px; color: #a78bfa; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; border-bottom: 1px solid rgba(124,58,237,0.2); user-select: none; }
-    .hxfc-page-break-body { padding: 18px 24px; }
-    .hxfc-page-break-title { font-size: 16px; font-weight: 700; color: var(--cc-text); margin-bottom: 5px; user-select: none; }
-    .hxfc-page-break-desc { font-size: 13px; color: var(--cc-text-2); user-select: none; }
+
+    .gsfc-page-break:hover {
+      border-color: rgba(167, 139, 250, 0.5);
+    }
+
+    .gsfc-page-break.selected {
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.3);
+    }
+
+    .gsfc-page-break-badge {
+      background: rgba(124, 58, 237, 0.2);
+      padding: 8px 20px;
+      color: #a78bfa;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+      user-select: none;
+    }
+
+    .gsfc-page-break-body {
+      padding: 18px 24px;
+    }
+
+    .gsfc-page-break-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cc-text);
+      margin-bottom: 5px;
+      user-select: none;
+    }
+
+    .gsfc-page-break-desc {
+      font-size: 13px;
+      color: var(--cc-text-2);
+      user-select: none;
+    }
   </style>
 </head>
 
 <body>
-  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">Honourix Platform</p></div>'; } })();</script>
-  <div class="hxfb-shell">
+  <script>(function () { if (window.innerWidth < 768) { document.body.innerHTML = '<div style="position:fixed;inset:0;background:#0f0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;z-index:99999"><div style="font-size:48px;margin-bottom:24px">🖥️</div><h2 style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:12px">Desktop Only</h2><p style="color:#a0a0b0;font-size:15px;max-width:280px;line-height:1.6">This tool is designed for desktop use.<br>Please open it on a laptop or desktop computer.</p><p style="color:#606070;font-size:13px;margin-top:24px">GalSol Platform</p></div>'; } })();</script>
+  <div class="gsfb-shell">
 
     <!-- ── Topbar ────────────────────────────────────────────────── -->
-    <header class="hxfb-topbar">
-      <button class="hxfb-back" onclick="confirmLeave(event)">
+    <header class="gsfb-topbar">
+      <button class="gsfb-back" onclick="confirmLeave(event)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="15 18 9 12 15 6" />
         </svg>
         Forms
       </button>
-      <div class="hxfb-divider"></div>
-      <div class="hxfb-name-wrap">
-        <span class="hxfb-name" id="formNameEl" contenteditable="true" spellcheck="false" onblur="onNameBlur()"
+      <div class="gsfb-divider"></div>
+      <div class="gsfb-name-wrap">
+        <span class="gsfb-name" id="formNameEl" contenteditable="true" spellcheck="false" onblur="onNameBlur()"
           onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">
           Untitled Form
         </span>
       </div>
-      <div class="hxfb-save-status">
-        <div class="hxfb-save-dot" id="saveDot"></div>
+      <div class="gsfb-save-status">
+        <div class="gsfb-save-dot" id="saveDot"></div>
         <span id="saveStatusTxt">Saved</span>
       </div>
-      <div class="hxfb-topbar-right">
-        <span class="hxfb-status-badge" id="statusBadge" style="display:none"></span>
+      <div class="gsfb-topbar-right">
+        <span class="gsfb-status-badge" id="statusBadge" style="display:none"></span>
         <!-- Copy Link -->
-        <button class="hxfb-tb-btn cyan" id="copyLinkBtn" style="display:none" onclick="tbCopyLink()"
+        <button class="gsfb-tb-btn cyan" id="copyLinkBtn" style="display:none" onclick="tbCopyLink()"
           title="Copy public link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
@@ -1821,7 +2027,7 @@
           <span id="copyLinkTxt">Copy Link</span>
         </button>
         <!-- QR Code -->
-        <button class="hxfb-tb-btn" id="qrBtn" style="display:none" onclick="tbOpenQR()" title="QR Code">
+        <button class="gsfb-tb-btn" id="qrBtn" style="display:none" onclick="tbOpenQR()" title="QR Code">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="7" height="7" />
             <rect x="14" y="3" width="7" height="7" />
@@ -1832,7 +2038,7 @@
           <span id="qrBtnTxt">QR Code</span>
         </button>
         <!-- Sheet -->
-        <button class="hxfb-tb-btn green" id="sheetBtn" style="display:none" onclick="tbOpenSheet()"
+        <button class="gsfb-tb-btn green" id="sheetBtn" style="display:none" onclick="tbOpenSheet()"
           title="Open responses in Google Sheets">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1843,13 +2049,13 @@
           Sheet
         </button>
         <!-- Dashboard -->
-        <button class="hxfb-tb-btn" onclick="window.location.href='hx-database.html'"
+        <button class="gsfb-tb-btn" onclick="window.location.href='gs-database.html'"
           title="Open Dashboard & Database">Dashboard</button>
         <!-- Scanner Tool -->
-        <button class="hxfb-tb-btn" id="scannerBtn" style="display:none"
-          onclick="window.location.href='hx-scanner.html'" title="Open Entry Scanner">Scanner</button>
+        <button class="gsfb-tb-btn" id="scannerBtn" style="display:none"
+          onclick="window.location.href='gs-scanner.html'" title="Open Entry Scanner">Scanner</button>
         <!-- View Live -->
-        <button class="hxfb-tb-btn" id="viewLiveBtn" style="display:none" onclick="viewLive()">
+        <button class="gsfb-tb-btn" id="viewLiveBtn" style="display:none" onclick="viewLive()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>
@@ -1857,9 +2063,9 @@
           Preview
         </button>
         <!-- Close Form -->
-        <button class="hxfb-tb-btn" id="closeFmBtn" style="display:none" onclick="toggleClose()"></button>
+        <button class="gsfb-tb-btn" id="closeFmBtn" style="display:none" onclick="toggleClose()"></button>
         <!-- Publish -->
-        <button class="hxfb-publish-btn" id="publishBtn" onclick="doPublish()">
+        <button class="gsfb-publish-btn" id="publishBtn" onclick="doPublish()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px">
             <polyline points="17 1 21 5 17 9" />
             <path d="M3 11V9a4 4 0 0 1 4-4h14" />
@@ -1872,82 +2078,137 @@
     </header>
 
     <!-- ── 3-column layout ──────────────────────────────────────── -->
-    <div class="hxfb-layout">
+    <div class="gsfb-layout">
 
       <!-- LEFT: Fields + Add Field tabs -->
-      <aside class="hxfb-left">
+      <aside class="gsfb-left">
         <!-- Tab bar -->
-        <div class="hxfb-left-tabs">
-          <button class="hxfb-ltab active" id="ltabFields" onclick="switchLTab('fields')">
-            Fields&nbsp;<span class="hxfb-layer-count" id="layerCount">0</span>
+        <div class="gsfb-left-tabs">
+          <button class="gsfb-ltab active" id="ltabFields" onclick="switchLTab('fields')">
+            Fields&nbsp;<span class="gsfb-layer-count" id="layerCount">0</span>
           </button>
-          <button class="hxfb-ltab" id="ltabAdd" onclick="switchLTab('add')">+ Add Field</button>
+          <button class="gsfb-ltab" id="ltabAdd" onclick="switchLTab('add')">+ Add Field</button>
         </div>
 
         <!-- Fields tab: draggable layer list -->
-        <div class="hxfb-left-body" id="ltabFieldsBody">
-          <div class="hxfb-layer-list" id="layerList"></div>
+        <div class="gsfb-left-body" id="ltabFieldsBody">
+          <div class="gsfb-layer-list" id="layerList"></div>
         </div>
 
         <!-- Add Field tab: card grid -->
-        <div class="hxfb-left-body" id="ltabAddBody" style="display:none">
-          <div class="hxfb-field-cards-grid">
-            <button class="hxfb-field-card" onclick="addField('text')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        <div class="gsfb-left-body" id="ltabAddBody" style="display:none">
+          <div class="gsfb-field-cards-grid">
+            <button class="gsfb-field-card" onclick="addField('text')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="4 7 4 4 20 4 20 7" />
+                <line x1="9" y1="20" x2="15" y2="20" />
+                <line x1="12" y1="4" x2="12" y2="20" />
+              </svg>
               Short Text
             </button>
-            <button class="hxfb-field-card" onclick="addField('textarea')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+            <button class="gsfb-field-card" onclick="addField('textarea')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="17" y1="10" x2="3" y2="10" />
+                <line x1="21" y1="6" x2="3" y2="6" />
+                <line x1="21" y1="14" x2="3" y2="14" />
+                <line x1="17" y1="18" x2="3" y2="18" />
+              </svg>
               Paragraph
             </button>
-            <button class="hxfb-field-card" onclick="addField('email')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+            <button class="gsfb-field-card" onclick="addField('email')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94" />
+              </svg>
               Email
             </button>
-            <button class="hxfb-field-card" onclick="addField('phone')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <button class="gsfb-field-card" onclick="addField('phone')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
               Phone
             </button>
-            <button class="hxfb-field-card" onclick="addField('number')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+            <button class="gsfb-field-card" onclick="addField('number')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="4" y1="9" x2="20" y2="9" />
+                <line x1="4" y1="15" x2="20" y2="15" />
+                <line x1="10" y1="3" x2="8" y2="21" />
+                <line x1="16" y1="3" x2="14" y2="21" />
+              </svg>
               Number
             </button>
-            <button class="hxfb-field-card" onclick="addField('date')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <button class="gsfb-field-card" onclick="addField('date')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
               Date
             </button>
-            <button class="hxfb-field-card" onclick="addField('time')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <button class="gsfb-field-card" onclick="addField('time')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
               Time
             </button>
-            <button class="hxfb-field-card" onclick="addField('dropdown')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18"/><path d="M3 15h18"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+            <button class="gsfb-field-card" onclick="addField('dropdown')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9h18" />
+                <path d="M3 15h18" />
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
               Dropdown
             </button>
-            <button class="hxfb-field-card" onclick="addField('radio')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+            <button class="gsfb-field-card" onclick="addField('radio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
               Multiple Choice
             </button>
-            <button class="hxfb-field-card" onclick="addField('checkbox')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <button class="gsfb-field-card" onclick="addField('checkbox')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
               Checkboxes
             </button>
-            <button class="hxfb-field-card" onclick="addField('file_upload')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            <button class="gsfb-field-card" onclick="addField('file_upload')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 16 12 12 8 16" />
+                <line x1="12" y1="12" x2="12" y2="21" />
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+              </svg>
               File Upload
             </button>
-            <button class="hxfb-field-card" onclick="addField('linear_scale')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <button class="gsfb-field-card" onclick="addField('linear_scale')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
               Rating Scale
             </button>
-            <button class="hxfb-field-card card-full" onclick="addField('event_pass')"
+            <button class="gsfb-field-card card-full" onclick="addField('event_pass')"
               style="color:#f59e0b;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z" />
+                <path d="M13 5v2" />
+                <path d="M13 17v2" />
+                <path d="M13 11v2" />
+              </svg>
               Event Entry Pass
             </button>
-            <button class="hxfb-field-card card-full" onclick="addField('section_break')"
+            <button class="gsfb-field-card card-full" onclick="addField('section_break')"
               style="color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="7" rx="1" />
+                <rect x="3" y="14" width="18" height="7" rx="1" />
+              </svg>
               Add New Page
             </button>
           </div>
@@ -1955,24 +2216,29 @@
       </aside>
 
       <!-- CENTER: Interactive Preview -->
-      <main class="hxfb-center" id="hxfbCenterPanel" onclick="if(event.target.id==='hxfbCenterPanel'){selectedId=null;renderRightPanel();renderPreview();}">
-        <div style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;pointer-events:none;">
-          
-          <div style="width:100%;max-width:680px;flex-shrink:1;min-width:0;pointer-events:auto;" id="hxfbCanvas">
-            <div class="hxfc-header-card" id="canvasHeaderCard" onclick="selectedId=null;switchRTab('settings');renderRightPanel();">
-              <div class="hxfc-header-accent" id="canvasTopAccent"></div>
-              <div id="canvasHeaderCover" style="display:none;height:160px;background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
-              <div class="hxfc-header-inner">
-                <div class="hxfc-header-title" id="canvasFormTitle">Untitled Form</div>
-                <div class="hxfc-header-desc" id="canvasFormDesc">Form description...</div>
+      <main class="gsfb-center" id="gsfbCenterPanel"
+        onclick="if(event.target.id==='gsfbCenterPanel'){selectedId=null;renderRightPanel();renderPreview();}">
+        <div
+          style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;pointer-events:none;">
+
+          <div style="width:100%;max-width:680px;flex-shrink:1;min-width:0;pointer-events:auto;" id="gsfbCanvas">
+            <div class="gsfc-header-card" id="canvasHeaderCard"
+              onclick="selectedId=null;switchRTab('settings');renderRightPanel();">
+              <div class="gsfc-header-accent" id="canvasTopAccent"></div>
+              <div id="canvasHeaderCover"
+                style="display:none;height:160px;background-size:cover;background-position:center;background-repeat:no-repeat;">
+              </div>
+              <div class="gsfc-header-inner">
+                <div class="gsfc-header-title" id="canvasFormTitle">Untitled Form</div>
+                <div class="gsfc-header-desc" id="canvasFormDesc">Form description...</div>
               </div>
             </div>
-            
+
             <div id="canvasFieldsWrap"></div>
           </div>
           <!-- Pass preview (visible when passEnabled) -->
           <div id="pvPassCol" style="display:none;flex-shrink:0;">
-            <div class="hxfb-pv-label" style="width:260px;max-width:260px;margin-bottom:14px">
+            <div class="gsfb-pv-label" style="width:260px;max-width:260px;margin-bottom:14px">
               <span>Pass Preview</span>
             </div>
             <canvas id="pvPassCanvas" width="520" height="693"
@@ -1982,31 +2248,31 @@
       </main>
 
       <!-- RIGHT: Field Editor + Settings -->
-      <aside class="hxfb-right">
-        <div class="hxfb-right-tabs">
-          <button class="hxfb-rtab active" id="rtabField" onclick="switchRTab('field')">Edit Field</button>
-          <button class="hxfb-rtab" id="rtabSettings" onclick="switchRTab('settings')">Form Settings</button>
+      <aside class="gsfb-right">
+        <div class="gsfb-right-tabs">
+          <button class="gsfb-rtab active" id="rtabField" onclick="switchRTab('field')">Edit Field</button>
+          <button class="gsfb-rtab" id="rtabSettings" onclick="switchRTab('settings')">Form Settings</button>
         </div>
-        <div class="hxfb-right-body" id="rtabFieldBody"></div>
-        <div class="hxfb-right-body" id="rtabSettingsBody" style="display:none"></div>
+        <div class="gsfb-right-body" id="rtabFieldBody"></div>
+        <div class="gsfb-right-body" id="rtabSettingsBody" style="display:none"></div>
       </aside>
 
     </div>
   </div>
 
   <!-- Publish Modal -->
-  <div class="hxfb-modal-overlay" id="publishModal">
-    <div class="hxfb-pub-modal">
-      <div class="hxfb-pub-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+  <div class="gsfb-modal-overlay" id="publishModal">
+    <div class="gsfb-pub-modal">
+      <div class="gsfb-pub-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="20 6 9 17 4 12" />
         </svg></div>
-      <div class="hxfb-pub-title">Form Published!</div>
-      <div class="hxfb-pub-sub">Your form is live. Anyone with the link can fill it out.</div>
-      <div class="hxfb-pub-link-box">
-        <span class="hxfb-pub-link-url" id="publishedUrlEl"></span>
-        <button class="hxfb-pub-copy" id="copyUrlBtn" onclick="copyPublishedUrl()">Copy</button>
+      <div class="gsfb-pub-title">Form Published!</div>
+      <div class="gsfb-pub-sub">Your form is live. Anyone with the link can fill it out.</div>
+      <div class="gsfb-pub-link-box">
+        <span class="gsfb-pub-link-url" id="publishedUrlEl"></span>
+        <button class="gsfb-pub-copy" id="copyUrlBtn" onclick="copyPublishedUrl()">Copy</button>
       </div>
-      <div class="hxfb-modal-btns">
+      <div class="gsfb-modal-btns">
         <button class="btn btn-secondary btn-sm" onclick="closePublishModal()">Done</button>
         <button class="btn btn-primary btn-sm" onclick="openPublishedForm()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px">
@@ -2021,13 +2287,13 @@
   </div>
 
   <!-- QR Modal -->
-  <div class="hxfb-modal-overlay" id="qrModal" onclick="if(event.target===this)closeQR()">
-    <div class="hxfb-qr-modal">
-      <div class="hxfb-qr-title" id="qrModalTitle">Form QR Code</div>
-      <div class="hxfb-qr-sub">Scan to open on any device</div>
-      <div class="hxfb-qr-canvas-wrap"><canvas id="qrCanvas"></canvas></div>
-      <div class="hxfb-qr-url" id="qrUrlDisplay"></div>
-      <div class="hxfb-modal-btns">
+  <div class="gsfb-modal-overlay" id="qrModal" onclick="if(event.target===this)closeQR()">
+    <div class="gsfb-qr-modal">
+      <div class="gsfb-qr-title" id="qrModalTitle">Form QR Code</div>
+      <div class="gsfb-qr-sub">Scan to open on any device</div>
+      <div class="gsfb-qr-canvas-wrap"><canvas id="qrCanvas"></canvas></div>
+      <div class="gsfb-qr-url" id="qrUrlDisplay"></div>
+      <div class="gsfb-modal-btns">
         <button class="btn btn-secondary btn-sm" onclick="closeQR()">Close</button>
         <button class="btn btn-primary btn-sm" onclick="downloadQR()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px">
@@ -2042,11 +2308,11 @@
   </div>
 
   <!-- Leave Modal -->
-  <div class="hxfb-modal-overlay" id="leaveModal">
-    <div class="hxfb-leave-modal">
-      <div class="hxfb-leave-title">Unsaved changes</div>
-      <div class="hxfb-leave-sub">Your latest edits haven't been saved to the cloud yet.</div>
-      <div class="hxfb-modal-btns">
+  <div class="gsfb-modal-overlay" id="leaveModal">
+    <div class="gsfb-leave-modal">
+      <div class="gsfb-leave-title">Unsaved changes</div>
+      <div class="gsfb-leave-sub">Your latest edits haven't been saved to the cloud yet.</div>
+      <div class="gsfb-modal-btns">
         <button class="btn btn-secondary btn-sm" onclick="closeLeaveModal()">Keep Editing</button>
         <button class="btn btn-danger btn-sm" onclick="leaveNow()">Leave Anyway</button>
         <button class="btn btn-primary btn-sm" onclick="saveAndLeave()">Save & Leave</button>
@@ -2056,7 +2322,7 @@
 
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="dashboard.js"></script>
-  <script src="hx-form-state.js"></script>
+  <script src="gs-form-state.js"></script>
   <script>
     requireAuth();
 
@@ -2086,7 +2352,7 @@
     /* ── Runtime state ──────────────────────────────────────────────── */
     let selectedId = null;   // selected field id in layers
     let publishedUrl = null;
-    let leaveTarget = 'hx-forms.html';
+    let leaveTarget = 'gs-forms.html';
     let rightTab = 'field';
     // Preview page state
     let _pv = { page: 0, pages: [], vals: {}, selOpts: {} };
@@ -2109,7 +2375,7 @@
     (async function init() {
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
-      const state = Object.create(HXFState);
+      const state = Object.create(GSFState);
       window._S = state;
       await state.init(id);
 
@@ -2150,7 +2416,7 @@
     function setSaveStatus(s) {
       const dot = document.getElementById('saveDot');
       const txt = document.getElementById('saveStatusTxt');
-      dot.className = 'hxfb-save-dot' + (s === 'unsaved' ? ' unsaved' : s === 'saving' ? ' saving' : '');
+      dot.className = 'gsfb-save-dot' + (s === 'unsaved' ? ' unsaved' : s === 'saving' ? ' saving' : '');
       txt.textContent = s === 'saved' ? 'Saved' : s === 'saving' ? 'Saving...' : 'Unsaved';
     }
 
@@ -2168,7 +2434,7 @@
       badge.style.display = isLive ? '' : 'none';
       if (isLive) {
         badge.innerHTML = status === 'published' ? '<span style="color:#10b981">&#9679;</span> Published' : '<span style="color:#6b7280">&#9679;</span> Closed';
-        badge.className = 'hxfb-status-badge ' + status;
+        badge.className = 'gsfb-status-badge ' + status;
       }
 
       copyBtn.style.display = isLive ? '' : 'none';
@@ -2181,10 +2447,10 @@
 
       if (isLive) {
         if (status === 'closed') {
-          closeBtn.className = 'hxfb-tb-btn green';
+          closeBtn.className = 'gsfb-tb-btn green';
           closeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Re-open`;
         } else {
-          closeBtn.className = 'hxfb-tb-btn red';
+          closeBtn.className = 'gsfb-tb-btn red';
           closeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Close`;
         }
       }
@@ -2195,14 +2461,14 @@
     }
 
     /* Topbar button actions */
-    function viewLive() { 
-      if (_S.slug) window.open('hx-form-view.html?f=' + _S.slug, '_blank'); 
+    function viewLive() {
+      if (_S.slug) window.open('gs-form-view.html?f=' + _S.slug, '_blank');
       else toast('Please publish the form once to generate the preview link.', 'warn');
     }
     function tbOpenSheet() { const sid = _S.config?.sheetId; if (sid) window.open('https://docs.google.com/spreadsheets/d/' + sid, '_blank'); }
 
     function tbCopyLink() {
-      const url = window.location.origin + '/hx-form-view.html?f=' + _S.slug;
+      const url = window.location.origin + '/gs-form-view.html?f=' + _S.slug;
       navigator.clipboard.writeText(url).then(() => {
         const btn = document.getElementById('copyLinkBtn');
         const txt = document.getElementById('copyLinkTxt');
@@ -2213,7 +2479,7 @@
     }
 
     function tbOpenQR() {
-      const url = window.location.origin + '/hx-form-view.html?f=' + _S.slug;
+      const url = window.location.origin + '/gs-form-view.html?f=' + _S.slug;
       document.getElementById('qrModalTitle').textContent = _S.name;
       document.getElementById('qrUrlDisplay').textContent = url;
       document.getElementById('qrModal').classList.add('open');
@@ -2256,7 +2522,7 @@
 
       if (!fields.length) {
         list.innerHTML = `
-      <div class="hxfb-layers-empty">
+      <div class="gsfb-layers-empty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         <p>No fields yet.<br>Click <strong style="color:var(--cyan)">Add Field</strong> below.</p>
       </div>`;
@@ -2270,7 +2536,7 @@
         const label = FIELD_LABELS[f.type] || f.type;
 
         return `
-      <div class="hxfb-layer-item${isSel ? ' selected' : ''}${isPB ? ' is-page-break' : ''}"
+      <div class="gsfb-layer-item${isSel ? ' selected' : ''}${isPB ? ' is-page-break' : ''}"
            id="li-${f.id}" draggable="true"
            data-id="${f.id}" data-idx="${i}"
            onclick="selectLayer('${f.id}')"
@@ -2278,15 +2544,15 @@
            ondragover="onDragOver(event,'${f.id}')"
            ondragleave="onDragLeave(event,'${f.id}')"
            ondrop="onDrop(event,'${f.id}')">
-        <span class="hxfb-drag-handle" ondragstart="event.stopPropagation()" onclick="event.stopPropagation()">⠿</span>
-        <div class="hxfb-layer-icon ${f.type}">
+        <span class="gsfb-drag-handle" ondragstart="event.stopPropagation()" onclick="event.stopPropagation()">⠿</span>
+        <div class="gsfb-layer-icon ${f.type}">
           <i data-lucide="${icon}"></i>
         </div>
-        <div class="hxfb-layer-info">
-          <div class="hxfb-layer-lbl">
-            ${f.required ? '<span class="hxfb-layer-req">*</span>' : ''}${f.label || (isPB ? '— New Page —' : 'Untitled')}
+        <div class="gsfb-layer-info">
+          <div class="gsfb-layer-lbl">
+            ${f.required ? '<span class="gsfb-layer-req">*</span>' : ''}${f.label || (isPB ? '— New Page —' : 'Untitled')}
           </div>
-          <div class="hxfb-layer-sub">${label}</div>
+          <div class="gsfb-layer-sub">${label}</div>
         </div>
       </div> `;
       }).join('');
@@ -2300,16 +2566,16 @@
       switchRTab('field');
       renderRightPanel();
       // Update selected state on canvas cards without full re-render
-      document.querySelectorAll('.hxfc-card, .hxfc-page-break').forEach(card => {
+      document.querySelectorAll('.gsfc-card, .gsfc-page-break').forEach(card => {
         const cid = card.id?.replace('canvas-card-', '');
         const sel = cid === id;
         card.classList.toggle('selected', sel);
-        // Show/hide the left selection bar for .hxfc-card
-        if (card.classList.contains('hxfc-card')) {
-          let bar = card.querySelector('.hxfc-card-sel-bar');
+        // Show/hide the left selection bar for .gsfc-card
+        if (card.classList.contains('gsfc-card')) {
+          let bar = card.querySelector('.gsfc-card-sel-bar');
           if (sel && !bar) {
             bar = document.createElement('div');
-            bar.className = 'hxfc-card-sel-bar';
+            bar.className = 'gsfc-card-sel-bar';
             card.insertBefore(bar, card.firstChild);
           } else if (!sel && bar) {
             bar.remove();
@@ -2371,7 +2637,7 @@
 
     function cleanDrag() {
       _dragId = null;
-      document.querySelectorAll('.hxfb-layer-item').forEach(el => {
+      document.querySelectorAll('.gsfb-layer-item').forEach(el => {
         el.classList.remove('dragging', 'drag-over-top', 'drag-over-bottom');
       });
     }
@@ -2419,7 +2685,7 @@
       document.getElementById('rtabSettings').classList.toggle('active', tab === 'settings');
       document.getElementById('rtabFieldBody').style.display = tab === 'field' ? '' : 'none';
       document.getElementById('rtabSettingsBody').style.display = tab === 'settings' ? '' : 'none';
-      
+
       // Guarantee fresh data rendering when switching tabs!
       if (tab === 'settings') renderSettings();
       if (tab === 'field') renderRightPanel();
@@ -2429,7 +2695,7 @@
       const body = document.getElementById('rtabFieldBody');
       if (!selectedId) {
         body.innerHTML = `
-      <div class="hxfb-no-sel" >
+      <div class="gsfb-no-sel" >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         <p>Select a field from the<br>left panel to edit it.</p>
       </div> `;
@@ -2450,37 +2716,37 @@
       const id = f.id;
       if (f.type === 'event_pass') return renderPassFieldEditor(f, idx, total);
       let html = `
-      <div class="hxfb-prop" >
-      <label class="hxfb-prop-label">Field Label</label>
-      <input class="hxfb-input" value="${escAttr(f.label)}"
+      <div class="gsfb-prop" >
+      <label class="gsfb-prop-label">Field Label</label>
+      <input class="gsfb-input" value="${escAttr(f.label)}"
              oninput="updateFP('${id}','label',this.value)" placeholder="Enter label"/>
     </div> `;
 
       if (f.type === 'section_break') {
         html += `
-      <div class="hxfb-prop" >
-        <label class="hxfb-prop-label">Page Description</label>
-        <input class="hxfb-input" value="${escAttr(f.description || '')}"
+      <div class="gsfb-prop" >
+        <label class="gsfb-prop-label">Page Description</label>
+        <input class="gsfb-input" value="${escAttr(f.description || '')}"
                oninput="updateFP('${id}','description',this.value)" placeholder="Optional subtitle for this page"/>
       </div> `;
       } else {
         if (!['radio', 'checkbox', 'file_upload', 'linear_scale', 'date', 'time'].includes(f.type)) {
           html += `
-      <div class="hxfb-prop" >
-          <label class="hxfb-prop-label">Placeholder</label>
-          <input class="hxfb-input" value="${escAttr(f.placeholder || '')}"
+      <div class="gsfb-prop" >
+          <label class="gsfb-prop-label">Placeholder</label>
+          <input class="gsfb-input" value="${escAttr(f.placeholder || '')}"
                  oninput="updateFP('${id}','placeholder',this.value)" placeholder="Hint text (optional)"/>
         </div> `;
         }
 
         if (f.type === 'number') {
           html += `
-      <div class="hxfb-prop" >
-          <label class="hxfb-prop-label">Range</label>
-          <div class="hxfb-grid-2">
-            <input class="hxfb-input" type="number" value="${f.validation?.min ?? ''}"
+      <div class="gsfb-prop" >
+          <label class="gsfb-prop-label">Range</label>
+          <div class="gsfb-grid-2">
+            <input class="gsfb-input" type="number" value="${f.validation?.min ?? ''}"
                    oninput="updateFPNested('${id}','validation','min',this.value||null)" placeholder="Min"/>
-            <input class="hxfb-input" type="number" value="${f.validation?.max ?? ''}"
+            <input class="gsfb-input" type="number" value="${f.validation?.max ?? ''}"
                    oninput="updateFPNested('${id}','validation','max',this.value||null)" placeholder="Max"/>
           </div>
         </div> `;
@@ -2489,27 +2755,27 @@
         if (['dropdown', 'radio', 'checkbox'].includes(f.type)) {
           const opts = f.options || [];
           html += `
-      <div class="hxfb-prop" >
-          <label class="hxfb-prop-label" style="display:flex;justify-content:space-between;align-items:center">
+      <div class="gsfb-prop" >
+          <label class="gsfb-prop-label" style="display:flex;justify-content:space-between;align-items:center">
             Options
             <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text-3);font-size:10.5px">Label &nbsp;&middot;&nbsp; Cap (seats)</span>
           </label>
-          <div class="hxfb-options-list">
+          <div class="gsfb-options-list">
             ${opts.map((o, i) => `
-              <div class="hxfb-option-row">
-                <input class="hxfb-option-input" value="${escAttr(o)}"
+              <div class="gsfb-option-row">
+                <input class="gsfb-option-input" value="${escAttr(o)}"
                        oninput="updateOpt('${id}',${i},this.value)" placeholder="Option ${i + 1}"/>
-                <input class="hxfb-option-input" type="number" min="1"
+                <input class="gsfb-option-input" type="number" min="1"
                        style="width:66px;flex-shrink:0;text-align:center"
                        value="${(f.optionCaps || [])[i] || ''}" placeholder="∞"
                        title="Seat cap — leave blank for unlimited"
                        oninput="updateOptCap('${id}',${i},this.value?+this.value:null)"/>
-                <button class="hxfb-option-del" onclick="removeOpt('${id}',${i})" ${opts.length <= 1 ? 'disabled style="opacity:.3"' : ''}>
+                <button class="gsfb-option-del" onclick="removeOpt('${id}',${i})" ${opts.length <= 1 ? 'disabled style="opacity:.3"' : ''}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>`).join('')}
           </div>
-          <button class="hxfb-add-option-btn" onclick="addOpt('${id}')">
+          <button class="gsfb-add-option-btn" onclick="addOpt('${id}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add option
           </button>
@@ -2518,27 +2784,27 @@
 
         if (f.type === 'linear_scale') {
           html += `
-      <div class="hxfb-prop" >
-          <label class="hxfb-prop-label">Range</label>
-          <div class="hxfb-grid-2">
-            <input class="hxfb-input" type="number" value="${f.min ?? 1}" min="1" max="5"
+      <div class="gsfb-prop" >
+          <label class="gsfb-prop-label">Range</label>
+          <div class="gsfb-grid-2">
+            <input class="gsfb-input" type="number" value="${f.min ?? 1}" min="1" max="5"
                    oninput="updateFP('${id}','min',+this.value)" placeholder="Min"/>
-            <input class="hxfb-input" type="number" value="${f.max ?? 5}" min="2" max="10"
+            <input class="gsfb-input" type="number" value="${f.max ?? 5}" min="2" max="10"
                    oninput="updateFP('${id}','max',+this.value)" placeholder="Max"/>
           </div>
         </div>
-        <div class="hxfb-prop">
-          <label class="hxfb-prop-label">Scale Labels</label>
-          <div class="hxfb-grid-2">
-            <input class="hxfb-input" value="${escAttr(f.minLabel || 'Poor')}"
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Scale Labels</label>
+          <div class="gsfb-grid-2">
+            <input class="gsfb-input" value="${escAttr(f.minLabel || 'Poor')}"
                    oninput="updateFP('${id}','minLabel',this.value)" placeholder="Low"/>
-            <input class="hxfb-input" value="${escAttr(f.maxLabel || 'Excellent')}"
+            <input class="gsfb-input" value="${escAttr(f.maxLabel || 'Excellent')}"
                    oninput="updateFP('${id}','maxLabel',this.value)" placeholder="High"/>
           </div>
         </div>
-        <div class="hxfb-prop">
-          <label class="hxfb-prop-label">Display Style</label>
-          <select class="hxfb-select" onchange="updateFP('${id}','style',this.value)">
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Display Style</label>
+          <select class="gsfb-select" onchange="updateFP('${id}','style',this.value)">
             <option value="stars"   ${f.style === 'stars' ? 'selected' : ''}>★ Stars</option>
             <option value="numbers" ${f.style === 'numbers' ? 'selected' : ''}>1–${f.max || 5} Numbers</option>
           </select>
@@ -2547,18 +2813,18 @@
 
         if (f.type === 'file_upload') {
           html += `
-      <div class="hxfb-prop" >
-          <label class="hxfb-prop-label">Accepted Types</label>
-          <select class="hxfb-select" onchange="updateFP('${id}','accept',this.value)">
+      <div class="gsfb-prop" >
+          <label class="gsfb-prop-label">Accepted Types</label>
+          <select class="gsfb-select" onchange="updateFP('${id}','accept',this.value)">
             <option value="*"               ${(!f.accept || f.accept === '*') ? 'selected' : ''}>Any file</option>
             <option value="image/*"         ${f.accept === 'image/*' ? 'selected' : ''}>Images only</option>
             <option value=".pdf"            ${f.accept === '.pdf' ? 'selected' : ''}>PDF only</option>
             <option value=".pdf,.doc,.docx" ${f.accept === '.pdf,.doc,.docx' ? 'selected' : ''}>Documents</option>
           </select>
         </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Max File Size</label>
-        <select class="hxfb-select" onchange="updateFP('${id}','maxMB',+this.value)">
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Max File Size</label>
+        <select class="gsfb-select" onchange="updateFP('${id}','maxMB',+this.value)">
           <option value="2" ${f.maxMB === 2 ? 'selected' : ''}>2 MB</option>
           <option value="5" ${f.maxMB === 5 ? 'selected' : ''}>5 MB</option>
           <option value="10" ${(!f.maxMB || f.maxMB === 10) ? 'selected' : ''}>10 MB</option>
@@ -2568,10 +2834,10 @@
         }
 
         html += `
-        <div class="hxfb-prop" >
-          <div class="hxfb-toggle-row">
+        <div class="gsfb-prop" >
+          <div class="gsfb-toggle-row">
             <span>Required</span>
-            <div class="hxfb-toggle${f.required ? ' on' : ''}" onclick="toggleReq('${id}')"></div>
+            <div class="gsfb-toggle${f.required ? ' on' : ''}" onclick="toggleReq('${id}')"></div>
           </div>
       </div> `;
 
@@ -2580,19 +2846,19 @@
 
       // Action row
       html += `
-      <div class="hxfb-field-actions" >
-      <button class="hxfb-action-btn" onclick="moveFP('${id}','up')"   ${idx === 0 ? 'disabled style="opacity:.35"' : ''}>
+      <div class="gsfb-field-actions" >
+      <button class="gsfb-action-btn" onclick="moveFP('${id}','up')"   ${idx === 0 ? 'disabled style="opacity:.35"' : ''}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
       </button>
-      <button class="hxfb-action-btn" onclick="moveFP('${id}','down')" ${idx === total - 1 ? 'disabled style="opacity:.35"' : ''}>
+      <button class="gsfb-action-btn" onclick="moveFP('${id}','down')" ${idx === total - 1 ? 'disabled style="opacity:.35"' : ''}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <button class="hxfb-action-btn" onclick="dupFP('${id}')">
+      <button class="gsfb-action-btn" onclick="dupFP('${id}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         Copy
       </button>
       <div style="flex:1"></div>
-      <button class="hxfb-action-btn danger" onclick="delFP('${id}')">
+      <button class="gsfb-action-btn danger" onclick="delFP('${id}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Delete
       </button>
@@ -2609,8 +2875,8 @@
       fields.forEach(f => {
         const el = document.getElementById('li-' + f.id);
         if (el) {
-          const lbl = el.querySelector('.hxfb-layer-lbl');
-          if (lbl) lbl.innerHTML = (f.required ? '<span class="hxfb-layer-req">*</span>' : '') + (f.label || (f.type === 'section_break' ? '— New Page —' : 'Untitled'));
+          const lbl = el.querySelector('.gsfb-layer-lbl');
+          if (lbl) lbl.innerHTML = (f.required ? '<span class="gsfb-layer-req">*</span>' : '') + (f.label || (f.type === 'section_break' ? '— New Page —' : 'Untitled'));
         }
       });
     }
@@ -2663,8 +2929,8 @@
 
     function applyCanvasTheme() {
       const th = _S.config?.theme || {};
-      const canvas = document.getElementById('hxfbCanvas');
-      const center = document.getElementById('hxfbCenterPanel');
+      const canvas = document.getElementById('gsfbCanvas');
+      const center = document.getElementById('gsfbCenterPanel');
       if (!canvas) return;
       canvas.classList.toggle('theme-light', !!th.lightMode);
       if (center) center.classList.toggle('theme-light', !!th.lightMode);
@@ -2776,23 +3042,23 @@
       renderPreview();
     }
     function updateSetting(key, value) {
-      if(!_S.config.settings) _S.config.settings = {}; // Fallback protection
+      if (!_S.config.settings) _S.config.settings = {}; // Fallback protection
       _S.updateSettings({ [key]: value });
       setSaveStatus('unsaved');
       // Don't call renderSettings() here - it would reset input cursor while typing
       // Only update the canvas preview
       renderPreviewHeader();
-      
+
       // LIVE SYNC TOP BAR DOCUMENT TITLE
       if (key === 'title') {
         const docTitle = document.getElementById('formNameEl');
         if (docTitle && document.activeElement !== docTitle) {
-           docTitle.textContent = value || 'Untitled Form';
+          docTitle.textContent = value || 'Untitled Form';
         }
       }
     }
     function toggleSetting(key) {
-      if(!_S.config.settings) _S.config.settings = {}; // Fallback protection
+      if (!_S.config.settings) _S.config.settings = {}; // Fallback protection
       _S.updateSettings({ [key]: !_S.config.settings[key] });
       setSaveStatus('unsaved');
       renderSettings();
@@ -2857,37 +3123,37 @@
       ];
 
       document.getElementById('rtabSettingsBody').innerHTML = `
-      <div class="hxfb-settings-section" >
-      <div class="hxfb-settings-sec-title">Form Details</div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Title</label>
-        <input class="hxfb-input" value="${escAttr(s.title || '')}" oninput="updateSetting('title',this.value)" placeholder="Form title"/>
+      <div class="gsfb-settings-section" >
+      <div class="gsfb-settings-sec-title">Form Details</div>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Title</label>
+        <input class="gsfb-input" value="${escAttr(s.title || '')}" oninput="updateSetting('title',this.value)" placeholder="Form title"/>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Description</label>
-        <div class="hxfb-rte-wrap">
-          <div class="hxfb-rte-bar">
-            <button class="hxfb-rte-btn" title="Bold"          onmousedown="event.preventDefault();document.execCommand('bold')"><strong>B</strong></button>
-            <button class="hxfb-rte-btn" title="Italic"        onmousedown="event.preventDefault();document.execCommand('italic')"><em>I</em></button>
-            <button class="hxfb-rte-btn" title="Bullet list"   onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">≡</button>
-            <button class="hxfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">①</button>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Description</label>
+        <div class="gsfb-rte-wrap">
+          <div class="gsfb-rte-bar">
+            <button class="gsfb-rte-btn" title="Bold"          onmousedown="event.preventDefault();document.execCommand('bold')"><strong>B</strong></button>
+            <button class="gsfb-rte-btn" title="Italic"        onmousedown="event.preventDefault();document.execCommand('italic')"><em>I</em></button>
+            <button class="gsfb-rte-btn" title="Bullet list"   onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">≡</button>
+            <button class="gsfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">①</button>
           </div>
-          <div class="hxfb-rte-body" contenteditable="true" id="descRTE"
+          <div class="gsfb-rte-body" contenteditable="true" id="descRTE"
                oninput="updateSetting('description', this.innerHTML)"
                placeholder="Brief description shown above the form">${s.description || ''}</div>
         </div>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Submit Button Label</label>
-        <input class="hxfb-input" value="${escAttr(s.submitLabel || 'Submit')}" oninput="updateSetting('submitLabel',this.value)"/>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Submit Button Label</label>
+        <input class="gsfb-input" value="${escAttr(s.submitLabel || 'Submit')}" oninput="updateSetting('submitLabel',this.value)"/>
       </div>
     </div>
 
-    <div class="hxfb-settings-section">
-      <div class="hxfb-settings-sec-title">Appearance</div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Cover Image URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
-        <input class="hxfb-input" type="url" id="coverImageInput" value="${escAttr(s.coverImage || '')}"
+    <div class="gsfb-settings-section">
+      <div class="gsfb-settings-sec-title">Appearance</div>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Cover Image URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
+        <input class="gsfb-input" type="url" id="coverImageInput" value="${escAttr(s.coverImage || '')}"
                oninput="updateSetting('coverImage',this.value)" placeholder="https://… or upload below"/>
         <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
           <label style="cursor:pointer;padding:6px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:6px;font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:6px;">
@@ -2898,17 +3164,17 @@
           ${s.coverImage ? `<button onclick="updateSetting('coverImage','');document.getElementById('coverImageInput').value=''" style="padding:6px 10px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);border-radius:6px;color:var(--red);font-size:12px;cursor:pointer;">Remove</button>` : ''}
         </div>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Heading Font</label>
-        <select class="hxfb-select" onchange="updateThemeFont('heading',this.value)">
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Heading Font</label>
+        <select class="gsfb-select" onchange="updateThemeFont('heading',this.value)">
           ${['Plus Jakarta Sans', 'Syne', 'Montserrat', 'Raleway', 'Playfair Display', 'Cormorant Garamond', 'Dancing Script', 'Cinzel', 'EB Garamond'].map(f =>
         `<option value="${f}" ${(th.headingFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`
       ).join('')}
         </select>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Body Font</label>
-        <select class="hxfb-select" onchange="updateThemeFont('body',this.value)">
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Body Font</label>
+        <select class="gsfb-select" onchange="updateThemeFont('body',this.value)">
           ${['Plus Jakarta Sans', 'Montserrat', 'Raleway', 'EB Garamond', 'JetBrains Mono'].map(f =>
         `<option value="${f}" ${(th.bodyFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`
       ).join('')}
@@ -2916,62 +3182,62 @@
       </div>
     </div>
 
-    <div class="hxfb-settings-section">
-      <div class="hxfb-settings-sec-title">After Submission</div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Success Message</label>
-        <input class="hxfb-input" value="${escAttr(s.successMessage || 'Thank you for your response!')}" oninput="updateSetting('successMessage',this.value)"/>
+    <div class="gsfb-settings-section">
+      <div class="gsfb-settings-sec-title">After Submission</div>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Success Message</label>
+        <input class="gsfb-input" value="${escAttr(s.successMessage || 'Thank you for your response!')}" oninput="updateSetting('successMessage',this.value)"/>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Redirect URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
-        <input class="hxfb-input" type="url" value="${escAttr(s.redirectUrl || '')}" oninput="updateSetting('redirectUrl',this.value)" placeholder="https://…"/>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Redirect URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
+        <input class="gsfb-input" type="url" value="${escAttr(s.redirectUrl || '')}" oninput="updateSetting('redirectUrl',this.value)" placeholder="https://…"/>
       </div>
     </div>
 
-    <div class="hxfb-settings-section">
-      <div class="hxfb-settings-sec-title">Submission Rules</div>
-      <div class="hxfb-prop">
-        <div class="hxfb-toggle-row">
+    <div class="gsfb-settings-section">
+      <div class="gsfb-settings-sec-title">Submission Rules</div>
+      <div class="gsfb-prop">
+        <div class="gsfb-toggle-row">
           <div>
             <div style="font-size:13px;color:var(--text)">Allow multiple submissions</div>
             <div style="font-size:11px;color:var(--text-3);margin-top:2px">Same person can submit more than once</div>
           </div>
-          <div class="hxfb-toggle${s.allowMultiple ? ' on' : ''}" onclick="toggleSetting('allowMultiple')"></div>
+          <div class="gsfb-toggle${s.allowMultiple ? ' on' : ''}" onclick="toggleSetting('allowMultiple')"></div>
         </div>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Max Submissions</label>
-        <input class="hxfb-input" type="number" value="${s.maxSubmissions || ''}" oninput="updateSetting('maxSubmissions',this.value?+this.value:null)" placeholder="Unlimited"/>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Max Submissions</label>
+        <input class="gsfb-input" type="number" value="${s.maxSubmissions || ''}" oninput="updateSetting('maxSubmissions',this.value?+this.value:null)" placeholder="Unlimited"/>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Close Date</label>
-        <input class="hxfb-input" type="date" value="${s.closeDate || ''}" oninput="updateSetting('closeDate',this.value||null)"/>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Close Date</label>
+        <input class="gsfb-input" type="date" value="${s.closeDate || ''}" oninput="updateSetting('closeDate',this.value||null)"/>
       </div>
     </div>
 
-    <div class="hxfb-settings-section">
-      <div class="hxfb-settings-sec-title">Theme Colour</div>
-      <div class="hxfb-color-grid">
-        ${COLORS.map(c => `<div class="hxfb-color-pill${th.color === c.key ? ' selected' : ''}" style="background:${c.hex}" title="${c.key}" onclick="updateThemeColor('${c.key}')"></div>`).join('')}
+    <div class="gsfb-settings-section">
+      <div class="gsfb-settings-sec-title">Theme Colour</div>
+      <div class="gsfb-color-grid">
+        ${COLORS.map(c => `<div class="gsfb-color-pill${th.color === c.key ? ' selected' : ''}" style="background:${c.hex}" title="${c.key}" onclick="updateThemeColor('${c.key}')"></div>`).join('')}
       </div>
-      <div class="hxfb-toggle-row" style="margin-top:12px">
+      <div class="gsfb-toggle-row" style="margin-top:12px">
         <div>
           <div style="font-size:13px;color:var(--text)">Light mode</div>
           <div style="font-size:11px;color:var(--text-3);margin-top:2px">White background, dark text</div>
         </div>
-        <div class="hxfb-toggle${th.lightMode ? ' on' : ''}" onclick="updateThemeLightMode()"></div>
+        <div class="gsfb-toggle${th.lightMode ? ' on' : ''}" onclick="updateThemeLightMode()"></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
-        <div class="hxfb-prop" style="margin-bottom:0">
-          <label class="hxfb-prop-label">Card Background</label>
+        <div class="gsfb-prop" style="margin-bottom:0">
+          <label class="gsfb-prop-label">Card Background</label>
           <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
             <input type="color" value="${th.cardColor || '#0d1728'}" oninput="updateCanvasColor('cardColor',this.value)"
                    style="width:34px;height:28px;border:1px solid rgba(255,255,255,0.12);padding:1px 3px;background:rgba(255,255,255,0.05);cursor:pointer;border-radius:5px"/>
             ${th.cardColor ? `<button onclick="updateCanvasColor('cardColor',null)" style="font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer">Reset</button>` : ''}
           </div>
         </div>
-        <div class="hxfb-prop" style="margin-bottom:0">
-          <label class="hxfb-prop-label">Canvas Background</label>
+        <div class="gsfb-prop" style="margin-bottom:0">
+          <label class="gsfb-prop-label">Canvas Background</label>
           <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
             <input type="color" value="${th.pageColor || '#04080f'}" oninput="updateCanvasColor('pageColor',this.value)"
                    style="width:34px;height:28px;border:1px solid rgba(255,255,255,0.12);padding:1px 3px;background:rgba(255,255,255,0.05);cursor:pointer;border-radius:5px"/>
@@ -2981,50 +3247,50 @@
       </div>
     </div>
 
-    <div class="hxfb-settings-section">
+    <div class="gsfb-settings-section">
       <details${s.passEnabled ? ' open' : ''}>
         <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:4px 0;user-select:none">
-          <div class="hxfb-settings-sec-title" style="margin-bottom:0">🎫 Entry Pass &amp; Attendance</div>
+          <div class="gsfb-settings-sec-title" style="margin-bottom:0">🎫 Entry Pass &amp; Attendance</div>
           <span style="font-size:11px;color:var(--text-3)">${s.passEnabled ? '&#9650;' : '&#9660;'}</span>
         </summary>
         <div style="padding-top:14px">
-          <div class="hxfb-prop">
-            <div class="hxfb-toggle-row">
+          <div class="gsfb-prop">
+            <div class="gsfb-toggle-row">
               <div>
                 <div style="font-size:13px;color:var(--text)">Enable Entry Passes</div>
                 <div style="font-size:11px;color:var(--text-3);margin-top:2px">Attendees get a QR pass on submit</div>
               </div>
-              <div class="hxfb-toggle${s.passEnabled ? ' on' : ''}" onclick="togglePassEnabled()"></div>
+              <div class="gsfb-toggle${s.passEnabled ? ' on' : ''}" onclick="togglePassEnabled()"></div>
             </div>
           </div>
           ${s.passEnabled ? `
-          <div class="hxfb-prop">
-            <label class="hxfb-prop-label">Event Name</label>
-            <input class="hxfb-input" value="${escAttr(s.passEventName || '')}" oninput="updateSetting('passEventName',this.value)" placeholder="e.g. Tech Fest 2026"/>
+          <div class="gsfb-prop">
+            <label class="gsfb-prop-label">Event Name</label>
+            <input class="gsfb-input" value="${escAttr(s.passEventName || '')}" oninput="updateSetting('passEventName',this.value)" placeholder="e.g. Tech Fest 2026"/>
           </div>
-          <div class="hxfb-prop">
-            <label class="hxfb-prop-label">Venue</label>
-            <input class="hxfb-input" value="${escAttr(s.passVenue || '')}" oninput="updateSetting('passVenue',this.value)" placeholder="e.g. Auditorium Block A"/>
+          <div class="gsfb-prop">
+            <label class="gsfb-prop-label">Venue</label>
+            <input class="gsfb-input" value="${escAttr(s.passVenue || '')}" oninput="updateSetting('passVenue',this.value)" placeholder="e.g. Auditorium Block A"/>
           </div>
-          <div class="hxfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="gsfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div>
-              <label class="hxfb-prop-label">Date</label>
-              <input class="hxfb-input" type="date" value="${escAttr(s.passDate || '')}" oninput="updateSetting('passDate',this.value)"/>
+              <label class="gsfb-prop-label">Date</label>
+              <input class="gsfb-input" type="date" value="${escAttr(s.passDate || '')}" oninput="updateSetting('passDate',this.value)"/>
             </div>
             <div>
-              <label class="hxfb-prop-label">Time</label>
-              <input class="hxfb-input" type="time" value="${escAttr(s.passTime || '')}" oninput="updateSetting('passTime',this.value)"/>
+              <label class="gsfb-prop-label">Time</label>
+              <input class="gsfb-input" type="time" value="${escAttr(s.passTime || '')}" oninput="updateSetting('passTime',this.value)"/>
             </div>
           </div>
-          <div class="hxfb-prop">
-            <label class="hxfb-prop-label">Entry Rules <span style="color:var(--text-3);font-weight:400;text-transform:none">(one per line)</span></label>
-            <textarea class="hxfb-input" rows="3" style="resize:vertical;font-family:var(--font);font-size:12.5px"
+          <div class="gsfb-prop">
+            <label class="gsfb-prop-label">Entry Rules <span style="color:var(--text-3);font-weight:400;text-transform:none">(one per line)</span></label>
+            <textarea class="gsfb-input" rows="3" style="resize:vertical;font-family:var(--font);font-size:12.5px"
               placeholder="No outside food${String.fromCharCode(10)}Carry valid ID${String.fromCharCode(10)}One entry per pass"
               oninput="updateSetting('passRules',this.value.split('\\n').filter(l=>l.trim()))">${escAttr((s.passRules || []).join('\n'))}</textarea>
           </div>
-          <div class="hxfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="gsfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
             <div>
-              <label class="hxfb-prop-label">Banner Colour</label>
+              <label class="gsfb-prop-label">Banner Colour</label>
               <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
                 <input type="color" value="${escAttr(s.passBannerColor || '#1a1a2e')}" oninput="updateSetting('passBannerColor',this.value)"
                   style="width:36px;height:36px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
@@ -3032,7 +3298,7 @@
               </div>
             </div>
             <div>
-              <label class="hxfb-prop-label">Text Colour</label>
+              <label class="gsfb-prop-label">Text Colour</label>
               <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
                 <input type="color" value="${escAttr(s.passTextColor || '#ffffff')}" oninput="updateSetting('passTextColor',this.value)"
                   style="width:36px;height:36px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
@@ -3040,40 +3306,40 @@
               </div>
             </div>
           </div>
-          <div class="hxfb-prop">
-            <label class="hxfb-prop-label">Logo URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
-            <input class="hxfb-input" type="url" value="${escAttr(s.passLogoUrl || '')}" oninput="updateSetting('passLogoUrl',this.value)" placeholder="https://…"/>
+          <div class="gsfb-prop">
+            <label class="gsfb-prop-label">Logo URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
+            <input class="gsfb-input" type="url" value="${escAttr(s.passLogoUrl || '')}" oninput="updateSetting('passLogoUrl',this.value)" placeholder="https://…"/>
           </div>
-          <div class="hxfb-prop">
-            <label class="hxfb-prop-label">Name Field</label>
-            <select class="hxfb-select" onchange="updateSetting('passNameField',this.value)">
+          <div class="gsfb-prop">
+            <label class="gsfb-prop-label">Name Field</label>
+            <select class="gsfb-select" onchange="updateSetting('passNameField',this.value)">
               <option value="">— Select field —</option>
               ${(_S.config?.fields || []).filter(f => f.type !== 'section_break').map(f => `<option value="${escAttr(f.id)}"${s.passNameField === f.id ? ' selected' : ''}>${escAttr(f.label || f.id)}</option>`).join('')}
             </select>
           </div>
-          <div class="hxfb-prop">
-            <label class="hxfb-prop-label">Email Field</label>
-            <select class="hxfb-select" onchange="updateSetting('passEmailField',this.value)">
+          <div class="gsfb-prop">
+            <label class="gsfb-prop-label">Email Field</label>
+            <select class="gsfb-select" onchange="updateSetting('passEmailField',this.value)">
               <option value="">— Select field —</option>
               ${(_S.config?.fields || []).filter(f => f.type !== 'section_break').map(f => `<option value="${escAttr(f.id)}"${s.passEmailField === f.id ? ' selected' : ''}>${escAttr(f.label || f.id)}</option>`).join('')}
             </select>
           </div>
-          <div class="hxfb-prop">
-            <div class="hxfb-toggle-row">
+          <div class="gsfb-prop">
+            <div class="gsfb-toggle-row">
               <div>
                 <div style="font-size:13px;color:var(--text)">Show Attendance Columns in Sheet</div>
                 <div style="font-size:11px;color:var(--text-3);margin-top:2px">Adds Pass Token, Status, Check-in columns</div>
               </div>
-              <div class="hxfb-toggle${s.passShowAttendance ? ' on' : ''}" onclick="toggleSetting('passShowAttendance')"></div>
+              <div class="gsfb-toggle${s.passShowAttendance ? ' on' : ''}" onclick="toggleSetting('passShowAttendance')"></div>
             </div>
           </div>
           ${s.passStaffCode ? `
-          <div class="hxfb-prop">
-            <label class="hxfb-prop-label">Staff Scanner Code</label>
+          <div class="gsfb-prop">
+            <label class="gsfb-prop-label">Staff Scanner Code</label>
             <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">Share with event volunteers — they enter this to access the scanner</div>
             <div style="display:flex;align-items:center;gap:8px">
               <div style="flex:1;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-radius:8px;padding:10px 14px;font-family:var(--font-mono,monospace);font-size:20px;font-weight:700;letter-spacing:5px;color:var(--cyan);text-align:center">${escAttr(s.passStaffCode)}</div>
-              <button id="passCodeCopyBtn" class="hxfb-tb-btn" onclick="copyPassCode()" style="padding:10px 14px">Copy</button>
+              <button id="passCodeCopyBtn" class="gsfb-tb-btn" onclick="copyPassCode()" style="padding:10px 14px">Copy</button>
             </div>
           </div>
           ` : ''}
@@ -3089,111 +3355,111 @@
     function renderPassFieldEditor(f, idx, total) {
       const id = f.id;
       const allFields = _S.config?.fields || [];
-      const textFields = allFields.filter(x => ['text','email','phone'].includes(x.type));
-      const tfOpts = textFields.map(x => `<option value="${escAttr(x.id)}" ${f.passNameField===x.id?'selected':''}>${escHtml(x.label||x.type)}</option>`).join('');
-      const efOpts = textFields.map(x => `<option value="${escAttr(x.id)}" ${f.passEmailField===x.id?'selected':''}>${escHtml(x.label||x.type)}</option>`).join('');
+      const textFields = allFields.filter(x => ['text', 'email', 'phone'].includes(x.type));
+      const tfOpts = textFields.map(x => `<option value="${escAttr(x.id)}" ${f.passNameField === x.id ? 'selected' : ''}>${escHtml(x.label || x.type)}</option>`).join('');
+      const efOpts = textFields.map(x => `<option value="${escAttr(x.id)}" ${f.passEmailField === x.id ? 'selected' : ''}>${escHtml(x.label || x.type)}</option>`).join('');
       const rules = (f.passRules || []);
       return `
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Field Label</label>
-        <input class="hxfb-input" value="${escAttr(f.label||'Entry Pass')}" oninput="updateFP('${id}','label',this.value)"/>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Field Label</label>
+        <input class="gsfb-input" value="${escAttr(f.label || 'Entry Pass')}" oninput="updateFP('${id}','label',this.value)"/>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Event Name</label>
-        <input class="hxfb-input" value="${escAttr(f.passEventName||'')}" oninput="updateFP('${id}','passEventName',this.value)" placeholder="e.g. TechConf 2025"/>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Event Name</label>
+        <input class="gsfb-input" value="${escAttr(f.passEventName || '')}" oninput="updateFP('${id}','passEventName',this.value)" placeholder="e.g. TechConf 2025"/>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Subtitle / Instruction</label>
-        <input class="hxfb-input" value="${escAttr(f.passSubtitle||'')}" oninput="updateFP('${id}','passSubtitle',this.value)" placeholder="Present this pass at the entrance"/>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Subtitle / Instruction</label>
+        <input class="gsfb-input" value="${escAttr(f.passSubtitle || '')}" oninput="updateFP('${id}','passSubtitle',this.value)" placeholder="Present this pass at the entrance"/>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Venue</label>
-        <input class="hxfb-input" value="${escAttr(f.passVenue||'')}" oninput="updateFP('${id}','passVenue',this.value)" placeholder="Venue name or address"/>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Venue</label>
+        <input class="gsfb-input" value="${escAttr(f.passVenue || '')}" oninput="updateFP('${id}','passVenue',this.value)" placeholder="Venue name or address"/>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="hxfb-prop">
-          <label class="hxfb-prop-label">Date</label>
-          <input class="hxfb-input" type="date" value="${escAttr(f.passDate||'')}" oninput="updateFP('${id}','passDate',this.value)"/>
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Date</label>
+          <input class="gsfb-input" type="date" value="${escAttr(f.passDate || '')}" oninput="updateFP('${id}','passDate',this.value)"/>
         </div>
-        <div class="hxfb-prop">
-          <label class="hxfb-prop-label">Time</label>
-          <input class="hxfb-input" type="time" value="${escAttr(f.passTime||'')}" oninput="updateFP('${id}','passTime',this.value)"/>
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Time</label>
+          <input class="gsfb-input" type="time" value="${escAttr(f.passTime || '')}" oninput="updateFP('${id}','passTime',this.value)"/>
         </div>
       </div>
 
-      <div class="hxfb-settings-sec-title" style="margin-top:18px">Pass Colours</div>
+      <div class="gsfb-settings-sec-title" style="margin-top:18px">Pass Colours</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-        <div class="hxfb-prop">
-          <label class="hxfb-prop-label">Background</label>
-          <input type="color" class="hxfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passBannerColor||'#12172a')}" oninput="updateFP('${id}','passBannerColor',this.value)"/>
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Background</label>
+          <input type="color" class="gsfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passBannerColor || '#12172a')}" oninput="updateFP('${id}','passBannerColor',this.value)"/>
         </div>
-        <div class="hxfb-prop">
-          <label class="hxfb-prop-label">Text</label>
-          <input type="color" class="hxfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passTextColor||'#ffffff')}" oninput="updateFP('${id}','passTextColor',this.value)"/>
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Text</label>
+          <input type="color" class="gsfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passTextColor || '#ffffff')}" oninput="updateFP('${id}','passTextColor',this.value)"/>
         </div>
-        <div class="hxfb-prop">
-          <label class="hxfb-prop-label">Accent</label>
-          <input type="color" class="hxfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passAccentColor||'#00d4ff')}" oninput="updateFP('${id}','passAccentColor',this.value)"/>
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Accent</label>
+          <input type="color" class="gsfb-input" style="height:36px;padding:2px 4px;cursor:pointer" value="${escAttr(f.passAccentColor || '#00d4ff')}" oninput="updateFP('${id}','passAccentColor',this.value)"/>
         </div>
       </div>
 
-      <div class="hxfb-settings-sec-title" style="margin-top:18px">Field Mappings</div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Attendee Name field</label>
-        <select class="hxfb-select" onchange="updateFP('${id}','passNameField',this.value)">
+      <div class="gsfb-settings-sec-title" style="margin-top:18px">Field Mappings</div>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Attendee Name field</label>
+        <select class="gsfb-select" onchange="updateFP('${id}','passNameField',this.value)">
           <option value="">— select field —</option>${tfOpts}
         </select>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Attendee Email field</label>
-        <select class="hxfb-select" onchange="updateFP('${id}','passEmailField',this.value)">
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Attendee Email field</label>
+        <select class="gsfb-select" onchange="updateFP('${id}','passEmailField',this.value)">
           <option value="">— select field —</option>${efOpts}
         </select>
       </div>
 
-      <div class="hxfb-settings-sec-title" style="margin-top:18px">QR Code</div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">QR Size: ${f.passQrSize||140}px</label>
-        <input type="range" min="80" max="200" step="10" value="${f.passQrSize||140}" class="hxfb-input" style="padding:4px 0;cursor:pointer"
+      <div class="gsfb-settings-sec-title" style="margin-top:18px">QR Code</div>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">QR Size: ${f.passQrSize || 140}px</label>
+        <input type="range" min="80" max="200" step="10" value="${f.passQrSize || 140}" class="gsfb-input" style="padding:4px 0;cursor:pointer"
                oninput="this.previousElementSibling.textContent='QR Size: '+this.value+'px';updateFP('${id}','passQrSize',+this.value)"/>
       </div>
-      <div class="hxfb-prop">
-        <label class="hxfb-prop-label">Staff Verification Code</label>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Staff Verification Code</label>
         <div style="display:flex;gap:8px;align-items:center">
-          <input class="hxfb-input" id="passCodeIn_${id}" value="${escAttr(f.passStaffCode||'')}" readonly style="font-family:monospace;letter-spacing:2px;flex:1" placeholder="Auto-generated"/>
+          <input class="gsfb-input" id="passCodeIn_${id}" value="${escAttr(f.passStaffCode || '')}" readonly style="font-family:monospace;letter-spacing:2px;flex:1" placeholder="Auto-generated"/>
           <button onclick="genPassStaffCode('${id}')" style="padding:7px 11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:var(--text-2);font-size:12px;cursor:pointer;white-space:nowrap">Generate</button>
           <button onclick="copyPassStaffCode('${id}')" style="padding:7px 11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:var(--text-2);font-size:12px;cursor:pointer;white-space:nowrap">Copy</button>
         </div>
       </div>
-      <div class="hxfb-prop">
-        <div class="hxfb-toggle-row">
+      <div class="gsfb-prop">
+        <div class="gsfb-toggle-row">
           <div>
             <div style="font-size:13px;color:var(--text)">Attendance tracking</div>
             <div style="font-size:11px;color:var(--text-3);margin-top:2px">Record scan timestamp in sheet</div>
           </div>
-          <div class="hxfb-toggle${f.passShowAttendance?' on':''}" onclick="updateFP('${id}','passShowAttendance',!${!!f.passShowAttendance})"></div>
+          <div class="gsfb-toggle${f.passShowAttendance ? ' on' : ''}" onclick="updateFP('${id}','passShowAttendance',!${!!f.passShowAttendance})"></div>
         </div>
       </div>
 
-      <div class="hxfb-settings-sec-title" style="margin-top:18px">Entry Rules</div>
+      <div class="gsfb-settings-sec-title" style="margin-top:18px">Entry Rules</div>
       <div id="passRulesList_${id}">
-        ${rules.map((r,i) => `
+        ${rules.map((r, i) => `
           <div style="display:flex;gap:6px;margin-bottom:6px">
-            <input class="hxfb-input" value="${escAttr(r)}" style="flex:1" oninput="updatePassRule('${id}',${i},this.value)" placeholder="Rule text..."/>
+            <input class="gsfb-input" value="${escAttr(r)}" style="flex:1" oninput="updatePassRule('${id}',${i},this.value)" placeholder="Rule text..."/>
             <button onclick="delPassRule('${id}',${i})" style="padding:6px 10px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);border-radius:7px;color:var(--red);font-size:13px;cursor:pointer">&#10005;</button>
           </div>`).join('')}
       </div>
       <button onclick="addPassRule('${id}')" style="width:100%;padding:8px;margin-top:4px;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.15);border-radius:8px;color:var(--text-3);font-size:13px;cursor:pointer">+ Add Rule</button>
 
       <div style="display:flex;gap:8px;margin-top:20px">
-        ${idx > 0 ? `<button class="hxfb-secondary-btn" onclick="moveFP('${id}',-1)">&#8593; Up</button>` : ''}
-        ${idx < total-1 ? `<button class="hxfb-secondary-btn" onclick="moveFP('${id}',1)">&#8595; Down</button>` : ''}
-        <button class="hxfb-danger-btn" onclick="delFP('${id}')">Delete</button>
+        ${idx > 0 ? `<button class="gsfb-secondary-btn" onclick="moveFP('${id}',-1)">&#8593; Up</button>` : ''}
+        ${idx < total - 1 ? `<button class="gsfb-secondary-btn" onclick="moveFP('${id}',1)">&#8595; Down</button>` : ''}
+        <button class="gsfb-danger-btn" onclick="delFP('${id}')">Delete</button>
       </div>`;
     }
 
     function genPassStaffCode(id) {
-      const code = Math.random().toString(36).slice(2,8).toUpperCase();
+      const code = Math.random().toString(36).slice(2, 8).toUpperCase();
       updateFP(id, 'passStaffCode', code);
       const el = document.getElementById('passCodeIn_' + id);
       if (el) el.value = code;
@@ -3201,7 +3467,7 @@
     function copyPassStaffCode(id) {
       const el = document.getElementById('passCodeIn_' + id);
       if (!el) return;
-      navigator.clipboard.writeText(el.value).catch(() => {});
+      navigator.clipboard.writeText(el.value).catch(() => { });
       const btn = el.nextElementSibling?.nextElementSibling;
       if (btn) { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 2000); }
     }
@@ -3235,36 +3501,35 @@
       const idx = allFields.findIndex(f => f.id === field.id);
       const prevFields = allFields.slice(0, idx).filter(f => f.type !== 'section_break');
       if (!prevFields.length) return `
-      <div class="hxfb-cond-section" >
-      <div class="hxfb-cond-section-label">
+      <div class="gsfb-cond-section" >
+      <div class="gsfb-cond-section-label">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
         Conditional Logic
       </div>
-      <div class="hxfb-cond-always">Add fields above this one to enable show/hide conditions.</div>
+      <div class="gsfb-cond-always">Add fields above this one to enable show/hide conditions.</div>
     </div> `;
 
       const conditions = field.conditions || [];
       const logic = field.conditionLogic || 'all';
       return `
-      <div class="hxfb-cond-section" >
-        <div class="hxfb-cond-section-label">
+      <div class="gsfb-cond-section" >
+        <div class="gsfb-cond-section-label">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 0 1 4-4h14" /><polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 0 1-4 4H3" /></svg>
           Conditional Logic
           ${conditions.length > 0 ? `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;border-radius:4px;padding:1px 6px;font-size:10px">${conditions.length}</span>` : ''}
         </div>
-      ${
-      conditions.length === 0
-      ? `<div class="hxfb-cond-always">Always visible — no conditions set.</div>`
-      : `<div id="condlist-${field.id}">
+      ${conditions.length === 0
+          ? `<div class="gsfb-cond-always">Always visible — no conditions set.</div>`
+          : `<div id="condlist-${field.id}">
             ${conditions.map(c => renderCondRow(c, field.id, prevFields)).join('')}
           </div>
-          ${conditions.length > 1 ? `<div class="hxfb-cond-logic-row">Show when
-            <select class="hxfb-select" onchange="updateCondLogic('${field.id}',this.value)">
+          ${conditions.length > 1 ? `<div class="gsfb-cond-logic-row">Show when
+            <select class="gsfb-select" onchange="updateCondLogic('${field.id}',this.value)">
               <option value="all" ${logic === 'all' ? 'selected' : ''}>ALL</option>
               <option value="any" ${logic === 'any' ? 'selected' : ''}>ANY</option>
             </select> conditions match</div>` : ''}`
-    }
-    <button class="hxfb-add-option-btn" onclick="addCondition('${field.id}')">
+        }
+    <button class="gsfb-add-option-btn" onclick="addCondition('${field.id}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
       Add condition
     </button>
@@ -3281,23 +3546,23 @@
       const srcField = prevFields.find(f => f.id === cond.fieldId);
       const srcOpts = srcField && ['radio', 'dropdown', 'checkbox'].includes(srcField.type) ? srcField.options || [] : [];
       return `
-      <div class="hxfb-cond-row" id="condrow-${cond.id}">
-        <select class="hxfb-select" onchange="updateCond('${fieldId}','${cond.id}','fieldId',this.value)">
+      <div class="gsfb-cond-row" id="condrow-${cond.id}">
+        <select class="gsfb-select" onchange="updateCond('${fieldId}','${cond.id}','fieldId',this.value)">
           ${prevFields.map(f => `<option value="${f.id}" ${f.id === cond.fieldId ? 'selected' : ''}>${f.label || 'Untitled'}</option>`).join('')}
         </select>
-      <select class="hxfb-select" onchange="updateCond('${fieldId}','${cond.id}','operator',this.value)">
+      <select class="gsfb-select" onchange="updateCond('${fieldId}','${cond.id}','operator',this.value)">
         ${ops.map(o => `<option value="${o.v}" ${o.v === (cond.operator || 'equals') ? 'selected' : ''}>${o.l}</option>`).join('')}
       </select>
       ${needsVal
-              ? srcOpts.length
-                ? `<select class="hxfb-select" onchange="updateCond('${fieldId}','${cond.id}','value',this.value)">
+          ? srcOpts.length
+            ? `<select class="gsfb-select" onchange="updateCond('${fieldId}','${cond.id}','value',this.value)">
                <option value="">— pick —</option>
                ${srcOpts.map(o => `<option value="${escAttr(o)}" ${o === cond.value ? 'selected' : ''}>${escHtml(o)}</option>`).join('')}
              </select>`
-                : `<input class="hxfb-input" value="${escAttr(cond.value || '')}" placeholder="value"
+            : `<input class="gsfb-input" value="${escAttr(cond.value || '')}" placeholder="value"
                     oninput="updateCondValue('${fieldId}','${cond.id}',this.value)"/>`
-              : `<div style="flex:1"></div>`}
-      <button class="hxfb-option-del" onclick="removeCond('${fieldId}','${cond.id}')">
+          : `<div style="flex:1"></div>`}
+      <button class="gsfb-option-del" onclick="removeCond('${fieldId}','${cond.id}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>`;
@@ -3381,24 +3646,24 @@
 
     function getFieldPreview(f) {
       const t = f.type;
-      if (['text','email','phone','number','date','time'].includes(t))
-        return `<div class="hxfc-text-preview">${escHtml(f.placeholder || 'Short answer text')}</div>`;
+      if (['text', 'email', 'phone', 'number', 'date', 'time'].includes(t))
+        return `<div class="gsfc-text-preview">${escHtml(f.placeholder || 'Short answer text')}</div>`;
       if (t === 'textarea')
-        return `<div class="hxfc-long-preview">${escHtml(f.placeholder || 'Long answer text...')}</div>`;
+        return `<div class="gsfc-long-preview">${escHtml(f.placeholder || 'Long answer text...')}</div>`;
       if (t === 'radio' || t === 'checkbox') {
         const icon = t === 'radio'
-          ? '<div class="hxfc-radio-circle"></div>'
-          : '<div class="hxfc-check-box"></div>';
+          ? '<div class="gsfc-radio-circle"></div>'
+          : '<div class="gsfc-check-box"></div>';
         return (f.options || ['Option 1']).slice(0, 4)
-          .map(o => `<div class="hxfc-radio-opt">${icon}<span>${escHtml(o)}</span></div>`).join('');
+          .map(o => `<div class="gsfc-radio-opt">${icon}<span>${escHtml(o)}</span></div>`).join('');
       }
       if (t === 'dropdown')
-        return `<div class="hxfc-dropdown-preview">${escHtml((f.options || ['Option 1'])[0])} <span style="font-size:10px">&#9660;</span></div>`;
+        return `<div class="gsfc-dropdown-preview">${escHtml((f.options || ['Option 1'])[0])} <span style="font-size:10px">&#9660;</span></div>`;
       if (t === 'file_upload')
-        return `<div class="hxfc-upload-preview">&#8679;&nbsp; Upload File &nbsp;(Max ${f.maxMB || 10}MB)</div>`;
+        return `<div class="gsfc-upload-preview">&#8679;&nbsp; Upload File &nbsp;(Max ${f.maxMB || 10}MB)</div>`;
       if (t === 'linear_scale') {
-        const nums = Array.from({ length: f.max || 5 }, (_, i) => `<div class="hxfc-scale-num">${i + 1}</div>`).join('');
-        return `<div class="hxfc-scale-preview"><span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.minLabel || 'Poor')}</span>${nums}<span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
+        const nums = Array.from({ length: f.max || 5 }, (_, i) => `<div class="gsfc-scale-num">${i + 1}</div>`).join('');
+        return `<div class="gsfc-scale-preview"><span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.minLabel || 'Poor')}</span>${nums}<span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
       }
       return '';
     }
@@ -3407,23 +3672,23 @@
       const isSel = (f.id === selectedId);
       if (f.type === 'event_pass') return renderPassCanvasCard(f, isSel);
       if (f.type === 'section_break') return `
-        <div class="hxfc-page-break ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
-          <div class="hxfc-page-break-badge">PAGE BREAK</div>
-          <div class="hxfc-page-break-body">
-            <div class="hxfc-page-break-title">${escHtml(f.label || 'Untitled Page')}</div>
-            ${f.description ? `<div class="hxfc-page-break-desc">${escHtml(f.description)}</div>` : ''}
+        <div class="gsfc-page-break ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
+          <div class="gsfc-page-break-badge">PAGE BREAK</div>
+          <div class="gsfc-page-break-body">
+            <div class="gsfc-page-break-title">${escHtml(f.label || 'Untitled Page')}</div>
+            ${f.description ? `<div class="gsfc-page-break-desc">${escHtml(f.description)}</div>` : ''}
           </div>
         </div>`;
       return `
-        <div class="hxfc-card ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
-          ${isSel ? '<div class="hxfc-card-sel-bar"></div>' : ''}
-          <div class="hxfc-card-inner">
-            <div class="hxfc-card-label">${escHtml(f.label || 'Untitled Question')}${f.required ? '<span class="hxfc-req">*</span>' : ''}</div>
-            <div class="hxfc-preview">${getFieldPreview(f)}</div>
+        <div class="gsfc-card ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
+          ${isSel ? '<div class="gsfc-card-sel-bar"></div>' : ''}
+          <div class="gsfc-card-inner">
+            <div class="gsfc-card-label">${escHtml(f.label || 'Untitled Question')}${f.required ? '<span class="gsfc-req">*</span>' : ''}</div>
+            <div class="gsfc-preview">${getFieldPreview(f)}</div>
           </div>
-          <div class="hxfc-card-actions">
-            <button class="hxfc-act-btn" title="Duplicate" onclick="event.stopPropagation();dupFP('${f.id}')">&#10697;</button>
-            <button class="hxfc-act-btn danger" title="Delete" onclick="event.stopPropagation();delFP('${f.id}')">&#10005;</button>
+          <div class="gsfc-card-actions">
+            <button class="gsfc-act-btn" title="Duplicate" onclick="event.stopPropagation();dupFP('${f.id}')">&#10697;</button>
+            <button class="gsfc-act-btn danger" title="Delete" onclick="event.stopPropagation();delFP('${f.id}')">&#10005;</button>
           </div>
         </div>`;
     }
@@ -3433,9 +3698,9 @@
       const tc = f.passTextColor || '#ffffff';
       const ac = f.passAccentColor || '#00d4ff';
       return `
-        <div class="hxfc-card ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')"
+        <div class="gsfc-card ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')"
              style="background:${escAttr(bg)};color:${escAttr(tc)};border-color:${isSel ? escAttr(ac) : 'rgba(255,255,255,0.1)'}">
-          ${isSel ? `<div class="hxfc-card-sel-bar" style="background:${escAttr(ac)}"></div>` : ''}
+          ${isSel ? `<div class="gsfc-card-sel-bar" style="background:${escAttr(ac)}"></div>` : ''}
           <div style="height:5px;background:linear-gradient(90deg,${escAttr(ac)},#7c3aed);"></div>
           <div style="padding:18px 24px 20px ${isSel ? '28px' : '24px'};">
             <div style="font-size:10px;font-weight:700;letter-spacing:1.4px;opacity:0.55;margin-bottom:8px;text-transform:uppercase;">Entry Pass</div>
@@ -3447,8 +3712,8 @@
               ${f.passTime ? `<span>&#128336; ${escHtml(f.passTime)}</span>` : ''}
             </div>
           </div>
-          <div class="hxfc-card-actions">
-            <button class="hxfc-act-btn danger" title="Delete" onclick="event.stopPropagation();delFP('${f.id}')" style="background:rgba(0,0,0,0.4);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);">&#10005;</button>
+          <div class="gsfc-card-actions">
+            <button class="gsfc-act-btn danger" title="Delete" onclick="event.stopPropagation();delFP('${f.id}')" style="background:rgba(0,0,0,0.4);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);">&#10005;</button>
           </div>
         </div>`;
     }
@@ -3475,25 +3740,25 @@
       if (total > 1) {
         const pct = Math.round(((_pv.page + 1) / total) * 100);
         html += `
-      <div class="hxfb-pv-prog">
-        <div class="hxfb-pv-prog-meta"><span>Step ${_pv.page + 1} of ${total}</span><span>${pct}%</span></div>
-        <div class="hxfb-pv-prog-track"><div class="hxfb-pv-prog-fill" style="width:${pct}%;background:${accent}"></div></div>
+      <div class="gsfb-pv-prog">
+        <div class="gsfb-pv-prog-meta"><span>Step ${_pv.page + 1} of ${total}</span><span>${pct}%</span></div>
+        <div class="gsfb-pv-prog-track"><div class="gsfb-pv-prog-fill" style="width:${pct}%;background:${accent}"></div></div>
       </div>`;
       }
 
       // Header
       if (isFirst) {
         if (s.coverImage) html += `<div style="margin:-22px -22px 18px;height:140px;background:url('${escHtml(s.coverImage)}') center/cover no-repeat;border-radius:4px 4px 0 0"></div>`;
-        html += `<div class="hxfb-pv-title" style="font-family:'${escHtml(th.headingFont || 'Plus Jakarta Sans')}',sans-serif">${escHtml(s.title || _S.name || 'Untitled Form')}</div>`;
-        if (s.description) html += `<div class="hxfb-pv-desc" style="font-family:'${escHtml(th.bodyFont || 'Plus Jakarta Sans')}',sans-serif">${s.description}</div>`;
+        html += `<div class="gsfb-pv-title" style="font-family:'${escHtml(th.headingFont || 'Plus Jakarta Sans')}',sans-serif">${escHtml(s.title || _S.name || 'Untitled Form')}</div>`;
+        if (s.description) html += `<div class="gsfb-pv-desc" style="font-family:'${escHtml(th.bodyFont || 'Plus Jakarta Sans')}',sans-serif">${s.description}</div>`;
       } else if (page.title) {
-        html += `<div class="hxfb-pv-page-title">${escHtml(page.title)}</div>`;
-        if (page.desc) html += `<div class="hxfb-pv-page-desc">${escHtml(page.desc)}</div>`;
+        html += `<div class="gsfb-pv-page-title">${escHtml(page.title)}</div>`;
+        if (page.desc) html += `<div class="gsfb-pv-page-desc">${escHtml(page.desc)}</div>`;
       }
 
       // Fields
       if (!page.fields.length) {
-        html += `<div class="hxfb-pv-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>No fields on this page yet</div>`;
+        html += `<div class="gsfb-pv-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>No fields on this page yet</div>`;
       } else {
         html += page.fields.map(f => pvRenderField(f, accSol)).join('');
       }
@@ -3501,9 +3766,9 @@
       // Nav
       const submitLabel = isLast ? (s.submitLabel || 'Submit') : 'Next &rarr;';
       const backVisible = !isFirst;
-      html += `<div class="hxfb-pv-nav">
-    ${backVisible ? `<button class="hxfb-pv-back" onclick="pvShowPage(${_pv.page - 1})">← Back</button>` : ''}
-    <button class="hxfb-pv-submit" style="background:${accent}"
+      html += `<div class="gsfb-pv-nav">
+    ${backVisible ? `<button class="gsfb-pv-back" onclick="pvShowPage(${_pv.page - 1})">← Back</button>` : ''}
+    <button class="gsfb-pv-submit" style="background:${accent}"
             onclick="${isLast ? 'pvFakeSubmit()' : `pvShowPage(${_pv.page + 1})`}">
       ${isLast
           ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>`
@@ -3514,7 +3779,7 @@
       const body = document.getElementById('pvBody');
       body.innerHTML = html;
       // Apply light mode to preview card
-      const card = document.querySelector('.hxfb-pv-card');
+      const card = document.querySelector('.gsfb-pv-card');
       if (card) {
         if (th.lightMode) {
           card.style.background = '#fff';
@@ -3529,41 +3794,41 @@
     }
 
     function pvRenderField(f, accSol) {
-      const req = f.required ? `<span class="hxfb-pv-req">*</span>` : '';
+      const req = f.required ? `<span class="gsfb-pv-req">*</span>` : '';
       const fid = 'pv_' + f.id;
       let body = '';
 
       switch (f.type) {
         case 'text':
-          body = `<input class="hxfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<input class="gsfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'email':
-          body = `<input class="hxfb-pv-input" id="${fid}" type="email" placeholder="${escAttr(f.placeholder || 'you@example.com')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<input class="gsfb-pv-input" id="${fid}" type="email" placeholder="${escAttr(f.placeholder || 'you@example.com')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'phone':
-          body = `<input class="hxfb-pv-input" id="${fid}" type="tel" placeholder="${escAttr(f.placeholder || '+91 98765 43210')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<input class="gsfb-pv-input" id="${fid}" type="tel" placeholder="${escAttr(f.placeholder || '+91 98765 43210')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'number':
-          body = `<input class="hxfb-pv-input" id="${fid}" type="number" placeholder="${escAttr(f.placeholder || '0')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<input class="gsfb-pv-input" id="${fid}" type="number" placeholder="${escAttr(f.placeholder || '0')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'textarea':
-          body = `<textarea class="hxfb-pv-textarea" id="${fid}" placeholder="${escAttr(f.placeholder || '')}" oninput="pvSetVal('${f.id}',this.value)"></textarea>`;
+          body = `<textarea class="gsfb-pv-textarea" id="${fid}" placeholder="${escAttr(f.placeholder || '')}" oninput="pvSetVal('${f.id}',this.value)"></textarea>`;
           break;
         case 'date':
-          body = `<input class="hxfb-pv-input" id="${fid}" type="date" onchange="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<input class="gsfb-pv-input" id="${fid}" type="date" onchange="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'time':
-          body = `<input class="hxfb-pv-input" id="${fid}" type="time" onchange="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<input class="gsfb-pv-input" id="${fid}" type="time" onchange="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'dropdown':
           const dOpts = (f.options || []).map(o => `<option value="${escAttr(o)}">${escHtml(o)}</option>`).join('');
-          body = `<select class="hxfb-pv-select" id="${fid}" onchange="pvSetVal('${f.id}',this.value)"><option value="">— Select —</option>${dOpts}</select>`;
+          body = `<select class="gsfb-pv-select" id="${fid}" onchange="pvSetVal('${f.id}',this.value)"><option value="">— Select —</option>${dOpts}</select>`;
           break;
         case 'radio':
           body = (f.options || []).map((o, i) => {
             const isSel = (_pv.selOpts[f.id] === i);
-            return `<div class="hxfb-pv-option${isSel ? ' sel' : ''}" onclick="pvPickRadio('${f.id}',${i},${(f.options || []).length},this)">
-          <div class="hxfb-pv-dot" style="${isSel ? `background:${accSol};border-color:${accSol}` : ''}"></div>
+            return `<div class="gsfb-pv-option${isSel ? ' sel' : ''}" onclick="pvPickRadio('${f.id}',${i},${(f.options || []).length},this)">
+          <div class="gsfb-pv-dot" style="${isSel ? `background:${accSol};border-color:${accSol}` : ''}"></div>
           <span>${escHtml(o)}</span>
         </div>`;
           }).join('');
@@ -3572,8 +3837,8 @@
           const cbSel = _pv.selOpts[f.id] || {};
           body = (f.options || []).map((o, i) => {
             const isSel = !!cbSel[i];
-            return `<div class="hxfb-pv-option${isSel ? ' sel' : ''}" onclick="pvPickCheck('${f.id}',${i},this)">
-          <div class="hxfb-pv-box" style="${isSel ? `background:${accSol};border-color:${accSol}` : ''}"></div>
+            return `<div class="gsfb-pv-option${isSel ? ' sel' : ''}" onclick="pvPickCheck('${f.id}',${i},this)">
+          <div class="gsfb-pv-box" style="${isSel ? `background:${accSol};border-color:${accSol}` : ''}"></div>
           <span>${escHtml(o)}</span>
         </div>`;
           }).join('');
@@ -3583,23 +3848,23 @@
           const styl = f.style || 'stars';
           const curS = _pv.vals[f.id] || 0;
           if (styl === 'stars') {
-            body = `<div class="hxfb-pv-stars" id="${fid}">
+            body = `<div class="gsfb-pv-stars" id="${fid}">
           ${Array.from({ length: max }, (_, i) =>
-              `<span class="hxfb-pv-star${i < curS ? ' on' : ''}" onclick="pvPickStar('${f.id}',${i + 1},${max})">★</span>`
+              `<span class="gsfb-pv-star${i < curS ? ' on' : ''}" onclick="pvPickStar('${f.id}',${i + 1},${max})">★</span>`
             ).join('')}
         </div>
-        <div class="hxfb-pv-scale-labels"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
+        <div class="gsfb-pv-scale-labels"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
           } else {
-            body = `<div class="hxfb-pv-numscale" id="${fid}">
+            body = `<div class="gsfb-pv-numscale" id="${fid}">
           ${Array.from({ length: max }, (_, i) =>
-              `<div class="hxfb-pv-numbox${curS === i + 1 ? ' on' : ''}" onclick="pvPickNum('${f.id}',${i + 1},${max})">${i + 1}</div>`
+              `<div class="gsfb-pv-numbox${curS === i + 1 ? ' on' : ''}" onclick="pvPickNum('${f.id}',${i + 1},${max})">${i + 1}</div>`
             ).join('')}
         </div>
-        <div class="hxfb-pv-scale-labels"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
+        <div class="gsfb-pv-scale-labels"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
           }
           break;
         case 'file_upload':
-          body = `<div class="hxfb-pv-upload">&#128206; Click to upload ${f.accept && f.accept !== '*' ? `(${f.accept})` : ''}<div style="font-size:11px;margin-top:3px">Max ${f.maxMB || 10} MB</div></div>`;
+          body = `<div class="gsfb-pv-upload">&#128206; Click to upload ${f.accept && f.accept !== '*' ? `(${f.accept})` : ''}<div style="font-size:11px;margin-top:3px">Max ${f.maxMB || 10} MB</div></div>`;
           break;
         case 'event_pass': {
           const bg = f.passBannerColor || '#12172a';
@@ -3611,7 +3876,7 @@
               <div style="font-size:10px;font-weight:700;letter-spacing:2px;opacity:0.6;margin-bottom:8px">ENTRY PASS</div>
               <div style="font-size:17px;font-weight:700;margin-bottom:6px">${escHtml(f.passEventName || 'Event Name')}</div>
               ${f.passVenue ? `<div style="font-size:12px;opacity:0.7;margin-bottom:2px">&#128205; ${escHtml(f.passVenue)}</div>` : ''}
-              ${f.passDate || f.passTime ? `<div style="font-size:12px;opacity:0.7;margin-bottom:2px">&#128197; ${escHtml([f.passDate,f.passTime].filter(Boolean).join(' - '))}</div>` : ''}
+              ${f.passDate || f.passTime ? `<div style="font-size:12px;opacity:0.7;margin-bottom:2px">&#128197; ${escHtml([f.passDate, f.passTime].filter(Boolean).join(' - '))}</div>` : ''}
               <div style="border-top:1px solid rgba(255,255,255,0.12);margin:12px 0;padding-top:12px;display:flex;align-items:center;gap:14px">
                 <div style="width:64px;height:64px;background:rgba(255,255,255,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;font-family:monospace">&#9638;</div>
                 <div style="font-size:11px;opacity:0.6">${escHtml(f.passSubtitle || 'Present this pass at the venue entrance')}</div>
@@ -3619,13 +3884,13 @@
             </div>
           </div>
           <div style="font-size:11px;color:var(--text-3);margin-top:6px;text-align:center">Your unique QR pass will be sent after submission</div>`;
-          return `<div class="hxfb-pv-field" id="pvf-${f.id}">${body}</div>`;
+          return `<div class="gsfb-pv-field" id="pvf-${f.id}">${body}</div>`;
         }
         default:
-          body = `<input class="hxfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
+          body = `<input class="gsfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
       }
 
-      return `<div class="hxfb-pv-field" id="pvf-${f.id}"><div class="hxfb-pv-label">${escHtml(f.label || 'Untitled')} ${req}</div>${body}</div>`;
+      return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-label">${escHtml(f.label || 'Untitled')} ${req}</div>${body}</div>`;
     }
 
     /* ── Preview interaction handlers ──────────────────────────────── */
@@ -3638,8 +3903,8 @@
       const opts = _S.config.fields.find(f => f.id === fid)?.options || [];
       _pv.vals[fid] = opts[idx] || '';
       // Visual update without full re-render
-      const parent = el.closest('.hxfb-pv-field');
-      if (parent) parent.querySelectorAll('.hxfb-pv-option').forEach((o, i) => o.classList.toggle('sel', i === idx));
+      const parent = el.closest('.gsfb-pv-field');
+      if (parent) parent.querySelectorAll('.gsfb-pv-option').forEach((o, i) => o.classList.toggle('sel', i === idx));
       pvEvalConditions();
     }
     function pvPickCheck(fid, idx, el) {
@@ -3653,12 +3918,12 @@
     function pvPickStar(fid, val, max) {
       _pv.vals[fid] = val;
       const container = document.getElementById('pv_' + fid);
-      if (container) container.querySelectorAll('.hxfb-pv-star').forEach((s, i) => s.classList.toggle('on', i < val));
+      if (container) container.querySelectorAll('.gsfb-pv-star').forEach((s, i) => s.classList.toggle('on', i < val));
     }
     function pvPickNum(fid, val, max) {
       _pv.vals[fid] = val;
       const container = document.getElementById('pv_' + fid);
-      if (container) container.querySelectorAll('.hxfb-pv-numbox').forEach((b, i) => b.classList.toggle('on', i + 1 === val));
+      if (container) container.querySelectorAll('.gsfb-pv-numbox').forEach((b, i) => b.classList.toggle('on', i + 1 === val));
     }
     function pvFakeSubmit() {
       const body = document.getElementById('pvBody');
@@ -3736,7 +4001,7 @@
         setSaveStatus('saved');
         updateTopBar();
         if (_S.status === 'published') {
-          publishedUrl = result.publicUrl || `${window.location.origin}/hx-form-view.html?f=${_S.slug}`;
+          publishedUrl = result.publicUrl || `${window.location.origin}/gs-form-view.html?f=${_S.slug}`;
           document.getElementById('publishedUrlEl').textContent = publishedUrl;
           document.getElementById('publishModal').classList.add('open');
         } else {
@@ -3907,7 +4172,7 @@
       ctx.textAlign = 'right';
       ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.50)';
-      ctx.fillText('Honourix', W - 24, stripY + 26);
+      ctx.fillText('GalSol', W - 24, stripY + 26);
       ctx.textAlign = 'left';
       ctx.font = '13px "Plus Jakarta Sans", sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.22)';

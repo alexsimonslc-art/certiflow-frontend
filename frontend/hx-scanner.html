@@ -1,771 +1,1240 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-  <title>Scanner — Honourix</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Scanner — GalSol</title>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     :root {
-      --bg: #04080f; --surface: #0a1223; --border: rgba(255,255,255,0.10);
-      --text: #eef4ff; --text-2: #98b0cc; --text-3: #546a85;
-      --accent: #00d4ff; --accent-dim: rgba(0,212,255,0.10);
-      --green: #10b981; --green-dim: rgba(16,185,129,0.12);
-      --red: #f43f5e; --red-dim: rgba(244,63,94,0.12);
-      --gold: #f59e0b; --gold-dim: rgba(245,158,11,0.12);
+      --bg: #04080f;
+      --surface: #0a1223;
+      --border: rgba(255, 255, 255, 0.10);
+      --text: #eef4ff;
+      --text-2: #98b0cc;
+      --text-3: #546a85;
+      --accent: #00d4ff;
+      --accent-dim: rgba(0, 212, 255, 0.10);
+      --green: #10b981;
+      --green-dim: rgba(16, 185, 129, 0.12);
+      --red: #f43f5e;
+      --red-dim: rgba(244, 63, 94, 0.12);
+      --gold: #f59e0b;
+      --gold-dim: rgba(245, 158, 11, 0.12);
       --font: 'Plus Jakarta Sans', system-ui, sans-serif;
-      --ease: cubic-bezier(0.16,1,0.3,1);
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
-    html, body { height: 100%; }
+
+    html,
     body {
-      font-family: var(--font); background: var(--bg); color: var(--text);
-      min-height: 100vh; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+      height: 100%;
     }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
     body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
       background:
-        radial-gradient(ellipse 60% 50% at 15% 0%, rgba(0,212,255,0.07) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 50% at 90% 100%, rgba(124,58,237,0.08) 0%, transparent 55%);
+        radial-gradient(ellipse 60% 50% at 15% 0%, rgba(0, 212, 255, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 90% 100%, rgba(124, 58, 237, 0.08) 0%, transparent 55%);
     }
 
     /* ── Screens ─────────────────────────────────────────────────── */
-    .screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
-    .screen.active { display: flex; flex-direction: column; align-items: center; }
+    .screen {
+      display: none;
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
     /* ── Pass view screen (attendee) ─────────────────────────────── */
-    #screenPass { padding: 48px 16px 64px; justify-content: flex-start; }
-    .pass-container { width: 100%; max-width: 520px; }
+    #screenPass {
+      padding: 48px 16px 64px;
+      justify-content: flex-start;
+    }
+
+    .pass-container {
+      width: 100%;
+      max-width: 520px;
+    }
+
     .pass-badge {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 5px 14px; border-radius: 99px; font-size: 12px; font-weight: 700;
-      margin-bottom: 18px; letter-spacing: 0.3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: 0.3px;
     }
-    .pass-badge.valid    { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
-    .pass-badge.admitted { background: var(--gold-dim);  color: var(--gold);  border: 1px solid rgba(245,158,11,0.25); }
-    .pass-badge.invalid  { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(244,63,94,0.25); }
-    .pass-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-    .pass-canvas-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
-    .pass-canvas-wrap canvas { border-radius: 14px; max-width: 100%; box-shadow: 0 16px 60px rgba(0,0,0,0.5); }
+
+    .pass-badge.valid {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .pass-badge.admitted {
+      background: var(--gold-dim);
+      color: var(--gold);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .pass-badge.invalid {
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+
+    .pass-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .pass-canvas-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .pass-canvas-wrap canvas {
+      border-radius: 14px;
+      max-width: 100%;
+      box-shadow: 0 16px 60px rgba(0, 0, 0, 0.5);
+    }
+
     .pass-dl-btn {
-      width: 100%; padding: 14px; border-radius: 12px; border: none;
-      background: linear-gradient(135deg, #00d4ff, #7c3aed); color: #fff;
-      font-size: 15px; font-weight: 700; font-family: var(--font); cursor: pointer;
-      box-shadow: 0 6px 24px rgba(0,212,255,0.22); transition: box-shadow 0.2s;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #00d4ff, #7c3aed);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(0, 212, 255, 0.22);
+      transition: box-shadow 0.2s;
     }
-    .pass-dl-btn:hover { box-shadow: 0 10px 36px rgba(0,212,255,0.38); }
+
+    .pass-dl-btn:hover {
+      box-shadow: 0 10px 36px rgba(0, 212, 255, 0.38);
+    }
 
     /* ── Login screen ────────────────────────────────────────────── */
-    #screenLogin { padding: 48px 16px 64px; justify-content: center; }
+    #screenLogin {
+      padding: 48px 16px 64px;
+      justify-content: center;
+    }
+
     .login-card {
-      width: 100%; max-width: 400px;
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-      border-radius: 20px; padding: 32px 28px;
-      box-shadow: 0 24px 72px rgba(0,0,0,0.4);
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: 0 24px 72px rgba(0, 0, 0, 0.4);
     }
+
     .login-icon {
-      width: 56px; height: 56px; border-radius: 16px;
-      background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.18);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; margin: 0 auto 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 20px;
     }
-    .login-title { font-size: 22px; font-weight: 800; color: var(--text); text-align: center; margin-bottom: 6px; }
-    .login-sub   { font-size: 14px; color: var(--text-2); text-align: center; margin-bottom: 28px; line-height: 1.6; }
-    .login-label { font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 7px; display: block; }
+
+    .login-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .login-sub {
+      font-size: 14px;
+      color: var(--text-2);
+      text-align: center;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .login-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 7px;
+      display: block;
+    }
+
     .login-input {
-      width: 100%; padding: 13px 16px; border-radius: 11px; font-size: 15px;
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-      color: var(--text); font-family: var(--font); outline: none; margin-bottom: 16px;
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 11px;
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      font-family: var(--font);
+      outline: none;
+      margin-bottom: 16px;
       transition: border-color 0.18s, box-shadow 0.18s;
     }
-    .login-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim); }
-    .login-input::placeholder { color: var(--text-3); }
-    .login-btn {
-      width: 100%; padding: 14px; border-radius: 12px; border: none; margin-top: 4px;
-      background: linear-gradient(135deg, #00d4ff, #7c3aed); color: #fff;
-      font-size: 15px; font-weight: 700; font-family: var(--font); cursor: pointer;
-      box-shadow: 0 6px 24px rgba(0,212,255,0.22); transition: all 0.2s;
+
+    .login-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-dim);
     }
-    .login-btn:hover { box-shadow: 0 8px 32px rgba(0,212,255,0.38); }
-    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .login-input::placeholder {
+      color: var(--text-3);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      margin-top: 4px;
+      background: linear-gradient(135deg, #00d4ff, #7c3aed);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(0, 212, 255, 0.22);
+      transition: all 0.2s;
+    }
+
+    .login-btn:hover {
+      box-shadow: 0 8px 32px rgba(0, 212, 255, 0.38);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .login-err {
-      font-size: 13px; color: var(--red); margin-top: 12px; text-align: center;
-      background: var(--red-dim); border-radius: 8px; padding: 10px 14px;
-      border: 1px solid rgba(244,63,94,0.2); display: none;
+      font-size: 13px;
+      color: var(--red);
+      margin-top: 12px;
+      text-align: center;
+      background: var(--red-dim);
+      border-radius: 8px;
+      padding: 10px 14px;
+      border: 1px solid rgba(244, 63, 94, 0.2);
+      display: none;
     }
 
     /* ── Scanner screen ──────────────────────────────────────────── */
-    #screenScanner { padding: 0; align-items: stretch; }
+    #screenScanner {
+      padding: 0;
+      align-items: stretch;
+    }
+
     .scanner-topbar {
-      flex-shrink: 0; padding: 14px 18px;
-      background: rgba(4,8,15,0.92); border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      position: sticky; top: 0; z-index: 50;
+      flex-shrink: 0;
+      padding: 14px 18px;
+      background: rgba(4, 8, 15, 0.92);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
-    .scanner-event-name { font-size: 15px; font-weight: 700; color: var(--text); }
-    .scanner-staff-name { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    .scanner-event-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .scanner-staff-name {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
     .scanner-admit-count {
-      font-size: 22px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums;
-      text-align: right; line-height: 1;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      line-height: 1;
     }
-    .scanner-admit-label { font-size: 11px; color: var(--text-3); text-align: right; margin-top: 2px; }
-    .scanner-body { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 24px 16px 16px; }
+
+    .scanner-admit-label {
+      font-size: 11px;
+      color: var(--text-3);
+      text-align: right;
+      margin-top: 2px;
+    }
+
+    .scanner-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 16px;
+    }
 
     /* Viewfinder */
     .scanner-vf-wrap {
-      position: relative; width: min(320px, 90vw); aspect-ratio: 1;
-      border-radius: 18px; overflow: hidden;
-      box-shadow: 0 0 0 3px rgba(0,212,255,0.4), 0 20px 60px rgba(0,0,0,0.6);
+      position: relative;
+      width: min(320px, 90vw);
+      aspect-ratio: 1;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.4), 0 20px 60px rgba(0, 0, 0, 0.6);
       margin-bottom: 20px;
     }
-    #scannerVideo { width: 100%; height: 100%; object-fit: cover; display: block; }
-    #scannerCanvas { display: none; }
+
+    #scannerVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #scannerCanvas {
+      display: none;
+    }
+
     .scanner-vf-corners {
-      position: absolute; inset: 0; pointer-events: none;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
     }
+
     .scanner-corner {
-      position: absolute; width: 28px; height: 28px;
-      border-color: var(--accent); border-style: solid;
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-color: var(--accent);
+      border-style: solid;
     }
-    .scanner-corner.tl { top: 10px; left: 10px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
-    .scanner-corner.tr { top: 10px; right: 10px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
-    .scanner-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
-    .scanner-corner.br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+
+    .scanner-corner.tl {
+      top: 10px;
+      left: 10px;
+      border-width: 3px 0 0 3px;
+      border-radius: 4px 0 0 0;
+    }
+
+    .scanner-corner.tr {
+      top: 10px;
+      right: 10px;
+      border-width: 3px 3px 0 0;
+      border-radius: 0 4px 0 0;
+    }
+
+    .scanner-corner.bl {
+      bottom: 10px;
+      left: 10px;
+      border-width: 0 0 3px 3px;
+      border-radius: 0 0 0 4px;
+    }
+
+    .scanner-corner.br {
+      bottom: 10px;
+      right: 10px;
+      border-width: 0 3px 3px 0;
+      border-radius: 0 0 4px 0;
+    }
+
     .scanner-scan-line {
-      position: absolute; left: 12px; right: 12px; height: 2px;
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      height: 2px;
       background: linear-gradient(90deg, transparent, var(--accent), transparent);
       animation: scanLine 2s ease-in-out infinite;
       box-shadow: 0 0 8px var(--accent);
     }
+
     @keyframes scanLine {
-      0%   { top: 12px; opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 1; }
-      100% { top: calc(100% - 14px); opacity: 0; }
+      0% {
+        top: 12px;
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        top: calc(100% - 14px);
+        opacity: 0;
+      }
     }
-    .scanner-hint { font-size: 13px; color: var(--text-3); text-align: center; margin-bottom: 16px; }
+
+    .scanner-hint {
+      font-size: 13px;
+      color: var(--text-3);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
     .scanner-manual-link {
-      font-size: 13px; color: var(--accent); cursor: pointer; text-align: center;
-      text-decoration: underline; padding: 8px 0;
+      font-size: 13px;
+      color: var(--accent);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: underline;
+      padding: 8px 0;
     }
-    .scanner-manual-wrap { width: 100%; max-width: 320px; margin-top: 8px; display: none; }
+
+    .scanner-manual-wrap {
+      width: 100%;
+      max-width: 320px;
+      margin-top: 8px;
+      display: none;
+    }
+
     .scanner-manual-input {
-      width: 100%; padding: 12px 14px; border-radius: 10px; font-size: 14px;
-      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-      color: var(--text); font-family: var(--font); outline: none; margin-bottom: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font);
+      outline: none;
+      margin-bottom: 10px;
     }
-    .scanner-manual-input::placeholder { color: var(--text-3); }
+
+    .scanner-manual-input::placeholder {
+      color: var(--text-3);
+    }
+
     .scanner-manual-btn {
-      width: 100%; padding: 12px; border-radius: 10px; border: none;
-      background: var(--accent); color: #000; font-size: 14px; font-weight: 700;
-      font-family: var(--font); cursor: pointer;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #000;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
     }
+
     .camera-denied-wrap {
-      display: none; flex-direction: column; align-items: center; gap: 14px;
-      text-align: center; padding: 24px 16px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+      padding: 24px 16px;
     }
-    .camera-denied-icon { font-size: 40px; }
-    .camera-denied-title { font-size: 17px; font-weight: 700; color: var(--text); }
-    .camera-denied-sub   { font-size: 14px; color: var(--text-2); line-height: 1.6; max-width: 280px; }
+
+    .camera-denied-icon {
+      font-size: 40px;
+    }
+
+    .camera-denied-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .camera-denied-sub {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
     .camera-allow-btn {
-      padding: 13px 28px; border-radius: 11px; border: none;
-      background: var(--accent); color: #000; font-size: 14px; font-weight: 700;
-      font-family: var(--font); cursor: pointer;
+      padding: 13px 28px;
+      border-radius: 11px;
+      border: none;
+      background: var(--accent);
+      color: #000;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
     }
 
     /* Result card */
     .result-card {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-      background: #0a1223; border-top: 1px solid var(--border);
-      border-radius: 22px 22px 0 0; padding: 22px 20px 32px;
-      transform: translateY(110%); transition: transform 0.38s var(--ease);
-      box-shadow: 0 -20px 60px rgba(0,0,0,0.6);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: #0a1223;
+      border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0;
+      padding: 22px 20px 32px;
+      transform: translateY(110%);
+      transition: transform 0.38s var(--ease);
+      box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
     }
-    .result-card.open { transform: translateY(0); }
-    .result-card-handle { width: 36px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.18); margin: 0 auto 18px; }
-    .result-status { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-    .result-status-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-    .result-status-dot.valid    { background: var(--green); box-shadow: 0 0 10px var(--green); }
-    .result-status-dot.admitted { background: var(--gold);  box-shadow: 0 0 10px var(--gold); }
-    .result-status-dot.invalid  { background: var(--red);   box-shadow: 0 0 10px var(--red); }
-    .result-status-label { font-size: 18px; font-weight: 800; color: var(--text); }
-    .result-name  { font-size: 15px; font-weight: 600; color: var(--text);   margin-bottom: 4px; }
-    .result-event { font-size: 13px; color: var(--text-3); margin-bottom: 6px; }
-    .result-admitted-time { font-size: 12px; color: var(--gold); margin-bottom: 16px; }
-    .result-btns { display: flex; gap: 10px; margin-top: 8px; }
+
+    .result-card.open {
+      transform: translateY(0);
+    }
+
+    .result-card-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.18);
+      margin: 0 auto 18px;
+    }
+
+    .result-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .result-status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .result-status-dot.valid {
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+    }
+
+    .result-status-dot.admitted {
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+    }
+
+    .result-status-dot.invalid {
+      background: var(--red);
+      box-shadow: 0 0 10px var(--red);
+    }
+
+    .result-status-label {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .result-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .result-event {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+
+    .result-admitted-time {
+      font-size: 12px;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .result-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
     .result-btn {
-      flex: 1; padding: 14px; border-radius: 12px; border: none; cursor: pointer;
-      font-size: 15px; font-weight: 700; font-family: var(--font); min-height: 48px;
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font);
+      min-height: 48px;
       transition: all 0.15s;
     }
-    .result-btn-admit  { background: var(--green); color: #fff; box-shadow: 0 4px 18px rgba(16,185,129,0.25); }
-    .result-btn-admit:hover  { box-shadow: 0 6px 28px rgba(16,185,129,0.4); }
-    .result-btn-reject { background: rgba(255,255,255,0.07); border: 1px solid var(--border); color: var(--text-2); }
+
+    .result-btn-admit {
+      background: var(--green);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.25);
+    }
+
+    .result-btn-admit:hover {
+      box-shadow: 0 6px 28px rgba(16, 185, 129, 0.4);
+    }
+
+    .result-btn-reject {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+    }
 
     /* Stats bar */
     .scanner-stats {
-      flex-shrink: 0; padding: 12px 18px;
-      background: rgba(4,8,15,0.88); border-top: 1px solid var(--border);
-      display: flex; justify-content: center; gap: 28px;
-      position: sticky; bottom: 0;
+      flex-shrink: 0;
+      padding: 12px 18px;
+      background: rgba(4, 8, 15, 0.88);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      position: sticky;
+      bottom: 0;
     }
-    .scanner-stat { text-align: center; }
-    .scanner-stat-num { font-size: 20px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
-    .scanner-stat-lbl { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+
+    .scanner-stat {
+      text-align: center;
+    }
+
+    .scanner-stat-num {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .scanner-stat-lbl {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 1px;
+    }
 
     /* Success flash */
     .admit-flash {
-      position: fixed; inset: 0; z-index: 500;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: rgba(16,185,129,0.12); pointer-events: none;
-      opacity: 0; transition: opacity 0.2s;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(16, 185, 129, 0.12);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
     }
-    .admit-flash.show { opacity: 1; }
-    .admit-flash-icon { font-size: 72px; margin-bottom: 12px; }
-    .admit-flash-text { font-size: 24px; font-weight: 800; color: var(--green); }
+
+    .admit-flash.show {
+      opacity: 1;
+    }
+
+    .admit-flash-icon {
+      font-size: 72px;
+      margin-bottom: 12px;
+    }
+
+    .admit-flash-text {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--green);
+    }
 
     /* Footer */
-    .scanner-footer { padding: 16px; text-align: center; font-size: 12px; color: var(--text-3); position: relative; z-index: 1; }
+    .scanner-footer {
+      padding: 16px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-3);
+      position: relative;
+      z-index: 1;
+    }
   </style>
 </head>
+
 <body>
 
-<!-- ── Pass View Screen (attendee with ?token=) ───────────────── -->
-<div class="screen" id="screenPass">
-  <div class="pass-container">
-    <div id="passBadge" class="pass-badge valid">
-      <div class="pass-badge-dot"></div>
-      <span id="passBadgeText">Valid Pass</span>
+  <!-- ── Pass View Screen (attendee with ?token=) ───────────────── -->
+  <div class="screen" id="screenPass">
+    <div class="pass-container">
+      <div id="passBadge" class="pass-badge valid">
+        <div class="pass-badge-dot"></div>
+        <span id="passBadgeText">Valid Pass</span>
+      </div>
+      <div class="pass-canvas-wrap">
+        <canvas id="passViewCanvas" width="900" height="380" style="width:100%;height:auto"></canvas>
+      </div>
+      <button class="pass-dl-btn" onclick="downloadPassView()">⬇ Download Pass</button>
     </div>
-    <div class="pass-canvas-wrap">
-      <canvas id="passViewCanvas" width="900" height="380" style="width:100%;height:auto"></canvas>
-    </div>
-    <button class="pass-dl-btn" onclick="downloadPassView()">⬇ Download Pass</button>
-  </div>
-  <footer class="scanner-footer">Powered by <a href="/index.html" style="color:var(--text-2);font-weight:600">Honourix</a></footer>
-</div>
-
-<!-- ── Staff Login Screen ─────────────────────────────────────── -->
-<div class="screen" id="screenLogin">
-  <div class="login-card">
-    <div class="login-icon">📡</div>
-    <div class="login-title">Staff Scanner</div>
-    <div class="login-sub">Enter your event code to access the attendance scanner.</div>
-    <label class="login-label">Staff Code</label>
-    <input class="login-input" id="loginCode" type="text" maxlength="8" placeholder="e.g. HX7K2M"
-      style="text-transform:uppercase;letter-spacing:3px;font-weight:700;font-size:20px;text-align:center"
-      oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <label class="login-label">Your Name</label>
-    <input class="login-input" id="loginName" type="text" placeholder="e.g. Priya (Gate 1)"
-      onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button class="login-btn" id="loginBtn" onclick="doLogin()">Connect →</button>
-    <div class="login-err" id="loginErr"></div>
-  </div>
-  <footer class="scanner-footer">Honourix Scanner</footer>
-</div>
-
-<!-- ── Scanner Screen ────────────────────────────────────────── -->
-<div class="screen" id="screenScanner">
-  <!-- Top bar -->
-  <div class="scanner-topbar">
-    <div>
-      <div class="scanner-event-name" id="scanEventName">Loading…</div>
-      <div class="scanner-staff-name" id="scanStaffName"></div>
-    </div>
-    <div>
-      <div class="scanner-admit-count" id="scanAdmitCount">0</div>
-      <div class="scanner-admit-label">Admitted</div>
-    </div>
+    <footer class="scanner-footer">Powered by <a href="/index.html"
+        style="color:var(--text-2);font-weight:600">GalSol</a></footer>
   </div>
 
-  <!-- Body -->
-  <div class="scanner-body">
-    <!-- Camera denied -->
-    <div class="camera-denied-wrap" id="cameraDenied">
-      <div class="camera-denied-icon">📷</div>
-      <div class="camera-denied-title">Camera Access Required</div>
-      <div class="camera-denied-sub">Please allow camera access in your browser settings to scan QR codes.</div>
-      <button class="camera-allow-btn" onclick="startCamera()">Try Again</button>
+  <!-- ── Staff Login Screen ─────────────────────────────────────── -->
+  <div class="screen" id="screenLogin">
+    <div class="login-card">
+      <div class="login-icon">📡</div>
+      <div class="login-title">Staff Scanner</div>
+      <div class="login-sub">Enter your event code to access the attendance scanner.</div>
+      <label class="login-label">Staff Code</label>
+      <input class="login-input" id="loginCode" type="text" maxlength="8" placeholder="e.g. GS7K2M"
+        style="text-transform:uppercase;letter-spacing:3px;font-weight:700;font-size:20px;text-align:center"
+        oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')doLogin()" />
+      <label class="login-label">Your Name</label>
+      <input class="login-input" id="loginName" type="text" placeholder="e.g. Priya (Gate 1)"
+        onkeydown="if(event.key==='Enter')doLogin()" />
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">Connect →</button>
+      <div class="login-err" id="loginErr"></div>
     </div>
+    <footer class="scanner-footer">GalSol Scanner</footer>
+  </div>
 
-    <!-- Viewfinder -->
-    <div class="scanner-vf-wrap" id="vfWrap">
-      <video id="scannerVideo" autoplay playsinline muted></video>
-      <canvas id="scannerCanvas"></canvas>
-      <div class="scanner-vf-corners">
-        <div class="scanner-corner tl"></div>
-        <div class="scanner-corner tr"></div>
-        <div class="scanner-corner bl"></div>
-        <div class="scanner-corner br"></div>
-        <div class="scanner-scan-line"></div>
+  <!-- ── Scanner Screen ────────────────────────────────────────── -->
+  <div class="screen" id="screenScanner">
+    <!-- Top bar -->
+    <div class="scanner-topbar">
+      <div>
+        <div class="scanner-event-name" id="scanEventName">Loading…</div>
+        <div class="scanner-staff-name" id="scanStaffName"></div>
+      </div>
+      <div>
+        <div class="scanner-admit-count" id="scanAdmitCount">0</div>
+        <div class="scanner-admit-label">Admitted</div>
       </div>
     </div>
 
-    <div class="scanner-hint" id="scanHint">Point camera at attendee's QR pass</div>
+    <!-- Body -->
+    <div class="scanner-body">
+      <!-- Camera denied -->
+      <div class="camera-denied-wrap" id="cameraDenied">
+        <div class="camera-denied-icon">📷</div>
+        <div class="camera-denied-title">Camera Access Required</div>
+        <div class="camera-denied-sub">Please allow camera access in your browser settings to scan QR codes.</div>
+        <button class="camera-allow-btn" onclick="startCamera()">Try Again</button>
+      </div>
 
-    <span class="scanner-manual-link" onclick="toggleManual()">Enter token manually</span>
-    <div class="scanner-manual-wrap" id="manualWrap">
-      <input class="scanner-manual-input" id="manualToken" placeholder="Paste pass token here"
-        onkeydown="if(event.key==='Enter')manualScan()"/>
-      <button class="scanner-manual-btn" onclick="manualScan()">Verify →</button>
+      <!-- Viewfinder -->
+      <div class="scanner-vf-wrap" id="vfWrap">
+        <video id="scannerVideo" autoplay playsinline muted></video>
+        <canvas id="scannerCanvas"></canvas>
+        <div class="scanner-vf-corners">
+          <div class="scanner-corner tl"></div>
+          <div class="scanner-corner tr"></div>
+          <div class="scanner-corner bl"></div>
+          <div class="scanner-corner br"></div>
+          <div class="scanner-scan-line"></div>
+        </div>
+      </div>
+
+      <div class="scanner-hint" id="scanHint">Point camera at attendee's QR pass</div>
+
+      <span class="scanner-manual-link" onclick="toggleManual()">Enter token manually</span>
+      <div class="scanner-manual-wrap" id="manualWrap">
+        <input class="scanner-manual-input" id="manualToken" placeholder="Paste pass token here"
+          onkeydown="if(event.key==='Enter')manualScan()" />
+        <button class="scanner-manual-btn" onclick="manualScan()">Verify →</button>
+      </div>
+    </div>
+
+    <!-- Result card -->
+    <div class="result-card" id="resultCard">
+      <div class="result-card-handle"></div>
+      <div class="result-status">
+        <div class="result-status-dot valid" id="resultDot"></div>
+        <div class="result-status-label" id="resultLabel">Valid Pass</div>
+      </div>
+      <div class="result-name" id="resultName"></div>
+      <div class="result-event" id="resultEvent"></div>
+      <div class="result-admitted-time" id="resultAdmittedTime" style="display:none"></div>
+      <div class="result-btns" id="resultBtns"></div>
+    </div>
+
+    <!-- Success flash -->
+    <div class="admit-flash" id="admitFlash">
+      <div class="admit-flash-icon">✅</div>
+      <div class="admit-flash-text">Admitted!</div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="scanner-stats">
+      <div class="scanner-stat">
+        <div class="scanner-stat-num" id="statAdmitted">0</div>
+        <div class="scanner-stat-lbl">Admitted</div>
+      </div>
+      <div class="scanner-stat">
+        <div class="scanner-stat-num" id="statTotal">0</div>
+        <div class="scanner-stat-lbl">Total</div>
+      </div>
+      <div class="scanner-stat">
+        <div class="scanner-stat-num" id="statPending">0</div>
+        <div class="scanner-stat-lbl">Pending</div>
+      </div>
     </div>
   </div>
 
-  <!-- Result card -->
-  <div class="result-card" id="resultCard">
-    <div class="result-card-handle"></div>
-    <div class="result-status">
-      <div class="result-status-dot valid" id="resultDot"></div>
-      <div class="result-status-label" id="resultLabel">Valid Pass</div>
-    </div>
-    <div class="result-name" id="resultName"></div>
-    <div class="result-event" id="resultEvent"></div>
-    <div class="result-admitted-time" id="resultAdmittedTime" style="display:none"></div>
-    <div class="result-btns" id="resultBtns"></div>
-  </div>
+  <script>
+    const BACKEND = 'https://certiflow-backend-73xk.onrender.com';
 
-  <!-- Success flash -->
-  <div class="admit-flash" id="admitFlash">
-    <div class="admit-flash-icon">✅</div>
-    <div class="admit-flash-text">Admitted!</div>
-  </div>
+    /* ════════════════════════════════════════════════════════════════
+       BOOT — decide which screen to show
+    ════════════════════════════════════════════════════════════════ */
+    const _params = new URLSearchParams(window.location.search);
+    const _token = _params.get('token');
+    const _isScan = _params.get('scan') === '1';
+    const _formSlug = _params.get('form') || '';
 
-  <!-- Stats bar -->
-  <div class="scanner-stats">
-    <div class="scanner-stat">
-      <div class="scanner-stat-num" id="statAdmitted">0</div>
-      <div class="scanner-stat-lbl">Admitted</div>
-    </div>
-    <div class="scanner-stat">
-      <div class="scanner-stat-num" id="statTotal">0</div>
-      <div class="scanner-stat-lbl">Total</div>
-    </div>
-    <div class="scanner-stat">
-      <div class="scanner-stat-num" id="statPending">0</div>
-      <div class="scanner-stat-lbl">Pending</div>
-    </div>
-  </div>
-</div>
+    let _staffCode = '';
+    let _staffName = '';
+    let _statsData = { total: 0, admitted: 0 };
+    let _scanning = false;
+    let _stream = null;
+    let _rafId = null;
+    let _currentPass = null;
+    let _passViewData = null;
 
-<script>
-const BACKEND = 'https://certiflow-backend-73xk.onrender.com';
+    (async function boot() {
+      if (_token) {
+        // Attendee view — show pass
+        showScreen('screenPass');
+        await loadPassView(_token);
+      } else if (_isScan || _formSlug) {
+        showScreen('screenLogin');
+      } else {
+        showScreen('screenLogin');
+      }
+    })();
 
-/* ════════════════════════════════════════════════════════════════
-   BOOT — decide which screen to show
-════════════════════════════════════════════════════════════════ */
-const _params   = new URLSearchParams(window.location.search);
-const _token    = _params.get('token');
-const _isScan   = _params.get('scan') === '1';
-const _formSlug = _params.get('form') || '';
-
-let _staffCode  = '';
-let _staffName  = '';
-let _statsData  = { total: 0, admitted: 0 };
-let _scanning   = false;
-let _stream     = null;
-let _rafId      = null;
-let _currentPass = null;
-let _passViewData = null;
-
-(async function boot() {
-  if (_token) {
-    // Attendee view — show pass
-    showScreen('screenPass');
-    await loadPassView(_token);
-  } else if (_isScan || _formSlug) {
-    showScreen('screenLogin');
-  } else {
-    showScreen('screenLogin');
-  }
-})();
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
-}
-
-/* ════════════════════════════════════════════════════════════════
-   PASS VIEW (attendee mode)
-════════════════════════════════════════════════════════════════ */
-async function loadPassView(token) {
-  try {
-    const res  = await fetch(`${BACKEND}/api/attendance/verify-token?token=${encodeURIComponent(token)}`);
-    const data = await res.json();
-    if (!res.ok || !data.ok) throw new Error(data.error || 'Invalid pass');
-
-    _passViewData = data.pass;
-    const status  = data.pass.status;
-    const badge   = document.getElementById('passBadge');
-    const badgeTx = document.getElementById('passBadgeText');
-
-    if (status === 'admitted') {
-      badge.className = 'pass-badge admitted';
-      badgeTx.textContent = '✓ Already Admitted';
-    } else {
-      badge.className = 'pass-badge valid';
-      badgeTx.textContent = '✓ Valid Pass';
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
     }
 
-    renderPassViewCanvas(data.pass);
-  } catch (e) {
-    document.getElementById('passBadge').className = 'pass-badge invalid';
-    document.getElementById('passBadgeText').textContent = '✗ Invalid Pass';
-  }
-}
+    /* ════════════════════════════════════════════════════════════════
+       PASS VIEW (attendee mode)
+    ════════════════════════════════════════════════════════════════ */
+    async function loadPassView(token) {
+      try {
+        const res = await fetch(`${BACKEND}/api/attendance/verify-token?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Invalid pass');
 
-function renderPassViewCanvas(pass) {
-  const canvas = document.getElementById('passViewCanvas');
-  const ctx    = canvas.getContext('2d');
-  const W = 900, H = 380;
-  canvas.width = W; canvas.height = H;
-  drawPassOnCanvas(ctx, pass, W, H);
-}
+        _passViewData = data.pass;
+        const status = data.pass.status;
+        const badge = document.getElementById('passBadge');
+        const badgeTx = document.getElementById('passBadgeText');
 
-function downloadPassView() {
-  const canvas = document.getElementById('passViewCanvas');
-  canvas.toBlob(blob => {
-    const a    = document.createElement('a');
-    a.href     = URL.createObjectURL(blob);
-    a.download = `entry-pass-${(_passViewData?.submissionId||'pass').slice(0,8)}.png`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }, 'image/png');
-}
+        if (status === 'admitted') {
+          badge.className = 'pass-badge admitted';
+          badgeTx.textContent = '✓ Already Admitted';
+        } else {
+          badge.className = 'pass-badge valid';
+          badgeTx.textContent = '✓ Valid Pass';
+        }
 
-/* ════════════════════════════════════════════════════════════════
-   STAFF LOGIN
-════════════════════════════════════════════════════════════════ */
-async function doLogin() {
-  const code = document.getElementById('loginCode').value.trim().toUpperCase();
-  const name = document.getElementById('loginName').value.trim();
-  const btn  = document.getElementById('loginBtn');
-  const err  = document.getElementById('loginErr');
+        renderPassViewCanvas(data.pass);
+      } catch (e) {
+        document.getElementById('passBadge').className = 'pass-badge invalid';
+        document.getElementById('passBadgeText').textContent = '✗ Invalid Pass';
+      }
+    }
 
-  if (!code || !_formSlug) {
-    showLoginErr('Please enter your staff code.');
-    return;
-  }
+    function renderPassViewCanvas(pass) {
+      const canvas = document.getElementById('passViewCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = 900, H = 380;
+      canvas.width = W; canvas.height = H;
+      drawPassOnCanvas(ctx, pass, W, H);
+    }
 
-  btn.disabled = true; btn.textContent = 'Connecting…'; err.style.display = 'none';
+    function downloadPassView() {
+      const canvas = document.getElementById('passViewCanvas');
+      canvas.toBlob(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `entry-pass-${(_passViewData?.submissionId || 'pass').slice(0, 8)}.png`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }, 'image/png');
+    }
 
-  try {
-    const res  = await fetch(`${BACKEND}/api/attendance/stats/${encodeURIComponent(_formSlug)}?staffCode=${encodeURIComponent(code)}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Invalid staff code');
+    /* ════════════════════════════════════════════════════════════════
+       STAFF LOGIN
+    ════════════════════════════════════════════════════════════════ */
+    async function doLogin() {
+      const code = document.getElementById('loginCode').value.trim().toUpperCase();
+      const name = document.getElementById('loginName').value.trim();
+      const btn = document.getElementById('loginBtn');
+      const err = document.getElementById('loginErr');
 
-    _staffCode = code;
-    _staffName = name || 'Staff';
-    _statsData = { total: data.total, admitted: data.admitted };
+      if (!code || !_formSlug) {
+        showLoginErr('Please enter your staff code.');
+        return;
+      }
 
-    document.getElementById('scanEventName').textContent = data.eventName || 'Event Scanner';
-    document.getElementById('scanStaffName').textContent = _staffName;
-    document.getElementById('scanAdmitCount').textContent = data.admitted;
-    updateStatsBar();
+      btn.disabled = true; btn.textContent = 'Connecting…'; err.style.display = 'none';
 
-    showScreen('screenScanner');
-    document.body.style.overflow = 'hidden';
-    startCamera();
-  } catch (e) {
-    showLoginErr(e.message || 'Invalid staff code. Check with your event organizer.');
-  } finally {
-    btn.disabled = false; btn.textContent = 'Connect →';
-  }
-}
+      try {
+        const res = await fetch(`${BACKEND}/api/attendance/stats/${encodeURIComponent(_formSlug)}?staffCode=${encodeURIComponent(code)}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Invalid staff code');
 
-function showLoginErr(msg) {
-  const err = document.getElementById('loginErr');
-  err.textContent = msg; err.style.display = '';
-}
+        _staffCode = code;
+        _staffName = name || 'Staff';
+        _statsData = { total: data.total, admitted: data.admitted };
 
-/* ════════════════════════════════════════════════════════════════
-   CAMERA / QR SCAN
-════════════════════════════════════════════════════════════════ */
-async function startCamera() {
-  document.getElementById('cameraDenied').style.display = 'none';
-  document.getElementById('vfWrap').style.display = '';
-  document.getElementById('scanHint').textContent = 'Point camera at attendee\'s QR pass';
+        document.getElementById('scanEventName').textContent = data.eventName || 'Event Scanner';
+        document.getElementById('scanStaffName').textContent = _staffName;
+        document.getElementById('scanAdmitCount').textContent = data.admitted;
+        updateStatsBar();
 
-  try {
-    _stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width: { ideal: 640 }, height: { ideal: 640 } }
-    });
-    const video = document.getElementById('scannerVideo');
-    video.srcObject = _stream;
-    video.play();
-    video.addEventListener('loadedmetadata', () => { _scanning = true; scanLoop(); });
-  } catch (e) {
-    document.getElementById('cameraDenied').style.display = 'flex';
-    document.getElementById('vfWrap').style.display = 'none';
-  }
-}
+        showScreen('screenScanner');
+        document.body.style.overflow = 'hidden';
+        startCamera();
+      } catch (e) {
+        showLoginErr(e.message || 'Invalid staff code. Check with your event organizer.');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Connect →';
+      }
+    }
 
-function stopCamera() {
-  _scanning = false;
-  if (_rafId) cancelAnimationFrame(_rafId);
-  if (_stream) { _stream.getTracks().forEach(t => t.stop()); _stream = null; }
-}
+    function showLoginErr(msg) {
+      const err = document.getElementById('loginErr');
+      err.textContent = msg; err.style.display = '';
+    }
 
-function scanLoop() {
-  if (!_scanning) return;
-  const video  = document.getElementById('scannerVideo');
-  const canvas = document.getElementById('scannerCanvas');
-  if (video.readyState === video.HAVE_ENOUGH_DATA) {
-    canvas.width  = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
-    const img  = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
-    if (code?.data) {
+    /* ════════════════════════════════════════════════════════════════
+       CAMERA / QR SCAN
+    ════════════════════════════════════════════════════════════════ */
+    async function startCamera() {
+      document.getElementById('cameraDenied').style.display = 'none';
+      document.getElementById('vfWrap').style.display = '';
+      document.getElementById('scanHint').textContent = 'Point camera at attendee\'s QR pass';
+
+      try {
+        _stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' }, width: { ideal: 640 }, height: { ideal: 640 } }
+        });
+        const video = document.getElementById('scannerVideo');
+        video.srcObject = _stream;
+        video.play();
+        video.addEventListener('loadedmetadata', () => { _scanning = true; scanLoop(); });
+      } catch (e) {
+        document.getElementById('cameraDenied').style.display = 'flex';
+        document.getElementById('vfWrap').style.display = 'none';
+      }
+    }
+
+    function stopCamera() {
       _scanning = false;
-      if (navigator.vibrate) navigator.vibrate(100);
-      processQRCode(code.data);
-      return;
+      if (_rafId) cancelAnimationFrame(_rafId);
+      if (_stream) { _stream.getTracks().forEach(t => t.stop()); _stream = null; }
     }
-  }
-  _rafId = requestAnimationFrame(scanLoop);
-}
 
-function processQRCode(data) {
-  // Extract token from URL or use raw value
-  let token = data;
-  try {
-    const url = new URL(data);
-    token = url.searchParams.get('token') || data;
-  } catch { /* raw token */ }
-  verifyPass(token);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   VERIFY + RESULT CARD
-════════════════════════════════════════════════════════════════ */
-async function verifyPass(token) {
-  document.getElementById('scanHint').textContent = 'Verifying…';
-  try {
-    const res  = await fetch(`${BACKEND}/api/attendance/verify-token?token=${encodeURIComponent(token)}`);
-    const data = await res.json();
-
-    if (!res.ok || !data.ok) {
-      showResult({ type: 'invalid', token, pass: null });
-    } else {
-      showResult({ type: data.pass.status === 'admitted' ? 'admitted' : 'valid', token, pass: data.pass });
+    function scanLoop() {
+      if (!_scanning) return;
+      const video = document.getElementById('scannerVideo');
+      const canvas = document.getElementById('scannerCanvas');
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+        if (code?.data) {
+          _scanning = false;
+          if (navigator.vibrate) navigator.vibrate(100);
+          processQRCode(code.data);
+          return;
+        }
+      }
+      _rafId = requestAnimationFrame(scanLoop);
     }
-  } catch (e) {
-    showResult({ type: 'invalid', token, pass: null });
-  }
-}
 
-function showResult({ type, token, pass }) {
-  _currentPass = { type, token, pass };
+    function processQRCode(data) {
+      // Extract token from URL or use raw value
+      let token = data;
+      try {
+        const url = new URL(data);
+        token = url.searchParams.get('token') || data;
+      } catch { /* raw token */ }
+      verifyPass(token);
+    }
 
-  const dot     = document.getElementById('resultDot');
-  const label   = document.getElementById('resultLabel');
-  const name    = document.getElementById('resultName');
-  const event   = document.getElementById('resultEvent');
-  const admTime = document.getElementById('resultAdmittedTime');
-  const btns    = document.getElementById('resultBtns');
+    /* ════════════════════════════════════════════════════════════════
+       VERIFY + RESULT CARD
+    ════════════════════════════════════════════════════════════════ */
+    async function verifyPass(token) {
+      document.getElementById('scanHint').textContent = 'Verifying…';
+      try {
+        const res = await fetch(`${BACKEND}/api/attendance/verify-token?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
 
-  dot.className   = 'result-status-dot ' + type;
-  admTime.style.display = 'none';
+        if (!res.ok || !data.ok) {
+          showResult({ type: 'invalid', token, pass: null });
+        } else {
+          showResult({ type: data.pass.status === 'admitted' ? 'admitted' : 'valid', token, pass: data.pass });
+        }
+      } catch (e) {
+        showResult({ type: 'invalid', token, pass: null });
+      }
+    }
 
-  if (type === 'valid') {
-    label.textContent = '✓ Valid Pass';
-    name.textContent  = pass?.attendeeName  || 'Attendee';
-    event.textContent = pass?.config?.eventName || '';
-    btns.innerHTML = `
+    function showResult({ type, token, pass }) {
+      _currentPass = { type, token, pass };
+
+      const dot = document.getElementById('resultDot');
+      const label = document.getElementById('resultLabel');
+      const name = document.getElementById('resultName');
+      const event = document.getElementById('resultEvent');
+      const admTime = document.getElementById('resultAdmittedTime');
+      const btns = document.getElementById('resultBtns');
+
+      dot.className = 'result-status-dot ' + type;
+      admTime.style.display = 'none';
+
+      if (type === 'valid') {
+        label.textContent = '✓ Valid Pass';
+        name.textContent = pass?.attendeeName || 'Attendee';
+        event.textContent = pass?.config?.eventName || '';
+        btns.innerHTML = `
       <button class="result-btn result-btn-reject" onclick="dismissResult()">✗ Reject</button>
       <button class="result-btn result-btn-admit"  onclick="admitPass()">✓ Admit</button>`;
-  } else if (type === 'admitted') {
-    label.textContent = '⚠ Already Admitted';
-    name.textContent  = pass?.attendeeName  || 'Attendee';
-    event.textContent = pass?.config?.eventName || '';
-    if (pass?.checkedInAt) {
-      admTime.style.display = '';
-      admTime.textContent = 'Admitted at ' + new Date(pass.checkedInAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+      } else if (type === 'admitted') {
+        label.textContent = '⚠ Already Admitted';
+        name.textContent = pass?.attendeeName || 'Attendee';
+        event.textContent = pass?.config?.eventName || '';
+        if (pass?.checkedInAt) {
+          admTime.style.display = '';
+          admTime.textContent = 'Admitted at ' + new Date(pass.checkedInAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+        btns.innerHTML = `<button class="result-btn result-btn-reject" style="flex:1" onclick="dismissResult()">Close</button>`;
+      } else {
+        label.textContent = '✗ Invalid Pass';
+        name.textContent = 'Pass not recognized';
+        event.textContent = 'Please check if this is a valid QR code.';
+        btns.innerHTML = `<button class="result-btn result-btn-reject" style="flex:1" onclick="dismissResult()">Dismiss</button>`;
+      }
+
+      document.getElementById('resultCard').classList.add('open');
     }
-    btns.innerHTML = `<button class="result-btn result-btn-reject" style="flex:1" onclick="dismissResult()">Close</button>`;
-  } else {
-    label.textContent = '✗ Invalid Pass';
-    name.textContent  = 'Pass not recognized';
-    event.textContent = 'Please check if this is a valid QR code.';
-    btns.innerHTML = `<button class="result-btn result-btn-reject" style="flex:1" onclick="dismissResult()">Dismiss</button>`;
-  }
 
-  document.getElementById('resultCard').classList.add('open');
-}
-
-function dismissResult() {
-  _currentPass = null;
-  document.getElementById('resultCard').classList.remove('open');
-  document.getElementById('scanHint').textContent = 'Point camera at attendee\'s QR pass';
-  setTimeout(() => { _scanning = true; scanLoop(); }, 300);
-}
-
-async function admitPass() {
-  if (!_currentPass?.token) return;
-  const btn = document.querySelector('.result-btn-admit');
-  if (btn) { btn.disabled = true; btn.textContent = 'Admitting…'; }
-
-  try {
-    const res  = await fetch(`${BACKEND}/api/attendance/admit`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ token: _currentPass.token, staffCode: _staffCode, staffName: _staffName }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Admit failed');
-
-    // Flash success
-    _statsData.admitted++;
-    updateStatsBar();
-    document.getElementById('scanAdmitCount').textContent = _statsData.admitted;
-    document.getElementById('resultCard').classList.remove('open');
-    showAdmitFlash();
-    setTimeout(dismissResult, 2500);
-  } catch (e) {
-    if (btn) { btn.disabled = false; btn.textContent = '✓ Admit'; }
-    if (e.message === 'Already admitted') {
-      showResult({ type: 'admitted', token: _currentPass.token, pass: _currentPass.pass });
+    function dismissResult() {
+      _currentPass = null;
+      document.getElementById('resultCard').classList.remove('open');
+      document.getElementById('scanHint').textContent = 'Point camera at attendee\'s QR pass';
+      setTimeout(() => { _scanning = true; scanLoop(); }, 300);
     }
-  }
-}
 
-function showAdmitFlash() {
-  const el = document.getElementById('admitFlash');
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 1800);
-}
+    async function admitPass() {
+      if (!_currentPass?.token) return;
+      const btn = document.querySelector('.result-btn-admit');
+      if (btn) { btn.disabled = true; btn.textContent = 'Admitting…'; }
 
-function updateStatsBar() {
-  document.getElementById('statAdmitted').textContent = _statsData.admitted;
-  document.getElementById('statTotal').textContent    = _statsData.total;
-  document.getElementById('statPending').textContent  = Math.max(0, _statsData.total - _statsData.admitted);
-}
+      try {
+        const res = await fetch(`${BACKEND}/api/attendance/admit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: _currentPass.token, staffCode: _staffCode, staffName: _staffName }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Admit failed');
 
-/* ════════════════════════════════════════════════════════════════
-   MANUAL TOKEN ENTRY
-════════════════════════════════════════════════════════════════ */
-function toggleManual() {
-  const wrap = document.getElementById('manualWrap');
-  wrap.style.display = wrap.style.display === 'block' ? 'none' : 'block';
-  if (wrap.style.display === 'block') document.getElementById('manualToken').focus();
-}
+        // Flash success
+        _statsData.admitted++;
+        updateStatsBar();
+        document.getElementById('scanAdmitCount').textContent = _statsData.admitted;
+        document.getElementById('resultCard').classList.remove('open');
+        showAdmitFlash();
+        setTimeout(dismissResult, 2500);
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = '✓ Admit'; }
+        if (e.message === 'Already admitted') {
+          showResult({ type: 'admitted', token: _currentPass.token, pass: _currentPass.pass });
+        }
+      }
+    }
 
-function manualScan() {
-  const t = document.getElementById('manualToken').value.trim();
-  if (!t) return;
-  document.getElementById('manualToken').value = '';
-  toggleManual();
-  verifyPass(t);
-}
+    function showAdmitFlash() {
+      const el = document.getElementById('admitFlash');
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 1800);
+    }
 
-/* ════════════════════════════════════════════════════════════════
-   CANVAS PASS RENDERING (shared)
-════════════════════════════════════════════════════════════════ */
-function drawPassOnCanvas(ctx, pass, W, H) {
-  const cfg         = pass.config || {};
-  const bannerColor = cfg.bannerColor || '#1a1a2e';
-  const textColor   = cfg.textColor   || '#ffffff';
+    function updateStatsBar() {
+      document.getElementById('statAdmitted').textContent = _statsData.admitted;
+      document.getElementById('statTotal').textContent = _statsData.total;
+      document.getElementById('statPending').textContent = Math.max(0, _statsData.total - _statsData.admitted);
+    }
 
-  ctx.fillStyle = bannerColor;
-  ctx.fillRect(0, 0, W, H);
+    /* ════════════════════════════════════════════════════════════════
+       MANUAL TOKEN ENTRY
+    ════════════════════════════════════════════════════════════════ */
+    function toggleManual() {
+      const wrap = document.getElementById('manualWrap');
+      wrap.style.display = wrap.style.display === 'block' ? 'none' : 'block';
+      if (wrap.style.display === 'block') document.getElementById('manualToken').focus();
+    }
 
-  const qrImg = new Image();
-  qrImg.onload = () => {
-    const qrPad  = 20;
-    const qrSize = H - qrPad * 2;
-    ctx.fillStyle = '#ffffff';
-    rrect(ctx, qrPad, qrPad, qrSize, qrSize, 12);
-    ctx.fill();
-    ctx.drawImage(qrImg, qrPad + 8, qrPad + 8, qrSize - 16, qrSize - 16);
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.font = '12px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Scan to verify', qrPad + qrSize / 2, qrPad + qrSize + 18);
+    function manualScan() {
+      const t = document.getElementById('manualToken').value.trim();
+      if (!t) return;
+      document.getElementById('manualToken').value = '';
+      toggleManual();
+      verifyPass(t);
+    }
 
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(320, 30); ctx.lineTo(320, H - 30); ctx.stroke();
+    /* ════════════════════════════════════════════════════════════════
+       CANVAS PASS RENDERING (shared)
+    ════════════════════════════════════════════════════════════════ */
+    function drawPassOnCanvas(ctx, pass, W, H) {
+      const cfg = pass.config || {};
+      const bannerColor = cfg.bannerColor || '#1a1a2e';
+      const textColor = cfg.textColor || '#ffffff';
 
-    const rx = 344, ry = 36, rw = W - rx - 20;
-    ctx.textAlign = 'left';
-    let cy = ry;
+      ctx.fillStyle = bannerColor;
+      ctx.fillRect(0, 0, W, H);
 
-    if (cfg.logoUrl) {
-      const logo = new Image(); logo.crossOrigin = 'anonymous';
-      logo.onload = () => {
-        const lh = Math.min(50, logo.naturalHeight || 50);
-        const lw = lh * ((logo.naturalWidth || 1) / (logo.naturalHeight || 1));
-        ctx.drawImage(logo, W - lw - 20, ry, lw, lh);
+      const qrImg = new Image();
+      qrImg.onload = () => {
+        const qrPad = 20;
+        const qrSize = H - qrPad * 2;
+        ctx.fillStyle = '#ffffff';
+        rrect(ctx, qrPad, qrPad, qrSize, qrSize, 12);
+        ctx.fill();
+        ctx.drawImage(qrImg, qrPad + 8, qrPad + 8, qrSize - 16, qrSize - 16);
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Scan to verify', qrPad + qrSize / 2, qrPad + qrSize + 18);
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(320, 30); ctx.lineTo(320, H - 30); ctx.stroke();
+
+        const rx = 344, ry = 36, rw = W - rx - 20;
+        ctx.textAlign = 'left';
+        let cy = ry;
+
+        if (cfg.logoUrl) {
+          const logo = new Image(); logo.crossOrigin = 'anonymous';
+          logo.onload = () => {
+            const lh = Math.min(50, logo.naturalHeight || 50);
+            const lw = lh * ((logo.naturalWidth || 1) / (logo.naturalHeight || 1));
+            ctx.drawImage(logo, W - lw - 20, ry, lw, lh);
+          };
+          logo.src = cfg.logoUrl;
+        }
+
+        ctx.fillStyle = textColor;
+        ctx.font = 'bold 26px sans-serif';
+        wrapTxt(ctx, cfg.eventName || 'Event', rx, cy, rw, 32);
+        cy += 38;
+
+        ctx.font = '19px sans-serif';
+        wrapTxt(ctx, pass.attendeeName || '—', rx, cy, rw, 26);
+        cy += 32;
+
+        ctx.font = '14px sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+        if (cfg.venue) { ctx.fillText('📍 ' + cfg.venue, rx, cy); cy += 24; }
+        if (cfg.date) { ctx.fillText('📅 ' + cfg.date, rx, cy); cy += 24; }
+        if (cfg.time) { ctx.fillText('🕐 ' + cfg.time, rx, cy); cy += 24; }
+
+        cy += 6;
+        ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(rx, cy); ctx.lineTo(W - 20, cy); ctx.stroke();
+        cy += 14;
+
+        const rules = (cfg.rules || []).slice(0, 3);
+        if (rules.length) {
+          ctx.fillStyle = 'rgba(255,255,255,0.55)';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.fillText('ENTRY RULES', rx, cy); cy += 17;
+          ctx.font = '12px sans-serif';
+          rules.forEach(r => { ctx.fillText('• ' + r, rx, cy); cy += 17; });
+        }
       };
-      logo.src = cfg.logoUrl;
+
+      // Build a simple QR dataURL from the token if not already a dataURL
+      if (pass.qrDataUrl) {
+        qrImg.src = pass.qrDataUrl;
+      } else {
+        // For pass view where we only have the token, build scanner URL
+        const scanUrl = window.location.origin + '/gs-scanner.html?token=' + encodeURIComponent(
+          pass.passToken || pass.pass_token || ''
+        );
+        // Use a placeholder colored box
+        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+        ctx.fillRect(20, 20, H - 40, H - 40);
+      }
     }
 
-    ctx.fillStyle = textColor;
-    ctx.font = 'bold 26px sans-serif';
-    wrapTxt(ctx, cfg.eventName || 'Event', rx, cy, rw, 32);
-    cy += 38;
-
-    ctx.font = '19px sans-serif';
-    wrapTxt(ctx, pass.attendeeName || '—', rx, cy, rw, 26);
-    cy += 32;
-
-    ctx.font = '14px sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.72)';
-    if (cfg.venue) { ctx.fillText('📍 ' + cfg.venue, rx, cy); cy += 24; }
-    if (cfg.date)  { ctx.fillText('📅 ' + cfg.date,  rx, cy); cy += 24; }
-    if (cfg.time)  { ctx.fillText('🕐 ' + cfg.time,  rx, cy); cy += 24; }
-
-    cy += 6;
-    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(rx, cy); ctx.lineTo(W - 20, cy); ctx.stroke();
-    cy += 14;
-
-    const rules = (cfg.rules || []).slice(0, 3);
-    if (rules.length) {
-      ctx.fillStyle = 'rgba(255,255,255,0.55)';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.fillText('ENTRY RULES', rx, cy); cy += 17;
-      ctx.font = '12px sans-serif';
-      rules.forEach(r => { ctx.fillText('• ' + r, rx, cy); cy += 17; });
+    function rrect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
     }
-  };
 
-  // Build a simple QR dataURL from the token if not already a dataURL
-  if (pass.qrDataUrl) {
-    qrImg.src = pass.qrDataUrl;
-  } else {
-    // For pass view where we only have the token, build scanner URL
-    const scanUrl = window.location.origin + '/hx-scanner.html?token=' + encodeURIComponent(
-      pass.passToken || pass.pass_token || ''
-    );
-    // Use a placeholder colored box
-    ctx.fillStyle = 'rgba(255,255,255,0.15)';
-    ctx.fillRect(20, 20, H - 40, H - 40);
-  }
-}
-
-function rrect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
-}
-
-function wrapTxt(ctx, text, x, y, maxW, lineH) {
-  const words = String(text || '').split(' ');
-  let line = '';
-  for (const w of words) {
-    const t = line ? line + ' ' + w : w;
-    if (ctx.measureText(t).width > maxW && line) { ctx.fillText(line, x, y); y += lineH; line = w; }
-    else { line = t; }
-  }
-  if (line) ctx.fillText(line, x, y);
-}
-</script>
+    function wrapTxt(ctx, text, x, y, maxW, lineH) {
+      const words = String(text || '').split(' ');
+      let line = '';
+      for (const w of words) {
+        const t = line ? line + ' ' + w : w;
+        if (ctx.measureText(t).width > maxW && line) { ctx.fillText(line, x, y); y += lineH; line = w; }
+        else { line = t; }
+      }
+      if (line) ctx.fillText(line, x, y);
+    }
+  </script>
 </body>
+
 </html>

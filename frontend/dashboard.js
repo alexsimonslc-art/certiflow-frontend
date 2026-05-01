@@ -1,12 +1,12 @@
 // @ts-nocheck
 /* ================================================================
-   Honourix — Shared Dashboard JS (v2.2 — Clean)
+   GalSol — Shared Dashboard JS (v2.2 — Clean)
 ================================================================ */
 
 const API = 'https://certiflow-backend-73xk.onrender.com';
 
 /* ── Auth ─────────────────────────────────────────────────────── */
-function getToken() { return localStorage.getItem('Honourix_token'); }
+function getToken() { return localStorage.getItem('GalSol_token'); }
 
 function getUser() {
   const token = getToken();
@@ -14,7 +14,7 @@ function getUser() {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     if (payload.exp && payload.exp * 1000 < Date.now()) {
-      localStorage.removeItem('Honourix_token');
+      localStorage.removeItem('GalSol_token');
       return null;
     }
     return payload;
@@ -25,7 +25,7 @@ function requireAuth() {
   const params = new URLSearchParams(window.location.search);
   const urlToken = params.get('token');
   if (urlToken) {
-    localStorage.setItem('Honourix_token', urlToken);
+    localStorage.setItem('GalSol_token', urlToken);
     window.history.replaceState({}, '', window.location.pathname);
   }
   const user = getUser();
@@ -34,7 +34,7 @@ function requireAuth() {
 }
 
 function logout() {
-  localStorage.removeItem('Honourix_token');
+  localStorage.removeItem('GalSol_token');
   window.location.href = '/index.html';
 }
 
@@ -53,7 +53,7 @@ async function apiFetch(path, options = {}) {
 
     // Only force-logout on 401 if it's a critical/required call
     if (res.status === 401 && !options.silent) {
-      localStorage.removeItem('Honourix_token');
+      localStorage.removeItem('GalSol_token');
       window.location.href = '/login.html';
       return null;
     }
@@ -74,7 +74,7 @@ async function apiFetch(path, options = {}) {
 
 /* ── Local Stats ─────────────────────────────────────────────── */
 function getLocalStats() {
-  const campaigns = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
+  const campaigns = JSON.parse(localStorage.getItem('gs_campaigns') || '[]');
   const totalCerts = campaigns.filter(c => c.type === 'cert' || c.type === 'combined').reduce((s, c) => s + (c.success || 0), 0);
   const totalMails = campaigns.filter(c => c.type === 'mail' || c.type === 'combined').reduce((s, c) => s + (c.success || 0), 0);
   const totalSuccess = campaigns.reduce((s, c) => s + (c.success || 0), 0);
@@ -100,8 +100,8 @@ function renderSidebar(activePage) {
     'mail-tool.html',
     'combined-tool.html',
     'mini-site.html',
-    'hx-forms.html',
-    'hx-database.html',
+    'gs-forms.html',
+    'gs-database.html',
   ]);
   const navItems = [
     { page: 'dashboard.html', icon: 'layout-dashboard', label: 'Overview', section: null },
@@ -109,8 +109,8 @@ function renderSidebar(activePage) {
     { page: 'mail-tool.html', icon: 'mail', label: 'Bulk Mail', section: null },
     { page: 'combined-tool.html', icon: 'zap', label: 'Combined Pipeline', section: null },
     { page: 'mini-site.html', icon: 'layout-template', label: 'Mini Sites', section: null },
-    { page: 'hx-forms.html', icon: 'file-text', label: 'HX Forms', section: null },
-    { page: 'hx-database.html', icon: 'database', label: 'Database', section: null },
+    { page: 'gs-forms.html', icon: 'file-text', label: 'GS Forms', section: null },
+    { page: 'gs-database.html', icon: 'database', label: 'Database', section: null },
     { page: 'campaigns.html', icon: 'folder-open', label: 'Campaigns', section: 'Manage' },
     { page: 'settings.html', icon: 'settings', label: 'Settings', section: null },
   ];
@@ -233,7 +233,7 @@ function initSidebar() {
       e.preventDefault();
       e.stopPropagation();
       showConfirm(
-        'Sign out of Honourix?',
+        'Sign out of GalSol?',
         'You will be returned to the home page. Campaign history is preserved locally.',
         logout
       );
@@ -251,14 +251,14 @@ function initSidebar() {
     if (!sidebar) return;
     sidebar.classList.toggle('collapsed', collapsed);
     if (mainArea) mainArea.classList.toggle('sidebar-collapsed', collapsed);
-    if (persist) localStorage.setItem('hx_sidebar_collapsed', collapsed ? '1' : '0');
+    if (persist) localStorage.setItem('gs_sidebar_collapsed', collapsed ? '1' : '0');
     // ✅ Do NOT touch collapseBtn innerHTML — icon stays as ☰ always
   }
 
 
   // Tool workspaces open collapsed by default; Campaigns and Settings keep the user's saved state.
   const shouldAutoCollapse = sidebar?.dataset.autoCollapsed === '1';
-  setSidebarCollapsed(shouldAutoCollapse || localStorage.getItem('hx_sidebar_collapsed') === '1', { persist: false });
+  setSidebarCollapsed(shouldAutoCollapse || localStorage.getItem('gs_sidebar_collapsed') === '1', { persist: false });
 
   // ✅ Wire up the hamburger button click
   if (collapseBtn) {

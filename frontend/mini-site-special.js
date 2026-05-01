@@ -1,5 +1,5 @@
 /* ================================================================
-   Honourix — Mini Site Builder  |  mini-site-special.js
+   GalSol — Mini Site Builder  |  mini-site-special.js
    Batch 4 Part A — Drive URL utilities · Font system ·
    Document & Video block deep enhancements
 ================================================================ */
@@ -276,4 +276,4 @@ function msd_typographySectionHtml() {
   }
 })();
 
-console.log('[Honourix] mini-site-special.js loaded ✓');
+console.log('[GalSol] mini-site-special.js loaded ✓');

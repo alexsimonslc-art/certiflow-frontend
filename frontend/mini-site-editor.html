@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Site Editor — Honourix</title>
+  <title>Mini Site Editor — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -796,7 +796,7 @@
 
       // ── Dynamically load user name & profile picture ──
       try {
-        const token = localStorage.getItem('Honourix_token');
+        const token = localStorage.getItem('GalSol_token');
         if (token) {
           const payload = JSON.parse(atob(token.split('.')[1]));
           const nameDisplay = document.getElementById('mseUserDisplayName');
@@ -1414,7 +1414,7 @@
         <div class="mse-prop-row">
           <div class="mse-prop-label">Form Source</div>
           <div style="display:flex;flex-direction:column;gap:6px">
-            ${['url', 'hxform'].map(t => `
+            ${['url', 'gsform'].map(t => `
             <label style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;border:1.5px solid ${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.5)' : 'rgba(255,255,255,0.12)'};background:${(p.connectType || 'url') === t ? 'rgba(0,212,255,0.08)' : 'rgba(255,255,255,0.04)'};transition:all 0.15s">
               <input type="radio" name="ct_${block.id}" value="${t}" ${(p.connectType || 'url') === t ? 'checked' : ''} style="display:none"
                 onchange="MSState.updateBlock('${block.id}',{connectType:'${t}'});updateRightPanel()"/>
@@ -1422,8 +1422,8 @@
                 ${(p.connectType || 'url') === t ? '<div style="width:6px;height:6px;border-radius:50%;background:var(--cyan)"></div>' : ''}
               </div>
               <div>
-                <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'HX Forms'}</div>
-                <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Connect your HX Form Builder forms'}</div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'GS Forms'}</div>
+                <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Connect your GS Form Builder forms'}</div>
               </div>
             </label>`).join('')}
           </div>
@@ -1437,20 +1437,20 @@
           <div class="mse-prop-hint">Paste your Google Forms, Typeform, or any form link</div>
         </div>` : `
         <div class="mse-prop-row">
-          <div class="mse-prop-label">Select HX Form</div>
-          <select class="mse-prop-select" id="hxfPicker_${block.id}"
+          <div class="mse-prop-label">Select GS Form</div>
+          <select class="mse-prop-select" id="gsfPicker_${block.id}"
                   onchange="msePickHxForm('${block.id}',this.value)">
             <option value="">Loading your forms…</option>
           </select>
-          <div class="mse-prop-hint">Only published HX Forms appear here</div>
+          <div class="mse-prop-hint">Only published GS Forms appear here</div>
         </div>
-        <script>setTimeout(()=>mseLoadHxForms('${block.id}','${(p.hxFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '')).replace(/'/g, "\\'")}'),0);<\/script>`}
+        <script>setTimeout(()=>mseLoadHxForms('${block.id}','${(p.gsFormSlug || ((p.connectUrl || '').match(/[?&]f=([^&#]+)/)?.[1] || '')).replace(/'/g, "\\'")}'),0);<\/script>`}
 
-        ${(p.connectType || 'url') === 'hxform' ? `
+        ${(p.connectType || 'url') === 'gsform' ? `
         <div class="mse-prop-row">
           <div class="mse-prop-label">Embed Height</div>
-          <input class="mse-prop-input" type="number" min="520" max="1400" step="20" value="${p.hxEmbedHeight || 820}"
-            oninput="MSState.updateBlock('${block.id}',{hxEmbedHeight:Math.max(520,Math.min(1400,+this.value||820))});refreshCanvas()"/>
+          <input class="mse-prop-input" type="number" min="520" max="1400" step="20" value="${p.gsEmbedHeight || 820}"
+            oninput="MSState.updateBlock('${block.id}',{gsEmbedHeight:Math.max(520,Math.min(1400,+this.value||820))});refreshCanvas()"/>
           <div class="mse-prop-hint">Adjust if your form needs more vertical space on the public mini site</div>
         </div>` : ''}
 
@@ -1560,7 +1560,7 @@
       },
       {
         title: 'Set Up a Web Data Stream',
-        desc: 'Select Web as the platform. Enter your site URL as honourix.app/your-slug and give it a name.',
+        desc: 'Select Web as the platform. Enter your site URL as GalSol.app/your-slug and give it a name.',
       },
       {
         title: 'Copy Your Measurement ID',
@@ -2146,13 +2146,13 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     /* ════════════════════════════════════════════════════════════════
        TOAST
     ════════════════════════════════════════════════════════════════ */
-    /* ── HX Forms live picklist ──────────────────────────────── */
+    /* ── GS Forms live picklist ──────────────────────────────── */
     async function mseLoadHxForms(blockId, selectedSlug) {
-      const sel = document.getElementById('hxfPicker_' + blockId);
+      const sel = document.getElementById('gsfPicker_' + blockId);
       if (!sel) return;
       try {
-        const token = localStorage.getItem('Honourix_token');
-        const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxforms/list', {
+        const token = localStorage.getItem('GalSol_token');
+        const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/gsforms/list', {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const { forms } = await res.json();
@@ -2163,20 +2163,20 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
             const safeName = String(f.name || '').replace(/"/g, '&quot;');
             return `<option value="${f.slug}" data-id="${f.id}" data-name="${safeName}" ${f.slug === selectedSlug ? 'selected' : ''}>${f.name} (${responses} responses)</option>`;
           }).join('');
-        if (!allForms.length) sel.innerHTML = '<option value="">No HX Forms found</option>';
+        if (!allForms.length) sel.innerHTML = '<option value="">No GS Forms found</option>';
       } catch {
         sel.innerHTML = '<option value="">Could not load forms - check login</option>';
       }
     }
     function msePickHxForm(blockId, slug) {
-      const sel = document.getElementById('hxfPicker_' + blockId);
+      const sel = document.getElementById('gsfPicker_' + blockId);
       const opt = sel?.selectedOptions?.[0];
-      const url = slug ? window.location.origin + '/hx-form-view.html?f=' + slug : '';
+      const url = slug ? window.location.origin + '/gs-form-view.html?f=' + slug : '';
       MSState.updateBlock(blockId, {
-        connectType: 'hxform',
-        hxFormId: opt?.dataset.id || '',
-        hxFormSlug: slug || '',
-        hxFormName: opt?.dataset.name || opt?.textContent?.replace(/\s*\([^)]*\)\s*$/, '') || '',
+        connectType: 'gsform',
+        gsFormId: opt?.dataset.id || '',
+        gsFormSlug: slug || '',
+        gsFormName: opt?.dataset.name || opt?.textContent?.replace(/\s*\([^)]*\)\s*$/, '') || '',
         connectUrl: url,
       });
       refreshCanvas();
@@ -2277,7 +2277,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     // Inject User Name into Greeting & Setup Inputs
     document.addEventListener('DOMContentLoaded', () => {
       try {
-        const token = localStorage.getItem('Honourix_token');
+        const token = localStorage.getItem('GalSol_token');
         if (token) {
           const name = JSON.parse(atob(token.split('.')[1])).name.split(' ')[0];
           const greet = document.getElementById('galAiGreetName');
@@ -2307,7 +2307,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     async function _galSendCheckPro() {
       if (_galSendIsPro !== null) return _galSendIsPro;
       try {
-        const token = localStorage.getItem('Honourix_token');
+        const token = localStorage.getItem('GalSol_token');
         const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
           headers: { 'Authorization': 'Bearer ' + token }
         });
@@ -2372,7 +2372,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         };
 
         // ── FIXED: Native Fetch with Authorization ──
-        const token = localStorage.getItem('Honourix_token');
+        const token = localStorage.getItem('GalSol_token');
         const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/minisite-ai/chat', {
           method: 'POST',
           headers: {
@@ -3197,7 +3197,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         return w;
       }
 
-      var saved = parseInt(localStorage.getItem('hx_right_panel_w') || '0');
+      var saved = parseInt(localStorage.getItem('gs_right_panel_w') || '0');
       if (saved >= MIN_W && saved <= MAX_W) setW(saved);
 
       handle.addEventListener('mousedown', function (e) {
@@ -3214,7 +3214,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         function onUp() {
           window._msResizing = false;
           handle.classList.remove('dragging');
-          localStorage.setItem('hx_right_panel_w',
+          localStorage.setItem('gs_right_panel_w',
             parseInt(getComputedStyle(document.documentElement).getPropertyValue('--right-panel-w')) || 272
           );
           document.removeEventListener('mousemove', onMove);
@@ -3315,7 +3315,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       }
 
       function mseGetToken() {
-        return localStorage.getItem('Honourix_token') || '';
+        return localStorage.getItem('GalSol_token') || '';
       }
 
       function mseAppendMsg(role, text) {
