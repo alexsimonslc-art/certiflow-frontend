@@ -29,8 +29,8 @@ const ED = {
 
 function setZoom(val) {
   ED.zoom = Math.max(0.1, Math.min(3, parseFloat(val)));
-  const zr = document.getElementById('canvasZoom'); if(zr) zr.value = ED.zoom;
-  const zl = document.getElementById('zoomLabel'); if(zl) zl.textContent = Math.round(ED.zoom * 100) + '%';
+  const zr = document.getElementById('canvasZoom'); if (zr) zr.value = ED.zoom;
+  const zl = document.getElementById('zoomLabel'); if (zl) zl.textContent = Math.round(ED.zoom * 100) + '%';
   resizeCanvas();
 }
 function getFontCSS(name) {
@@ -131,7 +131,7 @@ function validateStep(n) {
   if (n === 2) {
     if (ED.fields.length === 0) { toast('Please add at least one text field to your template', 'warning'); return false; }
   }
-    if (n === 3) {
+  if (n === 3) {
     const unmapped = ED.fields.filter(f => !f.column);
     if (unmapped.length) { toast('Please map all fields before continuing', 'error'); return false; }
     if (!ED.fields.some(f => f.isPrimary)) { toast('Please star one field as Primary (for filename)', 'error'); return false; }
@@ -152,19 +152,19 @@ function switchSrc(type) {
   });
   if (type === 'sheets') {
     document.getElementById('srcSheets').style.display = 'block';
-    document.getElementById('srcSheetsOpt').className  = 'src-opt active';
+    document.getElementById('srcSheetsOpt').className = 'src-opt active';
   } else if (type === 'file') {
     document.getElementById('srcFile').style.display = 'block';
-    document.getElementById('srcFileOpt').className  = 'src-opt active';
+    document.getElementById('srcFileOpt').className = 'src-opt active';
   } else if (type === 'manual') {
     document.getElementById('srcManual').style.display = 'block';
-    document.getElementById('srcManualOpt').className  = 'src-opt active';
+    document.getElementById('srcManualOpt').className = 'src-opt active';
     if (document.getElementById('manualBody').children.length === 0) {
       manualAddRow(); manualAddRow();
     }
   } else if (type === 'hxform') {
     document.getElementById('srcHxForm').style.display = 'block';
-    document.getElementById('srcHxFormOpt').className  = 'src-opt active';
+    document.getElementById('srcHxFormOpt').className = 'src-opt active';
     loadHxFormList_cert();
   }
 }
@@ -174,11 +174,11 @@ async function loadHxFormList_cert() {
   if (!sel || sel.dataset.loaded) return;
   try {
     const token = localStorage.getItem('Honourix_token');
-    const res   = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
+    const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/hxdb/summary', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const { forms } = await res.json();
-    const eligible  = (forms || []).filter(f => f.submissionCount > 0);
+    const eligible = (forms || []).filter(f => f.submissionCount > 0);
     sel.innerHTML = '<option value="">Select a form…</option>' +
       eligible.map(f => `<option value="${f.id}">${f.name} (${f.submissionCount} responses)</option>`).join('');
     if (!eligible.length) sel.innerHTML = '<option value="">No forms with submissions yet</option>';
@@ -189,7 +189,7 @@ async function loadHxFormList_cert() {
 async function loadHxFormData(formId) {
   if (!formId) return;
   const sel = document.getElementById('hxFormSelect');
-  const el  = document.getElementById('hxFormResult');
+  const el = document.getElementById('hxFormResult');
   sel.disabled = true;
   el.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--glass);margin-top:4px;font-size:14px;color:var(--text-2)">
     <svg style="flex-shrink:0;animation:spin 0.9s linear infinite" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
@@ -198,18 +198,18 @@ async function loadHxFormData(formId) {
   el.style.display = 'block';
   try {
     const token = localStorage.getItem('Honourix_token');
-    const res   = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
+    const res = await fetch(`https://certiflow-backend-73xk.onrender.com/api/hxdb/data/${formId}`, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     if (!res.ok) throw new Error((await res.json()).error || 'Failed');
     const data = await res.json();
     if (!data.rows?.length) { toast('No submissions in this form yet', 'warning'); return; }
-    CS.headers     = data.headers;
-    CS.rows        = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
+    CS.headers = data.headers;
+    CS.rows = data.rows.map(r => Object.fromEntries(data.headers.map((h, i) => [h, r[i] || ''])));
     window.allCols = CS.headers;
-    const el       = document.getElementById('hxFormResult');
-    const preview  = CS.rows; // FIX: Show all rows
-        el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
+    const el = document.getElementById('hxFormResult');
+    const preview = CS.rows; // FIX: Show all rows
+    el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
     el.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);margin-bottom:16px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><polyline points="20 6 9 17 4 12"/></svg>
@@ -223,22 +223,22 @@ async function loadHxFormData(formId) {
             </tr>
           </thead>
           <tbody>
-            ${CP.rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-              ${data.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g,'&lt;')}</td>`).join('')}
+            ${CS.rows.map(r => `<tr style="border-top:1px solid rgba(255,255,255,0.03);transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+              ${data.headers.map(h => `<td style="padding:10px 16px;font-size:13.5px;color:var(--text);white-space:nowrap">${(r[h] || '').toString().replace(/</g, '&lt;')}</td>`).join('')}
             </tr>`).join('')}
           </tbody>
         </table>
       </div>`;
     el.style.display = 'block';
     toast(`${CS.rows.length} responses ready`, 'success');
-    } catch(e) {
+  } catch (e) {
     el.style.display = 'none';
     toast('Could not load: ' + e.message, 'error');
   } finally { sel.disabled = false; }
 }
 
 async function loadSheet() {
-  const id  = document.getElementById('sheetId').value.trim();
+  const id = document.getElementById('sheetId').value.trim();
   if (!id) { toast('Paste your Sheet ID first', 'error'); return; }
   const btn = document.getElementById('loadSheetBtn');
   btn.classList.add('loading'); btn.disabled = true;
@@ -246,7 +246,7 @@ async function loadSheet() {
     const data = await apiFetch(`/api/sheets/read?sheetId=${encodeURIComponent(id)}&range=Sheet1`);
     if (!data?.data?.length || data.data.length < 2) { toast('Sheet is empty or has no data rows', 'warning'); return; }
     CS.headers = data.data[0].map(h => h.toString().trim());
-    CS.rows    = data.data.slice(1).map(row => Object.fromEntries(CS.headers.map((h, i) => [h, row[i] || ''])));
+    CS.rows = data.data.slice(1).map(row => Object.fromEntries(CS.headers.map((h, i) => [h, row[i] || ''])));
     renderSheetPreview();
     toast(`Loaded ${CS.rows.length} participants`, 'success');
   } catch (e) {
@@ -257,7 +257,7 @@ async function loadSheet() {
 function renderSheetPreview() {
   const el = document.getElementById('sheetResult');
   const preview = CS.rows; // FIX: Show all rows
-    el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
+  el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
   el.style.cssText = 'display:block;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden';
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);margin-bottom:16px">
@@ -280,13 +280,15 @@ function handleFile(e) {
   if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
   if (ext === 'csv') {
-    Papa.parse(file, { header: true, skipEmptyLines: true, complete: r => {
-      CS.headers = r.meta.fields; CS.rows = r.data; showFilePreview(file.name);
-    }});
+    Papa.parse(file, {
+      header: true, skipEmptyLines: true, complete: r => {
+        CS.headers = r.meta.fields; CS.rows = r.data; showFilePreview(file.name);
+      }
+    });
   } else if (['xlsx', 'xls'].includes(ext)) {
     const reader = new FileReader();
     reader.onload = e2 => {
-      const wb  = XLSX.read(e2.target.result, { type: 'array' });
+      const wb = XLSX.read(e2.target.result, { type: 'array' });
       const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
       CS.headers = Object.keys(arr[0] || {}); CS.rows = arr; showFilePreview(file.name);
     };
@@ -304,7 +306,7 @@ function showFilePreview(name) {
     <div style="width:100%;box-sizing:border-box;overflow:auto;max-height:260px;border:1px solid var(--glass-border);border-radius:10px;margin-top:4px;scrollbar-width:thin;scrollbar-color:var(--glass-border-2) transparent">
       <table style="width:max-content;min-width:100%;border-collapse:collapse">
         <thead><tr style="position:sticky;top:0;z-index:1;background:var(--surface)">${CS.headers.map(h => `<th style="padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--glass-border)">${h}</th>`).join('')}</tr></thead>
-        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+        <tbody>${preview.map(r => `<tr style="border-top:1px solid var(--glass-border)">${CS.headers.map(h => `<td style="padding:10px 14px;font-size:13.5px;color:var(--text-2);white-space:nowrap">${r[h] || ''}</td>`).join('')}</tr>`).join('')}</tbody>
       </table>
     </div>`;
   document.getElementById('fileResult').style.display = 'block';
@@ -324,13 +326,13 @@ document.addEventListener('DOMContentLoaded', () => {
    STEP 2 — CANVAS EDITOR
 ════════════════════════════════════════════════════════════════ */
 function initCanvas() {
-  canvas       = document.getElementById('certCanvas');
-  ctx          = canvas.getContext('2d');
+  canvas = document.getElementById('certCanvas');
+  ctx = canvas.getContext('2d');
   fieldOverlay = document.getElementById('fieldOverlay');
-  ED.ready     = true;
+  ED.ready = true;
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
-  
+
   // ── Mouse Wheel Zoom & Canvas Panning ──
   const zone = document.getElementById('canvasWrap');
   if (zone) {
@@ -346,7 +348,7 @@ function initCanvas() {
     // Pan
     let isPanning = false;
     let startX, startY, scrollLeft, scrollTop;
-    
+
     // Explicitly set base cursor
     zone.style.cursor = 'grab';
 
@@ -378,32 +380,32 @@ function initCanvas() {
   document.addEventListener('keydown', e => {
     if (CS.step !== 2) return;
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
-    
+
     // Zoom shortcuts
     if (e.ctrlKey || e.metaKey) {
       if (e.key === '=' || e.key === '+') { e.preventDefault(); setZoom((ED.zoom || 1) + 0.1); return; }
       if (e.key === '-') { e.preventDefault(); setZoom((ED.zoom || 1) - 0.1); return; }
       if (e.key === '0') { e.preventDefault(); setZoom(1); return; }
-      if (e.key.toLowerCase() === 'd' && ED.selId) { 
-          e.preventDefault(); 
-          if (typeof duplicateField === 'function') duplicateField(ED.selId); 
-          return; 
+      if (e.key.toLowerCase() === 'd' && ED.selId) {
+        e.preventDefault();
+        if (typeof duplicateField === 'function') duplicateField(ED.selId);
+        return;
       }
     }
-    
+
     // Movement shortcuts (Arrow Keys)
     if (ED.selId) {
       const f = ED.fields.find(x => x.id === ED.selId);
       if (!f) return;
       const step = e.shiftKey ? 1 : 0.1; // Shift makes it move 10x faster
       let moved = false;
-      
+
       if (e.key === 'ArrowUp') { f.y -= step; moved = true; }
       if (e.key === 'ArrowDown') { f.y += step; moved = true; }
       if (e.key === 'ArrowLeft') { f.x -= step; moved = true; }
       if (e.key === 'ArrowRight') { f.x += step; moved = true; }
       if (e.key === 'Delete' || e.key === 'Backspace') { deleteField(ED.selId); return; }
-      
+
       if (moved) {
         e.preventDefault();
         redraw();
@@ -426,7 +428,7 @@ function resizeCanvas() {
 
   // Base fit calculation
   const baseScale = Math.min((zw - 48) / ED.w, (Math.max(zh - 48, 200)) / ED.h, 1);
-  
+
   // Apply zoom multiplier
   ED.scale = baseScale * (ED.zoom || 1);
 
@@ -471,11 +473,11 @@ function redrawCanvas() {
     const boxX = (f.x / 100) * w;
     const boxY = (f.y / 100) * h;
     const boxW = (f.width / 100) * w;
-    const fs   = Math.max(4, f.fontSize * ED.scale);
-    const ls   = (f.letterSpacing || 0) * ED.scale;
-    const fw   = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
-    const fi   = f.italic ? 'italic' : 'normal';
-    const ff   = getFontCSS(f.fontFamily || 'Helvetica');
+    const fs = Math.max(4, f.fontSize * ED.scale);
+    const ls = (f.letterSpacing || 0) * ED.scale;
+    const fw = f.bold ? 700 : getFontWeight(f.fontFamily || 'Helvetica');
+    const fi = f.italic ? 'italic' : 'normal';
+    const ff = getFontCSS(f.fontFamily || 'Helvetica');
 
     const value = (f.column && CS.rows && CS.rows[0])
       ? (CS.rows[0][f.column] || f.previewText || f.placeholder)
@@ -519,7 +521,7 @@ function redrawCanvas() {
       const drawY = boxY + (i * fs * 1.3);
       let textW = ctx.measureText(line).width;
       if (ls > 0 && line.length > 1) textW += ls * (line.length - 1);
-      
+
       let drawX = boxX;
       if ((f.align || 'center') === 'center') drawX = boxX + (boxW - textW) / 2;
       else if (f.align === 'right') drawX = boxX + boxW - textW;
@@ -554,7 +556,7 @@ function renderHandles() {
     const y = (f.y / 100) * ch;
     const w = (f.width / 100) * cw;
     const fs = Math.max(6, f.fontSize * ED.scale);
-    
+
     // Auto-calculate the bounding box height based on wrapped lines
     const value = (f.column && CS.rows && CS.rows[0]) ? (CS.rows[0][f.column] || f.previewText || f.placeholder) : (f.previewText || f.placeholder);
     ctx.save();
@@ -566,7 +568,7 @@ function renderHandles() {
       const testLine = currentLine + ' ' + words[j];
       let testWidth = ctx.measureText(testLine).width;
       if (ls > 0 && testLine.length > 1) testWidth += ls * (testLine.length - 1);
-      if (testWidth > w && currentLine !== '') { linesCount++; currentLine = words[j]; } 
+      if (testWidth > w && currentLine !== '') { linesCount++; currentLine = words[j]; }
       else { currentLine = testLine; }
     }
     ctx.restore();
@@ -578,26 +580,26 @@ function renderHandles() {
     const el = document.createElement('div');
     el.className = 'tf-handle' + (f.id === ED.selId ? ' sel' : '');
     el.dataset.fid = f.id;
-    
+
     // Core Positioning & Rotation Map
     el.style.cssText = `left:${cx}px;top:${cy}px;width:${w}px;height:${h}px;transform:translate(-50%, -50%) rotate(${f.rotation || 0}deg);background:transparent;color:transparent;`;
 
     // 1. Top Action Bar (Duplicate & Delete)
     const actionBar = document.createElement('div');
     actionBar.className = 'tf-action-bar';
-    
+
     const btnDup = document.createElement('div');
     btnDup.className = 'tf-action-btn';
     btnDup.title = "Duplicate";
     btnDup.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
     btnDup.addEventListener('mousedown', e => { e.stopPropagation(); duplicateField(f.id); });
-    
+
     const btnDel = document.createElement('div');
     btnDel.className = 'tf-action-btn del';
     btnDel.title = "Delete";
     btnDel.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
     btnDel.addEventListener('mousedown', e => { e.stopPropagation(); deleteField(f.id); });
-    
+
     actionBar.appendChild(btnDup);
     actionBar.appendChild(btnDel);
     el.appendChild(actionBar);
@@ -605,19 +607,19 @@ function renderHandles() {
     // 2. Bottom Control Pill (Move & Rotate)
     const ctrlPill = document.createElement('div');
     ctrlPill.className = 'tf-ctrl-pill';
-    
+
     const btnMove = document.createElement('div');
     btnMove.className = 'tf-ctrl-btn move';
     btnMove.title = "Move";
     btnMove.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="19 9 22 12 19 15"></polyline><polyline points="9 19 12 22 15 19"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>';
     btnMove.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startDrag(e, f); });
-    
+
     const btnRot = document.createElement('div');
     btnRot.className = 'tf-ctrl-btn rot';
     btnRot.title = "Rotate";
     btnRot.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 2.63-6.37L21 8"></path></svg>';
     btnRot.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startRotate(e, f); });
-    
+
     ctrlPill.appendChild(btnMove);
     ctrlPill.appendChild(btnRot);
     el.appendChild(ctrlPill);
@@ -626,26 +628,26 @@ function renderHandles() {
     const isSmall = h < 40 || w < 80;
 
     ['tl', 'tr', 'bl', 'br'].forEach(corner => {
-        const cEl = document.createElement('div');
-        cEl.className = `tf-resizer-corner ${corner}`;
-        if (isSmall && corner !== 'tl') cEl.style.opacity = '0'; // Hide visually, but keep active!
-        cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
-        el.appendChild(cEl);
+      const cEl = document.createElement('div');
+      cEl.className = `tf-resizer-corner ${corner}`;
+      if (isSmall && corner !== 'tl') cEl.style.opacity = '0'; // Hide visually, but keep active!
+      cEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startScale(e, f, corner); });
+      el.appendChild(cEl);
     });
 
     ['left', 'right'].forEach(side => {
-        const sEl = document.createElement('div');
-        sEl.className = `tf-resizer-width ${side}`;
-        if (isSmall && side !== 'right') sEl.style.opacity = '0'; // Hide visually, but keep active!
-        sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
-        el.appendChild(sEl);
+      const sEl = document.createElement('div');
+      sEl.className = `tf-resizer-width ${side}`;
+      if (isSmall && side !== 'right') sEl.style.opacity = '0'; // Hide visually, but keep active!
+      sEl.addEventListener('mousedown', e => { e.stopPropagation(); selectField(f.id); startWidthResize(e, f, side); });
+      el.appendChild(sEl);
     });
 
     // Freeform Draging Base
-    el.addEventListener('mousedown', e => { 
-        if (e.target === el) { 
-            e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f); 
-        }
+    el.addEventListener('mousedown', e => {
+      if (e.target === el) {
+        e.stopPropagation(); e.preventDefault(); selectField(f.id); startDrag(e, f);
+      }
     });
     fieldOverlay.appendChild(el);
   });
@@ -667,9 +669,9 @@ function startResize(e, field) {
     field.fontSize = Math.max(8, Math.round(startSize * scaleRatio));
     redraw();
     if (field.id === ED.selId) {
-      const pW = document.getElementById('pW'); if(pW) pW.value = field.width.toFixed(1);
-      const pSize = document.getElementById('pSize'); if(pSize) pSize.value = field.fontSize;
-      const pSizeVal = document.getElementById('pSizeVal'); if(pSizeVal) pSizeVal.textContent = field.fontSize + 'px';
+      const pW = document.getElementById('pW'); if (pW) pW.value = field.width.toFixed(1);
+      const pSize = document.getElementById('pSize'); if (pSize) pSize.value = field.fontSize;
+      const pSizeVal = document.getElementById('pSizeVal'); if (pSizeVal) pSizeVal.textContent = field.fontSize + 'px';
     }
   };
   const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); };
@@ -697,32 +699,32 @@ function startRotate(e, field) {
 }
 
 const FONT_MAP = {
-  'Helvetica':          { css: 'Helvetica, Arial, sans-serif', weight: 400 },
-  'Montserrat':         { css: "'Montserrat', sans-serif", weight: 400 },
-  'Raleway':            { css: "'Raleway', sans-serif", weight: 400 },
-  'Plus Jakarta Sans':  { css: "'Plus Jakarta Sans', sans-serif", weight: 400 },
-  'Times New Roman':    { css: "'Times New Roman', serif", weight: 400 },
-  'EB Garamond':        { css: "'EB Garamond', serif", weight: 400 },
-  'Playfair Display':   { css: "'Playfair Display', serif", weight: 400 },
+  'Helvetica': { css: 'Helvetica, Arial, sans-serif', weight: 400 },
+  'Montserrat': { css: "'Montserrat', sans-serif", weight: 400 },
+  'Raleway': { css: "'Raleway', sans-serif", weight: 400 },
+  'Plus Jakarta Sans': { css: "'Plus Jakarta Sans', sans-serif", weight: 400 },
+  'Times New Roman': { css: "'Times New Roman', serif", weight: 400 },
+  'EB Garamond': { css: "'EB Garamond', serif", weight: 400 },
+  'Playfair Display': { css: "'Playfair Display', serif", weight: 400 },
   'Cormorant Garamond': { css: "'Cormorant Garamond', serif", weight: 400 },
-  'Dancing Script':     { css: "'Dancing Script', cursive", weight: 400 },
-  'Cinzel':             { css: "'Cinzel', serif", weight: 400 },
-  'Courier New':        { css: "'Courier New', monospace", weight: 400 },
-  'JetBrains Mono':     { css: "'JetBrains Mono', monospace", weight: 400 },
+  'Dancing Script': { css: "'Dancing Script', cursive", weight: 400 },
+  'Cinzel': { css: "'Cinzel', serif", weight: 400 },
+  'Courier New': { css: "'Courier New', monospace", weight: 400 },
+  'JetBrains Mono': { css: "'JetBrains Mono', monospace", weight: 400 },
 };
-function getFontCSS(name)    { return (FONT_MAP[name] || FONT_MAP['Helvetica']).css; }
+function getFontCSS(name) { return (FONT_MAP[name] || FONT_MAP['Helvetica']).css; }
 function getFontWeight(name) { return (FONT_MAP[name] || FONT_MAP['Helvetica']).weight; }
 
 const FONT_URLS = {
-  'Montserrat':         'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap',
-  'Raleway':            'https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap',
-  'Plus Jakarta Sans':  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap',
-  'EB Garamond':        'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
-  'Playfair Display':   'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+  'Montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap',
+  'Raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap',
+  'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap',
+  'EB Garamond': 'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+  'Playfair Display': 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
   'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
-  'Dancing Script':     'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap',
-  'Cinzel':             'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
-  'JetBrains Mono':     'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+  'Dancing Script': 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap',
+  'Cinzel': 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
+  'JetBrains Mono': 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
 };
 function getUsedFontUrls() {
   const used = [...new Set(ED.fields.map(f => f.fontFamily).filter(Boolean))];
@@ -749,7 +751,7 @@ function startDrag(e, field) {
     field.x = startFieldX + ((ev.clientX - startX) / dispW) * 100;
     field.y = startFieldY + ((ev.clientY - startY) / dispH) * 100;
     redraw();
-    
+
     if (field.id === ED.selId) {
       const px = document.getElementById('pX'), py = document.getElementById('pY');
       if (px) px.value = field.x.toFixed(1);
@@ -772,14 +774,14 @@ function startScale(e, field, corner = 'r') {
     if (corner.includes('l')) dx = -dx; // Reverse pulling direction if pulling from the left side
     const deltaPct = (dx / dispW) * 100;
     const scaleRatio = Math.max(0.1, (startW + deltaPct) / startW);
-    
+
     field.width = startW * scaleRatio;
     field.fontSize = Math.max(8, Math.round(startSize * scaleRatio));
     redraw();
     if (field.id === ED.selId) {
-      const pW = document.getElementById('pW'); if(pW) pW.value = field.width.toFixed(1);
-      const pSize = document.getElementById('pSize'); if(pSize) pSize.value = field.fontSize;
-      const pSizeVal = document.getElementById('pSizeVal'); if(pSizeVal) pSizeVal.textContent = field.fontSize + 'px';
+      const pW = document.getElementById('pW'); if (pW) pW.value = field.width.toFixed(1);
+      const pSize = document.getElementById('pSize'); if (pSize) pSize.value = field.fontSize;
+      const pSizeVal = document.getElementById('pSizeVal'); if (pSizeVal) pSizeVal.textContent = field.fontSize + 'px';
     }
   };
   const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
@@ -801,15 +803,15 @@ function startWidthResize(e, field, side) {
       field.width = Math.max(5, startFieldW + pctDelta);
     } else if (side === 'left') {
       const newW = Math.max(5, startFieldW - pctDelta);
-      if (newW > 5) { 
+      if (newW > 5) {
         field.width = newW;
         field.x = startFieldX + pctDelta;
       }
     }
     redraw();
     if (field.id === ED.selId) {
-      const pX = document.getElementById('pX'); if(pX) pX.value = field.x.toFixed(1);
-      const pW = document.getElementById('pW'); if(pW) pW.value = field.width.toFixed(1);
+      const pX = document.getElementById('pX'); if (pX) pX.value = field.x.toFixed(1);
+      const pW = document.getElementById('pW'); if (pW) pW.value = field.width.toFixed(1);
     }
   };
   const mu = () => { document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); saveTemplate(); };
@@ -832,7 +834,7 @@ function startRotate(e, field) {
     const angle = Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180 / Math.PI;
     field.rotation = Math.round((angle + 90) % 360);
     if (field.rotation < 0) field.rotation += 360; // Normalize purely to 0-360
-    
+
     // Track tooltip to the mouse
     tooltip.textContent = `${field.rotation}°`;
     tooltip.style.left = (ev.clientX + 15) + 'px';
@@ -841,11 +843,11 @@ function startRotate(e, field) {
 
     redraw();
   };
-  const mu = () => { 
-    document.removeEventListener('mousemove', mm); 
-    document.removeEventListener('mouseup', mu); 
+  const mu = () => {
+    document.removeEventListener('mousemove', mm);
+    document.removeEventListener('mouseup', mu);
     tooltip.remove(); // Kill tooltip on release
-    saveTemplate(); 
+    saveTemplate();
   };
   document.addEventListener('mousemove', mm);
   document.addEventListener('mouseup', mu);
@@ -865,29 +867,29 @@ function startResize(e, field, side) {
       field.width = Math.max(5, startFieldW + pctDelta);
     } else if (side === 'left') {
       const newW = Math.max(5, startFieldW - pctDelta);
-      if (newW > 5) { 
+      if (newW > 5) {
         field.width = newW;
         field.x = startFieldX + pctDelta;
       }
     }
-    
+
     const liveEl = fieldOverlay.querySelector(`[data-fid="${field.id}"]`);
     if (liveEl) {
       liveEl.style.left = (field.x / 100 * dispW) + 'px';
       liveEl.style.width = (field.width / 100 * dispW) + 'px';
     }
     redrawCanvas();
-    
+
     if (field.id === ED.selId) {
       const px = document.getElementById('pX'); if (px) px.value = field.x.toFixed(1);
       const pw = document.getElementById('pW'); if (pw) pw.value = field.width.toFixed(1);
     }
   };
 
-  const mu = () => { 
-    document.removeEventListener('mousemove', mm); 
-    document.removeEventListener('mouseup', mu); 
-    redraw(); 
+  const mu = () => {
+    document.removeEventListener('mousemove', mm);
+    document.removeEventListener('mouseup', mu);
+    redraw();
     saveTemplate();
   };
   document.addEventListener('mousemove', mm);
@@ -915,13 +917,13 @@ function openAFModal() {
   document.getElementById('afOverlay').classList.add('open');
 }
 function closeAFModal() { document.getElementById('afOverlay').classList.remove('open'); }
-function openAddFieldModal()  { openAFModal(); }
+function openAddFieldModal() { openAFModal(); }
 function closeAddFieldModal() { closeAFModal(); }
 /* ── File Naming Modal ─────────────────────────────── */
 function fnRefreshNamePill() {
   const primary = ED.fields.find(f => f.isPrimary);
   const sampleName = primary && CS.rows && CS.rows[0]
-    ? (CS.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g,''))
+    ? (CS.rows[0][primary.column] || primary.placeholder.replace(/[{}]/g, ''))
     : 'participant_name';
   const pill = document.getElementById('fnNamePill');
   if (pill) pill.textContent = sampleName;
@@ -943,7 +945,7 @@ function fnUpdatePreview() {
 }
 
 function sanitizeFilename(str) {
-  return String(str).replace(/[^a-zA-Z0-9_\-\u0900-\u097F\u00C0-\u024F]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+  return String(str).replace(/[^a-zA-Z0-9_\-\u0900-\u097F\u00C0-\u024F]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
 }
 
 function buildOutputFilename(rowData, index) {
@@ -979,10 +981,10 @@ function afPhInput(val) {
 }
 
 function addField() {
-  const colSel  = document.getElementById('afColSelect');
+  const colSel = document.getElementById('afColSelect');
   const phInner = document.getElementById('afPhInner').value.trim().replace(/[{}]/g, '');
-  const col     = colSel.value;
-  const size    = parseInt(document.getElementById('newFieldSize').value) || 36;
+  const col = colSel.value;
+  const size = parseInt(document.getElementById('newFieldSize').value) || 36;
   const isPrimary = document.getElementById('afPrimary').checked;
 
   if (!phInner) { toast('Enter a placeholder name', 'error'); return; }
@@ -1031,25 +1033,25 @@ function selectField(id) {
   const f = ED.fields.find(f => f.id === id); if (!f) return;
   switchEPTab('props');
   document.getElementById('propsEmpty').style.display = 'none';
-  document.getElementById('propsForm').style.display  = 'flex';
-  document.getElementById('pPh').value    = f.placeholder;
+  document.getElementById('propsForm').style.display = 'flex';
+  document.getElementById('pPh').value = f.placeholder;
   const livePreview = (f.column && CS.rows && CS.rows[0]) ? (CS.rows[0][f.column] || f.previewText || '') : (f.previewText || '');
   document.getElementById('pPrev').value = livePreview;
   document.getElementById('pPrev').style.color = (f.column && CS.rows && CS.rows[0]) ? 'var(--cyan)' : 'var(--text)';
   document.getElementById('pPrev').title = f.column ? 'Live value from row 1 of your data' : 'Manual preview text';
-  document.getElementById('pFont').value  = f.fontFamily || 'Helvetica';
-  document.getElementById('pSize').value  = f.fontSize;
+  document.getElementById('pFont').value = f.fontFamily || 'Helvetica';
+  document.getElementById('pSize').value = f.fontSize;
   document.getElementById('pSizeVal').textContent = f.fontSize + 'px';
   document.getElementById('pColor').value = f.color || '#111111';
   document.getElementById('pColorHex').textContent = f.color || '#111111';
-  document.getElementById('pX').value     = f.x.toFixed(1);
-  document.getElementById('pY').value     = f.y.toFixed(1);
-  document.getElementById('pW').value     = f.width;
+  document.getElementById('pX').value = f.x.toFixed(1);
+  document.getElementById('pY').value = f.y.toFixed(1);
+  document.getElementById('pW').value = f.width;
   document.getElementById('pSpacing').value = f.letterSpacing || 0;
   document.getElementById('pSpacingVal').textContent = (f.letterSpacing || 0) + 'px';
   document.getElementById('boldBtn').classList.toggle('on', !!f.bold);
   document.getElementById('italicBtn').classList.toggle('on', !!f.italic);
-  ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on'));
+  ['alL', 'alC', 'alR'].forEach(b => document.getElementById(b).classList.remove('on'));
   document.getElementById(f.align === 'center' ? 'alC' : f.align === 'right' ? 'alR' : 'alL').classList.add('on');
   loadFontIfNeeded(f.fontFamily || 'Helvetica');
   updateFontPreview(f.fontFamily || 'Helvetica', f.bold, f.italic);
@@ -1060,8 +1062,8 @@ function updateFontPreview(name, bold, italic) {
   const el = document.getElementById('fontPreviewSample'); if (!el) return;
   el.style.fontFamily = getFontCSS(name);
   el.style.fontWeight = bold ? 700 : getFontWeight(name);
-  el.style.fontStyle  = italic ? 'italic' : 'normal';
-  el.textContent      = name + ' — Aa 123';
+  el.style.fontStyle = italic ? 'italic' : 'normal';
+  el.textContent = name + ' — Aa 123';
 }
 
 function deleteField(id) {
@@ -1085,18 +1087,18 @@ function duplicateField(id) {
   saveTemplate();
 }
 function deleteSelectedField() { if (ED.selId) deleteField(ED.selId); }
-function deleteSelField()      { if (ED.selId) deleteField(ED.selId); }
+function deleteSelField() { if (ED.selId) deleteField(ED.selId); }
 function setFP(key, val) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f[key] = val; if (key === 'color') document.getElementById('pColorHex').textContent = val; redraw(); }
 function setFPFont(name) { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.fontFamily = name; loadFontIfNeeded(name); updateFontPreview(name, f.bold, f.italic); redraw(); }
-function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value)||f.x; f.y = parseFloat(document.getElementById('pY').value)||f.y; redraw(); }
-function setAlign(a) { setFP('align', a); ['alL','alC','alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a==='center'?'alC':a==='right'?'alR':'alL').classList.add('on'); }
-function toggleBold()   { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold   = !f.bold;   document.getElementById('boldBtn').classList.toggle('on', f.bold);   redraw(); }
+function setFPXY() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.x = parseFloat(document.getElementById('pX').value) || f.x; f.y = parseFloat(document.getElementById('pY').value) || f.y; redraw(); }
+function setAlign(a) { setFP('align', a);['alL', 'alC', 'alR'].forEach(b => document.getElementById(b).classList.remove('on')); document.getElementById(a === 'center' ? 'alC' : a === 'right' ? 'alR' : 'alL').classList.add('on'); }
+function toggleBold() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.bold = !f.bold; document.getElementById('boldBtn').classList.toggle('on', f.bold); redraw(); }
 function toggleItalic() { const f = ED.fields.find(f => f.id === ED.selId); if (!f) return; f.italic = !f.italic; document.getElementById('italicBtn').classList.toggle('on', f.italic); redraw(); }
-function switchEPTab(tab) { ['fields','props'].forEach(t => { document.getElementById(`epTab_${t}`).className = 'ep-tab'+(t===tab?' active':''); document.getElementById(`epPanel_${t}`).className = 'ep-panel'+(t===tab?' active':''); }); }
+function switchEPTab(tab) { ['fields', 'props'].forEach(t => { document.getElementById(`epTab_${t}`).className = 'ep-tab' + (t === tab ? ' active' : ''); document.getElementById(`epPanel_${t}`).className = 'ep-panel' + (t === tab ? ' active' : ''); }); }
 function renderChipList() {
   const el = document.getElementById('fieldChipList'); if (!el) return;
   if (!ED.fields.length) { el.innerHTML = `<div style="text-align:center;padding:28px 8px;color:var(--text-3);font-size:13px">No fields yet.<br/><span style="color:var(--cyan)">Click "+ Add Field"</span></div>`; return; }
-  el.innerHTML = ED.fields.map(f => `<div class="fc-chip ${f.id===ED.selId?'sel':''}" onclick="selectField('${f.id}')"><div class="fc-dot" style="background:${f.color}"></div><div style="flex:1;min-width:0"><span class="fc-name">${f.previewText||f.placeholder}</span><span class="fc-ph">${f.placeholder}${f.column?' → '+f.column:''}</span></div>${f.isPrimary?'<span style="font-size:10px;font-weight:700;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.25);border-radius:4px;padding:1px 5px;flex-shrink:0">PRIMARY</span>':''}</div>`).join('');
+  el.innerHTML = ED.fields.map(f => `<div class="fc-chip ${f.id === ED.selId ? 'sel' : ''}" onclick="selectField('${f.id}')"><div class="fc-dot" style="background:${f.color}"></div><div style="flex:1;min-width:0"><span class="fc-name">${f.previewText || f.placeholder}</span><span class="fc-ph">${f.placeholder}${f.column ? ' → ' + f.column : ''}</span></div>${f.isPrimary ? '<span style="font-size:10px;font-weight:700;color:var(--cyan);background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.25);border-radius:4px;padding:1px 5px;flex-shrink:0">PRIMARY</span>' : ''}</div>`).join('');
 }
 /* ── Background ──────────────────────────────────────────────────── */
 function uploadBackground(e) {
@@ -1133,7 +1135,7 @@ function clearAll() {
 
 /* ── Save / Load Template ────────────────────────────────────────── */
 function saveTemplate() {
-  localStorage.setItem('hx_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64,  fields: ED.fields }));
+  localStorage.setItem('hx_template', JSON.stringify({ w: ED.w, h: ED.h, bgColor: ED.bgColor, backgroundBase64: ED.bgBase64, fields: ED.fields }));
 }
 
 function loadSavedTemplate() {
@@ -1144,11 +1146,11 @@ function loadSavedTemplate() {
     ED.w = t.w || 1122; ED.h = t.h || 794;
     ED.bgColor = t.bgColor || '#ffffff';
     // FIX: Force fields to be totally empty on load so old campaign text doesn't carry over
-    ED.fields  = [];
+    ED.fields = [];
     if (t.bgBase64) { const img = new Image(); img.onload = () => { ED.bgImg = img; redraw(); }; img.src = t.bgBase64; ED.bgBase64 = t.bgBase64; }
     resizeCanvas();
     if (t.fields?.length) toast('Previous template restored', 'info', 2500);
-  } catch {}
+  } catch { }
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -1161,7 +1163,7 @@ function populateStep3() {
 }
 
 function buildStep3() {
-  const rows  = document.getElementById('s3Rows');
+  const rows = document.getElementById('s3Rows');
   const empty = document.getElementById('s3Empty');
   const count = document.getElementById('s3FieldCount');
 
@@ -1175,16 +1177,16 @@ function buildStep3() {
   if (ch) ch.innerHTML = hints || '<span style="color:var(--text-3);font-size:13px">No columns loaded yet.</span>';
 
   if (!ED.fields.length) {
-    if (rows)  rows.style.display  = 'none';
+    if (rows) rows.style.display = 'none';
     if (empty) empty.style.display = 'block';
-    if (count) count.textContent   = '0 fields';
+    if (count) count.textContent = '0 fields';
     buildStep3Writeback();
     return;
   }
 
   if (empty) empty.style.display = 'none';
-  if (rows)  rows.style.display  = 'flex';
-  if (count) count.textContent   = `${ED.fields.length} field${ED.fields.length > 1 ? 's' : ''}`;
+  if (rows) rows.style.display = 'flex';
+  if (count) count.textContent = `${ED.fields.length} field${ED.fields.length > 1 ? 's' : ''}`;
 
   const opts = CS.headers.map(h => `<option value="${h}">${h}</option>`).join('');
 
@@ -1227,10 +1229,10 @@ function s3SetPrimary(fieldId) {
 }
 
 function buildStep3Writeback() {
-  const badge   = document.getElementById('s3WritebackBadge');
-  const desc    = document.getElementById('s3WritebackDesc');
+  const badge = document.getElementById('s3WritebackBadge');
+  const desc = document.getElementById('s3WritebackDesc');
   const options = document.getElementById('s3WritebackOptions');
-  const isGS    = CS.srcType === 'sheets';
+  const isGS = CS.srcType === 'sheets';
 
   if (!badge || !desc) return;
 
@@ -1272,22 +1274,22 @@ let certPrevIndex = 0;
 
 function buildPreview() {
   const count = CS.rows.length;
-  const camp  = document.getElementById('campaignName').value;
+  const camp = document.getElementById('campaignName').value;
 
   document.getElementById('participantBadge').textContent = `${count} participant${count !== 1 ? 's' : ''}`;
-  document.getElementById('genCountLabel').textContent    = `(${count})`;
+  document.getElementById('genCountLabel').textContent = `(${count})`;
 
   // -- Summary grid (removed email col + sheet ID, added est. size) --
   const b64clean = ED.bgBase64 ? ED.bgBase64.split(',')[1] || ED.bgBase64 : null;
   const bgKB = b64clean ? Math.round(b64clean.length * 0.75 / 1024) : 0;
   const estMB = bgKB > 0 ? ((bgKB * count * 1.15) / 1024).toFixed(1) : '—';
   const items = [
-    { k: 'Campaign',        v: camp },
-    { k: 'Participants',    v: `${count}` },
+    { k: 'Campaign', v: camp },
+    { k: 'Participants', v: `${count}` },
     { k: 'Template fields', v: `${ED.fields.length} field${ED.fields.length !== 1 ? 's' : ''}` },
-    { k: 'Canvas size',     v: `${ED.w} × ${ED.h} px` },
+    { k: 'Canvas size', v: `${ED.w} × ${ED.h} px` },
     { k: 'Est. total size', v: `~${estMB} MB (approx)` },
-    { k: 'Write links back',v: document.getElementById('writeBackToggle')?.classList.contains('on') ? 'Yes' : 'No' },
+    { k: 'Write links back', v: document.getElementById('writeBackToggle')?.classList.contains('on') ? 'Yes' : 'No' },
   ];
   document.getElementById('summaryGrid').innerHTML = items.map(i =>
     `<div class="summary-item"><div class="summary-key">${i.k}</div><div class="summary-val">${i.v}</div></div>`
@@ -1318,10 +1320,10 @@ function certPrevNav(dir) {
 }
 
 function renderCertPreview(idx) {
-  const total  = CS.rows.length;
-  const row    = CS.rows[idx] || {};
+  const total = CS.rows.length;
+  const row = CS.rows[idx] || {};
   const canvas = document.getElementById('certPrevCanvas');
-  const strip  = document.getElementById('certPrevStrip');
+  const strip = document.getElementById('certPrevStrip');
   const navLbl = document.getElementById('certNavLabel');
   if (!canvas) return;
 
@@ -1329,14 +1331,14 @@ function renderCertPreview(idx) {
 
   if (strip) {
     strip.innerHTML = ED.fields.map(f =>
-      `<span><span style="color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-right:4px">${f.placeholder.replace(/[{}]/g,'')}</span><span style="color:var(--text);font-weight:500">${row[f.column] || '—'}</span></span>`
+      `<span><span style="color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-right:4px">${f.placeholder.replace(/[{}]/g, '')}</span><span style="color:var(--text);font-weight:500">${row[f.column] || '—'}</span></span>`
     ).join('');
   }
 
-  const dpr   = window.devicePixelRatio || 1;
+  const dpr = window.devicePixelRatio || 1;
   const scale = Math.min(1, 720 / ED.w);
-  const cssW  = Math.round(ED.w * scale);
-  const cssH  = Math.round(ED.h * scale);
+  const cssW = Math.round(ED.w * scale);
+  const cssH = Math.round(ED.h * scale);
 
   canvas.width = cssW * dpr;
   canvas.height = cssH * dpr;
@@ -1426,8 +1428,8 @@ async function startGeneration() {
   log('info', 'Initializing generation sequence...');
 
   const payload = {
-    campaignName:  document.getElementById('campaignName').value,
-    eventName:     CS.eventName || '', // <-- Added: Pass the optional event name to the backend!
+    campaignName: document.getElementById('campaignName').value,
+    eventName: CS.eventName || '', // <-- Added: Pass the optional event name to the backend!
     template: {
       width: ED.w,
       height: ED.h,
@@ -1436,17 +1438,17 @@ async function startGeneration() {
       fields: ED.fields.map(f => ({ ...f })),
       fontUrls: getUsedFontUrls(),
     },
-    participants:  CS.rows,
-    nameCol:       ED.fields.find(f => f.isPrimary)?.column || '',
-    emailCol:      '',
+    participants: CS.rows,
+    nameCol: ED.fields.find(f => f.isPrimary)?.column || '',
+    emailCol: '',
     fieldMappings: ED.fields.map(f => ({ col: f.column, ph: f.placeholder })),
-    sheetId:       document.getElementById('sheetId')?.value || null,
-    writeBack:     document.getElementById('writeBackToggle')?.classList.contains('on') || false,
+    sheetId: document.getElementById('sheetId')?.value || null,
+    writeBack: document.getElementById('writeBackToggle')?.classList.contains('on') || false,
   };
 
   try {
     document.getElementById('genBar').style.width = '0%';
-    document.getElementById('genPct').textContent  = '0%';
+    document.getElementById('genPct').textContent = '0%';
     document.getElementById('genStatus').textContent = 'Connecting to server...';
 
     const token = localStorage.getItem('Honourix_token');
@@ -1463,8 +1465,8 @@ async function startGeneration() {
     });
 
     if (!response.ok) {
-       const errData = await response.json().catch(()=>({}));
-       throw new Error(errData.error || `HTTP Error ${response.status}`);
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || `HTTP Error ${response.status}`);
     }
 
     // Attach stream reader
@@ -1477,7 +1479,7 @@ async function startGeneration() {
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      
+
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop(); // Keep the last partial line in the buffer until the next chunk
@@ -1491,26 +1493,26 @@ async function startGeneration() {
           if (event.type === 'info') {
             log('info', event.message);
             document.getElementById('genStatus').textContent = event.message;
-          } 
+          }
           else if (event.type === 'success' || event.type === 'error') {
             processed++;
             CS.results.push(event.result);
-            
+
             const pct = Math.round((processed / total) * 100);
-            document.getElementById('genCounter').textContent  = `${processed} / ${total}`;
-            document.getElementById('genBar').style.width      = pct + '%';
-            document.getElementById('genPct').textContent      = pct + '%';
-            document.getElementById('genStatus').textContent   = `Processing… ${processed} of ${total} complete`;
+            document.getElementById('genCounter').textContent = `${processed} / ${total}`;
+            document.getElementById('genBar').style.width = pct + '%';
+            document.getElementById('genPct').textContent = pct + '%';
+            document.getElementById('genStatus').textContent = `Processing… ${processed} of ${total} complete`;
 
             log(event.type === 'success' ? 'ok' : 'err', event.message);
-          } 
+          }
           else if (event.type === 'done') {
-            CS.folderId   = event.folderId   || null;
+            CS.folderId = event.folderId || null;
             CS.folderLink = event.folderLink || null;
             log('info', event.message);
             setTimeout(() => showResults(), 800);
           }
-        } catch(e) {
+        } catch (e) {
           console.warn("Error parsing stream chunk:", e, line);
         }
       }
@@ -1523,8 +1525,8 @@ async function startGeneration() {
 
 function log(type, msg) {
   const win = document.getElementById('genLog');
-  const ts  = new Date().toLocaleTimeString('en-IN', { hour12: false });
-  const el  = document.createElement('div');
+  const ts = new Date().toLocaleTimeString('en-IN', { hour12: false });
+  const el = document.createElement('div');
   el.className = 'log-entry';
   el.innerHTML = `<span class="log-ts">${ts}</span><span class="log-${type}">${msg}</span>`;
   win.appendChild(el);
@@ -1536,20 +1538,20 @@ function log(type, msg) {
 ════════════════════════════════════════════════════════════════ */
 function showResults() {
   goStep(6, true);
-  const ok  = CS.results.filter(r => r.status === 'success').length;
+  const ok = CS.results.filter(r => r.status === 'success').length;
   const bad = CS.results.filter(r => r.status !== 'success').length;
-  document.getElementById('resTotal').textContent   = CS.results.length;
+  document.getElementById('resTotal').textContent = CS.results.length;
   document.getElementById('resSuccess').textContent = ok;
-  document.getElementById('resFailed').textContent  = bad;
+  document.getElementById('resFailed').textContent = bad;
   document.getElementById('resultTitle').textContent = bad === 0 ? 'All certificates generated!' : `${ok} generated, ${bad} failed`;
-  document.getElementById('resultSub').textContent   = `${ok} PDFs saved to your Google Drive.`;
+  document.getElementById('resultSub').textContent = `${ok} PDFs saved to your Google Drive.`;
   if (bad > 0) {
     document.getElementById('completionRing').style.background = 'linear-gradient(135deg,#f59e0b,#ef4444)';
-    document.getElementById('completionRing').style.boxShadow  = '0 0 40px rgba(245,158,11,0.3)';
+    document.getElementById('completionRing').style.boxShadow = '0 0 40px rgba(245,158,11,0.3)';
   }
   renderResultRows(CS.results);
-  
-// Connect to Supabase Backend
+
+  // Connect to Supabase Backend
   saveCampaignToDatabase();
 
   toast(`${ok} certificates ready!`, 'success', 5000);
@@ -1566,16 +1568,16 @@ async function saveCampaignToDatabase() {
 
   // Build strictly: S.No, Mapped Fields Only, Cert Link
   const backupData = CS.results.map((r, i) => {
-     const original = CS.rows[i] || {};
-     const rowData = { "S.No": i + 1 };
-     
-     // Only grab data for fields that were physically placed on the canvas
-     ED.fields.forEach(f => {
-         if (f.column) rowData[f.column] = original[f.column] || '';
-     });
-     
-     rowData["Certificate Link"] = r.link || (r.error ? `ERROR: ${r.error}` : '');
-     return rowData;
+    const original = CS.rows[i] || {};
+    const rowData = { "S.No": i + 1 };
+
+    // Only grab data for fields that were physically placed on the canvas
+    ED.fields.forEach(f => {
+      if (f.column) rowData[f.column] = original[f.column] || '';
+    });
+
+    rowData["Certificate Link"] = r.link || (r.error ? `ERROR: ${r.error}` : '');
+    return rowData;
   });
 
   try {
@@ -1583,11 +1585,11 @@ async function saveCampaignToDatabase() {
       method: 'POST',
       body: JSON.stringify({
         name,
-        type:        'cert',
+        type: 'cert',
         total_count: total,
-        sent_count:  ok,
+        sent_count: ok,
         status,
-        folder_id:   CS.folderId || null,
+        folder_id: CS.folderId || null,
         backup_data: backupData,
       }),
     });
@@ -1595,7 +1597,7 @@ async function saveCampaignToDatabase() {
     const stored = JSON.parse(localStorage.getItem('hx_campaigns') || '[]');
     stored.push({ type: 'cert', name, total, success: ok, ts: Date.now() });
     localStorage.setItem('hx_campaigns', JSON.stringify(stored));
-  } catch(e) {
+  } catch (e) {
     console.error('Campaign database save failed', e);
     toast('Campaign save failed: ' + e.message, 'error', 6000);
   }
@@ -1613,7 +1615,7 @@ function renderResultRows(results) {
   });
 
   // Table wrapper with horizontal scroll, link column frozen right
-    container.innerHTML = `
+  container.innerHTML = `
       <div style="display:grid; grid-template-columns:minmax(0, 1fr); width:100%;">
         <div style="width:100%; box-sizing:border-box; overflow-x:auto; max-height:420px; border:1px solid var(--glass-border); border-radius:12px; scrollbar-width:thin; scrollbar-color:var(--glass-border-2) transparent;" id="resultTableWrap">
           <table style="width:max-content; min-width:100%; border-collapse:collapse; font-size:13.5px;">
@@ -1628,15 +1630,15 @@ function renderResultRows(results) {
             </thead>
             <tbody>
               ${mergedRows.map((row, i) => {
-                const r = results[i];
-                const isOk = r.status === 'success';
-                const linkCell = isOk
-                  ? `<a href="${r.link}" target="_blank" style="color:var(--cyan);text-decoration:none;display:flex;align-items:center;gap:6px;font-size:12.5px;white-space:nowrap" title="${r.link}">
+    const r = results[i];
+    const isOk = r.status === 'success';
+    const linkCell = isOk
+      ? `<a href="${r.link}" target="_blank" style="color:var(--cyan);text-decoration:none;display:flex;align-items:center;gap:6px;font-size:12.5px;white-space:nowrap" title="${r.link}">
                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                        Open PDF
                      </a>`
-                  : `<span style="color:var(--red);font-size:12.5px">${r.error || 'Failed'}</span>`;
-                return `
+      : `<span style="color:var(--red);font-size:12.5px">${r.error || 'Failed'}</span>`;
+    return `
                 <tr data-n="${row.__name}" data-e="${row[CS.headers?.[1]] || ''}" style="border-top:1px solid rgba(255,255,255,0.04);transition:background 0.12s" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
                   <td style="padding:10px 14px;color:var(--text-3);text-align:center;font-size:12px">${i + 1}</td>
                   ${allCols.map(h => `<td style="padding:10px 14px;color:var(--text-2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis" title="${row[h] || ''}">${row[h] || '—'}</td>`).join('')}
@@ -1644,7 +1646,7 @@ function renderResultRows(results) {
                     ${linkCell}
                   </td>
                 </tr>`;
-              }).join('')}
+  }).join('')}
             </tbody>
           </table>
         </div>
@@ -1703,7 +1705,7 @@ function startNew() {
 
   // Reset File Upload UI (This fixes the re-upload bug)
   const fileRes = document.getElementById('fileResult'); if (fileRes) fileRes.style.display = 'none';
-  document.querySelectorAll('input[type="file"]').forEach(i => i.value = ''); 
+  document.querySelectorAll('input[type="file"]').forEach(i => i.value = '');
 
   // Reset HX Form UI
   const hxRes = document.getElementById('hxFormResult'); if (hxRes) hxRes.style.display = 'none';
@@ -1720,7 +1722,7 @@ function startNew() {
   }
 
   // 3. Reset Canvas & Editor State
-  ED.fields = []; 
+  ED.fields = [];
   ED.selId = null;
   redraw();
   saveTemplate(); // Erases saved fields from storage so the next campaign starts blank
@@ -1740,7 +1742,7 @@ let manualCols = ['Name'];
 function manualRebuildHeader() {
   const tr = document.getElementById('manualHeaderRow');
   tr.innerHTML = `<th style="width:36px;text-align:center;">#</th>`;
-  
+
   manualCols.forEach((col, ci) => {
     const th = document.createElement('th');
     th.innerHTML = `<div class="manual-col-header">
@@ -1751,7 +1753,7 @@ function manualRebuildHeader() {
     </div>`;
     tr.appendChild(th);
   });
-  
+
   tr.innerHTML += `<th style="width:36px"></th>`;
   _manualRefreshRows();
 }
@@ -1769,21 +1771,21 @@ function manualAddRow(vals = []) {
   const tbody = document.getElementById('manualBody');
   const idx = tbody.children.length;
   const tr = document.createElement('tr');
-  
+
   let html = `<td><div style="font-size:12px; color:var(--text-3); text-align:center; font-weight:600;">${idx + 1}</div></td>`;
-  
+
   manualCols.forEach((col, ci) => {
     html += `<td>
-      <input type="text" placeholder="${col}" value="${(vals[ci] || '').replace(/"/g,'&quot;')}" />
+      <input type="text" placeholder="${col}" value="${(vals[ci] || '').replace(/"/g, '&quot;')}" />
     </td>`;
   });
-  
+
   html += `<td>
     <button class="manual-row-del" onclick="this.closest('tr').remove();_manualReindex()" title="Remove row">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
     </button>
   </td>`;
-  
+
   tr.innerHTML = html;
   tbody.appendChild(tr);
 }
@@ -1819,7 +1821,7 @@ function manualApply() {
   if (!data.length) { alert('Please add at least one row with data.'); return; }
 
   // ── Feed into cert-tool's CS state ──
-  CS.rows    = data;
+  CS.rows = data;
   CS.headers = manualCols;
   window.allCols = manualCols;
 
