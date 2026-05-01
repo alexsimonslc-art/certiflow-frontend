@@ -2754,6 +2754,10 @@ body::after {
   color: var(--text);
 }
 
+.sidebar.collapsed .nav-item:hover {
+  background: transparent !important;
+}
+
 .sidebar.collapsed .nav-item::after {
   content: attr(data-nav-label);
   position: absolute;
