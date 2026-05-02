@@ -64,6 +64,11 @@
     const s = document.createElement('style');
     s.id = 'msf-styles';
     s.textContent = `
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 212, 255, 0.4); }
+* { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.2) transparent; }
 @keyframes msf-spin { to { transform:rotate(360deg); } }
 @keyframes msf-slide-in-right  { from { transform:translateX(60px);  opacity:0; } to { transform:translateX(0); opacity:1; } }
 @keyframes msf-slide-in-left   { from { transform:translateX(-60px); opacity:0; } to { transform:translateX(0); opacity:1; } }
@@ -745,4 +750,3 @@
   window.msfDownloadPass = msfDownloadPass;
   window.MSForm = { bind: bindForm, boot };
 })();
-
