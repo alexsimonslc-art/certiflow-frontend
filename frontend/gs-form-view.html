@@ -308,6 +308,7 @@
       outline: none;
       transition: border-color 0.18s, box-shadow 0.18s;
       -webkit-appearance: none;
+      appearance: none;
     }
 
     .gsfv-input:focus,
@@ -507,17 +508,28 @@
     .gsfv-upload-zone {
       border: 2px dashed var(--glass-b);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 36px 24px;
+      min-height: 148px;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.18s, background 0.18s;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .gsfv-upload-zone:hover,
     .gsfv-upload-zone.drag-over {
       border-color: var(--accent);
       background: var(--accent-dim);
+    }
+
+    .gsfv-upload-zone[data-uploading] {
+      pointer-events: none;
+      opacity: 0.7;
     }
 
     .gsfv-upload-zone input[type="file"] {
@@ -530,8 +542,11 @@
     }
 
     .gsfv-upload-icon {
-      font-size: 28px;
-      margin-bottom: 8px;
+      width: 44px;
+      height: 44px;
+      margin-bottom: 4px;
+      color: var(--accent);
+      opacity: 0.85;
     }
 
     .gsfv-upload-text {
@@ -546,7 +561,7 @@
     .gsfv-upload-sub {
       font-size: 12px;
       color: var(--text-3);
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     .gsfv-upload-preview {
@@ -1707,9 +1722,13 @@
              ondrop="handleDrop('${f.id}',event)">
           <input type="file" ${accept ? `accept="${escAttr(accept)}"` : ''}
                  onchange="handleFileChange('${f.id}',this)"/>
-          <div class="gsfv-upload-icon">📎</div>
-          <div class="gsfv-upload-text"><strong>Click to upload</strong> or drag & drop</div>
-          <div class="gsfv-upload-sub">${accept || 'Any file'} · Max ${f.maxMB || 10} MB</div>
+          <svg class="gsfv-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 16 12 12 8 16"/>
+            <line x1="12" y1="12" x2="12" y2="21"/>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+          </svg>
+          <div class="gsfv-upload-text"><strong>Click to upload</strong> or drag &amp; drop</div>
+          <div class="gsfv-upload-sub">${accept ? accept.replace(/[.]/g,'').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
         </div>
         <div class="gsfv-upload-preview" id="fp-${f.id}" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1813,23 +1832,50 @@
       evaluateConditions();
     }
 
-    function handleFileChange(fieldId, input) {
+    async function handleFileChange(fieldId, input) {
       const file = input.files?.[0];
       if (!file) return;
       const field = formConfig.config.fields.find(f => f.id === fieldId);
-      const maxMB = (field?.maxMB || 10) * 1024 * 1024;
-      if (file.size > maxMB) {
-        showFieldError(fieldId, `File too large. Max ${field?.maxMB || 10} MB.`);
+      const maxMB = field?.maxMB || 10;
+      if (file.size > maxMB * 1024 * 1024) {
+        showFieldError(fieldId, `File too large. Max ${maxMB} MB.`);
         input.value = '';
         return;
       }
-      fileObjects[fieldId] = file;
-      formValues[fieldId] = file.name;
       clearErr(fieldId);
+
+      // Show uploading state
+      const zone = document.getElementById('fi-' + fieldId);
       const prev = document.getElementById('fp-' + fieldId);
-      const name = document.getElementById('fn-' + fieldId);
+      const nameEl = document.getElementById('fn-' + fieldId);
+      if (zone) zone.dataset.uploading = '1';
       if (prev) prev.style.display = '';
-      if (name) name.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+      if (nameEl) nameEl.textContent = `Uploading ${file.name}…`;
+
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('fieldId', fieldId);
+        const res = await fetch(`${BACKEND}/api/gsforms/upload/${encodeURIComponent(formSlug)}`, {
+          method: 'POST',
+          body: fd,
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Upload failed');
+
+        // Store Drive URL so it gets written to the Sheet on submit
+        formValues[fieldId] = json.driveUrl || file.name;
+        fileObjects[fieldId] = file;
+        if (zone) delete zone.dataset.uploading;
+        if (nameEl) nameEl.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB) ✓`;
+      } catch (err) {
+        formValues[fieldId] = '';
+        delete fileObjects[fieldId];
+        if (zone) delete zone.dataset.uploading;
+        if (prev) prev.style.display = 'none';
+        showFieldError(fieldId, err.message || 'File upload failed. Please try again.');
+        input.value = '';
+      }
     }
 
     function handleDrop(fieldId, e) {
@@ -1837,7 +1883,6 @@
       document.getElementById('fi-' + fieldId)?.classList.remove('drag-over');
       const file = e.dataTransfer.files?.[0];
       if (!file) return;
-      // Reuse upload logic with a fake input-like object
       handleFileChange(fieldId, { files: [file] });
     }
 
@@ -1965,13 +2010,8 @@
       fields.forEach(f => {
         if (f.type === 'section_break') return;
         if (!isFieldVisible(f)) return;
-        if (f.type === 'file_upload') {
-          // In Batch 4 we'll send the actual file to Drive.
-          // For now, record the filename only so Sheet gets populated.
-          payload.data[f.id] = formValues[f.id] || '';
-        } else {
-          payload.data[f.id] = formValues[f.id] ?? '';
-        }
+        // file_upload fields: formValues[f.id] already holds the Drive URL from the pre-upload step
+        payload.data[f.id] = formValues[f.id] ?? '';
       });
 
       // Add field labels as metadata so Sheet headers are readable

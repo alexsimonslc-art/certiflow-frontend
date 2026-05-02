@@ -594,9 +594,7 @@
     .gsfb-center {
       overflow-y: auto;
       overflow-x: hidden;
-      background:
-        repeating-conic-gradient(rgba(255, 255, 255, 0.012) 0% 25%, transparent 0% 50%) 0 0 / 24px 24px,
-        var(--bg);
+      background: var(--bg);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1091,6 +1089,47 @@
       color: var(--text-3);
       letter-spacing: 0.4px;
       text-transform: uppercase;
+    }
+
+    .gsfb-filetype-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      max-height: 196px;
+      overflow-y: auto;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 4px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .gsfb-filetype-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12.5px;
+      color: var(--text-2);
+      transition: background 0.12s;
+      user-select: none;
+    }
+
+    .gsfb-filetype-item:hover { background: rgba(255,255,255,0.05); }
+
+    .gsfb-filetype-item input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: #00d4ff;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .gsfb-filetype-sep {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 3px 4px;
     }
 
     .gsfb-input {
@@ -2812,23 +2851,83 @@
         }
 
         if (f.type === 'file_upload') {
+          const _ac = f.accept || '*';
+          const _acParts = _ac === '*' ? [] : _ac.split(',').map(s => s.trim());
+          const _chk = (val) => {
+            if (_ac === '*') return val === '*' ? 'checked' : '';
+            if (val === '*') return '';
+            return val.split(',').some(v => _acParts.includes(v.trim())) ? 'checked' : '';
+          };
           html += `
-      <div class="gsfb-prop" >
-          <label class="gsfb-prop-label">Accepted Types</label>
-          <select class="gsfb-select" onchange="updateFP('${id}','accept',this.value)">
-            <option value="*"               ${(!f.accept || f.accept === '*') ? 'selected' : ''}>Any file</option>
-            <option value="image/*"         ${f.accept === 'image/*' ? 'selected' : ''}>Images only</option>
-            <option value=".pdf"            ${f.accept === '.pdf' ? 'selected' : ''}>PDF only</option>
-            <option value=".pdf,.doc,.docx" ${f.accept === '.pdf,.doc,.docx' ? 'selected' : ''}>Documents</option>
-          </select>
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Accepted Types</label>
+        <div class="gsfb-filetype-list">
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype="*" ${_chk('*')} onchange="updateFileAccept('${id}')">
+            <span>Any File</span>
+          </label>
+          <div class="gsfb-filetype-sep"></div>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype="image/*" ${_chk('image/*')} onchange="updateFileAccept('${id}')">
+            <span>Images (JPG, PNG, GIF, WebP…)</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype="video/*" ${_chk('video/*')} onchange="updateFileAccept('${id}')">
+            <span>Videos (MP4, MOV, AVI…)</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype="audio/*" ${_chk('audio/*')} onchange="updateFileAccept('${id}')">
+            <span>Audio (MP3, WAV, OGG…)</span>
+          </label>
+          <div class="gsfb-filetype-sep"></div>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".pdf" ${_chk('.pdf')} onchange="updateFileAccept('${id}')">
+            <span>PDF</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".doc,.docx" ${_chk('.doc,.docx')} onchange="updateFileAccept('${id}')">
+            <span>Word Documents (.doc, .docx)</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".xls,.xlsx" ${_chk('.xls,.xlsx')} onchange="updateFileAccept('${id}')">
+            <span>Excel Spreadsheets (.xls, .xlsx)</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".ppt,.pptx" ${_chk('.ppt,.pptx')} onchange="updateFileAccept('${id}')">
+            <span>PowerPoint (.ppt, .pptx)</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".csv" ${_chk('.csv')} onchange="updateFileAccept('${id}')">
+            <span>CSV</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".txt,.rtf" ${_chk('.txt,.rtf')} onchange="updateFileAccept('${id}')">
+            <span>Text / RTF</span>
+          </label>
+          <div class="gsfb-filetype-sep"></div>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".zip,.rar,.7z,.tar" ${_chk('.zip,.rar,.7z,.tar')} onchange="updateFileAccept('${id}')">
+            <span>ZIP / Archives</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".json,.xml" ${_chk('.json,.xml')} onchange="updateFileAccept('${id}')">
+            <span>JSON / XML</span>
+          </label>
+          <label class="gsfb-filetype-item">
+            <input type="checkbox" data-field="${id}" data-ftype=".js,.ts,.py,.html,.css" ${_chk('.js,.ts,.py,.html,.css')} onchange="updateFileAccept('${id}')">
+            <span>Code Files</span>
+          </label>
         </div>
+      </div>
       <div class="gsfb-prop">
         <label class="gsfb-prop-label">Max File Size</label>
         <select class="gsfb-select" onchange="updateFP('${id}','maxMB',+this.value)">
-          <option value="2" ${f.maxMB === 2 ? 'selected' : ''}>2 MB</option>
-          <option value="5" ${f.maxMB === 5 ? 'selected' : ''}>5 MB</option>
-          <option value="10" ${(!f.maxMB || f.maxMB === 10) ? 'selected' : ''}>10 MB</option>
-          <option value="25" ${f.maxMB === 25 ? 'selected' : ''}>25 MB</option>
+          <option value="2"   ${f.maxMB === 2   ? 'selected' : ''}>2 MB</option>
+          <option value="5"   ${f.maxMB === 5   ? 'selected' : ''}>5 MB</option>
+          <option value="10"  ${(!f.maxMB || f.maxMB === 10)  ? 'selected' : ''}>10 MB</option>
+          <option value="25"  ${f.maxMB === 25  ? 'selected' : ''}>25 MB</option>
+          <option value="50"  ${f.maxMB === 50  ? 'selected' : ''}>50 MB</option>
+          <option value="100" ${f.maxMB === 100 ? 'selected' : ''}>100 MB</option>
         </select>
       </div>`;
         }
@@ -2968,6 +3067,24 @@
       // Instead, just update the layers count and canvas card directly
       renderLayersLabels();
       renderCanvasCardById(id);
+    }
+
+    function updateFileAccept(fieldId) {
+      const boxes = [...document.querySelectorAll(`input[data-ftype][data-field="${fieldId}"]`)];
+      const anyBox = boxes.find(b => b.dataset.ftype === '*');
+      if (anyBox?.checked) {
+        boxes.forEach(b => { if (b !== anyBox) b.checked = false; });
+        updateFP(fieldId, 'accept', '*');
+        return;
+      }
+      const vals = [];
+      boxes.forEach(b => { if (b.checked) b.dataset.ftype.split(',').forEach(v => vals.push(v.trim())); });
+      if (!vals.length) {
+        if (anyBox) anyBox.checked = true;
+        updateFP(fieldId, 'accept', '*');
+      } else {
+        updateFP(fieldId, 'accept', [...new Set(vals)].join(','));
+      }
     }
     function updateFPNested(id, obj, prop, value) {
       const field = _S.config.fields.find(f => f.id === id);
