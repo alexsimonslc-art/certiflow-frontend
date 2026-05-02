@@ -498,21 +498,21 @@ function meBlockToHtml(block) {
     case 'social': {
       // PNG icons at 64 px (2× retina) — SVG via <img> is blocked/blurry in Gmail & Outlook
       const pngMap = {
-        linkedin:    'https://img.icons8.com/color/64/linkedin.png',
+        linkedin: 'https://img.icons8.com/color/64/linkedin.png',
         'twitter/x': 'https://img.icons8.com/color/64/twitterx--v1.png',
-        twitter:     'https://img.icons8.com/color/64/twitter--v1.png',
-        x:           'https://img.icons8.com/color/64/twitterx--v1.png',
-        instagram:   'https://img.icons8.com/color/64/instagram-new--v1.png',
-        facebook:    'https://img.icons8.com/color/64/facebook-new.png',
-        youtube:     'https://img.icons8.com/color/64/youtube-play.png',
-        tiktok:      'https://img.icons8.com/color/64/tiktok.png',
-        pinterest:   'https://img.icons8.com/color/64/pinterest.png',
-        website:     'https://img.icons8.com/color/64/domain.png',
-        github:      'https://img.icons8.com/ios-filled/64/github.png',
-        whatsapp:    'https://img.icons8.com/color/64/whatsapp--v1.png',
-        telegram:    'https://img.icons8.com/color/64/telegram-app.png',
-        discord:     'https://img.icons8.com/color/64/discord-logo.png',
-        snapchat:    'https://img.icons8.com/color/64/snapchat.png',
+        twitter: 'https://img.icons8.com/color/64/twitter--v1.png',
+        x: 'https://img.icons8.com/color/64/twitterx--v1.png',
+        instagram: 'https://img.icons8.com/color/64/instagram-new--v1.png',
+        facebook: 'https://img.icons8.com/color/64/facebook-new.png',
+        youtube: 'https://img.icons8.com/color/64/youtube-play.png',
+        tiktok: 'https://img.icons8.com/color/64/tiktok.png',
+        pinterest: 'https://img.icons8.com/color/64/pinterest.png',
+        website: 'https://img.icons8.com/color/64/domain.png',
+        github: 'https://img.icons8.com/ios-filled/64/github.png',
+        whatsapp: 'https://img.icons8.com/color/64/whatsapp--v1.png',
+        telegram: 'https://img.icons8.com/color/64/telegram-app.png',
+        discord: 'https://img.icons8.com/color/64/discord-logo.png',
+        snapchat: 'https://img.icons8.com/color/64/snapchat.png',
       };
       const size = p.iconSize || 32;
       const pad = p.style === 'plain' ? 0 : Math.round(size * 0.25);
@@ -578,7 +578,8 @@ function meGetHtml() {
   const brandingBar = `<div style="padding:12px 24px;background:#f1f5f9;text-align:center;border-top:1px solid #e2e8f0">
     <p style="margin:0;font-size:11px;color:#94a3b8;font-family:Arial,sans-serif">
       Sent via <a href="https://GalSol.com" style="color:#64748b;text-decoration:none;font-weight:600">GalSol</a>
-      &nbsp;·&nbsp; <span style="letter-spacing:0.5px">Trusted Certificate &amp; Mail Platform</span>
+      &nbsp;—&nbsp; <span style="letter-spacing:0.5px">The Grand Event Console</span>
+      &nbsp;·&nbsp; <a href="https://GalSol.com" style="color:#64748b;text-decoration:none;font-weight:600">Learn More</a>
     </p>
   </div>`;
   return `<!DOCTYPE html>
