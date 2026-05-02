@@ -227,7 +227,7 @@ ol {
   display: flex;
   align-items: center;
   gap: 11px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
@@ -370,7 +370,7 @@ ol {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 10px;
   color: var(--text-2);
   font-size: 14.5px;
@@ -2717,11 +2717,11 @@ body::after {
 
 .sidebar.collapsed .nav-item {
   justify-content: center;
-  width: 46px !important;
-  min-width: 46px !important;
-  max-width: 46px !important;
-  height: 46px !important;
-  flex: 0 0 46px !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 40px !important;
   align-self: center;
   padding: 0 !important;
   overflow: visible;
@@ -2838,7 +2838,7 @@ body::after {
     height: auto !important;
     flex: 0 1 auto !important;
     align-self: stretch !important;
-    padding: 10px 12px !important;
+    padding: 8px 12px !important;
   }
 
   .sidebar.collapsed .nav-item::after {

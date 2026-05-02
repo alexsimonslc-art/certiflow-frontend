@@ -228,7 +228,7 @@ function mst_renderFontPairGrid() {
    Uses the free qrserver.com API — no key needed.
 ═══════════════════════════════════════════════════════════════ */
 function mst_getQRUrl(siteUrl) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=10&data=${encodeURIComponent(siteUrl)}&color=00d4ff&bgcolor=04080f`;
+  return `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=1&data=${encodeURIComponent(siteUrl)}&color=00d4ff&bgcolor=04080f`;
 }
 
 function mst_renderQRSection(slug) {
