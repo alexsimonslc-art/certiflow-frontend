@@ -1020,7 +1020,7 @@
 
     /* ── Default config per template ── */
     function _tplBlock(type, props) {
-      return { id: 'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), type, ...props };
+      return { id: 'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), type, props };
     }
 
     function getPrebuiltBlocks(template, name) {
