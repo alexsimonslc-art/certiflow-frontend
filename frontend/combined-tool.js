@@ -1797,21 +1797,32 @@ function meBlockToHtml(block) {
     case 'footer':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
     case 'social': {
-      const iconMap = {
-        linkedin: 'lucide:linkedin', 'twitter/x': 'tabler:brand-x', twitter: 'lucide:twitter', instagram: 'lucide:instagram',
-        facebook: 'lucide:facebook', youtube: 'lucide:youtube', tiktok: 'tabler:brand-tiktok', pinterest: 'tabler:brand-pinterest', website: 'lucide:globe',
-        github: 'lucide:github', whatsapp: 'tabler:brand-whatsapp', telegram: 'tabler:brand-telegram', discord: 'tabler:brand-discord',
-        snapchat: 'tabler:brand-snapchat', website: 'lucide:globe',
+      // PNG icons at 64 px (2× retina) — SVG via <img> is blocked/blurry in Gmail & Outlook
+      const pngMap = {
+        linkedin:    'https://img.icons8.com/color/64/linkedin.png',
+        'twitter/x': 'https://img.icons8.com/color/64/twitterx--v1.png',
+        twitter:     'https://img.icons8.com/color/64/twitter--v1.png',
+        x:           'https://img.icons8.com/color/64/twitterx--v1.png',
+        instagram:   'https://img.icons8.com/color/64/instagram-new--v1.png',
+        facebook:    'https://img.icons8.com/color/64/facebook-new.png',
+        youtube:     'https://img.icons8.com/color/64/youtube-play.png',
+        tiktok:      'https://img.icons8.com/color/64/tiktok.png',
+        pinterest:   'https://img.icons8.com/color/64/pinterest.png',
+        website:     'https://img.icons8.com/color/64/domain.png',
+        github:      'https://img.icons8.com/ios-filled/64/github.png',
+        whatsapp:    'https://img.icons8.com/color/64/whatsapp--v1.png',
+        telegram:    'https://img.icons8.com/color/64/telegram-app.png',
+        discord:     'https://img.icons8.com/color/64/discord-logo.png',
+        snapchat:    'https://img.icons8.com/color/64/snapchat.png',
       };
       const size = p.iconSize || 32;
       const pad = p.style === 'plain' ? 0 : Math.round(size * 0.25);
       const br = p.style === 'circle' ? '50%' : p.style === 'square' ? '8px' : '0';
-      const bgBadge = p.style !== 'plain' ? 'background:rgba(128,128,128,0.15);' : '';
-      const iconColor = encodeURIComponent(p.color || '#475569');
+      const bgBadge = p.style !== 'plain' ? 'background:rgba(128,128,128,0.12);' : '';
       const icons = (p.platforms || []).filter(pl => pl.url).map(pl => {
-        const slug = iconMap[(pl.name || '').toLowerCase()] || 'lucide:globe';
-        const src = `https://api.iconify.design/${slug}.svg?color=${iconColor}&stroke-width=1.5`;
-        const imgHtml = `<img src="${src}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;width:${size}px;height:${size}px"/>`;
+        const key = pl.icon || (pl.name || '').toLowerCase();
+        const src = pngMap[key] || pngMap.website;
+        const imgHtml = `<img src="${src}" width="${size}" height="${size}" alt="${pl.name}" style="display:block;outline:none;border:none;-ms-interpolation-mode:bicubic;width:${size}px;height:${size}px"/>`;
         return `<a href="${pl.url}" style="display:inline-block;margin:0 ${Math.round(size * 0.2)}px;text-decoration:none;${bgBadge}padding:${pad}px;border-radius:${br};vertical-align:middle">${imgHtml}</a>`;
       }).join('');
       return icons
