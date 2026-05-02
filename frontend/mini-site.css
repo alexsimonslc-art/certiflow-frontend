@@ -516,9 +516,10 @@
 }
 
 .ms-site-card-preview {
-  height: 80px;
+  height: 130px;
   position: relative;
   overflow: hidden;
+  border-radius: 13px 13px 0 0;
 }
 
 .ms-site-card-thumb {

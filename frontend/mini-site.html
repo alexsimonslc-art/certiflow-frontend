@@ -534,6 +534,7 @@
       initSidebar();
       lucide.createIcons();
       loadMySites();
+      ms_initTemplatePreviews();
     });
 
     /* ── Load existing sites — localStorage fast path + backend sync ── */
@@ -572,6 +573,201 @@
     // end _renderMySites
 
 
+    /* ═══════════════════════════════════════════════════════════════
+       RICH PREVIEWS — template cards + site card thumbnails
+    ═══════════════════════════════════════════════════════════════ */
+    const TPL_PREVIEW_DATA = {
+      hackathon: {
+        bg: '#04080f', accent: '#00d4ff',
+        img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=60',
+        badge: 'Hackathon', badgeFg: '#00d4ff', badgeBg: 'rgba(0,212,255,0.15)', badgeBorder: 'rgba(0,212,255,0.3)',
+        content: `
+          <div style="display:flex;gap:4px;margin-bottom:6px">
+            <div style="flex:1;height:23px;border:1px solid rgba(0,212,255,0.18);border-radius:5px;background:rgba(0,212,255,0.06)"></div>
+            <div style="flex:1;height:23px;border:1px solid rgba(0,212,255,0.18);border-radius:5px;background:rgba(0,212,255,0.06)"></div>
+            <div style="flex:1;height:23px;border:1px solid rgba(0,212,255,0.18);border-radius:5px;background:rgba(0,212,255,0.06)"></div>
+          </div>
+          <div style="height:3px;background:rgba(255,255,255,0.14);border-radius:2px;width:80%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(255,255,255,0.07);border-radius:2px;width:55%;margin-bottom:7px"></div>
+          <div style="height:14px;background:linear-gradient(90deg,#00d4ff,#7c3aed);border-radius:4px;width:42%;box-shadow:0 2px 8px rgba(0,212,255,0.3)"></div>`
+      },
+      workshop: {
+        bg: '#ffffff', accent: '#6366f1',
+        img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=400&q=60',
+        badge: 'Workshop', badgeFg: '#6366f1', badgeBg: 'rgba(99,102,241,0.12)', badgeBorder: 'rgba(99,102,241,0.25)',
+        content: `
+          <div style="height:3px;background:rgba(99,102,241,0.5);border-radius:2px;width:72%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(15,23,42,0.12);border-radius:2px;width:90%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(15,23,42,0.07);border-radius:2px;width:62%;margin-bottom:6px"></div>
+          <div style="display:flex;gap:4px;margin-bottom:6px">
+            <div style="flex:1;height:20px;border:1px solid rgba(99,102,241,0.22);border-radius:4px;background:rgba(99,102,241,0.06)"></div>
+            <div style="flex:1;height:20px;border:1px solid rgba(99,102,241,0.22);border-radius:4px;background:rgba(99,102,241,0.06)"></div>
+          </div>
+          <div style="height:13px;background:#6366f1;border-radius:4px;width:36%;opacity:0.9"></div>`
+      },
+      conference: {
+        bg: '#0a0700', accent: '#f59e0b',
+        img: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=400&q=60',
+        badge: 'Conference', badgeFg: '#f59e0b', badgeBg: 'rgba(245,158,11,0.12)', badgeBorder: 'rgba(245,158,11,0.3)',
+        content: `
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px">
+            <div style="width:26px;height:26px;border-radius:50%;background:rgba(245,158,11,0.75);flex-shrink:0"></div>
+            <div style="width:22px;height:22px;border-radius:50%;background:rgba(245,158,11,0.5);flex-shrink:0"></div>
+            <div style="width:20px;height:20px;border-radius:50%;background:rgba(245,158,11,0.3);flex-shrink:0"></div>
+            <div style="flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px"></div>
+          </div>
+          <div style="height:3px;background:rgba(255,255,255,0.14);border-radius:2px;width:76%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(255,255,255,0.07);border-radius:2px;width:50%;margin-bottom:7px"></div>
+          <div style="height:14px;background:#f59e0b;border-radius:4px;width:40%;box-shadow:0 2px 8px rgba(245,158,11,0.3)"></div>`
+      },
+      cultural: {
+        bg: '#0d0015', accent: '#f472b6',
+        img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=400&q=60',
+        badge: 'Cultural', badgeFg: '#f472b6', badgeBg: 'rgba(244,114,182,0.12)', badgeBorder: 'rgba(244,114,182,0.3)',
+        content: `
+          <div style="display:flex;gap:4px;margin-bottom:6px">
+            <div style="height:16px;background:rgba(244,114,182,0.2);border:1px solid rgba(244,114,182,0.35);border-radius:99px;width:36px"></div>
+            <div style="height:16px;background:rgba(251,146,60,0.2);border:1px solid rgba(251,146,60,0.35);border-radius:99px;width:42px"></div>
+            <div style="height:16px;background:rgba(167,139,250,0.2);border:1px solid rgba(167,139,250,0.35);border-radius:99px;width:32px"></div>
+          </div>
+          <div style="height:3px;background:rgba(255,255,255,0.14);border-radius:2px;width:80%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(255,255,255,0.07);border-radius:2px;width:55%;margin-bottom:7px"></div>
+          <div style="height:14px;background:linear-gradient(90deg,#f472b6,#fb923c);border-radius:4px;width:42%"></div>`
+      },
+      sports: {
+        bg: '#030d06', accent: '#10b981',
+        img: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=400&q=60',
+        badge: 'Sports', badgeFg: '#10b981', badgeBg: 'rgba(16,185,129,0.12)', badgeBorder: 'rgba(16,185,129,0.3)',
+        content: `
+          <div style="display:flex;gap:4px;margin-bottom:6px">
+            <div style="flex:1;height:22px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:5px;display:flex;align-items:center;padding:0 5px;gap:3px">
+              <div style="width:5px;height:5px;border-radius:50%;background:#10b981;flex-shrink:0"></div>
+              <div style="height:3px;background:rgba(255,255,255,0.2);border-radius:1px;flex:1"></div>
+            </div>
+            <div style="flex:1;height:22px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:5px;display:flex;align-items:center;padding:0 5px;gap:3px">
+              <div style="width:5px;height:5px;border-radius:50%;background:#34d399;flex-shrink:0"></div>
+              <div style="height:3px;background:rgba(255,255,255,0.2);border-radius:1px;flex:1"></div>
+            </div>
+          </div>
+          <div style="height:3px;background:rgba(255,255,255,0.13);border-radius:2px;width:78%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;width:50%;margin-bottom:7px"></div>
+          <div style="height:14px;background:#10b981;border-radius:4px;width:40%;box-shadow:0 2px 8px rgba(16,185,129,0.3)"></div>`
+      },
+      webinar: {
+        bg: '#020e1a', accent: '#60a5fa',
+        img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=60',
+        badge: 'Webinar', badgeFg: '#60a5fa', badgeBg: 'rgba(96,165,250,0.12)', badgeBorder: 'rgba(96,165,250,0.3)',
+        content: `
+          <div style="height:28px;background:rgba(96,165,250,0.07);border:1px solid rgba(96,165,250,0.18);border-radius:5px;margin-bottom:5px;display:flex;align-items:center;justify-content:center">
+            <div style="width:0;height:0;border-left:8px solid rgba(96,165,250,0.7);border-top:5px solid transparent;border-bottom:5px solid transparent;margin-left:2px"></div>
+          </div>
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:5px">
+            <div style="width:18px;height:18px;border-radius:50%;background:rgba(96,165,250,0.6);flex-shrink:0"></div>
+            <div style="width:16px;height:16px;border-radius:50%;background:rgba(96,165,250,0.35);flex-shrink:0"></div>
+            <div style="height:3px;background:rgba(255,255,255,0.12);border-radius:2px;flex:1"></div>
+          </div>
+          <div style="height:14px;background:#60a5fa;border-radius:4px;width:40%"></div>`
+      },
+      symposium: {
+        bg: '#f9f7f4', accent: '#92400e',
+        img: 'https://images.unsplash.com/photo-1497366754035-f200968a1f18?auto=format&fit=crop&w=400&q=60',
+        badge: 'Academic', badgeFg: '#92400e', badgeBg: 'rgba(146,64,14,0.1)', badgeBorder: 'rgba(146,64,14,0.25)',
+        content: `
+          <div style="height:3px;background:rgba(146,64,14,0.5);border-radius:2px;width:68%;margin-bottom:4px"></div>
+          <div style="height:3px;background:rgba(15,23,42,0.12);border-radius:2px;width:90%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(15,23,42,0.07);border-radius:2px;width:72%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(15,23,42,0.05);border-radius:2px;width:55%;margin-bottom:7px"></div>
+          <div style="display:flex;gap:4px;margin-bottom:5px">
+            <div style="height:16px;background:rgba(146,64,14,0.07);border:1px solid rgba(146,64,14,0.2);border-radius:3px;flex:1"></div>
+            <div style="height:16px;background:rgba(146,64,14,0.07);border:1px solid rgba(146,64,14,0.2);border-radius:3px;flex:1"></div>
+          </div>
+          <div style="height:13px;background:#92400e;border-radius:4px;width:36%;opacity:0.85"></div>`
+      },
+      music: {
+        bg: '#0d001a', accent: '#c084fc',
+        img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=400&q=60',
+        badge: 'Music', badgeFg: '#c084fc', badgeBg: 'rgba(192,132,252,0.12)', badgeBorder: 'rgba(192,132,252,0.3)',
+        content: `
+          <div style="display:flex;gap:4px;margin-bottom:6px">
+            <div style="flex:1;height:20px;background:rgba(192,132,252,0.18);border:1px solid rgba(192,132,252,0.3);border-radius:6px"></div>
+            <div style="flex:1;height:20px;background:rgba(129,140,248,0.15);border:1px solid rgba(129,140,248,0.25);border-radius:6px"></div>
+          </div>
+          <div style="height:3px;background:rgba(255,255,255,0.13);border-radius:2px;width:78%;margin-bottom:3px"></div>
+          <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;width:50%;margin-bottom:7px"></div>
+          <div style="height:14px;background:linear-gradient(90deg,#c084fc,#818cf8);border-radius:4px;width:40%;box-shadow:0 2px 8px rgba(192,132,252,0.3)"></div>`
+      },
+    };
+
+    function ms_initTemplatePreviews() {
+      document.querySelectorAll('.ms-template-card:not(.ms-blank-card)').forEach(card => {
+        const match = card.getAttribute('onclick')?.match(/createSite\('(\w+)'\)/);
+        if (!match) return;
+        const tpl = match[1];
+        const d = TPL_PREVIEW_DATA[tpl];
+        if (!d) return;
+        const preview = card.querySelector('.ms-template-preview');
+        if (!preview) return;
+        preview.style.background = d.bg;
+        preview.style.display = 'flex';
+        preview.style.flexDirection = 'column';
+        preview.innerHTML = `
+          <div style="height:14px;background:rgba(0,0,0,0.45);display:flex;align-items:center;gap:3px;padding:0 8px;flex-shrink:0">
+            <div style="width:5px;height:5px;border-radius:50%;background:#ff5f57;flex-shrink:0"></div>
+            <div style="width:5px;height:5px;border-radius:50%;background:#ffbd2e;flex-shrink:0"></div>
+            <div style="width:5px;height:5px;border-radius:50%;background:#28c840;flex-shrink:0"></div>
+            <div style="flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;margin-left:4px"></div>
+          </div>
+          <div style="height:68px;position:relative;overflow:hidden;flex-shrink:0">
+            <div style="position:absolute;inset:0;background:url('${d.img}') center/cover no-repeat"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.08) 0%,rgba(0,0,0,0.78) 100%)"></div>
+            <div style="position:absolute;bottom:7px;left:10px;right:10px">
+              <div style="height:5px;background:${d.accent};border-radius:2px;width:64%;margin-bottom:3px;opacity:0.9"></div>
+              <div style="height:3px;background:rgba(255,255,255,0.28);border-radius:2px;width:40%"></div>
+            </div>
+          </div>
+          <div style="padding:8px 10px 0;background:${d.bg};flex:1;overflow:hidden">
+            ${d.content}
+          </div>
+          <div class="ms-preview-badge" style="background:${d.badgeBg};color:${d.badgeFg};border-color:${d.badgeBorder}">${d.badge}</div>`;
+      });
+    }
+
+    function buildSiteCardPreview(site) {
+      const cfg = site.config || {};
+      const accent = cfg.accentColor || '#00d4ff';
+      const coverBlock = (cfg.blocks || []).find(b => b.type === 'cover');
+      const coverImg = coverBlock?.props?.coverImage || '';
+      const tplGrad = {
+        hackathon: 'linear-gradient(135deg,#0d1f3c,#04080f)',
+        workshop:  'linear-gradient(135deg,#3730a3,#6366f1)',
+        conference:'linear-gradient(135deg,#1a0a00,#0a0700)',
+        cultural:  'linear-gradient(135deg,#2d0057,#0d0015)',
+        sports:    'linear-gradient(135deg,#0a2010,#030d06)',
+        webinar:   'linear-gradient(135deg,#041c34,#020e1a)',
+        symposium: 'linear-gradient(135deg,#3b1f0a,#1c1917)',
+        music:     'linear-gradient(135deg,#1a0033,#0d001a)',
+        blank:     'linear-gradient(135deg,#0d1525,#04080f)',
+      };
+      const heroBg = coverImg
+        ? `url('${coverImg}') center/cover no-repeat`
+        : (tplGrad[site.template] || 'linear-gradient(135deg,#0d1525,#04080f)');
+      const tplLabel = (TEMPLATE_NAMES[site.template] || 'Custom').toUpperCase();
+      return `<div class="ms-site-card-preview">
+        <div style="position:absolute;inset:0;background:${heroBg}"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.04) 0%,rgba(0,0,0,0.82) 100%)"></div>
+        <div style="position:absolute;bottom:10px;left:12px;right:12px">
+          <div style="height:5px;background:${accent};border-radius:2px;width:56%;margin-bottom:4px;opacity:0.9"></div>
+          <div style="height:3px;background:rgba(255,255,255,0.25);border-radius:2px;width:36%;margin-bottom:8px"></div>
+          <div style="display:flex;gap:4px">
+            <div style="height:14px;border-radius:4px;flex:1;border:1px solid ${accent};opacity:0.35"></div>
+            <div style="height:14px;border-radius:4px;flex:1;border:1px solid ${accent};opacity:0.35"></div>
+            <div style="height:14px;border-radius:4px;flex:1;border:1px solid ${accent};opacity:0.35"></div>
+          </div>
+        </div>
+        <div style="position:absolute;top:8px;right:8px;border:1px solid ${accent};color:${accent};font-size:8.5px;font-weight:700;padding:2px 7px;border-radius:99px;text-transform:uppercase;letter-spacing:0.5px;font-family:var(--font);opacity:0.8;white-space:nowrap;background:rgba(0,0,0,0.3)">${tplLabel}</div>
+      </div>`;
+    }
+
     function renderSiteCard(site) {
       const statusColor = site.status === 'published'
         ? 'var(--green)' : 'var(--gold)';
@@ -580,9 +776,7 @@
       const url = `GalSol.app/s/${site.slug}`;
 
       return `<div class="ms-site-card" data-id="${site.id}">
-    <div class="ms-site-card-preview" style="background:${getTemplateBg(site.template)}">
-      <div class="ms-site-card-thumb">${getTemplateThumb(site.template)}</div>
-    </div>
+    ${buildSiteCardPreview(site)}
     <div class="ms-site-card-body">
       <div class="ms-site-card-header">
         <div class="ms-site-card-name">${site.name}</div>
