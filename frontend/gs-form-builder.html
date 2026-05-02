@@ -1750,7 +1750,7 @@
     }
 
     .gsfb-center.theme-light {
-      background: repeating-conic-gradient(rgba(0, 0, 0, 0.025) 0% 25%, transparent 0% 50%) 0 0/24px 24px, #f0f4f9;
+      background: #f0f4f9;
     }
 
     /* ── Header Card ── */
@@ -2863,58 +2863,58 @@
         <label class="gsfb-prop-label">Accepted Types</label>
         <div class="gsfb-filetype-list">
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype="*" ${_chk('*')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype="*" ${_chk('*')} onchange="updateFileAccept('${id}',this)">
             <span>Any File</span>
           </label>
           <div class="gsfb-filetype-sep"></div>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype="image/*" ${_chk('image/*')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype="image/*" ${_chk('image/*')} onchange="updateFileAccept('${id}',this)">
             <span>Images (JPG, PNG, GIF, WebP…)</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype="video/*" ${_chk('video/*')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype="video/*" ${_chk('video/*')} onchange="updateFileAccept('${id}',this)">
             <span>Videos (MP4, MOV, AVI…)</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype="audio/*" ${_chk('audio/*')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype="audio/*" ${_chk('audio/*')} onchange="updateFileAccept('${id}',this)">
             <span>Audio (MP3, WAV, OGG…)</span>
           </label>
           <div class="gsfb-filetype-sep"></div>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".pdf" ${_chk('.pdf')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".pdf" ${_chk('.pdf')} onchange="updateFileAccept('${id}',this)">
             <span>PDF</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".doc,.docx" ${_chk('.doc,.docx')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".doc,.docx" ${_chk('.doc,.docx')} onchange="updateFileAccept('${id}',this)">
             <span>Word Documents (.doc, .docx)</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".xls,.xlsx" ${_chk('.xls,.xlsx')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".xls,.xlsx" ${_chk('.xls,.xlsx')} onchange="updateFileAccept('${id}',this)">
             <span>Excel Spreadsheets (.xls, .xlsx)</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".ppt,.pptx" ${_chk('.ppt,.pptx')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".ppt,.pptx" ${_chk('.ppt,.pptx')} onchange="updateFileAccept('${id}',this)">
             <span>PowerPoint (.ppt, .pptx)</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".csv" ${_chk('.csv')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".csv" ${_chk('.csv')} onchange="updateFileAccept('${id}',this)">
             <span>CSV</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".txt,.rtf" ${_chk('.txt,.rtf')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".txt,.rtf" ${_chk('.txt,.rtf')} onchange="updateFileAccept('${id}',this)">
             <span>Text / RTF</span>
           </label>
           <div class="gsfb-filetype-sep"></div>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".zip,.rar,.7z,.tar" ${_chk('.zip,.rar,.7z,.tar')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".zip,.rar,.7z,.tar" ${_chk('.zip,.rar,.7z,.tar')} onchange="updateFileAccept('${id}',this)">
             <span>ZIP / Archives</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".json,.xml" ${_chk('.json,.xml')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".json,.xml" ${_chk('.json,.xml')} onchange="updateFileAccept('${id}',this)">
             <span>JSON / XML</span>
           </label>
           <label class="gsfb-filetype-item">
-            <input type="checkbox" data-field="${id}" data-ftype=".js,.ts,.py,.html,.css" ${_chk('.js,.ts,.py,.html,.css')} onchange="updateFileAccept('${id}')">
+            <input type="checkbox" data-field="${id}" data-ftype=".js,.ts,.py,.html,.css" ${_chk('.js,.ts,.py,.html,.css')} onchange="updateFileAccept('${id}',this)">
             <span>Code Files</span>
           </label>
         </div>
@@ -3069,17 +3069,27 @@
       renderCanvasCardById(id);
     }
 
-    function updateFileAccept(fieldId) {
+    function updateFileAccept(fieldId, changedBox) {
       const boxes = [...document.querySelectorAll(`input[data-ftype][data-field="${fieldId}"]`)];
       const anyBox = boxes.find(b => b.dataset.ftype === '*');
-      if (anyBox?.checked) {
+      const isAnyBox = changedBox === anyBox;
+
+      if (isAnyBox) {
+        // "Any File" was clicked — uncheck all specifics, restore '*'
         boxes.forEach(b => { if (b !== anyBox) b.checked = false; });
+        anyBox.checked = true;
         updateFP(fieldId, 'accept', '*');
         return;
       }
+
+      // A specific type was toggled — always uncheck "Any File"
+      if (anyBox) anyBox.checked = false;
+
       const vals = [];
-      boxes.forEach(b => { if (b.checked) b.dataset.ftype.split(',').forEach(v => vals.push(v.trim())); });
+      boxes.forEach(b => { if (b !== anyBox && b.checked) b.dataset.ftype.split(',').forEach(v => vals.push(v.trim())); });
+
       if (!vals.length) {
+        // Nothing left — fall back to "Any File"
         if (anyBox) anyBox.checked = true;
         updateFP(fieldId, 'accept', '*');
       } else {
