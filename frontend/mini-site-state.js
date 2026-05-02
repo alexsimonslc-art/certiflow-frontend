@@ -315,6 +315,7 @@ const MSState = {
       registrationOpen: site.config?.registrationOpen !== false,
       activePalette: site.config?.activePalette || null,
       activeFontPair: site.config?.activeFontPair || null,
+      bgOverride: site.config?.bgOverride || null,
       passConfig: site.config?.passConfig || null,
       gaId: site.gaId || site.ga_id || site.config?.gaId || null,
       status: site.status || 'draft',
@@ -341,6 +342,7 @@ const MSState = {
       registrationOpen: this.config.registrationOpen,
       activePalette: this.config.activePalette || null,
       activeFontPair: this.config.activeFontPair || null,
+      bgOverride: this.config.bgOverride || null,
       passConfig: this.config.passConfig || null,
       blocks: this.blocks.map(b => JSON.parse(JSON.stringify(b))),
     };
@@ -473,6 +475,7 @@ const MSState = {
       registrationOpen: this.config.registrationOpen !== false,
       activePalette: this.config.activePalette || null,
       activeFontPair: this.config.activeFontPair || null,
+      bgOverride: this.config.bgOverride || null,
       passConfig: this.config.passConfig || null,
       blocks: this.blocks.map(b => JSON.parse(JSON.stringify(b))),
     };

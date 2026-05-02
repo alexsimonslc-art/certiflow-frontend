@@ -22,19 +22,19 @@ function msb_theme(cfg) {
     font,
     fontDisplay: cfg.fontHeading || cfg.fontFamily || 'Syne',
     // Text
-    text: isDark ? '#eef4ff' : '#1e293b',
-    sub: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)',
-    muted: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
+    text: isDark ? '#eef4ff' : '#0f172a',
+    sub: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(15,23,42,0.62)',
+    muted: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(15,23,42,0.38)',
     // Backgrounds
-    bg: isDark ? (cfg.bgOverride || '#0a0f1e') : '#ffffff',
-    bgAlt: isDark ? '#0d1525' : '#f8fafc',
-    bgCard: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.025)',
-    bgInput: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+    bg: isDark ? (cfg.bgOverride || '#0a0f1e') : '#f1f5f9',
+    bgAlt: isDark ? (cfg.bgOverride ? 'rgba(255,255,255,0.025)' : '#0d1525') : '#ffffff',
+    bgCard: isDark ? 'rgba(255,255,255,0.045)' : '#ffffff',
+    bgInput: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.05)',
     // Borders
-    border: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
-    border2: isDark ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.14)',
+    border: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.1)',
+    border2: isDark ? 'rgba(255,255,255,0.14)' : 'rgba(15,23,42,0.16)',
     // Shadows
-    shadow: isDark ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 24px rgba(0,0,0,0.08)',
+    shadow: isDark ? '0 8px 32px rgba(0,0,0,0.4)' : '0 2px 14px rgba(15,23,42,0.08), 0 1px 3px rgba(15,23,42,0.05)',
   };
 }
 
@@ -117,7 +117,9 @@ function msb_cover(block, cfg) {
   const overlay = overlayMap[p.coverOverlay] || overlayMap.dark;
   const bgBase = p.coverImage
     ? 'transparent'
-    : (t.isDark ? 'linear-gradient(160deg,#0d1f3c 0%,#04080f 100%)' : 'linear-gradient(160deg,#e0e7ff,#c7d2fe)');
+    : (t.isDark
+        ? `linear-gradient(160deg,#0d1f3c 0%,${cfg.bgOverride || '#04080f'} 100%)`
+        : `linear-gradient(160deg,rgba(${t.ar},${t.ag},${t.ab},1) 0%,rgba(${t.ar},${t.ag},${t.ab},0.55) 55%,#1e293b 100%)`);
 
   return `
 <div style="position:relative;min-height:300px;background:${p.bgColor || (t.isDark ? '#04080f' : '#1e293b')};display:flex;flex-direction:column;align-items:${p.alignment === 'left' ? 'flex-start' : p.alignment === 'right' ? 'flex-end' : 'center'};justify-content:flex-end;padding:0 clamp(24px,6vw,64px) 52px;overflow:hidden;font-family:'${t.font}',sans-serif;box-sizing:border-box">
