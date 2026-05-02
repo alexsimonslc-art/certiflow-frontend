@@ -1019,19 +1019,123 @@
     });
 
     /* ── Default config per template ── */
+    function _tplBlock(type, props) {
+      return { id: 'bl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), type, ...props };
+    }
+
+    function getPrebuiltBlocks(template, name) {
+      const b = _tplBlock;
+      switch (template) {
+
+        case 'hackathon': return [
+          b('cover',    { siteName: name, tagline: 'Build. Break. Innovate.', coverImage: '', logoImage: '', logoShape: 'rounded', showLogo: true, coverOverlay: 'dark', bgColor: '#04080f', titleColor: '', taglineColor: '' }),
+          b('about',    { title: 'About the Hackathon', content: '48 hours. One mission. Build something that matters. Bring your skills, ideas, and team spirit to take on real-world problem statements — and compete for exciting prizes.', alignment: 'center', bgColor: '', titleColor: '', textColor: '' }),
+          b('announcements', { title: 'Announcements', items: [{ id: 'a1', text: 'Registrations are now open!', date: '', pinned: true }, { id: 'a2', text: 'Problem statements will be released 24 hours before the event.', date: '', pinned: false }], bgColor: '', titleColor: '', itemTextColor: '', itemDateColor: '' }),
+          b('datetime', { date: '', time: '', endTime: '', timezone: 'IST', venueName: 'Innovation Hub', venueAddress: '', venueType: 'in-person', onlineLink: '', mapLink: '', bgColor: '', valueColor: '', labelColor: '' }),
+          b('speakers', { title: 'Judges & Mentors', layout: 'grid', items: [], bgColor: '', titleColor: '', nameColor: '', roleColor: '', bioColor: '' }),
+          b('sponsors', { title: 'Our Sponsors', tiers: [{ id: 't1', name: 'Title Sponsor', items: [] }, { id: 't2', name: 'Co-Sponsor', items: [] }], bgColor: '', titleColor: '', tierNameColor: '' }),
+          b('faq',      { title: 'FAQ', items: [{ id: 'q1', question: 'Who can participate?', answer: 'Any student or working professional can register. Teams of 2–4 members are recommended.' }, { id: 'q2', question: 'Is there a registration fee?', answer: 'Registration is completely free.' }, { id: 'q3', question: 'What should I bring?', answer: 'Bring your laptop, chargers, and enthusiasm! Meals and refreshments will be provided.' }], bgColor: '', titleColor: '', questionColor: '', answerColor: '' }),
+          b('form',     { title: 'Register Your Team', subtitle: 'Spots are limited — lock in your place now!', buttonText: 'Register Now →', buttonColor: '', connectType: 'url', connectUrl: '', gsFormId: '', bgColor: '', titleColor: '', subtitleColor: '' }),
+          b('socials',  { title: 'Follow Us', links: [], bgColor: '', titleColor: '' }),
+        ];
+
+        case 'workshop': return [
+          b('cover',    { siteName: name, tagline: 'Learn. Practice. Grow.', coverImage: '', logoImage: '', logoShape: 'circle', showLogo: true, coverOverlay: 'dark', bgColor: '#1e1b4b', titleColor: '', taglineColor: '' }),
+          b('about',    { title: 'About This Workshop', content: 'A hands-on, interactive workshop designed to equip you with practical skills. Expert facilitators will guide you through real exercises and case studies — no prior experience required.', alignment: 'center', bgColor: '', titleColor: '', textColor: '' }),
+          b('datetime', { date: '', time: '', endTime: '', timezone: 'IST', venueName: '', venueAddress: '', venueType: 'in-person', onlineLink: '', mapLink: '', bgColor: '', valueColor: '', labelColor: '' }),
+          b('speakers', { title: 'Facilitators', layout: 'grid', items: [], bgColor: '', titleColor: '', nameColor: '', roleColor: '', bioColor: '' }),
+          b('documents',{ title: 'Workshop Resources', items: [], bgColor: '', titleColor: '', itemLabelColor: '', itemDescColor: '' }),
+          b('faq',      { title: 'FAQ', items: [{ id: 'q1', question: 'Who should attend?', answer: 'This workshop is open to beginners and intermediate learners alike.' }, { id: 'q2', question: 'What do I need to bring?', answer: 'A laptop (fully charged) and a notebook. All other materials will be provided on the day.' }, { id: 'q3', question: 'Will there be a certificate?', answer: 'Yes! All participants who complete the workshop will receive a certificate of participation.' }], bgColor: '', titleColor: '', questionColor: '', answerColor: '' }),
+          b('form',     { title: 'Secure Your Seat', subtitle: 'Limited seats available — register today!', buttonText: 'Register Now →', buttonColor: '', connectType: 'url', connectUrl: '', gsFormId: '', bgColor: '', titleColor: '', subtitleColor: '' }),
+          b('socials',  { title: 'Follow Us', links: [], bgColor: '', titleColor: '' }),
+        ];
+
+        case 'conference': return [
+          b('cover',    { siteName: name, tagline: 'Knowledge. Connection. Impact.', coverImage: '', logoImage: '', logoShape: 'rounded', showLogo: true, coverOverlay: 'dark', bgColor: '#0a0f1e', titleColor: '', taglineColor: '' }),
+          b('about',    { title: 'About the Conference', content: 'Join industry leaders, researchers, and innovators for a day of inspiring keynotes, panel discussions, and networking. Explore the latest trends and breakthroughs shaping the future.', alignment: 'center', bgColor: '', titleColor: '', textColor: '' }),
+          b('datetime', { date: '', time: '', endTime: '', timezone: 'IST', venueName: '', venueAddress: '', venueType: 'in-person', onlineLink: '', mapLink: '', bgColor: '', valueColor: '', labelColor: '' }),
+          b('speakers', { title: 'Keynote Speakers', layout: 'grid', items: [], bgColor: '', titleColor: '', nameColor: '', roleColor: '', bioColor: '' }),
+          b('sponsors', { title: 'Presented By', tiers: [{ id: 't1', name: 'Gold Partner', items: [] }, { id: 't2', name: 'Silver Partner', items: [] }], bgColor: '', titleColor: '', tierNameColor: '' }),
+          b('faq',      { title: 'FAQ', items: [{ id: 'q1', question: 'Who should attend?', answer: 'Professionals, researchers, and students in the field are all welcome.' }, { id: 'q2', question: 'Is there a registration fee?', answer: 'Conference passes are available at various tiers. Check the registration form for details.' }, { id: 'q3', question: 'Will sessions be recorded?', answer: 'Select sessions will be recorded and shared with registered attendees after the event.' }], bgColor: '', titleColor: '', questionColor: '', answerColor: '' }),
+          b('form',     { title: 'Get Your Pass', subtitle: 'Early-bird registrations are now open.', buttonText: 'Register Now →', buttonColor: '', connectType: 'url', connectUrl: '', gsFormId: '', bgColor: '', titleColor: '', subtitleColor: '' }),
+          b('socials',  { title: 'Follow Us', links: [], bgColor: '', titleColor: '' }),
+        ];
+
+        case 'cultural': return [
+          b('cover',    { siteName: name, tagline: 'Celebrate. Create. Connect.', coverImage: '', logoImage: '', logoShape: 'circle', showLogo: true, coverOverlay: 'dark', bgColor: '#0d0015', titleColor: '', taglineColor: '' }),
+          b('about',    { title: 'About the Festival', content: 'A vibrant celebration of art, music, dance, and culture. Join us for an unforgettable experience filled with performances, competitions, food stalls, and endless fun for everyone.', alignment: 'center', bgColor: '', titleColor: '', textColor: '' }),
+          b('announcements', { title: 'Announcements', items: [{ id: 'a1', text: 'Registrations are open for all events!', date: '', pinned: true }, { id: 'a2', text: 'Event schedule to be announced soon. Stay tuned!', date: '', pinned: false }], bgColor: '', titleColor: '', itemTextColor: '', itemDateColor: '' }),
+          b('datetime', { date: '', time: '', endTime: '', timezone: 'IST', venueName: '', venueAddress: '', venueType: 'in-person', onlineLink: '', mapLink: '', bgColor: '', valueColor: '', labelColor: '' }),
+          b('speakers', { title: 'Featured Artists & Performers', layout: 'grid', items: [], bgColor: '', titleColor: '', nameColor: '', roleColor: '', bioColor: '' }),
+          b('sponsors', { title: 'Our Sponsors', tiers: [{ id: 't1', name: 'Presenting Sponsor', items: [] }, { id: 't2', name: 'Associate Sponsor', items: [] }], bgColor: '', titleColor: '', tierNameColor: '' }),
+          b('faq',      { title: 'FAQ', items: [{ id: 'q1', question: 'Who can participate?', answer: 'The festival is open to all — students, artists, and the general public alike.' }, { id: 'q2', question: 'Are there registration fees for events?', answer: 'Most events are free to attend. Some competitions may have a nominal registration fee.' }, { id: 'q3', question: 'Is food available at the venue?', answer: 'Yes! A variety of food stalls and refreshment counters will be set up throughout the venue.' }], bgColor: '', titleColor: '', questionColor: '', answerColor: '' }),
+          b('form',     { title: 'Register for Events', subtitle: 'Pick your events and register before slots fill up!', buttonText: 'Register Now →', buttonColor: '', connectType: 'url', connectUrl: '', gsFormId: '', bgColor: '', titleColor: '', subtitleColor: '' }),
+          b('socials',  { title: 'Follow Us', links: [], bgColor: '', titleColor: '' }),
+        ];
+
+        case 'sports': return [
+          b('cover',    { siteName: name, tagline: 'Compete. Conquer. Champion.', coverImage: '', logoImage: '', logoShape: 'rounded', showLogo: true, coverOverlay: 'dark', bgColor: '#030a03', titleColor: '', taglineColor: '' }),
+          b('about',    { title: 'About the Event', content: 'A premier sporting tournament bringing together athletes from across the region. Compete in multiple categories, push your limits, and rise to the top. Glory awaits.', alignment: 'center', bgColor: '', titleColor: '', textColor: '' }),
+          b('announcements', { title: 'Announcements', items: [{ id: 'a1', text: 'Team registrations are now open!', date: '', pinned: true }, { id: 'a2', text: 'Draw ceremony details will be announced shortly.', date: '', pinned: false }], bgColor: '', titleColor: '', itemTextColor: '', itemDateColor: '' }),
+          b('datetime', { date: '', time: '', endTime: '', timezone: 'IST', venueName: '', venueAddress: '', venueType: 'in-person', onlineLink: '', mapLink: '', bgColor: '', valueColor: '', labelColor: '' }),
+          b('speakers', { title: 'Organising Committee', layout: 'grid', items: [], bgColor: '', titleColor: '', nameColor: '', roleColor: '', bioColor: '' }),
+          b('sponsors', { title: 'Our Sponsors', tiers: [{ id: 't1', name: 'Title Sponsor', items: [] }, { id: 't2', name: 'Co-Sponsor', items: [] }], bgColor: '', titleColor: '', tierNameColor: '' }),
+          b('faq',      { title: 'FAQ', items: [{ id: 'q1', question: 'Who can participate?', answer: 'The event is open to registered students/members only. Age categories apply — see the rulebook for details.' }, { id: 'q2', question: 'What are the registration fees?', answer: 'Fees vary by sport and category. Please refer to the registration form.' }, { id: 'q3', question: 'Where can I find the official rulebook?', answer: 'The rulebook will be available in the Documents section shortly. Please check back soon.' }], bgColor: '', titleColor: '', questionColor: '', answerColor: '' }),
+          b('form',     { title: 'Register Your Team', subtitle: 'Secure your spot before the registration deadline.', buttonText: 'Register Now →', buttonColor: '', connectType: 'url', connectUrl: '', gsFormId: '', bgColor: '', titleColor: '', subtitleColor: '' }),
+          b('socials',  { title: 'Follow Us', links: [], bgColor: '', titleColor: '' }),
+        ];
+
+        case 'webinar': return [
+          b('cover',    { siteName: name, tagline: 'Learn from the Best. Live Online.', coverImage: '', logoImage: '', logoShape: 'circle', showLogo: true, coverOverlay: 'dark', bgColor: '#020e1a', titleColor: '', taglineColor: '' }),
+          b('about',    { title: 'About the Webinar', content: 'A live online session with industry experts covering the latest insights, trends, and actionable takeaways. Join from anywhere in the world — all you need is an internet connection.', alignment: 'center', bgColor: '', titleColor: '', textColor: '' }),
+          b('datetime', { date: '', time: '', endTime: '', timezone: 'IST', venueName: '', venueAddress: '', venueType: 'online', onlineLink: '', mapLink: '', bgColor: '', valueColor: '', labelColor: '' }),
+          b('speakers', { title: 'Featured Speakers', layout: 'grid', items: [], bgColor: '', titleColor: '', nameColor: '', roleColor: '', bioColor: '' }),
+          b('faq',      { title: 'FAQ', items: [{ id: 'q1', question: 'How do I join the webinar?', answer: 'A joining link will be sent to your registered email 24 hours before the session.' }, { id: 'q2', question: 'Is this webinar free?', answer: 'Yes, this webinar is completely free to attend.' }, { id: 'q3', question: 'Will a recording be available?', answer: 'Yes, the recording will be shared with all registered participants after the session.' }], bgColor: '', titleColor: '', questionColor: '', answerColor: '' }),
+          b('form',     { title: 'Reserve Your Spot', subtitle: 'Free to attend — register now to receive the joining link.', buttonText: 'Register Now →', buttonColor: '', connectType: 'url', connectUrl: '', gsFormId: '', bgColor: '', titleColor: '', subtitleColor: '' }),
+          b('socials',  { title: 'Follow Us', links: [], bgColor: '', titleColor: '' }),
+        ];
+
+        case 'symposium': return [
+          b('cover',    { siteName: name, tagline: 'Advancing Knowledge Together', coverImage: '', logoImage: '', logoShape: 'square', showLogo: true, coverOverlay: 'dark', bgColor: '#1c1917', titleColor: '', taglineColor: '' }),
+          b('about',    { title: 'About the Symposium', content: 'A prestigious academic gathering bringing together scholars, researchers, and practitioners to present original research, share ideas, and foster collaborative dialogue across disciplines.', alignment: 'center', bgColor: '', titleColor: '', textColor: '' }),
+          b('datetime', { date: '', time: '', endTime: '', timezone: 'IST', venueName: '', venueAddress: '', venueType: 'in-person', onlineLink: '', mapLink: '', bgColor: '', valueColor: '', labelColor: '' }),
+          b('speakers', { title: 'Keynote Speakers & Panelists', layout: 'grid', items: [], bgColor: '', titleColor: '', nameColor: '', roleColor: '', bioColor: '' }),
+          b('documents',{ title: 'Papers & Proceedings', items: [], bgColor: '', titleColor: '', itemLabelColor: '', itemDescColor: '' }),
+          b('sponsors', { title: 'Academic Partners', tiers: [{ id: 't1', name: 'Lead Institution', items: [] }, { id: 't2', name: 'Supporting Bodies', items: [] }], bgColor: '', titleColor: '', tierNameColor: '' }),
+          b('faq',      { title: 'FAQ', items: [{ id: 'q1', question: 'Who can submit papers?', answer: 'Faculty members, PhD scholars, and postgraduate students are eligible to submit original research papers.' }, { id: 'q2', question: 'What is the submission deadline?', answer: 'Please check the Documents section for the call-for-papers brochure with submission timelines.' }, { id: 'q3', question: 'Is there a registration fee?', answer: 'There is a nominal fee for delegates. Authors presenting papers must register separately — details are in the registration form.' }], bgColor: '', titleColor: '', questionColor: '', answerColor: '' }),
+          b('form',     { title: 'Register / Submit Abstract', subtitle: 'Join as a delegate or submit your research to be part of the symposium.', buttonText: 'Register Now →', buttonColor: '', connectType: 'url', connectUrl: '', gsFormId: '', bgColor: '', titleColor: '', subtitleColor: '' }),
+          b('socials',  { title: 'Follow Us', links: [], bgColor: '', titleColor: '' }),
+        ];
+
+        case 'music': return [
+          b('cover',    { siteName: name, tagline: 'Feel the Beat. Live the Moment.', coverImage: '', logoImage: '', logoShape: 'circle', showLogo: true, coverOverlay: 'dark', bgColor: '#0d001a', titleColor: '', taglineColor: '' }),
+          b('about',    { title: 'About the Festival', content: 'A night of electrifying music across multiple stages. From indie acts to headlining performers, this festival is the ultimate celebration of sound, community, and culture.', alignment: 'center', bgColor: '', titleColor: '', textColor: '' }),
+          b('announcements', { title: 'Announcements', items: [{ id: 'a1', text: 'Early bird tickets now available — limited quantity!', date: '', pinned: true }, { id: 'a2', text: 'Stage schedule to be released next week.', date: '', pinned: false }], bgColor: '', titleColor: '', itemTextColor: '', itemDateColor: '' }),
+          b('datetime', { date: '', time: '', endTime: '', timezone: 'IST', venueName: '', venueAddress: '', venueType: 'in-person', onlineLink: '', mapLink: '', bgColor: '', valueColor: '', labelColor: '' }),
+          b('speakers', { title: 'Lineup', layout: 'grid', items: [], bgColor: '', titleColor: '', nameColor: '', roleColor: '', bioColor: '' }),
+          b('sponsors', { title: 'Our Sponsors', tiers: [{ id: 't1', name: 'Presenting Sponsor', items: [] }, { id: 't2', name: 'Stage Sponsor', items: [] }], bgColor: '', titleColor: '', tierNameColor: '' }),
+          b('faq',      { title: 'FAQ', items: [{ id: 'q1', question: 'Are tickets available at the door?', answer: 'A limited number of walk-in tickets may be available, but we strongly recommend booking in advance.' }, { id: 'q2', question: 'What is the age limit?', answer: 'The festival is open to all ages. Some stages may have restrictions — check the event details.' }, { id: 'q3', question: 'Can I get a refund?', answer: 'Tickets are non-refundable but may be transferred to another person.' }], bgColor: '', titleColor: '', questionColor: '', answerColor: '' }),
+          b('form',     { title: 'Get Tickets', subtitle: 'Grab your tickets before they sell out!', buttonText: 'Get Tickets →', buttonColor: '', connectType: 'url', connectUrl: '', gsFormId: '', bgColor: '', titleColor: '', subtitleColor: '' }),
+          b('socials',  { title: 'Follow Us', links: [], bgColor: '', titleColor: '' }),
+        ];
+
+        default: return []; // blank
+      }
+    }
+
     function getDefaultConfig(template, name) {
       const defaults = {
-        blank: { theme: 'dark', accentColor: '#00d4ff', logoShape: 'circle' },
-        hackathon: { theme: 'dark', accentColor: '#00d4ff', logoShape: 'rounded' },
-        workshop: { theme: 'light', accentColor: '#6366f1', logoShape: 'circle' },
-        conference: { theme: 'dark', accentColor: '#fbbf24', logoShape: 'rounded' },
-        cultural: { theme: 'dark', accentColor: '#f472b6', logoShape: 'circle' },
-        sports: { theme: 'dark', accentColor: '#10b981', logoShape: 'rounded' },
-        webinar: { theme: 'dark', accentColor: '#60a5fa', logoShape: 'circle' },
-        symposium: { theme: 'light', accentColor: '#e7c57c', logoShape: 'square' },
-        music: { theme: 'dark', accentColor: '#c084fc', logoShape: 'circle' },
+        blank:      { theme: 'dark',  accentColor: '#00d4ff', logoShape: 'circle'   },
+        hackathon:  { theme: 'dark',  accentColor: '#00d4ff', logoShape: 'rounded'  },
+        workshop:   { theme: 'light', accentColor: '#6366f1', logoShape: 'circle'   },
+        conference: { theme: 'dark',  accentColor: '#fbbf24', logoShape: 'rounded'  },
+        cultural:   { theme: 'dark',  accentColor: '#f472b6', logoShape: 'circle'   },
+        sports:     { theme: 'dark',  accentColor: '#10b981', logoShape: 'rounded'  },
+        webinar:    { theme: 'dark',  accentColor: '#60a5fa', logoShape: 'circle'   },
+        symposium:  { theme: 'light', accentColor: '#e7c57c', logoShape: 'square'   },
+        music:      { theme: 'dark',  accentColor: '#c084fc', logoShape: 'circle'   },
       };
-      return { ...(defaults[template] || defaults.blank), siteName: name, blocks: [] };
+      return { ...(defaults[template] || defaults.blank), siteName: name, blocks: getPrebuiltBlocks(template, name) };
     }
 
     /* ── Thumbnail helpers ── */
