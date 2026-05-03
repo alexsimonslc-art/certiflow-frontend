@@ -799,7 +799,6 @@
     /* ── Conditional field show/hide ───────────────────────────── */
     .gsfv-field {
       transition: opacity 0.28s ease, max-height 0.32s ease, margin-bottom 0.28s ease;
-      overflow: hidden;
     }
 
     .gsfv-field.cond-hidden {
@@ -807,6 +806,12 @@
       opacity: 0 !important;
       margin-bottom: 0 !important;
       pointer-events: none;
+      overflow: hidden;
+    }
+
+    .gsfv-field.dd-open {
+      position: relative;
+      z-index: 100;
     }
 
 
@@ -1483,7 +1488,8 @@
     .gsfv-cc-item:hover { background: rgba(255, 255, 255, 0.06); }
     .gsfv-cc-item.selected { background: var(--accent-dim); }
 
-    .gsfv-cc-item-flag { font-size: 18px; line-height: 1; flex-shrink: 0; }
+    .gsfv-cc-item-flag { width: 20px; height: 14px; border-radius: 2px; object-fit: cover; flex-shrink: 0; display: block; }
+    .gsfv-cc-btn-flag { width: 20px; height: 14px; border-radius: 2px; object-fit: cover; flex-shrink: 0; display: block; }
     .gsfv-cc-item-name { color: var(--text-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .gsfv-cc-item-code { color: var(--text-3); font-size: 12.5px; flex-shrink: 0; }
 
@@ -1754,8 +1760,8 @@
       ['VN','84','Vietnam'],['YE','967','Yemen'],['ZM','260','Zambia'],['ZW','263','Zimbabwe'],
     ];
 
-    function ccFlag(iso) {
-      return [...iso.toUpperCase()].map(c => String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)).join('');
+    function ccFlagImg(iso) {
+      return `<img class="gsfv-cc-item-flag" src="https://flagcdn.com/w20/${iso.toLowerCase()}.png" alt="${iso}" loading="lazy"/>`;
     }
 
     let _ccSelected = {}; // { fieldId: { iso, dial } }
@@ -1777,10 +1783,9 @@
       );
       const sel = _ccSelected[fid];
       listEl.innerHTML = items.map(([iso, dial, name]) => {
-        const flag = ccFlag(iso);
         const isSelected = sel && sel.iso === iso;
         return `<div class="gsfv-cc-item${isSelected ? ' selected' : ''}" onclick="pickCC('${fid}','${iso}','${dial}')">
-          <span class="gsfv-cc-item-flag">${flag}</span>
+          ${ccFlagImg(iso)}
           <span class="gsfv-cc-item-name">${esc(name)}</span>
           <span class="gsfv-cc-item-code">+${dial}</span>
         </div>`;
@@ -1796,9 +1801,10 @@
       if (!isOpen) {
         menu.classList.add('open');
         if (btn) btn.classList.add('open');
+        const field = btn && btn.closest('.gsfv-field');
+        if (field) field.classList.add('dd-open');
         const search = menu.querySelector('.gsfv-cc-search');
         if (search) { search.value = ''; search.focus(); renderCCList(fid, ''); }
-        // Scroll to selected
         setTimeout(() => {
           const sel = menu.querySelector('.gsfv-cc-item.selected');
           if (sel) sel.scrollIntoView({ block: 'nearest' });
@@ -1812,7 +1818,7 @@
       _ccSelected[fid] = { iso, dial };
       const flagEl = document.getElementById('ccflag-' + fid);
       const dialEl = document.getElementById('ccdial-' + fid);
-      if (flagEl) flagEl.textContent = ccFlag(iso);
+      if (flagEl) { flagEl.src = `https://flagcdn.com/w20/${iso.toLowerCase()}.png`; flagEl.alt = iso; }
       if (dialEl) dialEl.textContent = '+' + dial;
       closeAllPopups();
       updatePhone(fid, document.getElementById('fi-' + fid)?.value || '');
@@ -1834,6 +1840,8 @@
       if (!isOpen) {
         list.classList.add('open');
         if (btn) btn.classList.add('open');
+        const field = btn && btn.closest('.gsfv-field');
+        if (field) field.classList.add('dd-open');
       }
     }
 
@@ -1856,6 +1864,7 @@
       document.querySelectorAll('.gsfv-dd-btn.open').forEach(el => el.classList.remove('open'));
       document.querySelectorAll('.gsfv-cc-menu.open').forEach(el => el.classList.remove('open'));
       document.querySelectorAll('.gsfv-cc-btn.open').forEach(el => el.classList.remove('open'));
+      document.querySelectorAll('.gsfv-field.dd-open').forEach(el => el.classList.remove('dd-open'));
     }
 
     document.addEventListener('click', e => {
@@ -2121,7 +2130,7 @@
           input = `<div class="gsfv-phone-wrap" id="pw-${f.id}">
             <div class="gsfv-cc" id="cc-${f.id}">
               <button type="button" class="gsfv-cc-btn" id="ccb-${f.id}" onclick="toggleCC('${f.id}')">
-                <span id="ccflag-${f.id}">🇮🇳</span>
+                <img id="ccflag-${f.id}" src="https://flagcdn.com/w20/in.png" alt="IN" class="gsfv-cc-btn-flag"/>
                 <span id="ccdial-${f.id}">+91</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
