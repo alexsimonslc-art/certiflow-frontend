@@ -4063,7 +4063,7 @@
             </div>
           </div>
           <div style="font-size:11px;color:var(--text-3);margin-top:6px;text-align:center">Your unique QR pass will be sent after submission</div>`;
-          return `<div class="gsfb-pv-field" id="pvf-${f.id}">${body}</div>`;
+          return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-field-card">${body}</div></div>`;
         }
         default:
           body = `<input class="gsfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
