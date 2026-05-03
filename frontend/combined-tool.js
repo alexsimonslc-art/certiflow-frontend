@@ -1968,7 +1968,7 @@ let meAiIsLoading = false;
         const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
         let sIdx = 0;
         wrap.innerHTML = `
-              <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+              <div style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:24px;height:24px;"></div>
           <div style="flex:1; display:flex; align-items:center; gap:8px;">
             <div style="display:flex; gap:4px;">
                <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0s;"></div>
@@ -1987,7 +1987,7 @@ let meAiIsLoading = false;
         parsed = parsed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         parsed = parsed.replace(/\*(.*?)\*/g, '<em>$1</em>');
         wrap.innerHTML = `
-              <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+              <div style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:24px;height:24px;"></div>
           <div style="flex:1;">${parsed}</div>`;
       }
     }
@@ -2027,7 +2027,7 @@ function meAiShowUpgrade() {
   const wrap = document.createElement('div');
   wrap.style.cssText = 'display:flex;gap:12px;margin-bottom:24px';
   wrap.innerHTML = `
-        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;box-shadow:0 4px 12px rgba(124,58,237,0.3);margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+        <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:24px;height:24px;"></div>
     <div style="flex:1;">
       <div style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:10px">Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered email generation, design suggestions, and unlimited assistance.</div>
       <div style="display:flex;flex-wrap:wrap;gap:7px">

@@ -2888,7 +2888,7 @@ mNewCampaign = function () {
         const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
         let sIdx = 0;
         wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+          <div style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:24px;height:24px;"></div>
           <div style="flex:1; display:flex; align-items:center; gap:8px;">
             <div style="display:flex; gap:4px;">
                <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0s;"></div>
@@ -2912,7 +2912,7 @@ mNewCampaign = function () {
         parsedContent = parsedContent.replace(/<br>\d+\.\s+(.+)/g, '<br><div class="ai-clickable-option" onclick="applyAiOption(this.innerText)">$1</div>');
 
         wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+          <div style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:24px;height:24px;"></div>
           <div style="flex:1;">${parsedContent}</div>`;
       }
     }

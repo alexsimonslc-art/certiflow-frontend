@@ -31,7 +31,7 @@
       --accent-dim: rgba(0, 212, 255, 0.10);
       --accent-grad: linear-gradient(135deg, #00d4ff, #7c3aed);
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
-      --radius: 11px;
+      --radius: 9px;
     }
 
     *,
@@ -99,7 +99,22 @@
 
     .gsfv-container {
       width: 100%;
-      max-width: 580px;
+      max-width: 520px;
+      background: #080d1c;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+      padding: 27px 22px 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gsfv-container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent-grad);
     }
 
     /* ── Loading skeleton ───────────────────────────────────────── */
@@ -213,7 +228,7 @@
 
     /* ── Form header ────────────────────────────────────────────── */
     .gsfv-header {
-      margin-bottom: 32px;
+      margin-bottom: 20px;
     }
 
     .gsfv-org-badge {
@@ -237,23 +252,22 @@
 
     .gsfv-title {
       font-family: var(--font-display);
-      font-size: clamp(22px, 5vw, 30px);
-      font-weight: 800;
+      font-size: clamp(17px, 3vw, 22px);
+      font-weight: 700;
       color: var(--text);
       line-height: 1.25;
-      letter-spacing: -0.5px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .gsfv-desc {
-      font-size: 15px;
+      font-size: 13.5px;
       color: var(--text-2);
       line-height: 1.65;
     }
 
     /* ── Field wrapper ──────────────────────────────────────────── */
     .gsfv-field {
-      margin-bottom: 22px;
+      margin-bottom: 16px;
       animation: fieldIn 0.3s var(--ease) both;
     }
 
@@ -273,10 +287,10 @@
       display: flex;
       align-items: baseline;
       gap: 5px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 9px;
+      margin-bottom: 7px;
       line-height: 1.4;
     }
 
@@ -298,15 +312,15 @@
     .gsfv-textarea,
     .gsfv-select {
       width: 100%;
-      padding: 12px 14px;
+      padding: 10px 12px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--glass-b);
+      border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: var(--radius);
       color: var(--text);
-      font-size: 15px;
+      font-size: 13.5px;
       font-family: var(--font);
       outline: none;
-      transition: border-color 0.18s, box-shadow 0.18s;
+      transition: border-color 0.18s;
       -webkit-appearance: none;
       appearance: none;
     }
@@ -315,7 +329,6 @@
     .gsfv-textarea:focus,
     .gsfv-select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 4px var(--accent-dim);
     }
 
     .gsfv-input::placeholder,
@@ -325,7 +338,7 @@
 
     .gsfv-textarea {
       resize: vertical;
-      min-height: 100px;
+      min-height: 72px;
       line-height: 1.6;
     }
 
@@ -366,19 +379,20 @@
     .gsfv-options {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 5px;
     }
 
     .gsfv-option-label {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 14px;
+      padding: 9px 12px;
       border-radius: var(--radius);
-      border: 1px solid var(--glass-b);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.025);
       cursor: pointer;
       transition: border-color 0.18s, background 0.18s;
-      font-size: 14.5px;
+      font-size: 13.5px;
       color: var(--text-2);
       user-select: none;
     }
@@ -394,8 +408,8 @@
     }
 
     .gsfv-option-indicator {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       border: 2px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
@@ -478,12 +492,12 @@
     }
 
     .gsfv-num-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 9px;
+      width: 36px;
+      height: 36px;
+      border-radius: 7px;
       border: 1px solid var(--glass-b);
       background: transparent;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--text-3);
       cursor: pointer;
@@ -506,10 +520,9 @@
 
     /* ── File upload ────────────────────────────────────────────── */
     .gsfv-upload-zone {
-      border: 2px dashed var(--glass-b);
+      border: 2px dashed rgba(255, 255, 255, 0.12);
       border-radius: var(--radius);
-      padding: 22px 24px;
-      min-height: 110px;
+      padding: 18px;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.18s, background 0.18s;
@@ -608,16 +621,16 @@
     /* ── Submit button ──────────────────────────────────────────── */
     .gsfv-submit {
       width: 100%;
-      padding: 14px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 10px;
       border: none;
       background: var(--accent-grad);
       color: #fff;
-      font-size: 15.5px;
+      font-size: 14px;
       font-weight: 700;
       font-family: var(--font);
       cursor: pointer;
-      box-shadow: 0 6px 28px rgba(0, 212, 255, 0.22);
+      box-shadow: 0 4px 18px rgba(0, 212, 255, 0.18);
       transition: box-shadow 0.2s, transform 0.15s, opacity 0.2s;
       margin-top: 12px;
       display: flex;
@@ -627,7 +640,7 @@
     }
 
     .gsfv-submit:hover {
-      box-shadow: 0 10px 36px rgba(0, 212, 255, 0.35);
+      box-shadow: 0 8px 28px rgba(0, 212, 255, 0.30);
       transform: translateY(-1px);
     }
 
@@ -808,7 +821,7 @@
     }
 
     .gsfv-progress-track {
-      height: 5px;
+      height: 4px;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 99px;
       overflow: hidden;
@@ -851,9 +864,9 @@
     }
 
     .gsfv-back-btn {
-      padding: 13px 20px;
-      border-radius: 12px;
-      font-size: 15px;
+      padding: 10px 16px;
+      border-radius: 9px;
+      font-size: 13.5px;
       font-weight: 700;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -861,7 +874,6 @@
       cursor: pointer;
       font-family: var(--font);
       transition: all 0.18s;
-      display: none;
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -904,11 +916,16 @@
     /* ── Responsive ─────────────────────────────────────────────── */
     @media (max-width: 600px) {
       .gsfv-page {
-        padding: 44px 12px 64px;
+        padding: 44px 10px 64px;
+      }
+
+      .gsfv-container {
+        padding: 20px 16px 20px;
+        border-radius: 16px;
       }
 
       .gsfv-title {
-        font-size: 22px;
+        font-size: 17px;
       }
 
       .gsfv-num-btn {
@@ -1031,13 +1048,13 @@
       color: var(--text-2);
     }
 
-    /* ── Field card wrapper (both modes) ──────────────────────────── */
+    /* ── Field card wrapper — flat inside outer card ──────────────── */
     .gsfv-field-card {
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 14px;
-      padding: 18px 20px 14px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
     }
 
     /* ── Light mode overrides ──────────────────────────────────── */
@@ -1053,6 +1070,12 @@
       --red-dim: rgba(244, 63, 94, 0.08);
       --accent-dim: rgba(0, 180, 220, 0.10);
     }
+
+    body.gsfv-light .gsfv-container {
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.10);
+    }
     body.gsfv-light ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); }
     body.gsfv-light * { scrollbar-color: rgba(0, 0, 0, 0.15) transparent; }
 
@@ -1065,7 +1088,7 @@
     body.gsfv-light .gsfv-textarea,
     body.gsfv-light .gsfv-select {
       background: #ffffff;
-      border-color: rgba(0, 0, 0, 0.15);
+      border-color: rgba(0, 0, 0, 0.12);
       color: #111827;
     }
 
@@ -1073,7 +1096,6 @@
     body.gsfv-light .gsfv-textarea:focus,
     body.gsfv-light .gsfv-select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(0, 180, 220, 0.10);
     }
 
     body.gsfv-light .gsfv-input::placeholder,
@@ -1093,8 +1115,8 @@
 
     /* option / radio / checkbox */
     body.gsfv-light .gsfv-option-label {
-      background: #f9fafb;
-      border-color: rgba(0, 0, 0, 0.12);
+      background: rgba(0, 0, 0, 0.02);
+      border-color: rgba(0, 0, 0, 0.10);
       color: #374151;
     }
 
@@ -1119,11 +1141,11 @@
       background: var(--accent);
     }
 
-    /* field card */
+    /* field card — transparent flat layout inside outer card */
     body.gsfv-light .gsfv-field-card {
-      background: #ffffff;
-      border-color: rgba(0, 0, 0, 0.06);
-      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.03);
+      background: transparent;
+      border: none;
+      box-shadow: none;
     }
 
     /* star rating */
@@ -1151,8 +1173,8 @@
 
     /* upload */
     body.gsfv-light .gsfv-upload-zone {
-      border-color: rgba(0, 0, 0, 0.18);
-      background: #fafafa;
+      border-color: rgba(0, 0, 0, 0.15);
+      background: rgba(0, 0, 0, 0.02);
     }
 
     body.gsfv-light .gsfv-upload-preview {
