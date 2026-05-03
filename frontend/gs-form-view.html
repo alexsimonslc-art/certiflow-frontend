@@ -100,21 +100,6 @@
     .gsfv-container {
       width: 100%;
       max-width: 520px;
-      background: #080d1c;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.10);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
-      padding: 27px 22px 24px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .gsfv-container::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--accent-grad);
     }
 
     /* ── Loading skeleton ───────────────────────────────────────── */
@@ -228,7 +213,22 @@
 
     /* ── Form header ────────────────────────────────────────────── */
     .gsfv-header {
-      margin-bottom: 20px;
+      background: rgba(10, 18, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 16px;
+      padding: 20px 22px 18px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
+      margin-bottom: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gsfv-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent-grad);
     }
 
     .gsfv-org-badge {
@@ -851,7 +851,12 @@
 
     /* ── Page section title (for page 2+) ───────────────────────── */
     .gsfv-page-hdr {
-      margin-bottom: 26px;
+      background: rgba(10, 18, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 14px;
+      padding: 18px 20px 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      margin-bottom: 10px;
       display: none;
     }
 
@@ -875,7 +880,7 @@
       display: flex;
       gap: 10px;
       align-items: center;
-      margin-top: 12px;
+      margin-top: 4px;
     }
 
     .gsfv-back-btn {
@@ -905,7 +910,7 @@
       height: 15px;
     }
 
-    /* submit button gets flex:1 when back is visible */
+    /* submit button inside nav row */
     .gsfv-nav-row .gsfv-submit {
       margin-top: 0;
       flex: 1;
@@ -932,11 +937,6 @@
     @media (max-width: 600px) {
       .gsfv-page {
         padding: 44px 10px 64px;
-      }
-
-      .gsfv-container {
-        padding: 20px 16px 20px;
-        border-radius: 16px;
       }
 
       .gsfv-title {
@@ -1063,12 +1063,13 @@
       color: var(--text-2);
     }
 
-    /* ── Field card wrapper — individual card per field ───────────── */
+    /* ── Field card — standalone floating card per field ──────────── */
     .gsfv-field-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 14px 16px 12px;
+      background: rgba(10, 18, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 14px;
+      padding: 18px 20px 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
     /* ── Light mode overrides ──────────────────────────────────── */
@@ -1085,10 +1086,10 @@
       --accent-dim: rgba(0, 180, 220, 0.10);
     }
 
-    body.gsfv-light .gsfv-container {
+    body.gsfv-light .gsfv-header {
       background: #ffffff;
       border-color: rgba(0, 0, 0, 0.08);
-      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.10);
+      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07);
     }
     body.gsfv-light ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); }
     body.gsfv-light * { scrollbar-color: rgba(0, 0, 0, 0.15) transparent; }
@@ -1157,8 +1158,9 @@
 
     /* field card */
     body.gsfv-light .gsfv-field-card {
-      background: rgba(0, 0, 0, 0.025);
+      background: #ffffff;
       border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     }
 
     /* star rating */
@@ -1235,6 +1237,16 @@
 
     body.gsfv-light .gsfv-nav-row {
       border-top-color: rgba(0, 0, 0, 0.08);
+    }
+
+    body.gsfv-light .gsfv-page-hdr {
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    body.gsfv-light .gsfv-header::before {
+      display: none;
     }
   </style>
 </head>
