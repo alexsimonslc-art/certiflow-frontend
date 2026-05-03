@@ -216,11 +216,14 @@
       background: rgba(10, 18, 35, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 16px;
-      padding: 26px 28px 22px;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
       margin-bottom: 12px;
       overflow: hidden;
       position: relative;
+    }
+
+    .gsfv-header-content {
+      padding: 26px 28px 22px;
     }
 
     .gsfv-header::before {
@@ -229,6 +232,7 @@
       top: 0; left: 0; right: 0;
       height: 3px;
       background: var(--accent-grad);
+      z-index: 2;
     }
 
     .gsfv-org-badge {
@@ -497,22 +501,39 @@
     /* ── Linear scale — Numbers ─────────────────────────────────── */
     .gsfv-num-scale {
       display: flex;
-      gap: 6px;
+      align-items: center;
+      gap: 12px;
       flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .gsfv-num-scale-inner {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .gsfv-scale-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-3);
     }
 
     .gsfv-num-btn {
       width: 42px;
       height: 42px;
-      border-radius: 8px;
+      border-radius: 50%;
       border: 1px solid var(--glass-b);
       background: transparent;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--text-3);
       cursor: pointer;
       transition: all 0.15s;
       font-family: var(--font);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .gsfv-num-btn:hover {
@@ -1576,19 +1597,20 @@
         </div>
       </div>
 
-      <!-- Cover image (shown when set) -->
-      <div id="formCoverImage"
-        style="display:none;width:100%;height:160px;border-radius:16px;background-size:cover;background-position:center;background-repeat:no-repeat;margin-bottom:22px">
-      </div>
-
       <!-- Form title header (page 1 only) -->
       <div class="gsfv-header" id="formMainHeader">
+        <!-- Cover image inside the card -->
+        <div id="formCoverImage"
+          style="display:none;width:100%;height:160px;background-size:cover;background-position:center;background-repeat:no-repeat;">
+        </div>
+        <div class="gsfv-header-content">
         <div class="gsfv-org-badge">
           <div class="gsfv-org-dot" id="orgDot"></div>
           <span id="orgBadgeText">GS Forms</span>
         </div>
         <h1 class="gsfv-title" id="formTitle"></h1>
         <p class="gsfv-desc" id="formDesc" style="display:none"></p>
+        </div>
       </div>
 
       <!-- Section title (page 2+, from Page Break label) -->
@@ -2227,13 +2249,13 @@
           } else {
             input = `
           <div class="gsfv-num-scale" id="fi-${f.id}">
-            ${Array.from({ length: max }, (_, i) =>
-              `<button type="button" class="gsfv-num-btn" data-val="${i + 1}" onclick="pickNum('${f.id}',${i + 1},${max})">${i + 1}</button>`
-            ).join('')}
-          </div>
-          <div class="gsfv-scale-labels" style="max-width:${max * 48}px">
-            <span>${esc(f.minLabel || 'Poor')}</span>
-            <span>${esc(f.maxLabel || 'Excellent')}</span>
+            <span class="gsfv-scale-label min-label">${esc(f.minLabel || 'Poor')}</span>
+            <div class="gsfv-num-scale-inner">
+              ${Array.from({ length: max }, (_, i) =>
+                `<button type="button" class="gsfv-num-btn" data-val="${i + 1}" onclick="pickNum('${f.id}',${i + 1},${max})">${i + 1}</button>`
+              ).join('')}
+            </div>
+            <span class="gsfv-scale-label max-label">${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
           }
           break;

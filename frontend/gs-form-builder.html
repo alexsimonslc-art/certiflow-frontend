@@ -893,7 +893,7 @@
     .gsfb-pv-numbox {
       width: 36px;
       height: 36px;
-      border-radius: 7px;
+      border-radius: 50%;
       border: 1px solid rgba(255, 255, 255, 0.12);
       background: transparent;
       font-size: 13px;
@@ -4027,12 +4027,15 @@
         </div>
         <div class="gsfb-pv-scale-labels" style="max-width:${max * 36}px"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
           } else {
-            body = `<div class="gsfb-pv-numscale" id="${fid}">
+            body = `<div class="gsfb-pv-numscale-wrap" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:4px;">
+          <span style="font-size:13px; font-weight:500; color:var(--text-3);">${escHtml(f.minLabel || 'Poor')}</span>
+          <div class="gsfb-pv-numscale" id="${fid}">
           ${Array.from({ length: max }, (_, i) =>
               `<div class="gsfb-pv-numbox${curS === i + 1 ? ' on' : ''}" onclick="pvPickNum('${f.id}',${i + 1},${max})">${i + 1}</div>`
             ).join('')}
-        </div>
-        <div class="gsfb-pv-scale-labels"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
+          </div>
+          <span style="font-size:13px; font-weight:500; color:var(--text-3);">${escHtml(f.maxLabel || 'Excellent')}</span>
+        </div>`;
           }
           break;
         case 'file_upload':
