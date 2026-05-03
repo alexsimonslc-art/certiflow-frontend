@@ -1101,7 +1101,13 @@
       border-radius: 8px;
       padding: 4px;
       background: rgba(255,255,255,0.02);
+      scrollbar-width: thin;
+      scrollbar-color: var(--glass-border) transparent;
     }
+
+    .gsfb-filetype-list::-webkit-scrollbar { width: 3px; }
+    .gsfb-filetype-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+    .gsfb-filetype-list::-webkit-scrollbar-track { background: transparent; }
 
     .gsfb-filetype-item {
       display: flex;

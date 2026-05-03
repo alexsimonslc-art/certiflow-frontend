@@ -579,7 +579,7 @@ function toggleAiChat() {
 
   if (chatbox.classList.contains('open')) {
     chatbox.classList.remove('open');
-    trigger.innerHTML = `<span class="mse-ai-sparkle" style="font-size:14px;">✨</span> Ask Gemini <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-left:4px;"><polyline points="18 15 12 9 6 15"/></svg>`;
+    trigger.innerHTML = `<img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;vertical-align:middle;"> Ask Gemini <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-left:4px;"><polyline points="18 15 12 9 6 15"/></svg>`;
   } else {
     chatbox.classList.add('open');
     trigger.innerHTML = `Close AI`;

@@ -2538,7 +2538,7 @@ function meAiAppendBubble(role, content, isTyping) {
     div.classList.add('typing');
     div.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
   } else if (role === 'ai') {
-    div.innerHTML = `<div class="ai-avatar">✨ Gemini AI</div>${content.replace(/\n/g, '<br>')}`;
+    div.innerHTML = `<div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"><span class="ai-avatar" style="margin-bottom:0;">Gemini AI</span></div>${content.replace(/\n/g, '<br>')}`;
   } else {
     div.textContent = content;
   }
@@ -2559,7 +2559,7 @@ function meAiApplySuggestions(suggestions) {
       <span style="color:var(--text-3);font-size:11px;margin-right:5px">${i + 1}.</span>${s}
     </button>`
   ).join('');
-  div.innerHTML = `<div class="ai-avatar">✨ Gemini AI</div>
+  div.innerHTML = `<div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"><span class="ai-avatar" style="margin-bottom:0;">Gemini AI</span></div>
     <div style="margin-bottom:8px">Here are 5 subject line suggestions. Click one to apply:</div>
     <div class="me-ai-suggestions">${btns}</div>`;
   chat.appendChild(div);
@@ -2583,7 +2583,7 @@ function meAiShowUpgrade() {
   if (!chat) return;
   const div = document.createElement('div');
   div.className = 'me-ai-bubble ai';
-  div.innerHTML = `<div class="ai-avatar">✨ Gal AI</div>
+  div.innerHTML = `<div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"><span class="ai-avatar" style="margin-bottom:0;">Gal AI</span></div>
     <div style="margin-bottom:10px">Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered email generation, design suggestions, and unlimited assistance.</div>
     <div class="gal-ai-sugg-list">
       <a href="settings.html#billing" class="gal-ai-sugg-btn" style="background:linear-gradient(90deg,rgba(0,212,255,0.12),rgba(124,58,237,0.12));border-color:rgba(0,212,255,0.3);color:var(--cyan);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>
@@ -2597,7 +2597,7 @@ function meAiShowProDetails(btn) {
   const chat = document.getElementById('meAiChat');
   const details = document.createElement('div');
   details.className = 'me-ai-bubble ai';
-  details.innerHTML = `<div class="ai-avatar">✨ Gal AI</div>
+  details.innerHTML = `<div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"><span class="ai-avatar" style="margin-bottom:0;">Gal AI</span></div>
     <div style="line-height:1.8">
       ✦ Unlimited AI email generation<br>
       ✦ Smart design suggestions<br>
@@ -2745,7 +2745,7 @@ mNewCampaign = function () {
   // Reset AI chat
   const aiChat = document.getElementById('meAiChat');
   if (aiChat) aiChat.innerHTML = `<div class="me-ai-bubble ai">
-    <div class="ai-avatar">✨ Gemini AI</div>
+    <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"><span class="ai-avatar" style="margin-bottom:0;">Gemini AI</span></div>
     Hi! I can help you create beautiful email designs. Try asking me:<br><br>
     <strong>• "Generate a professional welcome email"</strong><br>
     <strong>• "Make the header dark blue and bold"</strong><br>
@@ -2888,7 +2888,7 @@ mNewCampaign = function () {
         const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
         let sIdx = 0;
         wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
+          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
           <div style="flex:1; display:flex; align-items:center; gap:8px;">
             <div style="display:flex; gap:4px;">
                <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0s;"></div>
@@ -2912,7 +2912,7 @@ mNewCampaign = function () {
         parsedContent = parsedContent.replace(/<br>\d+\.\s+(.+)/g, '<br><div class="ai-clickable-option" onclick="applyAiOption(this.innerText)">$1</div>');
 
         wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
+          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #00d4ff, #7c3aed); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
           <div style="flex:1;">${parsedContent}</div>`;
       }
     }

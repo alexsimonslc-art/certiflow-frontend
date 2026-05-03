@@ -1423,8 +1423,8 @@ function meSwitchTab(tab) {
     if (ME.cm) setTimeout(() => ME.cm.refresh(), 50);
     // Update bottom bar label based on editable state
     const bar = document.querySelector('.me-code-apply-bar span');
-    if (bar) bar.textContent = ME.codeEditable
-      ? 'Type or paste your HTML here — Gal AI can write it for you ✨'
+    if (bar) bar.innerHTML = ME.codeEditable
+      ? 'Type or paste your HTML here — Gal AI can write it for you <img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:14px;height:14px;vertical-align:-2px;margin-left:4px;">'
       : 'View-only — use Copy Code to export, or switch to Visual to edit blocks';
   }
   if (tab === 'preview') meUpdatePreview();
@@ -1799,21 +1799,21 @@ function meBlockToHtml(block) {
     case 'social': {
       // PNG icons at 64 px (2× retina) — SVG via <img> is blocked/blurry in Gmail & Outlook
       const pngMap = {
-        linkedin:    'https://img.icons8.com/color/64/linkedin.png',
+        linkedin: 'https://img.icons8.com/color/64/linkedin.png',
         'twitter/x': 'https://img.icons8.com/color/64/twitterx--v1.png',
-        twitter:     'https://img.icons8.com/color/64/twitter--v1.png',
-        x:           'https://img.icons8.com/color/64/twitterx--v1.png',
-        instagram:   'https://img.icons8.com/color/64/instagram-new--v1.png',
-        facebook:    'https://img.icons8.com/color/64/facebook-new.png',
-        youtube:     'https://img.icons8.com/color/64/youtube-play.png',
-        tiktok:      'https://img.icons8.com/color/64/tiktok.png',
-        pinterest:   'https://img.icons8.com/color/64/pinterest.png',
-        website:     'https://img.icons8.com/color/64/domain.png',
-        github:      'https://img.icons8.com/ios-filled/64/github.png',
-        whatsapp:    'https://img.icons8.com/color/64/whatsapp--v1.png',
-        telegram:    'https://img.icons8.com/color/64/telegram-app.png',
-        discord:     'https://img.icons8.com/color/64/discord-logo.png',
-        snapchat:    'https://img.icons8.com/color/64/snapchat.png',
+        twitter: 'https://img.icons8.com/color/64/twitter--v1.png',
+        x: 'https://img.icons8.com/color/64/twitterx--v1.png',
+        instagram: 'https://img.icons8.com/color/64/instagram-new--v1.png',
+        facebook: 'https://img.icons8.com/color/64/facebook-new.png',
+        youtube: 'https://img.icons8.com/color/64/youtube-play.png',
+        tiktok: 'https://img.icons8.com/color/64/tiktok.png',
+        pinterest: 'https://img.icons8.com/color/64/pinterest.png',
+        website: 'https://img.icons8.com/color/64/domain.png',
+        github: 'https://img.icons8.com/ios-filled/64/github.png',
+        whatsapp: 'https://img.icons8.com/color/64/whatsapp--v1.png',
+        telegram: 'https://img.icons8.com/color/64/telegram-app.png',
+        discord: 'https://img.icons8.com/color/64/discord-logo.png',
+        snapchat: 'https://img.icons8.com/color/64/snapchat.png',
       };
       const size = p.iconSize || 32;
       const pad = p.style === 'plain' ? 0 : Math.round(size * 0.25);
@@ -1968,7 +1968,7 @@ let meAiIsLoading = false;
         const statuses = ['Analyzing style', 'Drafting copy', 'Designing blocks'];
         let sIdx = 0;
         wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
+              <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
           <div style="flex:1; display:flex; align-items:center; gap:8px;">
             <div style="display:flex; gap:4px;">
                <div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:galThinkDot 1.4s ease-in-out infinite 0s;"></div>
@@ -1987,7 +1987,7 @@ let meAiIsLoading = false;
         parsed = parsed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         parsed = parsed.replace(/\*(.*?)\*/g, '<em>$1</em>');
         wrap.innerHTML = `
-          <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;">✨</div>
+              <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 4px 12px rgba(124,58,237,0.3); margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
           <div style="flex:1;">${parsed}</div>`;
       }
     }
@@ -2027,7 +2027,7 @@ function meAiShowUpgrade() {
   const wrap = document.createElement('div');
   wrap.style.cssText = 'display:flex;gap:12px;margin-bottom:24px';
   wrap.innerHTML = `
-    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;box-shadow:0 4px 12px rgba(124,58,237,0.3);margin-top:2px;">✨</div>
+        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;box-shadow:0 4px 12px rgba(124,58,237,0.3);margin-top:2px;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
     <div style="flex:1;">
       <div style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:10px">Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered email generation, design suggestions, and unlimited assistance.</div>
       <div style="display:flex;flex-wrap:wrap;gap:7px">
