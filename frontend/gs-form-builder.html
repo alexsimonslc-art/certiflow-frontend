@@ -711,7 +711,14 @@
     }
 
     .gsfb-pv-field {
-      margin-bottom: 16px;
+      margin-bottom: 10px;
+    }
+
+    .gsfb-pv-field-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 16px 12px;
     }
 
     .gsfb-pv-label {
@@ -748,6 +755,22 @@
 
     .gsfb-pv-input::placeholder {
       color: var(--text-3);
+    }
+
+    .gsfb-pv-input[type="date"],
+    .gsfb-pv-input[type="time"] {
+      color-scheme: dark;
+    }
+
+    .gsfb-pv-input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .gsfb-pv-input[type="number"]::-webkit-outer-spin-button,
+    .gsfb-pv-input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
     }
 
     .gsfb-pv-textarea {
@@ -910,6 +933,22 @@
       text-align: center;
       color: var(--text-3);
       font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .gsfb-pv-upload svg {
+      width: 30px;
+      height: 30px;
+      color: var(--cyan);
+      opacity: 0.8;
+      flex-shrink: 0;
+    }
+
+    .gsfb-pv-upload strong {
+      color: var(--cyan);
     }
 
     .gsfb-pv-page-break {
@@ -3986,7 +4025,7 @@
               `<span class="gsfb-pv-star${i < curS ? ' on' : ''}" onclick="pvPickStar('${f.id}',${i + 1},${max})">★</span>`
             ).join('')}
         </div>
-        <div class="gsfb-pv-scale-labels"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
+        <div class="gsfb-pv-scale-labels" style="max-width:${max * 36}px"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
           } else {
             body = `<div class="gsfb-pv-numscale" id="${fid}">
           ${Array.from({ length: max }, (_, i) =>
@@ -3997,7 +4036,14 @@
           }
           break;
         case 'file_upload':
-          body = `<div class="gsfb-pv-upload">&#128206; Click to upload ${f.accept && f.accept !== '*' ? `(${f.accept})` : ''}<div style="font-size:11px;margin-top:3px">Max ${f.maxMB || 10} MB</div></div>`;
+          body = `<div class="gsfb-pv-upload">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+            </svg>
+            <div style="font-size:13px"><strong>Click to upload</strong> or drag &amp; drop</div>
+            <div style="font-size:11px">${f.accept && f.accept !== '*' ? f.accept.replace(/[.]/g,'').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
+          </div>`;
           break;
         case 'event_pass': {
           const bg = f.passBannerColor || '#12172a';
@@ -4023,7 +4069,7 @@
           body = `<input class="gsfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
       }
 
-      return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-label">${escHtml(f.label || 'Untitled')} ${req}</div>${body}</div>`;
+      return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-field-card"><div class="gsfb-pv-label">${escHtml(f.label || 'Untitled')} ${req}</div>${body}</div></div>`;
     }
 
     /* ── Preview interaction handlers ──────────────────────────────── */
