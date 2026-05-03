@@ -577,7 +577,7 @@ function meGetHtml() {
   const inner = ME.blocks.map(b => meBlockToHtml(b)).join('\n');
   const brandingBar = `<div style="padding:12px 24px;background:#f1f5f9;text-align:center;border-top:1px solid #e2e8f0">
     <p style="margin:0;font-size:11px;color:#94a3b8;font-family:Arial,sans-serif">
-      Sent via <a href="https://GalSol.com" style="display:inline-block;vertical-align:middle;margin:0 4px"><img src="/Images/GalSol%20GWN.svg" alt="GalSol" style="height:15px;border:none;display:block" /></a>
+      Sent via <a href="https://GalSol.com" style="display:inline-block;vertical-align:middle;margin:0 4px"><img src="https://certiflow-frontend.vercel.app/Images/GalSol%20GWN.svg" alt="GalSol" style="height:15px;border:none;display:block" /></a>
       &nbsp;—&nbsp; <span style="letter-spacing:0.5px">The Grand Event Console</span>
       &nbsp;·&nbsp; <a href="https://GalSol.com" style="color:#64748b;text-decoration:none;font-weight:600">Learn More</a>
     </p>
