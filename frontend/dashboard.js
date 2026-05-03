@@ -148,7 +148,7 @@ function renderSidebar(activePage) {
   <aside class="sidebar" id="appSidebar" data-auto-collapsed="${autoCollapsedPages.has(activePage) ? '1' : '0'}">
     <div class="sidebar-logo">
       <img src="/Images/GalSol%20Logo%20IC.svg" alt="GalSol Logo" style="width: 34px; height: 34px; object-fit: contain;" />
-      <span class="logo-name" style="background: linear-gradient(135deg, #00d4ff, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">GalSol</span>
+      <span class="logo-name" style="background: linear-gradient(90deg, #00d4ff 0%, #a78bfa 50%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">GalSol</span>
     </div>
     <nav class="sidebar-nav">
 
