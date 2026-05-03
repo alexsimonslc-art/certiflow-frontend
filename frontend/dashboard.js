@@ -147,11 +147,7 @@ function renderSidebar(activePage) {
   return `
   <aside class="sidebar" id="appSidebar" data-auto-collapsed="${autoCollapsedPages.has(activePage) ? '1' : '0'}">
     <div class="sidebar-logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-        </svg>
-      </div>
+      <img src="Images/GalSol Logo IC.png" alt="GalSol Logo" style="width: 34px; height: 34px; object-fit: contain;" />
       <span class="logo-name">Gal<span>Sol</span></span>
     </div>
     <nav class="sidebar-nav">
