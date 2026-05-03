@@ -99,7 +99,7 @@
 
     .gsfv-container {
       width: 100%;
-      max-width: 520px;
+      max-width: 620px;
     }
 
     /* ── Loading skeleton ───────────────────────────────────────── */
@@ -216,9 +216,9 @@
       background: rgba(10, 18, 35, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 16px;
-      padding: 20px 22px 18px;
+      padding: 26px 28px 22px;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       overflow: hidden;
       position: relative;
     }
@@ -232,15 +232,7 @@
     }
 
     .gsfv-org-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-3);
-      margin-bottom: 14px;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
+      display: none;
     }
 
     .gsfv-org-dot {
@@ -252,7 +244,7 @@
 
     .gsfv-title {
       font-family: var(--font-display);
-      font-size: clamp(17px, 3vw, 22px);
+      font-size: clamp(22px, 4vw, 28px);
       font-weight: 700;
       color: var(--text);
       line-height: 1.25;
@@ -260,14 +252,14 @@
     }
 
     .gsfv-desc {
-      font-size: 13.5px;
+      font-size: 15px;
       color: var(--text-2);
       line-height: 1.65;
     }
 
     /* ── Field wrapper ──────────────────────────────────────────── */
     .gsfv-field {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       animation: fieldIn 0.3s var(--ease) both;
     }
 
@@ -287,10 +279,10 @@
       display: flex;
       align-items: baseline;
       gap: 5px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 7px;
+      margin-bottom: 9px;
       line-height: 1.4;
     }
 
@@ -312,12 +304,12 @@
     .gsfv-textarea,
     .gsfv-select {
       width: 100%;
-      padding: 10px 12px;
+      padding: 12px 14px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: var(--radius);
       color: var(--text);
-      font-size: 13.5px;
+      font-size: 15px;
       font-family: var(--font);
       outline: none;
       transition: border-color 0.18s;
@@ -338,6 +330,7 @@
 
     .gsfv-input[type="number"] {
       -moz-appearance: textfield;
+      appearance: textfield;
     }
 
     .gsfv-input[type="number"]::-webkit-outer-spin-button,
@@ -353,7 +346,7 @@
 
     .gsfv-textarea {
       resize: vertical;
-      min-height: 72px;
+      min-height: 90px;
       line-height: 1.6;
     }
 
@@ -394,20 +387,20 @@
     .gsfv-options {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 7px;
     }
 
     .gsfv-option-label {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 9px 12px;
+      padding: 11px 14px;
       border-radius: var(--radius);
       border: 1px solid rgba(255, 255, 255, 0.10);
       background: rgba(255, 255, 255, 0.025);
       cursor: pointer;
       transition: border-color 0.18s, background 0.18s;
-      font-size: 13.5px;
+      font-size: 14.5px;
       color: var(--text-2);
       user-select: none;
     }
@@ -423,8 +416,8 @@
     }
 
     .gsfv-option-indicator {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       border: 2px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
@@ -473,18 +466,20 @@
     }
 
     .gsfv-star-btn {
-      font-size: 28px;
+      font-size: 32px;
       background: none;
       border: none;
+      outline: none;
       cursor: pointer;
-      transition: transform 0.12s;
-      color: rgba(255, 255, 255, 0.15);
+      transition: transform 0.12s, color 0.12s;
+      color: rgba(255, 255, 255, 0.18);
       line-height: 1;
       padding: 2px;
     }
 
     .gsfv-star-btn:hover {
       transform: scale(1.15);
+      color: rgba(245, 158, 11, 0.5);
     }
 
     .gsfv-star-btn.active {
@@ -507,12 +502,12 @@
     }
 
     .gsfv-num-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 7px;
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
       border: 1px solid var(--glass-b);
       background: transparent;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--text-3);
       cursor: pointer;
@@ -537,7 +532,7 @@
     .gsfv-upload-zone {
       border: 2px dashed rgba(255, 255, 255, 0.12);
       border-radius: var(--radius);
-      padding: 18px;
+      padding: 24px;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.18s, background 0.18s;
@@ -570,15 +565,15 @@
     }
 
     .gsfv-upload-icon {
-      width: 36px;
-      height: 36px;
-      margin-bottom: 2px;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 4px;
       color: var(--accent);
       opacity: 0.85;
     }
 
     .gsfv-upload-text {
-      font-size: 14px;
+      font-size: 15px;
       color: var(--text-2);
     }
 
@@ -587,7 +582,7 @@
     }
 
     .gsfv-upload-sub {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-3);
       margin-top: 2px;
     }
@@ -636,12 +631,12 @@
     /* ── Submit button ──────────────────────────────────────────── */
     .gsfv-submit {
       width: 100%;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 14px;
+      border-radius: 11px;
       border: none;
       background: var(--accent-grad);
       color: #fff;
-      font-size: 14px;
+      font-size: 15.5px;
       font-weight: 700;
       font-family: var(--font);
       cursor: pointer;
@@ -884,9 +879,9 @@
     }
 
     .gsfv-back-btn {
-      padding: 10px 16px;
-      border-radius: 9px;
-      font-size: 13.5px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14.5px;
       font-weight: 700;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -940,12 +935,20 @@
       }
 
       .gsfv-title {
-        font-size: 17px;
+        font-size: 22px;
+      }
+
+      .gsfv-field-card {
+        padding: 18px 18px 14px;
+      }
+
+      .gsfv-header {
+        padding: 20px 18px 18px;
       }
 
       .gsfv-num-btn {
-        width: 34px;
-        height: 34px;
+        width: 38px;
+        height: 38px;
       }
     }
 
@@ -1068,7 +1071,7 @@
       background: rgba(10, 18, 35, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 14px;
-      padding: 18px 20px 14px;
+      padding: 22px 24px 18px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
@@ -1247,6 +1250,14 @@
 
     body.gsfv-light .gsfv-header::before {
       display: none;
+    }
+
+    body.gsfv-light .gsfv-star-btn {
+      color: rgba(0, 0, 0, 0.18);
+    }
+
+    body.gsfv-light .gsfv-star-btn:hover {
+      color: rgba(245, 158, 11, 0.5);
     }
   </style>
 </head>
@@ -1742,7 +1753,7 @@
               `<button type="button" class="gsfv-star-btn" data-val="${i + 1}" onclick="pickStar('${f.id}',${i + 1},${max})">★</button>`
             ).join('')}
           </div>
-          <div class="gsfv-scale-labels" style="max-width:${max * 38}px">
+          <div class="gsfv-scale-labels" style="max-width:${max * 46}px">
             <span>${esc(f.minLabel || 'Poor')}</span>
             <span>${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
@@ -1753,7 +1764,7 @@
               `<button type="button" class="gsfv-num-btn" data-val="${i + 1}" onclick="pickNum('${f.id}',${i + 1},${max})">${i + 1}</button>`
             ).join('')}
           </div>
-          <div class="gsfv-scale-labels" style="max-width:${max * 44}px">
+          <div class="gsfv-scale-labels" style="max-width:${max * 48}px">
             <span>${esc(f.minLabel || 'Poor')}</span>
             <span>${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
