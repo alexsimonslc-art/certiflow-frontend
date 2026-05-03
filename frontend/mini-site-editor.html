@@ -572,20 +572,6 @@
 
   </div>
 
-  <svg class="gal-ai-screen-trace" id="galAiWash" viewBox="0 0 100 100" preserveAspectRatio="none">
-    <defs>
-      <linearGradient id="galGlowTrace" x1="0%" y1="100%" x2="0%" y2="0%">
-        <stop offset="0%" stop-color="#00d4ff" />
-        <stop offset="50%" stop-color="#7c3aed" />
-        <stop offset="100%" stop-color="#f43f5e" />
-      </linearGradient>
-    </defs>
-    <path class="gal-trace-line" d="M 35 99 L 1 99 L 1 1 L 50 1" fill="none" stroke="url(#galGlowTrace)"
-      stroke-width="4" vector-effect="non-scaling-stroke" stroke-linecap="round" />
-    <path class="gal-trace-line" d="M 65 99 L 99 99 L 99 1 L 50 1" fill="none" stroke="url(#galGlowTrace)"
-      stroke-width="4" vector-effect="non-scaling-stroke" stroke-linecap="round" />
-  </svg>
-
   <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
 
     <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
@@ -2172,15 +2158,6 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     function openGalAi() {
       document.getElementById('galAiWrapper').classList.add('open');
       document.getElementById('galAiInput').focus();
-
-      // Trigger the Full-Screen Laser
-      const wash = document.getElementById('galAiWash');
-      if (wash) {
-        wash.classList.remove('scanning');
-        setTimeout(() => {
-          wash.classList.add('scanning');
-        }, 10);
-      }
     }
 
 
