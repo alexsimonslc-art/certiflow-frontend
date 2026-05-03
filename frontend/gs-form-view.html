@@ -331,6 +331,21 @@
       border-color: var(--accent);
     }
 
+    .gsfv-input[type="date"],
+    .gsfv-input[type="time"] {
+      color-scheme: dark;
+    }
+
+    .gsfv-input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    .gsfv-input[type="number"]::-webkit-outer-spin-button,
+    .gsfv-input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
     .gsfv-input::placeholder,
     .gsfv-textarea::placeholder {
       color: var(--text-3);
@@ -473,7 +488,7 @@
     }
 
     .gsfv-star-btn.active {
-      color: var(--accent);
+      color: #f59e0b;
     }
 
     .gsfv-scale-labels {
@@ -1048,13 +1063,12 @@
       color: var(--text-2);
     }
 
-    /* ── Field card wrapper — flat inside outer card ──────────────── */
+    /* ── Field card wrapper — individual card per field ───────────── */
     .gsfv-field-card {
-      background: transparent;
-      border: none;
-      border-radius: 0;
-      padding: 0;
-      box-shadow: none;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 16px 12px;
     }
 
     /* ── Light mode overrides ──────────────────────────────────── */
@@ -1141,11 +1155,10 @@
       background: var(--accent);
     }
 
-    /* field card — transparent flat layout inside outer card */
+    /* field card */
     body.gsfv-light .gsfv-field-card {
-      background: transparent;
-      border: none;
-      box-shadow: none;
+      background: rgba(0, 0, 0, 0.025);
+      border-color: rgba(0, 0, 0, 0.08);
     }
 
     /* star rating */
@@ -1717,7 +1730,7 @@
               `<button type="button" class="gsfv-star-btn" data-val="${i + 1}" onclick="pickStar('${f.id}',${i + 1},${max})">★</button>`
             ).join('')}
           </div>
-          <div class="gsfv-scale-labels">
+          <div class="gsfv-scale-labels" style="max-width:${max * 38}px">
             <span>${esc(f.minLabel || 'Poor')}</span>
             <span>${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
