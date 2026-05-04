@@ -32,6 +32,11 @@
       --accent-grad: linear-gradient(135deg, #00d4ff, #7c3aed);
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
       --radius: 9px;
+      --card-bg: rgba(10, 18, 35, 0.85);
+      --header-color: #eef4ff;
+      --body-color: #98b0cc;
+      --header-size: clamp(22px, 4vw, 28px);
+      --body-size: 15px;
     }
 
     *,
@@ -56,11 +61,28 @@
     }
 
     /* ── Custom Scrollbar ───────────────────────────────────────── */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-    * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.15) transparent; }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    }
 
     /* Background glow */
     body::before {
@@ -213,7 +235,7 @@
 
     /* ── Form header ────────────────────────────────────────────── */
     .gsfv-header {
-      background: rgba(10, 18, 35, 0.85);
+      background: var(--card-bg);
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 16px;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30);
@@ -229,7 +251,9 @@
     .gsfv-header::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 3px;
       background: var(--accent-grad);
       z-index: 2;
@@ -248,16 +272,16 @@
 
     .gsfv-title {
       font-family: var(--font-display);
-      font-size: clamp(22px, 4vw, 28px);
+      font-size: var(--header-size);
       font-weight: 700;
-      color: var(--text);
+      color: var(--header-color);
       line-height: 1.25;
       margin-bottom: 10px;
     }
 
     .gsfv-desc {
-      font-size: 15px;
-      color: var(--text-2);
+      font-size: var(--body-size);
+      color: var(--body-color);
       line-height: 1.65;
     }
 
@@ -283,7 +307,7 @@
       display: flex;
       align-items: baseline;
       gap: 5px;
-      font-size: 14px;
+      font-size: var(--body-size);
       font-weight: 600;
       color: var(--text);
       margin-bottom: 9px;
@@ -872,7 +896,7 @@
 
     /* ── Page section title (for page 2+) ───────────────────────── */
     .gsfv-page-hdr {
-      background: rgba(10, 18, 35, 0.85);
+      background: var(--card-bg);
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 14px;
       padding: 18px 20px 14px;
@@ -1094,7 +1118,7 @@
 
     /* ── Field card — standalone floating card per field ──────────── */
     .gsfv-field-card {
-      background: rgba(10, 18, 35, 0.85);
+      background: var(--card-bg);
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 14px;
       padding: 22px 24px 18px;
@@ -1113,15 +1137,23 @@
       --text-3: #6b7280;
       --red-dim: rgba(244, 63, 94, 0.08);
       --accent-dim: rgba(0, 180, 220, 0.10);
+      --card-bg: #ffffff;
+      --header-color: #111827;
+      --body-color: #374151;
     }
 
     body.gsfv-light .gsfv-header {
-      background: #ffffff;
       border-color: rgba(0, 0, 0, 0.08);
       box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07);
     }
-    body.gsfv-light ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); }
-    body.gsfv-light * { scrollbar-color: rgba(0, 0, 0, 0.15) transparent; }
+
+    body.gsfv-light ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    body.gsfv-light * {
+      scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+    }
 
     body.gsfv-light::before {
       display: none;
@@ -1185,9 +1217,8 @@
       background: var(--accent);
     }
 
-    /* field card */
+    /* field card — bg already comes from --card-bg which is #fff in light mode */
     body.gsfv-light .gsfv-field-card {
-      background: #ffffff;
       border-color: rgba(0, 0, 0, 0.08);
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     }
@@ -1331,8 +1362,14 @@
       transition: border-color 0.18s;
     }
 
-    .gsfv-dd-btn.has-val { color: var(--text); }
-    .gsfv-dd-btn:focus { outline: none; border-color: var(--accent); }
+    .gsfv-dd-btn.has-val {
+      color: var(--text);
+    }
+
+    .gsfv-dd-btn:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
 
     .gsfv-dd-btn svg {
       flex-shrink: 0;
@@ -1342,12 +1379,15 @@
       transition: transform 0.25s var(--ease);
     }
 
-    .gsfv-dd-btn.open svg { transform: rotate(180deg); }
+    .gsfv-dd-btn.open svg {
+      transform: rotate(180deg);
+    }
 
     .gsfv-dd-list {
       position: absolute;
       top: calc(100% + 6px);
-      left: 0; right: 0;
+      left: 0;
+      right: 0;
       background: #0d1728;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
@@ -1359,11 +1399,17 @@
       transition: max-height 0.28s var(--ease), opacity 0.2s;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.1) transparent;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
     }
 
-    .gsfv-dd-list::-webkit-scrollbar { width: 3px; }
-    .gsfv-dd-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+    .gsfv-dd-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .gsfv-dd-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+    }
 
     .gsfv-dd-list.open {
       max-height: 230px;
@@ -1379,9 +1425,21 @@
       transition: background 0.15s;
     }
 
-    .gsfv-dd-item:hover { background: rgba(255, 255, 255, 0.06); color: var(--text); }
-    .gsfv-dd-item.selected { background: var(--accent-dim); color: var(--accent); font-weight: 600; }
-    .gsfv-dd-item.placeholder { color: var(--text-3); font-style: italic; }
+    .gsfv-dd-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+    }
+
+    .gsfv-dd-item.selected {
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .gsfv-dd-item.placeholder {
+      color: var(--text-3);
+      font-style: italic;
+    }
 
     body.gsfv-light .gsfv-dd-btn {
       background: #ffffff;
@@ -1389,7 +1447,9 @@
       color: #9ca3af;
     }
 
-    body.gsfv-light .gsfv-dd-btn.has-val { color: #111827; }
+    body.gsfv-light .gsfv-dd-btn.has-val {
+      color: #111827;
+    }
 
     body.gsfv-light .gsfv-dd-list {
       background: #ffffff;
@@ -1397,9 +1457,19 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     }
 
-    body.gsfv-light .gsfv-dd-item { color: #374151; }
-    body.gsfv-light .gsfv-dd-item:hover { background: #f9fafb; color: #111827; }
-    body.gsfv-light .gsfv-dd-item.selected { background: var(--accent-dim); color: var(--accent); }
+    body.gsfv-light .gsfv-dd-item {
+      color: #374151;
+    }
+
+    body.gsfv-light .gsfv-dd-item:hover {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    body.gsfv-light .gsfv-dd-item.selected {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
 
     /* ── Phone + Country Code ─────────────────────────────────────── */
     .gsfv-phone-wrap {
@@ -1432,8 +1502,13 @@
       min-width: 86px;
     }
 
-    .gsfv-cc-btn:focus { outline: none; }
-    .gsfv-cc-btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .gsfv-cc-btn:focus {
+      outline: none;
+    }
+
+    .gsfv-cc-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
 
     .gsfv-cc-btn svg {
       width: 10px;
@@ -1443,7 +1518,9 @@
       transition: transform 0.22s var(--ease);
     }
 
-    .gsfv-cc-btn.open svg { transform: rotate(180deg); }
+    .gsfv-cc-btn.open svg {
+      transform: rotate(180deg);
+    }
 
     .gsfv-cc-menu {
       position: absolute;
@@ -1484,17 +1561,25 @@
       outline: none;
     }
 
-    .gsfv-cc-search::placeholder { color: var(--text-3); }
+    .gsfv-cc-search::placeholder {
+      color: var(--text-3);
+    }
 
     .gsfv-cc-list {
       max-height: 220px;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.1) transparent;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
     }
 
-    .gsfv-cc-list::-webkit-scrollbar { width: 3px; }
-    .gsfv-cc-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+    .gsfv-cc-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .gsfv-cc-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+    }
 
     .gsfv-cc-item {
       display: flex;
@@ -1506,13 +1591,45 @@
       font-size: 13.5px;
     }
 
-    .gsfv-cc-item:hover { background: rgba(255, 255, 255, 0.06); }
-    .gsfv-cc-item.selected { background: var(--accent-dim); }
+    .gsfv-cc-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
 
-    .gsfv-cc-item-flag { width: 20px; height: 14px; border-radius: 2px; object-fit: cover; flex-shrink: 0; display: block; }
-    .gsfv-cc-btn-flag { width: 20px; height: 14px; border-radius: 2px; object-fit: cover; flex-shrink: 0; display: block; }
-    .gsfv-cc-item-name { color: var(--text-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .gsfv-cc-item-code { color: var(--text-3); font-size: 12.5px; flex-shrink: 0; }
+    .gsfv-cc-item.selected {
+      background: var(--accent-dim);
+    }
+
+    .gsfv-cc-item-flag {
+      width: 20px;
+      height: 14px;
+      border-radius: 2px;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .gsfv-cc-btn-flag {
+      width: 20px;
+      height: 14px;
+      border-radius: 2px;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .gsfv-cc-item-name {
+      color: var(--text-2);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .gsfv-cc-item-code {
+      color: var(--text-3);
+      font-size: 12.5px;
+      flex-shrink: 0;
+    }
 
     .gsfv-phone-num {
       flex: 1;
@@ -1525,7 +1642,9 @@
       color: #111827;
     }
 
-    body.gsfv-light .gsfv-cc-btn:hover { background: #f9fafb; }
+    body.gsfv-light .gsfv-cc-btn:hover {
+      background: #f9fafb;
+    }
 
     body.gsfv-light .gsfv-cc-menu {
       background: #ffffff;
@@ -1539,10 +1658,21 @@
       color: #111827;
     }
 
-    body.gsfv-light .gsfv-cc-item { color: #374151; }
-    body.gsfv-light .gsfv-cc-item:hover { background: #f9fafb; }
-    body.gsfv-light .gsfv-cc-item-name { color: #374151; }
-    body.gsfv-light .gsfv-cc-item-code { color: #6b7280; }
+    body.gsfv-light .gsfv-cc-item {
+      color: #374151;
+    }
+
+    body.gsfv-light .gsfv-cc-item:hover {
+      background: #f9fafb;
+    }
+
+    body.gsfv-light .gsfv-cc-item-name {
+      color: #374151;
+    }
+
+    body.gsfv-light .gsfv-cc-item-code {
+      color: #6b7280;
+    }
   </style>
 </head>
 
@@ -1604,17 +1734,20 @@
           style="display:none;width:100%;height:160px;background-size:cover;background-position:center;background-repeat:no-repeat;">
         </div>
         <div class="gsfv-header-content">
-        <div class="gsfv-org-badge">
-          <div class="gsfv-org-dot" id="orgDot"></div>
-          <span id="orgBadgeText">GS Forms</span>
-        </div>
-        <h1 class="gsfv-title" id="formTitle"></h1>
-        <p class="gsfv-desc" id="formDesc" style="display:none"></p>
+          <div class="gsfv-org-badge">
+            <div class="gsfv-org-dot" id="orgDot"></div>
+            <span id="orgBadgeText">GS Forms</span>
+          </div>
+          <h1 class="gsfv-title" id="formTitle"></h1>
+          <p class="gsfv-desc" id="formDesc" style="display:none"></p>
         </div>
       </div>
 
       <!-- Section title (page 2+, from Page Break label) -->
       <div class="gsfv-page-hdr" id="pageHdr">
+        <div id="pageHdrImage"
+          style="display:none; width:100%; height:160px; background-size:cover; background-position:center; background-repeat:no-repeat; border-radius: 14px 14px 0 0; margin: -18px -20px 14px;">
+        </div>
         <div class="gsfv-page-hdr-title" id="pageHdrTitle"></div>
         <div class="gsfv-page-hdr-desc" id="pageHdrDesc" style="display:none"></div>
       </div>
@@ -1717,69 +1850,70 @@
     ════════════════════════════════════════════════════════════════ */
     function niceAccept(acc) {
       if (!acc || acc === '*') return 'Any file';
-      const map = { 'image/*':'Images','video/*':'Videos','audio/*':'Audio',
-        'application/pdf':'PDF','.pdf':'PDF',
-        'application/msword':'Word','application/vnd.openxmlformats-officedocument.wordprocessingml.document':'Word',
-        '.doc':'Word','.docx':'Word',
-        'application/vnd.ms-excel':'Excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':'Excel',
-        '.xls':'Excel','.xlsx':'Excel',
-        'application/vnd.ms-powerpoint':'PowerPoint','application/vnd.openxmlformats-officedocument.presentationml.presentation':'PowerPoint',
-        '.ppt':'PowerPoint','.pptx':'PowerPoint',
-        '.csv':'CSV','text/csv':'CSV','text/plain':'Text','.txt':'Text',
-        'application/zip':'ZIP','application/x-zip-compressed':'ZIP','.zip':'ZIP',
-        'application/json':'JSON','.json':'JSON','.xml':'XML',
+      const map = {
+        'image/*': 'Images', 'video/*': 'Videos', 'audio/*': 'Audio',
+        'application/pdf': 'PDF', '.pdf': 'PDF',
+        'application/msword': 'Word', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word',
+        '.doc': 'Word', '.docx': 'Word',
+        'application/vnd.ms-excel': 'Excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Excel',
+        '.xls': 'Excel', '.xlsx': 'Excel',
+        'application/vnd.ms-powerpoint': 'PowerPoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'PowerPoint',
+        '.ppt': 'PowerPoint', '.pptx': 'PowerPoint',
+        '.csv': 'CSV', 'text/csv': 'CSV', 'text/plain': 'Text', '.txt': 'Text',
+        'application/zip': 'ZIP', 'application/x-zip-compressed': 'ZIP', '.zip': 'ZIP',
+        'application/json': 'JSON', '.json': 'JSON', '.xml': 'XML',
       };
       const labels = acc.split(',').map(a => {
         a = a.trim();
         if (map[a]) return map[a];
         if (a.startsWith('.')) return a.slice(1).toUpperCase();
         const sub = a.split('/').pop() || a;
-        return sub.replace(/vnd\.[^.]+[.-]/,'').replace(/^x-/,'').split(/[-.]/).pop().toUpperCase().slice(0,6);
+        return sub.replace(/vnd\.[^.]+[.-]/, '').replace(/^x-/, '').split(/[-.]/).pop().toUpperCase().slice(0, 6);
       });
       return [...new Set(labels)].join(', ');
     }
 
     /* ── Country code data [iso2, dialCode, name] ─────────────────── */
     const CC_DATA = [
-      ['AF','93','Afghanistan'],['AL','355','Albania'],['DZ','213','Algeria'],['AD','376','Andorra'],['AO','244','Angola'],
-      ['AG','1268','Antigua & Barbuda'],['AR','54','Argentina'],['AM','374','Armenia'],['AU','61','Australia'],['AT','43','Austria'],
-      ['AZ','994','Azerbaijan'],['BS','1242','Bahamas'],['BH','973','Bahrain'],['BD','880','Bangladesh'],['BB','1246','Barbados'],
-      ['BY','375','Belarus'],['BE','32','Belgium'],['BZ','501','Belize'],['BJ','229','Benin'],['BT','975','Bhutan'],
-      ['BO','591','Bolivia'],['BA','387','Bosnia & Herzegovina'],['BW','267','Botswana'],['BR','55','Brazil'],['BN','673','Brunei'],
-      ['BG','359','Bulgaria'],['BF','226','Burkina Faso'],['BI','257','Burundi'],['KH','855','Cambodia'],['CM','237','Cameroon'],
-      ['CA','1','Canada'],['CV','238','Cape Verde'],['CF','236','Central African Republic'],['TD','235','Chad'],['CL','56','Chile'],
-      ['CN','86','China'],['CO','57','Colombia'],['KM','269','Comoros'],['CD','243','Congo (DRC)'],['CG','242','Congo (Republic)'],
-      ['CR','506','Costa Rica'],['HR','385','Croatia'],['CU','53','Cuba'],['CY','357','Cyprus'],['CZ','420','Czech Republic'],
-      ['DK','45','Denmark'],['DJ','253','Djibouti'],['DO','1809','Dominican Republic'],['EC','593','Ecuador'],['EG','20','Egypt'],
-      ['SV','503','El Salvador'],['GQ','240','Equatorial Guinea'],['ER','291','Eritrea'],['EE','372','Estonia'],['ET','251','Ethiopia'],
-      ['FJ','679','Fiji'],['FI','358','Finland'],['FR','33','France'],['GA','241','Gabon'],['GM','220','Gambia'],
-      ['GE','995','Georgia'],['DE','49','Germany'],['GH','233','Ghana'],['GR','30','Greece'],['GD','1473','Grenada'],
-      ['GT','502','Guatemala'],['GN','224','Guinea'],['GW','245','Guinea-Bissau'],['GY','592','Guyana'],['HT','509','Haiti'],
-      ['HN','504','Honduras'],['HU','36','Hungary'],['IS','354','Iceland'],['IN','91','India'],['ID','62','Indonesia'],
-      ['IR','98','Iran'],['IQ','964','Iraq'],['IE','353','Ireland'],['IL','972','Israel'],['IT','39','Italy'],
-      ['JM','1876','Jamaica'],['JP','81','Japan'],['JO','962','Jordan'],['KZ','7','Kazakhstan'],['KE','254','Kenya'],
-      ['KI','686','Kiribati'],['KP','850','North Korea'],['KR','82','South Korea'],['KW','965','Kuwait'],['KG','996','Kyrgyzstan'],
-      ['LA','856','Laos'],['LV','371','Latvia'],['LB','961','Lebanon'],['LS','266','Lesotho'],['LR','231','Liberia'],
-      ['LY','218','Libya'],['LI','423','Liechtenstein'],['LT','370','Lithuania'],['LU','352','Luxembourg'],['MK','389','North Macedonia'],
-      ['MG','261','Madagascar'],['MW','265','Malawi'],['MY','60','Malaysia'],['MV','960','Maldives'],['ML','223','Mali'],
-      ['MT','356','Malta'],['MH','692','Marshall Islands'],['MR','222','Mauritania'],['MU','230','Mauritius'],['MX','52','Mexico'],
-      ['FM','691','Micronesia'],['MD','373','Moldova'],['MC','377','Monaco'],['MN','976','Mongolia'],['ME','382','Montenegro'],
-      ['MA','212','Morocco'],['MZ','258','Mozambique'],['MM','95','Myanmar'],['NA','264','Namibia'],['NR','674','Nauru'],
-      ['NP','977','Nepal'],['NL','31','Netherlands'],['NZ','64','New Zealand'],['NI','505','Nicaragua'],['NE','227','Niger'],
-      ['NG','234','Nigeria'],['NO','47','Norway'],['OM','968','Oman'],['PK','92','Pakistan'],['PW','680','Palau'],
-      ['PA','507','Panama'],['PG','675','Papua New Guinea'],['PY','595','Paraguay'],['PE','51','Peru'],['PH','63','Philippines'],
-      ['PL','48','Poland'],['PT','351','Portugal'],['QA','974','Qatar'],['RO','40','Romania'],['RU','7','Russia'],
-      ['RW','250','Rwanda'],['KN','1869','Saint Kitts & Nevis'],['LC','1758','Saint Lucia'],['VC','1784','Saint Vincent'],
-      ['WS','685','Samoa'],['SM','378','San Marino'],['ST','239','São Tomé & Príncipe'],['SA','966','Saudi Arabia'],
-      ['SN','221','Senegal'],['RS','381','Serbia'],['SC','248','Seychelles'],['SL','232','Sierra Leone'],['SG','65','Singapore'],
-      ['SK','421','Slovakia'],['SI','386','Slovenia'],['SB','677','Solomon Islands'],['SO','252','Somalia'],['ZA','27','South Africa'],
-      ['SS','211','South Sudan'],['ES','34','Spain'],['LK','94','Sri Lanka'],['SD','249','Sudan'],['SR','597','Suriname'],
-      ['SZ','268','Eswatini'],['SE','46','Sweden'],['CH','41','Switzerland'],['SY','963','Syria'],['TW','886','Taiwan'],
-      ['TJ','992','Tajikistan'],['TZ','255','Tanzania'],['TH','66','Thailand'],['TL','670','Timor-Leste'],['TG','228','Togo'],
-      ['TO','676','Tonga'],['TT','1868','Trinidad & Tobago'],['TN','216','Tunisia'],['TR','90','Turkey'],['TM','993','Turkmenistan'],
-      ['TV','688','Tuvalu'],['UG','256','Uganda'],['UA','380','Ukraine'],['AE','971','UAE'],['GB','44','United Kingdom'],
-      ['US','1','United States'],['UY','598','Uruguay'],['UZ','998','Uzbekistan'],['VU','678','Vanuatu'],['VE','58','Venezuela'],
-      ['VN','84','Vietnam'],['YE','967','Yemen'],['ZM','260','Zambia'],['ZW','263','Zimbabwe'],
+      ['AF', '93', 'Afghanistan'], ['AL', '355', 'Albania'], ['DZ', '213', 'Algeria'], ['AD', '376', 'Andorra'], ['AO', '244', 'Angola'],
+      ['AG', '1268', 'Antigua & Barbuda'], ['AR', '54', 'Argentina'], ['AM', '374', 'Armenia'], ['AU', '61', 'Australia'], ['AT', '43', 'Austria'],
+      ['AZ', '994', 'Azerbaijan'], ['BS', '1242', 'Bahamas'], ['BH', '973', 'Bahrain'], ['BD', '880', 'Bangladesh'], ['BB', '1246', 'Barbados'],
+      ['BY', '375', 'Belarus'], ['BE', '32', 'Belgium'], ['BZ', '501', 'Belize'], ['BJ', '229', 'Benin'], ['BT', '975', 'Bhutan'],
+      ['BO', '591', 'Bolivia'], ['BA', '387', 'Bosnia & Herzegovina'], ['BW', '267', 'Botswana'], ['BR', '55', 'Brazil'], ['BN', '673', 'Brunei'],
+      ['BG', '359', 'Bulgaria'], ['BF', '226', 'Burkina Faso'], ['BI', '257', 'Burundi'], ['KH', '855', 'Cambodia'], ['CM', '237', 'Cameroon'],
+      ['CA', '1', 'Canada'], ['CV', '238', 'Cape Verde'], ['CF', '236', 'Central African Republic'], ['TD', '235', 'Chad'], ['CL', '56', 'Chile'],
+      ['CN', '86', 'China'], ['CO', '57', 'Colombia'], ['KM', '269', 'Comoros'], ['CD', '243', 'Congo (DRC)'], ['CG', '242', 'Congo (Republic)'],
+      ['CR', '506', 'Costa Rica'], ['HR', '385', 'Croatia'], ['CU', '53', 'Cuba'], ['CY', '357', 'Cyprus'], ['CZ', '420', 'Czech Republic'],
+      ['DK', '45', 'Denmark'], ['DJ', '253', 'Djibouti'], ['DO', '1809', 'Dominican Republic'], ['EC', '593', 'Ecuador'], ['EG', '20', 'Egypt'],
+      ['SV', '503', 'El Salvador'], ['GQ', '240', 'Equatorial Guinea'], ['ER', '291', 'Eritrea'], ['EE', '372', 'Estonia'], ['ET', '251', 'Ethiopia'],
+      ['FJ', '679', 'Fiji'], ['FI', '358', 'Finland'], ['FR', '33', 'France'], ['GA', '241', 'Gabon'], ['GM', '220', 'Gambia'],
+      ['GE', '995', 'Georgia'], ['DE', '49', 'Germany'], ['GH', '233', 'Ghana'], ['GR', '30', 'Greece'], ['GD', '1473', 'Grenada'],
+      ['GT', '502', 'Guatemala'], ['GN', '224', 'Guinea'], ['GW', '245', 'Guinea-Bissau'], ['GY', '592', 'Guyana'], ['HT', '509', 'Haiti'],
+      ['HN', '504', 'Honduras'], ['HU', '36', 'Hungary'], ['IS', '354', 'Iceland'], ['IN', '91', 'India'], ['ID', '62', 'Indonesia'],
+      ['IR', '98', 'Iran'], ['IQ', '964', 'Iraq'], ['IE', '353', 'Ireland'], ['IL', '972', 'Israel'], ['IT', '39', 'Italy'],
+      ['JM', '1876', 'Jamaica'], ['JP', '81', 'Japan'], ['JO', '962', 'Jordan'], ['KZ', '7', 'Kazakhstan'], ['KE', '254', 'Kenya'],
+      ['KI', '686', 'Kiribati'], ['KP', '850', 'North Korea'], ['KR', '82', 'South Korea'], ['KW', '965', 'Kuwait'], ['KG', '996', 'Kyrgyzstan'],
+      ['LA', '856', 'Laos'], ['LV', '371', 'Latvia'], ['LB', '961', 'Lebanon'], ['LS', '266', 'Lesotho'], ['LR', '231', 'Liberia'],
+      ['LY', '218', 'Libya'], ['LI', '423', 'Liechtenstein'], ['LT', '370', 'Lithuania'], ['LU', '352', 'Luxembourg'], ['MK', '389', 'North Macedonia'],
+      ['MG', '261', 'Madagascar'], ['MW', '265', 'Malawi'], ['MY', '60', 'Malaysia'], ['MV', '960', 'Maldives'], ['ML', '223', 'Mali'],
+      ['MT', '356', 'Malta'], ['MH', '692', 'Marshall Islands'], ['MR', '222', 'Mauritania'], ['MU', '230', 'Mauritius'], ['MX', '52', 'Mexico'],
+      ['FM', '691', 'Micronesia'], ['MD', '373', 'Moldova'], ['MC', '377', 'Monaco'], ['MN', '976', 'Mongolia'], ['ME', '382', 'Montenegro'],
+      ['MA', '212', 'Morocco'], ['MZ', '258', 'Mozambique'], ['MM', '95', 'Myanmar'], ['NA', '264', 'Namibia'], ['NR', '674', 'Nauru'],
+      ['NP', '977', 'Nepal'], ['NL', '31', 'Netherlands'], ['NZ', '64', 'New Zealand'], ['NI', '505', 'Nicaragua'], ['NE', '227', 'Niger'],
+      ['NG', '234', 'Nigeria'], ['NO', '47', 'Norway'], ['OM', '968', 'Oman'], ['PK', '92', 'Pakistan'], ['PW', '680', 'Palau'],
+      ['PA', '507', 'Panama'], ['PG', '675', 'Papua New Guinea'], ['PY', '595', 'Paraguay'], ['PE', '51', 'Peru'], ['PH', '63', 'Philippines'],
+      ['PL', '48', 'Poland'], ['PT', '351', 'Portugal'], ['QA', '974', 'Qatar'], ['RO', '40', 'Romania'], ['RU', '7', 'Russia'],
+      ['RW', '250', 'Rwanda'], ['KN', '1869', 'Saint Kitts & Nevis'], ['LC', '1758', 'Saint Lucia'], ['VC', '1784', 'Saint Vincent'],
+      ['WS', '685', 'Samoa'], ['SM', '378', 'San Marino'], ['ST', '239', 'São Tomé & Príncipe'], ['SA', '966', 'Saudi Arabia'],
+      ['SN', '221', 'Senegal'], ['RS', '381', 'Serbia'], ['SC', '248', 'Seychelles'], ['SL', '232', 'Sierra Leone'], ['SG', '65', 'Singapore'],
+      ['SK', '421', 'Slovakia'], ['SI', '386', 'Slovenia'], ['SB', '677', 'Solomon Islands'], ['SO', '252', 'Somalia'], ['ZA', '27', 'South Africa'],
+      ['SS', '211', 'South Sudan'], ['ES', '34', 'Spain'], ['LK', '94', 'Sri Lanka'], ['SD', '249', 'Sudan'], ['SR', '597', 'Suriname'],
+      ['SZ', '268', 'Eswatini'], ['SE', '46', 'Sweden'], ['CH', '41', 'Switzerland'], ['SY', '963', 'Syria'], ['TW', '886', 'Taiwan'],
+      ['TJ', '992', 'Tajikistan'], ['TZ', '255', 'Tanzania'], ['TH', '66', 'Thailand'], ['TL', '670', 'Timor-Leste'], ['TG', '228', 'Togo'],
+      ['TO', '676', 'Tonga'], ['TT', '1868', 'Trinidad & Tobago'], ['TN', '216', 'Tunisia'], ['TR', '90', 'Turkey'], ['TM', '993', 'Turkmenistan'],
+      ['TV', '688', 'Tuvalu'], ['UG', '256', 'Uganda'], ['UA', '380', 'Ukraine'], ['AE', '971', 'UAE'], ['GB', '44', 'United Kingdom'],
+      ['US', '1', 'United States'], ['UY', '598', 'Uruguay'], ['UZ', '998', 'Uzbekistan'], ['VU', '678', 'Vanuatu'], ['VE', '58', 'Venezuela'],
+      ['VN', '84', 'Vietnam'], ['YE', '967', 'Yemen'], ['ZM', '260', 'Zambia'], ['ZW', '263', 'Zimbabwe'],
     ];
 
     function ccFlagImg(iso) {
@@ -1903,12 +2037,12 @@
     function buildPages() {
       const fields = formConfig?.config?.fields || [];
       _pages = [];
-      let page = { title: null, desc: null, fields: [] };
+      let page = { title: null, desc: null, image: null, fields: [] };
 
       fields.forEach(f => {
         if (f.type === 'section_break') {
           _pages.push(page);
-          page = { title: f.label || '', desc: f.description || '', fields: [] };
+          page = { title: f.label || '', desc: f.description || '', image: f.image || null, fields: [] };
         } else {
           page.fields.push(f);
         }
@@ -1947,12 +2081,20 @@
       // Page 1: show form header; Page 2+: show section title
       document.getElementById('formMainHeader').style.display = isFirst ? '' : 'none';
       const pageHdr = document.getElementById('pageHdr');
-      if (!isFirst && page.title) {
+      if (!isFirst && (page.title || page.image)) {
         pageHdr.style.display = '';
         document.getElementById('pageHdrTitle').textContent = page.title;
         const descEl = document.getElementById('pageHdrDesc');
-        if (page.desc) { descEl.textContent = page.desc; descEl.style.display = ''; }
+        if (page.desc) { descEl.innerHTML = page.desc; descEl.style.display = ''; }
         else descEl.style.display = 'none';
+
+        const imgEl = document.getElementById('pageHdrImage');
+        if (page.image) {
+          imgEl.style.backgroundImage = `url(${JSON.stringify(page.image)})`;
+          imgEl.style.display = 'block';
+        } else {
+          imgEl.style.display = 'none';
+        }
       } else {
         pageHdr.style.display = 'none';
       }
@@ -2079,8 +2221,9 @@
       // Light mode
       if (th.lightMode) document.body.classList.add('gsfv-light');
 
-      // Dynamic font loading (based on user's font selection)
+      // Dynamic font loading and full theme application
       loadCustomFonts(th);
+      applyFormTheme(th);
 
       // Cover image
       if (s.coverImage) {
@@ -2252,8 +2395,8 @@
             <span class="gsfv-scale-label min-label">${esc(f.minLabel || 'Poor')}</span>
             <div class="gsfv-num-scale-inner">
               ${Array.from({ length: max }, (_, i) =>
-                `<button type="button" class="gsfv-num-btn" data-val="${i + 1}" onclick="pickNum('${f.id}',${i + 1},${max})">${i + 1}</button>`
-              ).join('')}
+              `<button type="button" class="gsfv-num-btn" data-val="${i + 1}" onclick="pickNum('${f.id}',${i + 1},${max})">${i + 1}</button>`
+            ).join('')}
             </div>
             <span class="gsfv-scale-label max-label">${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
@@ -2850,6 +2993,17 @@
       }
       if (th.headingFont) document.documentElement.style.setProperty('--font-display', `'${th.headingFont}', sans-serif`);
       if (th.bodyFont) document.documentElement.style.setProperty('--font', `'${th.bodyFont}', sans-serif`);
+    }
+
+    /* ── Apply full theme to CSS vars ─────────────────────────────────── */
+    function applyFormTheme(th) {
+      const root = document.documentElement;
+      if (th.cardColor) root.style.setProperty('--card-bg', th.cardColor);
+      if (th.pageColor) root.style.setProperty('--bg', th.pageColor);
+      if (th.headerFontSize) root.style.setProperty('--header-size', th.headerFontSize + 'px');
+      if (th.bodyFontSize) root.style.setProperty('--body-size', th.bodyFontSize + 'px');
+      if (th.headerFontColor) root.style.setProperty('--header-color', th.headerFontColor);
+      if (th.bodyFontColor) root.style.setProperty('--body-color', th.bodyFontColor);
     }
 
     /* ════════════════════════════════════════════════════════════════
