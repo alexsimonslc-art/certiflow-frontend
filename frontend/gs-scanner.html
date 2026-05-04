@@ -310,21 +310,17 @@
       border-radius: 20px;
       overflow: hidden;
       flex-shrink: 0;
+      /* Glow on the wrapper itself — not clipped by overflow:hidden */
+      box-shadow: 0 0 0 2px rgba(0,212,255,0.45), 0 16px 48px rgba(0,0,0,0.55);
+      animation: ringPulse 2.8s ease-in-out infinite;
     }
 
-    /* Outer glow ring */
-    .scanner-vf-ring {
-      position: absolute; inset: -3px;
-      border-radius: 23px;
-      background: transparent;
-      box-shadow: 0 0 0 2px rgba(0,212,255,0.45);
-      animation: ringPulse 2.8s ease-in-out infinite;
-      pointer-events: none; z-index: 8;
-    }
+    /* Outer glow ring — kept as invisible placeholder, glow is on wrapper */
+    .scanner-vf-ring { display: none; }
 
     @keyframes ringPulse {
-      0%, 100% { box-shadow: 0 0 0 2px rgba(0,212,255,0.35), 0 0 20px rgba(0,212,255,0.08); }
-      50%       { box-shadow: 0 0 0 2px rgba(0,212,255,0.75), 0 0 32px rgba(0,212,255,0.18); }
+      0%, 100% { box-shadow: 0 0 0 2px rgba(0,212,255,0.35), 0 16px 48px rgba(0,0,0,0.55); }
+      50%       { box-shadow: 0 0 0 2.5px rgba(0,212,255,0.8), 0 0 28px rgba(0,212,255,0.16), 0 16px 48px rgba(0,0,0,0.55); }
     }
 
     #scannerVideo {
@@ -1054,17 +1050,37 @@
     async function startCamera() {
       document.getElementById('cameraDenied').style.display = 'none';
       document.getElementById('vfWrap').style.display = '';
-      setScanHint('Point camera at attendee\'s QR pass');
+      setScanHint('Starting camera…');
 
       try {
-        _stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' }, width: { ideal: 640 }, height: { ideal: 640 } }
-        });
+        // Try rear camera first, fall back to any camera
+        let stream;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: 'environment' }, width: { ideal: 640 }, height: { ideal: 640 } }
+          });
+        } catch {
+          stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        }
+        _stream = stream;
+
         const video = document.getElementById('scannerVideo');
         video.srcObject = _stream;
-        video.play();
-        video.addEventListener('loadedmetadata', () => { _scanning = true; scanLoop(); });
+
+        // Wait for video to be ready before playing (avoids race condition)
+        await new Promise((resolve) => {
+          if (video.readyState >= 1) { resolve(); return; }
+          video.onloadedmetadata = resolve;
+          // Safety fallback — some browsers skip loadedmetadata
+          setTimeout(resolve, 2500);
+        });
+
+        await video.play();
+        _scanning = true;
+        setScanHint('Point camera at attendee\'s QR pass');
+        scanLoop();
       } catch (e) {
+        console.error('[scanner] Camera error:', e);
         document.getElementById('cameraDenied').style.display = 'flex';
         document.getElementById('vfWrap').style.display = 'none';
       }
