@@ -1447,12 +1447,68 @@
 
     .gsfb-rte-body ul,
     .gsfb-rte-body ol {
-      margin: 4px 0 4px 18px;
+      margin: 4px 0 4px 20px;
+      padding-left: 4px;
     }
+    .gsfb-rte-body ul { list-style-type: disc; }
+    .gsfb-rte-body ol { list-style-type: decimal; }
+    .gsfb-rte-body li { margin-bottom: 2px; }
+    .gsfb-rte-body a { color: var(--cyan); text-decoration: underline; }
+    .gsfb-rte-body img { max-width: 100%; border-radius: 6px; margin: 4px 0; }
 
     .gsfb-settings-section {
       margin-bottom: 20px;
     }
+
+    /* Label RTE (field editor — compact) */
+    .gsfb-label-rte-bar {
+      display: flex;
+      gap: 2px;
+      padding: 4px 6px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      flex-wrap: wrap;
+    }
+    .gsfb-label-rte-btn {
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: none;
+      background: none;
+      color: var(--text-2);
+      cursor: pointer;
+      font-size: 12px;
+      font-family: var(--font);
+      line-height: 1.6;
+      transition: var(--transition);
+    }
+    .gsfb-label-rte-btn:hover { background: rgba(0,212,255,0.1); color: var(--cyan); }
+    .gsfb-label-rte-sep { width: 1px; background: rgba(255,255,255,0.1); margin: 3px 2px; align-self: stretch; }
+    .gsfb-label-rte-body {
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.55;
+      outline: none;
+      min-height: 36px;
+    }
+    .gsfb-label-rte-body:empty::before { content: attr(placeholder); color: var(--text-3); pointer-events: none; }
+    .gsfb-label-rte-body ul { list-style-type: disc; margin: 3px 0 3px 18px; }
+    .gsfb-label-rte-body ol { list-style-type: decimal; margin: 3px 0 3px 18px; }
+    .gsfb-label-rte-body li { margin-bottom: 2px; }
+    .gsfb-label-rte-body a { color: var(--cyan); text-decoration: underline; }
+    .gsfb-label-rte-body img { max-width: 100%; border-radius: 5px; margin: 3px 0; vertical-align: middle; }
+    .gsfb-img-dialog {
+      display: none;
+      background: rgba(4,8,15,0.96);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 8px 10px;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .gsfb-img-dialog.open { display: flex; }
+    .gsfb-img-dialog input { flex: 1; min-width: 160px; }
 
     .gsfb-settings-sec-title {
       font-size: 10px;
@@ -1860,6 +1916,7 @@
       --cc-body-size: 13px;
       --cc-header-color: var(--cc-text);
       --cc-body-color: var(--cc-text-2);
+      font-family: var(--font, 'Plus Jakarta Sans', sans-serif);
     }
 
     #gsfbCanvas.theme-light {
@@ -1962,11 +2019,24 @@
     .gsfc-card-label {
       font-size: var(--cc-body-size, 13px);
       font-weight: 600;
+      font-family: var(--font-question, var(--font, 'Plus Jakarta Sans', sans-serif));
       color: var(--cc-body-color);
-      margin-bottom: 12px;
+      margin-bottom: 6px;
+      user-select: none;
+      pointer-events: none;
+      line-height: 1.45;
+    }
+    .gsfc-card-desc {
+      font-size: calc(var(--cc-body-size, 13px) - 1px);
+      font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
+      color: var(--cc-text-2);
+      line-height: 1.55;
+      margin-bottom: 10px;
       user-select: none;
       pointer-events: none;
     }
+    .gsfc-card-desc ul, .gsfc-card-desc ol { padding-left: 18px; margin: 4px 0; }
+    .gsfc-card-desc li { margin-bottom: 2px; }
 
     .gsfc-req {
       color: #ef4444;
@@ -1977,6 +2047,7 @@
     .gsfc-preview {
       color: var(--cc-text-3);
       font-size: 13.5px;
+      font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
       user-select: none;
       pointer-events: none;
     }
@@ -2743,7 +2814,7 @@
         </div>
         <div class="gsfb-layer-info">
           <div class="gsfb-layer-lbl">
-            ${f.required ? '<span class="gsfb-layer-req">*</span>' : ''}${f.label || (isPB ? '— New Page —' : 'Untitled')}
+            ${f.required ? '<span class="gsfb-layer-req">*</span>' : ''}${stripHtml(f.label) || (isPB ? '— New Page —' : 'Untitled')}
           </div>
           <div class="gsfb-layer-sub">${label}</div>
         </div>
@@ -2907,23 +2978,63 @@
     /* ════════════════════════════════════════════════════════════════
        FIELD EDITOR (renders inside right panel)
     ════════════════════════════════════════════════════════════════ */
+    function stripHtml(s) {
+      return s ? s.replace(/<[^>]*>/g, '').trim() : '';
+    }
+
     function fieldEditor(f, idx, total) {
       const id = f.id;
       if (f.type === 'event_pass') return renderPassFieldEditor(f, idx, total);
+
+      const labelVal = f.label || '';
       let html = `
-      <div class="gsfb-prop" >
-      <label class="gsfb-prop-label">Field Label</label>
-      <input class="gsfb-input" value="${escAttr(f.label)}"
-             oninput="updateFP('${id}','label',this.value)" placeholder="Enter label"/>
-    </div> `;
+      <div class="gsfb-prop">
+        <label class="gsfb-prop-label">Field Label</label>
+        <div class="gsfb-rte-wrap">
+          <div class="gsfb-label-rte-bar">
+            <button class="gsfb-label-rte-btn" title="Bold" onmousedown="event.preventDefault();rteExecField('flabel-${id}','${id}','label','bold')"><strong>B</strong></button>
+            <button class="gsfb-label-rte-btn" title="Italic" onmousedown="event.preventDefault();rteExecField('flabel-${id}','${id}','label','italic')"><em>I</em></button>
+            <button class="gsfb-label-rte-btn" title="Underline" onmousedown="event.preventDefault();rteExecField('flabel-${id}','${id}','label','underline')"><u>U</u></button>
+            <div class="gsfb-label-rte-sep"></div>
+            <button class="gsfb-label-rte-btn" title="Insert link" onmousedown="event.preventDefault();rteFieldInsertLink('flabel-${id}','${id}','label')">&#128279;</button>
+            <button class="gsfb-label-rte-btn" title="Insert image" onmousedown="event.preventDefault();document.getElementById('fimg-dlg-${id}').classList.toggle('open')">&#128444;</button>
+            <div class="gsfb-label-rte-sep"></div>
+            <button class="gsfb-label-rte-btn" title="Remove formatting" onmousedown="event.preventDefault();rteExecField('flabel-${id}','${id}','label','removeFormat');rteExecField('flabel-${id}','${id}','label','unlink')">&#10005;</button>
+          </div>
+          <div class="gsfb-img-dialog" id="fimg-dlg-${id}">
+            <input class="gsfb-input" id="fimg-url-${id}" style="font-size:11px;padding:5px 8px" placeholder="Image URL or upload below…"/>
+            <label style="cursor:pointer;padding:5px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:5px;font-size:11px;color:var(--text-2)">
+              Upload
+              <input type="file" accept="image/*" style="display:none" onchange="rteFieldUploadImg('${id}',this)">
+            </label>
+            <button class="gsfb-label-rte-btn" style="padding:4px 9px" onmousedown="event.preventDefault();rteFieldInsertImgUrl('${id}')">Insert</button>
+            <button class="gsfb-label-rte-btn" style="padding:4px 9px" onmousedown="event.preventDefault();document.getElementById('fimg-dlg-${id}').classList.remove('open')">Cancel</button>
+          </div>
+          <div class="gsfb-label-rte-body" contenteditable="true" id="flabel-${id}"
+               oninput="updateFP('${id}','label',this.innerHTML)"
+               placeholder="Enter label">${labelVal}</div>
+        </div>
+      </div>`;
 
       if (f.type === 'section_break') {
         html += `
-      <div class="gsfb-prop" >
+      <div class="gsfb-prop">
         <label class="gsfb-prop-label">Page Description</label>
-        <input class="gsfb-input" value="${escAttr(f.description || '')}"
-               oninput="updateFP('${id}','description',this.value)" placeholder="Optional subtitle for this page"/>
-      </div> `;
+        <div class="gsfb-rte-wrap">
+          <div class="gsfb-label-rte-bar">
+            <button class="gsfb-label-rte-btn" title="Bold" onmousedown="event.preventDefault();rteExecField('fdesc-${id}','${id}','description','bold')"><strong>B</strong></button>
+            <button class="gsfb-label-rte-btn" title="Italic" onmousedown="event.preventDefault();rteExecField('fdesc-${id}','${id}','description','italic')"><em>I</em></button>
+            <button class="gsfb-label-rte-btn" title="Underline" onmousedown="event.preventDefault();rteExecField('fdesc-${id}','${id}','description','underline')"><u>U</u></button>
+            <button class="gsfb-label-rte-btn" title="Bullet list" onmousedown="event.preventDefault();rteExecField('fdesc-${id}','${id}','description','insertUnorderedList')">&#8226;&#8212;</button>
+            <button class="gsfb-label-rte-btn" title="Numbered list" onmousedown="event.preventDefault();rteExecField('fdesc-${id}','${id}','description','insertOrderedList')">1.</button>
+            <button class="gsfb-label-rte-btn" title="Insert link" onmousedown="event.preventDefault();rteFieldInsertLink('fdesc-${id}','${id}','description')">&#128279;</button>
+            <button class="gsfb-label-rte-btn" title="Remove formatting" onmousedown="event.preventDefault();rteExecField('fdesc-${id}','${id}','description','removeFormat')">&#10005;</button>
+          </div>
+          <div class="gsfb-label-rte-body" contenteditable="true" id="fdesc-${id}"
+               oninput="updateFP('${id}','description',this.innerHTML)"
+               placeholder="Optional subtitle for this page">${f.description || ''}</div>
+        </div>
+      </div>`;
       } else {
         if (!['radio', 'checkbox', 'file_upload', 'linear_scale', 'date', 'time'].includes(f.type)) {
           html += `
@@ -3088,13 +3199,47 @@
       </div>`;
         }
 
+        const descOn = f.showDesc === true;
         html += `
-        <div class="gsfb-prop" >
+        <div class="gsfb-prop">
+          <div class="gsfb-toggle-row">
+            <div>
+              <div style="font-size:13px;color:var(--text)">Card Description</div>
+              <div style="font-size:11px;color:var(--text-3);margin-top:2px">Shown below the question label</div>
+            </div>
+            <div class="gsfb-toggle${descOn ? ' on' : ''}" onclick="toggleCardDesc('${id}')"></div>
+          </div>
+          ${descOn ? `
+          <div class="gsfb-rte-wrap" style="margin-top:10px">
+            <div class="gsfb-label-rte-bar">
+              <button class="gsfb-label-rte-btn" title="Bold" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','bold')"><strong>B</strong></button>
+              <button class="gsfb-label-rte-btn" title="Italic" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','italic')"><em>I</em></button>
+              <button class="gsfb-label-rte-btn" title="Underline" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','underline')"><u>U</u></button>
+              <button class="gsfb-label-rte-btn" title="Bullet list" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','insertUnorderedList')">&#8226;&#8212;</button>
+              <button class="gsfb-label-rte-btn" title="Numbered list" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','insertOrderedList')">1.</button>
+              <button class="gsfb-label-rte-btn" title="Insert link" onmousedown="event.preventDefault();rteFieldInsertLink('fcdesc-${id}','${id}','description')">&#128279;</button>
+              <button class="gsfb-label-rte-btn" title="Insert image" onmousedown="event.preventDefault();document.getElementById('fcdesc-img-${id}').classList.toggle('open')">&#128444;</button>
+              <button class="gsfb-label-rte-btn" title="Remove formatting" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','removeFormat')">&#10005;</button>
+            </div>
+            <div class="gsfb-img-dialog" id="fcdesc-img-${id}">
+              <input class="gsfb-input" id="fcdesc-url-${id}" style="font-size:11px;padding:5px 8px" placeholder="Image URL…"/>
+              <label style="cursor:pointer;padding:5px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:5px;font-size:11px;color:var(--text-2)">
+                Upload<input type="file" accept="image/*" style="display:none" onchange="rteCDescUploadImg('${id}',this)">
+              </label>
+              <button class="gsfb-label-rte-btn" style="padding:4px 9px" onmousedown="event.preventDefault();rteCDescInsertImgUrl('${id}')">Insert</button>
+              <button class="gsfb-label-rte-btn" style="padding:4px 9px" onmousedown="event.preventDefault();document.getElementById('fcdesc-img-${id}').classList.remove('open')">Cancel</button>
+            </div>
+            <div class="gsfb-label-rte-body" contenteditable="true" id="fcdesc-${id}"
+                 oninput="updateFP('${id}','description',this.innerHTML)"
+                 placeholder="Optional description shown below the question…">${f.description || ''}</div>
+          </div>` : ''}
+        </div>
+        <div class="gsfb-prop">
           <div class="gsfb-toggle-row">
             <span>Required</span>
             <div class="gsfb-toggle${f.required ? ' on' : ''}" onclick="toggleReq('${id}')"></div>
           </div>
-      </div> `;
+        </div> `;
 
         html += renderConditionsEditor(f, _S.config.fields);
       }
@@ -3131,7 +3276,7 @@
         const el = document.getElementById('li-' + f.id);
         if (el) {
           const lbl = el.querySelector('.gsfb-layer-lbl');
-          if (lbl) lbl.innerHTML = (f.required ? '<span class="gsfb-layer-req">*</span>' : '') + (f.label || (f.type === 'section_break' ? '— New Page —' : 'Untitled'));
+          if (lbl) lbl.innerHTML = (f.required ? '<span class="gsfb-layer-req">*</span>' : '') + (stripHtml(f.label) || (f.type === 'section_break' ? '— New Page —' : 'Untitled'));
         }
       });
     }
@@ -3215,11 +3360,13 @@
       if (th.bodyFontColor) canvas.style.setProperty('--cc-body-color', th.bodyFontColor);
       else canvas.style.removeProperty('--cc-body-color');
       const hf = th.headingFont || 'Syne';
-      const bf = th.bodyFont || 'Plus Jakarta Sans';
-      loadCanvasFont(hf);
-      loadCanvasFont(bf);
+      const qf = th.questionFont || th.bodyFont || 'Plus Jakarta Sans';
+      const tf = th.textFont || th.bodyFont || 'Plus Jakarta Sans';
+      loadCanvasFont(hf); loadCanvasFont(qf); if (tf !== qf) loadCanvasFont(tf);
       canvas.style.setProperty('--font-display', `'${hf}', sans-serif`);
-      canvas.style.setProperty('--font', `'${bf}', sans-serif`);
+      canvas.style.setProperty('--font', `'${qf}', sans-serif`);
+      canvas.style.setProperty('--font-question', `'${qf}', sans-serif`);
+      canvas.style.setProperty('--font-text', `'${tf}', sans-serif`);
     }
 
     /* ── Cover image upload helper ─────────────────────────────────── */
@@ -3292,6 +3439,100 @@
       renderLayers();
       renderPreview();
       renderRightPanel();
+    }
+
+    function toggleCardDesc(id) {
+      const field = _S.config.fields.find(f => f.id === id);
+      if (!field) return;
+      const nowOn = !field.showDesc;
+      _S.updateField(id, { showDesc: nowOn, description: nowOn ? (field.description || '') : '' });
+      setSaveStatus('unsaved');
+      renderRightPanel();
+      renderCanvasCardById(id);
+    }
+
+    /* ── Field label/description RTE helpers ──────────────────────── */
+    /* ── RTE helpers: elemId + fieldId + prop passed explicitly ──── */
+    function rteExecField(elemId, fieldId, prop, cmd, val) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      el.focus();
+      document.execCommand(cmd, false, val || null);
+      updateFP(fieldId, prop, el.innerHTML);
+    }
+
+    function rteFieldInsertLink(elemId, fieldId, prop) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      el.focus();
+      const url = prompt('Enter URL:');
+      if (!url) return;
+      document.execCommand('createLink', false, url);
+      updateFP(fieldId, prop, el.innerHTML);
+    }
+
+    function rteFieldInsertImgUrl(fieldId) {
+      const urlEl = document.getElementById('fimg-url-' + fieldId);
+      if (!urlEl || !urlEl.value.trim()) return;
+      const el = document.getElementById('flabel-' + fieldId);
+      if (!el) return;
+      el.focus();
+      document.execCommand('insertImage', false, urlEl.value.trim());
+      updateFP(fieldId, 'label', el.innerHTML);
+      document.getElementById('fimg-dlg-' + fieldId)?.classList.remove('open');
+      urlEl.value = '';
+    }
+
+    function rteFieldUploadImg(fieldId, input) {
+      const file = input.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const el = document.getElementById('flabel-' + fieldId);
+        if (!el) return;
+        el.focus();
+        document.execCommand('insertImage', false, e.target.result);
+        updateFP(fieldId, 'label', el.innerHTML);
+        document.getElementById('fimg-dlg-' + fieldId)?.classList.remove('open');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function rteCDescInsertImgUrl(fieldId) {
+      const urlEl = document.getElementById('fcdesc-url-' + fieldId);
+      if (!urlEl || !urlEl.value.trim()) return;
+      const el = document.getElementById('fcdesc-' + fieldId);
+      if (!el) return;
+      el.focus();
+      document.execCommand('insertImage', false, urlEl.value.trim());
+      updateFP(fieldId, 'description', el.innerHTML);
+      document.getElementById('fcdesc-img-' + fieldId)?.classList.remove('open');
+      urlEl.value = '';
+    }
+
+    function rteCDescUploadImg(fieldId, input) {
+      const file = input.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const el = document.getElementById('fcdesc-' + fieldId);
+        if (!el) return;
+        el.focus();
+        document.execCommand('insertImage', false, e.target.result);
+        updateFP(fieldId, 'description', el.innerHTML);
+        document.getElementById('fcdesc-img-' + fieldId)?.classList.remove('open');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function rteDescInsertLink() {
+      const el = document.getElementById('descRTE');
+      if (!el) return;
+      el.focus();
+      const url = prompt('Enter URL:');
+      if (!url) return;
+      document.execCommand('createLink', false, url);
+      updateSetting('description', el.innerHTML);
     }
     function addOpt(id) {
       const field = _S.config.fields.find(f => f.id === id);
@@ -3399,7 +3640,8 @@
       renderPreview();
     }
     function updateThemeFont(type, value) {
-      _S.updateTheme({ [type === 'heading' ? 'headingFont' : 'bodyFont']: value });
+      const key = type === 'heading' ? 'headingFont' : type === 'question' ? 'questionFont' : 'textFont';
+      _S.updateTheme({ [key]: value });
       setSaveStatus('unsaved');
       applyCanvasTheme();
       renderPreview();
@@ -3435,7 +3677,7 @@
       if (!p) return;
       _S.updateTheme({
         pageColor: p.bg, cardColor: p.card, color: p.accent, lightMode: p.lightMode,
-        headingFont: p.hFont, bodyFont: p.bFont,
+        headingFont: p.hFont, bodyFont: p.bFont, questionFont: p.bFont, textFont: p.bFont,
         headerFontColor: p.hColor, bodyFontColor: p.bColor,
         headerFontSize: p.hSize, bodyFontSize: p.bSize,
       });
@@ -3466,8 +3708,9 @@
           ${resetBtn(key, val)}
         </div>`;
 
-      const HEADING_FONTS = ['Plus Jakarta Sans','Lexend','Syne','Montserrat','Raleway','Playfair Display','Cormorant Garamond','Cinzel','EB Garamond','Lora','DM Sans'];
-      const BODY_FONTS    = ['Plus Jakarta Sans','Lexend','Montserrat','Raleway','DM Sans','EB Garamond','Lora','JetBrains Mono'];
+      const HEADING_FONTS  = ['Plus Jakarta Sans','Lexend','Syne','Montserrat','Raleway','Playfair Display','Cormorant Garamond','Cinzel','EB Garamond','Lora','DM Sans'];
+      const QUESTION_FONTS = ['Plus Jakarta Sans','Lexend','Montserrat','Raleway','DM Sans','EB Garamond','Lora','JetBrains Mono'];
+      const TEXT_FONTS     = ['Plus Jakarta Sans','Lexend','Montserrat','Raleway','DM Sans','EB Garamond','Lora','JetBrains Mono'];
 
       document.getElementById('rtabSettingsBody').innerHTML = `
 
@@ -3485,8 +3728,11 @@
             <div class="gsfb-rte-bar">
               <button class="gsfb-rte-btn" title="Bold" onmousedown="event.preventDefault();document.execCommand('bold')"><strong>B</strong></button>
               <button class="gsfb-rte-btn" title="Italic" onmousedown="event.preventDefault();document.execCommand('italic')"><em>I</em></button>
-              <button class="gsfb-rte-btn" title="Bullet list" onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">≡</button>
-              <button class="gsfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">①</button>
+              <button class="gsfb-rte-btn" title="Underline" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
+              <button class="gsfb-rte-btn" title="Bullet list" onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">&#8226;&#8212;</button>
+              <button class="gsfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">1.</button>
+              <button class="gsfb-rte-btn" title="Insert link" onmousedown="event.preventDefault();rteDescInsertLink()">&#128279;</button>
+              <button class="gsfb-rte-btn" title="Remove formatting" onmousedown="event.preventDefault();document.execCommand('removeFormat');document.execCommand('unlink')">&#10005;</button>
             </div>
             <div class="gsfb-rte-body" contenteditable="true" id="descRTE"
                  oninput="updateSetting('description',this.innerHTML)"
@@ -3558,15 +3804,21 @@
       <div class="gsfb-settings-section">
         <div class="gsfb-settings-sec-title">Typography</div>
         <div class="gsfb-prop">
-          <label class="gsfb-prop-label">Header Font</label>
+          <label class="gsfb-prop-label">Title Font <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-3)">(form title)</span></label>
           <select class="gsfb-select" onchange="updateThemeFont('heading',this.value)">
             ${HEADING_FONTS.map(f => `<option value="${f}" ${(th.headingFont || 'Syne') === f ? 'selected' : ''}>${f}</option>`).join('')}
           </select>
         </div>
         <div class="gsfb-prop">
-          <label class="gsfb-prop-label">Body Font</label>
-          <select class="gsfb-select" onchange="updateThemeFont('body',this.value)">
-            ${BODY_FONTS.map(f => `<option value="${f}" ${(th.bodyFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`).join('')}
+          <label class="gsfb-prop-label">Question Font <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-3)">(card labels)</span></label>
+          <select class="gsfb-select" onchange="updateThemeFont('question',this.value)">
+            ${QUESTION_FONTS.map(f => `<option value="${f}" ${(th.questionFont || th.bodyFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`).join('')}
+          </select>
+        </div>
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Text Font <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-3)">(inputs &amp; options)</span></label>
+          <select class="gsfb-select" onchange="updateThemeFont('text',this.value)">
+            ${TEXT_FONTS.map(f => `<option value="${f}" ${(th.textFont || th.bodyFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`).join('')}
           </select>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -4055,17 +4307,18 @@
       if (f.type === 'event_pass') return renderPassCanvasCard(f, isSel);
       if (f.type === 'section_break') return `
         <div class="gsfc-page-break ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
-          <div class="gsfc-page-break-badge">PAGE BREAK</div>
+          <div class="gsfc-page-break-badge">PAGE BREAK — Next Page Title</div>
           <div class="gsfc-page-break-body">
-            <div class="gsfc-page-break-title">${escHtml(f.label || 'Untitled Page')}</div>
-            ${f.description ? `<div class="gsfc-page-break-desc">${escHtml(f.description)}</div>` : ''}
+            <div class="gsfc-page-break-title">${f.label || '<span style="opacity:.4">Untitled Page</span>'}</div>
+            ${f.description ? `<div class="gsfc-page-break-desc">${f.description}</div>` : ''}
           </div>
         </div>`;
       return `
         <div class="gsfc-card ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
           ${isSel ? '<div class="gsfc-card-sel-bar"></div>' : ''}
           <div class="gsfc-card-inner">
-            <div class="gsfc-card-label">${escHtml(f.label || 'Untitled Question')}${f.required ? '<span class="gsfc-req">*</span>' : ''}</div>
+            <div class="gsfc-card-label">${f.label || '<span style="opacity:.4">Untitled Question</span>'}${f.required ? '<span class="gsfc-req">*</span>' : ''}</div>
+            ${f.showDesc ? `<div class="gsfc-card-desc">${f.description || '<span style="opacity:.35">Description…</span>'}</div>` : ''}
             <div class="gsfc-preview">${getFieldPreview(f)}</div>
           </div>
           <div class="gsfc-card-actions">
@@ -4133,9 +4386,9 @@
         if (s.coverImage) html += `<div style="margin:-22px -22px 18px;height:140px;background:url('${escHtml(s.coverImage)}') center/cover no-repeat;border-radius:4px 4px 0 0"></div>`;
         html += `<div class="gsfb-pv-title" style="font-family:'${escHtml(th.headingFont || 'Plus Jakarta Sans')}',sans-serif">${escHtml(s.title || _S.name || 'Untitled Form')}</div>`;
         if (s.description) html += `<div class="gsfb-pv-desc" style="font-family:'${escHtml(th.bodyFont || 'Plus Jakarta Sans')}',sans-serif">${s.description}</div>`;
-      } else if (page.title) {
-        html += `<div class="gsfb-pv-page-title">${escHtml(page.title)}</div>`;
-        if (page.desc) html += `<div class="gsfb-pv-page-desc">${escHtml(page.desc)}</div>`;
+      } else {
+        html += `<div class="gsfb-pv-page-title">${page.title || '<span style="opacity:.4">Untitled Page</span>'}</div>`;
+        if (page.desc) html += `<div class="gsfb-pv-page-desc">${page.desc}</div>`;
       }
 
       // Fields
@@ -4282,7 +4535,8 @@
           body = `<input class="gsfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
       }
 
-      return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-field-card"><div class="gsfb-pv-label">${escHtml(f.label || 'Untitled')} ${req}</div>${body}</div></div>`;
+      const descHtml = f.showDesc && f.description ? `<div style="font-size:12px;color:var(--text-3);margin:-2px 0 8px;line-height:1.5">${f.description}</div>` : '';
+      return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-field-card"><div class="gsfb-pv-label">${f.label || 'Untitled'} ${req}</div>${descHtml}${body}</div></div>`;
     }
 
     /* ── Preview interaction handlers ──────────────────────────────── */
