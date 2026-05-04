@@ -1049,7 +1049,7 @@
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 20px;
       padding: 24px;
-      max-width: 520px;
+      max-width: 420px;
       width: 100%;
       max-height: 92vh;
       overflow-y: auto;
@@ -1826,7 +1826,7 @@
         <button class="gsfv-pass-modal-close" onclick="closePassModal()">✕</button>
       </div>
       <div class="gsfv-pass-canvas-wrap">
-        <canvas id="passCanvas" width="900" height="380" style="width:100%;height:auto"></canvas>
+        <canvas id="passCanvas" width="520" height="693" style="max-width:100%;border-radius:16px"></canvas>
       </div>
       <div class="gsfv-pass-actions">
         <button class="gsfv-pass-btn gsfv-pass-btn-dl" onclick="downloadPass()">⬇ Download Pass</button>
@@ -2107,7 +2107,7 @@
       document.getElementById('formMainHeader').style.display = isFirst ? '' : 'none';
       const pageHdr = document.getElementById('pageHdr');
       if (!isFirst) {
-        pageHdr.style.display = '';
+        pageHdr.style.display = 'block';
         const titleEl = document.getElementById('pageHdrTitle');
         titleEl.innerHTML = page.title || '';
         const descEl = document.getElementById('pageHdrDesc');
@@ -2267,6 +2267,7 @@
 
       // Build pages from section_breaks + show page 1
       buildPages();
+      _restoreProgress();
       showPage(0);
 
       // Show form
@@ -2494,12 +2495,46 @@
     const fv = new Proxy(formValues, {
       set(target, key, value) {
         target[key] = value;
-        evaluateConditions(); // re-evaluate show/hide after every text field change
+        _saveProgress();
+        evaluateConditions();
         return true;
       }
     });
+
+    function _progressKey() { return 'gsf_progress_' + formSlug; }
+
+    function _saveProgress() {
+      try { sessionStorage.setItem(_progressKey(), JSON.stringify(formValues)); } catch(e) {}
+    }
+
+    function _restoreProgress() {
+      try {
+        const raw = sessionStorage.getItem(_progressKey());
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        Object.assign(formValues, saved);
+        // Rehydrate DOM inputs on the current page
+        (formConfig?.config?.fields || []).forEach(f => {
+          if (f.type === 'section_break') return;
+          const val = formValues[f.id];
+          if (val === undefined || val === '' || val === null) return;
+          const el = document.getElementById('fi-' + f.id);
+          if (!el) return;
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.value = typeof val === 'object' ? '' : val;
+          } else if (el.tagName === 'SELECT') {
+            el.value = val;
+          }
+        });
+      } catch(e) {}
+    }
+
+    function _clearProgress() {
+      try { sessionStorage.removeItem(_progressKey()); } catch(e) {}
+    }
     function pickRadio(fieldId, idx, total) {
       formValues[fieldId] = (formConfig.config.fields.find(f => f.id === fieldId)?.options || [])[idx] || '';
+      _saveProgress();
       clearErr(fieldId);
       const container = document.getElementById('fi-' + fieldId);
       if (!container) return;
@@ -2517,6 +2552,7 @@
       const pos = arr.indexOf(val);
       if (pos > -1) arr.splice(pos, 1);
       else arr.push(val);
+      _saveProgress();
       clearErr(fieldId);
       const container = document.getElementById('fi-' + fieldId);
       if (!container) return;
@@ -2529,6 +2565,7 @@
 
     function pickStar(fieldId, val, max) {
       formValues[fieldId] = val;
+      _saveProgress();
       clearErr(fieldId);
       const container = document.getElementById('fi-' + fieldId);
       if (!container) return;
@@ -2540,6 +2577,7 @@
 
     function pickNum(fieldId, val, max) {
       formValues[fieldId] = val;
+      _saveProgress();
       clearErr(fieldId);
       const container = document.getElementById('fi-' + fieldId);
       if (!container) return;
@@ -2800,6 +2838,7 @@
     function showThankYou(message) {
       // Mark as submitted for this browser session (duplicate guard)
       sessionStorage.setItem('gsf_submitted_' + formSlug, '1');
+      _clearProgress();
       document.getElementById('formState').style.display = 'none';
       document.getElementById('thankYouState').style.display = '';
       document.getElementById('tyMessage').textContent = message;
@@ -3057,127 +3096,153 @@
     function renderPassCanvas(pass) {
       const canvas = document.getElementById('passCanvas');
       const ctx = canvas.getContext('2d');
-      const W = 900, H = 380;
+      const W = 520, H = 693;
       canvas.width = W; canvas.height = H;
 
       const cfg = pass.config || {};
-      const bannerColor = cfg.bannerColor || '#1a1a2e';
-      const textColor = cfg.textColor || '#ffffff';
+      const banner   = cfg.bannerColor   || '#12172a';
+      const gradEnd  = cfg.gradientColor || _darken(banner, 0.4);
+      const tcol     = cfg.textColor     || '#ffffff';
 
-      // Background
-      ctx.fillStyle = bannerColor;
-      ctx.fillRect(0, 0, W, H);
+      // Background gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+      bgGrad.addColorStop(0, banner);
+      bgGrad.addColorStop(1, gradEnd);
+      ctx.fillStyle = bgGrad;
+      _rr(ctx, 0, 0, W, H, 28); ctx.fill();
 
-      // Load QR image
-      const qrImg = new Image();
-      qrImg.onload = () => {
-        // Left: white QR box
-        const qrPad = 20;
-        const qrSize = H - qrPad * 2;
-        const qrX = qrPad;
-        const qrY = qrPad;
-        ctx.fillStyle = '#ffffff';
-        roundRect(ctx, qrX, qrY, qrSize, qrSize, 12);
-        ctx.fill();
-        ctx.drawImage(qrImg, qrX + 8, qrY + 8, qrSize - 16, qrSize - 16);
+      // Dot texture
+      ctx.fillStyle = 'rgba(255,255,255,0.015)';
+      for (let r = 0; r < H; r += 18) for (let c = 0; c < W; c += 18) ctx.fillRect(c, r, 2, 2);
 
-        // "Scan to verify" text below QR
-        ctx.fillStyle = 'rgba(255,255,255,0.55)';
-        ctx.font = '12px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Scan to verify', qrX + qrSize / 2, qrY + qrSize + 18);
+      // Top accent stripe
+      const stripe = ctx.createLinearGradient(0, 0, W, 0);
+      stripe.addColorStop(0, '#00d4ff'); stripe.addColorStop(1, '#7c3aed');
+      ctx.fillStyle = stripe;
+      _rr(ctx, 0, 0, W, 9, { tl:28, tr:28, bl:0, br:0 }); ctx.fill();
 
-        // Vertical divider
-        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(320, 30); ctx.lineTo(320, H - 30); ctx.stroke();
-
-        // Right section
-        const rx = 344, ry = 36, rw = W - rx - 20;
+      function drawPass() {
+        // "ENTRY PASS" badge
+        ctx.fillStyle = 'rgba(255,255,255,0.10)';
+        _rr(ctx, 24, 26, 136, 28, 14); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.60)';
+        ctx.font = 'bold 13px "Plus Jakarta Sans",sans-serif';
         ctx.textAlign = 'left';
-
-        let cy = ry;
-
-        // Logo (optional)
-        if (cfg.logoUrl) {
-          const logoImg = new Image();
-          logoImg.crossOrigin = 'anonymous';
-          logoImg.onload = () => {
-            const lh = Math.min(50, logoImg.naturalHeight || 50);
-            const lw = lh * (logoImg.naturalWidth / (logoImg.naturalHeight || 1));
-            ctx.drawImage(logoImg, W - lw - 20, ry, lw, lh);
-          };
-          logoImg.src = cfg.logoUrl;
-        }
+        ctx.fillText('ENTRY PASS', 40, 45);
 
         // Event name
-        ctx.fillStyle = textColor;
-        ctx.font = 'bold 26px sans-serif';
-        cy += 6;
-        wrapText(ctx, cfg.eventName || 'Event', rx, cy, rw, 32);
-        cy += 38;
+        ctx.fillStyle = tcol;
+        ctx.font = 'bold 34px "Plus Jakarta Sans",sans-serif';
+        _wrapText(ctx, cfg.eventName || 'Event Name', 24, 100, W - 48, 42);
 
-        // Attendee name
-        ctx.font = '19px sans-serif';
-        ctx.fillStyle = textColor;
-        wrapText(ctx, pass.attendeeName || '—', rx, cy, rw, 26);
-        cy += 32;
+        // Details
+        let cy = 158;
+        ctx.font = '16px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.70)';
+        if (cfg.venue)            { ctx.fillText('Venue:  ' + cfg.venue,            24, cy); cy += 26; }
+        if (cfg.date)             { ctx.fillText('Date:   ' + cfg.date,             24, cy); cy += 26; }
+        if (cfg.time)             { ctx.fillText('Time:   ' + cfg.time,             24, cy); cy += 26; }
 
-        // Venue / Date / Time
-        ctx.font = '14px sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.75)';
-        if (cfg.venue) { ctx.fillText('📍 ' + cfg.venue, rx, cy); cy += 24; }
-        if (cfg.date) { ctx.fillText('📅 ' + cfg.date, rx, cy); cy += 24; }
-        if (cfg.time) { ctx.fillText('🕐 ' + cfg.time, rx, cy); cy += 24; }
+        // Dashed divider
+        cy += 8;
+        ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1;
+        ctx.setLineDash([6,5]); ctx.beginPath(); ctx.moveTo(24,cy); ctx.lineTo(W-24,cy); ctx.stroke(); ctx.restore();
+        cy += 18;
 
-        // Divider
-        cy += 6;
-        ctx.strokeStyle = 'rgba(255,255,255,0.20)';
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(rx, cy); ctx.lineTo(W - 20, cy); ctx.stroke();
-        cy += 14;
+        // QR area
+        const qrS = 156, qrX = (W - qrS) / 2, qrY = cy;
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        _rr(ctx, qrX-14, qrY-14, qrS+28, qrS+28, 18); ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        _rr(ctx, qrX, qrY, qrS, qrS, 12); ctx.fill();
+
+        const qrImg = new Image();
+        qrImg.onload = () => {
+          ctx.drawImage(qrImg, qrX+6, qrY+6, qrS-12, qrS-12);
+          ctx.fillStyle = 'rgba(255,255,255,0.42)';
+          ctx.font = '13px "Plus Jakarta Sans",sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('Scan to verify', W/2, qrY+qrS+20);
+          // Unique code
+          ctx.font = 'bold 13px monospace';
+          ctx.fillStyle = 'rgba(255,255,255,0.55)';
+          ctx.fillText(pass.token || pass.submissionId?.slice(0,8)?.toUpperCase() || '', W/2, qrY+qrS+38);
+          finalizePass(qrY + qrS + 55);
+        };
+        qrImg.onerror = () => finalizePass(qrY + qrS + 20);
+        qrImg.src = pass.qrDataUrl;
+      }
+
+      function finalizePass(cy) {
+        // Attendee info strip
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth=1; ctx.setLineDash([6,5]);
+        ctx.beginPath(); ctx.moveTo(24,cy); ctx.lineTo(W-24,cy); ctx.stroke(); ctx.restore();
+        cy += 16;
+
+        ctx.textAlign = 'left';
+        ctx.font = '14px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.50)';
+        ctx.fillText(pass.attendeeEmail || '', 24, cy); cy += 22;
+        ctx.font = 'bold 18px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = tcol;
+        _wrapText(ctx, pass.attendeeName || '—', 24, cy, W-48, 24);
+        cy += 28;
 
         // Rules
-        const rules = (cfg.rules || []).slice(0, 3);
+        const rules = (cfg.rules||[]).filter(Boolean).slice(0,3);
         if (rules.length) {
-          ctx.fillStyle = 'rgba(255,255,255,0.6)';
-          ctx.font = 'bold 12px sans-serif';
-          ctx.fillText('ENTRY RULES', rx, cy); cy += 17;
-          ctx.font = '12px sans-serif';
-          rules.forEach(r => {
-            ctx.fillText('• ' + r, rx, cy); cy += 17;
-          });
+          cy += 4;
+          ctx.font = 'bold 11px "Plus Jakarta Sans",sans-serif';
+          ctx.fillStyle = 'rgba(255,255,255,0.38)';
+          ctx.fillText('ENTRY RULES', 24, cy); cy += 18;
+          ctx.font = '12px "Plus Jakarta Sans",sans-serif';
+          ctx.fillStyle = 'rgba(255,255,255,0.60)';
+          rules.forEach(r => { ctx.fillText('• '+r, 24, cy); cy += 17; });
         }
-      };
-      qrImg.src = pass.qrDataUrl;
+
+        // Branding
+        const bY = H - 32;
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fillText('GalSol', W/2, bY);
+      }
+
+      // Logo (optional)
+      if (cfg.logoUrl) {
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        logoImg.onload = () => {
+          const lh = 36, lw = lh*(logoImg.naturalWidth/(logoImg.naturalHeight||1));
+          ctx.drawImage(logoImg, W-lw-20, 26, lw, lh);
+        };
+        logoImg.src = cfg.logoUrl;
+      }
+
+      drawPass();
     }
 
-    function roundRect(ctx, x, y, w, h, r) {
+    function _rr(ctx, x, y, w, h, r) {
+      const tl = typeof r==='object'?(r.tl||0):r, tr=typeof r==='object'?(r.tr||0):r,
+            br = typeof r==='object'?(r.br||0):r, bl=typeof r==='object'?(r.bl||0):r;
       ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
+      ctx.moveTo(x+tl,y); ctx.lineTo(x+w-tr,y); ctx.quadraticCurveTo(x+w,y,x+w,y+tr);
+      ctx.lineTo(x+w,y+h-br); ctx.quadraticCurveTo(x+w,y+h,x+w-br,y+h);
+      ctx.lineTo(x+bl,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-bl);
+      ctx.lineTo(x,y+tl); ctx.quadraticCurveTo(x,y,x+tl,y); ctx.closePath();
     }
-
-    function wrapText(ctx, text, x, y, maxW, lineH) {
-      const words = String(text || '').split(' ');
-      let line = '';
-      for (const word of words) {
-        const test = line ? line + ' ' + word : word;
-        if (ctx.measureText(test).width > maxW && line) {
-          ctx.fillText(line, x, y); y += lineH; line = word;
-        } else {
-          line = test;
-        }
+    function _wrapText(ctx, text, x, y, maxW, lineH) {
+      const words = String(text||'').split(' '); let line='';
+      for (const w of words) {
+        const t = line?line+' '+w:w;
+        if (ctx.measureText(t).width>maxW&&line){ctx.fillText(line,x,y);y+=lineH;line=w;}else line=t;
       }
       if (line) ctx.fillText(line, x, y);
+    }
+    function _darken(hex, amt) {
+      hex=hex.replace('#',''); if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+      return `rgb(${Math.max(0,parseInt(hex.slice(0,2),16)-Math.round(255*amt))},${Math.max(0,parseInt(hex.slice(2,4),16)-Math.round(255*amt))},${Math.max(0,parseInt(hex.slice(4,6),16)-Math.round(255*amt))})`;
     }
 
     function downloadPass() {

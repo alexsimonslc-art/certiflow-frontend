@@ -673,39 +673,9 @@
     }
     .gsfb-pe-block {
       padding: 13px 18px;
-      cursor: pointer;
-      border-left: 3px solid transparent;
-      transition: border-color 0.13s, background 0.13s;
-      position: relative;
       flex-shrink: 0;
     }
-    .gsfb-pe-block:not(.locked):hover {
-      background: rgba(255,255,255,0.05);
-      border-left-color: rgba(0,212,255,0.45);
-    }
-    .gsfb-pe-block.sel {
-      border-left-color: #00d4ff;
-      background: rgba(0,212,255,0.07);
-    }
-    .gsfb-pe-block .gsfb-pe-blk-badge {
-      display: none;
-      position: absolute;
-      top: 5px;
-      right: 8px;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      background: rgba(0,212,255,0.85);
-      color: #000;
-      border-radius: 4px;
-      pointer-events: none;
-    }
-    .gsfb-pe-block:hover .gsfb-pe-blk-badge,
-    .gsfb-pe-block.sel .gsfb-pe-blk-badge { display: block; }
-    .gsfb-pe-block.locked { cursor: default; padding: 7px 18px; }
-    .gsfb-pe-block.locked:hover { background: transparent; border-left-color: transparent; }
+    .gsfb-pe-block.locked { padding: 7px 18px; }
     .gsfb-pe-divider {
       border: none;
       border-top: 1px dashed rgba(255,255,255,0.15);
@@ -2234,6 +2204,11 @@
       color: var(--cc-text-2);
       flex-shrink: 0;
     }
+    .gsfc-star {
+      font-size: 20px;
+      color: #f59e0b;
+      line-height: 1;
+    }
 
     /* ── Card hover actions ── */
     .gsfc-card-actions {
@@ -2576,9 +2551,8 @@
         </div>
 
         <!-- Form Canvas (active on 'form' tab) -->
-        <div id="gsfbFormCanvasWrap"
-          style="display:flex;gap:24px;align-items:flex-start;width:100%;justify-content:center;pointer-events:none;">
-          <div style="width:100%;max-width:680px;flex-shrink:1;min-width:0;pointer-events:auto;" id="gsfbCanvas">
+        <div id="gsfbFormCanvasWrap" style="width:100%;pointer-events:none;">
+          <div style="width:100%;max-width:680px;margin:0 auto;pointer-events:auto;" id="gsfbCanvas">
             <div class="gsfc-header-card" id="canvasHeaderCard"
               onclick="selectedId=null;switchRTab('settings');renderRightPanel();">
               <div class="gsfc-header-accent" id="canvasTopAccent"></div>
@@ -2712,7 +2686,6 @@
     let leaveTarget = 'gs-forms.html';
     let rightTab = 'field';
     let canvasTab = 'form';      // 'form' | 'pass'
-    let selectedPassBlock = null;
 
     const PALETTES = [
       // ── Light themes ──────────────────────────────────────────────────
@@ -3742,7 +3715,7 @@
 
       // Live-update the pass canvas editor when pass-related settings change
       const passKeys = ['passEventName','passVenue','passDate','passTime','passRules','passBannerColor',
-                        'passTextColor','passLogoUrl','passNameField','passEmailField','passSubtitle'];
+                        'passTextColor','passGradientColor','passLogoUrl','passNameField','passEmailField','passSubtitle'];
       if (passKeys.includes(key) && canvasTab === 'pass') {
         renderPassCanvas();
         renderBuilderPass();
@@ -3778,6 +3751,20 @@
       });
     }
 
+    function handlePassLogoUpload(input) {
+      const file = input.files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        updateSetting('passLogoUrl', e.target.result);
+        renderPassSettings();
+        if (canvasTab === 'pass') renderPassCanvas();
+        renderBuilderPass();
+      };
+      reader.readAsDataURL(file);
+    }
+
     /* ════════════════════════════════════════════════════════════════
        CANVAS TABS  (Form ↔ Pass)
     ════════════════════════════════════════════════════════════════ */
@@ -3793,111 +3780,93 @@
       }
     }
 
-    function selectPassBlock(blockId) {
-      selectedPassBlock = blockId;
-      renderPassCanvas();
-      switchRTab('pass');
-    }
-
     function renderPassCanvas() {
       const wrap = document.getElementById('gsfbPassCanvasWrap');
       if (!wrap) return;
       const s = _S.config?.settings || {};
-      const bg    = s.passBannerColor || '#12172a';
-      const tc    = s.passTextColor   || '#ffffff';
-      const ac    = '#00d4ff';
+      const bg   = s.passBannerColor  || '#12172a';
+      const bg2  = s.passGradientColor || _pbDarken(bg, 0.35);
+      const tc   = s.passTextColor    || '#ffffff';
+      const ac   = '#00d4ff';
       const allFields  = _S.config?.fields || [];
       const nameField  = s.passNameField  ? allFields.find(f => f.id === s.passNameField)  : null;
       const emailField = s.passEmailField ? allFields.find(f => f.id === s.passEmailField) : null;
       const rules = (s.passRules || []).filter(Boolean);
 
-      const blk = (id, label, content, extra = '') => {
-        const isSel = selectedPassBlock === id;
-        return `<div class="gsfb-pe-block${isSel ? ' sel' : ''}" onclick="selectPassBlock('${id}')" ${extra}>
-          <span class="gsfb-pe-blk-badge">${label}</span>
-          ${content}
-        </div>`;
-      };
+      const blk = (content, extraStyle = '') =>
+        `<div class="gsfb-pe-block" style="${extraStyle}">${content}</div>`;
 
-      // Logo
       const logoHtml = s.passLogoUrl
-        ? `<img src="${escAttr(s.passLogoUrl)}" style="height:30px;width:30px;object-fit:contain;border-radius:6px;flex-shrink:0" onerror="this.style.display='none'"/>`
-        : `<div style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,0.10);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-             <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="${tc}" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="2"/><path d="M1 8h14"/></svg>
+        ? `<img src="${escAttr(s.passLogoUrl)}" style="height:32px;width:32px;object-fit:contain;border-radius:6px;flex-shrink:0" onerror="this.style.display='none'"/>`
+        : `<div style="width:32px;height:32px;border-radius:6px;background:rgba(255,255,255,0.10);display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0.4">
+             <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="${escAttr(tc)}" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="2"/><circle cx="5.5" cy="7.5" r="1"/><polyline points="1,13 5,9 8,12 11,8 15,13"/></svg>
            </div>`;
 
-      // QR placeholder mini-grid
+      const pinSvg = `<svg viewBox="0 0 12 16" width="10" height="14" fill="none" stroke="${escAttr(tc)}" stroke-width="1.4" style="flex-shrink:0;margin-top:1px"><path d="M6 1a5 5 0 0 1 5 5c0 4-5 9-5 9S1 10 1 6a5 5 0 0 1 5-5z"/><circle cx="6" cy="6" r="2"/></svg>`;
+      const calSvg = `<svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="${escAttr(tc)}" stroke-width="1.4" style="flex-shrink:0"><rect x="1" y="2" width="12" height="11" rx="2"/><line x1="1" y1="6" x2="13" y2="6"/><line x1="4" y1="1" x2="4" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/></svg>`;
+      const clkSvg = `<svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="${escAttr(tc)}" stroke-width="1.4" style="flex-shrink:0"><circle cx="7" cy="7" r="6"/><polyline points="7,4 7,7 9,9"/></svg>`;
+
       const p = [[1,1,1,0,1],[1,0,1,0,0],[1,1,1,0,1],[0,0,0,1,0],[1,0,1,1,1]];
-      const qrSvg = `<svg viewBox="0 0 5 5" width="72" height="72" style="display:block;border-radius:4px">
-        <rect width="5" height="5" fill="#fff"/>
-        ${p.map((row,r)=>row.map((v,c)=>v?`<rect x="${c}" y="${r}" width="1" height="1" fill="#111"/>`:'').join('')).join('')}
-      </svg>`;
+      const qrSvg = `<svg viewBox="0 0 5 5" width="76" height="76" style="display:block;border-radius:4px"><rect width="5" height="5" fill="#fff"/>${p.map((row,r)=>row.map((v,c)=>v?`<rect x="${c}" y="${r}" width="1" height="1" fill="#111"/>`:'').join('')).join('')}</svg>`;
 
       wrap.innerHTML = `
-      <div class="gsfb-pe-hint">Click a section to edit &nbsp;→&nbsp; then adjust in the <strong style="color:#00d4ff">Entry Pass</strong> panel</div>
-      <div class="gsfb-pe-card" style="background:${escAttr(bg)};color:${escAttr(tc)}">
+      <div class="gsfb-pe-card" style="background:linear-gradient(160deg,${escAttr(bg)},${escAttr(bg2)});color:${escAttr(tc)}">
 
-        <!-- Accent stripe -->
         <div style="height:8px;background:linear-gradient(90deg,${escAttr(ac)},#7c3aed);flex-shrink:0"></div>
 
-        <!-- Header: logo + badge + event name -->
-        ${blk('header', 'Header', `
+        ${blk(`
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
             ${logoHtml}
-            <span style="font-size:9px;font-weight:700;letter-spacing:1.8px;padding:3px 9px;background:rgba(255,255,255,0.12);border-radius:20px;opacity:0.75">ENTRY PASS</span>
+            <span style="font-size:9px;font-weight:700;letter-spacing:1.8px;padding:3px 10px;background:rgba(255,255,255,0.12);border-radius:20px;opacity:0.75">ENTRY PASS</span>
           </div>
-          <div style="font-size:19px;font-weight:800;line-height:1.25;letter-spacing:-0.2px">${escHtml(s.passEventName || 'Event Name')}</div>
-          ${s.passSubtitle ? `<div style="font-size:11.5px;opacity:0.55;margin-top:3px">${escHtml(s.passSubtitle)}</div>` : ''}
+          <div style="font-size:20px;font-weight:800;line-height:1.25;letter-spacing:-0.2px">${escHtml(s.passEventName || 'Event Name')}</div>
         `)}
 
-        <!-- Details: venue + date/time -->
-        ${blk('details', 'Details', `
-          <div style="display:flex;flex-wrap:wrap;gap:10px 20px;font-size:12.5px">
-            <span style="opacity:${s.passVenue?'0.8':'0.3'}">📍 ${s.passVenue ? escHtml(s.passVenue) : 'Venue'}</span>
-            <span style="opacity:${s.passDate||s.passTime?'0.8':'0.3'}">📅 ${s.passDate||s.passTime ? escHtml([s.passDate,s.passTime].filter(Boolean).join(' · ')) : 'Date / Time'}</span>
-          </div>
-        `)}
-
-        <div class="gsfb-pe-divider"></div>
-
-        <!-- QR + unique code -->
-        ${blk('qr', 'QR Code', `
-          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 0">
-            <div style="background:#fff;padding:7px;border-radius:10px">${qrSvg}</div>
-            <div style="font-size:9.5px;opacity:0.45;letter-spacing:0.3px">Unique attendee QR</div>
-            <div style="font-size:11.5px;font-weight:700;letter-spacing:3px;opacity:0.65;font-family:monospace">ABCD-1234</div>
+        ${blk(`
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;gap:7px;font-size:12.5px;opacity:${s.passVenue?'0.85':'0.3'}">${pinSvg}<span>${s.passVenue ? escHtml(s.passVenue) : 'Venue not set'}</span></div>
+            ${s.passDate ? `<div style="display:flex;align-items:center;gap:7px;font-size:12.5px;opacity:0.85">${calSvg}<span>${escHtml(s.passDate)}</span></div>` : ''}
+            ${s.passTime ? `<div style="display:flex;align-items:center;gap:7px;font-size:12.5px;opacity:0.85">${clkSvg}<span>${escHtml(s.passTime)}</span></div>` : (!s.passDate ? `<div style="font-size:12px;opacity:0.3">Date / Time not set</div>` : '')}
           </div>
         `)}
 
         <div class="gsfb-pe-divider"></div>
 
-        <!-- Attendee fields -->
-        ${blk('fields', 'Attendee Info', `
+        ${blk(`
+          <div style="display:flex;flex-direction:column;align-items:center;gap:7px;padding:6px 0">
+            <div style="background:#fff;padding:8px;border-radius:10px">${qrSvg}</div>
+            <div style="font-size:9.5px;opacity:0.4;letter-spacing:0.4px">Unique attendee QR</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:3.5px;opacity:0.6;font-family:monospace">ABCD-1234</div>
+          </div>
+        `)}
+
+        <div class="gsfb-pe-divider"></div>
+
+        ${blk(`
           <div style="display:flex;flex-direction:column;gap:5px">
             <div style="display:flex;justify-content:space-between;font-size:12px">
-              <span style="opacity:0.55">${nameField ? escHtml(nameField.label||'Name') : 'Name'}</span>
-              <span style="font-weight:600;opacity:${nameField?'1':'0.3'}">${nameField ? 'Attendee Name' : '— not mapped —'}</span>
+              <span style="opacity:0.5">${nameField ? escHtml(nameField.label||'Name') : 'Name'}</span>
+              <span style="font-weight:600;opacity:${nameField?'1':'0.28'}">${nameField ? 'Attendee Name' : '— not mapped —'}</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:12px">
-              <span style="opacity:0.55">${emailField ? escHtml(emailField.label||'Email') : 'Email'}</span>
-              <span style="font-weight:600;opacity:${emailField?'0.75':'0.3'}">${emailField ? 'attendee@example.com' : '— not mapped —'}</span>
+              <span style="opacity:0.5">${emailField ? escHtml(emailField.label||'Email') : 'Email'}</span>
+              <span style="font-weight:600;opacity:${emailField?'0.75':'0.28'}">${emailField ? 'attendee@example.com' : '— not mapped —'}</span>
             </div>
           </div>
         `)}
 
         ${rules.length ? `
         <div class="gsfb-pe-divider"></div>
-        ${blk('instructions', 'Rules', `
-          <div style="font-size:9px;font-weight:700;letter-spacing:1px;opacity:0.45;margin-bottom:6px;text-transform:uppercase">Entry Rules</div>
-          ${rules.slice(0,3).map(r=>`<div style="font-size:11px;opacity:0.65;margin-bottom:2px">• ${escHtml(r)}</div>`).join('')}
-          ${rules.length>3?`<div style="font-size:10px;opacity:0.35">+${rules.length-3} more…</div>`:''}
+        ${blk(`
+          <div style="font-size:9px;font-weight:700;letter-spacing:1px;opacity:0.4;margin-bottom:7px;text-transform:uppercase">Entry Rules</div>
+          ${rules.slice(0,3).map(r=>`<div style="font-size:11px;opacity:0.65;margin-bottom:3px">• ${escHtml(r)}</div>`).join('')}
+          ${rules.length>3?`<div style="font-size:10px;opacity:0.32">+${rules.length-3} more…</div>`:''}
         `)}` : ''}
 
-        <!-- Branding watermark (locked) -->
-        <div class="gsfb-pe-block locked" style="margin-top:auto" title="GalSol branding — non-editable">
-          <div style="display:flex;align-items:center;justify-content:center;gap:5px;opacity:0.22;padding:2px 0">
+        <div class="gsfb-pe-block locked" style="margin-top:auto">
+          <div style="display:flex;align-items:center;justify-content:center;gap:5px;opacity:0.2;padding:2px 0">
             <svg viewBox="0 0 16 16" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="9" width="10" height="6" rx="1"/><path d="M5 9V6a3 3 0 016 0v3"/></svg>
-            <span style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase">${escHtml(_S.name?.split(' ')[0] || 'GalSol')}</span>
+            <span style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase">GalSol</span>
           </div>
         </div>
 
@@ -4203,27 +4172,42 @@
             placeholder="No outside food&#10;Carry valid ID&#10;One entry per pass"
             oninput="updateSetting('passRules',this.value.split('\\n').filter(l=>l.trim()))">${escAttr((s.passRules || []).join('\n'))}</textarea>
         </div>
-        <div class="gsfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="gsfb-prop" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
           <div>
-            <label class="gsfb-prop-label">Banner Colour</label>
-            <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-              <input type="color" value="${escAttr(s.passBannerColor || '#1a1a2e')}" oninput="updateSetting('passBannerColor',this.value)"
-                style="width:36px;height:36px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-              <span style="font-size:11px;color:var(--text-3)">${escAttr(s.passBannerColor || '#1a1a2e')}</span>
+            <label class="gsfb-prop-label">Bg Start</label>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+              <input type="color" value="${escAttr(s.passBannerColor || '#12172a')}" oninput="updateSetting('passBannerColor',this.value)"
+                style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
+              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passBannerColor || '#12172a')}</span>
             </div>
           </div>
           <div>
-            <label class="gsfb-prop-label">Text Colour</label>
-            <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+            <label class="gsfb-prop-label">Bg End</label>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+              <input type="color" value="${escAttr(s.passGradientColor || '#0a0f1e')}" oninput="updateSetting('passGradientColor',this.value)"
+                style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
+              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passGradientColor || '#0a0f1e')}</span>
+            </div>
+          </div>
+          <div>
+            <label class="gsfb-prop-label">Text</label>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
               <input type="color" value="${escAttr(s.passTextColor || '#ffffff')}" oninput="updateSetting('passTextColor',this.value)"
-                style="width:36px;height:36px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-              <span style="font-size:11px;color:var(--text-3)">${escAttr(s.passTextColor || '#ffffff')}</span>
+                style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
+              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passTextColor || '#ffffff')}</span>
             </div>
           </div>
         </div>
         <div class="gsfb-prop">
-          <label class="gsfb-prop-label">Logo URL <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
-          <input class="gsfb-input" type="url" value="${escAttr(s.passLogoUrl || '')}" oninput="updateSetting('passLogoUrl',this.value)" placeholder="https://…"/>
+          <label class="gsfb-prop-label">Logo <span style="color:var(--text-3);font-weight:400;text-transform:none">(optional)</span></label>
+          ${s.passLogoUrl ? `<div style="margin-bottom:6px"><img src="${escAttr(s.passLogoUrl)}" style="height:36px;border-radius:6px;object-fit:contain;background:rgba(255,255,255,0.07);padding:4px;" onerror="this.style.display='none'"/></div>` : ''}
+          <div style="display:flex;gap:6px;align-items:center">
+            <input class="gsfb-input" type="url" value="${escAttr(s.passLogoUrl || '')}" oninput="updateSetting('passLogoUrl',this.value)" placeholder="https://… or upload →" style="flex:1;font-size:12px"/>
+            <label style="cursor:pointer;padding:6px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:6px;font-size:11.5px;color:var(--text-2);white-space:nowrap">
+              Upload<input type="file" accept="image/*" style="display:none" onchange="handlePassLogoUpload(this)">
+            </label>
+          </div>
+          ${s.passLogoUrl ? `<button onclick="updateSetting('passLogoUrl','');renderPassSettings()" style="margin-top:4px;padding:3px 8px;font-size:11px;background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.25);border-radius:5px;color:var(--red);cursor:pointer">Remove logo</button>` : ''}
         </div>
         <div class="gsfb-prop">
           <label class="gsfb-prop-label">Name Field</label>
@@ -4577,6 +4561,10 @@
       if (t === 'file_upload')
         return `<div class="gsfc-upload-preview">&#8679;&nbsp; Upload File &nbsp;(Max ${f.maxMB || 10}MB)</div>`;
       if (t === 'linear_scale') {
+        if (f.style === 'stars') {
+          const stars = Array.from({ length: f.max || 5 }, () => `<span class="gsfc-star">★</span>`).join('');
+          return `<div class="gsfc-scale-preview" style="gap:2px">${stars}</div>`;
+        }
         const nums = Array.from({ length: f.max || 5 }, (_, i) => `<div class="gsfc-scale-num">${i + 1}</div>`).join('');
         return `<div class="gsfc-scale-preview"><span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.minLabel || 'Poor')}</span>${nums}<span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
       }
@@ -4997,12 +4985,13 @@
       const W = 520, H = 693;
 
       const banner = s.passBannerColor || '#12172a';
+      const gradEnd = s.passGradientColor || _pbDarken(banner, 0.4);
       const tcol = s.passTextColor || '#ffffff';
 
       // Background gradient
       const bg = ctx.createLinearGradient(0, 0, W, H);
       bg.addColorStop(0, banner);
-      bg.addColorStop(1, _pbDarken(banner, 0.4));
+      bg.addColorStop(1, gradEnd);
       ctx.fillStyle = bg;
       _pbRoundRect(ctx, 0, 0, W, H, 28); ctx.fill();
 
@@ -5034,13 +5023,11 @@
 
       // Venue + time
       let cy = 165;
-      ctx.font = '18px "Plus Jakarta Sans", sans-serif';
+      ctx.font = '17px "Plus Jakarta Sans", sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
-      if (s.passVenue) { ctx.fillText('📍 ' + s.passVenue, 24, cy); cy += 28; }
-      if (s.passDate || s.passTime) {
-        const dt = [s.passDate, s.passTime].filter(Boolean).join('  &middot;  ');
-        ctx.fillText('📅 ' + dt, 24, cy); cy += 28;
-      }
+      if (s.passVenue) { ctx.fillText('Venue: ' + s.passVenue, 24, cy); cy += 26; }
+      if (s.passDate) { ctx.fillText('Date:  ' + s.passDate, 24, cy); cy += 26; }
+      if (s.passTime) { ctx.fillText('Time:  ' + s.passTime, 24, cy); cy += 26; }
 
       // Dashed divider
       cy += 10;
