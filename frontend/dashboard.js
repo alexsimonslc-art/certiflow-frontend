@@ -413,6 +413,23 @@ function copyToClipboard(text, label = 'Copied') {
 
 /* ── DOMContentLoaded — runs on every page ───────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  // Set Platform Meta Description
+  if (!document.querySelector('meta[name="description"]')) {
+    const metaDesc = document.createElement('meta');
+    metaDesc.name = 'description';
+    metaDesc.content = 'GalSol — The Grand Event Console. An all-in-one platform for bulk mail, certificate generation, and mini-site building.';
+    document.head.appendChild(metaDesc);
+  }
+
+  // Set Platform Meta Icon (Favicon)
+  if (!document.querySelector('link[rel="icon"]')) {
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.type = 'image/svg+xml';
+    favicon.href = '/Images/GalSol%20Logo%20IC.svg';
+    document.head.appendChild(favicon);
+  }
+
   if (typeof lucide !== 'undefined') lucide.createIcons();
 
   // Add smooth page transition to eliminate the "glitch" of reloading
