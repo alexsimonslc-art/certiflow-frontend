@@ -2583,14 +2583,12 @@
       text: 'type', textarea: 'align-left', email: 'at-sign', phone: 'phone',
       number: 'hash', date: 'calendar', time: 'clock', dropdown: 'chevrons-up-down',
       radio: 'circle-dot', checkbox: 'check-square', file_upload: 'upload-cloud',
-      linear_scale: 'star', section_break: 'layout-template', event_pass: 'ticket',
       linear_scale: 'star', section_break: 'layout-template', event_pass: 'ticket', image: 'image',
     };
     const FIELD_LABELS = {
       text: 'Short Text', textarea: 'Paragraph', email: 'Email', phone: 'Phone',
       number: 'Number', date: 'Date', time: 'Time', dropdown: 'Dropdown',
       radio: 'Multiple Choice', checkbox: 'Checkboxes', file_upload: 'File Upload',
-      linear_scale: 'Rating Scale', section_break: 'Page Break', event_pass: 'Entry Pass',
       linear_scale: 'Rating Scale', section_break: 'Page Break', event_pass: 'Entry Pass', image: 'Image',
     };
 
@@ -3029,18 +3027,8 @@
             <button class="gsfb-label-rte-btn" title="Underline" onmousedown="event.preventDefault();rteExecField('flabel-${id}','${id}','label','underline')"><u>U</u></button>
             <div class="gsfb-label-rte-sep"></div>
             <button class="gsfb-label-rte-btn" title="Insert link" onmousedown="event.preventDefault();rteFieldInsertLink('flabel-${id}','${id}','label')">&#128279;</button>
-            <button class="gsfb-label-rte-btn" title="Insert image" onmousedown="event.preventDefault();document.getElementById('fimg-dlg-${id}').classList.toggle('open')">&#128444;</button>
             <div class="gsfb-label-rte-sep"></div>
             <button class="gsfb-label-rte-btn" title="Remove formatting" onmousedown="event.preventDefault();rteExecField('flabel-${id}','${id}','label','removeFormat');rteExecField('flabel-${id}','${id}','label','unlink')">&#10005;</button>
-          </div>
-          <div class="gsfb-img-dialog" id="fimg-dlg-${id}">
-            <input class="gsfb-input" id="fimg-url-${id}" style="font-size:11px;padding:5px 8px" placeholder="Image URL or upload below…"/>
-            <label style="cursor:pointer;padding:5px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:5px;font-size:11px;color:var(--text-2)">
-              Upload
-              <input type="file" accept="image/*" style="display:none" onchange="rteFieldUploadImg('${id}',this)">
-            </label>
-            <button class="gsfb-label-rte-btn" style="padding:4px 9px" onmousedown="event.preventDefault();rteFieldInsertImgUrl('${id}')">Insert</button>
-            <button class="gsfb-label-rte-btn" style="padding:4px 9px" onmousedown="event.preventDefault();document.getElementById('fimg-dlg-${id}').classList.remove('open')">Cancel</button>
           </div>
           <div class="gsfb-label-rte-body" contenteditable="true" id="flabel-${id}"
                oninput="updateFP('${id}','label',this.innerHTML)"
@@ -3250,16 +3238,7 @@
               <button class="gsfb-label-rte-btn" title="Bullet list" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','insertUnorderedList')">&#8226;&#8212;</button>
               <button class="gsfb-label-rte-btn" title="Numbered list" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','insertOrderedList')">1.</button>
               <button class="gsfb-label-rte-btn" title="Insert link" onmousedown="event.preventDefault();rteFieldInsertLink('fcdesc-${id}','${id}','description')">&#128279;</button>
-              <button class="gsfb-label-rte-btn" title="Insert image" onmousedown="event.preventDefault();document.getElementById('fcdesc-img-${id}').classList.toggle('open')">&#128444;</button>
               <button class="gsfb-label-rte-btn" title="Remove formatting" onmousedown="event.preventDefault();rteExecField('fcdesc-${id}','${id}','description','removeFormat')">&#10005;</button>
-            </div>
-            <div class="gsfb-img-dialog" id="fcdesc-img-${id}">
-              <input class="gsfb-input" id="fcdesc-url-${id}" style="font-size:11px;padding:5px 8px" placeholder="Image URL…"/>
-              <label style="cursor:pointer;padding:5px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:5px;font-size:11px;color:var(--text-2)">
-                Upload<input type="file" accept="image/*" style="display:none" onchange="rteCDescUploadImg('${id}',this)">
-              </label>
-              <button class="gsfb-label-rte-btn" style="padding:4px 9px" onmousedown="event.preventDefault();rteCDescInsertImgUrl('${id}')">Insert</button>
-              <button class="gsfb-label-rte-btn" style="padding:4px 9px" onmousedown="event.preventDefault();document.getElementById('fcdesc-img-${id}').classList.remove('open')">Cancel</button>
             </div>
             <div class="gsfb-label-rte-body" contenteditable="true" id="fcdesc-${id}"
                  oninput="updateFP('${id}','description',this.innerHTML)"
@@ -4436,7 +4415,6 @@
       // Nav
       const submitLabel = isLast ? (s.submitLabel || 'Submit') : 'Next &rarr;';
       const backVisible = !isFirst;
-      html += `<div class="gsfb-pv-nav">
       const pageStatusText = total > 1 ? `<div style="text-align:center;font-size:12.5px;color:var(--text-3);margin-bottom:10px;font-weight:600;letter-spacing:0.5px;">Page ${_pv.page + 1} of ${total}</div>` : '';
       html += `${pageStatusText}<div class="gsfb-pv-nav">
     ${backVisible ? `<button class="gsfb-pv-back" onclick="pvShowPage(${_pv.page - 1})">← Back</button>` : ''}
@@ -4576,7 +4554,6 @@
       }
 
       const descHtml = f.showDesc && f.description ? `<div style="font-size:12px;color:var(--text-3);margin:-2px 0 8px;line-height:1.5">${f.description}</div>` : '';
-      return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-field-card"><div class="gsfb-pv-label">${f.label || 'Untitled'} ${req}</div>${descHtml}${body}</div></div>`;
       const imgHtml = f.image ? `<div style="margin-bottom:14px;text-align:center;"><img src="${f.image}" style="max-width:100%;border-radius:8px;object-fit:contain;"/></div>` : '';
       return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-field-card">${imgHtml}<div class="gsfb-pv-label">${f.label || 'Untitled'} ${req}</div>${descHtml}${body}</div></div>`;
     }
