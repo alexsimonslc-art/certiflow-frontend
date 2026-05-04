@@ -295,8 +295,8 @@
     .scanner-body {
       flex: 1;
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 14px 16px 10px;
+      align-items: center; justify-content: flex-start;
+      padding: 22px 16px 10px;
       gap: 14px;
       overflow: hidden;
       position: relative;
@@ -305,7 +305,7 @@
     /* — Viewfinder — */
     .scanner-vf-wrap {
       position: relative;
-      width: min(288px, 80vw);
+      width: min(318px, 88vw);
       aspect-ratio: 1;
       border-radius: 20px;
       overflow: hidden;
@@ -1100,10 +1100,16 @@
     function processQRCode(data) {
       let token = data;
       try {
+        // Try as a full absolute URL first
         const url = new URL(data);
         token = url.searchParams.get('token') || data;
-      } catch { /* raw token */ }
-      verifyPass(token);
+      } catch {
+        // Not a valid absolute URL (e.g. relative path or misconfigured FRONTEND_URL)
+        // Try to extract ?token= from the raw string
+        const m = data.match(/[?&]token=([^&\s]+)/);
+        if (m) token = decodeURIComponent(m[1]);
+      }
+      verifyPass(token.trim());
     }
 
     /* ── Verify + result card ──────────────────────────────────────── */
