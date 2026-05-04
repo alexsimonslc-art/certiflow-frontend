@@ -2715,6 +2715,16 @@
       { id: 'bloom',   name: 'Bloom',      bg: '#100614', card: '#1c0828', accent: 'pink',
         hFont: 'Cormorant Garamond',bFont: 'Plus Jakarta Sans', hColor: '#fce7f3', bColor: '#d4a8c0', hSize: 30, bSize: 15, lightMode: false },
     ];
+
+    const PASS_THEMES = [
+      { id: 'navy',    name: 'Navy',    primary: '#0f2d6b', dark: '#061642' },
+      { id: 'violet',  name: 'Violet',  primary: '#4c1d95', dark: '#2d0e5a' },
+      { id: 'crimson', name: 'Crimson', primary: '#991b1b', dark: '#5c0f0f' },
+      { id: 'forest',  name: 'Forest',  primary: '#064e3b', dark: '#022c22' },
+      { id: 'charcoal',name: 'Charcoal',primary: '#1e293b', dark: '#0f172a' },
+      { id: 'amber',   name: 'Amber',   primary: '#78350f', dark: '#3d1a07' },
+    ];
+
     // Preview page state
     let _pv = { page: 0, pages: [], vals: {}, selOpts: {} };
 
@@ -3784,92 +3794,61 @@
       const wrap = document.getElementById('gsfbPassCanvasWrap');
       if (!wrap) return;
       const s = _S.config?.settings || {};
-      const bg   = s.passBannerColor  || '#12172a';
-      const bg2  = s.passGradientColor || _pbDarken(bg, 0.35);
-      const tc   = s.passTextColor    || '#ffffff';
-      const ac   = '#00d4ff';
-      const allFields  = _S.config?.fields || [];
-      const nameField  = s.passNameField  ? allFields.find(f => f.id === s.passNameField)  : null;
-      const emailField = s.passEmailField ? allFields.find(f => f.id === s.passEmailField) : null;
-      const rules = (s.passRules || []).filter(Boolean);
-
-      const blk = (content, extraStyle = '') =>
-        `<div class="gsfb-pe-block" style="${extraStyle}">${content}</div>`;
+      const primary = s.passBannerColor  || '#0f2d6b';
+      const darker  = s.passGradientColor || _pbDarken(primary, 0.30);
+      const allFields = _S.config?.fields || [];
+      const nameField = s.passNameField ? allFields.find(f => f.id === s.passNameField) : null;
+      const rules = (s.passRules || []).filter(Boolean).slice(0, 3);
 
       const logoHtml = s.passLogoUrl
-        ? `<img src="${escAttr(s.passLogoUrl)}" style="height:32px;width:32px;object-fit:contain;border-radius:6px;flex-shrink:0" onerror="this.style.display='none'"/>`
-        : `<div style="width:32px;height:32px;border-radius:6px;background:rgba(255,255,255,0.10);display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0.4">
-             <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="${escAttr(tc)}" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="2"/><circle cx="5.5" cy="7.5" r="1"/><polyline points="1,13 5,9 8,12 11,8 15,13"/></svg>
+        ? `<img src="${escAttr(s.passLogoUrl)}" style="width:55px;height:55px;object-fit:cover;border-radius:8px;border:1.5px solid #e0e0e0;flex-shrink:0" onerror="this.style.display='none'"/>`
+        : `<div style="width:55px;height:55px;border:1.5px dashed #ccc;border-radius:8px;background:#f8f8f8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+             <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="#ccc" stroke-width="1.4"><rect x="2" y="4" width="16" height="12" rx="2"/><circle cx="7" cy="9" r="1.5"/><polyline points="2,16 6,11 9.5,14 13,10 18,16"/></svg>
            </div>`;
 
-      const pinSvg = `<svg viewBox="0 0 12 16" width="10" height="14" fill="none" stroke="${escAttr(tc)}" stroke-width="1.4" style="flex-shrink:0;margin-top:1px"><path d="M6 1a5 5 0 0 1 5 5c0 4-5 9-5 9S1 10 1 6a5 5 0 0 1 5-5z"/><circle cx="6" cy="6" r="2"/></svg>`;
-      const calSvg = `<svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="${escAttr(tc)}" stroke-width="1.4" style="flex-shrink:0"><rect x="1" y="2" width="12" height="11" rx="2"/><line x1="1" y1="6" x2="13" y2="6"/><line x1="4" y1="1" x2="4" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/></svg>`;
-      const clkSvg = `<svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="${escAttr(tc)}" stroke-width="1.4" style="flex-shrink:0"><circle cx="7" cy="7" r="6"/><polyline points="7,4 7,7 9,9"/></svg>`;
+      const qrPat = [[1,1,1,0,1],[1,0,1,0,0],[1,1,1,0,1],[0,0,0,1,0],[1,0,1,1,1]];
+      const qrSvg = `<svg viewBox="0 0 5 5" width="100" height="100" style="display:block"><rect width="5" height="5" fill="#f0f0f0"/>${qrPat.map((row,r)=>row.map((v,c)=>v?`<rect x="${c}" y="${r}" width="1" height="1" fill="#1a1a2e"/>`:'').join('')).join('')}</svg>`;
 
-      const p = [[1,1,1,0,1],[1,0,1,0,0],[1,1,1,0,1],[0,0,0,1,0],[1,0,1,1,1]];
-      const qrSvg = `<svg viewBox="0 0 5 5" width="76" height="76" style="display:block;border-radius:4px"><rect width="5" height="5" fill="#fff"/>${p.map((row,r)=>row.map((v,c)=>v?`<rect x="${c}" y="${r}" width="1" height="1" fill="#111"/>`:'').join('')).join('')}</svg>`;
+      const dateStr = s.passDate || '';
+      const timeStr = s.passTime || '';
+      const dateLine = [dateStr, timeStr].filter(Boolean).join('  ·  ') || 'Date & Time';
+      const venueLine = s.passVenue || 'Venue';
+      const nameLabel = nameField ? escHtml(nameField.label || 'Name') : 'Attendee Name';
+      const eventLabel = escHtml(s.passEventName || 'Event Name');
 
       wrap.innerHTML = `
-      <div class="gsfb-pe-card" style="background:linear-gradient(160deg,${escAttr(bg)},${escAttr(bg2)});color:${escAttr(tc)}">
-
-        <div style="height:8px;background:linear-gradient(90deg,${escAttr(ac)},#7c3aed);flex-shrink:0"></div>
-
-        ${blk(`
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div class="gsfb-pe-card">
+        <!-- WHITE TOP ZONE -->
+        <div style="background:#ffffff;flex:0 0 308px;display:flex;flex-direction:column;padding:14px 16px 10px;overflow:hidden">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px">
+            <span style="font-size:7.5px;font-weight:700;letter-spacing:1.5px;padding:3px 10px;background:#f0f4f8;border-radius:20px;color:#999;text-transform:uppercase;margin-top:5px;align-self:flex-start">Entry Pass</span>
             ${logoHtml}
-            <span style="font-size:9px;font-weight:700;letter-spacing:1.8px;padding:3px 10px;background:rgba(255,255,255,0.12);border-radius:20px;opacity:0.75">ENTRY PASS</span>
           </div>
-          <div style="font-size:20px;font-weight:800;line-height:1.25;letter-spacing:-0.2px">${escHtml(s.passEventName || 'Event Name')}</div>
-        `)}
-
-        ${blk(`
-          <div style="display:flex;flex-direction:column;gap:7px">
-            <div style="display:flex;align-items:center;gap:7px;font-size:12.5px;opacity:${s.passVenue?'0.85':'0.3'}">${pinSvg}<span>${s.passVenue ? escHtml(s.passVenue) : 'Venue not set'}</span></div>
-            ${s.passDate ? `<div style="display:flex;align-items:center;gap:7px;font-size:12.5px;opacity:0.85">${calSvg}<span>${escHtml(s.passDate)}</span></div>` : ''}
-            ${s.passTime ? `<div style="display:flex;align-items:center;gap:7px;font-size:12.5px;opacity:0.85">${clkSvg}<span>${escHtml(s.passTime)}</span></div>` : (!s.passDate ? `<div style="font-size:12px;opacity:0.3">Date / Time not set</div>` : '')}
-          </div>
-        `)}
-
-        <div class="gsfb-pe-divider"></div>
-
-        ${blk(`
-          <div style="display:flex;flex-direction:column;align-items:center;gap:7px;padding:6px 0">
-            <div style="background:#fff;padding:8px;border-radius:10px">${qrSvg}</div>
-            <div style="font-size:9.5px;opacity:0.4;letter-spacing:0.4px">Unique attendee QR</div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:3.5px;opacity:0.6;font-family:monospace">ABCD-1234</div>
-          </div>
-        `)}
-
-        <div class="gsfb-pe-divider"></div>
-
-        ${blk(`
-          <div style="display:flex;flex-direction:column;gap:5px">
-            <div style="display:flex;justify-content:space-between;font-size:12px">
-              <span style="opacity:0.5">${nameField ? escHtml(nameField.label||'Name') : 'Name'}</span>
-              <span style="font-weight:600;opacity:${nameField?'1':'0.28'}">${nameField ? 'Attendee Name' : '— not mapped —'}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:12px">
-              <span style="opacity:0.5">${emailField ? escHtml(emailField.label||'Email') : 'Email'}</span>
-              <span style="font-weight:600;opacity:${emailField?'0.75':'0.28'}">${emailField ? 'attendee@example.com' : '— not mapped —'}</span>
-            </div>
-          </div>
-        `)}
-
-        ${rules.length ? `
-        <div class="gsfb-pe-divider"></div>
-        ${blk(`
-          <div style="font-size:9px;font-weight:700;letter-spacing:1px;opacity:0.4;margin-bottom:7px;text-transform:uppercase">Entry Rules</div>
-          ${rules.slice(0,3).map(r=>`<div style="font-size:11px;opacity:0.65;margin-bottom:3px">• ${escHtml(r)}</div>`).join('')}
-          ${rules.length>3?`<div style="font-size:10px;opacity:0.32">+${rules.length-3} more…</div>`:''}
-        `)}` : ''}
-
-        <div class="gsfb-pe-block locked" style="margin-top:auto">
-          <div style="display:flex;align-items:center;justify-content:center;gap:5px;opacity:0.2;padding:2px 0">
-            <svg viewBox="0 0 16 16" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="9" width="10" height="6" rx="1"/><path d="M5 9V6a3 3 0 016 0v3"/></svg>
-            <span style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase">GalSol</span>
+          <div style="text-align:center;font-size:16px;font-weight:800;color:#0d1b3e;line-height:1.25;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${eventLabel}</div>
+          <div style="text-align:center;font-size:10px;color:#555;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(dateLine)}</div>
+          <div style="text-align:center;font-size:10px;color:#888;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(venueLine)}</div>
+          <div style="border-top:1.5px dashed #dde0e8;margin-bottom:8px"></div>
+          <div style="flex:1;display:flex;align-items:center;justify-content:center">
+            <div style="background:#f7f7f7;border-radius:10px;padding:8px;box-shadow:0 2px 6px rgba(0,0,0,0.06)">${qrSvg}</div>
           </div>
         </div>
-
+        <!-- COLORED BOTTOM ZONE -->
+        <div style="background:${escAttr(primary)};flex:1;display:flex;flex-direction:column;overflow:hidden">
+          <div style="flex:1;padding:12px 16px 8px;overflow:hidden">
+            <div style="font-size:15px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nameLabel}</div>
+            <div style="font-size:9.5px;color:rgba(255,255,255,0.55);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${eventLabel}</div>
+            <div style="border-top:1px dashed rgba(255,255,255,0.25);margin-bottom:7px"></div>
+            ${rules.length ? `
+              <div style="font-size:8px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.45);margin-bottom:4px;text-transform:uppercase">Rules</div>
+              ${rules.map(r=>`<div style="font-size:10px;color:rgba(255,255,255,0.72);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">• ${escHtml(r)}</div>`).join('')}
+            ` : `<div style="font-size:10px;color:rgba(255,255,255,0.3);font-style:italic">No rules set</div>`}
+          </div>
+          <div style="background:${escAttr(darker)};padding:7px 16px;display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0">
+            <span style="font-size:8px;color:rgba(255,255,255,0.45)">Powered by</span>
+            <img src="Images/GalSol%20White.svg" style="height:13px;opacity:0.55" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"/>
+            <span style="display:none;font-size:9px;font-weight:700;letter-spacing:0.5px;color:rgba(255,255,255,0.6)">GalSol</span>
+          </div>
+        </div>
       </div>`;
     }
 
@@ -4167,34 +4146,43 @@
           </div>
         </div>
         <div class="gsfb-prop">
-          <label class="gsfb-prop-label">Entry Rules <span style="color:var(--text-3);font-weight:400;text-transform:none">(one per line)</span></label>
-          <textarea class="gsfb-input" rows="3" style="resize:vertical;font-family:var(--font);font-size:12.5px"
-            placeholder="No outside food&#10;Carry valid ID&#10;One entry per pass"
-            oninput="updateSetting('passRules',this.value.split('\\n').filter(l=>l.trim()))">${escAttr((s.passRules || []).join('\n'))}</textarea>
+          <label class="gsfb-prop-label">Entry Rules <span style="color:var(--text-3);font-weight:400;text-transform:none">(max 3 · 60 chars each)</span></label>
+          ${[0,1,2].map(i => {
+            const rv = (s.passRules||[])[i] || '';
+            return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <input class="gsfb-input" maxlength="60" value="${escAttr(rv)}" style="flex:1;font-size:12.5px" placeholder="Rule ${i+1}…" oninput="updatePassSettingRule(${i},this.value)"/>
+              <span style="font-size:10px;color:var(--text-3);flex-shrink:0;min-width:28px;text-align:right">${rv.length}/60</span>
+            </div>`;
+          }).join('')}
         </div>
-        <div class="gsfb-prop" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Pass Themes</label>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
+            ${PASS_THEMES.map(t => {
+              const isSel = (s.passBannerColor||'#0f2d6b') === t.primary;
+              return `<div onclick="applyPassTheme('${t.id}')" title="${t.name}" style="border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid ${isSel?'var(--cyan)':'transparent'};transition:border-color 0.15s">
+                <div style="height:28px;background:${t.primary}"></div>
+                <div style="height:10px;background:${t.dark}"></div>
+                <div style="font-size:9px;text-align:center;padding:3px 0;color:var(--text-3);background:var(--glass)">${t.name}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+        <div class="gsfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div>
-            <label class="gsfb-prop-label">Bg Start</label>
+            <label class="gsfb-prop-label">Primary Color</label>
             <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-              <input type="color" value="${escAttr(s.passBannerColor || '#12172a')}" oninput="updateSetting('passBannerColor',this.value)"
+              <input type="color" value="${escAttr(s.passBannerColor || '#0f2d6b')}" oninput="updateSetting('passBannerColor',this.value)"
                 style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passBannerColor || '#12172a')}</span>
+              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passBannerColor || '#0f2d6b')}</span>
             </div>
           </div>
           <div>
-            <label class="gsfb-prop-label">Bg End</label>
+            <label class="gsfb-prop-label">Footer Dark</label>
             <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-              <input type="color" value="${escAttr(s.passGradientColor || '#0a0f1e')}" oninput="updateSetting('passGradientColor',this.value)"
+              <input type="color" value="${escAttr(s.passGradientColor || '#061642')}" oninput="updateSetting('passGradientColor',this.value)"
                 style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passGradientColor || '#0a0f1e')}</span>
-            </div>
-          </div>
-          <div>
-            <label class="gsfb-prop-label">Text</label>
-            <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-              <input type="color" value="${escAttr(s.passTextColor || '#ffffff')}" oninput="updateSetting('passTextColor',this.value)"
-                style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passTextColor || '#ffffff')}</span>
+              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passGradientColor || '#061642')}</span>
             </div>
           </div>
         </div>
@@ -4389,6 +4377,22 @@
       rules[idx] = value;
       _S.updateField(id, { passRules: rules });
       setSaveStatus('unsaved');
+    }
+
+    function updatePassSettingRule(idx, val) {
+      const r = [...(_S.config?.settings?.passRules || [])];
+      while (r.length <= idx) r.push('');
+      r[idx] = val;
+      updateSetting('passRules', r.slice(0, 3));
+    }
+
+    function applyPassTheme(id) {
+      const t = PASS_THEMES.find(x => x.id === id);
+      if (!t) return;
+      _S.updateSettings({ passBannerColor: t.primary, passGradientColor: t.dark });
+      setSaveStatus('unsaved');
+      if (canvasTab === 'pass') { renderPassCanvas(); renderBuilderPass(); }
+      renderPassSettings();
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -4983,118 +4987,105 @@
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const W = 520, H = 693;
+      const SPLIT = 402, FOOTER_H = 44, R = 24;
 
-      const banner = s.passBannerColor || '#12172a';
-      const gradEnd = s.passGradientColor || _pbDarken(banner, 0.4);
-      const tcol = s.passTextColor || '#ffffff';
+      const primary = s.passBannerColor  || '#0f2d6b';
+      const darker  = s.passGradientColor || _pbDarken(primary, 0.30);
 
-      // Background gradient
-      const bg = ctx.createLinearGradient(0, 0, W, H);
-      bg.addColorStop(0, banner);
-      bg.addColorStop(1, gradEnd);
-      ctx.fillStyle = bg;
-      _pbRoundRect(ctx, 0, 0, W, H, 28); ctx.fill();
-
-      // Subtle dot texture
-      ctx.fillStyle = 'rgba(255,255,255,0.018)';
-      for (let r = 0; r < H; r += 18)
-        for (let c = 0; c < W; c += 18)
-          ctx.fillRect(c, r, 2, 2);
-
-      // Top accent stripe
-      const stripe = ctx.createLinearGradient(0, 0, W, 0);
-      stripe.addColorStop(0, '#00d4ff'); stripe.addColorStop(1, '#7c3aed');
-      ctx.fillStyle = stripe;
-      _pbRoundRect(ctx, 0, 0, W, 9, { tl: 28, tr: 28, bl: 0, br: 0 }); ctx.fill();
-
-      // "ENTRY PASS" badge
-      ctx.fillStyle = 'rgba(255,255,255,0.10)';
-      _pbRoundRect(ctx, 24, 26, 140, 30, 15); ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.60)';
-      ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('ENTRY PASS', 40, 47);
-
-      // Event name (large bold Montserrat)
-      ctx.fillStyle = tcol;
-      ctx.font = 'bold 36px "Montserrat", "Plus Jakarta Sans", sans-serif';
-      const eventName = s.passEventName || 'Event Name';
-      _pbWrapText(ctx, eventName, 24, 102, W - 48, 44);
-
-      // Venue + time
-      let cy = 165;
-      ctx.font = '17px "Plus Jakarta Sans", sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.72)';
-      if (s.passVenue) { ctx.fillText('Venue: ' + s.passVenue, 24, cy); cy += 26; }
-      if (s.passDate) { ctx.fillText('Date:  ' + s.passDate, 24, cy); cy += 26; }
-      if (s.passTime) { ctx.fillText('Time:  ' + s.passTime, 24, cy); cy += 26; }
-
-      // Dashed divider
-      cy += 10;
+      // Card shape + zones
       ctx.save();
-      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([6, 5]);
-      ctx.beginPath(); ctx.moveTo(24, cy); ctx.lineTo(W - 24, cy); ctx.stroke();
+      _pbRoundRect(ctx, 0, 0, W, H, R); ctx.clip();
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, SPLIT);
+      ctx.fillStyle = primary;   ctx.fillRect(0, SPLIT, W, H - SPLIT);
+      ctx.fillStyle = darker;    ctx.fillRect(0, H - FOOTER_H, W, FOOTER_H);
       ctx.restore();
-      cy += 18;
 
-      // QR placeholder (portrait center)
-      const qrS = 160, qrX = (W - qrS) / 2, qrY = cy;
-      ctx.fillStyle = 'rgba(255,255,255,0.10)';
-      _pbRoundRect(ctx, qrX - 12, qrY - 12, qrS + 24, qrS + 24, 18); ctx.fill();
-      ctx.fillStyle = '#ffffff';
-      _pbRoundRect(ctx, qrX, qrY, qrS, qrS, 12); ctx.fill();
+      // Badge
+      ctx.fillStyle = '#f0f4f8';
+      _pbRoundRect(ctx, 24, 22, 112, 22, 11); ctx.fill();
+      ctx.fillStyle = '#888';
+      ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('ENTRY PASS', 38, 37);
 
-      // QR pixel pattern
-      ctx.fillStyle = '#000000';
-      const cell = Math.floor(qrS / 9);
-      const pat = [
-        [1, 1, 1, 1, 1, 1, 1, 0, 0], [1, 0, 0, 0, 0, 0, 1, 0, 1],
-        [1, 0, 1, 1, 1, 0, 1, 0, 0], [1, 0, 1, 1, 1, 0, 1, 0, 1],
-        [1, 0, 1, 1, 1, 0, 1, 0, 0], [1, 0, 0, 0, 0, 0, 1, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 1, 0, 1, 0, 1],
-      ];
-      const pad = 6;
-      for (let r = 0; r < 9; r++)
-        for (let c = 0; c < 9; c++)
-          if (pat[r][c]) ctx.fillRect(qrX + pad + c * cell, qrY + pad + r * cell, cell - 1, cell - 1);
+      // Logo holder (top-right placeholder — logo loaded async)
+      const LX = W - 70 - 24, LY = 16, LS = 70;
+      ctx.fillStyle = '#f5f5f5'; _pbRoundRect(ctx, LX, LY, LS, LS, 8); ctx.fill();
+      ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1.5;
+      _pbRoundRect(ctx, LX, LY, LS, LS, 8); ctx.stroke();
 
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
-      ctx.font = '14px "Plus Jakarta Sans", sans-serif';
+      // Event name
+      ctx.fillStyle = '#0d1b3e';
+      ctx.font = 'bold 26px "Plus Jakarta Sans",sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Scan to verify', W / 2, qrY + qrS + 22);
-      cy = qrY + qrS + 42;
+      _pbWrapText(ctx, s.passEventName || 'Event Name', W / 2, 100, W - 48, 34);
 
-      // Rules
+      // Date + Time + Venue
+      const dtStr = [s.passDate, s.passTime].filter(Boolean).join('  ·  ');
+      ctx.font = '14px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = '#555';
+      if (dtStr) ctx.fillText(dtStr, W / 2, 162);
+      if (s.passVenue) { ctx.fillStyle = '#777'; ctx.fillText(s.passVenue, W / 2, 180); }
+
+      // Separator
+      ctx.save();
+      ctx.strokeStyle = '#dde0e8'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.moveTo(24, 200); ctx.lineTo(W - 24, 200); ctx.stroke();
+      ctx.restore();
+
+      // QR box
+      const QS = 164, QX = (W - QS) / 2, QY = 216;
+      ctx.fillStyle = '#f5f5f5'; _pbRoundRect(ctx, QX - 10, QY - 10, QS + 20, QS + 20, 14); ctx.fill();
+      ctx.fillStyle = '#ffffff'; _pbRoundRect(ctx, QX, QY, QS, QS, 10); ctx.fill();
+      // QR pattern
+      ctx.fillStyle = '#1a1a2e';
+      const cellSz = Math.floor((QS - 12) / 9);
+      const qrPat = [[1,1,1,1,1,1,1,0,0],[1,0,0,0,0,0,1,0,1],[1,0,1,1,1,0,1,0,0],
+                     [1,0,1,1,1,0,1,0,1],[1,0,1,1,1,0,1,0,0],[1,0,0,0,0,0,1,0,1],
+                     [1,1,1,1,1,1,1,0,0],[0,0,1,0,0,0,0,0,0],[0,1,0,0,1,0,1,0,1]];
+      for (let pr = 0; pr < 9; pr++)
+        for (let pc = 0; pc < 9; pc++)
+          if (qrPat[pr][pc]) ctx.fillRect(QX + 6 + pc * cellSz, QY + 6 + pr * cellSz, cellSz - 1, cellSz - 1);
+
+      // Colored zone: attendee info
+      const CY = SPLIT + 18;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 22px "Plus Jakarta Sans",sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('Attendee Name', 24, CY + 6);
+      ctx.font = '13px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.60)';
+      ctx.fillText(s.passEventName || '', 24, CY + 28);
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.moveTo(24, CY + 40); ctx.lineTo(W - 24, CY + 40); ctx.stroke();
+      ctx.restore();
+
       const rules = (s.passRules || []).filter(Boolean).slice(0, 3);
+      let ry = CY + 56;
       if (rules.length) {
         ctx.textAlign = 'left';
-        ctx.font = 'bold 14px "Plus Jakarta Sans", sans-serif';
+        ctx.font = 'bold 11px "Plus Jakarta Sans",sans-serif';
         ctx.fillStyle = 'rgba(255,255,255,0.45)';
-        ctx.fillText('ENTRY RULES', 24, cy); cy += 20;
-        ctx.font = '14px "Plus Jakarta Sans", sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.65)';
-        rules.forEach(r => { ctx.fillText('* ' + r, 24, cy); cy += 20; });
+        ctx.fillText('RULES', 24, ry); ry += 17;
+        ctx.font = '12px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+        rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 17; });
       }
 
-      // Bottom attendee strip
-      const stripY = H - 66;
-      ctx.fillStyle = 'rgba(255,255,255,0.05)';
-      _pbRoundRect(ctx, 0, stripY, W, 66, { tl: 0, tr: 0, bl: 28, br: 28 }); ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.30)';
-      ctx.font = '15px "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('Attendee Name', 24, stripY + 26);
-      ctx.textAlign = 'right';
-      ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
+      // Footer branding
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.50)';
-      ctx.fillText('GalSol', W - 24, stripY + 26);
-      ctx.textAlign = 'left';
-      ctx.font = '13px "Plus Jakarta Sans", sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.22)';
-      ctx.fillText('attendee@example.com', 24, stripY + 47);
+      ctx.fillText('Powered by GalSol', W / 2, H - FOOTER_H + 26);
+
+      // Async logo
+      if (s.passLogoUrl) {
+        const li = new Image(); li.crossOrigin = 'anonymous';
+        li.onload = () => { ctx.save(); _pbRoundRect(ctx, LX, LY, LS, LS, 8); ctx.clip(); ctx.drawImage(li, LX, LY, LS, LS); ctx.restore(); };
+        li.src = s.passLogoUrl;
+      }
     }
 
     /* ── Pass canvas helpers ──────────────────────────────────────── */

@@ -3096,131 +3096,113 @@
     function renderPassCanvas(pass) {
       const canvas = document.getElementById('passCanvas');
       const ctx = canvas.getContext('2d');
+      const DPR = Math.min(window.devicePixelRatio || 1, 2);
       const W = 520, H = 693;
-      canvas.width = W; canvas.height = H;
+      canvas.width = Math.round(W * DPR);
+      canvas.height = Math.round(H * DPR);
+      canvas.style.width = W + 'px';
+      canvas.style.maxWidth = '100%';
+      canvas.style.height = 'auto';
+      ctx.scale(DPR, DPR);
 
       const cfg = pass.config || {};
-      const banner   = cfg.bannerColor   || '#12172a';
-      const gradEnd  = cfg.gradientColor || _darken(banner, 0.4);
-      const tcol     = cfg.textColor     || '#ffffff';
+      const primary = cfg.bannerColor   || '#0f2d6b';
+      const darker  = cfg.gradientColor || _darken(primary, 0.30);
+      const SPLIT = 402, FOOTER_H = 44, R = 24;
 
-      // Background gradient
-      const bgGrad = ctx.createLinearGradient(0, 0, W, H);
-      bgGrad.addColorStop(0, banner);
-      bgGrad.addColorStop(1, gradEnd);
-      ctx.fillStyle = bgGrad;
-      _rr(ctx, 0, 0, W, H, 28); ctx.fill();
+      // Card shape clip + zone fills
+      ctx.save();
+      _rr(ctx, 0, 0, W, H, R); ctx.clip();
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, SPLIT);
+      ctx.fillStyle = primary;   ctx.fillRect(0, SPLIT, W, H - SPLIT);
+      ctx.fillStyle = darker;    ctx.fillRect(0, H - FOOTER_H, W, FOOTER_H);
+      ctx.restore();
 
-      // Dot texture
-      ctx.fillStyle = 'rgba(255,255,255,0.015)';
-      for (let r = 0; r < H; r += 18) for (let c = 0; c < W; c += 18) ctx.fillRect(c, r, 2, 2);
+      // ── WHITE ZONE ──────────────────────────────────────────────────
+      // Badge
+      ctx.fillStyle = '#f0f4f8';
+      _rr(ctx, 24, 22, 112, 22, 11); ctx.fill();
+      ctx.fillStyle = '#888';
+      ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('ENTRY PASS', 38, 37);
 
-      // Top accent stripe
-      const stripe = ctx.createLinearGradient(0, 0, W, 0);
-      stripe.addColorStop(0, '#00d4ff'); stripe.addColorStop(1, '#7c3aed');
-      ctx.fillStyle = stripe;
-      _rr(ctx, 0, 0, W, 9, { tl:28, tr:28, bl:0, br:0 }); ctx.fill();
+      // Logo holder outline (drawn now; filled by async load)
+      const LX = W - 70 - 24, LY = 16, LS = 70;
+      ctx.fillStyle = '#f5f5f5'; _rr(ctx, LX, LY, LS, LS, 8); ctx.fill();
+      ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1.5;
+      _rr(ctx, LX, LY, LS, LS, 8); ctx.stroke();
 
-      function drawPass() {
-        // "ENTRY PASS" badge
-        ctx.fillStyle = 'rgba(255,255,255,0.10)';
-        _rr(ctx, 24, 26, 136, 28, 14); ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,0.60)';
-        ctx.font = 'bold 13px "Plus Jakarta Sans",sans-serif';
+      // Event name (centered, 2-line max)
+      ctx.fillStyle = '#0d1b3e';
+      ctx.font = 'bold 26px "Plus Jakarta Sans",sans-serif';
+      ctx.textAlign = 'center';
+      _wrapText(ctx, cfg.eventName || 'Event Name', W / 2, 100, W - 48, 34);
+
+      // Date · Time and Venue
+      const dtStr = [cfg.date, cfg.time].filter(Boolean).join('  ·  ');
+      ctx.font = '14px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = '#555'; ctx.textAlign = 'center';
+      if (dtStr)     ctx.fillText(dtStr, W / 2, 158);
+      if (cfg.venue) { ctx.fillStyle = '#777'; ctx.fillText(cfg.venue, W / 2, 177); }
+
+      // Dashed separator
+      ctx.save();
+      ctx.strokeStyle = '#dde0e8'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.moveTo(24, 198); ctx.lineTo(W - 24, 198); ctx.stroke();
+      ctx.restore();
+
+      // QR box (white bg — actual QR drawn async)
+      const QS = 164, QX = (W - QS) / 2, QY = 214;
+      ctx.fillStyle = '#f5f5f5'; _rr(ctx, QX - 10, QY - 10, QS + 20, QS + 20, 14); ctx.fill();
+      ctx.fillStyle = '#ffffff'; _rr(ctx, QX, QY, QS, QS, 10); ctx.fill();
+
+      // ── COLORED ZONE ────────────────────────────────────────────────
+      const CY = SPLIT + 18;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 22px "Plus Jakarta Sans",sans-serif';
+      ctx.textAlign = 'left';
+      _wrapText(ctx, pass.attendeeName || '—', 24, CY + 6, W - 48, 28);
+
+      ctx.font = '13px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.60)';
+      ctx.fillText(cfg.eventName || '', 24, CY + 38);
+
+      // Dashed sep
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.moveTo(24, CY + 50); ctx.lineTo(W - 24, CY + 50); ctx.stroke();
+      ctx.restore();
+
+      // Rules
+      const rules = (cfg.rules || []).filter(Boolean).slice(0, 3);
+      let ry = CY + 66;
+      if (rules.length) {
         ctx.textAlign = 'left';
-        ctx.fillText('ENTRY PASS', 40, 45);
-
-        // Event name
-        ctx.fillStyle = tcol;
-        ctx.font = 'bold 34px "Plus Jakarta Sans",sans-serif';
-        _wrapText(ctx, cfg.eventName || 'Event Name', 24, 100, W - 48, 42);
-
-        // Details
-        let cy = 158;
-        ctx.font = '16px "Plus Jakarta Sans",sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.70)';
-        if (cfg.venue)            { ctx.fillText('Venue:  ' + cfg.venue,            24, cy); cy += 26; }
-        if (cfg.date)             { ctx.fillText('Date:   ' + cfg.date,             24, cy); cy += 26; }
-        if (cfg.time)             { ctx.fillText('Time:   ' + cfg.time,             24, cy); cy += 26; }
-
-        // Dashed divider
-        cy += 8;
-        ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1;
-        ctx.setLineDash([6,5]); ctx.beginPath(); ctx.moveTo(24,cy); ctx.lineTo(W-24,cy); ctx.stroke(); ctx.restore();
-        cy += 18;
-
-        // QR area
-        const qrS = 156, qrX = (W - qrS) / 2, qrY = cy;
-        ctx.fillStyle = 'rgba(255,255,255,0.08)';
-        _rr(ctx, qrX-14, qrY-14, qrS+28, qrS+28, 18); ctx.fill();
-        ctx.fillStyle = '#ffffff';
-        _rr(ctx, qrX, qrY, qrS, qrS, 12); ctx.fill();
-
-        const qrImg = new Image();
-        qrImg.onload = () => {
-          ctx.drawImage(qrImg, qrX+6, qrY+6, qrS-12, qrS-12);
-          ctx.fillStyle = 'rgba(255,255,255,0.42)';
-          ctx.font = '13px "Plus Jakarta Sans",sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText('Scan to verify', W/2, qrY+qrS+20);
-          // Unique code
-          ctx.font = 'bold 13px monospace';
-          ctx.fillStyle = 'rgba(255,255,255,0.55)';
-          ctx.fillText(pass.token || pass.submissionId?.slice(0,8)?.toUpperCase() || '', W/2, qrY+qrS+38);
-          finalizePass(qrY + qrS + 55);
-        };
-        qrImg.onerror = () => finalizePass(qrY + qrS + 20);
-        qrImg.src = pass.qrDataUrl;
+        ctx.font = 'bold 11px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.fillText('RULES', 24, ry); ry += 17;
+        ctx.font = '12px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.72)';
+        rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 17; });
       }
 
-      function finalizePass(cy) {
-        // Attendee info strip
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth=1; ctx.setLineDash([6,5]);
-        ctx.beginPath(); ctx.moveTo(24,cy); ctx.lineTo(W-24,cy); ctx.stroke(); ctx.restore();
-        cy += 16;
+      // Footer text
+      ctx.textAlign = 'center';
+      ctx.font = '10px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.50)';
+      ctx.fillText('Powered by GalSol', W / 2, H - FOOTER_H + 26);
 
-        ctx.textAlign = 'left';
-        ctx.font = '14px "Plus Jakarta Sans",sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.50)';
-        ctx.fillText(pass.attendeeEmail || '', 24, cy); cy += 22;
-        ctx.font = 'bold 18px "Plus Jakarta Sans",sans-serif';
-        ctx.fillStyle = tcol;
-        _wrapText(ctx, pass.attendeeName || '—', 24, cy, W-48, 24);
-        cy += 28;
-
-        // Rules
-        const rules = (cfg.rules||[]).filter(Boolean).slice(0,3);
-        if (rules.length) {
-          cy += 4;
-          ctx.font = 'bold 11px "Plus Jakarta Sans",sans-serif';
-          ctx.fillStyle = 'rgba(255,255,255,0.38)';
-          ctx.fillText('ENTRY RULES', 24, cy); cy += 18;
-          ctx.font = '12px "Plus Jakarta Sans",sans-serif';
-          ctx.fillStyle = 'rgba(255,255,255,0.60)';
-          rules.forEach(r => { ctx.fillText('• '+r, 24, cy); cy += 17; });
-        }
-
-        // Branding
-        const bY = H - 32;
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.18)';
-        ctx.fillText('GalSol', W/2, bY);
-      }
-
-      // Logo (optional)
+      // ── ASYNC: Logo + QR ────────────────────────────────────────────
       if (cfg.logoUrl) {
-        const logoImg = new Image();
-        logoImg.crossOrigin = 'anonymous';
-        logoImg.onload = () => {
-          const lh = 36, lw = lh*(logoImg.naturalWidth/(logoImg.naturalHeight||1));
-          ctx.drawImage(logoImg, W-lw-20, 26, lw, lh);
-        };
-        logoImg.src = cfg.logoUrl;
+        const li = new Image(); li.crossOrigin = 'anonymous';
+        li.onload = () => { ctx.save(); _rr(ctx, LX, LY, LS, LS, 8); ctx.clip(); ctx.drawImage(li, LX, LY, LS, LS); ctx.restore(); };
+        li.src = cfg.logoUrl;
       }
 
-      drawPass();
+      const qi = new Image();
+      qi.onload = () => { ctx.drawImage(qi, QX + 6, QY + 6, QS - 12, QS - 12); };
+      qi.src = pass.qrDataUrl;
     }
 
     function _rr(ctx, x, y, w, h, r) {
