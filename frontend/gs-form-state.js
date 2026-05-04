@@ -27,19 +27,20 @@ function gsf_storageKey() {
 
 /* ── Default field templates ────────────────────────────────────── */
 const GSF_FIELD_DEFAULTS = {
-  text: () => ({ label: 'Short Answer', placeholder: 'Your answer', required: false, validation: {} }),
-  textarea: () => ({ label: 'Paragraph', placeholder: 'Write your answer…', required: false, validation: {} }),
-  email: () => ({ label: 'Email Address', placeholder: 'you@example.com', required: true, validation: {} }),
-  phone: () => ({ label: 'Phone Number', placeholder: '+91 98765 43210', required: false, validation: {} }),
-  number: () => ({ label: 'Number', placeholder: '0', required: false, validation: { min: null, max: null } }),
-  dropdown: () => ({ label: 'Dropdown', placeholder: 'Select an option', required: false, options: ['Option 1', 'Option 2', 'Option 3'] }),
-  radio: () => ({ label: 'Multiple Choice', placeholder: '', required: false, options: ['Option 1', 'Option 2', 'Option 3'] }),
-  checkbox: () => ({ label: 'Checkboxes', placeholder: '', required: false, options: ['Option 1', 'Option 2'] }),
-  date: () => ({ label: 'Date', placeholder: '', required: false, validation: {} }),
-  time: () => ({ label: 'Time', placeholder: '', required: false, validation: {} }),
-  file_upload: () => ({ label: 'File Upload', placeholder: 'Upload a file', required: false, accept: '*', maxMB: 10 }),
-  linear_scale: () => ({ label: 'Rating', placeholder: '', required: false, min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars' }),
+  text: () => ({ label: 'Short Answer', placeholder: 'Your answer', required: false, validation: {}, image: null }),
+  textarea: () => ({ label: 'Paragraph', placeholder: 'Write your answer…', required: false, validation: {}, image: null }),
+  email: () => ({ label: 'Email Address', placeholder: 'you@example.com', required: true, validation: {}, image: null }),
+  phone: () => ({ label: 'Phone Number', placeholder: '+91 98765 43210', required: false, validation: {}, image: null }),
+  number: () => ({ label: 'Number', placeholder: '0', required: false, validation: { min: null, max: null }, image: null }),
+  dropdown: () => ({ label: 'Dropdown', placeholder: 'Select an option', required: false, options: ['Option 1', 'Option 2', 'Option 3'], image: null }),
+  radio: () => ({ label: 'Multiple Choice', placeholder: '', required: false, options: ['Option 1', 'Option 2', 'Option 3'], image: null }),
+  checkbox: () => ({ label: 'Checkboxes', placeholder: '', required: false, options: ['Option 1', 'Option 2'], image: null }),
+  date: () => ({ label: 'Date', placeholder: '', required: false, validation: {}, image: null }),
+  time: () => ({ label: 'Time', placeholder: '', required: false, validation: {}, image: null }),
+  file_upload: () => ({ label: 'File Upload', placeholder: 'Upload a file', required: false, accept: '*', maxMB: 10, image: null }),
+  linear_scale: () => ({ label: 'Rating', placeholder: '', required: false, min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars', image: null }),
   section_break: () => ({ label: 'Section Title', description: 'Add a description for this section.', image: null, required: false }),
+  image: () => ({ label: 'Image Title', description: 'Add an optional description.', image: null, required: false }),
   event_pass: () => ({
     label: 'Entry Pass',
     passEventName: '',
@@ -57,6 +58,7 @@ const GSF_FIELD_DEFAULTS = {
     passStaffCode: '',
     passShowAttendance: false,
     required: false,
+    image: null,
   }),
 };
 
