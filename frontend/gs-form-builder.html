@@ -2717,12 +2717,14 @@
     ];
 
     const PASS_THEMES = [
-      { id: 'navy',    name: 'Navy',    primary: '#0f2d6b', dark: '#061642' },
-      { id: 'violet',  name: 'Violet',  primary: '#4c1d95', dark: '#2d0e5a' },
-      { id: 'crimson', name: 'Crimson', primary: '#991b1b', dark: '#5c0f0f' },
-      { id: 'forest',  name: 'Forest',  primary: '#064e3b', dark: '#022c22' },
-      { id: 'charcoal',name: 'Charcoal',primary: '#1e293b', dark: '#0f172a' },
-      { id: 'amber',   name: 'Amber',   primary: '#78350f', dark: '#3d1a07' },
+      { id: 'royal',    name: 'Royal Blue',  primary: '#003087' },
+      { id: 'navy',     name: 'Deep Navy',   primary: '#002147' },
+      { id: 'slate',    name: 'Corporate',   primary: '#1a2744' },
+      { id: 'burgundy', name: 'Burgundy',    primary: '#6b0f1a' },
+      { id: 'emerald',  name: 'Emerald',     primary: '#004d2e' },
+      { id: 'teal',     name: 'Teal',        primary: '#003d40' },
+      { id: 'purple',   name: 'Deep Purple', primary: '#2d0a6e' },
+      { id: 'indigo',   name: 'Indigo',      primary: '#312e81' },
     ];
 
     // Preview page state
@@ -3725,7 +3727,7 @@
 
       // Live-update the pass canvas editor when pass-related settings change
       const passKeys = ['passEventName','passVenue','passDate','passTime','passRules','passBannerColor',
-                        'passTextColor','passGradientColor','passLogoUrl','passNameField','passEmailField','passSubtitle'];
+                        'passTextColor','passLogoUrl','passNameField','passEmailField','passSubField'];
       if (passKeys.includes(key) && canvasTab === 'pass') {
         renderPassCanvas();
         renderBuilderPass();
@@ -3794,60 +3796,93 @@
       const wrap = document.getElementById('gsfbPassCanvasWrap');
       if (!wrap) return;
       const s = _S.config?.settings || {};
-      const primary = s.passBannerColor  || '#0f2d6b';
-      const darker  = s.passGradientColor || _pbDarken(primary, 0.30);
+      const primary = s.passBannerColor || '#003087';
+      const darker  = _pbDarken(primary, 0.28);
       const allFields = _S.config?.fields || [];
       const nameField = s.passNameField ? allFields.find(f => f.id === s.passNameField) : null;
+      const subField  = s.passSubField  ? allFields.find(f => f.id === s.passSubField)  : null;
       const rules = (s.passRules || []).filter(Boolean).slice(0, 3);
 
+      const rawDate  = s.passDate || '';
+      const dateStr  = rawDate ? rawDate.split('-').reverse().map(Number).join('/') : '';
+      const timeStr  = s.passTime ? (() => {
+        const [h, m] = s.passTime.split(':'); const hr = +h;
+        return `${hr === 0 ? 12 : hr > 12 ? hr - 12 : hr}:${m}${hr >= 12 ? 'PM' : 'AM'}`;
+      })() : '';
+      const venueStr   = s.passVenue || '';
+      const eventLabel = escHtml(s.passEventName || 'Event Name');
+      const nameLabel  = nameField ? escHtml(nameField.label || 'Name') : 'Attendee Name';
+      const subDisplay = subField  ? `${escHtml(subField.label || 'Field')} : —` : '';
+
       const logoHtml = s.passLogoUrl
-        ? `<img src="${escAttr(s.passLogoUrl)}" style="width:55px;height:55px;object-fit:cover;border-radius:8px;border:1.5px solid #e0e0e0;flex-shrink:0" onerror="this.style.display='none'"/>`
-        : `<div style="width:55px;height:55px;border:1.5px dashed #ccc;border-radius:8px;background:#f8f8f8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-             <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="#ccc" stroke-width="1.4"><rect x="2" y="4" width="16" height="12" rx="2"/><circle cx="7" cy="9" r="1.5"/><polyline points="2,16 6,11 9.5,14 13,10 18,16"/></svg>
+        ? `<img src="${escAttr(s.passLogoUrl)}" style="position:absolute;right:16px;top:10px;width:48px;height:48px;object-fit:cover;border-radius:7px;border:1.5px solid #e0e0e0;z-index:2" onerror="this.style.display='none'">`
+        : `<div style="position:absolute;right:16px;top:10px;width:48px;height:48px;border:1.5px dashed #ccc;border-radius:7px;background:#f8f8f8;display:flex;align-items:center;justify-content:center;z-index:2">
+             <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="#ccc" stroke-width="1.4"><rect x="2" y="4" width="16" height="12" rx="2"/><circle cx="7" cy="9" r="1.5"/><polyline points="2,16 6,11 9.5,14 13,10 18,16"/></svg>
            </div>`;
 
-      const qrPat = [[1,1,1,0,1],[1,0,1,0,0],[1,1,1,0,1],[0,0,0,1,0],[1,0,1,1,1]];
-      const qrSvg = `<svg viewBox="0 0 5 5" width="100" height="100" style="display:block"><rect width="5" height="5" fill="#f0f0f0"/>${qrPat.map((row,r)=>row.map((v,c)=>v?`<rect x="${c}" y="${r}" width="1" height="1" fill="#1a1a2e"/>`:'').join('')).join('')}</svg>`;
-
-      const dateStr = s.passDate || '';
-      const timeStr = s.passTime || '';
-      const dateLine = [dateStr, timeStr].filter(Boolean).join('  ·  ') || 'Date & Time';
-      const venueLine = s.passVenue || 'Venue';
-      const nameLabel = nameField ? escHtml(nameField.label || 'Name') : 'Attendee Name';
-      const eventLabel = escHtml(s.passEventName || 'Event Name');
+      const qrPat = [[1,1,1,0,1,0,1],[0,1,0,0,0,1,0],[1,1,1,0,1,0,1],[0,0,0,0,0,0,0],[1,0,1,0,1,1,1],[0,1,0,0,0,1,0],[1,1,1,0,1,0,1]];
+      const qrSvg = `<svg viewBox="0 0 7 7" style="display:block;width:100%;height:100%"><rect width="7" height="7" fill="#f0f0f0"/>${qrPat.map((row,r)=>row.map((v,c)=>v?`<rect x="${c}" y="${r}" width="1" height="1" fill="#1a1a2e"/>`:'').join('')).join('')}</svg>`;
 
       wrap.innerHTML = `
-      <div class="gsfb-pe-card">
-        <!-- WHITE TOP ZONE -->
-        <div style="background:#ffffff;flex:0 0 308px;display:flex;flex-direction:column;padding:14px 16px 10px;overflow:hidden">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px">
-            <span style="font-size:7.5px;font-weight:700;letter-spacing:1.5px;padding:3px 10px;background:#f0f4f8;border-radius:20px;color:#999;text-transform:uppercase;margin-top:5px;align-self:flex-start">Entry Pass</span>
-            ${logoHtml}
-          </div>
-          <div style="text-align:center;font-size:16px;font-weight:800;color:#0d1b3e;line-height:1.25;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${eventLabel}</div>
-          <div style="text-align:center;font-size:10px;color:#555;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(dateLine)}</div>
-          <div style="text-align:center;font-size:10px;color:#888;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(venueLine)}</div>
-          <div style="border-top:1.5px dashed #dde0e8;margin-bottom:8px"></div>
-          <div style="flex:1;display:flex;align-items:center;justify-content:center">
-            <div style="background:#f7f7f7;border-radius:10px;padding:8px;box-shadow:0 2px 6px rgba(0,0,0,0.06)">${qrSvg}</div>
-          </div>
+      <div style="position:relative;width:360px;height:540px;border-radius:20px;overflow:hidden;box-shadow:0 28px 72px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);flex-shrink:0">
+
+        <!-- Zone backgrounds -->
+        <div style="position:absolute;inset:0;background:#fff"></div>
+        <div style="position:absolute;left:0;right:0;top:278px;bottom:0;background:${escAttr(primary)}"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:32px;background:${escAttr(darker)}"></div>
+
+        <!-- GalSol Gray watermark (white zone) -->
+        <img src="Images/GalSol%20Gray.svg" style="position:absolute;left:50%;top:152px;transform:translateX(-50%);width:216px;opacity:0.05;pointer-events:none;z-index:1" onerror="this.style.display='none'">
+
+        <!-- Badge -->
+        <div style="position:absolute;left:16px;top:14px;font-size:7px;font-weight:700;letter-spacing:1.2px;color:#999;background:#f0f4f8;border-radius:10px;padding:2.5px 9px;z-index:2;text-transform:uppercase">Entry Pass</div>
+
+        ${logoHtml}
+
+        <!-- Event name (centered) -->
+        <div style="position:absolute;left:16px;right:16px;top:38px;text-align:center;font-size:13px;font-weight:800;color:#0d1b3e;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;z-index:2">${eventLabel}</div>
+
+        <!-- Date (left) & Time (right) -->
+        <div style="position:absolute;left:16px;right:16px;top:78px;display:flex;justify-content:space-between;z-index:2">
+          <span style="font-size:8.5px;color:#555">${dateStr ? `Date: ${escHtml(dateStr)}` : `<span style='color:#ccc'>Date not set</span>`}</span>
+          <span style="font-size:8.5px;color:#555">${timeStr ? `Time: ${escHtml(timeStr)}` : ''}</span>
         </div>
-        <!-- COLORED BOTTOM ZONE -->
-        <div style="background:${escAttr(primary)};flex:1;display:flex;flex-direction:column;overflow:hidden">
-          <div style="flex:1;padding:12px 16px 8px;overflow:hidden">
-            <div style="font-size:15px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nameLabel}</div>
-            <div style="font-size:9.5px;color:rgba(255,255,255,0.55);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${eventLabel}</div>
-            <div style="border-top:1px dashed rgba(255,255,255,0.25);margin-bottom:7px"></div>
-            ${rules.length ? `
-              <div style="font-size:8px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.45);margin-bottom:4px;text-transform:uppercase">Rules</div>
-              ${rules.map(r=>`<div style="font-size:10px;color:rgba(255,255,255,0.72);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">• ${escHtml(r)}</div>`).join('')}
-            ` : `<div style="font-size:10px;color:rgba(255,255,255,0.3);font-style:italic">No rules set</div>`}
-          </div>
-          <div style="background:${escAttr(darker)};padding:7px 16px;display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0">
-            <span style="font-size:8px;color:rgba(255,255,255,0.45)">Powered by</span>
-            <img src="Images/GalSol%20White.svg" style="height:13px;opacity:0.55" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"/>
-            <span style="display:none;font-size:9px;font-weight:700;letter-spacing:0.5px;color:rgba(255,255,255,0.6)">GalSol</span>
-          </div>
+
+        <!-- Venue -->
+        <div style="position:absolute;left:16px;right:16px;top:93px;font-size:8.5px;color:#777;z-index:2">${venueStr ? `Venue: ${escHtml(venueStr)}` : `<span style='color:#ccc'>Venue not set</span>`}</div>
+
+        <!-- Dashed separator -->
+        <div style="position:absolute;left:16px;right:16px;top:109px;border-top:1.5px dashed #dde0e8;z-index:2"></div>
+
+        <!-- QR box (overlapping zone boundary at 278px) -->
+        <div style="position:absolute;left:106px;top:128px;width:148px;height:148px;background:#f5f5f5;border-radius:9px;padding:5px;z-index:10;box-shadow:0 4px 14px rgba(0,0,0,0.13)">${qrSvg}</div>
+
+        <!-- Unique Code (blue zone) -->
+        <div style="position:absolute;left:0;right:0;top:288px;text-align:center;font-size:7.5px;color:rgba(255,255,255,0.5);letter-spacing:0.4px;z-index:2">Unique Code</div>
+
+        <!-- NAME -->
+        <div style="position:absolute;left:16px;right:16px;top:303px;font-size:11.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">NAME : ${nameLabel}</div>
+
+        <!-- Sub Field -->
+        ${subDisplay ? `<div style="position:absolute;left:16px;right:16px;top:319px;font-size:9px;color:rgba(255,255,255,0.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">${subDisplay}</div>` : `<div style="position:absolute;left:16px;right:16px;top:319px;font-size:9px;color:rgba(255,255,255,0.28);font-style:italic;z-index:2">— sub field not set —</div>`}
+
+        <!-- Separator 2 -->
+        <div style="position:absolute;left:16px;right:16px;top:336px;border-top:1px dashed rgba(255,255,255,0.25);z-index:2"></div>
+
+        <!-- Rules heading (centered) -->
+        <div style="position:absolute;left:0;right:0;top:348px;text-align:center;font-size:7.5px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.45);text-transform:uppercase;z-index:2">Rules</div>
+
+        <!-- Rules bullets -->
+        ${rules.length
+          ? rules.map((r,i)=>`<div style="position:absolute;left:16px;right:16px;top:${364+i*16}px;font-size:9px;color:rgba(255,255,255,0.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">• ${escHtml(r)}</div>`).join('')
+          : `<div style="position:absolute;left:16px;right:16px;top:364px;font-size:9px;color:rgba(255,255,255,0.28);font-style:italic;z-index:2">No rules set</div>`
+        }
+
+        <!-- Footer bar -->
+        <div style="position:absolute;left:0;right:0;bottom:0;height:32px;display:flex;align-items:center;justify-content:center;gap:5px;z-index:3">
+          <span style="font-size:7.5px;color:rgba(255,255,255,0.4)">Powered by</span>
+          <img src="Images/GalSol%20White.svg" style="height:12px;opacity:0.55" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <span style="display:none;font-size:8px;font-weight:700;color:rgba(255,255,255,0.5)">GalSol</span>
         </div>
       </div>`;
     }
@@ -4159,31 +4194,21 @@
           <label class="gsfb-prop-label">Pass Themes</label>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
             ${PASS_THEMES.map(t => {
-              const isSel = (s.passBannerColor||'#0f2d6b') === t.primary;
+              const isSel = (s.passBannerColor||'#003087') === t.primary;
               return `<div onclick="applyPassTheme('${t.id}')" title="${t.name}" style="border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid ${isSel?'var(--cyan)':'transparent'};transition:border-color 0.15s">
                 <div style="height:28px;background:${t.primary}"></div>
-                <div style="height:10px;background:${t.dark}"></div>
+                <div style="height:10px;background:${_pbDarken(t.primary,0.28)}"></div>
                 <div style="font-size:9px;text-align:center;padding:3px 0;color:var(--text-3);background:var(--glass)">${t.name}</div>
               </div>`;
             }).join('')}
           </div>
         </div>
-        <div class="gsfb-prop" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div>
-            <label class="gsfb-prop-label">Primary Color</label>
-            <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-              <input type="color" value="${escAttr(s.passBannerColor || '#0f2d6b')}" oninput="updateSetting('passBannerColor',this.value)"
-                style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passBannerColor || '#0f2d6b')}</span>
-            </div>
-          </div>
-          <div>
-            <label class="gsfb-prop-label">Footer Dark</label>
-            <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-              <input type="color" value="${escAttr(s.passGradientColor || '#061642')}" oninput="updateSetting('passGradientColor',this.value)"
-                style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
-              <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passGradientColor || '#061642')}</span>
-            </div>
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Primary Color</label>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+            <input type="color" value="${escAttr(s.passBannerColor || '#003087')}" oninput="updateSetting('passBannerColor',this.value)"
+              style="width:34px;height:34px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px"/>
+            <span style="font-size:10px;color:var(--text-3)">${escAttr(s.passBannerColor || '#003087')}</span>
           </div>
         </div>
         <div class="gsfb-prop">
@@ -4202,6 +4227,13 @@
           <select class="gsfb-select" onchange="updateSetting('passNameField',this.value)">
             <option value="">— Select field —</option>
             ${(_S.config?.fields || []).filter(f => f.type !== 'section_break').map(f => `<option value="${escAttr(f.id)}"${s.passNameField === f.id ? ' selected' : ''}>${escAttr(f.label || f.id)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="gsfb-prop">
+          <label class="gsfb-prop-label">Sub Field <span style="color:var(--text-3);font-weight:400;text-transform:none">(shows below name on pass)</span></label>
+          <select class="gsfb-select" onchange="updateSetting('passSubField',this.value)">
+            <option value="">— None —</option>
+            ${(_S.config?.fields || []).filter(f => f.type !== 'section_break').map(f => `<option value="${escAttr(f.id)}"${s.passSubField === f.id ? ' selected' : ''}>${escAttr(f.label || f.id)}</option>`).join('')}
           </select>
         </div>
         <div class="gsfb-prop">
@@ -4389,7 +4421,7 @@
     function applyPassTheme(id) {
       const t = PASS_THEMES.find(x => x.id === id);
       if (!t) return;
-      _S.updateSettings({ passBannerColor: t.primary, passGradientColor: t.dark });
+      _S.updateSettings({ passBannerColor: t.primary });
       setSaveStatus('unsaved');
       if (canvasTab === 'pass') { renderPassCanvas(); renderBuilderPass(); }
       renderPassSettings();
@@ -4982,17 +5014,16 @@
     function renderBuilderPass() {
       const s = _S.config?.settings || {};
       if (!s.passEnabled) return;
-
       const canvas = document.getElementById('pvPassCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const W = 520, H = 693;
       const SPLIT = 402, FOOTER_H = 44, R = 24;
 
-      const primary = s.passBannerColor  || '#0f2d6b';
-      const darker  = s.passGradientColor || _pbDarken(primary, 0.30);
+      const primary = s.passBannerColor || '#003087';
+      const darker  = _pbDarken(primary, 0.28);
 
-      // Card shape + zones
+      // Card clip + zone fills
       ctx.save();
       _pbRoundRect(ctx, 0, 0, W, H, R); ctx.clip();
       ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, SPLIT);
@@ -5000,92 +5031,143 @@
       ctx.fillStyle = darker;    ctx.fillRect(0, H - FOOTER_H, W, FOOTER_H);
       ctx.restore();
 
+      // ── WHITE ZONE ───────────────────────────────────────────────────
       // Badge
       ctx.fillStyle = '#f0f4f8';
-      _pbRoundRect(ctx, 24, 22, 112, 22, 11); ctx.fill();
+      _pbRoundRect(ctx, 24, 20, 108, 20, 10); ctx.fill();
       ctx.fillStyle = '#888';
-      ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
+      ctx.font = 'bold 9.5px "Plus Jakarta Sans",sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText('ENTRY PASS', 38, 37);
+      ctx.fillText('ENTRY PASS', 38, 33);
 
-      // Logo holder (top-right placeholder — logo loaded async)
-      const LX = W - 70 - 24, LY = 16, LS = 70;
+      // Logo holder (top-right)
+      const LX = W - 64 - 24, LY = 14, LS = 64;
       ctx.fillStyle = '#f5f5f5'; _pbRoundRect(ctx, LX, LY, LS, LS, 8); ctx.fill();
       ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1.5;
       _pbRoundRect(ctx, LX, LY, LS, LS, 8); ctx.stroke();
 
-      // Event name
+      // Event name (centered, max 2 lines)
       ctx.fillStyle = '#0d1b3e';
-      ctx.font = 'bold 26px "Plus Jakarta Sans",sans-serif';
-      ctx.textAlign = 'center';
-      _pbWrapText(ctx, s.passEventName || 'Event Name', W / 2, 100, W - 48, 34);
-
-      // Date + Time + Venue
-      const dtStr = [s.passDate, s.passTime].filter(Boolean).join('  ·  ');
-      ctx.font = '14px "Plus Jakarta Sans",sans-serif';
-      ctx.fillStyle = '#555';
-      if (dtStr) ctx.fillText(dtStr, W / 2, 162);
-      if (s.passVenue) { ctx.fillStyle = '#777'; ctx.fillText(s.passVenue, W / 2, 180); }
-
-      // Separator
-      ctx.save();
-      ctx.strokeStyle = '#dde0e8'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 5]);
-      ctx.beginPath(); ctx.moveTo(24, 200); ctx.lineTo(W - 24, 200); ctx.stroke();
-      ctx.restore();
-
-      // QR box
-      const QS = 164, QX = (W - QS) / 2, QY = 216;
-      ctx.fillStyle = '#f5f5f5'; _pbRoundRect(ctx, QX - 10, QY - 10, QS + 20, QS + 20, 14); ctx.fill();
-      ctx.fillStyle = '#ffffff'; _pbRoundRect(ctx, QX, QY, QS, QS, 10); ctx.fill();
-      // QR pattern
-      ctx.fillStyle = '#1a1a2e';
-      const cellSz = Math.floor((QS - 12) / 9);
-      const qrPat = [[1,1,1,1,1,1,1,0,0],[1,0,0,0,0,0,1,0,1],[1,0,1,1,1,0,1,0,0],
-                     [1,0,1,1,1,0,1,0,1],[1,0,1,1,1,0,1,0,0],[1,0,0,0,0,0,1,0,1],
-                     [1,1,1,1,1,1,1,0,0],[0,0,1,0,0,0,0,0,0],[0,1,0,0,1,0,1,0,1]];
-      for (let pr = 0; pr < 9; pr++)
-        for (let pc = 0; pc < 9; pc++)
-          if (qrPat[pr][pc]) ctx.fillRect(QX + 6 + pc * cellSz, QY + 6 + pr * cellSz, cellSz - 1, cellSz - 1);
-
-      // Colored zone: attendee info
-      const CY = SPLIT + 18;
-      ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 22px "Plus Jakarta Sans",sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('Attendee Name', 24, CY + 6);
-      ctx.font = '13px "Plus Jakarta Sans",sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.60)';
-      ctx.fillText(s.passEventName || '', 24, CY + 28);
+      ctx.textAlign = 'center';
+      _pbWrapText(ctx, s.passEventName || 'Event Name', W / 2, 62, W - 48, 28);
 
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.setLineDash([6, 5]);
-      ctx.beginPath(); ctx.moveTo(24, CY + 40); ctx.lineTo(W - 24, CY + 40); ctx.stroke();
-      ctx.restore();
+      // Date (left) & Time (right) on same row
+      const rawDate = s.passDate || '';
+      const dateLabel = rawDate ? 'Date: ' + rawDate.split('-').reverse().map(Number).join('/') : '';
+      const rawTime = s.passTime || '';
+      const timeLabel = rawTime ? (() => {
+        const [h, m] = rawTime.split(':'); const hr = +h;
+        return 'Time: ' + (hr === 0 ? 12 : hr > 12 ? hr - 12 : hr) + ':' + m + (hr >= 12 ? 'PM' : 'AM');
+      })() : '';
+      ctx.font = '12.5px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = '#555';
+      if (dateLabel) { ctx.textAlign = 'left';  ctx.fillText(dateLabel, 24, 110); }
+      if (timeLabel) { ctx.textAlign = 'right'; ctx.fillText(timeLabel, W - 24, 110); }
 
-      const rules = (s.passRules || []).filter(Boolean).slice(0, 3);
-      let ry = CY + 56;
-      if (rules.length) {
-        ctx.textAlign = 'left';
-        ctx.font = 'bold 11px "Plus Jakarta Sans",sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.45)';
-        ctx.fillText('RULES', 24, ry); ry += 17;
-        ctx.font = '12px "Plus Jakarta Sans",sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.72)';
-        rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 17; });
+      // Venue (left)
+      if (s.passVenue) {
+        ctx.fillStyle = '#777'; ctx.textAlign = 'left';
+        ctx.fillText('Venue: ' + s.passVenue, 24, 128);
       }
 
-      // Footer branding
+      // Dashed separator
+      ctx.save();
+      ctx.strokeStyle = '#dde0e8'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.moveTo(24, 148); ctx.lineTo(W - 24, 148); ctx.stroke();
+      ctx.restore();
+
+      // QR box (overlaps zone boundary — drawn last to sit on top)
+      const QS = 214, QX = Math.round((W - QS) / 2), QY = 228;
+      ctx.fillStyle = '#f5f5f5'; _pbRoundRect(ctx, QX - 8, QY - 8, QS + 16, QS + 16, 14); ctx.fill();
+      ctx.fillStyle = '#ffffff'; _pbRoundRect(ctx, QX, QY, QS, QS, 10); ctx.fill();
+      ctx.fillStyle = '#1a1a2e';
+      const cs = Math.floor((QS - 14) / 7);
+      const qp = [[1,1,1,0,1,0,1],[0,1,0,0,0,1,0],[1,1,1,0,1,0,1],[0,0,0,0,0,0,0],[1,0,1,0,1,1,1],[0,1,0,0,0,1,0],[1,1,1,0,1,0,1]];
+      for (let r = 0; r < 7; r++) for (let c = 0; c < 7; c++) if (qp[r][c]) ctx.fillRect(QX + 7 + c * cs, QY + 7 + r * cs, cs - 1, cs - 1);
+
+      // ── COLORED ZONE ────────────────────────────────────────────────
+      const allFields = _S.config?.fields || [];
+      const nameField = s.passNameField ? allFields.find(f => f.id === s.passNameField) : null;
+      const subField  = s.passSubField  ? allFields.find(f => f.id === s.passSubField)  : null;
+      const nameLabel = nameField ? (nameField.label || 'Name') : 'Attendee Name';
+      const subLabel  = subField  ? (subField.label  || 'Field') : '';
+
+      const QB = QY + QS; // QR bottom (= 442, overlap into blue = 40px)
+      const UC_Y = QB + 16;
+
+      // Unique Code
+      ctx.textAlign = 'center';
+      ctx.font = '11px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.50)';
+      ctx.fillText('Unique Code', W / 2, UC_Y);
+
+      // NAME
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 21px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('NAME : ' + nameLabel, 24, UC_Y + 26);
+
+      // Sub Field
+      if (subLabel) {
+        ctx.font = '13px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.60)';
+        ctx.fillText(subLabel + ' : —', 24, UC_Y + 48);
+      }
+
+      // Dashed separator 2
+      const SEP2 = UC_Y + (subLabel ? 66 : 50);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.setLineDash([6, 5]);
+      ctx.beginPath(); ctx.moveTo(24, SEP2); ctx.lineTo(W - 24, SEP2); ctx.stroke();
+      ctx.restore();
+
+      // Rules heading (centered)
+      const RH_Y = SEP2 + 18;
       ctx.textAlign = 'center';
       ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.50)';
-      ctx.fillText('Powered by GalSol', W / 2, H - FOOTER_H + 26);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.fillText('RULES', W / 2, RH_Y);
 
-      // Async logo
+      // Rules bullets
+      const rules = (s.passRules || []).filter(Boolean).slice(0, 3);
+      let ry = RH_Y + 18;
+      ctx.textAlign = 'left';
+      ctx.font = '12px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.72)';
+      rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 18; });
+
+      // Footer: "Powered by" + GalSol White logo (async)
+      ctx.textAlign = 'right';
+      ctx.font = '10px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.fillText('Powered by', W / 2 - 4, H - FOOTER_H + 27);
+
+      const wi = new Image();
+      wi.onload = () => {
+        const GH = 16, GW = Math.round(GH * 2567 / 650);
+        ctx.globalAlpha = 0.55;
+        ctx.drawImage(wi, W / 2 + 4, H - FOOTER_H + (FOOTER_H - GH) / 2, GW, GH);
+        ctx.globalAlpha = 1.0;
+      };
+      wi.src = 'Images/GalSol%20White.svg';
+
+      // Async: logo
       if (s.passLogoUrl) {
         const li = new Image(); li.crossOrigin = 'anonymous';
         li.onload = () => { ctx.save(); _pbRoundRect(ctx, LX, LY, LS, LS, 8); ctx.clip(); ctx.drawImage(li, LX, LY, LS, LS); ctx.restore(); };
         li.src = s.passLogoUrl;
       }
+
+      // Async: GalSol Gray watermark (white zone)
+      const wm = new Image();
+      wm.onload = () => {
+        const WMW = 270, WMH = Math.round(WMW * 650 / 2567);
+        ctx.globalAlpha = 0.055;
+        ctx.drawImage(wm, (W - WMW) / 2, 172, WMW, WMH);
+        ctx.globalAlpha = 1.0;
+      };
+      wm.src = 'Images/GalSol%20Gray.svg';
     }
 
     /* ── Pass canvas helpers ──────────────────────────────────────── */
