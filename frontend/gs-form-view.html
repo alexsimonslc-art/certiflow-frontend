@@ -3096,12 +3096,11 @@
     function renderPassCanvas(pass) {
       const canvas = document.getElementById('passCanvas');
       const ctx = canvas.getContext('2d');
-      const DPR = Math.min(window.devicePixelRatio || 1, 2);
+      const DPR = 2; // fixed 2× for crisp output on all screens
       const W = 520, H = 693;
-      canvas.width = Math.round(W * DPR);
-      canvas.height = Math.round(H * DPR);
-      canvas.style.width = W + 'px';
-      canvas.style.maxWidth = '100%';
+      canvas.width = W * DPR;
+      canvas.height = H * DPR;
+      canvas.style.width = '100%';
       canvas.style.height = 'auto';
       ctx.scale(DPR, DPR);
 
@@ -3119,27 +3118,27 @@
       ctx.restore();
 
       // ── WHITE ZONE ──────────────────────────────────────────────────
-      // Badge
+      // Badge (top-left)
       ctx.fillStyle = '#f0f4f8';
-      _rr(ctx, 24, 20, 108, 20, 10); ctx.fill();
+      _rr(ctx, 24, 16, 108, 22, 11); ctx.fill();
       ctx.fillStyle = '#888';
-      ctx.font = 'bold 9.5px "Plus Jakarta Sans",sans-serif';
+      ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText('ENTRY PASS', 38, 33);
+      ctx.fillText('ENTRY PASS', 38, 31);
 
       // Logo holder (top-right)
-      const LX = W - 64 - 24, LY = 14, LS = 64;
+      const LX = W - 64 - 20, LY = 14, LS = 64;
       ctx.fillStyle = '#f5f5f5'; _rr(ctx, LX, LY, LS, LS, 8); ctx.fill();
       ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1.5;
       _rr(ctx, LX, LY, LS, LS, 8); ctx.stroke();
 
-      // Event name (centered, max 2 lines)
+      // Event name — big, centered, below logo
       ctx.fillStyle = '#0d1b3e';
-      ctx.font = 'bold 22px "Plus Jakarta Sans",sans-serif';
+      ctx.font = 'bold 28px "Plus Jakarta Sans",sans-serif';
       ctx.textAlign = 'center';
-      _wrapText(ctx, cfg.eventName || 'Event Name', W / 2, 62, W - 48, 28);
+      _wrapText(ctx, cfg.eventName || 'Event Name', W / 2, 106, W - 48, 36);
 
-      // Date (left) & Time (right) on same row
+      // Date (left) & Time (right)
       const rawDate = cfg.date || '';
       const dateLabel = rawDate ? 'Date: ' + rawDate.split('-').reverse().map(Number).join('/') : '';
       const rawTime = cfg.time || '';
@@ -3147,113 +3146,103 @@
         const [h, m] = rawTime.split(':'); const hr = +h;
         return 'Time: ' + (hr === 0 ? 12 : hr > 12 ? hr - 12 : hr) + ':' + m + (hr >= 12 ? 'PM' : 'AM');
       })() : '';
-      ctx.font = '12.5px "Plus Jakarta Sans",sans-serif';
-      ctx.fillStyle = '#555';
-      if (dateLabel) { ctx.textAlign = 'left';  ctx.fillText(dateLabel, 24, 110); }
-      if (timeLabel) { ctx.textAlign = 'right'; ctx.fillText(timeLabel, W - 24, 110); }
+      ctx.font = '14px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = '#444';
+      if (dateLabel) { ctx.textAlign = 'left';  ctx.fillText(dateLabel, 24, 164); }
+      if (timeLabel) { ctx.textAlign = 'right'; ctx.fillText(timeLabel, W - 24, 164); }
 
       // Venue (left)
       if (cfg.venue) {
-        ctx.fillStyle = '#777'; ctx.textAlign = 'left';
-        ctx.font = '12.5px "Plus Jakarta Sans",sans-serif';
-        ctx.fillText('Venue: ' + cfg.venue, 24, 128);
+        ctx.fillStyle = '#666'; ctx.textAlign = 'left';
+        ctx.fillText('Venue: ' + cfg.venue, 24, 184);
       }
 
       // Dashed separator
       ctx.save();
-      ctx.strokeStyle = '#dde0e8'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 5]);
-      ctx.beginPath(); ctx.moveTo(24, 148); ctx.lineTo(W - 24, 148); ctx.stroke();
+      ctx.strokeStyle = '#dde0e8'; ctx.lineWidth = 1.5; ctx.setLineDash([7, 5]);
+      ctx.beginPath(); ctx.moveTo(24, 204); ctx.lineTo(W - 24, 204); ctx.stroke();
       ctx.restore();
 
-      // QR background box (overlaps zone boundary — drawn before content to stay under text)
+      // QR background box (drawn now; QR image drawn async on top)
       const QS = 214, QX = Math.round((W - QS) / 2), QY = 228;
-      ctx.fillStyle = '#f5f5f5'; _rr(ctx, QX - 8, QY - 8, QS + 16, QS + 16, 14); ctx.fill();
+      ctx.fillStyle = '#f0f0f0'; _rr(ctx, QX - 8, QY - 8, QS + 16, QS + 16, 14); ctx.fill();
       ctx.fillStyle = '#ffffff'; _rr(ctx, QX, QY, QS, QS, 10); ctx.fill();
 
       // ── COLORED ZONE ────────────────────────────────────────────────
-      const QB = QY + QS; // 442 — QR bottom (40px below SPLIT)
+      const QB = QY + QS; // = 442 (40px overlap below SPLIT=402)
 
-      // Unique Code
+      // Token code + label
+      const tokenDisplay = pass.token ? pass.token.replace(/-/g, '').slice(0, 8).toUpperCase() : '--------';
       ctx.textAlign = 'center';
-      ctx.font = '11px "Plus Jakarta Sans",sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.50)';
-      ctx.fillText('Unique Code', W / 2, QB + 16);
+      ctx.font = 'bold 14px "Courier New",monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fillText(tokenDisplay, W / 2, QB + 20);
+      ctx.font = '9px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.38)';
+      ctx.fillText('UNIQUE CODE', W / 2, QB + 34);
 
-      // NAME : value
+      // NAME
       ctx.textAlign = 'left';
-      ctx.font = 'bold 21px "Plus Jakarta Sans",sans-serif';
+      ctx.font = 'bold 22px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = '#ffffff';
-      ctx.fillText('NAME : ' + (pass.attendeeName || '—'), 24, QB + 40);
+      ctx.fillText('NAME : ' + (pass.attendeeName || '—'), 24, QB + 58);
 
       // Sub Field
       const subLabel = cfg.subFieldLabel || '';
       const subValue = cfg.subFieldValue || '';
       if (subLabel) {
-        ctx.font = '13px "Plus Jakarta Sans",sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.60)';
-        ctx.fillText(subLabel + ' : ' + (subValue || '—'), 24, QB + 62);
+        ctx.font = '14px "Plus Jakarta Sans",sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.62)';
+        ctx.fillText(subLabel + ' : ' + (subValue || '—'), 24, QB + 80);
       }
 
       // Dashed separator 2
-      const SEP2 = QB + (subLabel ? 80 : 62);
+      const SEP2 = QB + (subLabel ? 98 : 80);
       ctx.save();
-      ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.setLineDash([6, 5]);
+      ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.setLineDash([7, 5]);
       ctx.beginPath(); ctx.moveTo(24, SEP2); ctx.lineTo(W - 24, SEP2); ctx.stroke();
       ctx.restore();
 
       // Rules heading (centered)
-      const RH_Y = SEP2 + 18;
+      const RH_Y = SEP2 + 20;
       ctx.textAlign = 'center';
-      ctx.font = 'bold 10px "Plus Jakarta Sans",sans-serif';
+      ctx.font = 'bold 11px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.45)';
       ctx.fillText('RULES', W / 2, RH_Y);
 
       // Rules bullets
       const rules = (cfg.rules || []).filter(Boolean).slice(0, 3);
-      let ry = RH_Y + 18;
+      let ry = RH_Y + 20;
       ctx.textAlign = 'left';
-      ctx.font = '12px "Plus Jakarta Sans",sans-serif';
+      ctx.font = '13px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
-      rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 18; });
+      rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 20; });
 
-      // Footer: "Powered by" text + GalSol GWN logo (async)
+      // Footer "Powered by" + White logo (async)
       ctx.textAlign = 'right';
       ctx.font = '10px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.45)';
       ctx.fillText('Powered by', W / 2 - 4, H - FOOTER_H + 27);
 
       // ── ASYNC ────────────────────────────────────────────────────────
-      // Logo
       if (cfg.logoUrl) {
         const li = new Image(); li.crossOrigin = 'anonymous';
         li.onload = () => { ctx.save(); _rr(ctx, LX, LY, LS, LS, 8); ctx.clip(); ctx.drawImage(li, LX, LY, LS, LS); ctx.restore(); };
         li.src = cfg.logoUrl;
       }
 
-      // QR code image
       const qi = new Image();
       qi.onload = () => { ctx.drawImage(qi, QX + 6, QY + 6, QS - 12, QS - 12); };
       qi.src = pass.qrDataUrl;
 
-      // GalSol GWN logo in footer
       const gi = new Image();
       gi.onload = () => {
-        const GH = 16, GW = Math.round(GH * 2567 / 650);
-        ctx.globalAlpha = 0.55;
+        const GH = 18, GW = Math.round(GH * 2567 / 650);
+        ctx.globalAlpha = 0.70;
         ctx.drawImage(gi, W / 2 + 4, H - FOOTER_H + Math.round((FOOTER_H - GH) / 2), GW, GH);
         ctx.globalAlpha = 1.0;
       };
-      gi.src = 'Images/GalSol%20GWN.svg';
-
-      // GalSol Gray watermark (white zone, very faint)
-      const wm = new Image();
-      wm.onload = () => {
-        const WMW = 270, WMH = Math.round(WMW * 650 / 2567);
-        ctx.globalAlpha = 0.055;
-        ctx.drawImage(wm, Math.round((W - WMW) / 2), 172, WMW, WMH);
-        ctx.globalAlpha = 1.0;
-      };
-      wm.src = 'Images/GalSol%20Gray.svg';
+      gi.src = 'Images/GalSol%20White.svg';
     }
 
     function _rr(ctx, x, y, w, h, r) {
