@@ -3854,29 +3854,30 @@
         <!-- QR box (top=148 → bottom=318 → 40px overlap below zone boundary 278px) -->
         <div style="position:absolute;left:95px;top:148px;width:170px;height:170px;background:#f0f0f0;border-radius:10px;padding:5px;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,0.14)">${qrSvg}</div>
 
-        <!-- Token code + label -->
-        <div style="position:absolute;left:0;right:0;top:323px;text-align:center;font-size:10.5px;font-weight:700;color:rgba(255,255,255,0.85);font-family:'Courier New',monospace;letter-spacing:1px;z-index:2">A3F7B9D2</div>
-        
+        <!-- Token code -->
+        <div style="position:absolute;left:0;right:0;top:322px;text-align:center;font-size:13px;font-weight:700;color:rgba(255,255,255,0.92);font-family:'Courier New',monospace;letter-spacing:2px;z-index:2">A3F7B9D2</div>
+        <!-- Entry code label -->
+        <div style="position:absolute;left:0;right:0;top:337px;text-align:center;font-size:6.5px;font-weight:700;color:rgba(255,255,255,0.38);letter-spacing:0.5px;text-transform:uppercase;z-index:2">Entry Code — For Manual Verification</div>
 
         <!-- NAME -->
-        <div style="position:absolute;left:14px;right:14px;top:354px;font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">NAME : ${nameLabel}</div>
+        <div style="position:absolute;left:14px;right:14px;top:358px;font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">NAME : ${nameLabel}</div>
 
         <!-- Sub Field -->
         ${subDisplay
-          ? `<div style="position:absolute;left:14px;right:14px;top:371px;font-size:9.5px;color:rgba(255,255,255,0.62);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">${subDisplay}</div>`
-          : `<div style="position:absolute;left:14px;right:14px;top:371px;font-size:9px;color:rgba(255,255,255,0.25);font-style:italic;z-index:2">— sub field —</div>`
+          ? `<div style="position:absolute;left:14px;right:14px;top:375px;font-size:9.5px;color:rgba(255,255,255,0.62);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">${subDisplay}</div>`
+          : `<div style="position:absolute;left:14px;right:14px;top:375px;font-size:9px;color:rgba(255,255,255,0.25);font-style:italic;z-index:2">— sub field —</div>`
         }
 
         <!-- Separator 2 -->
-        <div style="position:absolute;left:14px;right:14px;top:389px;border-top:1px dashed rgba(255,255,255,0.25);z-index:2"></div>
+        <div style="position:absolute;left:14px;right:14px;top:394px;border-top:1px dashed rgba(255,255,255,0.25);z-index:2"></div>
 
         <!-- Rules heading (centered) -->
-        <div style="position:absolute;left:0;right:0;top:401px;text-align:center;font-size:8px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.45);text-transform:uppercase;z-index:2">Rules</div>
+        <div style="position:absolute;left:0;right:0;top:406px;text-align:center;font-size:8px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.45);text-transform:uppercase;z-index:2">Rules</div>
 
         <!-- Rules bullets -->
         ${rules.length
-          ? rules.map((r,i)=>`<div style="position:absolute;left:14px;right:14px;top:${418+i*17}px;font-size:9.5px;color:rgba(255,255,255,0.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">• ${escHtml(r)}</div>`).join('')
-          : `<div style="position:absolute;left:14px;right:14px;top:418px;font-size:9px;color:rgba(255,255,255,0.28);font-style:italic;z-index:2">No rules set</div>`
+          ? rules.map((r,i)=>`<div style="position:absolute;left:14px;right:14px;top:${423+i*17}px;font-size:9.5px;color:rgba(255,255,255,0.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">• ${escHtml(r)}</div>`).join('')
+          : `<div style="position:absolute;left:14px;right:14px;top:423px;font-size:9px;color:rgba(255,255,255,0.28);font-style:italic;z-index:2">No rules set</div>`
         }
 
         <!-- Footer bar -->
@@ -5098,28 +5099,29 @@
 
       // Token placeholder + label
       ctx.textAlign = 'center';
-      ctx.font = 'bold 14px "Courier New",monospace';
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      ctx.fillText('A3F7B9D2', W / 2, QB + 20);
-      ctx.font = '9px "Plus Jakarta Sans",sans-serif';
+      ctx.font = 'bold 18px "Courier New",monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      ctx.fillText('A3F7B9D2', W / 2, QB + 24);
+      ctx.font = '700 9px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.38)';
-      
+      ctx.fillText('ENTRY CODE — FOR MANUAL VERIFICATION', W / 2, QB + 40);
+
 
       // NAME
       ctx.textAlign = 'left';
       ctx.font = 'bold 22px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = '#ffffff';
-      ctx.fillText('NAME : ' + nameLabel, 24, QB + 58);
+      ctx.fillText('NAME : ' + nameLabel, 24, QB + 64);
 
       // Sub Field
       if (subLabel) {
         ctx.font = '14px "Plus Jakarta Sans",sans-serif';
         ctx.fillStyle = 'rgba(255,255,255,0.62)';
-        ctx.fillText(subLabel + ' : —', 24, QB + 80);
+        ctx.fillText(subLabel + ' : —', 24, QB + 86);
       }
 
       // Dashed separator 2
-      const SEP2 = QB + (subLabel ? 98 : 80);
+      const SEP2 = QB + (subLabel ? 106 : 86);
       ctx.save();
       ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.setLineDash([7, 5]);
       ctx.beginPath(); ctx.moveTo(24, SEP2); ctx.lineTo(W - 24, SEP2); ctx.stroke();
