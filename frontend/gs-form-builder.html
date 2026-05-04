@@ -1472,8 +1472,8 @@
     }
 
     .gsfb-color-pill {
-      width: 26px;
-      height: 26px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       cursor: pointer;
       border: 2px solid transparent;
@@ -1489,72 +1489,55 @@
       box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
     }
 
-    /* Settings inner sub-tabs */
-    .gsfb-stab-row {
-      display: flex;
-      gap: 3px;
-      padding: 3px;
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 9px;
-      margin-bottom: 18px;
-    }
-    .gsfb-stab {
-      flex: 1;
-      padding: 6px 4px;
-      border: none;
-      border-radius: 6px;
-      background: none;
-      color: var(--text-3);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-      cursor: pointer;
-      font-family: var(--font);
-      transition: all 0.15s;
-      text-align: center;
-    }
-    .gsfb-stab.active {
-      background: rgba(255, 255, 255, 0.09);
+    /* Settings major section headings */
+    .gsfb-major-section {
+      font-size: 12px;
+      font-weight: 700;
       color: var(--text);
+      margin: 24px 0 14px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      letter-spacing: 0.1px;
     }
-    .gsfb-stab:hover:not(.active) { color: var(--text-2); }
+    .gsfb-major-section:first-child { margin-top: 2px; }
 
-    /* Palette grid */
+    /* Palette grid — 2-col so each swatch is large enough to see clearly */
     .gsfb-palette-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
     .gsfb-palette-item {
-      border-radius: 8px;
-      padding: 7px 5px 5px;
+      border-radius: 10px;
+      padding: 8px 6px 6px;
       cursor: pointer;
       border: 2px solid transparent;
       transition: all 0.18s;
       background: rgba(255, 255, 255, 0.03);
     }
-    .gsfb-palette-item:hover { background: rgba(255, 255, 255, 0.07); }
-    .gsfb-palette-item.selected { border-color: var(--cyan); }
+    .gsfb-palette-item:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-1px); }
+    .gsfb-palette-item.selected { border-color: var(--cyan); background: rgba(0,212,255,0.06); }
     .gsfb-palette-swatch {
-      height: 28px;
-      border-radius: 5px;
-      margin-bottom: 5px;
+      height: 40px;
+      border-radius: 6px;
+      margin-bottom: 6px;
       position: relative;
       overflow: hidden;
     }
     .gsfb-palette-card {
       position: absolute;
-      top: 4px; left: 4px; right: 4px; bottom: 0;
-      border-radius: 3px 3px 0 0;
+      top: 5px; left: 5px; right: 5px; bottom: 0;
+      border-radius: 4px 4px 0 0;
     }
     .gsfb-palette-dot {
       position: absolute;
-      top: 5px; right: 5px;
-      width: 7px; height: 7px;
+      top: 7px; right: 7px;
+      width: 8px; height: 8px;
       border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
     }
     .gsfb-palette-name {
-      font-size: 9px;
+      font-size: 9.5px;
       text-align: center;
       color: var(--text-3);
       font-weight: 600;
@@ -1562,6 +1545,23 @@
       text-transform: uppercase;
     }
     .gsfb-palette-item.selected .gsfb-palette-name { color: var(--cyan); }
+
+    /* Larger color pickers */
+    .gsfb-color-swatch-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .gsfb-color-swatch {
+      width: 40px;
+      height: 32px;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 2px 3px;
+      background: rgba(255,255,255,0.04);
+      cursor: pointer;
+    }
 
     /* Condition rows */
     .gsfb-cond-section {
@@ -2518,17 +2518,34 @@
     let publishedUrl = null;
     let leaveTarget = 'gs-forms.html';
     let rightTab = 'field';
-    let _settingsTab = 'general';
 
     const PALETTES = [
-      { id: 'ocean',   name: 'Ocean',   bg: '#04080f', card: '#0a1628', accent: 'cyan',   lightMode: false },
-      { id: 'nebula',  name: 'Nebula',  bg: '#0e0b1e', card: '#150d2a', accent: 'purple', lightMode: false },
-      { id: 'forest',  name: 'Forest',  bg: '#030d07', card: '#071912', accent: 'green',  lightMode: false },
-      { id: 'ember',   name: 'Ember',   bg: '#0f0701', card: '#1c1103', accent: 'gold',   lightMode: false },
-      { id: 'bloom',   name: 'Bloom',   bg: '#110614', card: '#1a0820', accent: 'pink',   lightMode: false },
-      { id: 'cloud',   name: 'Cloud',   bg: '#eef2f8', card: '#ffffff', accent: 'cyan',   lightMode: true  },
-      { id: 'violet',  name: 'Violet',  bg: '#f2eefb', card: '#ffffff', accent: 'purple', lightMode: true  },
-      { id: 'sage',    name: 'Sage',    bg: '#edf5f0', card: '#ffffff', accent: 'green',  lightMode: true  },
+      // ── Light themes ──────────────────────────────────────────────────
+      { id: 'white',   name: 'White',      bg: '#f8fafc', card: '#ffffff', accent: 'cyan',
+        hFont: 'Plus Jakarta Sans', bFont: 'Plus Jakarta Sans', hColor: '#0f172a', bColor: '#475569', hSize: 26, bSize: 15, lightMode: true },
+      { id: 'slate',   name: 'Slate',      bg: '#f1f5f9', card: '#ffffff', accent: 'purple',
+        hFont: 'Montserrat',        bFont: 'Montserrat',        hColor: '#1e293b', bColor: '#475569', hSize: 26, bSize: 14, lightMode: true },
+      { id: 'sage',    name: 'Sage',       bg: '#ecfdf5', card: '#ffffff', accent: 'green',
+        hFont: 'Raleway',           bFont: 'Plus Jakarta Sans', hColor: '#064e3b', bColor: '#374151', hSize: 26, bSize: 15, lightMode: true },
+      { id: 'warm',    name: 'Warm',       bg: '#fffbf0', card: '#fffff8', accent: 'gold',
+        hFont: 'Playfair Display',  bFont: 'Lexend',            hColor: '#1c1408', bColor: '#57534e', hSize: 28, bSize: 14, lightMode: true },
+      { id: 'blush',   name: 'Blush',      bg: '#fdf2f8', card: '#ffffff', accent: 'pink',
+        hFont: 'Cormorant Garamond',bFont: 'Plus Jakarta Sans', hColor: '#500724', bColor: '#6b7280', hSize: 30, bSize: 15, lightMode: true },
+      { id: 'lexclean',name: 'Lexend',     bg: '#f5f7fa', card: '#ffffff', accent: 'cyan',
+        hFont: 'Lexend',            bFont: 'Lexend',            hColor: '#0f172a', bColor: '#334155', hSize: 25, bSize: 14, lightMode: true },
+      // ── Dark themes ───────────────────────────────────────────────────
+      { id: 'ocean',   name: 'Ocean',      bg: '#030c1a', card: '#0a1830', accent: 'cyan',
+        hFont: 'Syne',              bFont: 'Plus Jakarta Sans', hColor: '#e0f2fe', bColor: '#94a3b8', hSize: 26, bSize: 15, lightMode: false },
+      { id: 'midnight',name: 'Midnight',   bg: '#080c14', card: '#0f1724', accent: 'cyan',
+        hFont: 'Montserrat',        bFont: 'Montserrat',        hColor: '#f1f5f9', bColor: '#94a3b8', hSize: 26, bSize: 14, lightMode: false },
+      { id: 'nebula',  name: 'Nebula',     bg: '#0c0818', card: '#130d22', accent: 'purple',
+        hFont: 'Syne',              bFont: 'Lexend',            hColor: '#ede9fe', bColor: '#c4b5fd', hSize: 26, bSize: 14, lightMode: false },
+      { id: 'forest',  name: 'Forest',     bg: '#030d07', card: '#071912', accent: 'green',
+        hFont: 'Raleway',           bFont: 'Plus Jakarta Sans', hColor: '#d1fae5', bColor: '#a7c4ae', hSize: 26, bSize: 15, lightMode: false },
+      { id: 'ember',   name: 'Ember',      bg: '#0f0700', card: '#1e1204', accent: 'gold',
+        hFont: 'Playfair Display',  bFont: 'Lexend',            hColor: '#fef3c7', bColor: '#d4ae6a', hSize: 28, bSize: 14, lightMode: false },
+      { id: 'bloom',   name: 'Bloom',      bg: '#100614', card: '#1c0828', accent: 'pink',
+        hFont: 'Cormorant Garamond',bFont: 'Plus Jakarta Sans', hColor: '#fce7f3', bColor: '#d4a8c0', hSize: 30, bSize: 15, lightMode: false },
     ];
     // Preview page state
     let _pv = { page: 0, pages: [], vals: {}, selOpts: {} };
@@ -3165,6 +3182,17 @@
       applyCanvasTheme();
     }
 
+    function loadCanvasFont(name) {
+      if (!name) return;
+      const safe = ['Plus Jakarta Sans', 'Syne'];
+      if (safe.includes(name)) return;
+      if (document.querySelector(`link[data-cf="${CSS.escape(name)}"]`)) return;
+      const lnk = document.createElement('link');
+      lnk.rel = 'stylesheet';
+      lnk.dataset.cf = name;
+      lnk.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(name)}:wght@400;500;600;700;800&display=swap`;
+      document.head.appendChild(lnk);
+    }
     function applyCanvasTheme() {
       const th = _S.config?.theme || {};
       const canvas = document.getElementById('gsfbCanvas');
@@ -3186,6 +3214,12 @@
       else canvas.style.removeProperty('--cc-header-color');
       if (th.bodyFontColor) canvas.style.setProperty('--cc-body-color', th.bodyFontColor);
       else canvas.style.removeProperty('--cc-body-color');
+      const hf = th.headingFont || 'Syne';
+      const bf = th.bodyFont || 'Plus Jakarta Sans';
+      loadCanvasFont(hf);
+      loadCanvasFont(bf);
+      canvas.style.setProperty('--font-display', `'${hf}', sans-serif`);
+      canvas.style.setProperty('--font', `'${bf}', sans-serif`);
     }
 
     /* ── Cover image upload helper ─────────────────────────────────── */
@@ -3383,6 +3417,13 @@
       applyCanvasTheme();
       renderSettings();
     }
+    function updateThemeLive(key, value) {
+      _S.updateTheme({ [key]: value || null });
+      setSaveStatus('unsaved');
+      applyCanvasTheme();
+      const btn = document.getElementById('reset-' + key);
+      if (btn && value) btn.style.display = '';
+    }
     function updateThemeVal(key, value) {
       _S.updateTheme({ [key]: value || null });
       setSaveStatus('unsaved');
@@ -3392,7 +3433,12 @@
     function updateThemePalette(pid) {
       const p = PALETTES.find(x => x.id === pid);
       if (!p) return;
-      _S.updateTheme({ pageColor: p.bg, cardColor: p.card, color: p.accent, lightMode: p.lightMode });
+      _S.updateTheme({
+        pageColor: p.bg, cardColor: p.card, color: p.accent, lightMode: p.lightMode,
+        headingFont: p.hFont, bodyFont: p.bFont,
+        headerFontColor: p.hColor, bodyFontColor: p.bColor,
+        headerFontSize: p.hSize, bodyFontSize: p.bSize,
+      });
       setSaveStatus('unsaved');
       applyCanvasTheme();
       renderSettings();
@@ -3411,13 +3457,22 @@
       const s = _S.config?.settings || {};
       const th = _S.config?.theme || {};
 
+      const resetBtn = (key, val) => val
+        ? `<button id="reset-${key}" onclick="updateThemeVal('${key}',null)" style="font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer">Reset</button>`
+        : `<button id="reset-${key}" style="display:none;font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer" onclick="updateThemeVal('${key}',null)">Reset</button>`;
+      const colorPicker = (key, val, fallback) => `
+        <div class="gsfb-color-swatch-row">
+          <input type="color" class="gsfb-color-swatch" value="${val || fallback}" oninput="updateThemeLive('${key}',this.value)"/>
+          ${resetBtn(key, val)}
+        </div>`;
+
+      const HEADING_FONTS = ['Plus Jakarta Sans','Lexend','Syne','Montserrat','Raleway','Playfair Display','Cormorant Garamond','Cinzel','EB Garamond','Lora','DM Sans'];
+      const BODY_FONTS    = ['Plus Jakarta Sans','Lexend','Montserrat','Raleway','DM Sans','EB Garamond','Lora','JetBrains Mono'];
+
       document.getElementById('rtabSettingsBody').innerHTML = `
-      <div class="gsfb-stab-row">
-        <button class="gsfb-stab${_settingsTab === 'general' ? ' active' : ''}" onclick="_settingsTab='general';renderSettings()">General</button>
-        <button class="gsfb-stab${_settingsTab === 'theme' ? ' active' : ''}" onclick="_settingsTab='theme';renderSettings()">Theme</button>
-        <button class="gsfb-stab${_settingsTab === 'advanced' ? ' active' : ''}" onclick="_settingsTab='advanced';renderSettings()">Advanced</button>
-      </div>
-      ${_settingsTab === 'general' ? `
+
+      <!-- ══ GENERAL SETTINGS ══ -->
+      <div class="gsfb-major-section">General Settings</div>
       <div class="gsfb-settings-section">
         <div class="gsfb-settings-sec-title">Form Details</div>
         <div class="gsfb-prop">
@@ -3434,7 +3489,7 @@
               <button class="gsfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">①</button>
             </div>
             <div class="gsfb-rte-body" contenteditable="true" id="descRTE"
-                 oninput="updateSetting('description', this.innerHTML)"
+                 oninput="updateSetting('description',this.innerHTML)"
                  placeholder="Brief description shown above the form">${s.description || ''}</div>
           </div>
         </div>
@@ -3466,7 +3521,9 @@
           </div>
         </div>
       </div>
-      ` : _settingsTab === 'theme' ? `
+
+      <!-- ══ THEME ══ -->
+      <div class="gsfb-major-section">Theme</div>
       <div class="gsfb-settings-section">
         <div class="gsfb-settings-sec-title">Cover Image</div>
         <div class="gsfb-prop" style="margin-bottom:0">
@@ -3480,16 +3537,6 @@
             </label>
             ${s.coverImage ? `<button onclick="updateSetting('coverImage','');document.getElementById('coverImageInput').value=''" style="padding:6px 10px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);border-radius:6px;color:var(--red);font-size:12px;cursor:pointer;">Remove</button>` : ''}
           </div>
-        </div>
-      </div>
-      <div class="gsfb-settings-section">
-        <div class="gsfb-settings-sec-title">Mode</div>
-        <div class="gsfb-toggle-row" style="margin-bottom:0">
-          <div>
-            <div style="font-size:13px;color:var(--text)">Light mode</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px">White background, dark text</div>
-          </div>
-          <div class="gsfb-toggle${th.lightMode ? ' on' : ''}" onclick="updateThemeLightMode()"></div>
         </div>
       </div>
       <div class="gsfb-settings-section">
@@ -3511,35 +3558,31 @@
       <div class="gsfb-settings-section">
         <div class="gsfb-settings-sec-title">Typography</div>
         <div class="gsfb-prop">
-          <label class="gsfb-prop-label">Header Font Style</label>
+          <label class="gsfb-prop-label">Header Font</label>
           <select class="gsfb-select" onchange="updateThemeFont('heading',this.value)">
-            ${['Plus Jakarta Sans','Syne','Montserrat','Raleway','Playfair Display','Cormorant Garamond','Dancing Script','Cinzel','EB Garamond'].map(f =>
-              `<option value="${f}" ${(th.headingFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`
-            ).join('')}
+            ${HEADING_FONTS.map(f => `<option value="${f}" ${(th.headingFont || 'Syne') === f ? 'selected' : ''}>${f}</option>`).join('')}
           </select>
         </div>
         <div class="gsfb-prop">
-          <label class="gsfb-prop-label">Body Font Style</label>
+          <label class="gsfb-prop-label">Body Font</label>
           <select class="gsfb-select" onchange="updateThemeFont('body',this.value)">
-            ${['Plus Jakarta Sans','Montserrat','Raleway','EB Garamond','JetBrains Mono'].map(f =>
-              `<option value="${f}" ${(th.bodyFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`
-            ).join('')}
+            ${BODY_FONTS.map(f => `<option value="${f}" ${(th.bodyFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`).join('')}
           </select>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="gsfb-prop" style="margin-bottom:0">
             <label class="gsfb-prop-label">Header Size</label>
             <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="range" min="16" max="48" value="${th.headerFontSize || 28}" style="flex:1;accent-color:var(--cyan)"
-                     oninput="updateThemeVal('headerFontSize',+this.value);this.nextElementSibling.textContent=this.value+'px'"/>
-              <span style="font-size:11px;color:var(--text-3);min-width:32px;text-align:right">${th.headerFontSize || 28}px</span>
+              <input type="range" min="16" max="48" value="${th.headerFontSize || 26}" style="flex:1;accent-color:var(--cyan)"
+                     oninput="updateThemeLive('headerFontSize',+this.value);this.nextElementSibling.textContent=this.value+'px'"/>
+              <span style="font-size:11px;color:var(--text-3);min-width:32px;text-align:right">${th.headerFontSize || 26}px</span>
             </div>
           </div>
           <div class="gsfb-prop" style="margin-bottom:0">
             <label class="gsfb-prop-label">Body Size</label>
             <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
               <input type="range" min="11" max="22" value="${th.bodyFontSize || 15}" style="flex:1;accent-color:var(--cyan)"
-                     oninput="updateThemeVal('bodyFontSize',+this.value);this.nextElementSibling.textContent=this.value+'px'"/>
+                     oninput="updateThemeLive('bodyFontSize',+this.value);this.nextElementSibling.textContent=this.value+'px'"/>
               <span style="font-size:11px;color:var(--text-3);min-width:32px;text-align:right">${th.bodyFontSize || 15}px</span>
             </div>
           </div>
@@ -3547,52 +3590,37 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
           <div class="gsfb-prop" style="margin-bottom:0">
             <label class="gsfb-prop-label">Header Color</label>
-            <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="color" value="${th.headerFontColor || (th.lightMode ? '#111827' : '#eef4ff')}"
-                     oninput="updateThemeVal('headerFontColor',this.value)"
-                     style="width:34px;height:28px;border:1px solid rgba(255,255,255,0.12);padding:1px 3px;background:rgba(255,255,255,0.05);cursor:pointer;border-radius:5px"/>
-              ${th.headerFontColor ? `<button onclick="updateThemeVal('headerFontColor',null)" style="font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer">Reset</button>` : ''}
-            </div>
+            ${colorPicker('headerFontColor', th.headerFontColor, th.lightMode ? '#111827' : '#eef4ff')}
           </div>
           <div class="gsfb-prop" style="margin-bottom:0">
             <label class="gsfb-prop-label">Body Color</label>
-            <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="color" value="${th.bodyFontColor || (th.lightMode ? '#374151' : '#98b0cc')}"
-                     oninput="updateThemeVal('bodyFontColor',this.value)"
-                     style="width:34px;height:28px;border:1px solid rgba(255,255,255,0.12);padding:1px 3px;background:rgba(255,255,255,0.05);cursor:pointer;border-radius:5px"/>
-              ${th.bodyFontColor ? `<button onclick="updateThemeVal('bodyFontColor',null)" style="font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer">Reset</button>` : ''}
-            </div>
+            ${colorPicker('bodyFontColor', th.bodyFontColor, th.lightMode ? '#374151' : '#98b0cc')}
           </div>
         </div>
       </div>
       <div class="gsfb-settings-section">
         <div class="gsfb-settings-sec-title">Colours</div>
-        <div class="gsfb-prop-label" style="margin-bottom:8px">Accent</div>
-        <div class="gsfb-color-grid" style="margin-bottom:14px">
-          ${COLORS.map(c => `<div class="gsfb-color-pill${th.color === c.key ? ' selected' : ''}" style="background:${c.hex}" title="${c.key}" onclick="updateThemeColor('${c.key}')"></div>`).join('')}
+        <div style="margin-bottom:14px">
+          <div class="gsfb-prop-label" style="margin-bottom:8px">Accent</div>
+          <div class="gsfb-color-grid">
+            ${COLORS.map(c => `<div class="gsfb-color-pill${th.color === c.key ? ' selected' : ''}" style="background:${c.hex}" title="${c.key}" onclick="updateThemeColor('${c.key}')"></div>`).join('')}
+          </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="gsfb-prop" style="margin-bottom:0">
             <label class="gsfb-prop-label">Cards</label>
-            <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="color" value="${th.cardColor || (th.lightMode ? '#ffffff' : '#0d1728')}" oninput="updateCanvasColor('cardColor',this.value)"
-                     style="width:34px;height:28px;border:1px solid rgba(255,255,255,0.12);padding:1px 3px;background:rgba(255,255,255,0.05);cursor:pointer;border-radius:5px"/>
-              ${th.cardColor ? `<button onclick="updateCanvasColor('cardColor',null)" style="font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer">Reset</button>` : ''}
-            </div>
+            ${colorPicker('cardColor', th.cardColor, th.lightMode ? '#ffffff' : '#0a1628')}
           </div>
           <div class="gsfb-prop" style="margin-bottom:0">
             <label class="gsfb-prop-label">Bg Color</label>
-            <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="color" value="${th.pageColor || (th.lightMode ? '#eef2f7' : '#04080f')}" oninput="updateCanvasColor('pageColor',this.value)"
-                     style="width:34px;height:28px;border:1px solid rgba(255,255,255,0.12);padding:1px 3px;background:rgba(255,255,255,0.05);cursor:pointer;border-radius:5px"/>
-              ${th.pageColor ? `<button onclick="updateCanvasColor('pageColor',null)" style="font-size:11px;padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:5px;color:var(--text-3);cursor:pointer">Reset</button>` : ''}
-            </div>
+            ${colorPicker('pageColor', th.pageColor, th.lightMode ? '#f8fafc' : '#030c1a')}
           </div>
         </div>
       </div>
-      ` : `
+
+      <!-- ══ ADVANCED ══ -->
+      <div class="gsfb-major-section">Advanced</div>
       <div class="gsfb-settings-section">
-        <div class="gsfb-settings-sec-title">Limits</div>
         <div class="gsfb-prop">
           <label class="gsfb-prop-label">Max Submissions</label>
           <input class="gsfb-input" type="number" min="1" value="${s.maxSubmissions || ''}"
@@ -3602,8 +3630,7 @@
           <label class="gsfb-prop-label">Close Date</label>
           <input class="gsfb-input" type="date" value="${s.closeDate || ''}" oninput="updateSetting('closeDate',this.value||null)"/>
         </div>
-      </div>
-      `}`;
+      </div>`;
     }
 
     function renderPassSettings() {
