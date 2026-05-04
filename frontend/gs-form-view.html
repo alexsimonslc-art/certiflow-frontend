@@ -823,6 +823,14 @@
       margin-bottom: 28px;
     }
 
+    .gsfv-ty-pass-cta {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
     .gsfv-ty-another {
       padding: 11px 24px;
       border-radius: 10px;
@@ -1804,8 +1812,17 @@
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <div class="gsfv-ty-title">You're all set!</div>
+        <div class="gsfv-ty-title">Your Response Submitted!</div>
         <div class="gsfv-ty-msg" id="tyMessage"></div>
+        <div id="tyPassSection" style="display:none;width:100%;margin-top:20px">
+          <div class="gsfv-ty-pass-cta">Please download your Entry Pass</div>
+          <div class="gsfv-pass-canvas-wrap">
+            <canvas id="passCanvas" width="520" height="693" style="max-width:320px;width:100%;border-radius:16px"></canvas>
+          </div>
+          <div class="gsfv-pass-actions">
+            <button class="gsfv-pass-btn gsfv-pass-btn-dl" onclick="downloadPass()">⬇ Download Pass</button>
+          </div>
+        </div>
         <button class="gsfv-ty-another" id="tyAnotherBtn" style="display:none" onclick="resetForm()">
           Submit another response
         </button>
@@ -1818,22 +1835,8 @@
     Powered by <a href="/index.html" target="_blank">GalSol</a>
   </footer>
 
-  <!-- ── Entry Pass Modal ──────────────────────────────────────── -->
-  <div class="gsfv-pass-overlay" id="passModal">
-    <div class="gsfv-pass-modal">
-      <div class="gsfv-pass-modal-hdr">
-        <div class="gsfv-pass-modal-title">🎫 Your Entry Pass</div>
-        <button class="gsfv-pass-modal-close" onclick="closePassModal()">✕</button>
-      </div>
-      <div class="gsfv-pass-canvas-wrap">
-        <canvas id="passCanvas" width="520" height="693" style="max-width:100%;border-radius:16px"></canvas>
-      </div>
-      <div class="gsfv-pass-actions">
-        <button class="gsfv-pass-btn gsfv-pass-btn-dl" onclick="downloadPass()">⬇ Download Pass</button>
-        <button class="gsfv-pass-btn gsfv-pass-btn-close" onclick="closePassModal()">Close</button>
-      </div>
-    </div>
-  </div>
+  <!-- ── Entry Pass Modal (kept for structure, pass is now inline) ── -->
+  <div class="gsfv-pass-overlay" id="passModal" style="display:none!important"></div>
 
   <script>
     /* ════════════════════════════════════════════════════════════════
@@ -2813,13 +2816,11 @@
 
         const data = await res.json();
 
-        // Show entry pass modal if backend returned one
+        const msg = data.message || formConfig?.config?.settings?.successMessage || 'Thank you for your response!';
         if (data.pass?.enabled) {
-          showThankYou(data.message || formConfig?.config?.settings?.successMessage || 'Thank you for your response!');
-          showPassModal(data.pass);
+          showThankYou(msg, data.pass);
         } else {
-          showThankYou(data.message || formConfig?.config?.settings?.successMessage || 'Thank you for your response!');
-          // Redirect if configured
+          showThankYou(msg);
           const redirectUrl = formConfig?.config?.settings?.redirectUrl;
           if (redirectUrl) {
             setTimeout(() => { window.location.href = redirectUrl; }, 2500);
@@ -2835,13 +2836,17 @@
     }
 
     /* ── Show thank you ─────────────────────────────────────────────── */
-    function showThankYou(message) {
-      // Mark as submitted for this browser session (duplicate guard)
+    function showThankYou(message, pass = null) {
       sessionStorage.setItem('gsf_submitted_' + formSlug, '1');
       _clearProgress();
       document.getElementById('formState').style.display = 'none';
       document.getElementById('thankYouState').style.display = '';
       document.getElementById('tyMessage').textContent = message;
+      if (pass) {
+        _passData = pass;
+        document.getElementById('tyPassSection').style.display = '';
+        renderPassCanvas(pass);
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     /* ── Reset for "submit another" ────────────────────────────────── */
@@ -3083,11 +3088,7 @@
     ════════════════════════════════════════════════════════════════ */
     let _passData = null;
 
-    function showPassModal(pass) {
-      _passData = pass;
-      document.getElementById('passModal').classList.add('open');
-      renderPassCanvas(pass);
-    }
+    function showPassModal(pass) { /* pass is now shown inline on the success page */ }
 
     function closePassModal() {
       document.getElementById('passModal').classList.remove('open');
@@ -3218,11 +3219,11 @@
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
       rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 20; });
 
-      // Footer "Powered by" + White logo (async)
-      ctx.textAlign = 'right';
-      ctx.font = '10px "Plus Jakarta Sans",sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
-      ctx.fillText('Powered by', W / 2 - 4, H - FOOTER_H + 27);
+      // Footer: "Powered by GalSol" centered text
+      ctx.textAlign = 'center';
+      ctx.font = '11px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.52)';
+      ctx.fillText('Powered by GalSol', W / 2, H - FOOTER_H + 27);
 
       // ── ASYNC ────────────────────────────────────────────────────────
       if (cfg.logoUrl) {
@@ -3234,15 +3235,6 @@
       const qi = new Image();
       qi.onload = () => { ctx.drawImage(qi, QX + 6, QY + 6, QS - 12, QS - 12); };
       qi.src = pass.qrDataUrl;
-
-      const gi = new Image();
-      gi.onload = () => {
-        const GH = 18, GW = Math.round(GH * 2567 / 650);
-        ctx.globalAlpha = 0.70;
-        ctx.drawImage(gi, W / 2 + 4, H - FOOTER_H + Math.round((FOOTER_H - GH) / 2), GW, GH);
-        ctx.globalAlpha = 1.0;
-      };
-      gi.src = 'Images/GalSol%20White.svg';
     }
 
     function _rr(ctx, x, y, w, h, r) {

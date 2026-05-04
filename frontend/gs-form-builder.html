@@ -5140,20 +5140,11 @@
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
       rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 20; });
 
-      // Footer: "Powered by" + GalSol White logo (async)
-      ctx.textAlign = 'right';
-      ctx.font = '10px "Plus Jakarta Sans",sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
-      ctx.fillText('Powered by', W / 2 - 4, H - FOOTER_H + 27);
-
-      const wi = new Image();
-      wi.onload = () => {
-        const GH = 18, GW = Math.round(GH * 2567 / 650);
-        ctx.globalAlpha = 0.70;
-        ctx.drawImage(wi, W / 2 + 4, H - FOOTER_H + Math.round((FOOTER_H - GH) / 2), GW, GH);
-        ctx.globalAlpha = 1.0;
-      };
-      wi.src = 'Images/GalSol%20White.svg';
+      // Footer: "Powered by GalSol" plain text
+      ctx.textAlign = 'center';
+      ctx.font = '11px "Plus Jakarta Sans",sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.52)';
+      ctx.fillText('Powered by GalSol', W / 2, H - FOOTER_H + 27);
 
       if (s.passLogoUrl) {
         const li = new Image(); li.crossOrigin = 'anonymous';
