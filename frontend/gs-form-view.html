@@ -1049,11 +1049,6 @@
         padding: 18px 18px 14px;
       }
 
-      .gsfv-field-card-img {
-        width: calc(100% + 36px);
-        margin: -18px -18px 14px;
-      }
-
       .gsfv-header {
         padding: 0;
       }
@@ -1188,16 +1183,15 @@
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 14px;
       padding: 22px 24px 18px;
-      overflow: hidden;
     }
 
     .gsfv-field-card-img {
-      width: calc(100% + 48px);
-      height: 160px;
-      object-fit: cover;
+      width: 100%;
+      height: auto;
       display: block;
-      margin: -22px -24px 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      margin-bottom: 14px;
+      max-width: 100%;
     }
 
     /* ── Light mode overrides ──────────────────────────────────── */
@@ -2001,13 +1995,14 @@
     function initCC(fid) {
       const listEl = document.getElementById('cclist-' + fid);
       if (!listEl) return;
+      renderCCList(fid, '');
+      // If a value is already saved (page revisit), rehydratePage will restore CC — skip default
+      if (formValues[fid]) return;
       _ccSelected[fid] = { iso: 'IN', dial: '91' };
       const flagEl = document.getElementById('ccflag-' + fid);
       const dialEl = document.getElementById('ccdial-' + fid);
       if (flagEl) { flagEl.src = 'https://flagcdn.com/w20/in.png'; flagEl.alt = 'IN'; flagEl.style.display = ''; }
       if (dialEl) { dialEl.textContent = '+91'; dialEl.style.opacity = ''; dialEl.style.fontSize = ''; }
-      renderCCList(fid, '');
-      updatePhone(fid, document.getElementById('fi-' + fid)?.value || '');
     }
 
     function renderCCList(fid, q) {
@@ -2062,7 +2057,8 @@
 
     function updatePhone(fid, num) {
       const sel = _ccSelected[fid];
-      fv[fid] = sel ? '+' + sel.dial + ' ' + num : num;
+      const clean = (num || '').trim();
+      fv[fid] = (sel && clean) ? '+' + sel.dial + ' ' + clean : '';
       clearErr(fid);
     }
 
@@ -2186,6 +2182,7 @@
       void container.offsetWidth; // reflow
       container.classList.add('gsfv-page-enter');
       wireFields(page.fields);
+      rehydratePage(page.fields);
       evaluateConditions();
 
       // Back button
@@ -2545,6 +2542,104 @@
           if (wrap) wrap.style.maxHeight = wrap.scrollHeight + 300 + 'px';
         });
         evaluateConditions();
+      });
+    }
+
+    /* ── Restore DOM from formValues after every page render ─────── */
+    function rehydratePage(fields) {
+      fields.forEach(f => {
+        if (f.type === 'section_break') return;
+        const val = formValues[f.id];
+
+        if (f.type === 'phone') {
+          if (typeof val === 'string' && val.trim()) {
+            const match = val.match(/^\+(\d+)\s?(.*)$/);
+            if (match) {
+              const dial = match[1], num = match[2] || '';
+              const country = CC_DATA.find(([, d]) => d === dial);
+              if (country) {
+                const [iso, d] = country;
+                _ccSelected[f.id] = { iso, dial: d };
+                const flagEl = document.getElementById('ccflag-' + f.id);
+                const dialEl = document.getElementById('ccdial-' + f.id);
+                if (flagEl) { flagEl.src = `https://flagcdn.com/w20/${iso.toLowerCase()}.png`; flagEl.alt = iso; flagEl.style.display = ''; }
+                if (dialEl) { dialEl.textContent = '+' + d; dialEl.style.opacity = ''; dialEl.style.fontSize = ''; }
+              }
+              const numEl = document.getElementById('fi-' + f.id);
+              if (numEl) numEl.value = num;
+            }
+          }
+          return;
+        }
+
+        if (val === '' || val === null || val === undefined) return;
+
+        switch (f.type) {
+          case 'text': case 'email': case 'number': case 'date': {
+            const el = document.getElementById('fi-' + f.id);
+            if (el) el.value = val;
+            break;
+          }
+          case 'textarea': {
+            const el = document.getElementById('fi-' + f.id);
+            if (el) el.value = val;
+            break;
+          }
+          case 'time': {
+            const el = document.getElementById('fi-' + f.id);
+            if (el) { el.value = val; updateAmPmDisplay(f.id); }
+            break;
+          }
+          case 'radio': {
+            const container = document.getElementById('fi-' + f.id);
+            if (!container) break;
+            container.querySelectorAll('.gsfv-option-label').forEach((el, i) => {
+              el.classList.toggle('selected', (f.options || [])[i] === val);
+            });
+            break;
+          }
+          case 'checkbox': {
+            if (!Array.isArray(val) || !val.length) break;
+            const container = document.getElementById('fi-' + f.id);
+            if (!container) break;
+            container.querySelectorAll('.gsfv-option-label').forEach((el, i) => {
+              el.classList.toggle('selected', val.includes((f.options || [])[i]));
+            });
+            break;
+          }
+          case 'dropdown': {
+            const valEl = document.getElementById('ddv-' + f.id);
+            const btn = document.getElementById('ddb-' + f.id);
+            const list = document.getElementById('ddl-' + f.id);
+            if (valEl) valEl.textContent = val;
+            if (btn) btn.classList.add('has-val');
+            if (list) list.querySelectorAll('.gsfv-dd-item').forEach(item =>
+              item.classList.toggle('selected', item.dataset.val === val)
+            );
+            break;
+          }
+          case 'linear_scale': {
+            const container = document.getElementById('fi-' + f.id);
+            if (!container) break;
+            if ((f.style || 'stars') === 'stars') {
+              container.querySelectorAll('.gsfv-star-btn').forEach(btn => {
+                btn.classList.toggle('active', +btn.dataset.val <= +val);
+              });
+            } else {
+              container.querySelectorAll('.gsfv-num-btn').forEach(btn => {
+                btn.classList.toggle('active', +btn.dataset.val === +val);
+              });
+            }
+            break;
+          }
+          case 'file_upload': {
+            const prev = document.getElementById('fp-' + f.id);
+            const nameEl = document.getElementById('fn-' + f.id);
+            if (prev) prev.style.display = '';
+            if (nameEl) nameEl.textContent = typeof val === 'string' && val.startsWith('http') ? 'File uploaded ✓' : String(val);
+            break;
+          }
+        }
       });
     }
 
