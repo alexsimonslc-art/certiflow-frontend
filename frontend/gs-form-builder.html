@@ -17,6 +17,12 @@
       box-sizing: border-box;
     }
 
+    /* Brighten muted text colors for readability throughout the builder */
+    :root {
+      --text-2: #94afc8;
+      --text-3: #6a879e;
+    }
+
     body {
       overflow: hidden;
       height: 100vh;
@@ -861,6 +867,31 @@
       line-height: 1.6;
     }
 
+    /* Phone field — matches form view */
+    .gsfb-pv-phone-wrap { display: flex; gap: 0; align-items: stretch; }
+    .gsfb-pv-cc-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 12px; min-width: 82px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);
+      border-right: none; border-radius: 9px 0 0 9px;
+      color: var(--text-2); font-size: 13px; font-weight: 500;
+      cursor: default; white-space: nowrap; flex-shrink: 0;
+      font-family: var(--font);
+    }
+    .gsfb-pv-cc-btn img { width: 20px; height: 14px; border-radius: 2px; object-fit: cover; }
+    .gsfb-pv-phone-wrap .gsfb-pv-input { border-radius: 0 9px 9px 0; }
+    /* Dropdown button — matches form view */
+    .gsfb-pv-dd-btn {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 12px 14px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10); border-radius: 9px;
+      color: var(--text-3); font-size: 15px; font-family: var(--font);
+      cursor: default; text-align: left;
+    }
+    .gsfb-pv-dd-btn svg { flex-shrink: 0; width: 14px; height: 14px; color: var(--text-3); }
+    .gsfb-pv-dd-item { padding: 10px 14px; font-size: 14px; color: var(--text-2); cursor: pointer; transition: background 0.12s; }
+    .gsfb-pv-dd-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    .gsfb-pv-dd-item.on { background: rgba(0,212,255,0.10); color: var(--cyan); font-weight: 600; }
     .gsfb-pv-select {
       width: 100%;
       padding: 12px 36px 12px 14px;
@@ -2334,7 +2365,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin: 6px 0 4px;
+      margin: 32px 0 24px;
       pointer-events: none;
     }
 
@@ -2507,19 +2538,14 @@
       <aside class="gsfb-left">
         <!-- Tab bar -->
         <div class="gsfb-left-tabs">
-          <button class="gsfb-ltab active" id="ltabFields" onclick="switchLTab('fields')">
-            Fields&nbsp;<span class="gsfb-layer-count" id="layerCount">0</span>
+          <button class="gsfb-ltab active" id="ltabAdd" onclick="switchLTab('add')">+ Add Field</button>
+          <button class="gsfb-ltab" id="ltabFields" onclick="switchLTab('fields')">
+            Layers&nbsp;<span class="gsfb-layer-count" id="layerCount">0</span>
           </button>
-          <button class="gsfb-ltab" id="ltabAdd" onclick="switchLTab('add')">+ Add Field</button>
-        </div>
-
-        <!-- Fields tab: draggable layer list -->
-        <div class="gsfb-left-body" id="ltabFieldsBody">
-          <div class="gsfb-layer-list" id="layerList"></div>
         </div>
 
         <!-- Add Field tab: card grid -->
-        <div class="gsfb-left-body" id="ltabAddBody" style="display:none">
+        <div class="gsfb-left-body" id="ltabAddBody">
           <div class="gsfb-field-cards-grid">
             <button class="gsfb-field-card" onclick="addField('text')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2623,17 +2649,6 @@
               </svg>
               Image
             </button>
-            <button class="gsfb-field-card card-full" onclick="addField('event_pass')"
-              style="color:#f59e0b;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path
-                  d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z" />
-                <path d="M13 5v2" />
-                <path d="M13 17v2" />
-                <path d="M13 11v2" />
-              </svg>
-              Event Entry Pass
-            </button>
             <button class="gsfb-field-card card-full" onclick="addField('section_break')"
               style="color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2643,7 +2658,12 @@
               Add New Page
             </button>
           </div>
-        
+        </div>
+
+        <!-- Layers tab: draggable layer list -->
+        <div class="gsfb-left-body" id="ltabFieldsBody" style="display:none">
+          <div class="gsfb-layer-list" id="layerList"></div>
+        </div>
       </aside>
 
       <!-- CENTER: Interactive Preview -->
@@ -4202,28 +4222,21 @@
             ${TEXT_FONTS.map(f => `<option value="${f}" ${(th.textFont || th.bodyFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`).join('')}
           </select>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
           <div class="gsfb-prop" style="margin-bottom:0">
             <label class="gsfb-prop-label">Header Size</label>
             <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="range" min="16" max="48" value="${th.headerFontSize || 26}" style="flex:1;accent-color:var(--cyan)"
               <input type="range" min="16" max="48" value="${th.headerFontSize || 26}" style="flex:1;min-width:0;accent-color:var(--cyan)"
-              <input type="range" min="16" max="48" value="${th.headerFontSize || 26}" style="flex:1;min-width:0;width:0;accent-color:var(--cyan)"
                      oninput="updateThemeLive('headerFontSize',+this.value);this.nextElementSibling.textContent=this.value+'px'"/>
-              <span style="font-size:11px;color:var(--text-3);min-width:32px;text-align:right">${th.headerFontSize || 26}px</span>
-              <span style="font-size:11px;color:var(--text-3);min-width:32px;text-align:right;flex-shrink:0">${th.headerFontSize || 26}px</span>
+              <span style="font-size:11px;color:var(--text-2);min-width:32px;text-align:right;flex-shrink:0">${th.headerFontSize || 26}px</span>
             </div>
           </div>
           <div class="gsfb-prop" style="margin-bottom:0">
             <label class="gsfb-prop-label">Body Size</label>
             <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="range" min="11" max="22" value="${th.bodyFontSize || 15}" style="flex:1;accent-color:var(--cyan)"
               <input type="range" min="11" max="22" value="${th.bodyFontSize || 15}" style="flex:1;min-width:0;accent-color:var(--cyan)"
-              <input type="range" min="11" max="22" value="${th.bodyFontSize || 15}" style="flex:1;min-width:0;width:0;accent-color:var(--cyan)"
                      oninput="updateThemeLive('bodyFontSize',+this.value);this.nextElementSibling.textContent=this.value+'px'"/>
-              <span style="font-size:11px;color:var(--text-3);min-width:32px;text-align:right">${th.bodyFontSize || 15}px</span>
-              <span style="font-size:11px;color:var(--text-3);min-width:32px;text-align:right;flex-shrink:0">${th.bodyFontSize || 15}px</span>
+              <span style="font-size:11px;color:var(--text-2);min-width:32px;text-align:right;flex-shrink:0">${th.bodyFontSize || 15}px</span>
             </div>
           </div>
         </div>
@@ -4897,7 +4910,14 @@
           body = `<input class="gsfb-pv-input" id="${fid}" type="email" placeholder="${escAttr(f.placeholder || 'you@example.com')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'phone':
-          body = `<input class="gsfb-pv-input" id="${fid}" type="tel" placeholder="${escAttr(f.placeholder || 'Phone number')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<div class="gsfb-pv-phone-wrap">
+            <div class="gsfb-pv-cc-btn">
+              <img src="https://flagcdn.com/w20/in.png" alt="IN" style="width:20px;height:14px;border-radius:2px;object-fit:cover"/>
+              <span>+91</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px;color:var(--text-3)"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <input class="gsfb-pv-input" id="${fid}" type="tel" placeholder="${escAttr(f.placeholder || 'Phone number')}" oninput="pvSetVal('${f.id}',this.value)" style="border-radius:0 9px 9px 0"/>
+          </div>`;
           break;
         case 'number':
           body = `<input class="gsfb-pv-input" id="${fid}" type="number" placeholder="${escAttr(f.placeholder || '0')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
@@ -4915,10 +4935,22 @@
               style="padding:0 14px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);color:var(--text-2);font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;flex-shrink:0;transition:all 0.15s">AM</button>
           </div>`;
           break;
-        case 'dropdown':
-          const dOpts = (f.options || []).map(o => `<option value="${escAttr(o)}">${escHtml(o)}</option>`).join('');
-          body = `<select class="gsfb-pv-select" id="${fid}" onchange="pvSetVal('${f.id}',this.value)"><option value="">— Select —</option>${dOpts}</select>`;
+        case 'dropdown': {
+          const curDD = _pv.vals[f.id] || '';
+          const dItems = (f.options || []).map(o =>
+            `<div class="gsfb-pv-dd-item${curDD === o ? ' on' : ''}" onclick="pvPickDD('${f.id}','${escAttr(o)}',this)">${escHtml(o)}</div>`
+          ).join('');
+          body = `<div class="gsfb-pv-dd-wrap" id="${fid}" style="position:relative">
+            <div class="gsfb-pv-dd-btn" id="pvddb-${f.id}" onclick="pvToggleDD('${f.id}')" style="${curDD ? 'color:var(--text)' : ''}">
+              <span id="pvddv-${f.id}">${curDD ? escHtml(curDD) : '— Select —'}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="gsfb-pv-dd-list" id="pvddl-${f.id}" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#0d1728;border:1px solid rgba(255,255,255,0.12);border-radius:10px;z-index:50;overflow:hidden">
+              ${dItems}
+            </div>
+          </div>`;
           break;
+        }
         case 'radio':
           body = (f.options || []).map((o, i) => {
             const isSel = (_pv.selOpts[f.id] === i);
@@ -5007,6 +5039,23 @@
     function pvSetVal(fid, val) {
       _pv.vals[fid] = val;
       pvEvalConditions();
+    }
+    function pvToggleDD(fid) {
+      const list = document.getElementById('pvddl-' + fid);
+      if (!list) return;
+      const isOpen = list.style.display !== 'none';
+      // Close all open dd lists
+      document.querySelectorAll('.gsfb-pv-dd-list').forEach(el => el.style.display = 'none');
+      if (!isOpen) list.style.display = '';
+    }
+    function pvPickDD(fid, val, el) {
+      pvSetVal(fid, val);
+      const valEl = document.getElementById('pvddv-' + fid);
+      const btn = document.getElementById('pvddb-' + fid);
+      const list = document.getElementById('pvddl-' + fid);
+      if (valEl) valEl.textContent = val;
+      if (btn) btn.style.color = 'var(--text)';
+      if (list) { list.querySelectorAll('.gsfb-pv-dd-item').forEach(i => i.classList.toggle('on', i === el)); list.style.display = 'none'; }
     }
     function pvPickRadio(fid, idx, total, el) {
       _pv.selOpts[fid] = idx;
