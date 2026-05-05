@@ -2509,9 +2509,6 @@
         <div class="gsfb-left-tabs">
           <button class="gsfb-ltab active" id="ltabFields" onclick="switchLTab('fields')">
             Fields&nbsp;<span class="gsfb-layer-count" id="layerCount">0</span>
-          <button class="gsfb-ltab active" id="ltabAdd" onclick="switchLTab('add')">+ Add Field</button>
-          <button class="gsfb-ltab" id="ltabFields" onclick="switchLTab('fields')">
-            Layers&nbsp;<span class="gsfb-layer-count" id="layerCount">0</span>
           </button>
           <button class="gsfb-ltab" id="ltabAdd" onclick="switchLTab('add')">+ Add Field</button>
         </div>
@@ -2523,7 +2520,6 @@
 
         <!-- Add Field tab: card grid -->
         <div class="gsfb-left-body" id="ltabAddBody" style="display:none">
-        <div class="gsfb-left-body" id="ltabAddBody">
           <div class="gsfb-field-cards-grid">
             <button class="gsfb-field-card" onclick="addField('text')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2882,11 +2878,8 @@
         renderPreview();
         setSaveStatus('saved');
         // If no fields yet, switch to the Add Field tab automatically
-        // Switch to appropriate tab based on whether fields exist
         if (!state.config.fields || !state.config.fields.length) {
           switchLTab('add');
-        } else {
-          switchLTab('fields');
         }
       });
     })();
@@ -4152,11 +4145,6 @@
             </div>
             <div class="gsfb-toggle${s.allowMultiple ? ' on' : ''}" onclick="toggleSetting('allowMultiple')"></div>
           </div>
-        </div>
-
-        <!-- Fields tab: draggable layer list -->
-        <div class="gsfb-left-body" id="ltabFieldsBody" style="display:none">
-          <div class="gsfb-layer-list" id="layerList"></div>
         </div>
       </div>
 
