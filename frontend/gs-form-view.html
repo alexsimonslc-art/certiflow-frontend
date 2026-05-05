@@ -714,6 +714,9 @@
       color: var(--text-2);
       line-height: 1.55;
     }
+    .gsfv-section-desc ul { list-style-type: disc; padding-left: 20px; margin: 4px 0; }
+    .gsfv-section-desc ol { list-style-type: decimal; padding-left: 20px; margin: 4px 0; }
+    .gsfv-section-desc li { margin-bottom: 3px; }
 
     /* ── Submit button ──────────────────────────────────────────── */
     .gsfv-submit {
@@ -2348,7 +2351,7 @@
         return `
       <div class="gsfv-section-break">
         ${f.label ? `<div class="gsfv-section-title">${esc(f.label)}</div>` : ''}
-        ${f.description ? `<div class="gsfv-section-desc">${esc(f.description)}</div>` : ''}
+        ${f.description ? `<div class="gsfv-section-desc">${f.description}</div>` : ''}
       </div>`;
       }
 
@@ -3247,8 +3250,19 @@
     /* ── Apply full theme to CSS vars ─────────────────────────────────── */
     function applyFormTheme(th) {
       const root = document.documentElement;
-      if (th.cardColor) root.style.setProperty('--card-bg', th.cardColor);
-      if (th.pageColor) root.style.setProperty('--bg', th.pageColor);
+      const body = document.body;
+
+      // Light mode class first
+      if (th.lightMode) body.classList.add('gsfv-light');
+      else body.classList.remove('gsfv-light');
+
+      // Card + page bg: set on body so CSS class light-mode defaults can be overridden
+      // by explicit custom colors, but fall through to CSS class when not set
+      if (th.cardColor) body.style.setProperty('--card-bg', th.cardColor);
+      else body.style.removeProperty('--card-bg');
+      if (th.pageColor) body.style.setProperty('--bg', th.pageColor);
+      else body.style.removeProperty('--bg');
+
       if (th.headerFontSize) root.style.setProperty('--header-size', th.headerFontSize + 'px');
       if (th.bodyFontSize) root.style.setProperty('--body-size', th.bodyFontSize + 'px');
       if (th.headerFontColor) root.style.setProperty('--header-color', th.headerFontColor);
@@ -3257,9 +3271,6 @@
       const tf = th.textFont || th.bodyFont;
       if (qf) root.style.setProperty('--font-question', `'${qf}', sans-serif`);
       if (tf) root.style.setProperty('--font-text', `'${tf}', sans-serif`);
-      // Light mode body class
-      if (th.lightMode) document.body.classList.add('gsfv-light');
-      else document.body.classList.remove('gsfv-light');
     }
 
     /* ════════════════════════════════════════════════════════════════
