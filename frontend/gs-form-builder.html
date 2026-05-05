@@ -2122,8 +2122,9 @@
       user-select: none;
       pointer-events: none;
     }
-    .gsfc-card-desc ul, .gsfc-card-desc ol { padding-left: 18px; margin: 4px 0; }
-    .gsfc-card-desc li { margin-bottom: 2px; }
+    .gsfc-card-desc ul { list-style-type: disc; padding-left: 18px; margin: 4px 0; }
+    .gsfc-card-desc ol { list-style-type: decimal; padding-left: 18px; margin: 4px 0; }
+    .gsfc-card-desc li { margin-bottom: 2px; display: list-item; }
 
     .gsfc-req {
       color: #ef4444;
@@ -2191,12 +2192,14 @@
     }
 
     .gsfc-upload-preview {
-      padding: 14px;
-      border: 1.5px dashed var(--cc-input-border);
+      border: 2px dashed rgba(0, 212, 255, 0.2);
       border-radius: 8px;
+      padding: 20px 14px;
       text-align: center;
-      font-size: 13px;
-      color: var(--cc-text-3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
     }
 
     .gsfc-scale-preview {
@@ -2891,7 +2894,7 @@
       if (_S.slug) window.open('gs-form-view.html?f=' + _S.slug, '_blank');
       else toast('Please publish the form once to generate the preview link.', 'warn');
     }
-    function tbOpenSheet() { const sid = _S.config?.sheetId; if (sid) window.open('https://docs.google.com/spreadsheets/d/' + sid, '_blank'); }
+    function tbOpenSheet() { const sid = _S.sheetId; if (sid) window.open('https://docs.google.com/spreadsheets/d/' + sid, '_blank'); else toast('No Google Sheet linked to this form yet.', 'warn'); }
 
     function tbCopyLink() {
       const url = window.location.origin + '/gs-form-view.html?f=' + _S.slug;
@@ -4650,7 +4653,14 @@
       if (t === 'dropdown')
         return `<div class="gsfc-dropdown-preview">${escHtml((f.options || ['Option 1'])[0])} <span style="font-size:10px">&#9660;</span></div>`;
       if (t === 'file_upload')
-        return `<div class="gsfc-upload-preview">&#8679;&nbsp; Upload File &nbsp;(Max ${f.maxMB || 10}MB)</div>`;
+        return `<div class="gsfc-upload-preview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;color:var(--cc-accent);opacity:0.85;margin-bottom:2px">
+            <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+          </svg>
+          <div style="font-size:13px;color:var(--cc-body-color)"><strong style="color:var(--cc-accent)">Click to upload</strong> or drag &amp; drop</div>
+          <div style="font-size:11px;color:var(--cc-text-3)">${f.accept && f.accept !== '*' ? f.accept.replace(/[.]/g,'').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
+        </div>`;
       if (t === 'linear_scale') {
         if (f.style === 'stars') {
           const stars = Array.from({ length: f.max || 5 }, () => `<span class="gsfc-star">★</span>`).join('');
@@ -4818,21 +4828,10 @@
           body = `<input class="gsfb-pv-input" id="${fid}" type="date" onchange="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'time':
-          body = `<div style="display:flex;gap:8px;align-items:center">
-            <select class="gsfb-pv-select" style="flex:1;min-width:0" id="${fid}_h" onchange="pvUpdateTime('${f.id}')">
-              <option value="">HH</option>
-              ${Array.from({length:12},(_,i)=>`<option value="${i+1}">${String(i+1).padStart(2,'0')}</option>`).join('')}
-            </select>
-            <span style="color:var(--text-2);font-weight:700;font-size:17px;flex-shrink:0">:</span>
-            <select class="gsfb-pv-select" style="flex:1;min-width:0" id="${fid}_m" onchange="pvUpdateTime('${f.id}')">
-              <option value="">MM</option>
-              ${Array.from({length:60},(_,i)=>`<option value="${String(i).padStart(2,'0')}">${String(i).padStart(2,'0')}</option>`).join('')}
-            </select>
-            <select class="gsfb-pv-select" style="flex:0 0 90px;width:90px" id="${fid}_ap" onchange="pvUpdateTime('${f.id}')">
-              <option value="">--</option>
-              <option value="AM">AM</option>
-              <option value="PM">PM</option>
-            </select>
+          body = `<div style="display:flex;gap:8px;align-items:stretch">
+            <input class="gsfb-pv-input" id="${fid}" type="time" style="flex:1" onchange="pvSetVal('${f.id}',this.value);pvUpdateAmPmBtn('${f.id}')"/>
+            <button type="button" id="pvampm-${f.id}" onclick="pvToggleAmPm('${f.id}')"
+              style="padding:0 14px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);color:var(--text-2);font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;flex-shrink:0;transition:all 0.15s">AM</button>
           </div>`;
           break;
         case 'dropdown':
@@ -4955,15 +4954,23 @@
       const container = document.getElementById('pv_' + fid);
       if (container) container.querySelectorAll('.gsfb-pv-numbox').forEach((b, i) => b.classList.toggle('on', i + 1 === val));
     }
-    function pvUpdateTime(fid) {
-      const h = document.getElementById('pv_' + fid + '_h')?.value;
-      const m = document.getElementById('pv_' + fid + '_m')?.value;
-      const ap = document.getElementById('pv_' + fid + '_ap')?.value;
-      if (!h || !m || !ap) { pvSetVal(fid, ''); return; }
-      let hr = parseInt(h);
-      if (ap === 'PM' && hr !== 12) hr += 12;
-      if (ap === 'AM' && hr === 12) hr = 0;
-      pvSetVal(fid, String(hr).padStart(2, '0') + ':' + m);
+    function pvUpdateAmPmBtn(fid) {
+      const el = document.getElementById('pv_' + fid);
+      const btn = document.getElementById('pvampm-' + fid);
+      if (!btn) return;
+      if (!el?.value) { btn.textContent = 'AM'; return; }
+      btn.textContent = parseInt(el.value.split(':')[0]) >= 12 ? 'PM' : 'AM';
+    }
+    function pvToggleAmPm(fid) {
+      const el = document.getElementById('pv_' + fid);
+      if (!el) return;
+      if (!el.value) { el.value = '12:00'; }
+      const [h, m] = el.value.split(':').map(Number);
+      let newH = h >= 12 ? h - 12 : h + 12;
+      if (newH === 24) newH = 12; if (newH < 0) newH = 12;
+      el.value = String(newH).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+      pvSetVal(fid, el.value);
+      pvUpdateAmPmBtn(fid);
     }
     function pvFakeSubmit() {
       const body = document.getElementById('pvBody');

@@ -30,7 +30,7 @@ const GSF_FIELD_DEFAULTS = {
   text: () => ({ label: 'Short Answer', placeholder: 'Your answer', required: false, validation: {}, image: null }),
   textarea: () => ({ label: 'Paragraph', placeholder: 'Write your answer…', required: false, validation: {}, image: null }),
   email: () => ({ label: 'Email Address', placeholder: 'you@example.com', required: true, validation: {}, image: null }),
-  phone: () => ({ label: 'Phone Number', placeholder: '+91 98765 43210', required: false, validation: {}, image: null }),
+  phone: () => ({ label: 'Phone Number', placeholder: '98765 43210', required: false, validation: {}, image: null }),
   number: () => ({ label: 'Number', placeholder: '0', required: false, validation: { min: null, max: null }, image: null }),
   dropdown: () => ({ label: 'Dropdown', placeholder: 'Select an option', required: false, options: ['Option 1', 'Option 2', 'Option 3'], image: null }),
   radio: () => ({ label: 'Multiple Choice', placeholder: '', required: false, options: ['Option 1', 'Option 2', 'Option 3'], image: null }),
@@ -236,6 +236,7 @@ const GSFState = {
     this.slug = form.slug;
     this.status = form.status || 'draft';
     this.config = form.config || GSF_TEMPLATES.blank.config();
+    this.sheetId = form.sheet_id || null;
   },
 
   /* ── save (localStorage instant, Supabase flagged) ─────────── */
@@ -249,6 +250,7 @@ const GSFState = {
       slug: this.slug,
       status: this.status,
       config: this.config,
+      sheet_id: this.sheetId || null,
       updated_at: new Date().toISOString(),
     };
     if (idx > -1) forms[idx] = entry;

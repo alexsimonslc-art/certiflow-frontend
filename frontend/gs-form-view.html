@@ -286,9 +286,9 @@
       color: var(--body-color);
       line-height: 1.65;
     }
-    .gsfv-desc ul { list-style-type: disc; padding-left: 20px; margin: 5px 0; }
-    .gsfv-desc ol { list-style-type: decimal; padding-left: 20px; margin: 5px 0; }
-    .gsfv-desc li { margin-bottom: 3px; }
+    .gsfv-desc ul { list-style: disc outside; padding-left: 1.5em; margin: 5px 0; }
+    .gsfv-desc ol { list-style: decimal outside; padding-left: 1.5em; margin: 5px 0; }
+    .gsfv-desc li { margin-bottom: 3px; display: list-item; }
     .gsfv-desc a { color: var(--accent); text-decoration: underline; }
 
     /* ── Field wrapper ──────────────────────────────────────────── */
@@ -327,9 +327,9 @@
       line-height: 1.6;
       margin-bottom: 9px;
     }
-    .gsfv-field-desc ul { list-style-type: disc; padding-left: 20px; margin: 4px 0; }
-    .gsfv-field-desc ol { list-style-type: decimal; padding-left: 20px; margin: 4px 0; }
-    .gsfv-field-desc li { margin-bottom: 2px; }
+    .gsfv-field-desc ul { list-style: disc outside; padding-left: 1.5em; margin: 4px 0; }
+    .gsfv-field-desc ol { list-style: decimal outside; padding-left: 1.5em; margin: 4px 0; }
+    .gsfv-field-desc li { margin-bottom: 2px; display: list-item; }
     .gsfv-field-desc a { color: var(--accent); text-decoration: underline; }
     .gsfv-field-desc img { max-width: 100%; border-radius: 6px; margin: 4px 0; }
 
@@ -373,6 +373,28 @@
     .gsfv-input[type="date"],
     .gsfv-input[type="time"] {
       color-scheme: dark;
+    }
+
+    .gsfv-ampm-btn {
+      padding: 0 16px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      color: var(--text-2);
+      font-size: 14px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+      white-space: nowrap;
+      min-width: 60px;
+    }
+
+    .gsfv-ampm-btn:hover {
+      background: rgba(255, 255, 255, 0.10);
+      color: var(--text);
+      border-color: var(--accent);
     }
 
     .gsfv-input[type="number"] {
@@ -949,9 +971,9 @@
       color: var(--text-2);
       line-height: 1.6;
     }
-    .gsfv-page-hdr-desc ul { list-style-type: disc; padding-left: 20px; margin: 4px 0; }
-    .gsfv-page-hdr-desc ol { list-style-type: decimal; padding-left: 20px; margin: 4px 0; }
-    .gsfv-page-hdr-desc li { margin-bottom: 2px; }
+    .gsfv-page-hdr-desc ul { list-style: disc outside; padding-left: 1.5em; margin: 4px 0; }
+    .gsfv-page-hdr-desc ol { list-style: decimal outside; padding-left: 1.5em; margin: 4px 0; }
+    .gsfv-page-hdr-desc li { margin-bottom: 2px; display: list-item; }
     .gsfv-page-hdr-desc a { color: var(--accent); text-decoration: underline; }
     .gsfv-page-hdr-title { font-family: var(--font-display); }
 
@@ -1027,7 +1049,16 @@
         padding: 18px 18px 14px;
       }
 
+      .gsfv-field-card-img {
+        width: calc(100% + 36px);
+        margin: -18px -18px 14px;
+      }
+
       .gsfv-header {
+        padding: 0;
+      }
+
+      .gsfv-header-content {
         padding: 20px 18px 18px;
       }
 
@@ -1157,6 +1188,15 @@
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 14px;
       padding: 22px 24px 18px;
+      overflow: hidden;
+    }
+
+    .gsfv-field-card-img {
+      width: calc(100% + 48px);
+      height: 160px;
+      object-fit: cover;
+      display: block;
+      margin: -22px -24px 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
@@ -1201,6 +1241,12 @@
       background: #ffffff;
       border-color: rgba(0, 0, 0, 0.12);
       color: #111827;
+    }
+
+    body.gsfv-light .gsfv-ampm-btn {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.12);
+      color: #374151;
     }
 
     body.gsfv-light .gsfv-input:focus,
@@ -1955,7 +2001,11 @@
     function initCC(fid) {
       const listEl = document.getElementById('cclist-' + fid);
       if (!listEl) return;
-      _ccSelected[fid] = null; // no default country
+      _ccSelected[fid] = { iso: 'IN', dial: '91' };
+      const flagEl = document.getElementById('ccflag-' + fid);
+      const dialEl = document.getElementById('ccdial-' + fid);
+      if (flagEl) { flagEl.src = 'https://flagcdn.com/w20/in.png'; flagEl.alt = 'IN'; flagEl.style.display = ''; }
+      if (dialEl) { dialEl.textContent = '+91'; dialEl.style.opacity = ''; dialEl.style.fontSize = ''; }
       renderCCList(fid, '');
       updatePhone(fid, document.getElementById('fi-' + fid)?.value || '');
     }
@@ -2364,21 +2414,10 @@
           break;
 
         case 'time':
-          input = `<div style="display:flex;gap:8px;align-items:center">
-            <select class="gsfv-select" style="flex:1;min-width:0" id="fi-${f.id}_h" onchange="updateTimeField('${f.id}');clearErr('${f.id}')">
-              <option value="">HH</option>
-              ${Array.from({length:12},(_,i)=>`<option value="${i+1}">${String(i+1).padStart(2,'0')}</option>`).join('')}
-            </select>
-            <span style="color:var(--text-2);font-weight:700;font-size:18px;flex-shrink:0">:</span>
-            <select class="gsfv-select" style="flex:1;min-width:0" id="fi-${f.id}_m" onchange="updateTimeField('${f.id}');clearErr('${f.id}')">
-              <option value="">MM</option>
-              ${Array.from({length:60},(_,i)=>`<option value="${String(i).padStart(2,'0')}">${String(i).padStart(2,'0')}</option>`).join('')}
-            </select>
-            <select class="gsfv-select" style="flex:0 0 90px" id="fi-${f.id}_ap" onchange="updateTimeField('${f.id}');clearErr('${f.id}')">
-              <option value="">--</option>
-              <option value="AM">AM</option>
-              <option value="PM">PM</option>
-            </select>
+          input = `<div style="display:flex;gap:8px;align-items:stretch">
+            <input class="gsfv-input" id="fi-${f.id}" type="time" style="flex:1"
+              oninput="fv['${f.id}']=this.value;updateAmPmDisplay('${f.id}');clearErr('${f.id}')"/>
+            <button type="button" class="gsfv-ampm-btn" id="ampm-${f.id}" onclick="toggleAmPm('${f.id}')">AM</button>
           </div>`;
           break;
 
@@ -2477,9 +2516,11 @@
                       oninput="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
       }
 
+      const cardImg = f.image ? `<img src="${escAttr(f.image)}" alt="" class="gsfv-field-card-img" loading="lazy"/>` : '';
       return `
     <div class="gsfv-field" id="fw-${f.id}" data-field-id="${f.id}">
       <div class="gsfv-field-card">
+        ${cardImg}
         <div class="gsfv-label">${f.label || 'Field'} ${req}</div>
         ${f.showDesc && f.description ? `<div class="gsfv-field-desc">${f.description}</div>` : ''}
         ${input}
@@ -2727,15 +2768,23 @@
       if (err) err.textContent = msg;
     }
 
-    function updateTimeField(fid) {
-      const h = document.getElementById('fi-' + fid + '_h')?.value;
-      const m = document.getElementById('fi-' + fid + '_m')?.value;
-      const ap = document.getElementById('fi-' + fid + '_ap')?.value;
-      if (!h || !m || !ap) { fv[fid] = ''; return; }
-      let hr = parseInt(h);
-      if (ap === 'PM' && hr !== 12) hr += 12;
-      if (ap === 'AM' && hr === 12) hr = 0;
-      fv[fid] = String(hr).padStart(2, '0') + ':' + m;
+    function updateAmPmDisplay(fid) {
+      const el = document.getElementById('fi-' + fid);
+      const btn = document.getElementById('ampm-' + fid);
+      if (!btn || !el) return;
+      btn.textContent = el.value && parseInt(el.value.split(':')[0]) >= 12 ? 'PM' : 'AM';
+    }
+
+    function toggleAmPm(fid) {
+      const el = document.getElementById('fi-' + fid);
+      if (!el) return;
+      if (!el.value) el.value = '12:00';
+      const [h, m] = el.value.split(':').map(Number);
+      let newH = h >= 12 ? h - 12 : h + 12;
+      if (newH === 24) newH = 12;
+      el.value = String(newH).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+      fv[fid] = el.value;
+      updateAmPmDisplay(fid);
     }
 
     function clearErr(fieldId) {
@@ -3043,7 +3092,10 @@
           break;
         }
         case 'time': {
-          ['_h', '_m', '_ap'].forEach(suf => { const el = document.getElementById('fi-' + fid + suf); if (el) el.selectedIndex = 0; });
+          const el = document.getElementById('fi-' + fid);
+          if (el) el.value = '';
+          const btn = document.getElementById('ampm-' + fid);
+          if (btn) btn.textContent = 'AM';
           break;
         }
         case 'dropdown': {
