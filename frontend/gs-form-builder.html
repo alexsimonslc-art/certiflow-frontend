@@ -2345,6 +2345,39 @@
       padding: 3px 12px;
       white-space: nowrap;
     }
+    /* -- Gal AI Chat Box (Form Builder) -- */
+    #gsfbAiWrapper { position: absolute; bottom: 20px; left: 10px; right: 10px; z-index: 999; font-family: var(--font, 'Plus Jakarta Sans'); }
+    .gsfb-ai-tab { background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 12px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15); transition: all 0.3s; }
+    .gsfb-ai-tab:hover { border-color: rgba(0, 212, 255, 0.6); box-shadow: 0 6px 24px rgba(0, 212, 255, 0.25); }
+    .gsfb-ai-sparkle { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+    .gsfb-ai-box { position: absolute; bottom: 60px; left: 0; right: 0; min-height: 480px; background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 16px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2); transform-origin: bottom left; animation: popIn 0.3s ease; }
+    .gsfb-ai-box.open { display: flex; }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    .gsfb-ai-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: rgba(0, 212, 255, 0.05); border-bottom: 1px solid rgba(0, 212, 255, 0.1); }
+    .gsfb-ai-header-left { display: flex; align-items: center; gap: 8px; }
+    .gsfb-ai-title { font-weight: 700; font-size: 14px; background: linear-gradient(90deg, #00d4ff, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .gsfb-ai-close { background: none; border: none; color: var(--text-3); cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
+    .gsfb-ai-close:hover { color: var(--text); }
+    .gsfb-ai-history { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+    .gsfb-ai-history::-webkit-scrollbar { width: 4px; }
+    .gsfb-ai-history::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 4px; }
+    .gsfb-ai-greeting { text-align: center; padding: 10px 0; }
+    .gsfb-ai-greet-title { font-size: 18px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+    .gsfb-ai-greet-sub { font-size: 13px; color: var(--text-2); margin-bottom: 16px; }
+    .gsfb-ai-suggestions { display: flex; flex-direction: column; gap: 8px; }
+    .gsfb-ai-sug { padding: 10px 12px; background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.15); border-radius: 10px; font-size: 13px; color: var(--cyan); cursor: pointer; transition: all 0.2s; text-align: center; }
+    .gsfb-ai-sug:hover { background: rgba(0, 212, 255, 0.15); border-color: rgba(0, 212, 255, 0.3); transform: translateY(-1px); }
+    .gsfb-ai-msg { font-size: 13.5px; line-height: 1.5; padding: 10px 14px; border-radius: 12px; max-width: 85%; word-wrap: break-word; }
+    .gsfb-ai-msg.user { background: linear-gradient(135deg, #00d4ff, #3b82f6); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .gsfb-ai-msg.bot { background: rgba(255, 255, 255, 0.05); color: var(--text-2); align-self: flex-start; border-bottom-left-radius: 2px; }
+    .gsfb-ai-input-wrap { padding: 12px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(0, 212, 255, 0.1); display: flex; gap: 8px; align-items: flex-end; }
+    .gsfb-ai-input { flex: 1; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 13px; font-family: inherit; outline: none; resize: none; max-height: 80px; transition: border-color 0.2s; }
+    .gsfb-ai-input:focus { border-color: rgba(0, 212, 255, 0.5); box-shadow: 0 0 8px rgba(0, 212, 255, 0.15); }
+    .gsfb-ai-input::placeholder { color: var(--text-3); }
+    .gsfb-ai-send-btn { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #00d4ff, #3b82f6); border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; box-shadow: 0 0 12px rgba(0, 212, 255, 0.2); }
+    .gsfb-ai-send-btn:hover:not(:disabled) { box-shadow: 0 0 20px rgba(0, 212, 255, 0.35); transform: scale(1.05); }
+    .gsfb-ai-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .gsfb-ai-send-btn svg { width: 18px; height: 18px; }
   </style>
 </head>
 
@@ -2567,7 +2600,50 @@
               Add New Page
             </button>
           </div>
+        
+      <!-- AI Chat Box at bottom of left sidebar -->
+      <div id="gsfbAiWrapper">
+        <div class="gsfb-ai-tab" id="gsfbAiTab" onclick="toggleGsfbAiChat()">
+          <div class="gsfb-ai-sparkle"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+          <span style="flex:1; text-align: left; font-weight: bold; font-size: 14px;">Gal AI Form Chat</span>
         </div>
+
+        <div class="gsfb-ai-box" id="gsfbAiBox" onclick="event.stopPropagation()">
+          <div class="gsfb-ai-header">
+            <div class="gsfb-ai-header-left">
+              <div class="gsfb-ai-sparkle"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+              <span class="gsfb-ai-title">Gal AI</span>
+            </div>
+            <button class="gsfb-ai-close" onclick="toggleGsfbAiChat()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="gsfb-ai-history" id="gsfbAiHistory">
+            <div class="gsfb-ai-greeting" id="gsfbAiGreeting">
+              <div class="gsfb-ai-greet-title">Build Your Form</div>
+              <div class="gsfb-ai-greet-sub">Describe what you need...</div>
+              <div class="gsfb-ai-suggestions">
+                <div class="gsfb-ai-sug" onclick="document.getElementById('gsfbAiInput').value = this.textContent; sendGsfbAiMessage();">Create an event registration form</div>
+                <div class="gsfb-ai-sug" onclick="document.getElementById('gsfbAiInput').value = this.textContent; sendGsfbAiMessage();">Create a contact form</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="gsfb-ai-input-wrap">
+            <textarea id="gsfbAiInput" class="gsfb-ai-input" rows="2" placeholder="Ask to generate or edit forms..." autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendGsfbAiMessage()}"></textarea>
+            <button id="gsfbAiSendBtn" class="gsfb-ai-send-btn" onclick="sendGsfbAiMessage()" title="Send">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
       </aside>
 
       <!-- CENTER: Interactive Preview -->
@@ -5259,6 +5335,106 @@
       const g = Math.max(0, parseInt(hex.slice(2, 4), 16) - Math.round(255 * amt));
       const b = Math.max(0, parseInt(hex.slice(4, 6), 16) - Math.round(255 * amt));
       return `rgb(${r},${g},${b})`;
+    }
+  </script>
+  <script>
+    /* -- Gal AI Logic for Form Builder -- */
+    let gsfbChatHistory = [];
+    let gsfbAiLoading = false;
+
+    function toggleGsfbAiChat() {
+      const box = document.getElementById('gsfbAiBox');
+      box.classList.toggle('open');
+      if (box.classList.contains('open')) {
+        document.getElementById('gsfbAiInput').focus();
+      }
+    }
+
+    function appendGsfbAiMessage(text, role) {
+      const history = document.getElementById('gsfbAiHistory');
+      const div = document.createElement('div');
+      div.className = 'gsfb-ai-msg ' + role;
+      div.textContent = text;
+      history.appendChild(div);
+      history.scrollTop = history.scrollHeight;
+    }
+
+    function showGsfbAiTyping() {
+      const history = document.getElementById('gsfbAiHistory');
+      const div = document.createElement('div');
+      div.className = 'gsfb-ai-msg bot';
+      div.id = 'gsfbAiTyping';
+      div.textContent = 'Thinking...';
+      history.appendChild(div);
+      history.scrollTop = history.scrollHeight;
+      return div;
+    }
+
+    async function sendGsfbAiMessage() {
+      if (gsfbAiLoading) return;
+      const inputEl = document.getElementById('gsfbAiInput');
+      const sendBtn = document.getElementById('gsfbAiSendBtn');
+      const msg = (inputEl.value || '').trim();
+      if (!msg) return;
+
+      gsfbAiLoading = true;
+      inputEl.value = '';
+      sendBtn.disabled = true;
+      
+      appendGsfbAiMessage(msg, 'user');
+      gsfbChatHistory.push({ role: 'user', content: msg });
+      
+      const typingEl = showGsfbAiTyping();
+
+      try {
+        const token = localStorage.getItem('GalSol_token') || '';
+        const resp = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/gsform-chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            userMessage: msg,
+            chatHistory: gsfbChatHistory.slice(-8),
+            fields: _S.config.fields || [],
+            settings: _S.config.settings || {}
+          })
+        });
+
+        if (typingEl) typingEl.remove();
+
+        if (!resp.ok) throw new Error('Request failed: ' + resp.status);
+
+        const data = await resp.json();
+        const reply = data.message || 'Done!';
+        
+        gsfbChatHistory.push({ role: 'assistant', content: reply });
+        appendGsfbAiMessage(reply, 'bot');
+
+        // Apply changes
+        if (data.action === 'replace_fields') {
+          _S.config.fields = data.fields;
+          _S.dirty = true;
+        } else if (data.action === 'add_field') {
+          _S.config.fields.push(data.field);
+          _S.dirty = true;
+        }
+        
+        if (data.action === 'replace_fields' || data.action === 'add_field') {
+          renderRightPanel();
+          renderPreview();
+          if (typeof renderLayers === 'function') renderLayers();
+          _S.save();
+        }
+      } catch (err) {
+        if (typingEl) typingEl.remove();
+        appendGsfbAiMessage('Error: ' + err.message, 'bot');
+      } finally {
+        gsfbAiLoading = false;
+        sendBtn.disabled = false;
+        inputEl.focus();
+      }
     }
   </script>
 </body>
