@@ -2345,39 +2345,145 @@
       padding: 3px 12px;
       white-space: nowrap;
     }
-    /* -- Gal AI Chat Box (Form Builder) -- */
-    #gsfbAiWrapper { position: absolute; bottom: 20px; left: 10px; right: 10px; z-index: 999; font-family: var(--font, 'Plus Jakarta Sans'); }
-    .gsfb-ai-tab { background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 12px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15); transition: all 0.3s; }
-    .gsfb-ai-tab:hover { border-color: rgba(0, 212, 255, 0.6); box-shadow: 0 6px 24px rgba(0, 212, 255, 0.25); }
-    .gsfb-ai-sparkle { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
-    .gsfb-ai-box { position: absolute; bottom: 60px; left: 0; right: 0; min-height: 480px; background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 16px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2); transform-origin: bottom left; animation: popIn 0.3s ease; }
-    .gsfb-ai-box.open { display: flex; }
-    @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    .gsfb-ai-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: rgba(0, 212, 255, 0.05); border-bottom: 1px solid rgba(0, 212, 255, 0.1); }
-    .gsfb-ai-header-left { display: flex; align-items: center; gap: 8px; }
-    .gsfb-ai-title { font-weight: 700; font-size: 14px; background: linear-gradient(90deg, #00d4ff, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .gsfb-ai-close { background: none; border: none; color: var(--text-3); cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
-    .gsfb-ai-close:hover { color: var(--text); }
-    .gsfb-ai-history { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
-    .gsfb-ai-history::-webkit-scrollbar { width: 4px; }
-    .gsfb-ai-history::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 4px; }
-    .gsfb-ai-greeting { text-align: center; padding: 10px 0; }
-    .gsfb-ai-greet-title { font-size: 18px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
-    .gsfb-ai-greet-sub { font-size: 13px; color: var(--text-2); margin-bottom: 16px; }
-    .gsfb-ai-suggestions { display: flex; flex-direction: column; gap: 8px; }
-    .gsfb-ai-sug { padding: 10px 12px; background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.15); border-radius: 10px; font-size: 13px; color: var(--cyan); cursor: pointer; transition: all 0.2s; text-align: center; }
-    .gsfb-ai-sug:hover { background: rgba(0, 212, 255, 0.15); border-color: rgba(0, 212, 255, 0.3); transform: translateY(-1px); }
-    .gsfb-ai-msg { font-size: 13.5px; line-height: 1.5; padding: 10px 14px; border-radius: 12px; max-width: 85%; word-wrap: break-word; }
-    .gsfb-ai-msg.user { background: linear-gradient(135deg, #00d4ff, #3b82f6); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-    .gsfb-ai-msg.bot { background: rgba(255, 255, 255, 0.05); color: var(--text-2); align-self: flex-start; border-bottom-left-radius: 2px; }
-    .gsfb-ai-input-wrap { padding: 12px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(0, 212, 255, 0.1); display: flex; gap: 8px; align-items: flex-end; }
-    .gsfb-ai-input { flex: 1; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 13px; font-family: inherit; outline: none; resize: none; max-height: 80px; transition: border-color 0.2s; }
-    .gsfb-ai-input:focus { border-color: rgba(0, 212, 255, 0.5); box-shadow: 0 0 8px rgba(0, 212, 255, 0.15); }
-    .gsfb-ai-input::placeholder { color: var(--text-3); }
-    .gsfb-ai-send-btn { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #00d4ff, #3b82f6); border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; box-shadow: 0 0 12px rgba(0, 212, 255, 0.2); }
-    .gsfb-ai-send-btn:hover:not(:disabled) { box-shadow: 0 0 20px rgba(0, 212, 255, 0.35); transform: scale(1.05); }
-    .gsfb-ai-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .gsfb-ai-send-btn svg { width: 18px; height: 18px; }
+    /* ═══ Gal AI — Sliding Right Panel (Form Builder) ═══ */
+    .gal-ai-panel {
+      position: fixed; top: 0; right: 0; height: 100vh; width: 0;
+      overflow: hidden;
+      transition: width 0.32s cubic-bezier(0.16,1,0.3,1);
+      z-index: 600; display: flex; flex-direction: column;
+      background: rgba(4,8,15,0.97); border-left: 1px solid rgba(255,255,255,0.09);
+      backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+      box-shadow: -12px 0 60px rgba(0,0,0,0.6);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      will-change: width; transform: translateZ(0);
+    }
+    .gal-ai-panel.open { width: var(--gal-width, 380px); }
+    .gsfb-layout { transition: margin-right 0.32s cubic-bezier(0.16,1,0.3,1); }
+    .gsfb-layout.gal-open { margin-right: var(--gal-width, 380px); }
+    .gal-ai-resize {
+      position: absolute; left: 0; top: 0; width: 5px; height: 100%;
+      cursor: col-resize; z-index: 10; transition: background 0.15s;
+    }
+    .gal-ai-resize:hover, .gal-ai-resize.dragging {
+      background: linear-gradient(180deg, rgba(0,212,255,0.5), rgba(124,58,237,0.5));
+    }
+    .gal-ai-inner { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    .gal-ai-header {
+      padding: 16px 18px 14px; border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.015); flex-shrink: 0;
+    }
+    .gal-ai-header-left { display: flex; align-items: center; gap: 10px; }
+    .gal-ai-avatar-icon { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .gal-ai-title { font-size: 14.5px; font-weight: 800; color: var(--text); letter-spacing: 0.2px; }
+    .gal-ai-subtitle { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+    .gal-ai-close-btn {
+      width: 30px; height: 30px; border-radius: 8px; background: transparent; border: none;
+      color: var(--text-2); cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .gal-ai-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .gal-ai-close-btn svg { width: 14px; height: 14px; }
+    .gal-ai-chat {
+      flex: 1; overflow-y: auto; padding: 20px 18px 8px;
+      display: flex; flex-direction: column; gap: 4px;
+      scrollbar-color: rgba(0,212,255,0.12) transparent;
+    }
+    .gal-ai-chat::-webkit-scrollbar { width: 4px; }
+    .gal-ai-chat::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.15); border-radius: 4px; }
+    .gal-ai-greeting {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; flex: 1; padding: 20px 10px; gap: 20px;
+    }
+    .gal-ai-greeting.hidden { display: none; }
+    .gal-ai-greet-name {
+      font-size: clamp(20px,4vw,26px); font-weight: 700; line-height: 1.3;
+      background: linear-gradient(90deg,#00d4ff,#7c3aed);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .gal-ai-sugg-list { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 300px; }
+    .gal-ai-sugg-btn {
+      padding: 11px 14px; border-radius: 12px; font-size: 13px; font-weight: 500;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-2); cursor: pointer; text-align: left;
+      transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .gal-ai-sugg-btn:hover {
+      background: rgba(0,212,255,0.1); color: #00d4ff;
+      border-color: rgba(0,212,255,0.3); transform: translateY(-1px);
+    }
+    /* Chat messages */
+    .gal-ai-msg-user {
+      align-self: flex-end; max-width: 85%;
+      background: rgba(255,255,255,0.08); color: var(--text);
+      padding: 12px 16px; border-radius: 18px 18px 4px 18px;
+      font-size: 14px; line-height: 1.55; margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.05); font-family: 'Plus Jakarta Sans',sans-serif;
+    }
+    .gal-ai-msg-ai {
+      align-self: flex-start; width: 100%; display: flex; gap: 12px;
+      color: var(--text); font-size: 14px; line-height: 1.7;
+      margin-bottom: 20px; font-family: 'Plus Jakarta Sans',sans-serif;
+    }
+    .gal-ai-msg-ai-logo { width: 26px; height: 26px; display: flex; align-items: flex-start; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .gal-ai-msg-ai-body { flex: 1; }
+    .gal-ai-msg-ai-body strong { font-weight: 700; }
+    .gal-ai-msg-ai-body em { font-style: italic; }
+    /* Typing indicator */
+    .gal-ai-typing { display: flex; align-items: center; gap: 5px; padding: 4px 0; }
+    .gal-ai-typing .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: linear-gradient(135deg,#00d4ff,#7c3aed);
+      animation: galTypeDot 1.4s ease-in-out infinite;
+    }
+    .gal-ai-typing .dot:nth-child(2) { animation-delay: 0.2s; }
+    .gal-ai-typing .dot:nth-child(3) { animation-delay: 0.4s; }
+    .gal-ai-thinking-text { font-size: 13px; color: var(--cyan); font-weight: 600; margin-left: 4px; }
+    @keyframes galTypeDot { 0%,80%,100%{transform:scale(0.7);opacity:0.4} 40%{transform:scale(1.2);opacity:1} }
+    /* Input area */
+    .gal-ai-input-area {
+      padding: 0 18px 20px; flex-shrink: 0; position: relative;
+    }
+    .gal-ai-textarea {
+      width: 100%; background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.10); border-radius: 14px;
+      padding: 18px 48px 18px 18px; color: var(--text);
+      font-size: 14px; font-family: 'Plus Jakarta Sans',sans-serif;
+      outline: none; resize: none; min-height: 80px; max-height: 160px;
+      overflow-y: auto; transition: border-color 0.2s; line-height: 1.6;
+      box-sizing: border-box;
+    }
+    .gal-ai-textarea:focus { border-color: rgba(0,212,255,0.4); }
+    .gal-ai-textarea::placeholder { color: var(--text-3); }
+    .gal-ai-send-btn {
+      position: absolute; right: 32px; bottom: 34px;
+      width: 28px; height: 28px; background: transparent; border: none;
+      color: var(--text-3); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: color 0.2s; padding: 0;
+    }
+    .gal-ai-send-btn:hover { color: #00d4ff; }
+    .gal-ai-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .gal-ai-send-btn svg { width: 20px; height: 20px; }
+    /* FAB */
+    .gal-ai-fab {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 18px; border-radius: 99px;
+      color: #fff; font-size: 13px; font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer;
+      letter-spacing: 0.4px; border: 2px solid transparent;
+      background:
+        linear-gradient(rgba(4,8,15,0.95),rgba(4,8,15,0.95)) padding-box,
+        linear-gradient(90deg,#00d4ff,#7c3aed,#00d4ff,#7c3aed) border-box;
+      background-size: 100% 100%, 300% 100%;
+      animation: galBorderPan 8s linear infinite;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: box-shadow 0.25s, transform 0.2s;
+    }
+    .gal-ai-fab:hover { box-shadow: 0 0 16px rgba(0,212,255,0.5),0 0 28px rgba(124,58,237,0.4); transform: translateY(-1px); }
+    .gal-ai-fab:active { transform: translateY(0); }
+    @keyframes galBorderPan { 0%{background-position:0% 0%,0% 50%} 100%{background-position:0% 0%,300% 50%} }
   </style>
 </head>
 
@@ -2444,6 +2550,11 @@
         </button>
         <!-- Close Form -->
         <button class="gsfb-tb-btn" id="closeFmBtn" style="display:none" onclick="toggleClose()"></button>
+        <!-- Gal AI FAB -->
+        <button class="gal-ai-fab" id="galAiFab" onclick="galAiToggle()">
+          <img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:15px;height:15px;">
+          Gal AI
+        </button>
         <!-- Publish -->
         <button class="gsfb-publish-btn" id="publishBtn" onclick="doPublish()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px">
@@ -2601,49 +2712,6 @@
             </button>
           </div>
         
-      <!-- AI Chat Box at bottom of left sidebar -->
-      <div id="gsfbAiWrapper">
-        <div class="gsfb-ai-tab" id="gsfbAiTab" onclick="toggleGsfbAiChat()">
-          <div class="gsfb-ai-sparkle"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
-          <span style="flex:1; text-align: left; font-weight: bold; font-size: 14px;">Gal AI Form Chat</span>
-        </div>
-
-        <div class="gsfb-ai-box" id="gsfbAiBox" onclick="event.stopPropagation()">
-          <div class="gsfb-ai-header">
-            <div class="gsfb-ai-header-left">
-              <div class="gsfb-ai-sparkle"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
-              <span class="gsfb-ai-title">Gal AI</span>
-            </div>
-            <button class="gsfb-ai-close" onclick="toggleGsfbAiChat()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-
-          <div class="gsfb-ai-history" id="gsfbAiHistory">
-            <div class="gsfb-ai-greeting" id="gsfbAiGreeting">
-              <div class="gsfb-ai-greet-title">Build Your Form</div>
-              <div class="gsfb-ai-greet-sub">Describe what you need...</div>
-              <div class="gsfb-ai-suggestions">
-                <div class="gsfb-ai-sug" onclick="document.getElementById('gsfbAiInput').value = this.textContent; sendGsfbAiMessage();">Create an event registration form</div>
-                <div class="gsfb-ai-sug" onclick="document.getElementById('gsfbAiInput').value = this.textContent; sendGsfbAiMessage();">Create a contact form</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="gsfb-ai-input-wrap">
-            <textarea id="gsfbAiInput" class="gsfb-ai-input" rows="2" placeholder="Ask to generate or edit forms..." autocomplete="off" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendGsfbAiMessage()}"></textarea>
-            <button id="gsfbAiSendBtn" class="gsfb-ai-send-btn" onclick="sendGsfbAiMessage()" title="Send">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="22" y1="2" x2="11" y2="13" />
-                <polygon points="22 2 15 22 11 13 2 9 22 2" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
       </aside>
 
       <!-- CENTER: Interactive Preview -->
@@ -5338,104 +5406,271 @@
     }
   </script>
   <script>
-    /* -- Gal AI Logic for Form Builder -- */
-    let gsfbChatHistory = [];
-    let gsfbAiLoading = false;
+    function toggleGsfbAiChat() { galAiToggle(); }
+  </script>
 
-    function toggleGsfbAiChat() {
-      const box = document.getElementById('gsfbAiBox');
-      box.classList.toggle('open');
-      if (box.classList.contains('open')) {
-        document.getElementById('gsfbAiInput').focus();
+  <!-- ══════ Gal AI Panel (Form Builder) ══════ -->
+  <div class="gal-ai-panel" id="galAiPanel">
+    <div class="gal-ai-resize" id="galAiResize"></div>
+    <div class="gal-ai-inner">
+      <div class="gal-ai-header">
+        <div class="gal-ai-header-left">
+          <div class="gal-ai-avatar-icon">
+            <img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:28px;height:28px;">
+          </div>
+          <div>
+            <div class="gal-ai-title">Gal AI</div>
+            <div class="gal-ai-subtitle">Form design assistant</div>
+          </div>
+        </div>
+        <button class="gal-ai-close-btn" onclick="galAiToggle()" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="gal-ai-chat" id="galAiChat">
+        <div class="gal-ai-greeting" id="galAiGreeting">
+          <div class="gal-ai-greet-name" id="galAiGreetName">How can I help you<br>build this form?</div>
+          <div class="gal-ai-sugg-list">
+            <div class="gal-ai-sugg-btn" onclick="galAiQuickSend(this)">Create an event registration form</div>
+            <div class="gal-ai-sugg-btn" onclick="galAiQuickSend(this)">Add name, email and phone fields</div>
+            <div class="gal-ai-sugg-btn" onclick="galAiQuickSend(this)">Change accent color to deep purple</div>
+            <div class="gal-ai-sugg-btn" onclick="galAiQuickSend(this)">Add a 5-star rating question</div>
+            <div class="gal-ai-sugg-btn" onclick="galAiQuickSend(this)">Set cover image from web (tech event)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gal-ai-input-area">
+        <textarea id="galAiInput" class="gal-ai-textarea"
+          placeholder="Ask Gal AI to build, edit, or style your form…"
+          autocomplete="off"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();galAiSend()}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,160)+'px'"></textarea>
+        <button class="gal-ai-send-btn" id="galAiSendBtn" onclick="galAiSend()" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ════ Gal AI — Form Builder Panel ════ */
+  (function () {
+    let _chatHistory = [];
+    let _loading = false;
+    const BACKEND = 'https://certiflow-backend-73xk.onrender.com';
+
+    window.galAiToggle = function () {
+      const panel = document.getElementById('galAiPanel');
+      const layout = document.querySelector('.gsfb-layout');
+      if (!panel) return;
+      const isOpen = panel.classList.toggle('open');
+      if (layout) layout.classList.toggle('gal-open', isOpen);
+      if (isOpen) {
+        _setGreetName();
+        setTimeout(() => document.getElementById('galAiInput')?.focus(), 320);
       }
+    };
+
+    function _setGreetName() {
+      try {
+        const token = localStorage.getItem('GalSol_token');
+        if (!token) return;
+        const p = JSON.parse(atob(token.split('.')[1]));
+        const first = (p.name || '').split(' ')[0] || '';
+        const el = document.getElementById('galAiGreetName');
+        if (el && first) el.innerHTML = `How can I help you<br>build this form, ${first}?`;
+      } catch (_) {}
     }
 
-    function appendGsfbAiMessage(text, role) {
-      const history = document.getElementById('gsfbAiHistory');
-      const div = document.createElement('div');
-      div.className = 'gsfb-ai-msg ' + role;
-      div.textContent = text;
-      history.appendChild(div);
-      history.scrollTop = history.scrollHeight;
-    }
+    window.galAiQuickSend = function (btn) {
+      const input = document.getElementById('galAiInput');
+      if (input) { input.value = btn.textContent.trim(); input.style.height = 'auto'; }
+      galAiSend();
+    };
 
-    function showGsfbAiTyping() {
-      const history = document.getElementById('gsfbAiHistory');
-      const div = document.createElement('div');
-      div.className = 'gsfb-ai-msg bot';
-      div.id = 'gsfbAiTyping';
-      div.textContent = 'Thinking...';
-      history.appendChild(div);
-      history.scrollTop = history.scrollHeight;
-      return div;
-    }
-
-    async function sendGsfbAiMessage() {
-      if (gsfbAiLoading) return;
-      const inputEl = document.getElementById('gsfbAiInput');
-      const sendBtn = document.getElementById('gsfbAiSendBtn');
-      const msg = (inputEl.value || '').trim();
+    window.galAiSend = async function () {
+      if (_loading) return;
+      const input = document.getElementById('galAiInput');
+      const sendBtn = document.getElementById('galAiSendBtn');
+      const msg = (input?.value || '').trim();
       if (!msg) return;
 
-      gsfbAiLoading = true;
-      inputEl.value = '';
-      sendBtn.disabled = true;
-      
-      appendGsfbAiMessage(msg, 'user');
-      gsfbChatHistory.push({ role: 'user', content: msg });
-      
-      const typingEl = showGsfbAiTyping();
+      input.value = ''; input.style.height = 'auto';
+      _loading = true;
+      if (sendBtn) sendBtn.disabled = true;
+
+      _appendUser(msg);
+      const typingEl = _appendTyping();
+      _chatHistory.push({ role: 'user', content: msg });
 
       try {
         const token = localStorage.getItem('GalSol_token') || '';
-        const resp = await fetch('https://certiflow-backend-73xk.onrender.com/api/ai/gsform-chat', {
+        const resp = await fetch(`${BACKEND}/api/ai/gsform-chat`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-          },
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({
             userMessage: msg,
-            chatHistory: gsfbChatHistory.slice(-8),
-            fields: _S.config.fields || [],
-            settings: _S.config.settings || {}
+            chatHistory: _chatHistory.slice(-10),
+            fields: _S?.config?.fields || [],
+            settings: _S?.config?.settings || {},
+            theme: _S?.config?.theme || {}
           })
         });
 
         if (typingEl) typingEl.remove();
 
+        if (resp.status === 403) {
+          const d = await resp.json();
+          if (d.error === 'AI_LOCKED') { _appendAi('Gal AI is a **Pro** feature. Upgrade to unlock AI-powered form generation and styling.'); return; }
+        }
         if (!resp.ok) throw new Error('Request failed: ' + resp.status);
 
         const data = await resp.json();
         const reply = data.message || 'Done!';
-        
-        gsfbChatHistory.push({ role: 'assistant', content: reply });
-        appendGsfbAiMessage(reply, 'bot');
+        _chatHistory.push({ role: 'assistant', content: reply });
+        _appendAi(reply);
 
-        // Apply changes
-        if (data.action === 'replace_fields') {
-          _S.config.fields = data.fields;
-          _S.dirty = true;
-        } else if (data.action === 'add_field') {
-          _S.config.fields.push(data.field);
-          _S.dirty = true;
+        // Apply actions
+        let dirty = false;
+        if (data.action === 'replace_fields' && Array.isArray(data.fields)) {
+          _S.config.fields = data.fields; dirty = true;
+        } else if (data.action === 'add_field' && data.field) {
+          _S.config.fields.push(data.field); dirty = true;
+        } else if (data.action === 'update_field' && data.fieldId && data.changes) {
+          const f = _S.config.fields.find(x => x.id === data.fieldId);
+          if (f) { Object.assign(f, data.changes); dirty = true; }
+        } else if (data.action === 'update_theme' && data.theme) {
+          _S.updateTheme(data.theme);
+          if (typeof applyCanvasTheme === 'function') applyCanvasTheme();
+          if (typeof renderSettings === 'function') renderSettings();
+          if (typeof renderPreview === 'function') renderPreview();
+          _S.dirty = true; _S.save(); return;
+        } else if (data.action === 'update_settings' && data.settings) {
+          _S.config.settings = { ..._S.config.settings, ...data.settings };
+          if (typeof renderSettings === 'function') renderSettings();
+          if (typeof renderPreview === 'function') renderPreview();
+          _S.dirty = true; _S.save(); return;
+        } else if (data.action === 'update_pass' && data.settings) {
+          _S.config.settings = { ..._S.config.settings, ...data.settings };
+          if (typeof togglePassEnabled === 'function' && data.settings.passEnabled !== undefined)
+            togglePassEnabled(data.settings.passEnabled);
+          if (typeof renderSettings === 'function') renderSettings();
+          if (typeof renderPreview === 'function') renderPreview();
+          _S.dirty = true; _S.save(); return;
         }
-        
-        if (data.action === 'replace_fields' || data.action === 'add_field') {
-          renderRightPanel();
-          renderPreview();
+
+        if (dirty) {
+          if (typeof renderRightPanel === 'function') renderRightPanel();
+          if (typeof renderPreview === 'function') renderPreview();
           if (typeof renderLayers === 'function') renderLayers();
-          _S.save();
+          _S.dirty = true; _S.save();
         }
       } catch (err) {
         if (typingEl) typingEl.remove();
-        appendGsfbAiMessage('Error: ' + err.message, 'bot');
+        _appendAi('Error: ' + err.message);
       } finally {
-        gsfbAiLoading = false;
-        sendBtn.disabled = false;
-        inputEl.focus();
+        _loading = false;
+        if (sendBtn) sendBtn.disabled = false;
       }
+    };
+
+    function _appendUser(text) {
+      const chat = document.getElementById('galAiChat');
+      if (!chat) return;
+      _hideGreeting();
+      const el = document.createElement('div');
+      el.className = 'gal-ai-msg-user';
+      el.textContent = text;
+      chat.appendChild(el);
+      chat.scrollTop = chat.scrollHeight;
     }
+
+    function _appendAi(text) {
+      const chat = document.getElementById('galAiChat');
+      if (!chat) return;
+      _hideGreeting();
+      const wrap = document.createElement('div');
+      wrap.className = 'gal-ai-msg-ai';
+      const parsed = text
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g,'<em>$1</em>')
+        .replace(/\n/g,'<br>');
+      wrap.innerHTML = `
+        <div class="gal-ai-msg-ai-logo"><img src="/Images/GalAI%20Logo.svg" style="width:22px;height:22px;"></div>
+        <div class="gal-ai-msg-ai-body">${parsed}</div>`;
+      chat.appendChild(wrap);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function _appendTyping() {
+      const chat = document.getElementById('galAiChat');
+      if (!chat) return null;
+      _hideGreeting();
+      const statuses = ['Analyzing form','Building fields','Applying styles'];
+      let sIdx = 0;
+      const wrap = document.createElement('div');
+      wrap.className = 'gal-ai-msg-ai';
+      wrap.id = 'galAiTyping';
+      wrap.innerHTML = `
+        <div class="gal-ai-msg-ai-logo"><img src="/Images/GalAI%20Logo.svg" style="width:22px;height:22px;"></div>
+        <div class="gal-ai-msg-ai-body">
+          <div class="gal-ai-typing">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <span class="gal-ai-thinking-text" id="galAiThinkTxt">Thinking…</span>
+          </div>
+        </div>`;
+      chat.appendChild(wrap);
+      chat.scrollTop = chat.scrollHeight;
+      wrap._timer = setInterval(() => {
+        sIdx = (sIdx + 1) % statuses.length;
+        const el = document.getElementById('galAiThinkTxt');
+        if (el) el.textContent = statuses[sIdx] + '…';
+      }, 1500);
+      const origRemove = wrap.remove.bind(wrap);
+      wrap.remove = () => { clearInterval(wrap._timer); origRemove(); };
+      return wrap;
+    }
+
+    function _hideGreeting() {
+      const g = document.getElementById('galAiGreeting');
+      if (g) g.classList.add('hidden');
+    }
+
+    // Resizable panel
+    const handle = document.getElementById('galAiResize');
+    const panel = document.getElementById('galAiPanel');
+    if (handle && panel) {
+      let startX, startW;
+      handle.addEventListener('mousedown', e => {
+        startX = e.clientX;
+        startW = parseInt(getComputedStyle(panel).width, 10);
+        handle.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        const onMove = e => {
+          const newW = Math.min(640, Math.max(300, startW + (startX - e.clientX)));
+          document.documentElement.style.setProperty('--gal-width', newW + 'px');
+        };
+        const onUp = () => {
+          handle.classList.remove('dragging');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    }
+  })();
   </script>
 </body>
 
