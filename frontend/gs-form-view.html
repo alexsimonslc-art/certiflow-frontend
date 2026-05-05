@@ -888,31 +888,18 @@
     }
 
 
-    /* ── Multi-page progress bar ────────────────────────────────── */
+    /* ── Multi-page progress bar (bottom) ───────────────────────── */
     .gsfv-progress-wrap {
-      margin-bottom: 24px;
+      margin-top: 20px;
       display: none;
     }
 
-    .gsfv-progress-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12.5px;
-      color: var(--text-3);
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .gsfv-progress-meta strong {
-      color: var(--text-2);
-    }
-
     .gsfv-progress-track {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
+      height: 5px;
+      background: rgba(255, 255, 255, 0.07);
       border-radius: 99px;
       overflow: hidden;
+      margin-bottom: 10px;
     }
 
     .gsfv-progress-fill {
@@ -920,6 +907,20 @@
       border-radius: 99px;
       background: var(--accent-grad);
       transition: width 0.45s var(--ease);
+    }
+
+    .gsfv-progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+
+    .gsfv-progress-meta strong {
+      color: var(--text-2);
+      font-weight: 700;
     }
 
     /* ── Page section title (for page 2+) ───────────────────────── */
@@ -1749,17 +1750,6 @@
   <div class="gsfv-page" id="formState" style="display:none">
     <div class="gsfv-container">
 
-      <!-- Progress bar (hidden when single page) -->
-      <div class="gsfv-progress-wrap" id="progressWrap">
-        <div class="gsfv-progress-meta">
-          <span>Step <strong id="pgNum">1</strong> of <strong id="pgTotal">1</strong></span>
-          <span id="pgPct">0%</span>
-        </div>
-        <div class="gsfv-progress-track">
-          <div class="gsfv-progress-fill" id="progressFill" style="width:0%"></div>
-        </div>
-      </div>
-
       <!-- Form title header (page 1 only) -->
       <div class="gsfv-header" id="formMainHeader">
         <!-- Cover image inside the card -->
@@ -1798,6 +1788,17 @@
         <button class="gsfv-submit" id="submitBtn">
           <span id="submitLabel">Next</span>
         </button>
+      </div>
+
+      <!-- Page progress (bottom, hidden for single-page forms) -->
+      <div class="gsfv-progress-wrap" id="progressWrap">
+        <div class="gsfv-progress-track">
+          <div class="gsfv-progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="gsfv-progress-meta">
+          <span>Page <strong id="pgNum">1</strong> / <strong id="pgTotal">1</strong></span>
+          <span id="pgPct">0%</span>
+        </div>
       </div>
 
     </div>
@@ -1953,7 +1954,7 @@
     function initCC(fid) {
       const listEl = document.getElementById('cclist-' + fid);
       if (!listEl) return;
-      _ccSelected[fid] = { iso: 'IN', dial: '91' };
+      _ccSelected[fid] = null; // no default country
       renderCCList(fid, '');
       updatePhone(fid, document.getElementById('fi-' + fid)?.value || '');
     }
@@ -2002,8 +2003,8 @@
       _ccSelected[fid] = { iso, dial };
       const flagEl = document.getElementById('ccflag-' + fid);
       const dialEl = document.getElementById('ccdial-' + fid);
-      if (flagEl) { flagEl.src = `https://flagcdn.com/w20/${iso.toLowerCase()}.png`; flagEl.alt = iso; }
-      if (dialEl) dialEl.textContent = '+' + dial;
+      if (flagEl) { flagEl.src = `https://flagcdn.com/w20/${iso.toLowerCase()}.png`; flagEl.alt = iso; flagEl.style.display = ''; }
+      if (dialEl) { dialEl.textContent = '+' + dial; dialEl.style.opacity = ''; dialEl.style.fontSize = ''; }
       closeAllPopups();
       updatePhone(fid, document.getElementById('fi-' + fid)?.value || '');
     }
@@ -2324,8 +2325,8 @@
           input = `<div class="gsfv-phone-wrap" id="pw-${f.id}">
             <div class="gsfv-cc" id="cc-${f.id}">
               <button type="button" class="gsfv-cc-btn" id="ccb-${f.id}" onclick="toggleCC('${f.id}')">
-                <img id="ccflag-${f.id}" src="https://flagcdn.com/w20/in.png" alt="IN" class="gsfv-cc-btn-flag"/>
-                <span id="ccdial-${f.id}">+91</span>
+                <img id="ccflag-${f.id}" src="" alt="" class="gsfv-cc-btn-flag" style="display:none"/>
+                <span id="ccdial-${f.id}" style="opacity:0.45;font-size:12px">+Code</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               <div class="gsfv-cc-menu" id="ccmenu-${f.id}">

@@ -2300,6 +2300,34 @@
       color: var(--cc-text-2);
       user-select: none;
     }
+
+    /* ── Page divider (between pages in canvas) ── */
+    .gsfc-page-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0 4px;
+      pointer-events: none;
+    }
+
+    .gsfc-page-divider-line {
+      flex: 1;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.35), transparent);
+    }
+
+    .gsfc-page-divider-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #a78bfa;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      background: rgba(124,58,237,0.10);
+      border: 1px solid rgba(124,58,237,0.22);
+      border-radius: 20px;
+      padding: 3px 12px;
+      white-space: nowrap;
+    }
   </style>
 </head>
 
@@ -3114,7 +3142,7 @@
       if (f.type === 'event_pass') return renderPassFieldEditor(f, idx, total);
 
       const labelVal = f.label || '';
-      let html = `
+      const cardImageHtml = `
       <div class="gsfb-prop">
         <label class="gsfb-prop-label">Card Image</label>
         <div style="display:flex; gap:8px; align-items:center;">
@@ -3125,7 +3153,8 @@
           </label>
           ${f.image ? `<button onclick="updateFP('${id}','image',null);renderRightPanel();" style="padding:6px 10px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);border-radius:6px;color:var(--red);font-size:11.5px;cursor:pointer;font-family:var(--font);">Remove</button>` : ''}
         </div>
-      </div>
+      </div>`;
+      let html = `
       <div class="gsfb-prop">
         <label class="gsfb-prop-label">Field Label</label>
         <div class="gsfb-rte-wrap">
@@ -3163,6 +3192,7 @@
                placeholder="Optional subtitle for this page">${f.description || ''}</div>
         </div>
       </div>`;
+        html += cardImageHtml;
       } else {
         if (!['radio', 'checkbox', 'file_upload', 'linear_scale', 'date', 'time'].includes(f.type)) {
           html += `
@@ -3359,6 +3389,7 @@
             <div class="gsfb-toggle${f.required ? ' on' : ''}" onclick="toggleReq('${id}')"></div>
           </div>
         </div> `;
+        html += cardImageHtml;
 
         html += renderConditionsEditor(f, _S.config.fields);
       }
@@ -4567,7 +4598,20 @@
               Field cards will appear here.<br>Click "+ Add Field" on the left to add one!
             </div>`;
         } else {
-          wrap.innerHTML = fields.map((f, i) => renderCanvasCard(f, i)).join('');
+          const totalPages = 1 + fields.filter(f => f.type === 'section_break').length;
+          let pageNum = 1;
+          wrap.innerHTML = fields.map((f, i) => {
+            if (f.type === 'section_break') {
+              pageNum++;
+              const divider = `<div class="gsfc-page-divider">
+                <div class="gsfc-page-divider-line"></div>
+                <span class="gsfc-page-divider-label">Page ${pageNum} of ${totalPages}</span>
+                <div class="gsfc-page-divider-line"></div>
+              </div>`;
+              return divider + renderCanvasCard(f, i);
+            }
+            return renderCanvasCard(f, i);
+          }).join('');
         }
       }
       renderBuilderPass();
@@ -4612,6 +4656,7 @@
       if (f.type === 'section_break') return `
         <div class="gsfc-page-break ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
           <div class="gsfc-page-break-badge">PAGE BREAK — Next Page Title</div>
+          ${f.image ? `<div style="width:100%;height:130px;background-image:url(${JSON.stringify(f.image)});background-size:cover;background-position:center;"></div>` : ''}
           <div class="gsfc-page-break-body">
             <div class="gsfc-page-break-title">${f.label || '<span style="opacity:.4">Untitled Page</span>'}</div>
             ${f.description ? `<div class="gsfc-page-break-desc">${f.description}</div>` : ''}

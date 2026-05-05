@@ -2393,13 +2393,21 @@
       const counts = {};
       rows.forEach(r => {
         if (!r[tsIdx]) return;
-        const key = new Date(r[tsIdx]).toISOString().slice(0, 10);
+        const d = new Date(r[tsIdx]);
+        if (isNaN(d.getTime())) return;
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const key = `${year}-${month}-${day}`;
         counts[key] = (counts[key] || 0) + 1;
       });
 
       const labels = Object.keys(counts).sort();
       const values = labels.map(k => counts[k]);
-      const display = labels.map(l => new Date(l).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }));
+      const display = labels.map(l => {
+        const [y, m, d] = l.split('-');
+        return new Date(y, m - 1, d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+      });
 
       _charts[canvasId] = new Chart(canvas, {
         type: 'line',
