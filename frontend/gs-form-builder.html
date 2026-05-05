@@ -11,7 +11,7 @@
     rel="stylesheet" />
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="dashboard-patch.css" />
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -2658,7 +2658,7 @@
     <div class="gsfb-qr-modal" style="max-width: 380px;">
       <div class="gsfb-qr-title">Share Form</div>
       <div class="gsfb-qr-sub">Scan to open on any device or copy the link below.</div>
-      <div class="gsfb-qr-canvas-wrap"><canvas id="shareQrCanvas"></canvas></div>
+      <div class="gsfb-qr-canvas-wrap"><div id="shareQrCanvas"></div></div>
       <div class="gsfb-pub-link-box" style="margin-bottom:20px;background:rgba(255,255,255,0.03);">
         <span class="gsfb-pub-link-url" id="shareUrlDisplay"></span>
         <button class="gsfb-pub-copy" id="shareCopyBtn" onclick="copyShareUrl()">Copy</button>
@@ -2894,11 +2894,17 @@
       document.getElementById('shareModal').classList.add('open');
       // Delay so the modal overlay is visible before canvas rendering
       setTimeout(() => {
-        const canvas = document.getElementById('shareQrCanvas');
+      const qrWrap = document.getElementById('shareQrCanvas');
+      qrWrap.innerHTML = '';
         if (typeof QRCode !== 'undefined') {
-          QRCode.toCanvas(canvas, url, { width: 200, margin: 1, color: { dark: '#000000', light: '#ffffff' } }, (err) => {
-            if (err) console.error('QR generation failed:', err);
-          });
+        new QRCode(qrWrap, {
+          text: url,
+          width: 200,
+          height: 200,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
         }
       }, 60);
     }
