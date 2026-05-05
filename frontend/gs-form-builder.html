@@ -2373,25 +2373,16 @@
       </div>
       <div class="gsfb-topbar-right">
         <span class="gsfb-status-badge" id="statusBadge" style="display:none"></span>
-        <!-- Copy Link -->
-        <button class="gsfb-tb-btn cyan" id="copyLinkBtn" style="display:none" onclick="tbCopyLink()"
-          title="Copy public link">
+        <!-- Share Button -->
+        <button class="gsfb-tb-btn cyan" id="shareBtn" style="display:none" onclick="tbOpenShare()" title="Share Form">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
           </svg>
-          <span id="copyLinkTxt">Copy Link</span>
-        </button>
-        <!-- QR Code -->
-        <button class="gsfb-tb-btn" id="qrBtn" style="display:none" onclick="tbOpenQR()" title="QR Code">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" />
-            <rect x="10" y="10" width="2" height="2" />
-            <rect x="14" y="14" width="7" height="7" />
-          </svg>
-          <span id="qrBtnTxt">QR Code</span>
+          <span>Share</span>
         </button>
         <!-- Sheet -->
         <button class="gsfb-tb-btn green" id="sheetBtn" onclick="tbOpenSheet()"
@@ -2662,22 +2653,25 @@
     </div>
   </div>
 
-  <!-- QR Modal -->
-  <div class="gsfb-modal-overlay" id="qrModal" onclick="if(event.target===this)closeQR()">
-    <div class="gsfb-qr-modal">
-      <div class="gsfb-qr-title" id="qrModalTitle">Form QR Code</div>
-      <div class="gsfb-qr-sub">Scan to open on any device</div>
-      <div class="gsfb-qr-canvas-wrap"><canvas id="qrCanvas"></canvas></div>
-      <div class="gsfb-qr-url" id="qrUrlDisplay"></div>
+  <!-- Share Modal -->
+  <div class="gsfb-modal-overlay" id="shareModal" onclick="if(event.target===this)closeShareModal()">
+    <div class="gsfb-qr-modal" style="max-width: 380px;">
+      <div class="gsfb-qr-title">Share Form</div>
+      <div class="gsfb-qr-sub">Scan to open on any device or copy the link below.</div>
+      <div class="gsfb-qr-canvas-wrap"><canvas id="shareQrCanvas"></canvas></div>
+      <div class="gsfb-pub-link-box" style="margin-bottom:20px;background:rgba(255,255,255,0.03);">
+        <span class="gsfb-pub-link-url" id="shareUrlDisplay"></span>
+        <button class="gsfb-pub-copy" id="shareCopyBtn" onclick="copyShareUrl()">Copy</button>
+      </div>
       <div class="gsfb-modal-btns">
-        <button class="btn btn-secondary btn-sm" onclick="closeQR()">Close</button>
-        <button class="btn btn-primary btn-sm" onclick="downloadQR()">
+        <button class="btn btn-secondary btn-sm" onclick="closeShareModal()">Close</button>
+        <button class="btn btn-primary btn-sm" onclick="downloadShareQR()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
-          Download PNG
+          Download QR
         </button>
       </div>
     </div>
@@ -2851,8 +2845,7 @@
 
     function updateTopBar() {
       const badge = document.getElementById('statusBadge');
-      const copyBtn = document.getElementById('copyLinkBtn');
-      const qrBtn = document.getElementById('qrBtn');
+      const shareBtn = document.getElementById('shareBtn');
       const sheetBtn = document.getElementById('sheetBtn');
       const viewBtn = document.getElementById('viewLiveBtn');
       const closeBtn = document.getElementById('closeFmBtn');
@@ -2866,8 +2859,7 @@
         badge.className = 'gsfb-status-badge ' + status;
       }
 
-      copyBtn.style.display = isLive ? '' : 'none';
-      qrBtn.style.display = isLive ? '' : 'none';
+      shareBtn.style.display = isLive ? '' : 'none';
       sheetBtn.style.display = '';
       const scBtn = document.getElementById('scannerBtn');
       if (scBtn) scBtn.style.display = _S.config?.settings?.passEnabled ? '' : 'none';
@@ -2896,36 +2888,35 @@
     }
     function tbOpenSheet() { const sid = _S.sheetId; if (sid) window.open('https://docs.google.com/spreadsheets/d/' + sid, '_blank'); else toast('No Google Sheet linked to this form yet.', 'warn'); }
 
-    function tbCopyLink() {
+    function tbOpenShare() {
       const url = window.location.origin + '/gs-form-view.html?f=' + _S.slug;
-      navigator.clipboard.writeText(url).then(() => {
-        const btn = document.getElementById('copyLinkBtn');
-        const txt = document.getElementById('copyLinkTxt');
-        txt.textContent = 'Copied!';
-        btn.style.color = 'var(--green)';
-        setTimeout(() => { txt.textContent = 'Copy Link'; btn.style.color = ''; }, 2000);
-      });
-    }
-
-    function tbOpenQR() {
-      const url = window.location.origin + '/gs-form-view.html?f=' + _S.slug;
-      document.getElementById('qrModalTitle').textContent = _S.name;
-      document.getElementById('qrUrlDisplay').textContent = url;
-      document.getElementById('qrModal').classList.add('open');
+      document.getElementById('shareUrlDisplay').textContent = url;
+      document.getElementById('shareModal').classList.add('open');
       // Delay so the modal overlay is visible before canvas rendering
       setTimeout(() => {
-        const canvas = document.getElementById('qrCanvas');
-        canvas.width = 200; canvas.height = 200;
-        QRCode.toCanvas(canvas, url, { width: 200, margin: 1, color: { dark: '#000', light: '#fff' } }, (err) => {
-          if (err) console.error('QR generation failed:', err);
-        });
+        const canvas = document.getElementById('shareQrCanvas');
+        if (typeof QRCode !== 'undefined') {
+          QRCode.toCanvas(canvas, url, { width: 200, margin: 1, color: { dark: '#000000', light: '#ffffff' } }, (err) => {
+            if (err) console.error('QR generation failed:', err);
+          });
+        }
       }, 60);
     }
-    function closeQR() { document.getElementById('qrModal').classList.remove('open'); }
-    function downloadQR() {
+    function closeShareModal() { document.getElementById('shareModal').classList.remove('open'); }
+    
+    function copyShareUrl() {
+      const url = document.getElementById('shareUrlDisplay').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('shareCopyBtn');
+        btn.textContent = 'Copied!'; btn.style.color = 'var(--green)';
+        setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 2000);
+      });
+    }
+    
+    function downloadShareQR() {
       const a = document.createElement('a');
-      a.download = 'form-qr.png';
-      a.href = document.getElementById('qrCanvas').toDataURL();
+      a.download = `${_S.slug}-qr.png`;
+      a.href = document.getElementById('shareQrCanvas').toDataURL('image/png');
       a.click();
     }
 
