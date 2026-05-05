@@ -784,24 +784,24 @@
     }
 
     .gsfb-pv-field {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .gsfb-pv-field-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 14px 16px 12px;
+      background: rgba(10, 18, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 14px;
+      padding: 22px 24px 18px;
     }
 
     .gsfb-pv-label {
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 7px;
+      margin-bottom: 8px;
       display: flex;
       align-items: baseline;
-      gap: 4px;
+      gap: 5px;
     }
 
     .gsfb-pv-req {
@@ -811,11 +811,11 @@
 
     .gsfb-pv-input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 12px 14px;
       border-radius: 9px;
-      font-size: 13.5px;
+      font-size: 15px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.10);
       color: var(--text);
       font-family: var(--font);
       outline: none;
@@ -848,23 +848,24 @@
 
     .gsfb-pv-textarea {
       width: 100%;
-      padding: 10px 12px;
+      padding: 12px 14px;
       border-radius: 9px;
-      font-size: 13.5px;
+      font-size: 15px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.10);
       color: var(--text);
       font-family: var(--font);
       outline: none;
       resize: none;
-      min-height: 72px;
+      min-height: 90px;
+      line-height: 1.6;
     }
 
     .gsfb-pv-select {
       width: 100%;
-      padding: 10px 36px 10px 12px;
+      padding: 12px 36px 12px 14px;
       border-radius: 9px;
-      font-size: 13.5px;
+      font-size: 15px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text);
@@ -884,12 +885,12 @@
     .gsfb-pv-option {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
+      gap: 12px;
+      padding: 11px 14px;
       border-radius: 9px;
-      margin-bottom: 5px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 13.5px;
+      margin-bottom: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      font-size: 14.5px;
       color: var(--text-2);
       cursor: pointer;
       transition: all 0.15s;
@@ -910,8 +911,8 @@
     }
 
     .gsfb-pv-dot {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       border: 2px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
@@ -919,9 +920,9 @@
     }
 
     .gsfb-pv-box {
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
       border: 2px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
     }
@@ -943,10 +944,12 @@
     }
 
     .gsfb-pv-star {
-      font-size: 24px;
+      font-size: 32px;
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.18);
       transition: all 0.12s;
+      line-height: 1;
+      padding: 2px;
     }
 
     .gsfb-pv-star.on {
@@ -964,12 +967,12 @@
     }
 
     .gsfb-pv-numbox {
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       border: 1px solid rgba(255, 255, 255, 0.12);
       background: transparent;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--text-3);
       cursor: pointer;
@@ -1002,26 +1005,37 @@
     .gsfb-pv-upload {
       border: 2px dashed rgba(255, 255, 255, 0.12);
       border-radius: 9px;
-      padding: 18px;
+      padding: 24px;
       text-align: center;
       color: var(--text-3);
-      font-size: 13px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
 
     .gsfb-pv-upload svg {
-      width: 30px;
-      height: 30px;
+      width: 42px;
+      height: 42px;
       color: var(--cyan);
-      opacity: 0.8;
+      opacity: 0.85;
       flex-shrink: 0;
+      margin-bottom: 4px;
+    }
+
+    .gsfb-pv-upload-text {
+      font-size: 15px;
+      color: var(--text-2);
     }
 
     .gsfb-pv-upload strong {
       color: var(--cyan);
+    }
+
+    .gsfb-pv-upload-sub {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-top: 2px;
     }
 
     .gsfb-pv-page-break {
@@ -2377,7 +2391,7 @@
           <span id="qrBtnTxt">QR Code</span>
         </button>
         <!-- Sheet -->
-        <button class="gsfb-tb-btn green" id="sheetBtn" style="display:none" onclick="tbOpenSheet()"
+        <button class="gsfb-tb-btn green" id="sheetBtn" onclick="tbOpenSheet()"
           title="Open responses in Google Sheets">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -2851,7 +2865,7 @@
 
       copyBtn.style.display = isLive ? '' : 'none';
       qrBtn.style.display = isLive ? '' : 'none';
-      sheetBtn.style.display = _S.config?.sheetId ? '' : 'none';
+      sheetBtn.style.display = '';
       const scBtn = document.getElementById('scannerBtn');
       if (scBtn) scBtn.style.display = _S.config?.settings?.passEnabled ? '' : 'none';
       viewBtn.style.display = ''; // Preview should always be accessible!
@@ -4656,7 +4670,7 @@
       if (f.type === 'section_break') return `
         <div class="gsfc-page-break ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
           <div class="gsfc-page-break-badge">PAGE BREAK — Next Page Title</div>
-          ${f.image ? `<div style="width:100%;height:130px;background-image:url(${JSON.stringify(f.image)});background-size:cover;background-position:center;"></div>` : ''}
+          ${f.image ? `<img src="${escAttr(f.image)}" style="width:100%;height:130px;object-fit:cover;display:block;border-radius:4px;"/>` : ''}
           <div class="gsfc-page-break-body">
             <div class="gsfc-page-break-title">${f.label || '<span style="opacity:.4">Untitled Page</span>'}</div>
             ${f.description ? `<div class="gsfc-page-break-desc">${f.description}</div>` : ''}
@@ -4792,7 +4806,7 @@
           body = `<input class="gsfb-pv-input" id="${fid}" type="email" placeholder="${escAttr(f.placeholder || 'you@example.com')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'phone':
-          body = `<input class="gsfb-pv-input" id="${fid}" type="tel" placeholder="${escAttr(f.placeholder || '+91 98765 43210')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<input class="gsfb-pv-input" id="${fid}" type="tel" placeholder="${escAttr(f.placeholder || 'Phone number')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'number':
           body = `<input class="gsfb-pv-input" id="${fid}" type="number" placeholder="${escAttr(f.placeholder || '0')}" oninput="pvSetVal('${f.id}',this.value)"/>`;
@@ -4804,7 +4818,22 @@
           body = `<input class="gsfb-pv-input" id="${fid}" type="date" onchange="pvSetVal('${f.id}',this.value)"/>`;
           break;
         case 'time':
-          body = `<input class="gsfb-pv-input" id="${fid}" type="time" onchange="pvSetVal('${f.id}',this.value)"/>`;
+          body = `<div style="display:flex;gap:8px;align-items:center">
+            <select class="gsfb-pv-select" style="flex:1;min-width:0" id="${fid}_h" onchange="pvUpdateTime('${f.id}')">
+              <option value="">HH</option>
+              ${Array.from({length:12},(_,i)=>`<option value="${i+1}">${String(i+1).padStart(2,'0')}</option>`).join('')}
+            </select>
+            <span style="color:var(--text-2);font-weight:700;font-size:17px;flex-shrink:0">:</span>
+            <select class="gsfb-pv-select" style="flex:1;min-width:0" id="${fid}_m" onchange="pvUpdateTime('${f.id}')">
+              <option value="">MM</option>
+              ${Array.from({length:60},(_,i)=>`<option value="${String(i).padStart(2,'0')}">${String(i).padStart(2,'0')}</option>`).join('')}
+            </select>
+            <select class="gsfb-pv-select" style="flex:0 0 90px;width:90px" id="${fid}_ap" onchange="pvUpdateTime('${f.id}')">
+              <option value="">--</option>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          </div>`;
           break;
         case 'dropdown':
           const dOpts = (f.options || []).map(o => `<option value="${escAttr(o)}">${escHtml(o)}</option>`).join('');
@@ -4858,8 +4887,8 @@
               <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
               <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
             </svg>
-            <div style="font-size:13px"><strong>Click to upload</strong> or drag &amp; drop</div>
-            <div style="font-size:11px">${f.accept && f.accept !== '*' ? f.accept.replace(/[.]/g,'').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
+            <div class="gsfb-pv-upload-text"><strong>Click to upload</strong> or drag &amp; drop</div>
+            <div class="gsfb-pv-upload-sub">${f.accept && f.accept !== '*' ? f.accept.replace(/[.]/g,'').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
           </div>`;
           break;
         case 'image':
@@ -4889,7 +4918,7 @@
           body = `<input class="gsfb-pv-input" id="${fid}" type="text" placeholder="${escAttr(f.placeholder || '')}"/>`;
       }
 
-      const descHtml = f.showDesc && f.description ? `<div style="font-size:12px;color:var(--text-3);margin:-2px 0 8px;line-height:1.5">${f.description}</div>` : '';
+      const descHtml = f.showDesc && f.description ? `<div style="font-size:14px;color:var(--text-2);margin:0 0 9px;line-height:1.6">${f.description}</div>` : '';
       const imgHtml = f.image ? `<div style="margin-bottom:14px;text-align:center;"><img src="${f.image}" style="max-width:100%;border-radius:8px;object-fit:contain;"/></div>` : '';
       return `<div class="gsfb-pv-field" id="pvf-${f.id}"><div class="gsfb-pv-field-card">${imgHtml}<div class="gsfb-pv-label">${f.label || 'Untitled'} ${req}</div>${descHtml}${body}</div></div>`;
     }
@@ -4925,6 +4954,16 @@
       _pv.vals[fid] = val;
       const container = document.getElementById('pv_' + fid);
       if (container) container.querySelectorAll('.gsfb-pv-numbox').forEach((b, i) => b.classList.toggle('on', i + 1 === val));
+    }
+    function pvUpdateTime(fid) {
+      const h = document.getElementById('pv_' + fid + '_h')?.value;
+      const m = document.getElementById('pv_' + fid + '_m')?.value;
+      const ap = document.getElementById('pv_' + fid + '_ap')?.value;
+      if (!h || !m || !ap) { pvSetVal(fid, ''); return; }
+      let hr = parseInt(h);
+      if (ap === 'PM' && hr !== 12) hr += 12;
+      if (ap === 'AM' && hr === 12) hr = 0;
+      pvSetVal(fid, String(hr).padStart(2, '0') + ':' + m);
     }
     function pvFakeSubmit() {
       const body = document.getElementById('pvBody');

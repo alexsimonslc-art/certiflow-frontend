@@ -929,6 +929,7 @@
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 14px;
       padding: 18px 20px 14px;
+      overflow: hidden;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
       margin-bottom: 10px;
       display: none;
@@ -1769,7 +1770,7 @@
       <!-- Section title (page 2+, from Page Break label) -->
       <div class="gsfv-page-hdr" id="pageHdr">
         <div id="pageHdrImage"
-          style="display:none; width:100%; height:160px; background-size:cover; background-position:center; background-repeat:no-repeat; border-radius: 14px 14px 0 0; margin: -18px -20px 14px;">
+          style="display:none; width:calc(100% + 40px); height:160px; background-size:cover; background-position:center; background-repeat:no-repeat; margin: -18px -20px 14px;">
         </div>
         <div class="gsfv-page-hdr-title" id="pageHdrTitle"></div>
         <div class="gsfv-page-hdr-desc" id="pageHdrDesc" style="display:none"></div>
@@ -1833,7 +1834,7 @@
 
   <!-- ── Footer ─────────────────────────────────────────────────── -->
   <footer class="gsfv-footer">
-    Powered by <a href="/index.html" target="_blank">GalSol</a>
+    Powered by <a href="/index.html" target="_blank"><img src="Images/GalSol GWN.svg" alt="GalSol" style="height:18px;vertical-align:middle;opacity:0.75;transition:opacity 0.2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'"/></a>
   </footer>
 
   <!-- ── Entry Pass Modal (kept for structure, pass is now inline) ── -->
@@ -2097,7 +2098,7 @@
       // Progress bar
       const progressWrap = document.getElementById('progressWrap');
       if (total > 1) {
-        progressWrap.style.display = '';
+        progressWrap.style.display = 'block';
         const pct = Math.round(((n + 1) / total) * 100);
         document.getElementById('progressFill').style.width = pct + '%';
         document.getElementById('pgNum').textContent = n + 1;
@@ -2144,7 +2145,7 @@
       // Submit/Next button label + action
       const labelEl = document.getElementById('submitLabel');
       const btn = document.getElementById('submitBtn');
-      const passLabel = (isLast && s.passEnabled) ? '🎫 ' + (s.submitLabel || 'Submit & Get Pass') : null;
+      const passLabel = (isLast && s.passEnabled) ? (s.submitLabel || 'Submit & Get Pass') : null;
       labelEl.textContent = passLabel || (isLast ? (s.submitLabel || 'Submit') : 'Next →');
       btn.onclick = isLast ? handleSubmit : nextPage;
       // Style change: next vs submit
@@ -2363,8 +2364,22 @@
           break;
 
         case 'time':
-          input = `<input class="gsfv-input" id="fi-${f.id}" type="time"
-                      onchange="fv['${f.id}']=this.value;clearErr('${f.id}')"/>`;
+          input = `<div style="display:flex;gap:8px;align-items:center">
+            <select class="gsfv-select" style="flex:1;min-width:0" id="fi-${f.id}_h" onchange="updateTimeField('${f.id}');clearErr('${f.id}')">
+              <option value="">HH</option>
+              ${Array.from({length:12},(_,i)=>`<option value="${i+1}">${String(i+1).padStart(2,'0')}</option>`).join('')}
+            </select>
+            <span style="color:var(--text-2);font-weight:700;font-size:18px;flex-shrink:0">:</span>
+            <select class="gsfv-select" style="flex:1;min-width:0" id="fi-${f.id}_m" onchange="updateTimeField('${f.id}');clearErr('${f.id}')">
+              <option value="">MM</option>
+              ${Array.from({length:60},(_,i)=>`<option value="${String(i).padStart(2,'0')}">${String(i).padStart(2,'0')}</option>`).join('')}
+            </select>
+            <select class="gsfv-select" style="flex:0 0 90px" id="fi-${f.id}_ap" onchange="updateTimeField('${f.id}');clearErr('${f.id}')">
+              <option value="">--</option>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          </div>`;
           break;
 
         case 'dropdown': {
@@ -2712,6 +2727,17 @@
       if (err) err.textContent = msg;
     }
 
+    function updateTimeField(fid) {
+      const h = document.getElementById('fi-' + fid + '_h')?.value;
+      const m = document.getElementById('fi-' + fid + '_m')?.value;
+      const ap = document.getElementById('fi-' + fid + '_ap')?.value;
+      if (!h || !m || !ap) { fv[fid] = ''; return; }
+      let hr = parseInt(h);
+      if (ap === 'PM' && hr !== 12) hr += 12;
+      if (ap === 'AM' && hr === 12) hr = 0;
+      fv[fid] = String(hr).padStart(2, '0') + ':' + m;
+    }
+
     function clearErr(fieldId) {
       const wrap = document.getElementById('fw-' + fieldId);
       const err = document.getElementById('err-' + fieldId);
@@ -3011,9 +3037,13 @@
       // Reset visual state based on type
       switch (field.type) {
         case 'text': case 'email': case 'phone': case 'number':
-        case 'date': case 'time': case 'textarea': {
+        case 'date': case 'textarea': {
           const el = document.getElementById('fi-' + fid);
           if (el) el.value = '';
+          break;
+        }
+        case 'time': {
+          ['_h', '_m', '_ap'].forEach(suf => { const el = document.getElementById('fi-' + fid + suf); if (el) el.selectedIndex = 0; });
           break;
         }
         case 'dropdown': {
