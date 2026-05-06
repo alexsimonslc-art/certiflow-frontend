@@ -576,7 +576,8 @@
 
     <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
       <div style="display:flex; align-items:center; gap:12px; flex:1; overflow:hidden;">
-            <div class="gal-ai-sparkle" style="display:flex; align-items:center; justify-content:center;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+        <div class="gal-ai-sparkle" style="display:flex; align-items:center; justify-content:center;"><img
+            src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
         <span style="font-weight: 700; font-size: 14.5px; letter-spacing: 0.3px; color:#fff;">Gal AI</span>
         <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.15);"></div>
         <span class="gal-ai-typewriter" id="galAiTypewriter">I can help you write, design, and build blocks...</span>
@@ -590,7 +591,8 @@
 
       <div class="gal-ai-header">
         <div style="display:flex; align-items:center; gap:8px;">
-              <div class="gal-ai-sparkle"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+          <div class="gal-ai-sparkle"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;">
+          </div>
           <span style="font-weight: 700; font-size: 14px; color:var(--text);">Gal AI</span>
         </div>
         <button class="gal-ai-close" onclick="closeGalAi()">
@@ -620,8 +622,8 @@
       </div>
 
       <div class="gal-ai-input-area">
-        <textarea id="galAiInput" class="gal-ai-input custom-scroll-input" rows="2" placeholder="Ask Gal AI to generate or edit..."
-          autocomplete="off"
+        <textarea id="galAiInput" class="gal-ai-input custom-scroll-input" rows="2"
+          placeholder="Ask Gal AI to generate or edit..." autocomplete="off"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendGalAiMessage()}"
           oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"></textarea>
 
@@ -2391,7 +2393,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
             if (el) el.textContent = statuses[sIdx] + '...';
           }, 1500);
         } else {
-                    msg.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div><div class="gal-ai-bot-text">${text.replace(/\n/g, '<br>')}</div>`;
+          msg.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div><div class="gal-ai-bot-text">${text.replace(/\n/g, '<br>')}</div>`;
         }
       }
 
@@ -2501,8 +2503,8 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       }
 
       100% {
-      background-position: 0% 0%, 300% 50%;
-      background-position: 0% 0%, 200% 50%;
+        background-position: 0% 0%, 300% 50%;
+        background-position: 0% 0%, 200% 50%;
       }
     }
 
@@ -2948,6 +2950,9 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       align-items: center;
       justify-content: center;
       height: 100%;
+      width: calc(100% + 32px);
+      margin: 0 -16px;
+      overflow: hidden;
       text-align: center;
       animation: fadeIn 0.5s ease;
       padding-top: 20px;
@@ -2974,9 +2979,10 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       display: flex;
       gap: 10px;
       overflow-x: auto;
-      max-width: 100%;
-      padding: 4px 0 14px 0;
+      width: 100%;
+      padding: 4px 16px 14px 16px;
       scrollbar-width: none;
+      scroll-behavior: auto;
     }
 
     .gal-ai-suggestions::-webkit-scrollbar {
@@ -3469,6 +3475,34 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       const style = document.createElement('style');
       style.textContent = `@keyframes galDot{0%,60%,100%{opacity:0.2}30%{opacity:1}}`;
       document.head.appendChild(style);
+
+      /* ── Auto-scroll suggestions carousel ── */
+      setTimeout(() => {
+        const sugCont = document.querySelector('.gal-ai-suggestions');
+        if (sugCont) {
+          let scrollDir = 1;
+          let isPaused = false;
+          sugCont.addEventListener('mouseenter', () => isPaused = true);
+          sugCont.addEventListener('mouseleave', () => isPaused = false);
+          sugCont.addEventListener('touchstart', () => isPaused = true, { passive: true });
+          sugCont.addEventListener('touchend', () => isPaused = false);
+          sugCont.addEventListener('scroll', () => {
+            isPaused = true;
+            clearTimeout(sugCont._scrollTo);
+            sugCont._scrollTo = setTimeout(() => isPaused = false, 2000);
+          }, { passive: true });
+
+          function autoScrollSug() {
+            if (!isPaused && sugCont.scrollWidth > sugCont.clientWidth) {
+              sugCont.scrollLeft += scrollDir * 0.5;
+              if (sugCont.scrollLeft >= sugCont.scrollWidth - sugCont.clientWidth - 1) scrollDir = -1;
+              if (sugCont.scrollLeft <= 0) scrollDir = 1;
+            }
+            requestAnimationFrame(autoScrollSug);
+          }
+          requestAnimationFrame(autoScrollSug);
+        }
+      }, 500);
     })();
   </script>
 </body>

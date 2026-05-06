@@ -2433,10 +2433,10 @@
     .gal-ai-close { background: none; border: none; color: var(--text-3); cursor: pointer; transition: color 0.2s; padding: 4px; }
     .gal-ai-close:hover { color: #f43f5e; }
     .gal-ai-history { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
-    .gal-ai-greeting { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; animation: fadeIn 0.5s ease; padding-top: 20px; }
+    .gal-ai-greeting { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: calc(100% + 32px); margin: 0 -16px; overflow: hidden; text-align: center; animation: fadeIn 0.5s ease; padding-top: 20px; }
     .gal-ai-greet-title { font-size: 24px; font-weight: 700; background: linear-gradient(90deg,#00d4ff,#7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; letter-spacing: -0.5px; }
     .gal-ai-greet-sub { font-size: 14px; color: var(--text-2); margin-bottom: 20px; }
-    .gal-ai-suggestions { display: flex; gap: 10px; overflow-x: auto; max-width: 100%; padding: 4px 0 14px 0; scrollbar-width: none; }
+    .gal-ai-suggestions { display: flex; gap: 10px; overflow-x: auto; width: 100%; padding: 4px 16px 14px 16px; scrollbar-width: none; scroll-behavior: auto; }
     .gal-ai-suggestions::-webkit-scrollbar { display: none; }
     .gal-ai-sug { padding: 10px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; font-size: 13px; color: var(--text-2); white-space: nowrap; cursor: pointer; transition: all 0.2s; }
     .gal-ai-sug:hover { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.3); transform: translateY(-2px); }
@@ -5650,6 +5650,34 @@
       history.scrollTop = history.scrollHeight;
       return id;
     }
+
+    /* ── Auto-scroll suggestions carousel ── */
+    setTimeout(() => {
+      const sugCont = document.querySelector('.gal-ai-suggestions');
+      if (sugCont) {
+        let scrollDir = 1;
+        let isPaused = false;
+        sugCont.addEventListener('mouseenter', () => isPaused = true);
+        sugCont.addEventListener('mouseleave', () => isPaused = false);
+        sugCont.addEventListener('touchstart', () => isPaused = true, {passive: true});
+        sugCont.addEventListener('touchend', () => isPaused = false);
+        sugCont.addEventListener('scroll', () => {
+          isPaused = true;
+          clearTimeout(sugCont._scrollTo);
+          sugCont._scrollTo = setTimeout(() => isPaused = false, 2000);
+        }, {passive: true});
+        
+        function autoScrollSug() {
+          if (!isPaused && sugCont.scrollWidth > sugCont.clientWidth) {
+            sugCont.scrollLeft += scrollDir * 0.5;
+            if (sugCont.scrollLeft >= sugCont.scrollWidth - sugCont.clientWidth - 1) scrollDir = -1;
+            if (sugCont.scrollLeft <= 0) scrollDir = 1;
+          }
+          requestAnimationFrame(autoScrollSug);
+        }
+        requestAnimationFrame(autoScrollSug);
+      }
+    }, 500);
   })();
   </script>
 </body>
