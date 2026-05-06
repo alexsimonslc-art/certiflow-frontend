@@ -2503,12 +2503,8 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         background-position: 0% 0%, 0% 50%;
       }
 
-      50% {
-        background-position: 0% 0%, 100% 50%;
-      }
-
       100% {
-        background-position: 0% 0%, 0% 50%;
+      background-position: 0% 0%, 300% 50%;
       }
     }
 
@@ -2529,9 +2525,9 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
 
     .gal-ai-tab {
       width: 100%;
-      background: linear-gradient(#0c1120, #0c1120) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #f43f5e, #00d4ff) border-box;
+      background: linear-gradient(#0c1120, #0c1120) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff, #7c3aed) border-box;
       background-size: 100% 100%, 300% 100%;
-      animation: gal-glow-border 6s ease-in-out infinite;
+      animation: gal-glow-border 8s linear infinite;
       border: 1.5px solid transparent;
       border-bottom: none;
       border-radius: 16px 16px 0 0;
@@ -2593,9 +2589,9 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       bottom: 0;
       width: 100%;
       height: 320px;
-      background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #f43f5e, #00d4ff) border-box;
+      background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff, #7c3aed) border-box;
       background-size: 100% 100%, 300% 100%;
-      animation: gal-glow-border 6s ease-in-out infinite;
+      animation: gal-glow-border 8s linear infinite;
       border: 1.5px solid transparent;
       border-bottom: none;
       border-radius: 18px 18px 0 0;
@@ -2617,7 +2613,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       transform: translateY(0) scale(1);
       pointer-events: auto;
       /* Increased time from 0.8s to a buttery smooth 2.5s */
-      animation: gal-glow-border 6s ease-in-out infinite, gal-flare 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: gal-glow-border 8s linear infinite, gal-flare 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     /* Tab sinking away smoothly */
