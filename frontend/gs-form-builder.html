@@ -1240,8 +1240,10 @@
       overflow: hidden;
     }
 
+    /* AFTER — add flex-wrap: wrap */
     .gsfb-right-tabs {
       display: flex;
+      flex-wrap: wrap;
       padding: 10px 12px 0;
       gap: 4px;
       flex-shrink: 0;
@@ -3769,9 +3771,13 @@
       document.getElementById('rtabSettingsBody').style.display = tab === 'settings' ? '' : 'none';
       document.getElementById('rtabPassBody').style.display = tab === 'pass' ? '' : 'none';
 
-      if (tab === 'settings') renderSettings();
-      if (tab === 'field') renderRightPanel();
-      if (tab === 'pass') renderPassSettings();
+      if (tab === 'field') {
+        renderFieldEditor();
+      } else if (tab === 'settings') {
+        renderSettingsPanel();
+      } else if (tab === 'pass') {
+        renderPassSettings();   // ✅ must be here
+      }
     }
 
     function renderRightPanel() {
@@ -4959,7 +4965,7 @@
           <label class="gsfb-prop-label">Pass Holder Management</label>
           <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">View, monitor and block entry passes for this form.</div>
           <a
-            href="gs-database-view.html?form=${_formId}&tab=passes"
+            href="gs-database-view.html?form=${_S.formId}&tab=passes"
             target="_blank"
             style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-radius:8px;color:var(--cyan);font-size:13px;font-weight:600;text-decoration:none;transition:background 0.15s"
             onmouseover="this.style.background='rgba(0,212,255,0.13)'"
