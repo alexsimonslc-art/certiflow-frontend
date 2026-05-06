@@ -1867,7 +1867,7 @@
               <span id="rowCount"
                 style="background:rgba(0,212,255,0.12);color:var(--cyan);border-radius:99px;padding:2px 8px;font-size:11px;font-weight:700">0</span>
             </button>
-                        <button class="dbv-tab" id="tabPasses" onclick="switchTab('passes')" style="display:none">
+                        <button class="dbv-tab" id="tabPasses" onclick="switchTab('passes')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                 <circle cx="9" cy="7" r="4"/>
@@ -2398,10 +2398,8 @@
       // Render active tab
       renderDashboard();
       applyFilters();
-            // Show Manage Passes tab if pass is enabled for this form
-      if (_data.passEnabled) {
-        document.getElementById('tabPasses').style.display = '';
-      }
+            // Always show Manage Passes tab
+      document.getElementById('tabPasses').style.display = '';
 
       // Deep-link support: ?tab=passes
       const urlTab = new URLSearchParams(window.location.search).get('tab');
