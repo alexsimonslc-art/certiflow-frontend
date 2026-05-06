@@ -527,7 +527,7 @@
     .rc-icon.valid   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
     .rc-icon.admitted{ background: var(--gold-dim);  color: var(--gold);  border: 1px solid rgba(245,158,11,0.2); }
     .rc-icon.invalid { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(244,63,94,0.2); }
-
+    .rc-icon.blocked { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(244,63,94,0.2); }
     .rc-title-wrap { min-width: 0; flex: 1; }
 
     .rc-status-label { font-size: 17px; font-weight: 800; color: var(--text); }
@@ -638,7 +638,7 @@
     .pass-badge.valid   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.22); }
     .pass-badge.admitted{ background: var(--gold-dim);  color: var(--gold);  border: 1px solid rgba(245,158,11,0.22); }
     .pass-badge.invalid { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(244,63,94,0.22); }
-
+    .pass-badge.blocked { background: var(--red-dim); color: var(--red); border: 1px solid rgba(244,63,94,0.22); }
     .pass-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 
     .pass-canvas-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
@@ -1137,7 +1137,8 @@
         if (!res.ok || !data.ok) {
           showResult({ type: 'invalid', token, pass: null });
         } else {
-          showResult({ type: data.pass.status === 'admitted' ? 'admitted' : 'valid', token, pass: data.pass });
+          const st = data.pass.status;
+showResult({ type: st === 'admitted' ? 'admitted' : st === 'blocked' ? 'blocked' : 'valid', token, pass: data.pass });
         }
       } catch (e) {
         showResult({ type: 'invalid', token, pass: null });
@@ -1192,6 +1193,13 @@
           admNote.innerHTML = `${ICONS.clock} Admitted at ${new Date(pass.checkedInAt).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12:true })}`;
         }
         btns.innerHTML = `<button class="rc-btn rc-btn-secondary" style="flex:1" onclick="dismissResult()">Close</button>`;
+
+      } else if (type === 'blocked') {
+        rcIcon.innerHTML  = ICONS.x;
+        label.textContent = 'Pass Blocked';
+        name.textContent  = pass?.attendeeName || 'Attendee';
+        meta.innerHTML    = `<div class="rc-meta-row" style="color:var(--red)">This pass has been blocked by the organizer. Entry is not permitted.</div>`;
+        btns.innerHTML    = `<button class="rc-btn rc-btn-secondary" style="flex:1" onclick="dismissResult()">Dismiss</button>`;
 
       } else {
         rcIcon.innerHTML  = ICONS.x;
