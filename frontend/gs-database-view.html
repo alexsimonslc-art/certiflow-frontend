@@ -3332,6 +3332,7 @@
       document.getElementById('errorMsg').textContent = msg;
     }
     function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function escAttr(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function ucFirst(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
     function timeAgo(iso) {
       const diff = Date.now() - new Date(iso).getTime();
