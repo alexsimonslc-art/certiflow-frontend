@@ -622,8 +622,8 @@
       align-items: center;
       gap: 6px;
       padding: 8px 16px;
-      background: rgba(4,8,15,0.90);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: rgba(4, 8, 15, 0.90);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
       backdrop-filter: blur(16px);
       position: sticky;
       top: -20px;
@@ -632,13 +632,14 @@
       z-index: 22;
       flex-shrink: 0;
     }
+
     .gsfb-ctab {
       display: flex;
       align-items: center;
       gap: 6px;
       padding: 6px 20px;
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.10);
+      border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 8px;
       color: var(--text-3);
       font-size: 12.5px;
@@ -647,10 +648,26 @@
       transition: all 0.14s;
       font-family: var(--font);
     }
-    .gsfb-ctab:hover { background: rgba(255,255,255,0.04); color: var(--text-2); border-color: rgba(255,255,255,0.18); }
-    .gsfb-ctab.active { background: rgba(0,212,255,0.10); border-color: rgba(0,212,255,0.38); color: #00d4ff; }
-    .gsfb-ctab svg { opacity: 0.7; }
-    .gsfb-ctab.active svg { opacity: 1; }
+
+    .gsfb-ctab:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-2);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .gsfb-ctab.active {
+      background: rgba(0, 212, 255, 0.10);
+      border-color: rgba(0, 212, 255, 0.38);
+      color: #00d4ff;
+    }
+
+    .gsfb-ctab svg {
+      opacity: 0.7;
+    }
+
+    .gsfb-ctab.active svg {
+      opacity: 1;
+    }
 
     /* ── Pass Editor Canvas ──────────────────────────────────────── */
     #gsfbPassCanvasWrap {
@@ -660,6 +677,7 @@
       width: 100%;
       padding-bottom: 40px;
     }
+
     .gsfb-pe-hint {
       font-size: 11.5px;
       color: var(--text-3);
@@ -667,24 +685,30 @@
       text-align: center;
       letter-spacing: 0.2px;
     }
+
     .gsfb-pe-card {
       width: 360px;
       height: 540px;
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 28px 72px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+      box-shadow: 0 28px 72px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
     }
+
     .gsfb-pe-block {
       padding: 13px 18px;
       flex-shrink: 0;
     }
-    .gsfb-pe-block.locked { padding: 7px 18px; }
+
+    .gsfb-pe-block.locked {
+      padding: 7px 18px;
+    }
+
     .gsfb-pe-divider {
       border: none;
-      border-top: 1px dashed rgba(255,255,255,0.15);
+      border-top: 1px dashed rgba(255, 255, 255, 0.15);
       margin: 0 18px;
       flex-shrink: 0;
     }
@@ -868,30 +892,86 @@
     }
 
     /* Phone field — matches form view */
-    .gsfb-pv-phone-wrap { display: flex; gap: 0; align-items: stretch; }
+    .gsfb-pv-phone-wrap {
+      display: flex;
+      gap: 0;
+      align-items: stretch;
+    }
+
     .gsfb-pv-cc-btn {
-      display: flex; align-items: center; gap: 6px;
-      padding: 0 12px; min-width: 82px;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);
-      border-right: none; border-radius: 9px 0 0 9px;
-      color: var(--text-2); font-size: 13px; font-weight: 500;
-      cursor: default; white-space: nowrap; flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      min-width: 82px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-right: none;
+      border-radius: 9px 0 0 9px;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: default;
+      white-space: nowrap;
+      flex-shrink: 0;
       font-family: var(--font);
     }
-    .gsfb-pv-cc-btn img { width: 20px; height: 14px; border-radius: 2px; object-fit: cover; }
-    .gsfb-pv-phone-wrap .gsfb-pv-input { border-radius: 0 9px 9px 0; }
+
+    .gsfb-pv-cc-btn img {
+      width: 20px;
+      height: 14px;
+      border-radius: 2px;
+      object-fit: cover;
+    }
+
+    .gsfb-pv-phone-wrap .gsfb-pv-input {
+      border-radius: 0 9px 9px 0;
+    }
+
     /* Dropdown button — matches form view */
     .gsfb-pv-dd-btn {
-      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      padding: 12px 14px; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.10); border-radius: 9px;
-      color: var(--text-3); font-size: 15px; font-family: var(--font);
-      cursor: default; text-align: left;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 9px;
+      color: var(--text-3);
+      font-size: 15px;
+      font-family: var(--font);
+      cursor: default;
+      text-align: left;
     }
-    .gsfb-pv-dd-btn svg { flex-shrink: 0; width: 14px; height: 14px; color: var(--text-3); }
-    .gsfb-pv-dd-item { padding: 10px 14px; font-size: 14px; color: var(--text-2); cursor: pointer; transition: background 0.12s; }
-    .gsfb-pv-dd-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
-    .gsfb-pv-dd-item.on { background: rgba(0,212,255,0.10); color: var(--cyan); font-weight: 600; }
+
+    .gsfb-pv-dd-btn svg {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      color: var(--text-3);
+    }
+
+    .gsfb-pv-dd-item {
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .gsfb-pv-dd-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+    }
+
+    .gsfb-pv-dd-item.on {
+      background: rgba(0, 212, 255, 0.10);
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
     .gsfb-pv-select {
       width: 100%;
       padding: 12px 36px 12px 14px;
@@ -1255,17 +1335,26 @@
       gap: 1px;
       max-height: 196px;
       overflow-y: auto;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 8px;
       padding: 4px;
-      background: rgba(255,255,255,0.02);
+      background: rgba(255, 255, 255, 0.02);
       scrollbar-width: thin;
       scrollbar-color: var(--glass-border) transparent;
     }
 
-    .gsfb-filetype-list::-webkit-scrollbar { width: 3px; }
-    .gsfb-filetype-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
-    .gsfb-filetype-list::-webkit-scrollbar-track { background: transparent; }
+    .gsfb-filetype-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .gsfb-filetype-list::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 3px;
+    }
+
+    .gsfb-filetype-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
     .gsfb-filetype-item {
       display: flex;
@@ -1280,7 +1369,9 @@
       user-select: none;
     }
 
-    .gsfb-filetype-item:hover { background: rgba(255,255,255,0.05); }
+    .gsfb-filetype-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
 
     .gsfb-filetype-item input[type="checkbox"] {
       width: 14px;
@@ -1292,7 +1383,7 @@
 
     .gsfb-filetype-sep {
       height: 1px;
-      background: rgba(255,255,255,0.06);
+      background: rgba(255, 255, 255, 0.06);
       margin: 3px 4px;
     }
 
@@ -1355,7 +1446,7 @@
       gap: 10px;
     }
 
-    .gsfb-toggle-row > div:first-child {
+    .gsfb-toggle-row>div:first-child {
       flex: 1;
       min-width: 0;
     }
@@ -1578,11 +1669,29 @@
       margin: 4px 0 4px 20px;
       padding-left: 4px;
     }
-    .gsfb-rte-body ul { list-style-type: disc; }
-    .gsfb-rte-body ol { list-style-type: decimal; }
-    .gsfb-rte-body li { margin-bottom: 2px; }
-    .gsfb-rte-body a { color: var(--cyan); text-decoration: underline; }
-    .gsfb-rte-body img { max-width: 100%; border-radius: 6px; margin: 4px 0; }
+
+    .gsfb-rte-body ul {
+      list-style-type: disc;
+    }
+
+    .gsfb-rte-body ol {
+      list-style-type: decimal;
+    }
+
+    .gsfb-rte-body li {
+      margin-bottom: 2px;
+    }
+
+    .gsfb-rte-body a {
+      color: var(--cyan);
+      text-decoration: underline;
+    }
+
+    .gsfb-rte-body img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin: 4px 0;
+    }
 
     .gsfb-settings-section {
       margin-bottom: 20px;
@@ -1593,10 +1702,11 @@
       display: flex;
       gap: 2px;
       padding: 4px 6px;
-      background: rgba(255,255,255,0.03);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
       flex-wrap: wrap;
     }
+
     .gsfb-label-rte-btn {
       padding: 2px 7px;
       border-radius: 4px;
@@ -1609,8 +1719,19 @@
       line-height: 1.6;
       transition: var(--transition);
     }
-    .gsfb-label-rte-btn:hover { background: rgba(0,212,255,0.1); color: var(--cyan); }
-    .gsfb-label-rte-sep { width: 1px; background: rgba(255,255,255,0.1); margin: 3px 2px; align-self: stretch; }
+
+    .gsfb-label-rte-btn:hover {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--cyan);
+    }
+
+    .gsfb-label-rte-sep {
+      width: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 3px 2px;
+      align-self: stretch;
+    }
+
     .gsfb-label-rte-body {
       padding: 8px 10px;
       color: var(--text);
@@ -1619,24 +1740,58 @@
       outline: none;
       min-height: 36px;
     }
-    .gsfb-label-rte-body:empty::before { content: attr(placeholder); color: var(--text-3); pointer-events: none; }
-    .gsfb-label-rte-body ul { list-style-type: disc; margin: 3px 0 3px 18px; }
-    .gsfb-label-rte-body ol { list-style-type: decimal; margin: 3px 0 3px 18px; }
-    .gsfb-label-rte-body li { margin-bottom: 2px; }
-    .gsfb-label-rte-body a { color: var(--cyan); text-decoration: underline; }
-    .gsfb-label-rte-body img { max-width: 100%; border-radius: 5px; margin: 3px 0; vertical-align: middle; }
+
+    .gsfb-label-rte-body:empty::before {
+      content: attr(placeholder);
+      color: var(--text-3);
+      pointer-events: none;
+    }
+
+    .gsfb-label-rte-body ul {
+      list-style-type: disc;
+      margin: 3px 0 3px 18px;
+    }
+
+    .gsfb-label-rte-body ol {
+      list-style-type: decimal;
+      margin: 3px 0 3px 18px;
+    }
+
+    .gsfb-label-rte-body li {
+      margin-bottom: 2px;
+    }
+
+    .gsfb-label-rte-body a {
+      color: var(--cyan);
+      text-decoration: underline;
+    }
+
+    .gsfb-label-rte-body img {
+      max-width: 100%;
+      border-radius: 5px;
+      margin: 3px 0;
+      vertical-align: middle;
+    }
+
     .gsfb-img-dialog {
       display: none;
-      background: rgba(4,8,15,0.96);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(4, 8, 15, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       padding: 8px 10px;
       gap: 6px;
       align-items: center;
       flex-wrap: wrap;
     }
-    .gsfb-img-dialog.open { display: flex; }
-    .gsfb-img-dialog input { flex: 1; min-width: 160px; }
+
+    .gsfb-img-dialog.open {
+      display: flex;
+    }
+
+    .gsfb-img-dialog input {
+      flex: 1;
+      min-width: 160px;
+    }
 
     .gsfb-settings-sec-title {
       font-size: 10px;
@@ -1683,7 +1838,10 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.14);
       letter-spacing: 0.1px;
     }
-    .gsfb-major-section:first-child { margin-top: 2px; }
+
+    .gsfb-major-section:first-child {
+      margin-top: 2px;
+    }
 
     /* Palette grid — 2-col so each swatch is large enough to see clearly */
     .gsfb-palette-grid {
@@ -1691,6 +1849,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
+
     .gsfb-palette-item {
       border-radius: 10px;
       padding: 8px 6px 6px;
@@ -1699,8 +1858,17 @@
       transition: all 0.18s;
       background: rgba(255, 255, 255, 0.03);
     }
-    .gsfb-palette-item:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-1px); }
-    .gsfb-palette-item.selected { border-color: var(--cyan); background: rgba(0,212,255,0.06); }
+
+    .gsfb-palette-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .gsfb-palette-item.selected {
+      border-color: var(--cyan);
+      background: rgba(0, 212, 255, 0.06);
+    }
+
     .gsfb-palette-swatch {
       height: 40px;
       border-radius: 6px;
@@ -1708,18 +1876,26 @@
       position: relative;
       overflow: hidden;
     }
+
     .gsfb-palette-card {
       position: absolute;
-      top: 5px; left: 5px; right: 5px; bottom: 0;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 0;
       border-radius: 4px 4px 0 0;
     }
+
     .gsfb-palette-dot {
       position: absolute;
-      top: 7px; right: 7px;
-      width: 8px; height: 8px;
+      top: 7px;
+      right: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
     }
+
     .gsfb-palette-name {
       font-size: 9.5px;
       text-align: center;
@@ -1728,7 +1904,10 @@
       letter-spacing: 0.3px;
       text-transform: uppercase;
     }
-    .gsfb-palette-item.selected .gsfb-palette-name { color: var(--cyan); }
+
+    .gsfb-palette-item.selected .gsfb-palette-name {
+      color: var(--cyan);
+    }
 
     /* Larger color pickers */
     .gsfb-color-swatch-row {
@@ -1738,13 +1917,14 @@
       margin-top: 6px;
       flex-wrap: wrap;
     }
+
     .gsfb-color-swatch {
       width: 40px;
       height: 32px;
       border-radius: 7px;
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 2px 3px;
-      background: rgba(255,255,255,0.04);
+      background: rgba(255, 255, 255, 0.04);
       cursor: pointer;
     }
 
@@ -2157,6 +2337,7 @@
       pointer-events: none;
       line-height: 1.45;
     }
+
     .gsfc-card-desc {
       font-size: calc(var(--cc-body-size, 13px) - 1px);
       font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
@@ -2166,9 +2347,23 @@
       user-select: none;
       pointer-events: none;
     }
-    .gsfc-card-desc ul { list-style-type: disc; padding-left: 18px; margin: 4px 0; }
-    .gsfc-card-desc ol { list-style-type: decimal; padding-left: 18px; margin: 4px 0; }
-    .gsfc-card-desc li { margin-bottom: 2px; display: list-item; }
+
+    .gsfc-card-desc ul {
+      list-style-type: disc;
+      padding-left: 18px;
+      margin: 4px 0;
+    }
+
+    .gsfc-card-desc ol {
+      list-style-type: decimal;
+      padding-left: 18px;
+      margin: 4px 0;
+    }
+
+    .gsfc-card-desc li {
+      margin-bottom: 2px;
+      display: list-item;
+    }
 
     .gsfc-req {
       color: #ef4444;
@@ -2265,6 +2460,7 @@
       color: var(--cc-text-2);
       flex-shrink: 0;
     }
+
     .gsfc-star {
       font-size: 20px;
       color: #f59e0b;
@@ -2374,7 +2570,7 @@
     .gsfc-page-divider-line {
       flex: 1;
       height: 1.5px;
-      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.35), transparent);
+      background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.35), transparent);
     }
 
     .gsfc-page-divider-label {
@@ -2383,77 +2579,395 @@
       color: #a78bfa;
       letter-spacing: 0.8px;
       text-transform: uppercase;
-      background: rgba(124,58,237,0.10);
-      border: 1px solid rgba(124,58,237,0.22);
+      background: rgba(124, 58, 237, 0.10);
+      border: 1px solid rgba(124, 58, 237, 0.22);
       border-radius: 20px;
       padding: 3px 12px;
       white-space: nowrap;
     }
+
     /* ═══ Gal AI — Bottom Chat (Form Builder) ═══ */
-    @keyframes gal-glow-border { 0%{background-position:0% 0%,0% 50%} 100%{background-position:0% 0%,200% 50%} }
-    @keyframes gal-flare { 0%{box-shadow:0 -12px 60px rgba(0,0,0,0.9),0 0 80px rgba(124,58,237,0.6),0 0 40px rgba(0,212,255,0.8)} 100%{box-shadow:0 -12px 48px rgba(0,0,0,0.8),0 0 28px rgba(0,212,255,0.2)} }
-    @keyframes galTypeDot { 0%,80%,100%{transform:scale(0.7);opacity:0.4} 40%{transform:scale(1.2);opacity:1} }
-    .gal-ai-wrapper {
-      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 720px; max-width: 95vw; z-index: 9999;
-      pointer-events: none; display: flex; justify-content: center; align-items: flex-end;
+    @keyframes gal-glow-border {
+      0% {
+        background-position: 0% 0%, 0% 50%
+      }
+
+      100% {
+        background-position: 0% 0%, 200% 50%
+      }
     }
+
+    @keyframes gal-flare {
+      0% {
+        box-shadow: 0 -12px 60px rgba(0, 0, 0, 0.9), 0 0 80px rgba(124, 58, 237, 0.6), 0 0 40px rgba(0, 212, 255, 0.8)
+      }
+
+      100% {
+        box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(0, 212, 255, 0.2)
+      }
+    }
+
+    @keyframes galTypeDot {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(0.7);
+        opacity: 0.4
+      }
+
+      40% {
+        transform: scale(1.2);
+        opacity: 1
+      }
+    }
+
+    .gal-ai-wrapper {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 720px;
+      max-width: 95vw;
+      z-index: 9999;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
     .gal-ai-tab {
       width: 100%;
-      background: linear-gradient(#0c1120,#0c1120) padding-box, linear-gradient(90deg,#00d4ff,#7c3aed,#00d4ff) border-box;
+      background: linear-gradient(#0c1120, #0c1120) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff) border-box;
       background-size: 100% 100%, 200% 100%;
       animation: gal-glow-border 8s linear infinite;
-      border: 2px solid transparent; border-bottom: none;
-      border-radius: 16px 16px 0 0; padding: 12px 24px;
-      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 -4px 24px rgba(0,0,0,0.5),0 0 16px rgba(0,212,255,0.15);
-      pointer-events: auto; color: var(--text);
-      transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+      border: 2px solid transparent;
+      border-bottom: none;
+      border-radius: 16px 16px 0 0;
+      padding: 12px 24px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(0, 212, 255, 0.15);
+      pointer-events: auto;
+      color: var(--text);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .gal-ai-tab:hover { filter: brightness(1.25); box-shadow: 0 -6px 32px rgba(0,0,0,0.7),0 0 40px rgba(0,212,255,0.5); padding-bottom: 18px; }
-    .gal-ai-tab:active { transform: scale(0.98) translateY(4px); filter: brightness(1.5); transition: all 0.1s ease-out; }
-    .gal-ai-typewriter { font-size: 13.5px; color: var(--text-2); white-space: nowrap; transition: opacity 0.3s; }
+
+    .gal-ai-tab:hover {
+      filter: brightness(1.25);
+      box-shadow: 0 -6px 32px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 212, 255, 0.5);
+      padding-bottom: 18px;
+    }
+
+    .gal-ai-tab:active {
+      transform: scale(0.98) translateY(4px);
+      filter: brightness(1.5);
+      transition: all 0.1s ease-out;
+    }
+
+    .gal-ai-typewriter {
+      font-size: 13.5px;
+      color: var(--text-2);
+      white-space: nowrap;
+      transition: opacity 0.3s;
+    }
+
     .gal-ai-box {
-      position: absolute; bottom: 0; width: 100%; height: 360px;
-      background: linear-gradient(#0a0e1a,#0a0e1a) padding-box, linear-gradient(90deg,#00d4ff,#7c3aed,#00d4ff) border-box;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 360px;
+      background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff) border-box;
       background-size: 100% 100%, 200% 100%;
       animation: gal-glow-border 8s linear infinite;
-      border: 2px solid transparent; border-bottom: none;
-      border-radius: 18px 18px 0 0; display: flex; flex-direction: column;
-      box-shadow: 0 -12px 48px rgba(0,0,0,0.8),0 0 28px rgba(0,212,255,0.15);
-      z-index: 2; opacity: 0; transform: translateY(40px) scale(0.96); pointer-events: none;
-      transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1);
+      border: 2px solid transparent;
+      border-bottom: none;
+      border-radius: 18px 18px 0 0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(0, 212, 255, 0.15);
+      z-index: 2;
+      opacity: 0;
+      transform: translateY(40px) scale(0.96);
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .gal-ai-wrapper.open .gal-ai-box { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; animation: gal-glow-border 8s linear infinite, gal-flare 2.5s cubic-bezier(0.16,1,0.3,1) forwards; }
-    .gal-ai-wrapper.open .gal-ai-tab { opacity: 0; pointer-events: none; transform: translateY(30px) scale(0.92); }
-    .gal-ai-resizer { height: 16px; width: 100%; cursor: ns-resize; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: transparent; }
-    .gal-ai-resizer:hover .gal-ai-resizer-line { background: rgba(255,255,255,0.4); }
-    .gal-ai-resizer-line { width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.15); transition: background 0.2s; }
-    .gal-ai-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 16px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .gal-ai-close { background: none; border: none; color: var(--text-3); cursor: pointer; transition: color 0.2s; padding: 4px; }
-    .gal-ai-close:hover { color: #f43f5e; }
-    .gal-ai-history { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
-    .gal-ai-greeting { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: calc(100% + 32px); margin: 0 -16px; overflow: hidden; text-align: center; animation: fadeIn 0.5s ease; padding-top: 20px; }
-    .gal-ai-greet-title { font-size: 24px; font-weight: 700; background: linear-gradient(90deg,#00d4ff,#7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; letter-spacing: -0.5px; }
-    .gal-ai-greet-sub { font-size: 14px; color: var(--text-2); margin-bottom: 20px; }
-    .gal-ai-suggestions { display: flex; gap: 10px; overflow-x: auto; width: 100%; padding: 4px 16px 14px 16px; scrollbar-width: none; scroll-behavior: auto; }
-    .gal-ai-suggestions::-webkit-scrollbar { display: none; }
-    .gal-ai-sug { padding: 10px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; font-size: 13px; color: var(--text-2); white-space: nowrap; cursor: pointer; transition: all 0.2s; }
-    .gal-ai-sug:hover { background: rgba(0,212,255,0.1); color: var(--cyan); border-color: rgba(0,212,255,0.3); transform: translateY(-2px); }
-    .gal-ai-msg { font-size: 13.5px; line-height: 1.55; padding: 12px 16px; border-radius: 8px; max-width: 88%; }
-    .gal-ai-msg.user-msg { background: rgba(255,255,255,0.08); color: var(--text); padding: 12px 18px; border-radius: 20px 20px 4px 20px; max-width: 85%; align-self: flex-end; font-size: 14px; line-height: 1.5; }
-    .gal-ai-msg.bot-msg { display: flex; gap: 16px; align-self: flex-start; width: 100%; color: var(--text); font-size: 14.5px; line-height: 1.6; border: none; background: transparent; }
-    .gal-ai-sparkle-icon { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#00d4ff,#7c3aed); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
-    .gal-ai-bot-text { flex: 1; padding-top: 3px; }
-    .gal-ai-thinking { display: flex; align-items: center; gap: 12px; color: var(--cyan); font-weight: 500; font-size: 14px; padding-left: 4px; }
-    .gal-ai-think-spinner { width: 16px; height: 16px; border: 2px solid rgba(0,212,255,0.2); border-top-color: var(--cyan); border-radius: 50%; animation: spin 1s linear infinite; }
-    .gai-input-wrap { padding: 14px 20px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-end; gap: 12px; flex-shrink: 0; }
-    .gal-ai-input { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px 20px; color: var(--text); font-size: 15px; font-family: 'Plus Jakarta Sans',sans-serif; outline: none; resize: none; min-height: 54px; max-height: 140px; overflow-y: auto; transition: border-color 0.2s; }
-    .gal-ai-input:focus { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.03); }
-    .gal-ai-input::placeholder { color: var(--text-3); }
-    .gal-ai-send { width: 42px; height: 42px; border-radius: 50%; background: var(--text); color: var(--bg); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
-    .gal-ai-send:hover { transform: scale(1.05); }
-    .gal-ai-send svg { width: 16px; height: 16px; }
+
+    .gal-ai-wrapper.open .gal-ai-box {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      animation: gal-glow-border 8s linear infinite, gal-flare 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .gal-ai-wrapper.open .gal-ai-tab {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(30px) scale(0.92);
+    }
+
+    .gal-ai-resizer {
+      height: 16px;
+      width: 100%;
+      cursor: ns-resize;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: transparent;
+    }
+
+    .gal-ai-resizer:hover .gal-ai-resizer-line {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .gal-ai-resizer-line {
+      width: 40px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.15);
+      transition: background 0.2s;
+    }
+
+    .gal-ai-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 16px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .gal-ai-close {
+      background: none;
+      border: none;
+      color: var(--text-3);
+      cursor: pointer;
+      transition: color 0.2s;
+      padding: 4px;
+    }
+
+    .gal-ai-close:hover {
+      color: #f43f5e;
+    }
+
+    .gal-ai-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    }
+
+    .gal-ai-greeting {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: calc(100% + 32px);
+      margin: 0 -16px;
+      overflow: hidden;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+      padding-top: 20px;
+    }
+
+    .gal-ai-greet-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00d4ff, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .gal-ai-greet-sub {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 20px;
+    }
+
+    .gal-ai-suggestions {
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+      padding: 4px 16px 14px 16px;
+      position: relative;
+    }
+
+    .gal-ai-suggestions-track {
+      display: flex;
+      gap: 10px;
+      width: max-content;
+      padding-right: 10px;
+      animation: galAiScroll 20s linear infinite;
+    }
+
+    .gal-ai-suggestions-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes galAiScroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(calc(-50% - 5px));
+      }
+    }
+
+    .gal-ai-sug {
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-2);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .gal-ai-sug:hover {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--cyan);
+      border-color: rgba(0, 212, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .gal-ai-msg {
+      font-size: 13.5px;
+      line-height: 1.55;
+      padding: 12px 16px;
+      border-radius: 8px;
+      max-width: 88%;
+    }
+
+    .gal-ai-msg.user-msg {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 20px 20px 4px 20px;
+      max-width: 85%;
+      align-self: flex-end;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .gal-ai-msg.bot-msg {
+      display: flex;
+      gap: 16px;
+      align-self: flex-start;
+      width: 100%;
+      color: var(--text);
+      font-size: 14.5px;
+      line-height: 1.6;
+      border: none;
+      background: transparent;
+    }
+
+    .gal-ai-sparkle-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00d4ff, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    .gal-ai-bot-text {
+      flex: 1;
+      padding-top: 3px;
+    }
+
+    .gal-ai-thinking {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--cyan);
+      font-weight: 500;
+      font-size: 14px;
+      padding-left: 4px;
+    }
+
+    .gal-ai-think-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0, 212, 255, 0.2);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .gai-input-wrap {
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .gal-ai-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--text);
+      font-size: 15px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      outline: none;
+      resize: none;
+      min-height: 54px;
+      max-height: 140px;
+      overflow-y: auto;
+      transition: border-color 0.2s;
+    }
+
+    .gal-ai-input:focus {
+      border-color: rgba(0, 212, 255, 0.4);
+      background: rgba(0, 212, 255, 0.03);
+    }
+
+    .gal-ai-input::placeholder {
+      color: var(--text-3);
+    }
+
+    .gal-ai-send {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .gal-ai-send:hover {
+      transform: scale(1.05);
+    }
+
+    .gal-ai-send svg {
+      width: 16px;
+      height: 16px;
+    }
   </style>
 </head>
 
@@ -2485,17 +2999,16 @@
         <!-- Share Button -->
         <button class="gsfb-tb-btn cyan" id="shareBtn" style="display:none" onclick="tbOpenShare()" title="Share Form">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="18" cy="5" r="3"/>
-            <circle cx="6" cy="12" r="3"/>
-            <circle cx="18" cy="19" r="3"/>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
           </svg>
           <span>Share</span>
         </button>
         <!-- Sheet -->
-        <button class="gsfb-tb-btn green" id="sheetBtn" onclick="tbOpenSheet()"
-          title="Open responses in Google Sheets">
+        <button class="gsfb-tb-btn green" id="sheetBtn" onclick="tbOpenSheet()" title="Open responses in Google Sheets">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <polyline points="14 2 14 8 20 8" />
@@ -2645,9 +3158,9 @@
             </button>
             <button class="gsfb-field-card" onclick="addField('image')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
               </svg>
               Image
             </button>
@@ -2675,11 +3188,22 @@
         <!-- Canvas Tab Bar — shown when passEnabled -->
         <div class="gsfb-canvas-tabs" id="gsfbCanvasTabBar" style="display:none">
           <button class="gsfb-ctab active" id="ctabForm" onclick="switchCanvasTab('form')">
-            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="1" width="14" height="14" rx="2"/><line x1="4" y1="5" x2="12" y2="5"/><line x1="4" y1="8" x2="12" y2="8"/><line x1="4" y1="11" x2="8" y2="11"/></svg>
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="1" y="1" width="14" height="14" rx="2" />
+              <line x1="4" y1="5" x2="12" y2="5" />
+              <line x1="4" y1="8" x2="12" y2="8" />
+              <line x1="4" y1="11" x2="8" y2="11" />
+            </svg>
             Form
           </button>
           <button class="gsfb-ctab" id="ctabPass" onclick="switchCanvasTab('pass')">
-            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 6a2 2 0 0 1 0 4v1.5A1.5 1.5 0 0 0 2.5 13h11A1.5 1.5 0 0 0 15 11.5V10a2 2 0 0 1 0-4V4.5A1.5 1.5 0 0 0 13.5 3h-11A1.5 1.5 0 0 0 1 4.5Z"/><line x1="8" y1="3" x2="8" y2="5" stroke-dasharray="1.5 1.5"/><line x1="8" y1="11" x2="8" y2="13" stroke-dasharray="1.5 1.5"/><line x1="8" y1="7" x2="8" y2="9" stroke-dasharray="1.5 1.5"/></svg>
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path
+                d="M1 6a2 2 0 0 1 0 4v1.5A1.5 1.5 0 0 0 2.5 13h11A1.5 1.5 0 0 0 15 11.5V10a2 2 0 0 1 0-4V4.5A1.5 1.5 0 0 0 13.5 3h-11A1.5 1.5 0 0 0 1 4.5Z" />
+              <line x1="8" y1="3" x2="8" y2="5" stroke-dasharray="1.5 1.5" />
+              <line x1="8" y1="11" x2="8" y2="13" stroke-dasharray="1.5 1.5" />
+              <line x1="8" y1="7" x2="8" y2="9" stroke-dasharray="1.5 1.5" />
+            </svg>
             Pass
           </button>
         </div>
@@ -2756,7 +3280,9 @@
     <div class="gsfb-qr-modal" style="max-width: 380px;">
       <div class="gsfb-qr-title">Share Form</div>
       <div class="gsfb-qr-sub">Scan to open on any device or copy the link below.</div>
-      <div class="gsfb-qr-canvas-wrap"><div id="shareQrCanvas"></div></div>
+      <div class="gsfb-qr-canvas-wrap">
+        <div id="shareQrCanvas"></div>
+      </div>
       <div class="gsfb-pub-link-box" style="margin-bottom:20px;background:rgba(255,255,255,0.03);">
         <span class="gsfb-pub-link-url" id="shareUrlDisplay"></span>
         <button class="gsfb-pub-copy" id="shareCopyBtn" onclick="copyShareUrl()">Copy</button>
@@ -2826,42 +3352,66 @@
 
     const PALETTES = [
       // ── Light themes ──────────────────────────────────────────────────
-      { id: 'white',   name: 'White',      bg: '#f8fafc', card: '#ffffff', accent: 'cyan',
-        hFont: 'Plus Jakarta Sans', bFont: 'Plus Jakarta Sans', hColor: '#0f172a', bColor: '#475569', hSize: 26, bSize: 15, lightMode: true },
-      { id: 'slate',   name: 'Slate',      bg: '#f1f5f9', card: '#ffffff', accent: 'purple',
-        hFont: 'Montserrat',        bFont: 'Montserrat',        hColor: '#1e293b', bColor: '#475569', hSize: 26, bSize: 14, lightMode: true },
-      { id: 'sage',    name: 'Sage',       bg: '#ecfdf5', card: '#ffffff', accent: 'green',
-        hFont: 'Raleway',           bFont: 'Plus Jakarta Sans', hColor: '#064e3b', bColor: '#374151', hSize: 26, bSize: 15, lightMode: true },
-      { id: 'warm',    name: 'Warm',       bg: '#fffbf0', card: '#fffff8', accent: 'gold',
-        hFont: 'Playfair Display',  bFont: 'Lexend',            hColor: '#1c1408', bColor: '#57534e', hSize: 28, bSize: 14, lightMode: true },
-      { id: 'blush',   name: 'Blush',      bg: '#fdf2f8', card: '#ffffff', accent: 'pink',
-        hFont: 'Cormorant Garamond',bFont: 'Plus Jakarta Sans', hColor: '#500724', bColor: '#6b7280', hSize: 30, bSize: 15, lightMode: true },
-      { id: 'lexclean',name: 'Lexend',     bg: '#f5f7fa', card: '#ffffff', accent: 'cyan',
-        hFont: 'Lexend',            bFont: 'Lexend',            hColor: '#0f172a', bColor: '#334155', hSize: 25, bSize: 14, lightMode: true },
+      {
+        id: 'white', name: 'White', bg: '#f8fafc', card: '#ffffff', accent: 'cyan',
+        hFont: 'Plus Jakarta Sans', bFont: 'Plus Jakarta Sans', hColor: '#0f172a', bColor: '#475569', hSize: 26, bSize: 15, lightMode: true
+      },
+      {
+        id: 'slate', name: 'Slate', bg: '#f1f5f9', card: '#ffffff', accent: 'purple',
+        hFont: 'Montserrat', bFont: 'Montserrat', hColor: '#1e293b', bColor: '#475569', hSize: 26, bSize: 14, lightMode: true
+      },
+      {
+        id: 'sage', name: 'Sage', bg: '#ecfdf5', card: '#ffffff', accent: 'green',
+        hFont: 'Raleway', bFont: 'Plus Jakarta Sans', hColor: '#064e3b', bColor: '#374151', hSize: 26, bSize: 15, lightMode: true
+      },
+      {
+        id: 'warm', name: 'Warm', bg: '#fffbf0', card: '#fffff8', accent: 'gold',
+        hFont: 'Playfair Display', bFont: 'Lexend', hColor: '#1c1408', bColor: '#57534e', hSize: 28, bSize: 14, lightMode: true
+      },
+      {
+        id: 'blush', name: 'Blush', bg: '#fdf2f8', card: '#ffffff', accent: 'pink',
+        hFont: 'Cormorant Garamond', bFont: 'Plus Jakarta Sans', hColor: '#500724', bColor: '#6b7280', hSize: 30, bSize: 15, lightMode: true
+      },
+      {
+        id: 'lexclean', name: 'Lexend', bg: '#f5f7fa', card: '#ffffff', accent: 'cyan',
+        hFont: 'Lexend', bFont: 'Lexend', hColor: '#0f172a', bColor: '#334155', hSize: 25, bSize: 14, lightMode: true
+      },
       // ── Dark themes ───────────────────────────────────────────────────
-      { id: 'ocean',   name: 'Ocean',      bg: '#030c1a', card: '#0a1830', accent: 'cyan',
-        hFont: 'Syne',              bFont: 'Plus Jakarta Sans', hColor: '#e0f2fe', bColor: '#94a3b8', hSize: 26, bSize: 15, lightMode: false },
-      { id: 'midnight',name: 'Midnight',   bg: '#080c14', card: '#0f1724', accent: 'cyan',
-        hFont: 'Montserrat',        bFont: 'Montserrat',        hColor: '#f1f5f9', bColor: '#94a3b8', hSize: 26, bSize: 14, lightMode: false },
-      { id: 'nebula',  name: 'Nebula',     bg: '#0c0818', card: '#130d22', accent: 'purple',
-        hFont: 'Syne',              bFont: 'Lexend',            hColor: '#ede9fe', bColor: '#c4b5fd', hSize: 26, bSize: 14, lightMode: false },
-      { id: 'forest',  name: 'Forest',     bg: '#030d07', card: '#071912', accent: 'green',
-        hFont: 'Raleway',           bFont: 'Plus Jakarta Sans', hColor: '#d1fae5', bColor: '#a7c4ae', hSize: 26, bSize: 15, lightMode: false },
-      { id: 'ember',   name: 'Ember',      bg: '#0f0700', card: '#1e1204', accent: 'gold',
-        hFont: 'Playfair Display',  bFont: 'Lexend',            hColor: '#fef3c7', bColor: '#d4ae6a', hSize: 28, bSize: 14, lightMode: false },
-      { id: 'bloom',   name: 'Bloom',      bg: '#100614', card: '#1c0828', accent: 'pink',
-        hFont: 'Cormorant Garamond',bFont: 'Plus Jakarta Sans', hColor: '#fce7f3', bColor: '#d4a8c0', hSize: 30, bSize: 15, lightMode: false },
+      {
+        id: 'ocean', name: 'Ocean', bg: '#030c1a', card: '#0a1830', accent: 'cyan',
+        hFont: 'Syne', bFont: 'Plus Jakarta Sans', hColor: '#e0f2fe', bColor: '#94a3b8', hSize: 26, bSize: 15, lightMode: false
+      },
+      {
+        id: 'midnight', name: 'Midnight', bg: '#080c14', card: '#0f1724', accent: 'cyan',
+        hFont: 'Montserrat', bFont: 'Montserrat', hColor: '#f1f5f9', bColor: '#94a3b8', hSize: 26, bSize: 14, lightMode: false
+      },
+      {
+        id: 'nebula', name: 'Nebula', bg: '#0c0818', card: '#130d22', accent: 'purple',
+        hFont: 'Syne', bFont: 'Lexend', hColor: '#ede9fe', bColor: '#c4b5fd', hSize: 26, bSize: 14, lightMode: false
+      },
+      {
+        id: 'forest', name: 'Forest', bg: '#030d07', card: '#071912', accent: 'green',
+        hFont: 'Raleway', bFont: 'Plus Jakarta Sans', hColor: '#d1fae5', bColor: '#a7c4ae', hSize: 26, bSize: 15, lightMode: false
+      },
+      {
+        id: 'ember', name: 'Ember', bg: '#0f0700', card: '#1e1204', accent: 'gold',
+        hFont: 'Playfair Display', bFont: 'Lexend', hColor: '#fef3c7', bColor: '#d4ae6a', hSize: 28, bSize: 14, lightMode: false
+      },
+      {
+        id: 'bloom', name: 'Bloom', bg: '#100614', card: '#1c0828', accent: 'pink',
+        hFont: 'Cormorant Garamond', bFont: 'Plus Jakarta Sans', hColor: '#fce7f3', bColor: '#d4a8c0', hSize: 30, bSize: 15, lightMode: false
+      },
     ];
 
     const PASS_THEMES = [
-      { id: 'royal',    name: 'Royal Blue',  primary: '#003087' },
-      { id: 'navy',     name: 'Deep Navy',   primary: '#002147' },
-      { id: 'slate',    name: 'Corporate',   primary: '#1a2744' },
-      { id: 'burgundy', name: 'Burgundy',    primary: '#6b0f1a' },
-      { id: 'emerald',  name: 'Emerald',     primary: '#004d2e' },
-      { id: 'teal',     name: 'Teal',        primary: '#003d40' },
-      { id: 'purple',   name: 'Deep Purple', primary: '#2d0a6e' },
-      { id: 'indigo',   name: 'Indigo',      primary: '#312e81' },
+      { id: 'royal', name: 'Royal Blue', primary: '#003087' },
+      { id: 'navy', name: 'Deep Navy', primary: '#002147' },
+      { id: 'slate', name: 'Corporate', primary: '#1a2744' },
+      { id: 'burgundy', name: 'Burgundy', primary: '#6b0f1a' },
+      { id: 'emerald', name: 'Emerald', primary: '#004d2e' },
+      { id: 'teal', name: 'Teal', primary: '#003d40' },
+      { id: 'purple', name: 'Deep Purple', primary: '#2d0a6e' },
+      { id: 'indigo', name: 'Indigo', primary: '#312e81' },
     ];
 
     // Preview page state
@@ -2992,22 +3542,22 @@
       document.getElementById('shareModal').classList.add('open');
       // Delay so the modal overlay is visible before canvas rendering
       setTimeout(() => {
-      const qrWrap = document.getElementById('shareQrCanvas');
-      qrWrap.innerHTML = '';
+        const qrWrap = document.getElementById('shareQrCanvas');
+        qrWrap.innerHTML = '';
         if (typeof QRCode !== 'undefined') {
-        new QRCode(qrWrap, {
-          text: url,
-          width: 200,
-          height: 200,
-          colorDark: '#000000',
-          colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.H
-        });
+          new QRCode(qrWrap, {
+            text: url,
+            width: 200,
+            height: 200,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
         }
       }, 60);
     }
     function closeShareModal() { document.getElementById('shareModal').classList.remove('open'); }
-    
+
     function copyShareUrl() {
       const url = document.getElementById('shareUrlDisplay').textContent;
       navigator.clipboard.writeText(url).then(() => {
@@ -3016,7 +3566,7 @@
         setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 2000);
       });
     }
-    
+
     function downloadShareQR() {
       const a = document.createElement('a');
       a.download = `${_S.slug}-qr.png`;
@@ -3459,11 +4009,11 @@
       <div class="gsfb-prop">
         <label class="gsfb-prop-label">Max File Size</label>
         <select class="gsfb-select" onchange="updateFP('${id}','maxMB',+this.value)">
-          <option value="2"   ${f.maxMB === 2   ? 'selected' : ''}>2 MB</option>
-          <option value="5"   ${f.maxMB === 5   ? 'selected' : ''}>5 MB</option>
-          <option value="10"  ${(!f.maxMB || f.maxMB === 10)  ? 'selected' : ''}>10 MB</option>
-          <option value="25"  ${f.maxMB === 25  ? 'selected' : ''}>25 MB</option>
-          <option value="50"  ${f.maxMB === 50  ? 'selected' : ''}>50 MB</option>
+          <option value="2"   ${f.maxMB === 2 ? 'selected' : ''}>2 MB</option>
+          <option value="5"   ${f.maxMB === 5 ? 'selected' : ''}>5 MB</option>
+          <option value="10"  ${(!f.maxMB || f.maxMB === 10) ? 'selected' : ''}>10 MB</option>
+          <option value="25"  ${f.maxMB === 25 ? 'selected' : ''}>25 MB</option>
+          <option value="50"  ${f.maxMB === 50 ? 'selected' : ''}>50 MB</option>
           <option value="100" ${f.maxMB === 100 ? 'selected' : ''}>100 MB</option>
         </select>
       </div>`;
@@ -3869,8 +4419,8 @@
       }
 
       // Live-update the pass canvas editor when pass-related settings change
-      const passKeys = ['passEventName','passVenue','passDate','passTime','passRules','passBannerColor',
-                        'passTextColor','passLogoUrl','passNameField','passEmailField','passSubField'];
+      const passKeys = ['passEventName', 'passVenue', 'passDate', 'passTime', 'passRules', 'passBannerColor',
+        'passTextColor', 'passLogoUrl', 'passNameField', 'passEmailField', 'passSubField'];
       if (passKeys.includes(key) && canvasTab === 'pass') {
         renderPassCanvas();
         renderBuilderPass();
@@ -3940,22 +4490,22 @@
       if (!wrap) return;
       const s = _S.config?.settings || {};
       const primary = s.passBannerColor || '#003087';
-      const darker  = _pbDarken(primary, 0.28);
+      const darker = _pbDarken(primary, 0.28);
       const allFields = _S.config?.fields || [];
       const nameField = s.passNameField ? allFields.find(f => f.id === s.passNameField) : null;
-      const subField  = s.passSubField  ? allFields.find(f => f.id === s.passSubField)  : null;
+      const subField = s.passSubField ? allFields.find(f => f.id === s.passSubField) : null;
       const rules = (s.passRules || []).filter(Boolean).slice(0, 3);
 
-      const rawDate  = s.passDate || '';
-      const dateStr  = rawDate ? rawDate.split('-').reverse().map(Number).join('/') : '';
-      const timeStr  = s.passTime ? (() => {
+      const rawDate = s.passDate || '';
+      const dateStr = rawDate ? rawDate.split('-').reverse().map(Number).join('/') : '';
+      const timeStr = s.passTime ? (() => {
         const [h, m] = s.passTime.split(':'); const hr = +h;
         return `${hr === 0 ? 12 : hr > 12 ? hr - 12 : hr}:${m}${hr >= 12 ? 'PM' : 'AM'}`;
       })() : '';
-      const venueStr   = s.passVenue || '';
+      const venueStr = s.passVenue || '';
       const eventLabel = escHtml(s.passEventName || 'Event Name');
-      const nameLabel  = nameField ? escHtml(nameField.label || 'Name') : 'Attendee Name';
-      const subDisplay = subField  ? `${escHtml(subField.label || 'Field')} : —` : '';
+      const nameLabel = nameField ? escHtml(nameField.label || 'Name') : 'Attendee Name';
+      const subDisplay = subField ? `${escHtml(subField.label || 'Field')} : —` : '';
 
       const logoHtml = s.passLogoUrl
         ? `<img src="${escAttr(s.passLogoUrl)}" style="position:absolute;right:14px;top:10px;width:46px;height:46px;object-fit:cover;border-radius:7px;border:1.5px solid #e0e0e0;z-index:2" onerror="this.style.display='none'">`
@@ -3963,8 +4513,8 @@
              <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="#ccc" stroke-width="1.4"><rect x="2" y="4" width="16" height="12" rx="2"/><circle cx="7" cy="9" r="1.5"/><polyline points="2,16 6,11 9.5,14 13,10 18,16"/></svg>
            </div>`;
 
-      const qrPat = [[1,1,1,0,1,0,1],[0,1,0,0,0,1,0],[1,1,1,0,1,0,1],[0,0,0,0,0,0,0],[1,0,1,0,1,1,1],[0,1,0,0,0,1,0],[1,1,1,0,1,0,1]];
-      const qrSvg = `<svg viewBox="0 0 7 7" style="display:block;width:100%;height:100%"><rect width="7" height="7" fill="#f0f0f0"/>${qrPat.map((row,r)=>row.map((v,c)=>v?`<rect x="${c}" y="${r}" width="1" height="1" fill="#1a1a2e"/>`:'').join('')).join('')}</svg>`;
+      const qrPat = [[1, 1, 1, 0, 1, 0, 1], [0, 1, 0, 0, 0, 1, 0], [1, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 0], [1, 0, 1, 0, 1, 1, 1], [0, 1, 0, 0, 0, 1, 0], [1, 1, 1, 0, 1, 0, 1]];
+      const qrSvg = `<svg viewBox="0 0 7 7" style="display:block;width:100%;height:100%"><rect width="7" height="7" fill="#f0f0f0"/>${qrPat.map((row, r) => row.map((v, c) => v ? `<rect x="${c}" y="${r}" width="1" height="1" fill="#1a1a2e"/>` : '').join('')).join('')}</svg>`;
 
       wrap.innerHTML = `
       <div style="position:relative;width:360px;height:540px;border-radius:20px;overflow:hidden;box-shadow:0 28px 72px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);flex-shrink:0">
@@ -4014,7 +4564,7 @@
 
         <!-- Rules bullets -->
         ${rules.length
-          ? rules.map((r,i)=>`<div style="position:absolute;left:14px;right:14px;top:${393+i*17}px;font-size:9.5px;color:rgba(255,255,255,0.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">• ${escHtml(r)}</div>`).join('')
+          ? rules.map((r, i) => `<div style="position:absolute;left:14px;right:14px;top:${393 + i * 17}px;font-size:9.5px;color:rgba(255,255,255,0.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2">• ${escHtml(r)}</div>`).join('')
           : `<div style="position:absolute;left:14px;right:14px;top:393px;font-size:9px;color:rgba(255,255,255,0.28);font-style:italic;z-index:2">No rules set</div>`
         }
 
@@ -4110,9 +4660,9 @@
           ${resetBtn(key, val)}
         </div>`;
 
-      const HEADING_FONTS  = ['Plus Jakarta Sans','Lexend','Syne','Montserrat','Raleway','Playfair Display','Cormorant Garamond','Cinzel','EB Garamond','Lora','DM Sans'];
-      const QUESTION_FONTS = ['Plus Jakarta Sans','Lexend','Montserrat','Raleway','DM Sans','EB Garamond','Lora','JetBrains Mono'];
-      const TEXT_FONTS     = ['Plus Jakarta Sans','Lexend','Montserrat','Raleway','DM Sans','EB Garamond','Lora','JetBrains Mono'];
+      const HEADING_FONTS = ['Plus Jakarta Sans', 'Lexend', 'Syne', 'Montserrat', 'Raleway', 'Playfair Display', 'Cormorant Garamond', 'Cinzel', 'EB Garamond', 'Lora', 'DM Sans'];
+      const QUESTION_FONTS = ['Plus Jakarta Sans', 'Lexend', 'Montserrat', 'Raleway', 'DM Sans', 'EB Garamond', 'Lora', 'JetBrains Mono'];
+      const TEXT_FONTS = ['Plus Jakarta Sans', 'Lexend', 'Montserrat', 'Raleway', 'DM Sans', 'EB Garamond', 'Lora', 'JetBrains Mono'];
 
       document.getElementById('rtabSettingsBody').innerHTML = `
 
@@ -4192,16 +4742,16 @@
         <div class="gsfb-settings-sec-title">Prebuilt Themes</div>
         <div class="gsfb-palette-grid">
           ${PALETTES.map(p => {
-            const acc = ACCENT_SOLID[p.accent] || '#00d4ff';
-            const isSel = th.pageColor === p.bg && th.cardColor === p.card && th.color === p.accent && !!th.lightMode === p.lightMode;
-            return `<div class="gsfb-palette-item${isSel ? ' selected' : ''}" onclick="updateThemePalette('${p.id}')" title="${p.name}">
+        const acc = ACCENT_SOLID[p.accent] || '#00d4ff';
+        const isSel = th.pageColor === p.bg && th.cardColor === p.card && th.color === p.accent && !!th.lightMode === p.lightMode;
+        return `<div class="gsfb-palette-item${isSel ? ' selected' : ''}" onclick="updateThemePalette('${p.id}')" title="${p.name}">
               <div class="gsfb-palette-swatch" style="background:${p.bg}">
                 <div class="gsfb-palette-card" style="background:${p.card}"></div>
                 <div class="gsfb-palette-dot" style="background:${acc}"></div>
               </div>
               <div class="gsfb-palette-name">${p.name}</div>
             </div>`;
-          }).join('')}
+      }).join('')}
         </div>
       </div>
       <div class="gsfb-settings-section">
@@ -4323,25 +4873,25 @@
         </div>
         <div class="gsfb-prop">
           <label class="gsfb-prop-label">Entry Rules <span style="color:var(--text-3);font-weight:400;text-transform:none">(max 3 · 60 chars each)</span></label>
-          ${[0,1,2].map(i => {
-            const rv = (s.passRules||[])[i] || '';
-            return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-              <input class="gsfb-input" maxlength="60" value="${escAttr(rv)}" style="flex:1;font-size:12.5px" placeholder="Rule ${i+1}…" oninput="updatePassSettingRule(${i},this.value)"/>
+          ${[0, 1, 2].map(i => {
+        const rv = (s.passRules || [])[i] || '';
+        return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <input class="gsfb-input" maxlength="60" value="${escAttr(rv)}" style="flex:1;font-size:12.5px" placeholder="Rule ${i + 1}…" oninput="updatePassSettingRule(${i},this.value)"/>
               <span style="font-size:10px;color:var(--text-3);flex-shrink:0;min-width:28px;text-align:right">${rv.length}/60</span>
             </div>`;
-          }).join('')}
+      }).join('')}
         </div>
         <div class="gsfb-prop">
           <label class="gsfb-prop-label">Pass Themes</label>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
             ${PASS_THEMES.map(t => {
-              const isSel = (s.passBannerColor||'#003087') === t.primary;
-              return `<div onclick="applyPassTheme('${t.id}')" title="${t.name}" style="border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid ${isSel?'var(--cyan)':'transparent'};transition:border-color 0.15s">
+        const isSel = (s.passBannerColor || '#003087') === t.primary;
+        return `<div onclick="applyPassTheme('${t.id}')" title="${t.name}" style="border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid ${isSel ? 'var(--cyan)' : 'transparent'};transition:border-color 0.15s">
                 <div style="height:28px;background:${t.primary}"></div>
-                <div style="height:10px;background:${_pbDarken(t.primary,0.28)}"></div>
+                <div style="height:10px;background:${_pbDarken(t.primary, 0.28)}"></div>
                 <div style="font-size:9px;text-align:center;padding:3px 0;color:var(--text-3);background:var(--glass)">${t.name}</div>
               </div>`;
-            }).join('')}
+      }).join('')}
           </div>
         </div>
         <div class="gsfb-prop">
@@ -4762,7 +5312,7 @@
             <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
           </svg>
           <div style="font-size:13px;color:var(--cc-body-color)"><strong style="color:var(--cc-accent)">Click to upload</strong> or drag &amp; drop</div>
-          <div style="font-size:11px;color:var(--cc-text-3)">${f.accept && f.accept !== '*' ? f.accept.replace(/[.]/g,'').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
+          <div style="font-size:11px;color:var(--cc-text-3)">${f.accept && f.accept !== '*' ? f.accept.replace(/[.]/g, '').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
         </div>`;
       if (t === 'linear_scale') {
         if (f.style === 'stars') {
@@ -5009,7 +5559,7 @@
               <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
             </svg>
             <div class="gsfb-pv-upload-text"><strong>Click to upload</strong> or drag &amp; drop</div>
-            <div class="gsfb-pv-upload-sub">${f.accept && f.accept !== '*' ? f.accept.replace(/[.]/g,'').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
+            <div class="gsfb-pv-upload-sub">${f.accept && f.accept !== '*' ? f.accept.replace(/[.]/g, '').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
           </div>`;
           break;
         case 'image':
@@ -5248,14 +5798,14 @@
       const SPLIT = 402, FOOTER_H = 44, R = 24;
 
       const primary = s.passBannerColor || '#003087';
-      const darker  = _pbDarken(primary, 0.28);
+      const darker = _pbDarken(primary, 0.28);
 
       // Card clip + zone fills
       ctx.save();
       _pbRoundRect(ctx, 0, 0, W, H, R); ctx.clip();
       ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, SPLIT);
-      ctx.fillStyle = primary;   ctx.fillRect(0, SPLIT, W, H - SPLIT);
-      ctx.fillStyle = darker;    ctx.fillRect(0, H - FOOTER_H, W, FOOTER_H);
+      ctx.fillStyle = primary; ctx.fillRect(0, SPLIT, W, H - SPLIT);
+      ctx.fillStyle = darker; ctx.fillRect(0, H - FOOTER_H, W, FOOTER_H);
       ctx.restore();
 
       // ── WHITE ZONE ───────────────────────────────────────────────────
@@ -5289,7 +5839,7 @@
       })() : '';
       ctx.font = '14px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = '#444';
-      if (dateLabel) { ctx.textAlign = 'left';  ctx.fillText(dateLabel, 24, 164); }
+      if (dateLabel) { ctx.textAlign = 'left'; ctx.fillText(dateLabel, 24, 164); }
       if (timeLabel) { ctx.textAlign = 'right'; ctx.fillText(timeLabel, W - 24, 164); }
 
       // Venue (left)
@@ -5310,15 +5860,15 @@
       ctx.fillStyle = '#ffffff'; _pbRoundRect(ctx, QX, QY, QS, QS, 10); ctx.fill();
       ctx.fillStyle = '#1a1a2e';
       const cs = Math.floor((QS - 14) / 7);
-      const qp = [[1,1,1,0,1,0,1],[0,1,0,0,0,1,0],[1,1,1,0,1,0,1],[0,0,0,0,0,0,0],[1,0,1,0,1,1,1],[0,1,0,0,0,1,0],[1,1,1,0,1,0,1]];
+      const qp = [[1, 1, 1, 0, 1, 0, 1], [0, 1, 0, 0, 0, 1, 0], [1, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 0], [1, 0, 1, 0, 1, 1, 1], [0, 1, 0, 0, 0, 1, 0], [1, 1, 1, 0, 1, 0, 1]];
       for (let r = 0; r < 7; r++) for (let c = 0; c < 7; c++) if (qp[r][c]) ctx.fillRect(QX + 7 + c * cs, QY + 7 + r * cs, cs - 1, cs - 1);
 
       // ── COLORED ZONE ────────────────────────────────────────────────
       const allFields = _S.config?.fields || [];
       const nameField = s.passNameField ? allFields.find(f => f.id === s.passNameField) : null;
-      const subField  = s.passSubField  ? allFields.find(f => f.id === s.passSubField)  : null;
+      const subField = s.passSubField ? allFields.find(f => f.id === s.passSubField) : null;
       const nameLabel = nameField ? (nameField.label || 'Name') : 'Attendee Name';
-      const subLabel  = subField  ? (subField.label  || 'Field') : '';
+      const subLabel = subField ? (subField.label || 'Field') : '';
 
       const QB = QY + QS; // = 442 (40px overlap below SPLIT=402)
 
@@ -5408,7 +5958,8 @@
 
     <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
       <div style="display:flex;align-items:center;gap:12px;flex:1;overflow:hidden;">
-        <div style="display:flex;align-items:center;justify-content:center;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+        <div style="display:flex;align-items:center;justify-content:center;"><img src="/Images/GalAI%20Logo.svg"
+            alt="Gal AI" style="width:16px;height:16px;"></div>
         <span style="font-weight:700;font-size:14.5px;letter-spacing:0.3px;color:#fff;">Gal AI</span>
         <div style="width:1px;height:16px;background:rgba(255,255,255,0.15);"></div>
         <span class="gal-ai-typewriter" id="galAiTypewriter">I can help you build, style, and design your form...</span>
@@ -5422,12 +5973,16 @@
 
       <div class="gal-ai-header">
         <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#7c3aed);display:flex;align-items:center;justify-content:center;"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
+          <div
+            style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#7c3aed);display:flex;align-items:center;justify-content:center;">
+            <img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;">
+          </div>
           <span style="font-weight:700;font-size:14px;color:var(--text);">Gal AI</span>
         </div>
         <button class="gal-ai-close" onclick="closeGalAi()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -5437,25 +5992,52 @@
           <div class="gal-ai-greet-title" id="galAiGreetName">How can I help?</div>
           <div class="gal-ai-greet-sub">Build, style, and design your form with AI</div>
           <div class="gal-ai-suggestions">
-            <div class="gal-ai-sug" onclick="document.getElementById('galAiInput').value=this.textContent;galAiSend()">Create an event registration form</div>
-            <div class="gal-ai-sug" onclick="document.getElementById('galAiInput').value=this.textContent;galAiSend()">Add name, email and phone fields</div>
-            <div class="gal-ai-sug" onclick="document.getElementById('galAiInput').value=this.textContent;galAiSend()">Change accent color to deep purple</div>
-            <div class="gal-ai-sug" onclick="document.getElementById('galAiInput').value=this.textContent;galAiSend()">Add a 5-star rating question</div>
-            <div class="gal-ai-sug" onclick="document.getElementById('galAiInput').value=this.textContent;galAiSend()">Set cover image from web (tech event)</div>
+            <div class="gal-ai-suggestions-track">
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Create an
+                event registration form</div>
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Add name,
+                email and phone fields</div>
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Change accent
+                color to deep purple</div>
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Add a 5-star
+                rating question</div>
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Set cover
+                image from web (tech event)</div>
+              <!-- Duplicate for seamless looping -->
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Create an
+                event registration form</div>
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Add name,
+                email and phone fields</div>
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Change accent
+                color to deep purple</div>
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Add a 5-star
+                rating question</div>
+              <div class="gal-ai-sug"
+                onclick="document.getElementById('galAiInput').value=this.textContent.trim();galAiSend()">Set cover
+                image from web (tech event)</div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="gai-input-wrap">
         <textarea id="galAiInput" class="gal-ai-input" rows="2"
-          placeholder="Ask Gal AI to build, edit, or style your form…"
-          autocomplete="off"
+          placeholder="Ask Gal AI to build, edit, or style your form…" autocomplete="off"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();galAiSend()}"
           oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"></textarea>
         <button class="gal-ai-send" id="galAiSendBtn" onclick="galAiSend()" title="Send">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
-            <line x1="22" y1="2" x2="11" y2="13"/>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
           </svg>
         </button>
       </div>
@@ -5463,233 +6045,194 @@
   </div>
 
   <script>
-  /* ════ Gal AI — Form Builder Bottom Chat ════ */
-  (function () {
-    const BACKEND = 'https://certiflow-backend-73xk.onrender.com';
-    let _chatHistory = [];
-    let _loading = false;
+    /* ════ Gal AI — Form Builder Bottom Chat ════ */
+    (function () {
+      const BACKEND = 'https://certiflow-backend-73xk.onrender.com';
+      let _chatHistory = [];
+      let _loading = false;
 
-    /* ── Open / Close ── */
-    window.openGalAi = function () {
-      document.getElementById('galAiWrapper').classList.add('open');
-      setTimeout(() => document.getElementById('galAiInput')?.focus(), 50);
-      _setGreetName();
-    };
-    window.closeGalAi = function () {
-      document.getElementById('galAiWrapper').classList.remove('open');
-    };
-    window.toggleGsfbAiChat = function () {
-      const w = document.getElementById('galAiWrapper');
-      w.classList.contains('open') ? closeGalAi() : openGalAi();
-    };
+      /* ── Open / Close ── */
+      window.openGalAi = function () {
+        document.getElementById('galAiWrapper').classList.add('open');
+        setTimeout(() => document.getElementById('galAiInput')?.focus(), 50);
+        _setGreetName();
+      };
+      window.closeGalAi = function () {
+        document.getElementById('galAiWrapper').classList.remove('open');
+      };
+      window.toggleGsfbAiChat = function () {
+        const w = document.getElementById('galAiWrapper');
+        w.classList.contains('open') ? closeGalAi() : openGalAi();
+      };
 
-    /* ── Click-outside to close (with resize shield) ── */
-    let _justFinishedResizing = false;
-    document.addEventListener('click', e => {
-      if (_justFinishedResizing) return;
-      const w = document.getElementById('galAiWrapper');
-      if (w && w.classList.contains('open') && !w.contains(e.target)) closeGalAi();
-    });
-
-    /* ── ns-resize ── */
-    let _aiResizing = false, _aiStartY, _aiStartH;
-    document.addEventListener('DOMContentLoaded', () => {
-      const resizer = document.getElementById('galAiResizer');
-      const box = document.getElementById('galAiBox');
-      if (!resizer || !box) return;
-      resizer.addEventListener('mousedown', e => {
-        _aiResizing = true; _aiStartY = e.clientY; _aiStartH = box.offsetHeight;
-        document.body.style.cursor = 'ns-resize';
-        document.body.style.userSelect = 'none';
-        e.preventDefault();
+      /* ── Click-outside to close (with resize shield) ── */
+      let _justFinishedResizing = false;
+      document.addEventListener('click', e => {
+        if (_justFinishedResizing) return;
+        const w = document.getElementById('galAiWrapper');
+        if (w && w.classList.contains('open') && !w.contains(e.target)) closeGalAi();
       });
-      document.addEventListener('mousemove', e => {
-        if (!_aiResizing) return;
-        const newH = Math.max(250, Math.min(_aiStartH + (_aiStartY - e.clientY), window.innerHeight * 0.8));
-        box.style.height = newH + 'px';
-      });
-      document.addEventListener('mouseup', () => {
-        if (_aiResizing) {
-          _aiResizing = false;
-          document.body.style.cursor = '';
-          document.body.style.userSelect = '';
-          _justFinishedResizing = true;
-          setTimeout(() => { _justFinishedResizing = false; }, 100);
-        }
-      });
-    });
 
-    /* ── Greeting personalisation ── */
-    function _setGreetName() {
-      try {
-        const token = localStorage.getItem('GalSol_token');
-        if (!token) return;
-        const first = (JSON.parse(atob(token.split('.')[1])).name || '').split(' ')[0];
-        const el = document.getElementById('galAiGreetName');
-        if (el && first) el.textContent = `Hey ${first}, how can I help?`;
-      } catch (_) {}
-    }
-
-    /* ── Send ── */
-    window.galAiSend = async function () {
-      if (_loading) return;
-      const input = document.getElementById('galAiInput');
-      const sendBtn = document.getElementById('galAiSendBtn');
-      const msg = (input?.value || '').trim();
-      if (!msg) return;
-
-      input.value = ''; input.style.height = 'auto';
-      _loading = true;
-      if (sendBtn) sendBtn.disabled = true;
-
-      const greeting = document.getElementById('galAiGreeting');
-      if (greeting) greeting.style.display = 'none';
-
-      _appendMsg(msg, 'user');
-      const loadingId = _appendMsg('', 'bot', true);
-      _chatHistory.push({ role: 'user', content: msg });
-
-      try {
-        const token = localStorage.getItem('GalSol_token') || '';
-        const resp = await fetch(`${BACKEND}/api/ai/gsform-chat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify({
-            userMessage: msg,
-            chatHistory: _chatHistory.slice(-10),
-            fields: _S?.config?.fields || [],
-            settings: _S?.config?.settings || {},
-            theme: _S?.config?.theme || {}
-          })
+      /* ── ns-resize ── */
+      let _aiResizing = false, _aiStartY, _aiStartH;
+      document.addEventListener('DOMContentLoaded', () => {
+        const resizer = document.getElementById('galAiResizer');
+        const box = document.getElementById('galAiBox');
+        if (!resizer || !box) return;
+        resizer.addEventListener('mousedown', e => {
+          _aiResizing = true; _aiStartY = e.clientY; _aiStartH = box.offsetHeight;
+          document.body.style.cursor = 'ns-resize';
+          document.body.style.userSelect = 'none';
+          e.preventDefault();
         });
-
-        clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
-        document.getElementById(loadingId)?.remove();
-
-        if (resp.status === 403) {
-          const d = await resp.json();
-          if (d.error === 'AI_LOCKED') {
-            _appendMsg('Gal AI is a <strong>Pro</strong> feature. Upgrade to unlock AI-powered form generation and styling.', 'bot');
-            return;
+        document.addEventListener('mousemove', e => {
+          if (!_aiResizing) return;
+          const newH = Math.max(250, Math.min(_aiStartH + (_aiStartY - e.clientY), window.innerHeight * 0.8));
+          box.style.height = newH + 'px';
+        });
+        document.addEventListener('mouseup', () => {
+          if (_aiResizing) {
+            _aiResizing = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            _justFinishedResizing = true;
+            setTimeout(() => { _justFinishedResizing = false; }, 100);
           }
-        }
-        if (!resp.ok) throw new Error('Request failed: ' + resp.status);
+        });
+      });
 
-        const data = await resp.json();
-        const reply = data.message || 'Done!';
-        _chatHistory.push({ role: 'assistant', content: reply });
-        _appendMsg(reply, 'bot');
-
-        let dirty = false;
-        if (data.action === 'replace_fields' && Array.isArray(data.fields)) {
-          _S.config.fields = data.fields; dirty = true;
-        } else if (data.action === 'add_field' && data.field) {
-          _S.config.fields.push(data.field); dirty = true;
-        } else if (data.action === 'update_field' && data.fieldId && data.changes) {
-          const f = _S.config.fields.find(x => x.id === data.fieldId);
-          if (f) { Object.assign(f, data.changes); dirty = true; }
-        } else if (data.action === 'update_theme' && data.theme) {
-          if (typeof _S.updateTheme === 'function') _S.updateTheme(data.theme);
-          if (typeof applyCanvasTheme === 'function') applyCanvasTheme();
-          if (typeof renderSettings === 'function') renderSettings();
-          if (typeof renderPreview === 'function') renderPreview();
-          _S.dirty = true; _S.save(); return;
-        } else if (data.action === 'update_settings' && data.settings) {
-          _S.config.settings = { ..._S.config.settings, ...data.settings };
-          if (typeof renderSettings === 'function') renderSettings();
-          if (typeof renderPreview === 'function') renderPreview();
-          _S.dirty = true; _S.save(); return;
-        } else if (data.action === 'update_pass' && data.settings) {
-          _S.config.settings = { ..._S.config.settings, ...data.settings };
-          if (typeof togglePassEnabled === 'function' && data.settings.passEnabled !== undefined)
-            togglePassEnabled(data.settings.passEnabled);
-          if (typeof renderSettings === 'function') renderSettings();
-          if (typeof renderPreview === 'function') renderPreview();
-          _S.dirty = true; _S.save(); return;
-        }
-        if (dirty) {
-          if (typeof renderRightPanel === 'function') renderRightPanel();
-          if (typeof renderPreview === 'function') renderPreview();
-          if (typeof renderLayers === 'function') renderLayers();
-          _S.dirty = true; _S.save();
-        }
-      } catch (err) {
-        clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
-        document.getElementById(loadingId)?.remove();
-        _appendMsg('Error: ' + err.message, 'bot');
-      } finally {
-        _loading = false;
-        if (sendBtn) sendBtn.disabled = false;
+      /* ── Greeting personalisation ── */
+      function _setGreetName() {
+        try {
+          const token = localStorage.getItem('GalSol_token');
+          if (!token) return;
+          const first = (JSON.parse(atob(token.split('.')[1])).name || '').split(' ')[0];
+          const el = document.getElementById('galAiGreetName');
+          if (el && first) el.textContent = `Hey ${first}, how can I help?`;
+        } catch (_) { }
       }
-    };
 
-    function _appendMsg(text, sender, isLoading = false) {
-      const history = document.getElementById('galAiHistory');
-      const el = document.createElement('div');
-      const id = 'gmsg_' + Date.now();
-      el.id = id;
-      if (sender === 'user') {
-        el.className = 'gal-ai-msg user-msg';
-        el.textContent = text;
-      } else {
-        el.className = 'gal-ai-msg bot-msg';
-        if (isLoading) {
-          const statuses = ['Thinking', 'Analyzing form', 'Building fields', 'Applying styles'];
-          let sIdx = 0;
-          el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:16px;height:16px;"></div><div class="gal-ai-bot-text"><div class="gal-ai-thinking"><div class="gal-ai-think-spinner"></div><span id="gthink_${id}">Thinking...</span></div></div>`;
-          el.dataset.thinkTimer = setInterval(() => {
-            sIdx = (sIdx + 1) % statuses.length;
-            const s = document.getElementById(`gthink_${id}`);
-            if (s) s.textContent = statuses[sIdx] + '...';
-          }, 1500);
+      /* ── Send ── */
+      window.galAiSend = async function () {
+        if (_loading) return;
+        const input = document.getElementById('galAiInput');
+        const sendBtn = document.getElementById('galAiSendBtn');
+        const msg = (input?.value || '').trim();
+        if (!msg) return;
+
+        input.value = ''; input.style.height = 'auto';
+        _loading = true;
+        if (sendBtn) sendBtn.disabled = true;
+
+        const greeting = document.getElementById('galAiGreeting');
+        if (greeting) greeting.style.display = 'none';
+
+        _appendMsg(msg, 'user');
+        const loadingId = _appendMsg('', 'bot', true);
+        _chatHistory.push({ role: 'user', content: msg });
+
+        try {
+          const token = localStorage.getItem('GalSol_token') || '';
+          const resp = await fetch(`${BACKEND}/api/ai/gsform-chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({
+              userMessage: msg,
+              chatHistory: _chatHistory.slice(-10),
+              fields: _S?.config?.fields || [],
+              settings: _S?.config?.settings || {},
+              theme: _S?.config?.theme || {}
+            })
+          });
+
+          clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
+          document.getElementById(loadingId)?.remove();
+
+          if (resp.status === 403) {
+            const d = await resp.json();
+            if (d.error === 'AI_LOCKED') {
+              _appendMsg('Gal AI is a <strong>Pro</strong> feature. Upgrade to unlock AI-powered form generation and styling.', 'bot');
+              return;
+            }
+          }
+          if (!resp.ok) throw new Error('Request failed: ' + resp.status);
+
+          const data = await resp.json();
+          const reply = data.message || 'Done!';
+          _chatHistory.push({ role: 'assistant', content: reply });
+          _appendMsg(reply, 'bot');
+
+          let dirty = false;
+          if (data.action === 'replace_fields' && Array.isArray(data.fields)) {
+            _S.config.fields = data.fields; dirty = true;
+          } else if (data.action === 'add_field' && data.field) {
+            _S.config.fields.push(data.field); dirty = true;
+          } else if (data.action === 'update_field' && data.fieldId && data.changes) {
+            const f = _S.config.fields.find(x => x.id === data.fieldId);
+            if (f) { Object.assign(f, data.changes); dirty = true; }
+          } else if (data.action === 'update_theme' && data.theme) {
+            if (typeof _S.updateTheme === 'function') _S.updateTheme(data.theme);
+            if (typeof applyCanvasTheme === 'function') applyCanvasTheme();
+            if (typeof renderSettings === 'function') renderSettings();
+            if (typeof renderPreview === 'function') renderPreview();
+            _S.dirty = true; _S.save(); return;
+          } else if (data.action === 'update_settings' && data.settings) {
+            _S.config.settings = { ..._S.config.settings, ...data.settings };
+            if (typeof renderSettings === 'function') renderSettings();
+            if (typeof renderPreview === 'function') renderPreview();
+            _S.dirty = true; _S.save(); return;
+          } else if (data.action === 'update_pass' && data.settings) {
+            _S.config.settings = { ..._S.config.settings, ...data.settings };
+            if (typeof togglePassEnabled === 'function' && data.settings.passEnabled !== undefined)
+              togglePassEnabled(data.settings.passEnabled);
+            if (typeof renderSettings === 'function') renderSettings();
+            if (typeof renderPreview === 'function') renderPreview();
+            _S.dirty = true; _S.save(); return;
+          }
+          if (dirty) {
+            if (typeof renderRightPanel === 'function') renderRightPanel();
+            if (typeof renderPreview === 'function') renderPreview();
+            if (typeof renderLayers === 'function') renderLayers();
+            _S.dirty = true; _S.save();
+          }
+        } catch (err) {
+          clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
+          document.getElementById(loadingId)?.remove();
+          _appendMsg('Error: ' + err.message, 'bot');
+        } finally {
+          _loading = false;
+          if (sendBtn) sendBtn.disabled = false;
+        }
+      };
+
+      function _appendMsg(text, sender, isLoading = false) {
+        const history = document.getElementById('galAiHistory');
+        const el = document.createElement('div');
+        const id = 'gmsg_' + Date.now();
+        el.id = id;
+        if (sender === 'user') {
+          el.className = 'gal-ai-msg user-msg';
+          el.textContent = text;
         } else {
-          el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:16px;height:16px;"></div><div class="gal-ai-bot-text">${text.replace(/\n/g,'<br>')}</div>`;
-        }
-      }
-      history.appendChild(el);
-      history.scrollTop = history.scrollHeight;
-      return id;
-    }
-
-    /* ── Auto-scroll suggestions carousel ── */
-    setTimeout(() => {
-      const sugCont = document.querySelector('.gal-ai-suggestions');
-      if (sugCont) {
-        let scrollDir = 1;
-        let isPaused = false;
-        let exactScroll = 0;
-        let lastTime = performance.now();
-
-        sugCont.addEventListener('mouseenter', () => isPaused = true);
-        sugCont.addEventListener('mouseleave', () => { isPaused = false; lastTime = performance.now(); });
-        sugCont.addEventListener('touchstart', () => isPaused = true, {passive: true});
-        sugCont.addEventListener('touchend', () => { isPaused = false; lastTime = performance.now(); });
-        sugCont.addEventListener('scroll', () => {
-          isPaused = true;
-          clearTimeout(sugCont._scrollTo);
-          sugCont._scrollTo = setTimeout(() => { isPaused = false; lastTime = performance.now(); }, 2000);
-        }, {passive: true});
-        
-        function autoScrollSug(time) {
-          if (!time) time = performance.now();
-          const dt = Math.min(time - lastTime, 50);
-          lastTime = time;
-
-          if (!isPaused && sugCont.scrollWidth > sugCont.clientWidth) {
-            exactScroll += scrollDir * (40 * dt / 1000); // Smooth 40px/sec
-            sugCont.scrollLeft = exactScroll;
-            
-            if (sugCont.scrollLeft >= sugCont.scrollWidth - sugCont.clientWidth - 1) { scrollDir = -1; exactScroll = sugCont.scrollLeft; }
-            else if (sugCont.scrollLeft <= 0) { scrollDir = 1; exactScroll = 0; }
+          el.className = 'gal-ai-msg bot-msg';
+          if (isLoading) {
+            const statuses = ['Thinking', 'Analyzing form', 'Building fields', 'Applying styles'];
+            let sIdx = 0;
+            el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:16px;height:16px;"></div><div class="gal-ai-bot-text"><div class="gal-ai-thinking"><div class="gal-ai-think-spinner"></div><span id="gthink_${id}">Thinking...</span></div></div>`;
+            el.dataset.thinkTimer = setInterval(() => {
+              sIdx = (sIdx + 1) % statuses.length;
+              const s = document.getElementById(`gthink_${id}`);
+              if (s) s.textContent = statuses[sIdx] + '...';
+            }, 1500);
           } else {
-            exactScroll = sugCont.scrollLeft;
+            el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:16px;height:16px;"></div><div class="gal-ai-bot-text">${text.replace(/\n/g, '<br>')}</div>`;
           }
-          requestAnimationFrame(autoScrollSug);
         }
-        requestAnimationFrame(autoScrollSug);
+        history.appendChild(el);
+        history.scrollTop = history.scrollHeight;
+        return id;
       }
-    }, 500);
-  })();
+    })();
   </script>
 </body>
 
