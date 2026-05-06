@@ -3482,21 +3482,32 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
         if (sugCont) {
           let scrollDir = 1;
           let isPaused = false;
+          let exactScroll = 0;
+          let lastTime = performance.now();
+
           sugCont.addEventListener('mouseenter', () => isPaused = true);
-          sugCont.addEventListener('mouseleave', () => isPaused = false);
+          sugCont.addEventListener('mouseleave', () => { isPaused = false; lastTime = performance.now(); });
           sugCont.addEventListener('touchstart', () => isPaused = true, { passive: true });
-          sugCont.addEventListener('touchend', () => isPaused = false);
+          sugCont.addEventListener('touchend', () => { isPaused = false; lastTime = performance.now(); });
           sugCont.addEventListener('scroll', () => {
             isPaused = true;
             clearTimeout(sugCont._scrollTo);
-            sugCont._scrollTo = setTimeout(() => isPaused = false, 2000);
+            sugCont._scrollTo = setTimeout(() => { isPaused = false; lastTime = performance.now(); }, 2000);
           }, { passive: true });
 
-          function autoScrollSug() {
+          function autoScrollSug(time) {
+            if (!time) time = performance.now();
+            const dt = Math.min(time - lastTime, 50);
+            lastTime = time;
+
             if (!isPaused && sugCont.scrollWidth > sugCont.clientWidth) {
-              sugCont.scrollLeft += scrollDir * 0.5;
-              if (sugCont.scrollLeft >= sugCont.scrollWidth - sugCont.clientWidth - 1) scrollDir = -1;
-              if (sugCont.scrollLeft <= 0) scrollDir = 1;
+              exactScroll += scrollDir * (40 * dt / 1000);
+              sugCont.scrollLeft = exactScroll;
+
+              if (sugCont.scrollLeft >= sugCont.scrollWidth - sugCont.clientWidth - 1) { scrollDir = -1; exactScroll = sugCont.scrollLeft; }
+              else if (sugCont.scrollLeft <= 0) { scrollDir = 1; exactScroll = 0; }
+            } else {
+              exactScroll = sugCont.scrollLeft;
             }
             requestAnimationFrame(autoScrollSug);
           }
