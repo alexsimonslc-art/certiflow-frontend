@@ -619,17 +619,14 @@
         </div>
       </div>
 
-      <div
-        style="padding:0 20px 24px 20px; background:transparent; position:relative; flex-shrink:0; margin-top: auto;">
-        <textarea id="galAiInput" class="custom-scroll-input" rows="2" placeholder="Ask Gal AI to generate or edit..."
+      <div class="gal-ai-input-area">
+        <textarea id="galAiInput" class="gal-ai-input custom-scroll-input" rows="2" placeholder="Ask Gal AI to generate or edit..."
           autocomplete="off"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendGalAiMessage()}"
-          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,180)+'px'"
-          style="width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px 50px 20px 20px; color:var(--text); font-size:15px; font-family:'Plus Jakarta Sans',sans-serif; outline:none; resize:none; min-height:85px; max-height:180px; overflow-y:auto; transition:border-color 0.2s; box-sizing:border-box; line-height:1.6;"></textarea>
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"></textarea>
 
-        <button id="galAiSendBtn" onclick="sendGalAiMessage()" title="Send"
-          style="position:absolute; right:36px; bottom:42px; width:28px; height:28px; background:transparent; color:var(--text-3); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; z-index:2; padding:0;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;">
+        <button class="gal-ai-send" id="galAiSendBtn" onclick="sendGalAiMessage()" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px; height:18px;">
             <line x1="22" y1="2" x2="11" y2="13" />
             <polygon points="22 2 15 22 11 13 2 9 22 2" />
           </svg>
@@ -2592,7 +2589,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 320px;
+      height: 360px;
       background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff, #7c3aed) border-box;
       background-size: 100% 100%, 300% 100%;
       background: linear-gradient(#0a0e1a, #0a0e1a) padding-box, linear-gradient(90deg, #00d4ff, #7c3aed, #00d4ff) border-box;
