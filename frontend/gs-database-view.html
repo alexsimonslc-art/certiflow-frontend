@@ -2350,35 +2350,35 @@
               </div>
             </div>
           </div>
-
-          <!-- Block / Unblock Confirmation Modal -->
-          <div class="mp-modal-overlay" id="mpModalOverlay">
-            <div class="mp-modal">
-              <div class="mp-modal-title" id="mpModalTitle">
-                <span id="mpModalTitleText">Block this Pass?</span>
-              </div>
-
-              <div class="mp-modal-attendee">
-                <div><span>Attendee:</span> <strong id="mpModalName"></strong></div>
-                <div><span>Email:</span> <strong id="mpModalEmail"></strong></div>
-                <div><span>Token:</span> <strong id="mpModalToken"></strong></div>
-              </div>
-
-              <div class="mp-modal-sub" id="mpModalSub">
-                This will prevent entry at the gate.<br>
-                You can unblock anytime.
-              </div>
-
-              <div class="mp-modal-btns">
-                <button class="mp-modal-cancel" onclick="closeMpModal()">Cancel</button>
-                <button class="mp-modal-confirm" id="mpModalConfirm" onclick="confirmPassAction()">Yes, Block
-                  Pass</button>
-              </div>
-            </div>
-          </div>
         </div>
         <!-- /mainContent -->
       </main>
+    </div>
+  </div>
+
+  <!-- Block / Unblock Confirmation Modal -->
+  <div class="mp-modal-overlay" id="mpModalOverlay">
+    <div class="mp-modal">
+      <div class="mp-modal-title" id="mpModalTitle">
+        <span id="mpModalTitleText">Block this Pass?</span>
+      </div>
+
+      <div class="mp-modal-attendee">
+        <div><span>Attendee:</span> <strong id="mpModalName"></strong></div>
+        <div><span>Email:</span> <strong id="mpModalEmail"></strong></div>
+        <div><span>Token:</span> <strong id="mpModalToken"></strong></div>
+      </div>
+
+      <div class="mp-modal-sub" id="mpModalSub">
+        This will prevent entry at the gate.<br>
+        You can unblock anytime.
+      </div>
+
+      <div class="mp-modal-btns">
+        <button class="mp-modal-cancel" onclick="closeMpModal()">Cancel</button>
+        <button class="mp-modal-confirm" id="mpModalConfirm" onclick="confirmPassAction()">Yes, Block
+          Pass</button>
+      </div>
     </div>
   </div>
 
@@ -2825,12 +2825,14 @@
       confirmBtn.textContent = isBlock ? 'Yes, Block Pass' : 'Yes, Unblock Pass';
       confirmBtn.className = 'mp-modal-confirm ' + (isBlock ? 'block-confirm' : 'unblock-confirm');
       document.getElementById('mpModalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
 
     function closeMpModal() {
       _mpPendingToken = null;
       _mpPendingAction = null;
       document.getElementById('mpModalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
     }
 
     async function confirmPassAction() {
