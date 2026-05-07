@@ -1548,6 +1548,94 @@
       display: flex;
     }
 
+    /* ── Manage Passes Tab Stats Cards (Hero Cards) ─────────────── */
+    .db-hero-card {
+      background: rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 16px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.22s var(--ease);
+    }
+
+    .db-hero-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .db-hero-card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .db-hero-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .db-hero-num {
+      font-family: var(--font);
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .db-hero-sub {
+      font-size: 12.5px;
+      color: var(--text-3);
+    }
+
+    .db-hero-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.6;
+    }
+
+    .db-hero-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .db-hero-icon.cyan {
+      background: var(--cyan-dim);
+      color: var(--cyan);
+    }
+
+    .db-hero-icon.purple {
+      background: var(--purple-dim);
+      color: #a78bfa;
+    }
+
+    .db-hero-icon.green {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+
+    .db-hero-icon.gold {
+      background: var(--gold-dim);
+      color: var(--gold);
+    }
+
     /* ── Manage Passes Tab ─────────────────────────────────────── */
     .mp-toolbar {
       display: flex;
@@ -2128,18 +2216,41 @@
           </div>
           <!-- MANAGE PASSES TAB -->
           <div id="panelPasses" style="display:none">
-            <div class="mp-stats-cards">
-              <div class="mp-stat-card valid">
-                <div class="mp-stat-card-title">Pending (Valid)</div>
-                <div class="mp-stat-card-value" id="mpStatPending">0</div>
+            <div class="mp-stats-cards" style="display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
+              <div class="db-hero-card" style="flex: 1; min-width: 200px;">
+                <div class="db-hero-label">Pending (Valid)</div>
+                <div class="db-hero-num" id="mpStatPending">0</div>
+                <div class="db-hero-sub">Passes ready to be scanned</div>
+                <div class="db-hero-icon cyan">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                </div>
               </div>
-              <div class="mp-stat-card admitted">
-                <div class="mp-stat-card-title">Admitted</div>
-                <div class="mp-stat-card-value" id="mpStatAdmitted">0</div>
+              <div class="db-hero-card" style="flex: 1; min-width: 200px;">
+                <div class="db-hero-label">Admitted</div>
+                <div class="db-hero-num" id="mpStatAdmitted">0</div>
+                <div class="db-hero-sub">Checked-in attendees</div>
+                <div class="db-hero-icon green">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <polyline points="17 11 19 13 23 9"></polyline>
+                  </svg>
+                </div>
               </div>
-              <div class="mp-stat-card blocked">
-                <div class="mp-stat-card-title">Blocked</div>
-                <div class="mp-stat-card-value" id="mpStatBlocked">0</div>
+              <div class="db-hero-card" style="flex: 1; min-width: 200px;">
+                <div class="db-hero-label">Blocked</div>
+                <div class="db-hero-num" id="mpStatBlocked">0</div>
+                <div class="db-hero-sub">Passes denied entry</div>
+                <div class="db-hero-icon purple" style="background: rgba(244,63,94,0.15); color: #f43f5e;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                  </svg>
+                </div>
               </div>
             </div>
 
