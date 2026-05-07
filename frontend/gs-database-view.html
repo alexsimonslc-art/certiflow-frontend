@@ -1557,22 +1557,6 @@
       flex-wrap: wrap;
     }
 
-    .mp-search {
-      flex: 1;
-      min-width: 200px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: var(--text);
-      font-size: 13px;
-      outline: none;
-    }
-
-    .mp-search:focus {
-      border-color: var(--cyan);
-    }
-
     .mp-filter-select {
       background: var(--surface-2);
       border: 1px solid var(--border);
@@ -2160,8 +2144,14 @@
             </div>
 
             <div class="mp-toolbar">
-              <input class="mp-search" id="mpSearch" type="text" placeholder="Search by name, email or token…"
-                oninput="filterPasses()" />
+              <div class="dbv-search-wrap">
+                <svg class="dbv-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input class="dbv-table-search" id="mpSearch" type="text" placeholder="Search by name, email or token…"
+                  oninput="filterPasses()" />
+              </div>
               <select class="mp-filter-select" id="mpFilter" onchange="filterPasses()">
                 <option value="all">All Statuses</option>
                 <option value="valid">Valid</option>
