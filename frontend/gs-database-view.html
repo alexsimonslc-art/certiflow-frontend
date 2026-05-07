@@ -1685,7 +1685,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--text-3);
+      color: var(--text-2);
       white-space: nowrap;
     }
 
@@ -2802,6 +2802,10 @@
       document.getElementById('mpModalEmail').textContent = email || 'N/A';
       document.getElementById('mpModalToken').textContent = passToken || '';
 
+      const confirmBtn = document.getElementById('mpModalConfirm');
+      confirmBtn.textContent = isBlock ? 'Yes, Block Pass' : 'Yes, Unblock Pass';
+      confirmBtn.className = 'mp-modal-confirm ' + (isBlock ? 'block-confirm' : 'unblock-confirm');
+      document.getElementById('mpModalOverlay').classList.add('open');
     }
 
     function closeMpModal() {
@@ -2948,7 +2952,7 @@
       if (w.type === 'stat') {
         let val = w.field === 'total' ? rows.length : calculateFieldStat(w.field, rows, headers);
         if (isNaN(val)) val = 0;
-        contentEl.innerHTML = removeBtn + `<div class="dbv-stat-label" style="font-size:12px; font-weight:600; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">${escHtml(w.title)}</div><div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>`;
+        contentEl.innerHTML = removeBtn + `<div class="dbv-stat-label" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>`;
       } else {
         contentEl.innerHTML = removeBtn + `<div class="dbv-chart-title" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div style="flex:1; position:relative; min-height:0; width:100%;"><canvas id="chart_${w.id}"></canvas></div>`;
 
