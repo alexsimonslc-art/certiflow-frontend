@@ -696,8 +696,9 @@
     /* Results info */
     .dbv-results-info {
       font-size: 12.5px;
-      color: var(--text-3);
+      color: var(--text-2);
       margin-bottom: 12px;
+      font-weight: 500;
     }
 
     .dbv-results-info strong {
@@ -736,7 +737,7 @@
       padding: 11px 14px;
       font-size: 11.5px;
       font-weight: 700;
-      color: var(--text-3);
+      color: var(--text-2);
       text-transform: uppercase;
       letter-spacing: 0.6px;
       text-align: left;
@@ -1073,7 +1074,7 @@
     .dbv-pivot-label {
       font-size: 11.5px;
       font-weight: 700;
-      color: var(--text-3);
+      color: var(--text-2);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -1576,7 +1577,7 @@
     .db-hero-label {
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-3);
+      color: var(--text-2);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 10px;
@@ -1594,7 +1595,7 @@
 
     .db-hero-sub {
       font-size: 12.5px;
-      color: var(--text-3);
+      color: var(--text-2);
     }
 
     .db-hero-icon {
@@ -1777,10 +1778,9 @@
 
     /* Block confirmation modal */
     .mp-modal-overlay {
-      position: fixed;
+      position: absolute;
       inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
+      background: var(--bg);
       z-index: 1000;
       display: flex;
       align-items: center;
@@ -1798,7 +1798,7 @@
     .mp-modal {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 24px 28px;
       width: 100%;
       max-width: 400px;
@@ -2336,7 +2336,7 @@
           <div class="mp-modal-overlay" id="mpModalOverlay">
             <div class="mp-modal">
               <div class="mp-modal-title" id="mpModalTitle">
-                <span id="mpModalIcon">🚫</span> <span id="mpModalTitleText">Block this Pass?</span>
+                <span id="mpModalTitleText">Block this Pass?</span>
               </div>
 
               <div class="mp-modal-attendee">
@@ -2792,7 +2792,6 @@
       _mpPendingAction = action;
       const isBlock = action === 'block';
 
-      document.getElementById('mpModalIcon').textContent = isBlock ? '🚫' : '✅';
       document.getElementById('mpModalTitleText').textContent = isBlock ? 'Block this Pass?' : 'Unblock this Pass?';
 
       document.getElementById('mpModalSub').innerHTML = isBlock
@@ -2803,10 +2802,6 @@
       document.getElementById('mpModalEmail').textContent = email || 'N/A';
       document.getElementById('mpModalToken').textContent = passToken || '';
 
-      const confirmBtn = document.getElementById('mpModalConfirm');
-      confirmBtn.textContent = isBlock ? 'Yes, Block Pass' : 'Yes, Unblock Pass';
-      confirmBtn.className = 'mp-modal-confirm ' + (isBlock ? 'block-confirm' : 'unblock-confirm');
-      document.getElementById('mpModalOverlay').classList.add('open');
     }
 
     function closeMpModal() {
@@ -2953,7 +2948,7 @@
       if (w.type === 'stat') {
         let val = w.field === 'total' ? rows.length : calculateFieldStat(w.field, rows, headers);
         if (isNaN(val)) val = 0;
-        contentEl.innerHTML = removeBtn + `<div class="dbv-stat-label" style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">${escHtml(w.title)}</div><div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>`;
+        contentEl.innerHTML = removeBtn + `<div class="dbv-stat-label" style="font-size:12px; font-weight:600; color:var(--text-2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">${escHtml(w.title)}</div><div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>`;
       } else {
         contentEl.innerHTML = removeBtn + `<div class="dbv-chart-title" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div style="flex:1; position:relative; min-height:0; width:100%;"><canvas id="chart_${w.id}"></canvas></div>`;
 
