@@ -2878,13 +2878,10 @@
     .gal-ai-sparkle-icon {
       width: 28px;
       height: 28px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #00d4ff, #7c3aed);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
     }
 
     .gal-ai-bot-text {
@@ -5984,7 +5981,7 @@
     <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
       <div style="display:flex;align-items:center;gap:12px;flex:1;overflow:hidden;">
         <div style="display:flex;align-items:center;justify-content:center;"><img src="/Images/GalAI%20Logo.svg"
-            alt="Gal AI" style="width:16px;height:16px;"></div>
+            alt="Gal AI" style="width:18px;height:18px;"></div>
         <span style="font-weight:700;font-size:14.5px;letter-spacing:0.3px;color:#fff;">Gal AI</span>
         <div style="width:1px;height:16px;background:rgba(255,255,255,0.15);"></div>
         <span class="gal-ai-typewriter" id="galAiTypewriter">I can help you build, style, and design your form...</span>
@@ -5998,9 +5995,8 @@
 
       <div class="gal-ai-header">
         <div style="display:flex;align-items:center;gap:8px;">
-          <div
-            style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#7c3aed);display:flex;align-items:center;justify-content:center;">
-            <img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;">
+          <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;">
+            <img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:18px;height:18px;">
           </div>
           <span style="font-weight:700;font-size:14px;color:var(--text);">Gal AI</span>
         </div>
@@ -6243,14 +6239,14 @@
           if (isLoading) {
             const statuses = ['Thinking', 'Analyzing form', 'Building fields', 'Applying styles'];
             let sIdx = 0;
-            el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:16px;height:16px;"></div><div class="gal-ai-bot-text"><div class="gal-ai-thinking"><div class="gal-ai-think-spinner"></div><span id="gthink_${id}">Thinking...</span></div></div>`;
+          el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:18px;height:18px;"></div><div class="gal-ai-bot-text"><div class="gal-ai-thinking"><div class="gal-ai-think-spinner"></div><span id="gthink_${id}">Thinking...</span></div></div>`;
             el.dataset.thinkTimer = setInterval(() => {
               sIdx = (sIdx + 1) % statuses.length;
               const s = document.getElementById(`gthink_${id}`);
               if (s) s.textContent = statuses[sIdx] + '...';
             }, 1500);
           } else {
-            el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:16px;height:16px;"></div><div class="gal-ai-bot-text">${text.replace(/\n/g, '<br>')}</div>`;
+          el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:18px;height:18px;"></div><div class="gal-ai-bot-text">${text.replace(/\n/g, '<br>')}</div>`;
           }
         }
         history.appendChild(el);
