@@ -2330,7 +2330,15 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
           userMessage: text,
           chatHistory: galChatHistory,
           blocks: MSState.blocks,
-          config: { name: MSState.siteName, theme: MSState.theme, accentColor: MSState.accentColor }
+          config: {
+            name: MSState.config.name, // Use MSState.config.name
+            theme: MSState.config.theme,
+            accentColor: MSState.config.accentColor
+          },
+          user: { // Pass user info for personalization
+            name: JSON.parse(atob(token.split('.')[1])).name,
+            email: JSON.parse(atob(token.split('.')[1])).email,
+          }
         };
 
         // ── FIXED: Native Fetch with Authorization ──

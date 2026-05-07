@@ -3772,6 +3772,7 @@
         renderFieldEditor();
       } else if (tab === 'settings') {
         renderSettingsPanel();
+        renderSettings();
       } else if (tab === 'pass') {
         renderPassSettings();   // ✅ must be here
       }
@@ -6161,8 +6162,14 @@
               userMessage: msg,
               chatHistory: _chatHistory.slice(-10),
               fields: _S?.config?.fields || [],
-              settings: _S?.config?.settings || {},
-              theme: _S?.config?.theme || {}
+              settings: _S?.config?.settings || {}, // Pass settings
+              theme: _S?.config?.theme || {}, // Pass theme
+              user: (() => { // Pass user info for personalization
+                try {
+                  const token = localStorage.getItem('GalSol_token');
+                  return token ? { name: JSON.parse(atob(token.split('.')[1])).name, email: JSON.parse(atob(token.split('.')[1])).email } : null;
+                } catch { return null; }
+              })(),
             })
           });
 
@@ -6239,14 +6246,14 @@
           if (isLoading) {
             const statuses = ['Thinking', 'Analyzing form', 'Building fields', 'Applying styles'];
             let sIdx = 0;
-          el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:18px;height:18px;"></div><div class="gal-ai-bot-text"><div class="gal-ai-thinking"><div class="gal-ai-think-spinner"></div><span id="gthink_${id}">Thinking...</span></div></div>`;
+            el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:18px;height:18px;"></div><div class="gal-ai-bot-text"><div class="gal-ai-thinking"><div class="gal-ai-think-spinner"></div><span id="gthink_${id}">Thinking...</span></div></div>`;
             el.dataset.thinkTimer = setInterval(() => {
               sIdx = (sIdx + 1) % statuses.length;
               const s = document.getElementById(`gthink_${id}`);
               if (s) s.textContent = statuses[sIdx] + '...';
             }, 1500);
           } else {
-          el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:18px;height:18px;"></div><div class="gal-ai-bot-text">${text.replace(/\n/g, '<br>')}</div>`;
+            el.innerHTML = `<div class="gal-ai-sparkle-icon"><img src="/Images/GalAI%20Logo.svg" style="width:18px;height:18px;"></div><div class="gal-ai-bot-text">${text.replace(/\n/g, '<br>')}</div>`;
           }
         }
         history.appendChild(el);
