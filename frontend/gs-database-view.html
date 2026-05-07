@@ -1780,7 +1780,8 @@
     .mp-modal-overlay {
       position: absolute;
       inset: 0;
-      background: var(--bg);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
       z-index: 1000;
       display: flex;
       align-items: center;
@@ -2952,7 +2953,7 @@
       if (w.type === 'stat') {
         let val = w.field === 'total' ? rows.length : calculateFieldStat(w.field, rows, headers);
         if (isNaN(val)) val = 0;
-        contentEl.innerHTML = removeBtn + `<div class="dbv-stat-label" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>`;
+        contentEl.innerHTML = removeBtn + `<div class="dbv-stat-label" style="font-family:var(--font-display); font-size:13px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>`;
       } else {
         contentEl.innerHTML = removeBtn + `<div class="dbv-chart-title" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div style="flex:1; position:relative; min-height:0; width:100%;"><canvas id="chart_${w.id}"></canvas></div>`;
 
