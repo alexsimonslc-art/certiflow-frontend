@@ -1780,6 +1780,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
       z-index: 1000;
       display: flex;
       align-items: center;
@@ -1797,13 +1798,14 @@
     .mp-modal {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px;
+      border-radius: 12px;
+      padding: 24px 28px;
       width: 100%;
-      max-width: 420px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
       transform: translateY(12px);
       transition: transform 0.2s;
+      text-align: left;
     }
 
     .mp-modal-overlay.open .mp-modal {
@@ -1811,49 +1813,62 @@
     }
 
     .mp-modal-title {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--text);
-      margin-bottom: 6px;
-    }
-
-    .mp-modal-sub {
-      font-size: 13px;
-      color: var(--text-3);
       margin-bottom: 20px;
-      line-height: 1.5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .mp-modal-attendee {
       background: var(--surface-2);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin-bottom: 20px;
-      font-size: 13px;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      font-size: 13.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mp-modal-attendee div {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .mp-modal-attendee span {
+      width: 65px;
+      color: var(--text-3);
+      flex-shrink: 0;
     }
 
     .mp-modal-attendee strong {
       color: var(--text);
-      display: block;
-      margin-bottom: 2px;
+      flex: 1;
+      word-break: break-all;
     }
 
-    .mp-modal-attendee span {
+    .mp-modal-sub {
+      font-size: 13.5px;
       color: var(--text-3);
-      font-size: 12px;
+      margin-bottom: 24px;
+      line-height: 1.6;
     }
 
     .mp-modal-btns {
       display: flex;
-      gap: 10px;
-      justify-content: flex-end;
+      gap: 12px;
     }
 
     .mp-modal-cancel {
-      padding: 9px 18px;
+      flex: 1;
+      padding: 11px 18px;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       background: var(--surface-2);
@@ -1867,9 +1882,10 @@
     }
 
     .mp-modal-confirm {
-      padding: 9px 18px;
+      flex: 1;
+      padding: 11px 18px;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       border: none;
@@ -2216,93 +2232,101 @@
           </div>
           <!-- MANAGE PASSES TAB -->
           <div id="panelPasses" style="display:none">
-            <div class="mp-stats-cards" style="display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
-              <div class="db-hero-card" style="flex: 1; min-width: 200px;">
-                <div class="db-hero-label">Pending (Valid)</div>
-                <div class="db-hero-num" id="mpStatPending">0</div>
-                <div class="db-hero-sub">Passes ready to be scanned</div>
-                <div class="db-hero-icon cyan">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                  </svg>
-                </div>
-              </div>
-              <div class="db-hero-card" style="flex: 1; min-width: 200px;">
-                <div class="db-hero-label">Admitted</div>
-                <div class="db-hero-num" id="mpStatAdmitted">0</div>
-                <div class="db-hero-sub">Checked-in attendees</div>
-                <div class="db-hero-icon green">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <polyline points="17 11 19 13 23 9"></polyline>
-                  </svg>
-                </div>
-              </div>
-              <div class="db-hero-card" style="flex: 1; min-width: 200px;">
-                <div class="db-hero-label">Blocked</div>
-                <div class="db-hero-num" id="mpStatBlocked">0</div>
-                <div class="db-hero-sub">Passes denied entry</div>
-                <div class="db-hero-icon purple" style="background: rgba(244,63,94,0.15); color: #f43f5e;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="15" y1="9" x2="9" y2="15"></line>
-                    <line x1="9" y1="9" x2="15" y2="15"></line>
-                  </svg>
-                </div>
-              </div>
+            <div id="mpLoading"
+              style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 100px 24px; gap: 16px;">
+              <div class="dbv-loading-spin"></div>
+              <div style="font-size: 14px; color: var(--text-3); font-weight: 500;">Loading passes...</div>
             </div>
 
-            <div class="mp-toolbar">
-              <div class="dbv-search-wrap">
-                <svg class="dbv-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input class="dbv-table-search" id="mpSearch" type="text" placeholder="Search by name, email or token…"
-                  oninput="filterPasses()" />
+            <div id="mpContent">
+              <div class="mp-stats-cards" style="display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
+                <div class="db-hero-card" style="flex: 1; min-width: 200px;">
+                  <div class="db-hero-label">Pending (Valid)</div>
+                  <div class="db-hero-num" id="mpStatPending">0</div>
+                  <div class="db-hero-sub">Passes ready to be scanned</div>
+                  <div class="db-hero-icon cyan">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                  </div>
+                </div>
+                <div class="db-hero-card" style="flex: 1; min-width: 200px;">
+                  <div class="db-hero-label">Admitted</div>
+                  <div class="db-hero-num" id="mpStatAdmitted">0</div>
+                  <div class="db-hero-sub">Checked-in attendees</div>
+                  <div class="db-hero-icon green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="8.5" cy="7" r="4"></circle>
+                      <polyline points="17 11 19 13 23 9"></polyline>
+                    </svg>
+                  </div>
+                </div>
+                <div class="db-hero-card" style="flex: 1; min-width: 200px;">
+                  <div class="db-hero-label">Blocked</div>
+                  <div class="db-hero-num" id="mpStatBlocked">0</div>
+                  <div class="db-hero-sub">Passes denied entry</div>
+                  <div class="db-hero-icon purple" style="background: rgba(244,63,94,0.15); color: #f43f5e;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="15" y1="9" x2="9" y2="15"></line>
+                      <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                  </div>
+                </div>
               </div>
-              <select class="mp-filter-select" id="mpFilter" onchange="filterPasses()">
-                <option value="all">All Statuses</option>
-                <option value="valid">Valid</option>
-                <option value="admitted">Admitted</option>
-                <option value="blocked">Blocked</option>
-              </select>
-              <button class="dbv-btn mp-btn" onclick="loadPasses(true)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M23 4v6h-6" />
-                  <path d="M1 20v-6h6" />
-                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-                </svg>
-                Refresh
-              </button>
-            </div>
-            <div class="mp-table-wrap">
-              <table class="mp-table">
-                <thead>
-                  <tr>
-                    <th>Submitted At</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Pass Token</th>
-                    <th>Status</th>
-                    <th>Checked In At</th>
-                    <th>Checked In By</th>
-                    <th style="text-align: center;">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="mpTableBody"></tbody>
-              </table>
-              <div id="mpEmpty" style="display:none">
-                <div class="dbv-table-empty">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
+
+              <div class="mp-toolbar">
+                <div class="dbv-search-wrap">
+                  <svg class="dbv-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
-                  <h3>No passes found</h3>
-                  <p>Passes are created when respondents submit the form.</p>
+                  <input class="dbv-table-search" id="mpSearch" type="text"
+                    placeholder="Search by name, email or token…" oninput="filterPasses()" />
+                </div>
+                <select class="mp-filter-select" id="mpFilter" onchange="filterPasses()">
+                  <option value="all">All Statuses</option>
+                  <option value="valid">Valid</option>
+                  <option value="admitted">Admitted</option>
+                  <option value="blocked">Blocked</option>
+                </select>
+                <button class="dbv-btn mp-btn" onclick="loadPasses(true)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6" />
+                    <path d="M1 20v-6h6" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                  </svg>
+                  Refresh
+                </button>
+              </div>
+              <div class="dbv-table-wrap">
+                <table class="dbv-table" id="mpTable">
+                  <thead>
+                    <tr>
+                      <th>Submitted At</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Pass Token</th>
+                      <th>Status</th>
+                      <th>Checked In At</th>
+                      <th>Checked In By</th>
+                      <th style="text-align: center;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="mpTableBody"></tbody>
+                </table>
+                <div id="mpEmpty" style="display:none">
+                  <div class="dbv-table-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                    </svg>
+                    <h3>No passes found</h3>
+                    <p>Passes are created when respondents submit the form.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2311,16 +2335,25 @@
           <!-- Block / Unblock Confirmation Modal -->
           <div class="mp-modal-overlay" id="mpModalOverlay">
             <div class="mp-modal">
-              <div class="mp-modal-title" id="mpModalTitle">Block Pass</div>
-              <div class="mp-modal-sub" id="mpModalSub">This pass will be blocked. The attendee will be denied entry at
-                the scanner.</div>
-              <div class="mp-modal-attendee">
-                <strong id="mpModalName"></strong>
-                <span id="mpModalEmail"></span>
+              <div class="mp-modal-title" id="mpModalTitle">
+                <span id="mpModalIcon">🚫</span> <span id="mpModalTitleText">Block this Pass?</span>
               </div>
+
+              <div class="mp-modal-attendee">
+                <div><span>Attendee:</span> <strong id="mpModalName"></strong></div>
+                <div><span>Email:</span> <strong id="mpModalEmail"></strong></div>
+                <div><span>Token:</span> <strong id="mpModalToken"></strong></div>
+              </div>
+
+              <div class="mp-modal-sub" id="mpModalSub">
+                This will prevent entry at the gate.<br>
+                You can unblock anytime.
+              </div>
+
               <div class="mp-modal-btns">
                 <button class="mp-modal-cancel" onclick="closeMpModal()">Cancel</button>
-                <button class="mp-modal-confirm" id="mpModalConfirm" onclick="confirmPassAction()">Block Pass</button>
+                <button class="mp-modal-confirm" id="mpModalConfirm" onclick="confirmPassAction()">Yes, Block
+                  Pass</button>
               </div>
             </div>
           </div>
@@ -2657,10 +2690,16 @@
     let _mpPendingAction = null; // 'block' | 'unblock'
 
     async function loadPasses(force = false) {
-      const tb = document.getElementById('mpTableBody');
-      if (tb && force) {
-        tb.innerHTML = `<tr><td colspan="8"><div class="dbv-loading" style="padding:40px"><div class="dbv-loading-spin"></div><div style="font-size:13px;color:var(--text-3);margin-top:12px;">Loading passes...</div></div></td></tr>`;
+      if (!force && _mpPasses.length === 0) {
+        document.getElementById('mpLoading').style.display = 'flex';
+        document.getElementById('mpContent').style.display = 'none';
+      } else if (force) {
+        const tb = document.getElementById('mpTableBody');
+        if (tb) {
+          tb.innerHTML = `<tr><td colspan="8"><div class="dbv-loading" style="padding:40px"><div class="dbv-loading-spin"></div><div style="font-size:13px;color:var(--text-3);margin-top:12px;">Loading passes...</div></div></td></tr>`;
+        }
       }
+
       try {
         const res = await fetch(`${API}/api/attendance/organizer/passes/${_formId}`, {
           headers: { 'Authorization': 'Bearer ' + getToken() },
@@ -2672,6 +2711,9 @@
         filterPasses();
       } catch (e) {
         toast('Could not load passes: ' + e.message, 'error', 4000);
+      } finally {
+        document.getElementById('mpLoading').style.display = 'none';
+        document.getElementById('mpContent').style.display = 'block';
       }
     }
 
@@ -2749,14 +2791,20 @@
       _mpPendingToken = passToken;
       _mpPendingAction = action;
       const isBlock = action === 'block';
-      document.getElementById('mpModalTitle').textContent = isBlock ? 'Block Pass' : 'Unblock Pass';
-      document.getElementById('mpModalSub').textContent = isBlock
-        ? 'This pass will be blocked. The attendee will be denied entry at the scanner.'
-        : 'This pass will be unblocked. The attendee will be permitted entry again.';
+
+      document.getElementById('mpModalIcon').textContent = isBlock ? '🚫' : '✅';
+      document.getElementById('mpModalTitleText').textContent = isBlock ? 'Block this Pass?' : 'Unblock this Pass?';
+
+      document.getElementById('mpModalSub').innerHTML = isBlock
+        ? 'This will prevent entry at the gate.<br>You can unblock anytime.'
+        : 'This will permit entry at the gate.<br>You can block anytime.';
+
       document.getElementById('mpModalName').textContent = name || 'Unknown';
-      document.getElementById('mpModalEmail').textContent = email || '';
+      document.getElementById('mpModalEmail').textContent = email || 'N/A';
+      document.getElementById('mpModalToken').textContent = passToken || '';
+
       const confirmBtn = document.getElementById('mpModalConfirm');
-      confirmBtn.textContent = isBlock ? 'Block Pass' : 'Unblock Pass';
+      confirmBtn.textContent = isBlock ? 'Yes, Block Pass' : 'Yes, Unblock Pass';
       confirmBtn.className = 'mp-modal-confirm ' + (isBlock ? 'block-confirm' : 'unblock-confirm');
       document.getElementById('mpModalOverlay').classList.add('open');
     }
