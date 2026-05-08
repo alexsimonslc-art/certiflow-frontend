@@ -2020,9 +2020,10 @@
       inset: 0;
       background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(18px);
-      z-index: 999;
+      z-index: 20000;
       align-items: center;
       justify-content: center;
+      padding: 24px;
     }
 
     .gsfb-modal-overlay.open {
@@ -2060,6 +2061,8 @@
       padding: 28px 28px 24px;
       max-width: 320px;
       width: 94%;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
       text-align: center;
       box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
       animation: modalIn 0.22s var(--ease) both;
@@ -2257,8 +2260,9 @@
 
     .gsfb-staff-share-message {
       width: 100%;
-      min-height: 154px;
-      resize: vertical;
+      min-height: 0;
+      overflow: hidden;
+      resize: none;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 10px;
       background: rgba(0, 0, 0, 0.22);
@@ -3101,7 +3105,7 @@
           title="Open Dashboard & Database">Dashboard</button>
         <!-- Scanner Tool -->
         <button class="gsfb-tb-btn" id="scannerBtn" style="display:none"
-          onclick="window.location.href='gs-scanner.html'" title="Open Entry Scanner">Scanner</button>
+          onclick="openStaffScannerShareDialog()" title="Share Staff Scanner">Scanner</button>
         <!-- View Live -->
         <button class="gsfb-tb-btn" id="viewLiveBtn" style="display:none" onclick="viewLive()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -4583,10 +4587,13 @@
     function openStaffScannerShareDialog() {
       const details = getStaffScannerShareDetails();
       if (!details.scannerCode) { toast('Generate or enable the staff scanner code first.', 'warn'); return; }
+      const messageEl = document.getElementById('staffShareMessage');
       document.getElementById('staffShareEvent').textContent = details.eventName;
       document.getElementById('staffShareLink').textContent = details.scannerLink;
       document.getElementById('staffShareCode').textContent = details.scannerCode;
-      document.getElementById('staffShareMessage').value = details.message;
+      messageEl.value = details.message;
+      messageEl.style.height = 'auto';
+      messageEl.style.height = `${messageEl.scrollHeight + 2}px`;
       const btn = document.getElementById('staffShareCopyBtn');
       const label = document.getElementById('staffShareCopyLabel');
       if (label) label.textContent = 'Copy Message';
