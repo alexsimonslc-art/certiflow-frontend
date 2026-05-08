@@ -2260,7 +2260,7 @@
 
     .gsfb-staff-share-message {
       width: 100%;
-      min-height: 0;
+      min-height: 168px;
       overflow: hidden;
       resize: none;
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -4599,6 +4599,10 @@
       if (label) label.textContent = 'Copy Message';
       if (btn) btn.style.color = '';
       document.getElementById('staffScannerShareModal').classList.add('open');
+      requestAnimationFrame(() => {
+        messageEl.style.height = 'auto';
+        messageEl.style.height = `${messageEl.scrollHeight + 2}px`;
+      });
     }
 
     function closeStaffScannerShareModal() {
