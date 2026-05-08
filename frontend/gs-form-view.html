@@ -2232,16 +2232,19 @@
           .select('id, name, slug, status, config, submission_count')
           .eq('slug', formSlug)
           .in('status', ['published', 'closed'])
-          .single();
+          .order('updated_at', { ascending: false })
+          .limit(1);
 
-        if (error || !data) {
+        const form = Array.isArray(data) ? data[0] : null;
+
+        if (error || !form) {
           // 4. Fallback: try backend (in case Supabase hiccup)
           const res = await fetch(`${BACKEND}/api/gsforms/view/${encodeURIComponent(formSlug)}`);
           if (!res.ok) throw new Error('not-found');
           const json = await res.json();
           renderForm(json.form);
         } else {
-          renderForm(data);
+          renderForm(form);
         }
       } catch (e) {
         showError('not-found', 'Form not found', 'This form doesn\'t exist or the link may be incorrect.');
