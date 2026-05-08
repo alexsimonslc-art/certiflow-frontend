@@ -2066,6 +2066,28 @@
       text-align: center;
       box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
       animation: modalIn 0.22s var(--ease) both;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 212, 255, 0.32) rgba(255, 255, 255, 0.04);
+    }
+
+    .gsfb-qr-modal::-webkit-scrollbar {
+      width: 9px;
+    }
+
+    .gsfb-qr-modal::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 999px;
+    }
+
+    .gsfb-qr-modal::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(0, 212, 255, 0.58), rgba(124, 58, 237, 0.58));
+      border: 2px solid #080f1e;
+      border-radius: 999px;
+    }
+
+    .gsfb-staff-share-modal {
+      width: min(720px, calc(100vw - 48px));
+      max-width: none;
     }
 
     @keyframes modalIn {
@@ -2211,8 +2233,8 @@
 
     .gsfb-staff-share-row {
       display: grid;
-      grid-template-columns: 92px minmax(0, 1fr);
-      gap: 10px;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 12px;
       align-items: start;
       padding: 9px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
@@ -2289,6 +2311,13 @@
     #staffShareCopyBtn svg,
     #staffShareCopyLabel {
       flex-shrink: 0;
+    }
+
+    @media (max-width: 620px) {
+      .gsfb-staff-share-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
     }
 
     @media (max-width: 1100px) {
@@ -3397,7 +3426,7 @@
 
   <!-- Staff Scanner Share Modal -->
   <div class="gsfb-modal-overlay" id="staffScannerShareModal" onclick="if(event.target===this)closeStaffScannerShareModal()">
-    <div class="gsfb-qr-modal" style="max-width: 460px;">
+    <div class="gsfb-qr-modal gsfb-staff-share-modal">
       <div class="gsfb-qr-title">Share Staff Scanner</div>
       <div class="gsfb-qr-sub">Send this message to staff members who will scan entry passes at the venue.</div>
       <div class="gsfb-staff-share-card">
