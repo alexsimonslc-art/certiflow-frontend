@@ -3961,6 +3961,10 @@
         renderSettingsPanel();
         renderSettings();
       } else if (tab === 'pass') {
+        if (_S.config?.settings?.passEnabled && canvasTab !== 'pass') {
+          switchCanvasTab('pass');
+          return;
+        }
         renderPassSettings();   // ✅ must be here
       }
     }
