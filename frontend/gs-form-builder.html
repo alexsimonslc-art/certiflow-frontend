@@ -2313,6 +2313,36 @@
       flex-shrink: 0;
     }
 
+    .gsfb-staff-link-code-btn {
+      width: 100%;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 1px solid rgba(0, 212, 255, 0.28);
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(124, 58, 237, 0.18));
+      color: var(--cyan);
+      font-size: 14px;
+      font-weight: 800;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .gsfb-staff-link-code-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(0, 212, 255, 0.48);
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.24), rgba(124, 58, 237, 0.24));
+    }
+
+    .gsfb-staff-link-code-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
     @media (max-width: 620px) {
       .gsfb-staff-share-row {
         grid-template-columns: 1fr;
@@ -5152,11 +5182,14 @@
         ${s.passStaffCode ? `
         <div class="gsfb-prop" style="margin-bottom:0">
           <label class="gsfb-prop-label">Staff Scanner Code</label>
-          <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">Share with event volunteers — they enter this to access the scanner</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="flex:1;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-radius:8px;padding:10px 14px;font-family:var(--font-mono,monospace);font-size:20px;font-weight:700;letter-spacing:5px;color:var(--cyan);text-align:center">${escAttr(s.passStaffCode)}</div>
-            <button id="passCodeShareBtn" class="gsfb-tb-btn cyan" onclick="openStaffScannerShareDialog()" style="padding:10px 14px">Share</button>
-          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-bottom:8px">Share the scanner link and access code with event volunteers.</div>
+          <button id="passCodeShareBtn" class="gsfb-staff-link-code-btn" onclick="openStaffScannerShareDialog()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            Get Link and Code
+          </button>
         </div>
         ` : ''}
 
