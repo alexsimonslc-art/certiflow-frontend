@@ -2195,6 +2195,87 @@
       border: 1px solid rgba(255, 255, 255, 0.07);
     }
 
+    .gsfb-staff-share-card {
+      text-align: left;
+      background:
+        linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(124, 58, 237, 0.08)),
+        rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .gsfb-staff-share-row {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .gsfb-staff-share-row:last-child {
+      border-bottom: 0;
+    }
+
+    .gsfb-staff-share-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .gsfb-staff-share-value {
+      min-width: 0;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .gsfb-staff-share-value.link,
+    .gsfb-staff-share-code {
+      color: var(--cyan);
+      font-family: var(--font-mono);
+    }
+
+    .gsfb-staff-share-code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 4px 10px;
+      background: rgba(0, 212, 255, 0.09);
+      border: 1px solid rgba(0, 212, 255, 0.22);
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 4px;
+    }
+
+    .gsfb-staff-share-message {
+      width: 100%;
+      min-height: 154px;
+      resize: vertical;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.22);
+      color: var(--text-2);
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.55;
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    .gsfb-staff-share-message:focus {
+      border-color: rgba(0, 212, 255, 0.38);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.08);
+    }
+
     @media (max-width: 1100px) {
       .gsfb-layout {
         grid-template-columns: 220px 1fr 300px;
@@ -3294,6 +3375,39 @@
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
           Download QR
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Staff Scanner Share Modal -->
+  <div class="gsfb-modal-overlay" id="staffScannerShareModal" onclick="if(event.target===this)closeStaffScannerShareModal()">
+    <div class="gsfb-qr-modal" style="max-width: 460px;">
+      <div class="gsfb-qr-title">Share Staff Scanner</div>
+      <div class="gsfb-qr-sub">Send this message to staff members who will scan entry passes at the venue.</div>
+      <div class="gsfb-staff-share-card">
+        <div class="gsfb-staff-share-row">
+          <div class="gsfb-staff-share-label">Event</div>
+          <div class="gsfb-staff-share-value" id="staffShareEvent">Event</div>
+        </div>
+        <div class="gsfb-staff-share-row">
+          <div class="gsfb-staff-share-label">Scanner Link</div>
+          <div class="gsfb-staff-share-value link" id="staffShareLink"></div>
+        </div>
+        <div class="gsfb-staff-share-row">
+          <div class="gsfb-staff-share-label">Code</div>
+          <div class="gsfb-staff-share-value"><span class="gsfb-staff-share-code" id="staffShareCode"></span></div>
+        </div>
+      </div>
+      <textarea class="gsfb-staff-share-message" id="staffShareMessage" readonly></textarea>
+      <div class="gsfb-modal-btns">
+        <button class="btn btn-secondary btn-sm" onclick="closeStaffScannerShareModal()">Close</button>
+        <button class="btn btn-primary btn-sm" id="staffShareCopyBtn" onclick="copyStaffScannerShareMessage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+          <span id="staffShareCopyLabel">Copy Message</span>
         </button>
       </div>
     </div>
@@ -4451,12 +4565,53 @@
       updateCanvasTabVisibility();
       if (next) switchCanvasTab('pass');
     }
-    function copyPassCode() {
-      const code = _S.config?.settings?.passStaffCode || '';
-      navigator.clipboard.writeText(code).then(() => {
-        const btn = document.getElementById('passCodeCopyBtn');
-        if (btn) { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 2000); }
-      });
+    function getStaffScannerUrl() {
+      const formParam = _S.slug ? `?form=${encodeURIComponent(_S.slug)}` : '';
+      return `${window.location.origin}/gs-scanner.html${formParam}`;
+    }
+
+    function getStaffScannerShareDetails() {
+      const s = _S.config?.settings || {};
+      const eventName = s.passEventName || s.title || _S.name || 'Event';
+      const scannerLink = getStaffScannerUrl();
+      const scannerCode = s.passStaffCode || '';
+      const instruction = 'Open the scanner link, enter the scanner code, type your name, and tap Connect. Allow camera access when prompted, then scan each attendee entry pass QR code at the gate.';
+      const message = `Event: ${eventName}\n\nScanner Link: ${scannerLink}\nScanner Code: ${scannerCode}\n\nInstruction: ${instruction}`;
+      return { eventName, scannerLink, scannerCode, message };
+    }
+
+    function openStaffScannerShareDialog() {
+      const details = getStaffScannerShareDetails();
+      if (!details.scannerCode) { toast('Generate or enable the staff scanner code first.', 'warn'); return; }
+      document.getElementById('staffShareEvent').textContent = details.eventName;
+      document.getElementById('staffShareLink').textContent = details.scannerLink;
+      document.getElementById('staffShareCode').textContent = details.scannerCode;
+      document.getElementById('staffShareMessage').value = details.message;
+      const btn = document.getElementById('staffShareCopyBtn');
+      const label = document.getElementById('staffShareCopyLabel');
+      if (label) label.textContent = 'Copy Message';
+      if (btn) btn.style.color = '';
+      document.getElementById('staffScannerShareModal').classList.add('open');
+    }
+
+    function closeStaffScannerShareModal() {
+      document.getElementById('staffScannerShareModal').classList.remove('open');
+    }
+
+    function copyStaffScannerShareMessage() {
+      const message = document.getElementById('staffShareMessage').value;
+      navigator.clipboard.writeText(message).then(() => {
+        const btn = document.getElementById('staffShareCopyBtn');
+        const label = document.getElementById('staffShareCopyLabel');
+        if (btn) {
+          if (label) label.textContent = 'Copied!';
+          btn.style.color = 'var(--green)';
+          setTimeout(() => {
+            if (label) label.textContent = 'Copy Message';
+            btn.style.color = '';
+          }, 2000);
+        }
+      }).catch(() => toast('Could not copy message', 'error'));
     }
 
     function handlePassLogoUpload(input) {
@@ -4952,7 +5107,7 @@
           <div style="font-size:11px;color:var(--text-3);margin-bottom:6px">Share with event volunteers — they enter this to access the scanner</div>
           <div style="display:flex;align-items:center;gap:8px">
             <div style="flex:1;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-radius:8px;padding:10px 14px;font-family:var(--font-mono,monospace);font-size:20px;font-weight:700;letter-spacing:5px;color:var(--cyan);text-align:center">${escAttr(s.passStaffCode)}</div>
-            <button id="passCodeCopyBtn" class="gsfb-tb-btn" onclick="copyPassCode()" style="padding:10px 14px">Copy</button>
+            <button id="passCodeShareBtn" class="gsfb-tb-btn cyan" onclick="openStaffScannerShareDialog()" style="padding:10px 14px">Share</button>
           </div>
         </div>
         ` : ''}
