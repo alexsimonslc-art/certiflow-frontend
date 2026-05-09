@@ -1907,11 +1907,18 @@
 
     /* ── Accent colour map ─────────────────────────────────────────── */
     const ACCENTS = {
-      cyan: { solid: '#00d4ff', grad: 'linear-gradient(135deg,#00d4ff,#7c3aed)', dim: 'rgba(0,212,255,0.10)' },
-      purple: { solid: '#a78bfa', grad: 'linear-gradient(135deg,#7c3aed,#a855f7)', dim: 'rgba(124,58,237,0.10)' },
-      green: { solid: '#10b981', grad: 'linear-gradient(135deg,#10b981,#06b6d4)', dim: 'rgba(16,185,129,0.10)' },
-      gold: { solid: '#f59e0b', grad: 'linear-gradient(135deg,#f59e0b,#ef4444)', dim: 'rgba(245,158,11,0.10)' },
-      pink: { solid: '#ec4899', grad: 'linear-gradient(135deg,#ec4899,#8b5cf6)', dim: 'rgba(236,72,153,0.10)' },
+      cyan:    { solid: '#00d4ff', grad: 'linear-gradient(135deg,#00d4ff,#7c3aed)',    dim: 'rgba(0,212,255,0.10)' },
+      purple:  { solid: '#a78bfa', grad: 'linear-gradient(135deg,#7c3aed,#a855f7)',    dim: 'rgba(124,58,237,0.10)' },
+      green:   { solid: '#10b981', grad: 'linear-gradient(135deg,#10b981,#06b6d4)',    dim: 'rgba(16,185,129,0.10)' },
+      gold:    { solid: '#f59e0b', grad: 'linear-gradient(135deg,#f59e0b,#ef4444)',    dim: 'rgba(245,158,11,0.10)' },
+      pink:    { solid: '#ec4899', grad: 'linear-gradient(135deg,#ec4899,#8b5cf6)',    dim: 'rgba(236,72,153,0.10)' },
+      blue:    { solid: '#2563eb', grad: 'linear-gradient(135deg,#2563eb,#06b6d4)',    dim: 'rgba(37,99,235,0.10)' },
+      teal:    { solid: '#0d9488', grad: 'linear-gradient(135deg,#0d9488,#22c55e)',    dim: 'rgba(13,148,136,0.10)' },
+      indigo:  { solid: '#6366f1', grad: 'linear-gradient(135deg,#4f46e5,#8b5cf6)',    dim: 'rgba(99,102,241,0.10)' },
+      rose:    { solid: '#e11d48', grad: 'linear-gradient(135deg,#e11d48,#f97316)',    dim: 'rgba(225,29,72,0.10)' },
+      amber:   { solid: '#d97706', grad: 'linear-gradient(135deg,#d97706,#eab308)',    dim: 'rgba(217,119,6,0.10)' },
+      emerald: { solid: '#059669', grad: 'linear-gradient(135deg,#059669,#14b8a6)',    dim: 'rgba(5,150,105,0.10)' },
+      coral:   { solid: '#f43f5e', grad: 'linear-gradient(135deg,#f43f5e,#fb7185)',    dim: 'rgba(244,63,94,0.10)' },
     };
 
     /* ── Runtime state ─────────────────────────────────────────────── */
@@ -2155,26 +2162,44 @@
       return logic === 'any' ? results.some(Boolean) : results.every(Boolean);
     }
 
+    /**
+     * Returns progress info based on actually-visible pages.
+     * current = pages visited so far + this one (= _pageHistory.length + 1)
+     * total   = visited + current + visible pages remaining ahead
+     */
+    function getProgressInfo() {
+      const current = _pageHistory.length + 1;
+      const remaining = _pages.slice(_currentPage + 1).filter(isPageVisible).length;
+      // If all remaining pages are conditional and none are visible yet, add 1 to hint more pages exist
+      const futureConditional = _pages.slice(_currentPage + 1);
+      const hasHiddenConditional = futureConditional.length > 0 && remaining === 0
+        && futureConditional.every(p => p.pageConditions && p.pageConditions.length > 0);
+      const total = current + remaining + (hasHiddenConditional ? 1 : 0);
+      return { current, total };
+    }
+
+    /** Update the progress bar UI */
+    function updateProgress() {
+      const progressWrap = document.getElementById('progressWrap');
+      if (_pages.length <= 1) { progressWrap.style.display = 'none'; return; }
+      const { current, total } = getProgressInfo();
+      progressWrap.style.display = 'block';
+      const pct = Math.round((current / total) * 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('pgNum').textContent = current;
+      document.getElementById('pgTotal').textContent = total;
+      document.getElementById('pgPct').textContent = pct + '%';
+    }
+
     /** Render a specific page */
     function showPage(n) {
       _currentPage = n;
       const page = _pages[n];
-      const total = _pages.length;
       const isFirst = n === 0;
       const s = formConfig?.config?.settings || {};
 
-      // Progress bar
-      const progressWrap = document.getElementById('progressWrap');
-      if (total > 1) {
-        progressWrap.style.display = 'block';
-        const pct = Math.round(((n + 1) / total) * 100);
-        document.getElementById('progressFill').style.width = pct + '%';
-        document.getElementById('pgNum').textContent = n + 1;
-        document.getElementById('pgTotal').textContent = total;
-        document.getElementById('pgPct').textContent = pct + '%';
-      } else {
-        progressWrap.style.display = 'none';
-      }
+      // Progress bar — updated after fields render so isPageVisible has fresh formValues
+      updateProgress();
 
       // Page 1: show form header; Page 2+: show section title card
       document.getElementById('formMainHeader').style.display = isFirst ? '' : 'none';
@@ -2253,6 +2278,7 @@
       const passLabel = (last && s.passEnabled) ? (s.submitLabel || 'Submit & Get Pass') : null;
       labelEl.textContent = passLabel || (last ? (s.submitLabel || 'Submit') : 'Next →');
       btn.onclick = last ? handleSubmit : nextPage;
+      updateProgress();
     }
 
     function nextPage() {
@@ -2568,6 +2594,16 @@
           <span id="fn-${f.id}">No file</span>
         </div>`;
           break;
+
+        case 'image':
+          return `
+    <div class="gsfv-field" id="fw-${f.id}" data-field-id="${f.id}">
+      <div class="gsfv-field-card">
+        ${f.label ? `<div class="gsfv-label">${esc(f.label)}</div>` : ''}
+        ${f.showDesc && f.description ? `<div class="gsfv-field-desc">${f.description}</div>` : ''}
+        ${f.image ? `<img src="${escAttr(f.image)}" alt="" style="width:100%;height:auto;border-radius:8px;display:block;margin-top:8px;" loading="lazy"/>` : ''}
+      </div>
+    </div>`;
 
         default:
           input = `<input class="gsfv-input" id="fi-${f.id}" type="text"
@@ -2999,7 +3035,7 @@
       const payload = { data: {} };
       const fields = formConfig?.config?.fields || [];
       fields.forEach(f => {
-        if (f.type === 'section_break') return;
+        if (f.type === 'section_break' || f.type === 'image') return;
         if (!isFieldVisible(f)) return;
         // file_upload fields: formValues[f.id] already holds the Drive URL from the pre-upload step
         payload.data[f.id] = formValues[f.id] ?? '';
@@ -3008,7 +3044,7 @@
       // Add field labels as metadata so Sheet headers are readable
       payload.fieldMeta = {};
       fields.forEach(f => {
-        if (f.type !== 'section_break') {
+        if (f.type !== 'section_break' && f.type !== 'image') {
           payload.fieldMeta[f.id] = f.label || f.id;
         }
       });
