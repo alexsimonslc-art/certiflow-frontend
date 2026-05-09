@@ -653,7 +653,15 @@ function renderMSBlock(block, config) {
  */
 function renderMSSite(siteConfig, blocks) {
   const t = msb_theme(siteConfig);
-  const fontUrl = MSB_GOOGLE_FONT_URLS[siteConfig.fontFamily] || '';
+  const titleFont   = siteConfig.titleFont   || siteConfig.fontFamily || 'Syne';
+  const contentFont = siteConfig.contentFont || siteConfig.fontFamily || 'Plus Jakarta Sans';
+  const fontUrls = [...new Set([
+    MSB_GOOGLE_FONT_URLS[titleFont]   || '',
+    MSB_GOOGLE_FONT_URLS[contentFont] || '',
+    'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap',
+  ])].filter(Boolean).map(u => `  <link href="${u}" rel="stylesheet"/>`).join('\n');
+  const titleColorRule  = siteConfig.titleColor   ? `h1,h2,h3,h4,h5{color:${siteConfig.titleColor}!important}` : '';
+  const contentColorRule = siteConfig.contentColor ? `p,li,span{color:${siteConfig.contentColor}!important}` : '';
   const body = (blocks || []).map(b => renderMSBlock(b, siteConfig)).join('\n');
   return `<!DOCTYPE html>
 <html lang="en">
@@ -662,12 +670,13 @@ function renderMSSite(siteConfig, blocks) {
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>${siteConfig.name || 'Event'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+${fontUrls}
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{font-family:'${t.font}','Plus Jakarta Sans',sans-serif;background:${t.bg};color:${t.text};-webkit-font-smoothing:antialiased}
+    body{font-family:'${contentFont}','Plus Jakarta Sans',sans-serif;background:${t.bg};color:${t.text};-webkit-font-smoothing:antialiased}
+    h1,h2,h3,h4,h5{font-family:'${titleFont}',sans-serif}
+    ${titleColorRule}${contentColorRule}
     details summary::-webkit-details-marker{display:none}
     details[open]>summary svg{transform:rotate(180deg)}
     details>summary svg{transition:transform 0.2s}

@@ -399,76 +399,104 @@
 
       <!-- Site settings tab -->
       <div class="mse-right-body" id="rightSiteBody" style="display:none">
-        <div class="mse-props-section">
-          <div class="mse-props-sec-label">Appearance</div>
 
+        <!-- ── 1. Prebuilt Themes ── -->
+        <div class="mse-props-section">
+          <div class="mse-props-sec-label">Prebuilt Themes</div>
+          <div class="mse-prebuilt-grid" id="prebuiltThemeGrid">
+            <!-- filled by buildPrebuiltThemeGrid() -->
+          </div>
+        </div>
+
+        <!-- ── 2. Colors ── -->
+        <div class="mse-props-section" style="padding-top:16px">
+          <div class="mse-props-sec-label">Colors</div>
           <div class="mse-prop-row">
-            <div class="mse-prop-label">Theme</div>
+            <div class="mse-prop-label">Mode</div>
             <div class="mse-theme-grid">
               <button class="mse-theme-box" data-value="dark" onclick="setThemeBox('dark')">
                 <div class="mse-theme-preview">
-                  <div class="mtp-topbar"></div>
-                  <div class="mtp-left"></div>
-                  <div class="mtp-body">
-                    <div class="mtp-block"></div>
-                    <div class="mtp-block short"></div>
-                    <div class="mtp-block"></div>
-                  </div>
+                  <div class="mtp-topbar"></div><div class="mtp-left"></div>
+                  <div class="mtp-body"><div class="mtp-block"></div><div class="mtp-block short"></div><div class="mtp-block"></div></div>
                 </div>
                 <span>Dark</span>
               </button>
               <button class="mse-theme-box" data-value="light" onclick="setThemeBox('light')">
                 <div class="mse-theme-preview light">
-                  <div class="mtp-topbar light"></div>
-                  <div class="mtp-left light"></div>
-                  <div class="mtp-body">
-                    <div class="mtp-block light"></div>
-                    <div class="mtp-block short light"></div>
-                    <div class="mtp-block light"></div>
-                  </div>
+                  <div class="mtp-topbar light"></div><div class="mtp-left light"></div>
+                  <div class="mtp-body"><div class="mtp-block light"></div><div class="mtp-block short light"></div><div class="mtp-block light"></div></div>
                 </div>
                 <span>Light</span>
               </button>
             </div>
           </div>
-
           <div class="mse-prop-row">
-            <div class="mse-prop-label">Accent Colour</div>
+            <div class="mse-prop-label">Accent</div>
             <div class="mse-color-row">
-              <div class="mse-color-swatch" id="accentSwatch">
-                <input type="color" id="accentColorInput" oninput="onAccentChange(this.value)" />
-              </div>
-              <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7" placeholder="#00d4ff"
-                oninput="onAccentHexInput(this.value)" style="flex:1" />
+              <div class="mse-color-swatch" id="accentSwatch"><input type="color" id="accentColorInput" oninput="onAccentChange(this.value)" /></div>
+              <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7" placeholder="#00d4ff" oninput="onAccentHexInput(this.value)" style="flex:1" />
             </div>
           </div>
-
           <div class="mse-prop-row">
-            <div class="mse-prop-label">Font Family</div>
-            <div class="mse-font-grid">
-              <button class="mse-font-pill" data-font="Plus Jakarta Sans" onclick="setFontBox('Plus Jakarta Sans')"
-                style="font-family:Plus Jakarta Sans,sans-serif">Plus Jakarta Sans</button>
-              <button class="mse-font-pill" data-font="Syne" onclick="setFontBox('Syne')"
-                style="font-family:Syne,sans-serif;font-weight:700">Syne</button>
-              <button class="mse-font-pill" data-font="Montserrat" onclick="setFontBox('Montserrat')"
-                style="font-family:Montserrat,sans-serif">Montserrat</button>
-              <button class="mse-font-pill" data-font="Raleway" onclick="setFontBox('Raleway')"
-                style="font-family:Raleway,sans-serif">Raleway</button>
-              <button class="mse-font-pill" data-font="Playfair Display" onclick="setFontBox('Playfair Display')"
-                style="font-family:Playfair Display,serif">Playfair Display</button>
-              <button class="mse-font-pill" data-font="Cormorant Garamond" onclick="setFontBox('Cormorant Garamond')"
-                style="font-family:Cormorant Garamond,serif">Cormorant Garamond</button>
-              <button class="mse-font-pill" data-font="Dancing Script" onclick="setFontBox('Dancing Script')"
-                style="font-family:Dancing Script,cursive">Dancing Script</button>
-              <button class="mse-font-pill" data-font="Cinzel" onclick="setFontBox('Cinzel')"
-                style="font-family:Cinzel,serif">Cinzel</button>
-              <button class="mse-font-pill" data-font="EB Garamond" onclick="setFontBox('EB Garamond')"
-                style="font-family:EB Garamond,serif">EB Garamond</button>
-              <button class="mse-font-pill" data-font="JetBrains Mono" onclick="setFontBox('JetBrains Mono')"
-                style="font-family:JetBrains Mono,monospace">JetBrains Mono</button>
+            <div class="mse-prop-label">Background</div>
+            <div class="mse-color-row">
+              <div class="mse-color-swatch" id="bgSwatch"><input type="color" id="bgColorInput" oninput="onBgColorChange(this.value)" /></div>
+              <input type="text" class="mse-prop-input" id="bgColorHex" maxlength="7" placeholder="#0a0f1e" oninput="onBgHexInput(this.value)" style="flex:1" />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 3. Paired Fonts ── -->
+        <div class="mse-props-section" style="padding-top:16px">
+          <div class="mse-props-sec-label">Paired Fonts</div>
+          <div class="mse-font-pair-list" id="fontPairList">
+            <!-- filled by buildFontPairList() -->
+          </div>
+        </div>
+
+        <!-- ── 4. Custom Fonts ── -->
+        <div class="mse-props-section" style="padding-top:16px">
+          <div class="mse-props-sec-label">Custom Fonts</div>
+
+          <!-- Title font -->
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Title Font</div>
+            <div class="mse-font-select-wrap">
+              <button class="mse-font-select-box" id="titleFontBox" onclick="toggleFontPicker('title')">
+                <span id="titleFontLabel">Syne</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="mse-font-picker" id="titleFontPicker" style="display:none"></div>
+            </div>
+          </div>
+          <!-- Title color -->
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Title Color</div>
+            <div class="mse-color-row">
+              <div class="mse-color-swatch" id="titleColorSwatch"><input type="color" id="titleColorInput" oninput="onTitleColorChange(this.value)" /></div>
+              <input type="text" class="mse-prop-input" id="titleColorHex" maxlength="7" placeholder="Global default" oninput="onTitleColorHexInput(this.value)" style="flex:1" />
             </div>
           </div>
 
+          <!-- Content font -->
+          <div class="mse-prop-row" style="margin-top:10px">
+            <div class="mse-prop-label">Content Font</div>
+            <div class="mse-font-select-wrap">
+              <button class="mse-font-select-box" id="contentFontBox" onclick="toggleFontPicker('content')">
+                <span id="contentFontLabel">Plus Jakarta Sans</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="mse-font-picker" id="contentFontPicker" style="display:none"></div>
+            </div>
+          </div>
+          <!-- Content color -->
+          <div class="mse-prop-row">
+            <div class="mse-prop-label">Content Color</div>
+            <div class="mse-color-row">
+              <div class="mse-color-swatch" id="contentColorSwatch"><input type="color" id="contentColorInput" oninput="onContentColorChange(this.value)" /></div>
+              <input type="text" class="mse-prop-input" id="contentColorHex" maxlength="7" placeholder="Global default" oninput="onContentColorHexInput(this.value)" style="flex:1" />
+            </div>
+          </div>
         </div>
 
         <div class="mse-props-section" style="padding-top:14px">
@@ -1663,14 +1691,49 @@
 
       document.querySelectorAll('.mse-theme-box').forEach(b => b.classList.toggle('on', b.dataset.value === c.theme));
 
+      // Accent colour
       const accentIn = document.getElementById('accentColorInput');
       const accentHx = document.getElementById('accentColorHex');
-      const swatch = document.getElementById('accentSwatch');
-      if (accentIn) { accentIn.value = c.accentColor; }
-      if (accentHx && document.activeElement !== accentHx) accentHx.value = c.accentColor;
-      if (swatch) swatch.style.background = c.accentColor;
+      const accentSw = document.getElementById('accentSwatch');
+      if (accentIn) accentIn.value = c.accentColor || '#00d4ff';
+      if (accentHx && document.activeElement !== accentHx) accentHx.value = c.accentColor || '#00d4ff';
+      if (accentSw) accentSw.style.background = c.accentColor || '#00d4ff';
 
-      document.querySelectorAll('.mse-font-pill').forEach(p => p.classList.toggle('on', p.dataset.font === c.fontFamily));
+      // Background colour
+      const bgIn = document.getElementById('bgColorInput');
+      const bgHx = document.getElementById('bgColorHex');
+      const bgSw = document.getElementById('bgSwatch');
+      const bgVal = c.bgOverride || '#0a0f1e';
+      if (bgIn) bgIn.value = bgVal;
+      if (bgHx && document.activeElement !== bgHx) bgHx.value = bgVal;
+      if (bgSw) bgSw.style.background = bgVal;
+
+      // Title font & colour
+      const titleFont = c.titleFont || c.fontFamily || 'Syne';
+      updateFontSelectBoxes();
+      const tcIn = document.getElementById('titleColorInput');
+      const tcHx = document.getElementById('titleColorHex');
+      const tcSw = document.getElementById('titleColorSwatch');
+      if (tcIn) tcIn.value = c.titleColor || '#ffffff';
+      if (tcHx && document.activeElement !== tcHx) tcHx.value = c.titleColor || '';
+      if (tcSw) tcSw.style.background = c.titleColor || 'rgba(255,255,255,0.25)';
+
+      // Content font & colour
+      const ccIn = document.getElementById('contentColorInput');
+      const ccHx = document.getElementById('contentColorHex');
+      const ccSw = document.getElementById('contentColorSwatch');
+      if (ccIn) ccIn.value = c.contentColor || '#ccddee';
+      if (ccHx && document.activeElement !== ccHx) ccHx.value = c.contentColor || '';
+      if (ccSw) ccSw.style.background = c.contentColor || 'rgba(255,255,255,0.15)';
+
+      // Rebuild prebuilt & pair lists
+      buildPrebuiltThemeGrid();
+      buildFontPairList();
+      // Force rebuild font pickers on next open
+      ['title','content'].forEach(w => {
+        const p = document.getElementById(w + 'FontPicker');
+        if (p) delete p.dataset.built;
+      });
 
       ['shapeCircle', 'shapeRounded', 'shapeSquare'].forEach(id => {
         const el = document.getElementById(id);
@@ -1800,7 +1863,9 @@
 
     function onSlugInput(val) {
       const clean = val.toLowerCase().replace(/[^a-z0-9-]/g, '');
-      document.getElementById('siteSlugInput').value = clean;
+      const input = document.getElementById('siteSlugInput');
+      // Only overwrite the input value (which resets cursor) when we actually stripped chars
+      if (clean !== val) input.value = clean;
       document.getElementById('slugPreview').textContent = clean || '—';
       const pubUrl = clean
         ? `${window.location.origin}/site.html?slug=${clean}`
@@ -1918,7 +1983,10 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     .gal-ai-send svg { width: 16px; height: 16px; transform: translateX(-1px); }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:'${t_cfg.fontFamily || 'Plus Jakarta Sans'}',sans-serif;background:${bg};color:${textColor};-webkit-font-smoothing:antialiased;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent}
+  body{font-family:'${t_cfg.contentFont || t_cfg.fontFamily || 'Plus Jakarta Sans'}',sans-serif;background:${bg};color:${textColor};-webkit-font-smoothing:antialiased;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent}
+  h1,h2,h3,h4,h5{font-family:'${t_cfg.titleFont || t_cfg.fontFamily || 'Syne'}',sans-serif}
+  ${t_cfg.titleColor ? `h1,h2,h3,h4,h5{color:${t_cfg.titleColor}!important}` : ''}
+  ${t_cfg.contentColor ? `p,span,li{color:${t_cfg.contentColor}!important}` : ''}
   ::-webkit-scrollbar{width:3px;height:3px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:99px}
@@ -2070,10 +2138,223 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       document.querySelectorAll('.mse-theme-box').forEach(b => b.classList.toggle('on', b.dataset.value === val));
     }
     function setFontBox(val) {
-      MSState.updateConfig({ fontFamily: val });
+      MSState.updateConfig({ fontFamily: val, titleFont: val });
       refreshCanvas();
       document.querySelectorAll('.mse-font-pill').forEach(p => p.classList.toggle('on', p.dataset.font === val));
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PREBUILT THEMES & FONT PAIRS — data + UI
+    ═══════════════════════════════════════════════════════════════ */
+    const MSB_PREBUILT_THEMES = [
+      { id:'midnight-pulse',   name:'Midnight Pulse',   titleFont:'Syne',              contentFont:'Plus Jakarta Sans', accent:'#00d4ff', bg:'#030d1e' },
+      { id:'crimson-gala',     name:'Crimson Gala',     titleFont:'Cinzel',            contentFont:'Cormorant Garamond',accent:'#f43f5e', bg:'#0d0408' },
+      { id:'golden-luxe',      name:'Golden Luxe',      titleFont:'Playfair Display',  contentFont:'EB Garamond',       accent:'#f59e0b', bg:'#080602' },
+      { id:'emerald-city',     name:'Emerald City',     titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans', accent:'#10b981', bg:'#020d08' },
+      { id:'royal-dusk',       name:'Royal Dusk',       titleFont:'Cormorant Garamond',contentFont:'Raleway',           accent:'#a78bfa', bg:'#07040f' },
+      { id:'ember',            name:'Ember',            titleFont:'Raleway',           contentFont:'Plus Jakarta Sans', accent:'#f97316', bg:'#0e0602' },
+      { id:'arctic',           name:'Arctic',           titleFont:'Plus Jakarta Sans', contentFont:'Montserrat',        accent:'#38bdf8', bg:'#020b14' },
+      { id:'serif-editorial',  name:'Serif Editorial',  titleFont:'EB Garamond',       contentFont:'Cormorant Garamond',accent:'#d4a96a', bg:'#0a0805' },
+      { id:'blossom',          name:'Blossom',          titleFont:'Dancing Script',    contentFont:'Plus Jakarta Sans', accent:'#f472b6', bg:'#120810' },
+      { id:'matrix',           name:'Matrix',           titleFont:'JetBrains Mono',   contentFont:'JetBrains Mono',    accent:'#4ade80', bg:'#020c04' },
+    ];
+
+    const MSB_FONT_PAIRS = [
+      { id:'modern-tech',      name:'Modern Tech',      titleFont:'Syne',              contentFont:'Plus Jakarta Sans' },
+      { id:'editorial',        name:'Editorial',        titleFont:'Syne',              contentFont:'Montserrat' },
+      { id:'classic-serif',    name:'Classic Serif',    titleFont:'Playfair Display',  contentFont:'EB Garamond' },
+      { id:'gothic-elegance',  name:'Gothic Elegance',  titleFont:'Cinzel',            contentFont:'Cormorant Garamond' },
+      { id:'corporate-bold',   name:'Corporate Bold',   titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans' },
+      { id:'creative-flow',    name:'Creative Flow',    titleFont:'Raleway',           contentFont:'Montserrat' },
+      { id:'literary',         name:'Literary',         titleFont:'EB Garamond',       contentFont:'Cormorant Garamond' },
+      { id:'romantic',         name:'Romantic',         titleFont:'Dancing Script',    contentFont:'Plus Jakarta Sans' },
+      { id:'minimal',          name:'Minimal',          titleFont:'Plus Jakarta Sans', contentFont:'Plus Jakarta Sans' },
+      { id:'developer',        name:'Developer',        titleFont:'JetBrains Mono',   contentFont:'Plus Jakarta Sans' },
+    ];
+
+    const MSB_FONT_LIST = [
+      { name:'Plus Jakarta Sans', stack:'Plus Jakarta Sans,sans-serif',   weight:'600' },
+      { name:'Syne',              stack:'Syne,sans-serif',                weight:'700' },
+      { name:'Montserrat',        stack:'Montserrat,sans-serif',          weight:'600' },
+      { name:'Raleway',           stack:'Raleway,sans-serif',             weight:'600' },
+      { name:'Playfair Display',  stack:'Playfair Display,serif',         weight:'700' },
+      { name:'Cormorant Garamond',stack:'Cormorant Garamond,serif',       weight:'600' },
+      { name:'Dancing Script',    stack:'Dancing Script,cursive',         weight:'600' },
+      { name:'Cinzel',            stack:'Cinzel,serif',                   weight:'600' },
+      { name:'EB Garamond',       stack:'EB Garamond,serif',              weight:'700' },
+      { name:'JetBrains Mono',    stack:'JetBrains Mono,monospace',       weight:'500' },
+    ];
+
+    /* Build prebuilt theme grid */
+    function buildPrebuiltThemeGrid() {
+      const grid = document.getElementById('prebuiltThemeGrid');
+      if (!grid) return;
+      const current = MSState.config;
+      grid.innerHTML = MSB_PREBUILT_THEMES.map(t => {
+        const isOn = current.titleFont === t.titleFont && current.contentFont === t.contentFont &&
+                     current.accentColor === t.accent && current.bgOverride === t.bg;
+        return `<button class="mse-pt${isOn ? ' on' : ''}" data-theme-id="${t.id}" onclick="applyPrebuiltTheme('${t.id}')">
+          <div class="mse-pt-swatches">
+            <div class="mse-pt-swatch" style="background:${t.bg}"></div>
+            <div class="mse-pt-swatch accent" style="background:${t.accent}"></div>
+          </div>
+          <div class="mse-pt-body">
+            <div class="mse-pt-name">${t.name}</div>
+            <div class="mse-pt-fonts">${t.titleFont.split(' ')[0]} · ${t.contentFont.split(' ')[0]}</div>
+          </div>
+        </button>`;
+      }).join('');
+    }
+
+    /* Build font pair list */
+    function buildFontPairList() {
+      const list = document.getElementById('fontPairList');
+      if (!list) return;
+      const c = MSState.config;
+      list.innerHTML = MSB_FONT_PAIRS.map(p => {
+        const isOn = c.titleFont === p.titleFont && c.contentFont === p.contentFont;
+        return `<button class="mse-fp${isOn ? ' on' : ''}" data-pair-id="${p.id}" onclick="applyFontPair('${p.id}')">
+          <div class="mse-fp-fonts">
+            <div class="mse-fp-title" style="font-family:${p.titleFont},serif,sans-serif">${p.titleFont}</div>
+            <div class="mse-fp-content" style="font-family:${p.contentFont},sans-serif">${p.contentFont}</div>
+          </div>
+          <div class="mse-fp-label">${p.name}</div>
+        </button>`;
+      }).join('');
+    }
+
+    /* Build font picker options for title/content dropdowns */
+    function buildFontPicker(which) {
+      const picker = document.getElementById(which + 'FontPicker');
+      if (!picker || picker.dataset.built) return;
+      const current = MSState.config[which + 'Font'] || (which === 'title' ? 'Syne' : 'Plus Jakarta Sans');
+      picker.innerHTML = MSB_FONT_LIST.map(f =>
+        `<button class="mse-font-opt${current === f.name ? ' on' : ''}" data-font="${f.name}"
+          style="font-family:${f.stack};font-weight:${f.weight}"
+          onclick="selectFont('${which}','${f.name}')">
+          <span class="mse-font-opt-preview">${f.name}</span>
+          <span class="mse-font-opt-name" style="font-family:var(--font)">${f.name.split(' ')[0]}</span>
+        </button>`
+      ).join('');
+      picker.dataset.built = '1';
+    }
+
+    /* Apply a prebuilt theme */
+    function applyPrebuiltTheme(id) {
+      const t = MSB_PREBUILT_THEMES.find(x => x.id === id);
+      if (!t) return;
+      MSState.updateConfig({ titleFont: t.titleFont, contentFont: t.contentFont, fontFamily: t.titleFont, accentColor: t.accent, bgOverride: t.bg });
+      refreshCanvas();
+      populateSiteSettings();
+    }
+
+    /* Apply a font pair */
+    function applyFontPair(id) {
+      const p = MSB_FONT_PAIRS.find(x => x.id === id);
+      if (!p) return;
+      MSState.updateConfig({ titleFont: p.titleFont, contentFont: p.contentFont, fontFamily: p.titleFont });
+      refreshCanvas();
+      updateFontSelectBoxes();
+      buildFontPairList();
+    }
+
+    /* Toggle the font picker dropdown */
+    function toggleFontPicker(which) {
+      const picker = document.getElementById(which + 'FontPicker');
+      const box    = document.getElementById(which + 'FontBox');
+      if (!picker || !box) return;
+      const isOpen = picker.style.display !== 'none';
+      // Close both first
+      ['title','content'].forEach(w => {
+        document.getElementById(w + 'FontPicker').style.display = 'none';
+        document.getElementById(w + 'FontBox')?.classList.remove('open');
+      });
+      if (!isOpen) {
+        buildFontPicker(which);
+        picker.style.display = '';
+        box.classList.add('open');
+      }
+    }
+
+    /* Select a font from the picker */
+    function selectFont(which, fontName) {
+      const upd = { fontFamily: fontName };
+      upd[which + 'Font'] = fontName;
+      MSState.updateConfig(upd);
+      refreshCanvas();
+      updateFontSelectBoxes();
+      buildFontPairList();
+      // Update picker selection highlight
+      const picker = document.getElementById(which + 'FontPicker');
+      if (picker) picker.querySelectorAll('.mse-font-opt').forEach(o => o.classList.toggle('on', o.dataset.font === fontName));
+    }
+
+    /* Update font select box labels to reflect current config */
+    function updateFontSelectBoxes() {
+      const c = MSState.config;
+      const tl = document.getElementById('titleFontLabel');
+      const cl = document.getElementById('contentFontLabel');
+      if (tl) { tl.textContent = c.titleFont || 'Syne'; tl.style.fontFamily = (c.titleFont || 'Syne') + ',sans-serif'; }
+      if (cl) { cl.textContent = c.contentFont || 'Plus Jakarta Sans'; cl.style.fontFamily = (c.contentFont || 'Plus Jakarta Sans') + ',sans-serif'; }
+    }
+
+    /* Background color handlers */
+    function onBgColorChange(val) {
+      document.getElementById('bgColorHex').value = val;
+      document.getElementById('bgSwatch').style.background = val;
+      MSState.updateConfig({ bgOverride: val });
+      refreshCanvas();
+    }
+    function onBgHexInput(val) {
+      if (/^#[0-9a-f]{6}$/i.test(val)) {
+        document.getElementById('bgColorInput').value = val;
+        document.getElementById('bgSwatch').style.background = val;
+        MSState.updateConfig({ bgOverride: val });
+        refreshCanvas();
+      }
+    }
+
+    /* Title color handlers */
+    function onTitleColorChange(val) {
+      document.getElementById('titleColorHex').value = val;
+      document.getElementById('titleColorSwatch').style.background = val;
+      MSState.updateConfig({ titleColor: val });
+      refreshCanvas();
+    }
+    function onTitleColorHexInput(val) {
+      if (/^#[0-9a-f]{6}$/i.test(val)) {
+        document.getElementById('titleColorInput').value = val;
+        document.getElementById('titleColorSwatch').style.background = val;
+        MSState.updateConfig({ titleColor: val });
+        refreshCanvas();
+      }
+    }
+
+    /* Content color handlers */
+    function onContentColorChange(val) {
+      document.getElementById('contentColorHex').value = val;
+      document.getElementById('contentColorSwatch').style.background = val;
+      MSState.updateConfig({ contentColor: val });
+      refreshCanvas();
+    }
+    function onContentColorHexInput(val) {
+      if (/^#[0-9a-f]{6}$/i.test(val)) {
+        document.getElementById('contentColorInput').value = val;
+        document.getElementById('contentColorSwatch').style.background = val;
+        MSState.updateConfig({ contentColor: val });
+        refreshCanvas();
+      }
+    }
+
+    /* Close font pickers when clicking outside */
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.mse-font-select-wrap')) {
+        ['title','content'].forEach(w => {
+          document.getElementById(w + 'FontPicker').style.display = 'none';
+          document.getElementById(w + 'FontBox')?.classList.remove('open');
+        });
+      }
+    });
 
     function copyPublishUrl() {
       const url = MSState.config.slug
@@ -2876,6 +3157,205 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.25) !important;
     }
 
+    /* ── Prebuilt Theme Grid ─────────────────────────────────────── */
+    .mse-prebuilt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .mse-pt {
+      display: flex;
+      flex-direction: column;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      text-align: left;
+      padding: 0;
+    }
+
+    .mse-pt:hover { border-color: rgba(255, 255, 255, 0.22); }
+
+    .mse-pt.on {
+      border-color: rgba(0, 212, 255, 0.75);
+      box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.3);
+    }
+
+    .mse-pt-swatches {
+      display: flex;
+      height: 28px;
+      width: 100%;
+    }
+
+    .mse-pt-swatch {
+      flex: 1;
+    }
+
+    .mse-pt-swatch.accent { flex: 0.55; }
+
+    .mse-pt-body {
+      padding: 7px 9px 8px;
+    }
+
+    .mse-pt-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mse-pt-fonts {
+      font-size: 9.5px;
+      color: var(--text-3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Font Pair List ──────────────────────────────────────────── */
+    .mse-font-pair-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .mse-fp {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      border-radius: 9px;
+      border: 1.5px solid rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      transition: border-color 0.13s;
+      gap: 10px;
+    }
+
+    .mse-fp:hover { border-color: rgba(255, 255, 255, 0.2); }
+
+    .mse-fp.on {
+      border-color: rgba(0, 212, 255, 0.7);
+      background: rgba(0, 212, 255, 0.07);
+    }
+
+    .mse-fp-fonts {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mse-fp-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .mse-fp-content {
+      font-size: 11px;
+      color: var(--text-3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .mse-fp-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-3);
+      flex-shrink: 0;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Font Select Box (custom dropdown) ───────────────────────── */
+    .mse-font-select-wrap {
+      position: relative;
+    }
+
+    .mse-font-select-box {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 11px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: border-color 0.13s;
+      text-align: left;
+    }
+
+    .mse-font-select-box:hover { border-color: rgba(255, 255, 255, 0.28); }
+    .mse-font-select-box.open { border-color: var(--cyan); }
+
+    .mse-font-select-box svg { flex-shrink: 0; color: var(--text-3); transition: transform 0.18s; }
+    .mse-font-select-box.open svg { transform: rotate(180deg); }
+
+    .mse-font-picker {
+      width: 100%;
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+      animation: mse-picker-in 0.14s ease;
+    }
+
+    @keyframes mse-picker-in {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .mse-font-opt {
+      display: flex;
+      align-items: center;
+      padding: 9px 13px;
+      cursor: pointer;
+      transition: background 0.1s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      gap: 10px;
+    }
+
+    .mse-font-opt:hover { background: rgba(255, 255, 255, 0.06); }
+
+    .mse-font-opt.on {
+      background: rgba(0, 212, 255, 0.1);
+      color: #67e8f9;
+    }
+
+    .mse-font-opt-preview {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .mse-font-opt-name {
+      font-size: 10px;
+      color: var(--text-3);
+      font-family: var(--font);
+      flex-shrink: 0;
+    }
+
     /* Mini editor mockup */
     .mse-theme-preview {
       width: 100%;
@@ -2980,6 +3460,7 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
       font-weight: 700;
       background: linear-gradient(90deg, #00d4ff, #7c3aed);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 6px;
       letter-spacing: -0.5px;
