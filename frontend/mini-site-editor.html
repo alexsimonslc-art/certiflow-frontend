@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Site Editor — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@400;600;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="mini-site-editor.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="mini-site-state.js"></script>
@@ -1902,7 +1900,11 @@
       const frame = document.getElementById('mse-mobile-frame');
       if (!frame) return;
       const t_cfg = MSState.config;
-      const fontUrl = (typeof MSB_GOOGLE_FONT_URLS !== 'undefined' && MSB_GOOGLE_FONT_URLS[t_cfg.fontFamily]) || '';
+      const _titleFont   = t_cfg.titleFont   || t_cfg.fontFamily || 'Syne';
+      const _contentFont = t_cfg.contentFont || 'Plus Jakarta Sans';
+      const _fontUrlMap  = typeof MSB_GOOGLE_FONT_URLS !== 'undefined' ? MSB_GOOGLE_FONT_URLS : {};
+      const _fontLinks   = [...new Set([_fontUrlMap[_titleFont], _fontUrlMap[_contentFont]].filter(Boolean))]
+                            .map(u => `<link href="${u}" rel="stylesheet"/>`).join('\n');
       const blocksHtml = MSState.blocks.map(b => renderMSBlock(b, t_cfg)).join('');
       const bg = t_cfg.theme === 'light' ? '#ffffff' : (t_cfg.bgOverride || '#0a0f1e');
       const textColor = t_cfg.theme === 'light' ? '#1e293b' : '#eef4ff';
@@ -1910,7 +1912,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=390px,initial-scale=1.0"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
+${_fontLinks}
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
 <style>
   /* ── Account Settings Dock ── */
@@ -1983,8 +1985,8 @@ ${fontUrl ? `<link href="${fontUrl}" rel="stylesheet"/>` : ''}
     .gal-ai-send svg { width: 16px; height: 16px; transform: translateX(-1px); }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:'${t_cfg.contentFont || t_cfg.fontFamily || 'Plus Jakarta Sans'}',sans-serif;background:${bg};color:${textColor};-webkit-font-smoothing:antialiased;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent}
-  h1,h2,h3,h4,h5{font-family:'${t_cfg.titleFont || t_cfg.fontFamily || 'Syne'}',sans-serif}
+  body{font-family:'${_contentFont}',sans-serif;background:${bg};color:${textColor};-webkit-font-smoothing:antialiased;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent}
+  h1,h2,h3,h4,h5{font-family:'${_titleFont}',sans-serif}
   ${t_cfg.titleColor ? `h1,h2,h3,h4,h5{color:${t_cfg.titleColor}!important}` : ''}
   ${t_cfg.contentColor ? `p,span,li{color:${t_cfg.contentColor}!important}` : ''}
   ::-webkit-scrollbar{width:3px;height:3px}
