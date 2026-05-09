@@ -2424,7 +2424,7 @@
       --cc-input-border: rgba(255, 255, 255, 0.12);
       --cc-input-bg: rgba(255, 255, 255, 0.05);
       --cc-header-size: 22px;
-      --cc-body-size: 13px;
+      --cc-body-size: 15px;
       --cc-header-color: var(--cc-text);
       --cc-body-color: var(--cc-text-2);
       font-family: var(--font, 'Plus Jakarta Sans', sans-serif);
@@ -2553,10 +2553,10 @@
     }
 
     .gsfc-card-label {
-      font-size: var(--cc-body-size, 13px);
+      font-size: var(--cc-body-size, 15px);
       font-weight: 600;
       font-family: var(--font-question, var(--font, 'Plus Jakarta Sans', sans-serif));
-      color: var(--cc-body-color);
+      color: var(--cc-text);
       margin-bottom: 6px;
       user-select: none;
       pointer-events: none;
@@ -2564,7 +2564,7 @@
     }
 
     .gsfc-card-desc {
-      font-size: calc(var(--cc-body-size, 13px) - 1px);
+      font-size: calc(var(--cc-body-size, 15px) - 1px);
       font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
       color: var(--cc-text-2);
       line-height: 1.55;
@@ -2605,54 +2605,72 @@
     }
 
     .gsfc-text-preview {
-      border-bottom: 1px dotted var(--cc-input-border);
-      padding-bottom: 6px;
-      width: 60%;
-      min-height: 20px;
+      padding: 12px 14px;
+      background: var(--cc-input-bg);
+      border: 1px solid var(--cc-input-border);
+      border-radius: 9px;
+      width: 100%;
+      min-height: 44px;
+      font-size: 15px;
+      color: var(--cc-text-3);
+      font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
     }
 
     .gsfc-long-preview {
-      border-bottom: 1px dotted var(--cc-input-border);
-      padding-bottom: 36px;
+      padding: 12px 14px;
+      background: var(--cc-input-bg);
+      border: 1px solid var(--cc-input-border);
+      border-radius: 9px;
       width: 100%;
-      min-height: 20px;
+      min-height: 90px;
+      font-size: 15px;
+      color: var(--cc-text-3);
+      font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
     }
 
     .gsfc-radio-opt {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 12px;
+      padding: 11px 14px;
+      border: 1px solid var(--cc-input-border);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.025);
+      margin-bottom: 7px;
       color: var(--cc-text-2);
-      font-size: 13.5px;
+      font-size: 14.5px;
+      font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
     }
 
     .gsfc-radio-circle {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      border: 2px solid var(--cc-input-border);
+      border: 2px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
     }
 
     .gsfc-check-box {
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
-      border: 2px solid var(--cc-input-border);
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
     }
 
     .gsfc-dropdown-preview {
-      padding: 8px 14px;
+      width: 100%;
+      padding: 12px 14px;
       background: var(--cc-input-bg);
       border: 1px solid var(--cc-input-border);
-      border-radius: 6px;
-      display: inline-flex;
+      border-radius: 9px;
+      display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 13.5px;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 15px;
       color: var(--cc-text-3);
+      font-family: var(--font, 'Plus Jakarta Sans', sans-serif);
     }
 
     .gsfc-upload-preview {
@@ -2673,23 +2691,39 @@
       flex-wrap: wrap;
     }
 
+    .gsfc-scale-labels-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--cc-text-3);
+      margin-top: 6px;
+    }
+
+    .gsfc-scale-side-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cc-text-3);
+    }
+
     .gsfc-scale-num {
-      width: 30px;
-      height: 30px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       border: 1px solid var(--cc-input-border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      color: var(--cc-text-2);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cc-text-3);
       flex-shrink: 0;
     }
 
     .gsfc-star {
-      font-size: 20px;
-      color: #f59e0b;
+      font-size: 32px;
+      color: rgba(255, 255, 255, 0.18);
       line-height: 1;
+      padding: 2px;
     }
 
     /* ── Card hover actions ── */
@@ -5648,7 +5682,7 @@
           .map(o => `<div class="gsfc-radio-opt">${icon}<span>${escHtml(o)}</span></div>`).join('');
       }
       if (t === 'dropdown')
-        return `<div class="gsfc-dropdown-preview">${escHtml((f.options || ['Option 1'])[0])} <span style="font-size:10px">&#9660;</span></div>`;
+        return `<div class="gsfc-dropdown-preview"><span>${escHtml((f.options || ['— Select —'])[0])}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg></div>`;
       if (t === 'file_upload')
         return `<div class="gsfc-upload-preview">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;color:var(--cc-accent);opacity:0.85;margin-bottom:2px">
@@ -5660,11 +5694,13 @@
         </div>`;
       if (t === 'linear_scale') {
         if (f.style === 'stars') {
-          const stars = Array.from({ length: f.max || 5 }, () => `<span class="gsfc-star">★</span>`).join('');
-          return `<div class="gsfc-scale-preview" style="gap:2px">${stars}</div>`;
+          const max = f.max || 5;
+          const stars = Array.from({ length: max }, () => `<span class="gsfc-star">★</span>`).join('');
+          return `<div class="gsfc-scale-preview" style="gap:8px">${stars}</div>
+        <div class="gsfc-scale-labels-row"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
         }
         const nums = Array.from({ length: f.max || 5 }, (_, i) => `<div class="gsfc-scale-num">${i + 1}</div>`).join('');
-        return `<div class="gsfc-scale-preview"><span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.minLabel || 'Poor')}</span>${nums}<span style="font-size:11px;color:var(--cc-text-2)">${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
+        return `<div class="gsfc-scale-preview"><span class="gsfc-scale-side-label">${escHtml(f.minLabel || 'Poor')}</span><div style="display:flex;gap:8px;flex-wrap:wrap">${nums}</div><span class="gsfc-scale-side-label">${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
       }
       if (t === 'image')
         return `<div class="gsfc-upload-preview" style="padding:10px;">Display-only Image</div>`;
