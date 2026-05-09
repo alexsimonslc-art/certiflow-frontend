@@ -416,7 +416,8 @@
 
     .gsfv-input::placeholder,
     .gsfv-textarea::placeholder {
-      color: var(--text-3);
+      color: var(--text-color, var(--text-3));
+      opacity: 0.55;
     }
 
     .gsfv-textarea {
@@ -1264,7 +1265,8 @@
 
     body.gsfv-light .gsfv-input::placeholder,
     body.gsfv-light .gsfv-textarea::placeholder {
-      color: #9ca3af;
+      color: var(--text-color, #9ca3af);
+      opacity: 0.55;
     }
 
     body.gsfv-light .gsfv-select {
@@ -1525,7 +1527,8 @@
     }
 
     .gsfv-dd-item.placeholder {
-      color: var(--text-3);
+      color: var(--text-color, var(--text-3));
+      opacity: 0.55;
       font-style: italic;
     }
 
@@ -2482,7 +2485,7 @@
             </div>
             <input class="gsfv-input gsfv-phone-num" id="fi-${f.id}" type="tel"
                    placeholder="${escAttr(f.placeholder || 'Phone number')}"
-                   oninput="updatePhone('${f.id}',this.value)"/>
+                   oninput="this.value=this.value.replace(/[^0-9]/g,'');updatePhone('${f.id}',this.value)"/>
           </div>`;
           break;
 
@@ -2556,14 +2559,14 @@
           const max = f.max || 5;
           if ((f.style || 'stars') === 'stars') {
             input = `
-          <div class="gsfv-stars" id="fi-${f.id}">
-            ${Array.from({ length: max }, (_, i) =>
-              `<button type="button" class="gsfv-star-btn" data-val="${i + 1}" onclick="pickStar('${f.id}',${i + 1},${max})">★</button>`
-            ).join('')}
-          </div>
-          <div class="gsfv-scale-labels" style="max-width:${max * 46}px">
-            <span>${esc(f.minLabel || 'Poor')}</span>
-            <span>${esc(f.maxLabel || 'Excellent')}</span>
+          <div class="gsfv-num-scale" id="fi-${f.id}">
+            <span class="gsfv-scale-label min-label">${esc(f.minLabel || 'Poor')}</span>
+            <div class="gsfv-stars">
+              ${Array.from({ length: max }, (_, i) =>
+                `<button type="button" class="gsfv-star-btn" data-val="${i + 1}" onclick="pickStar('${f.id}',${i + 1},${max})">★</button>`
+              ).join('')}
+            </div>
+            <span class="gsfv-scale-label max-label">${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
           } else {
             input = `
