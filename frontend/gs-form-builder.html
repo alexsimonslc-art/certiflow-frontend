@@ -3627,12 +3627,21 @@
   <!-- Leave Modal -->
   <div class="gsfb-modal-overlay" id="leaveModal">
     <div class="gsfb-leave-modal">
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="width:22px;height:22px">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
       <div class="gsfb-leave-title">Unsaved changes</div>
-      <div class="gsfb-leave-sub">Your latest edits haven't been saved to the cloud yet.</div>
-      <div class="gsfb-modal-btns">
-        <button class="btn btn-secondary btn-sm" onclick="closeLeaveModal()">Keep Editing</button>
-        <button class="btn btn-danger btn-sm" onclick="leaveNow()">Leave Anyway</button>
-        <button class="btn btn-primary btn-sm" onclick="saveAndLeave()">Save & Leave</button>
+      <div class="gsfb-leave-sub">Your latest edits haven't been saved yet. What would you like to do?</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-primary btn-sm btn-full" onclick="saveAndLeave()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save &amp; Leave
+        </button>
+        <button class="btn btn-danger btn-sm btn-full" onclick="leaveNow()">Leave without saving</button>
+        <button class="btn btn-secondary btn-sm btn-full" onclick="closeLeaveModal()" style="margin-top:2px">Keep Editing</button>
       </div>
     </div>
   </div>
@@ -4822,6 +4831,7 @@
       renderPassSettings();
       renderPreview();
       updateCanvasTabVisibility();
+      updateTopBar();
       if (next) switchCanvasTab('pass');
     }
     function getStaffScannerUrl() {
