@@ -3577,11 +3577,11 @@
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
       rules.forEach(r => { ctx.fillText('• ' + r, 24, ry); ry += 20; });
 
-      // Footer: "Powered by GalSol" centered text
-      ctx.textAlign = 'center';
+      // Footer: "Powered by" + logo image
+      ctx.textAlign = 'right';
       ctx.font = '11px "Plus Jakarta Sans",sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.52)';
-      ctx.fillText('Powered by GalSol', W / 2, H - FOOTER_H + 27);
+      ctx.fillStyle = 'rgba(255,255,255,0.42)';
+      ctx.fillText('Powered by', W / 2 - 4, H - FOOTER_H + 27);
 
       // ── ASYNC ────────────────────────────────────────────────────────
       if (cfg.logoUrl) {
@@ -3593,6 +3593,13 @@
       const qi = new Image();
       qi.onload = () => { ctx.drawImage(qi, QX + 6, QY + 6, QS - 12, QS - 12); };
       qi.src = pass.qrDataUrl;
+
+      const fi = new Image();
+      fi.onload = () => {
+        const fh = 14, fw = fi.naturalWidth > 0 ? Math.round(fh * fi.naturalWidth / fi.naturalHeight) : 42;
+        ctx.drawImage(fi, W / 2 + 2, H - FOOTER_H + 16, fw, fh);
+      };
+      fi.src = 'Images/GalSol GWN.svg';
     }
 
     function _rr(ctx, x, y, w, h, r) {

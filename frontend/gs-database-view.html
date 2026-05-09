@@ -2670,11 +2670,10 @@
       // Always show Manage Passes tab
       document.getElementById('tabPasses').style.display = '';
 
-      // Deep-link support: ?tab=passes
+      // Deep-link support: ?tab=passes | tab=responses | tab=database
       const urlTab = new URLSearchParams(window.location.search).get('tab');
-      if (urlTab === 'passes' && _data.passEnabled) {
-        switchTab('passes');
-      }
+      if (urlTab === 'passes') switchTab('passes');
+      else if (urlTab === 'responses' || urlTab === 'database') switchTab('database');
     }
 
     /* ════════════════════════════════════════════════════════════════

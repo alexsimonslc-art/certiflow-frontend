@@ -3298,11 +3298,21 @@
           Passes
         </button>
         <!-- Dashboard -->
-        <button class="gsfb-tb-btn" onclick="window.location.href='gs-database.html'"
-          title="Open Dashboard & Database">Dashboard</button>
+        <button class="gsfb-tb-btn" onclick="window.location.href='gs-database.html'" title="Open Dashboard & Database">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          Dashboard
+        </button>
         <!-- Scanner Tool -->
-        <button class="gsfb-tb-btn" id="scannerBtn" style="display:none"
-          onclick="openStaffScannerShareDialog()" title="Share Staff Scanner">Scanner</button>
+        <button class="gsfb-tb-btn" id="scannerBtn" style="display:none" onclick="openStaffScannerShareDialog()" title="Share Staff Scanner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+            <line x1="3" y1="12" x2="21" y2="12" stroke-width="2.5"/>
+          </svg>
+          Scanner
+        </button>
         <!-- View Live -->
         <button class="gsfb-tb-btn" id="viewLiveBtn" style="display:none" onclick="viewLive()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3982,6 +3992,7 @@
 
     function selectLayer(id) {
       selectedId = id;
+      if (canvasTab === 'pass') switchCanvasTab('form');
       switchRTab('field');
       renderLayers();
       renderPreview();
@@ -4099,15 +4110,17 @@
       document.getElementById('rtabPassBody').style.display = tab === 'pass' ? '' : 'none';
 
       if (tab === 'field') {
+        if (canvasTab === 'pass') switchCanvasTab('form');
         renderRightPanel();
       } else if (tab === 'settings') {
+        if (canvasTab === 'pass') switchCanvasTab('form');
         renderSettings();
       } else if (tab === 'pass') {
         if (_S.config?.settings?.passEnabled && canvasTab !== 'pass') {
           switchCanvasTab('pass');
           return;
         }
-        renderPassSettings();   // ✅ must be here
+        renderPassSettings();
       }
     }
 
@@ -4933,7 +4946,7 @@
         <div style="position:absolute;left:0;right:0;bottom:0;height:32px;background:${escAttr(darker)}"></div>
 
         <!-- Badge -->
-        <div style="position:absolute;left:14px;top:12px;font-size:7px;font-weight:700;letter-spacing:1.2px;color:#888;background:#f0f4f8;border-radius:11px;padding:3px 10px;z-index:2;text-transform:uppercase;line-height:1.4">ENTRY PASS</div>
+        <div style="position:absolute;left:14px;top:12px;font-size:7px;font-weight:700;letter-spacing:1.2px;color:#888;background:#f0f4f8;border-radius:11px;padding:3px 10px;z-index:2;text-transform:uppercase;line-height:1.4;white-space:nowrap;width:fit-content">ENTRY PASS</div>
 
         ${logoHtml}
 
@@ -4979,7 +4992,7 @@
         <!-- Footer bar -->
         <div style="position:absolute;left:0;right:0;bottom:0;height:32px;display:flex;align-items:center;justify-content:center;gap:5px;z-index:3">
           <span style="font-size:7.5px;color:rgba(255,255,255,0.42)">Powered by</span>
-          <img src="Images/GalSol%20White.svg" style="height:13px;opacity:0.70" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <img src="Images/GalSol GWN.svg" style="height:13px;opacity:0.70" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
           <span style="display:none;font-size:8px;font-weight:700;color:rgba(255,255,255,0.55)">GalSol</span>
         </div>
       </div>`;
@@ -5151,7 +5164,7 @@
           </div>
         </div>
       </div>
-      <div class="gsfb-settings-section">
+      <div class="gsfb-settings-section" style="margin-top:24px">
         <div class="gsfb-settings-sec-title">Prebuilt Themes</div>
         <div class="gsfb-palette-grid">
           ${PALETTES.map(p => {
