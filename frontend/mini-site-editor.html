@@ -1541,6 +1541,7 @@
       document.getElementById('rtabSite').classList.toggle('active', tab === 'site');
       document.getElementById('rightBlockBody').style.display = tab === 'block' ? 'block' : 'none';
       document.getElementById('rightSiteBody').style.display = tab === 'site' ? 'block' : 'none';
+      if (tab === 'site') populateSiteSettings();
     }
 
     /* ════════════════════════════════════════════════════════════════
