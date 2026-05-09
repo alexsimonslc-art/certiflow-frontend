@@ -797,6 +797,30 @@
       margin-bottom: 20px;
     }
 
+    .gsfb-pv-desc ul,
+    .gsfb-pv-desc ol {
+      padding-left: 1.5em;
+      margin: 5px 0;
+    }
+
+    .gsfb-pv-desc ul {
+      list-style: disc outside;
+    }
+
+    .gsfb-pv-desc ol {
+      list-style: decimal outside;
+    }
+
+    .gsfb-pv-desc li {
+      display: list-item;
+      margin-bottom: 3px;
+    }
+
+    .gsfb-pv-desc a {
+      color: var(--cyan);
+      text-decoration: underline;
+    }
+
     .gsfb-pv-page-title {
       font-family: var(--font-display);
       font-size: 18px;
@@ -2444,6 +2468,30 @@
       user-select: none;
     }
 
+    .gsfc-header-desc ul,
+    .gsfc-header-desc ol {
+      padding-left: 1.5em;
+      margin: 5px 0;
+    }
+
+    .gsfc-header-desc ul {
+      list-style: disc outside;
+    }
+
+    .gsfc-header-desc ol {
+      list-style: decimal outside;
+    }
+
+    .gsfc-header-desc li {
+      display: list-item;
+      margin-bottom: 3px;
+    }
+
+    .gsfc-header-desc a {
+      color: var(--cc-accent);
+      text-decoration: underline;
+    }
+
     /* ── Field Cards ── */
     .gsfc-card {
       background: var(--cc-card-bg);
@@ -3513,8 +3561,19 @@
       green: 'linear-gradient(135deg,#10b981,#06b6d4)',
       gold: 'linear-gradient(135deg,#f59e0b,#ef4444)',
       pink: 'linear-gradient(135deg,#ec4899,#8b5cf6)',
+      blue: 'linear-gradient(135deg,#2563eb,#06b6d4)',
+      teal: 'linear-gradient(135deg,#0d9488,#22c55e)',
+      indigo: 'linear-gradient(135deg,#4f46e5,#8b5cf6)',
+      rose: 'linear-gradient(135deg,#e11d48,#f97316)',
+      amber: 'linear-gradient(135deg,#d97706,#eab308)',
+      emerald: 'linear-gradient(135deg,#059669,#14b8a6)',
+      coral: 'linear-gradient(135deg,#f43f5e,#fb7185)',
     };
-    const ACCENT_SOLID = { cyan: '#00d4ff', purple: '#a78bfa', green: '#10b981', gold: '#f59e0b', pink: '#ec4899' };
+    const ACCENT_SOLID = {
+      cyan: '#00d4ff', purple: '#a78bfa', green: '#10b981', gold: '#f59e0b', pink: '#ec4899',
+      blue: '#2563eb', teal: '#0d9488', indigo: '#6366f1', rose: '#e11d48', amber: '#d97706',
+      emerald: '#059669', coral: '#f43f5e'
+    };
 
     const FIELD_ICONS = {
       text: 'type', textarea: 'align-left', email: 'at-sign', phone: 'phone',
@@ -3539,53 +3598,53 @@
     const PALETTES = [
       // ── Light themes ──────────────────────────────────────────────────
       {
-        id: 'white', name: 'White', bg: '#f8fafc', card: '#ffffff', accent: 'cyan',
-        hFont: 'Plus Jakarta Sans', bFont: 'Plus Jakarta Sans', hColor: '#0f172a', bColor: '#475569', hSize: 26, bSize: 15, lightMode: true
+        id: 'porcelain', name: 'Porcelain', bg: '#eef6ff', card: '#ffffff', accent: 'blue',
+        hFont: 'Plus Jakarta Sans', bFont: 'Plus Jakarta Sans', hColor: '#102033', bColor: '#496276', hSize: 26, bSize: 15, lightMode: true
       },
       {
-        id: 'slate', name: 'Slate', bg: '#f1f5f9', card: '#ffffff', accent: 'purple',
-        hFont: 'Montserrat', bFont: 'Montserrat', hColor: '#1e293b', bColor: '#475569', hSize: 26, bSize: 14, lightMode: true
+        id: 'alpine', name: 'Alpine', bg: '#eefdf8', card: '#f8fffc', accent: 'teal',
+        hFont: 'Lexend', bFont: 'Plus Jakarta Sans', hColor: '#073b34', bColor: '#3f635d', hSize: 25, bSize: 15, lightMode: true
       },
       {
-        id: 'sage', name: 'Sage', bg: '#ecfdf5', card: '#ffffff', accent: 'green',
-        hFont: 'Raleway', bFont: 'Plus Jakarta Sans', hColor: '#064e3b', bColor: '#374151', hSize: 26, bSize: 15, lightMode: true
+        id: 'lilac', name: 'Lilac', bg: '#f5f1ff', card: '#fffaff', accent: 'indigo',
+        hFont: 'Syne', bFont: 'DM Sans', hColor: '#2d2357', bColor: '#655d86', hSize: 27, bSize: 15, lightMode: true
       },
       {
-        id: 'warm', name: 'Warm', bg: '#fffbf0', card: '#fffff8', accent: 'gold',
-        hFont: 'Playfair Display', bFont: 'Lexend', hColor: '#1c1408', bColor: '#57534e', hSize: 28, bSize: 14, lightMode: true
+        id: 'champagne', name: 'Champagne', bg: '#fbf5e8', card: '#fffdf7', accent: 'amber',
+        hFont: 'Playfair Display', bFont: 'DM Sans', hColor: '#302412', bColor: '#6d604b', hSize: 28, bSize: 15, lightMode: true
       },
       {
-        id: 'blush', name: 'Blush', bg: '#fdf2f8', card: '#ffffff', accent: 'pink',
-        hFont: 'Cormorant Garamond', bFont: 'Plus Jakarta Sans', hColor: '#500724', bColor: '#6b7280', hSize: 30, bSize: 15, lightMode: true
+        id: 'rosequartz', name: 'Rose Quartz', bg: '#fff1f3', card: '#fffafa', accent: 'coral',
+        hFont: 'Cormorant Garamond', bFont: 'Plus Jakarta Sans', hColor: '#4b1720', bColor: '#76535b', hSize: 30, bSize: 15, lightMode: true
       },
       {
-        id: 'lexclean', name: 'Lexend', bg: '#f5f7fa', card: '#ffffff', accent: 'cyan',
-        hFont: 'Lexend', bFont: 'Lexend', hColor: '#0f172a', bColor: '#334155', hSize: 25, bSize: 14, lightMode: true
+        id: 'mist', name: 'Mist', bg: '#f0f4f8', card: '#fbfdff', accent: 'emerald',
+        hFont: 'Montserrat', bFont: 'Lexend', hColor: '#182231', bColor: '#536173', hSize: 26, bSize: 14, lightMode: true
       },
       // ── Dark themes ───────────────────────────────────────────────────
       {
-        id: 'ocean', name: 'Ocean', bg: '#030c1a', card: '#0a1830', accent: 'cyan',
-        hFont: 'Syne', bFont: 'Plus Jakarta Sans', hColor: '#e0f2fe', bColor: '#94a3b8', hSize: 26, bSize: 15, lightMode: false
+        id: 'graphite', name: 'Graphite', bg: '#070b12', card: '#111827', accent: 'blue',
+        hFont: 'Plus Jakarta Sans', bFont: 'Plus Jakarta Sans', hColor: '#f4f7fb', bColor: '#a4b1c2', hSize: 26, bSize: 15, lightMode: false
       },
       {
-        id: 'midnight', name: 'Midnight', bg: '#080c14', card: '#0f1724', accent: 'cyan',
-        hFont: 'Montserrat', bFont: 'Montserrat', hColor: '#f1f5f9', bColor: '#94a3b8', hSize: 26, bSize: 14, lightMode: false
+        id: 'aurora', name: 'Aurora', bg: '#041411', card: '#0b2420', accent: 'teal',
+        hFont: 'Syne', bFont: 'DM Sans', hColor: '#e6fffb', bColor: '#94c9c0', hSize: 27, bSize: 15, lightMode: false
       },
       {
-        id: 'nebula', name: 'Nebula', bg: '#0c0818', card: '#130d22', accent: 'purple',
-        hFont: 'Syne', bFont: 'Lexend', hColor: '#ede9fe', bColor: '#c4b5fd', hSize: 26, bSize: 14, lightMode: false
+        id: 'violet', name: 'Violet', bg: '#0d0a1f', card: '#17112d', accent: 'indigo',
+        hFont: 'Montserrat', bFont: 'Lexend', hColor: '#f0edff', bColor: '#beb7de', hSize: 26, bSize: 14, lightMode: false
       },
       {
-        id: 'forest', name: 'Forest', bg: '#030d07', card: '#071912', accent: 'green',
-        hFont: 'Raleway', bFont: 'Plus Jakarta Sans', hColor: '#d1fae5', bColor: '#a7c4ae', hSize: 26, bSize: 15, lightMode: false
+        id: 'noirrose', name: 'Noir Rose', bg: '#14070b', card: '#231018', accent: 'rose',
+        hFont: 'Cormorant Garamond', bFont: 'Plus Jakarta Sans', hColor: '#ffe8ef', bColor: '#d7aab8', hSize: 30, bSize: 15, lightMode: false
       },
       {
-        id: 'ember', name: 'Ember', bg: '#0f0700', card: '#1e1204', accent: 'gold',
-        hFont: 'Playfair Display', bFont: 'Lexend', hColor: '#fef3c7', bColor: '#d4ae6a', hSize: 28, bSize: 14, lightMode: false
+        id: 'copper', name: 'Copper', bg: '#120d08', card: '#21170f', accent: 'amber',
+        hFont: 'Playfair Display', bFont: 'DM Sans', hColor: '#fff4df', bColor: '#d0b894', hSize: 28, bSize: 15, lightMode: false
       },
       {
-        id: 'bloom', name: 'Bloom', bg: '#100614', card: '#1c0828', accent: 'pink',
-        hFont: 'Cormorant Garamond', bFont: 'Plus Jakarta Sans', hColor: '#fce7f3', bColor: '#d4a8c0', hSize: 30, bSize: 15, lightMode: false
+        id: 'deepsea', name: 'Deep Sea', bg: '#020f17', card: '#08212b', accent: 'emerald',
+        hFont: 'Raleway', bFont: 'Plus Jakarta Sans', hColor: '#e2fbf5', bColor: '#9abfb8', hSize: 26, bSize: 15, lightMode: false
       },
     ];
 
@@ -3822,26 +3881,9 @@
 
     function selectLayer(id) {
       selectedId = id;
-      renderLayers();
       switchRTab('field');
-      renderRightPanel();
-      // Update selected state on canvas cards without full re-render
-      document.querySelectorAll('.gsfc-card, .gsfc-page-break').forEach(card => {
-        const cid = card.id?.replace('canvas-card-', '');
-        const sel = cid === id;
-        card.classList.toggle('selected', sel);
-        // Show/hide the left selection bar for .gsfc-card
-        if (card.classList.contains('gsfc-card')) {
-          let bar = card.querySelector('.gsfc-card-sel-bar');
-          if (sel && !bar) {
-            bar = document.createElement('div');
-            bar.className = 'gsfc-card-sel-bar';
-            card.insertBefore(bar, card.firstChild);
-          } else if (!sel && bar) {
-            bar.remove();
-          }
-        }
-      });
+      renderLayers();
+      renderPreview();
       // Scroll the selected card into view
       document.getElementById('canvas-card-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -3982,8 +4024,17 @@
       const idx = fields.findIndex(f => f.id === selectedId);
       if (idx < 0) { selectedId = null; renderRightPanel(); return; }
       const f = fields[idx];
-      body.innerHTML = fieldEditor(f, idx, fields.length);
-      lucide.createIcons();
+      try {
+        body.innerHTML = fieldEditor(f, idx, fields.length);
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      } catch (err) {
+        console.error('[gs-form-builder] field editor render failed:', err);
+        body.innerHTML = `
+      <div class="gsfb-no-sel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p>Could not load this field's settings.<br>Please check the console for details.</p>
+      </div>`;
+      }
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -4531,6 +4582,14 @@
       reader.readAsDataURL(file);
     }
 
+    function rteDescExec(command) {
+      const el = document.getElementById('descRTE');
+      if (!el) return;
+      el.focus();
+      document.execCommand(command);
+      updateSetting('description', el.innerHTML);
+    }
+
     function rteDescInsertLink() {
       const el = document.getElementById('descRTE');
       if (!el) return;
@@ -4884,7 +4943,10 @@
     const COLORS = [
       { key: 'cyan', hex: '#00d4ff' }, { key: 'purple', hex: '#a78bfa' },
       { key: 'green', hex: '#10b981' }, { key: 'gold', hex: '#f59e0b' },
-      { key: 'pink', hex: '#ec4899' },
+      { key: 'pink', hex: '#ec4899' }, { key: 'blue', hex: '#2563eb' },
+      { key: 'teal', hex: '#0d9488' }, { key: 'indigo', hex: '#6366f1' },
+      { key: 'rose', hex: '#e11d48' }, { key: 'amber', hex: '#d97706' },
+      { key: 'emerald', hex: '#059669' }, { key: 'coral', hex: '#f43f5e' },
     ];
     function renderSettings() {
       const s = _S.config?.settings || {};
@@ -4917,13 +4979,13 @@
           <label class="gsfb-prop-label">Description</label>
           <div class="gsfb-rte-wrap">
             <div class="gsfb-rte-bar">
-              <button class="gsfb-rte-btn" title="Bold" onmousedown="event.preventDefault();document.execCommand('bold')"><strong>B</strong></button>
-              <button class="gsfb-rte-btn" title="Italic" onmousedown="event.preventDefault();document.execCommand('italic')"><em>I</em></button>
-              <button class="gsfb-rte-btn" title="Underline" onmousedown="event.preventDefault();document.execCommand('underline')"><u>U</u></button>
-              <button class="gsfb-rte-btn" title="Bullet list" onmousedown="event.preventDefault();document.execCommand('insertUnorderedList')">&#8226;&#8212;</button>
-              <button class="gsfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();document.execCommand('insertOrderedList')">1.</button>
+              <button class="gsfb-rte-btn" title="Bold" onmousedown="event.preventDefault();rteDescExec('bold')"><strong>B</strong></button>
+              <button class="gsfb-rte-btn" title="Italic" onmousedown="event.preventDefault();rteDescExec('italic')"><em>I</em></button>
+              <button class="gsfb-rte-btn" title="Underline" onmousedown="event.preventDefault();rteDescExec('underline')"><u>U</u></button>
+              <button class="gsfb-rte-btn" title="Bullet list" onmousedown="event.preventDefault();rteDescExec('insertUnorderedList')">&#8226;&#8212;</button>
+              <button class="gsfb-rte-btn" title="Numbered list" onmousedown="event.preventDefault();rteDescExec('insertOrderedList')">1.</button>
               <button class="gsfb-rte-btn" title="Insert link" onmousedown="event.preventDefault();rteDescInsertLink()">&#128279;</button>
-              <button class="gsfb-rte-btn" title="Remove formatting" onmousedown="event.preventDefault();document.execCommand('removeFormat');document.execCommand('unlink')">&#10005;</button>
+              <button class="gsfb-rte-btn" title="Remove formatting" onmousedown="event.preventDefault();rteDescExec('removeFormat');rteDescExec('unlink')">&#10005;</button>
             </div>
             <div class="gsfb-rte-body" contenteditable="true" id="descRTE"
                  oninput="updateSetting('description',this.innerHTML)"
