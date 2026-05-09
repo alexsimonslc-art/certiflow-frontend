@@ -5894,12 +5894,39 @@
       if (_pv.history && _pv.history.length) pvShowPage(_pv.history.pop());
     }
 
+    function pvIsOnLastPage() {
+      const remaining = _pv.pages.slice(_pv.page + 1);
+      if (!remaining.length) return true;
+      if (remaining.some(p => !p.pageConditions?.length)) return false;
+      const condFieldIds = new Set(
+        remaining.flatMap(p => (p.pageConditions || []).map(c => c.fieldId))
+      );
+      const anyAnswered = [...condFieldIds].some(fid => {
+        const val = _pv.vals[fid];
+        return Array.isArray(val) ? val.length > 0 : String(val || '').trim() !== '';
+      });
+      if (!anyAnswered) return false;
+      return !remaining.some(p => pvIsPageVisible(p));
+    }
+    function pvNavClick() {
+      if (pvIsOnLastPage()) pvFakeSubmit();
+      else pvNextPage();
+    }
+    function pvUpdateNavButton() {
+      const s = _S.config?.settings || {};
+      const last = pvIsOnLastPage();
+      const btn = document.getElementById('pvSubmitBtn');
+      if (!btn) return;
+      btn.innerHTML = (last
+        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>`
+        : '') + escHtml(last ? (s.submitLabel || 'Submit') : 'Next →');
+    }
+
     function pvShowPage(n, animate = true) {
       _pv.page = Math.max(0, Math.min(n, _pv.pages.length - 1));
       const page = _pv.pages[_pv.page] || { fields: [] };
       const total = _pv.pages.length;
       const isFirst = _pv.page === 0;
-      const isLast = !_pv.pages.slice(_pv.page + 1).some(p => pvIsPageVisible(p));
       const s = _S.config?.settings || {};
       const th = _S.config?.theme || {};
       const accent = ACCENT[th.color] || ACCENT.cyan;
@@ -5939,17 +5966,13 @@
         html += page.fields.map(f => pvRenderField(f, accSol)).join('');
       }
 
-      // Nav
-      const submitLabel = isLast ? (s.submitLabel || 'Submit') : 'Next &rarr;';
+      // Nav — label/onclick set by pvUpdateNavButton() after render
       const backVisible = !isFirst;
       const pageStatusText = total > 1 ? `<div style="text-align:center;font-size:12.5px;color:var(--text-3);margin-bottom:10px;font-weight:600;letter-spacing:0.5px;">Page ${_pv.page + 1} of ${total}</div>` : '';
       html += `${pageStatusText}<div class="gsfb-pv-nav">
     ${backVisible ? `<button class="gsfb-pv-back" onclick="pvPrevPage()">← Back</button>` : ''}
-    <button class="gsfb-pv-submit" style="background:${accent}"
-            onclick="${isLast ? 'pvFakeSubmit()' : 'pvNextPage()'}">
-      ${isLast
-          ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>`
-          : ''}${escHtml(submitLabel)}
+    <button id="pvSubmitBtn" class="gsfb-pv-submit" style="background:${accent}" onclick="pvNavClick()">
+      Next &rarr;
     </button>
   </div>`;
 
@@ -5968,6 +5991,7 @@
       }
       if (animate) { body.style.opacity = '0'; requestAnimationFrame(() => { body.style.transition = 'opacity 0.22s'; body.style.opacity = '1'; }); }
       pvEvalConditions();
+      pvUpdateNavButton();
     }
 
     function pvRenderField(f, accSol) {
@@ -6203,6 +6227,7 @@
         const visible = pvIsVisible(f);
         wrap.style.display = visible ? '' : 'none';
       });
+      pvUpdateNavButton();
     }
     function pvIsVisible(field) {
       if (!field.conditions?.length) return true;

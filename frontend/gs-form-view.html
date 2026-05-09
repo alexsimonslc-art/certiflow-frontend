@@ -2161,7 +2161,6 @@
       const page = _pages[n];
       const total = _pages.length;
       const isFirst = n === 0;
-      const isLast = !_pages.slice(n + 1).some(isPageVisible);
       const s = formConfig?.config?.settings || {};
 
       // Progress bar
@@ -2212,16 +2211,48 @@
       const backBtn = document.getElementById('backBtn');
       backBtn.style.display = isFirst ? 'none' : 'flex';
 
-      // Submit/Next button label + action
-      const labelEl = document.getElementById('submitLabel');
-      const btn = document.getElementById('submitBtn');
-      const passLabel = (isLast && s.passEnabled) ? (s.submitLabel || 'Submit & Get Pass') : null;
-      labelEl.textContent = passLabel || (isLast ? (s.submitLabel || 'Submit') : 'Next →');
-      btn.onclick = isLast ? handleSubmit : nextPage;
-      // Style change: next vs submit
-      btn.style.background = isLast ? 'var(--accent-grad)' : 'var(--accent-grad)';
+      // Submit/Next button — updated live by updateNavButton()
+      updateNavButton();
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /**
+     * Returns true when there are no more visible pages after the current one.
+     * If all remaining pages are conditional but their trigger fields haven't been
+     * answered yet, returns false so "Next" keeps showing until the user responds.
+     */
+    function isOnLastPage() {
+      const remaining = _pages.slice(_currentPage + 1);
+      if (!remaining.length) return true;
+
+      // If any remaining page has no conditions it's always reachable
+      if (remaining.some(p => !p.pageConditions || !p.pageConditions.length)) return false;
+
+      // All remaining pages are conditional — check if their trigger fields have answers
+      const condFieldIds = new Set(
+        remaining.flatMap(p => (p.pageConditions || []).map(c => c.fieldId))
+      );
+      const anyAnswered = [...condFieldIds].some(fid => {
+        const val = formValues[fid];
+        return Array.isArray(val) ? val.length > 0 : String(val || '').trim() !== '';
+      });
+      if (!anyAnswered) return false;  // unanswered → keep showing Next
+
+      // Trigger fields answered → evaluate actual page visibility
+      return !remaining.some(isPageVisible);
+    }
+
+    /** Update the Next/Submit button text and onclick based on current form state */
+    function updateNavButton() {
+      const s = formConfig?.config?.settings || {};
+      const last = isOnLastPage();
+      const labelEl = document.getElementById('submitLabel');
+      const btn = document.getElementById('submitBtn');
+      if (!labelEl || !btn) return;
+      const passLabel = (last && s.passEnabled) ? (s.submitLabel || 'Submit & Get Pass') : null;
+      labelEl.textContent = passLabel || (last ? (s.submitLabel || 'Submit') : 'Next →');
+      btn.onclick = last ? handleSubmit : nextPage;
     }
 
     function nextPage() {
@@ -3156,6 +3187,8 @@
           clearFieldValue(f);
         }
       });
+      // Re-evaluate Next/Submit button in case page conditions changed
+      updateNavButton();
     }
 
     /** Returns true if the field should be shown based on its conditions */
