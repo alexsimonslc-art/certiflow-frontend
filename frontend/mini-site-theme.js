@@ -294,72 +294,10 @@ function mst_renderOverlayPicker(blockId, currentOverlay) {
    rich visual layout: palette grid + font pairs + toggles.
 ═══════════════════════════════════════════════════════════════ */
 function mst_rebuildSiteSettings() {
-  const el = document.getElementById('rightSiteBody');
-  if (!el) return;
-  const c = MSState.config;
-
-  el.innerHTML = `
-
-  <!-- COLOUR THEMES -->
-  <div class="mse-props-section">
-    <div class="mse-props-sec-label" style="margin-bottom:10px">Colour Theme</div>
-    ${mst_renderPaletteGrid()}
-    <div style="margin-top:10px">
-      <div class="mse-prop-label" style="margin-bottom:7px">Custom Accent Colour</div>
-      <div class="mse-color-row">
-        <div class="mse-color-swatch" id="mstAccentSwatch" style="background:${c.accentColor || '#00d4ff'}">
-          <input type="color" id="mstAccentInput" value="${c.accentColor || '#00d4ff'}"
-            oninput="mst_onAccentChange(this.value)"/>
-        </div>
-        <input type="text" class="mse-prop-input" id="mstAccentHex" value="${c.accentColor || '#00d4ff'}"
-          placeholder="#00d4ff" maxlength="7"
-          oninput="if(/^#[0-9a-f]{6}$/i.test(this.value))mst_onAccentChange(this.value)" style="flex:1"/>
-      </div>
-    </div>
-  </div>
-
-  <!-- TYPOGRAPHY -->
-  <div class="mse-props-section" style="padding-top:14px">
-    <div class="mse-props-sec-label" style="margin-bottom:10px">Typography</div>
-    ${(typeof msd_typographySectionHtml === 'function')
-      ? `<div id="msd_fontPickerGrid">${(typeof msd_renderFontPickerGrid === 'function') ? msd_renderFontPickerGrid(c.fontFamily || 'Plus Jakarta Sans') : ''}</div>`
-      : ''}
-  </div>
-
-  <!-- FONT PAIRINGS -->
-  <div class="mse-props-section" style="padding-top:14px">
-    <div class="mse-props-sec-label" style="margin-bottom:10px">Font Pairings</div>
-    <div style="font-size:11.5px;color:var(--text-3);margin-bottom:8px;line-height:1.5">Quick presets — applies a curated heading + body combination</div>
-    ${mst_renderFontPairGrid()}
-  </div>
-
-  <!-- REGISTRATION -->
-  <div class="mse-props-section" style="padding-top:14px">
-    <div class="mse-props-sec-label">Registration</div>
-    <div class="mse-toggle-row" style="margin-top:8px">
-      <div>
-        <div style="font-size:13.5px;font-weight:600;color:var(--text)">Registrations Open</div>
-        <div style="font-size:12px;color:var(--text-3);margin-top:2px">Controls your form block's submit state</div>
-      </div>
-      <div class="mse-toggle ${c.registrationOpen !== false ? 'on' : ''}" id="mstRegToggle"
-        onclick="mst_toggleReg()"></div>
-    </div>
-  </div>
-
-  <!-- SITE INFO -->
-  <div class="mse-props-section" style="padding-top:14px;padding-bottom:16px">
-    <div class="mse-props-sec-label">Site Info</div>
-    <div class="mse-prop-row" style="margin-top:8px">
-      <div class="mse-prop-label">Site URL Slug</div>
-      <input type="text" class="mse-prop-input" id="mstSlugInput" value="${c.slug || ''}"
-        placeholder="my-event-2026"
-        oninput="mst_onSlugInput(this.value)"/>
-      <div style="font-size:11.5px;color:var(--cyan);margin-top:4px;font-family:var(--font-mono);word-break:break-all" id="mstSlugHint">${c.slug ? `${window.location.origin}/site.html?slug=${c.slug}` : `${window.location.origin}/site.html?slug=…`}</div>
-    </div>
-  </div>
-
-  `;
-  setTimeout(mst_wireCardHovers, 0);
+  // Delegate to the editor's populateSiteSettings which fills the new static HTML panel
+  if (typeof _mst_origPopulate === 'function') {
+    _mst_origPopulate();
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
