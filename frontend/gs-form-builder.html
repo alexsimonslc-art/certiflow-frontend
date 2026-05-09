@@ -2615,7 +2615,7 @@
       border-radius: 9px;
       width: 100%;
       min-height: 44px;
-      font-size: 15px;
+      font-size: var(--cc-text-size, 15px);
       color: var(--cc-text-3);
       font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
     }
@@ -2627,7 +2627,7 @@
       border-radius: 9px;
       width: 100%;
       min-height: 90px;
-      font-size: 15px;
+      font-size: var(--cc-text-size, 15px);
       color: var(--cc-text-3);
       font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
     }
@@ -2641,8 +2641,8 @@
       border-radius: 9px;
       background: rgba(255, 255, 255, 0.025);
       margin-bottom: 7px;
-      color: var(--cc-text-2);
-      font-size: 14.5px;
+      color: var(--cc-text-color, var(--cc-text-2));
+      font-size: var(--cc-text-size, 14.5px);
       font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
     }
 
@@ -2674,9 +2674,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      font-size: 15px;
-      color: var(--cc-text-3);
-      font-family: var(--font, 'Plus Jakarta Sans', sans-serif);
+      font-size: var(--cc-text-size, 15px);
+      color: var(--cc-text-color, var(--cc-text-3));
+      font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
     }
 
     .gsfc-upload-preview {
@@ -2700,15 +2700,15 @@
     .gsfc-scale-labels-row {
       display: flex;
       justify-content: space-between;
-      font-size: 11.5px;
-      color: var(--cc-text-3);
+      font-size: var(--cc-text-size, 11.5px);
+      color: var(--cc-text-color, var(--cc-text-3));
       margin-top: 6px;
     }
 
     .gsfc-scale-side-label {
-      font-size: 13px;
+      font-size: var(--cc-text-size, 13px);
       font-weight: 500;
-      color: var(--cc-text-3);
+      color: var(--cc-text-color, var(--cc-text-3));
     }
 
     .gsfc-scale-num {
@@ -2719,9 +2719,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      font-size: var(--cc-text-size, 13px);
       font-weight: 600;
-      color: var(--cc-text-3);
+      color: var(--cc-text-color, var(--cc-text-3));
       flex-shrink: 0;
     }
 
@@ -3657,55 +3657,67 @@
     let canvasTab = 'form';      // 'form' | 'pass'
 
     const PALETTES = [
-      // ── Light themes ──────────────────────────────────────────────────
+      // ── 9 Light themes ────────────────────────────────────────────────
       {
-        id: 'porcelain', name: 'Porcelain', bg: '#eef6ff', card: '#ffffff', accent: 'blue',
-        hFont: 'Plus Jakarta Sans', bFont: 'Plus Jakarta Sans', hColor: '#102033', bColor: '#496276', hSize: 26, bSize: 15, lightMode: true
+        id: 'porcelain', name: 'Porcelain', bg: '#edf5ff', card: '#ffffff', accent: 'blue', lightMode: true,
+        hFont: 'Plus Jakarta Sans', qFont: 'Plus Jakarta Sans', tFont: 'Plus Jakarta Sans',
+        hColor: '#0f2033', qColor: '#1e3a52', tColor: '#496276', hSize: 26, qSize: 15, tSize: 14,
       },
       {
-        id: 'alpine', name: 'Alpine', bg: '#eefdf8', card: '#f8fffc', accent: 'teal',
-        hFont: 'Lexend', bFont: 'Plus Jakarta Sans', hColor: '#073b34', bColor: '#3f635d', hSize: 25, bSize: 15, lightMode: true
+        id: 'sakura', name: 'Sakura', bg: '#fff4f7', card: '#fffbfc', accent: 'pink', lightMode: true,
+        hFont: 'Cormorant Garamond', qFont: 'Plus Jakarta Sans', tFont: 'Plus Jakarta Sans',
+        hColor: '#48141e', qColor: '#6a2836', tColor: '#8a4e5c', hSize: 34, qSize: 15, tSize: 14,
       },
       {
-        id: 'lilac', name: 'Lilac', bg: '#f5f1ff', card: '#fffaff', accent: 'indigo',
-        hFont: 'Syne', bFont: 'DM Sans', hColor: '#2d2357', bColor: '#655d86', hSize: 27, bSize: 15, lightMode: true
+        id: 'sage', name: 'Sage', bg: '#ecf7f1', card: '#f6fef9', accent: 'emerald', lightMode: true,
+        hFont: 'Lexend', qFont: 'Lexend', tFont: 'Plus Jakarta Sans',
+        hColor: '#0b3320', qColor: '#17503a', tColor: '#3d6b52', hSize: 25, qSize: 15, tSize: 14,
       },
       {
-        id: 'champagne', name: 'Champagne', bg: '#fbf5e8', card: '#fffdf7', accent: 'amber',
-        hFont: 'Playfair Display', bFont: 'DM Sans', hColor: '#302412', bColor: '#6d604b', hSize: 28, bSize: 15, lightMode: true
+        id: 'champagne', name: 'Champagne', bg: '#faf3e6', card: '#fffdf4', accent: 'amber', lightMode: true,
+        hFont: 'Playfair Display', qFont: 'DM Sans', tFont: 'DM Sans',
+        hColor: '#281a06', qColor: '#4a3010', tColor: '#6b5028', hSize: 30, qSize: 15, tSize: 14,
       },
       {
-        id: 'rosequartz', name: 'Rose Quartz', bg: '#fff1f3', card: '#fffafa', accent: 'coral',
-        hFont: 'Cormorant Garamond', bFont: 'Plus Jakarta Sans', hColor: '#4b1720', bColor: '#76535b', hSize: 30, bSize: 15, lightMode: true
+        id: 'lavender', name: 'Lavender', bg: '#f2f0ff', card: '#fdfcff', accent: 'indigo', lightMode: true,
+        hFont: 'Syne', qFont: 'DM Sans', tFont: 'DM Sans',
+        hColor: '#1c0e40', qColor: '#36266c', tColor: '#5c4e98', hSize: 27, qSize: 15, tSize: 14,
       },
       {
-        id: 'mist', name: 'Mist', bg: '#f0f4f8', card: '#fbfdff', accent: 'emerald',
-        hFont: 'Montserrat', bFont: 'Lexend', hColor: '#182231', bColor: '#536173', hSize: 26, bSize: 14, lightMode: true
-      },
-      // ── Dark themes ───────────────────────────────────────────────────
-      {
-        id: 'graphite', name: 'Graphite', bg: '#070b12', card: '#111827', accent: 'blue',
-        hFont: 'Plus Jakarta Sans', bFont: 'Plus Jakarta Sans', hColor: '#f4f7fb', bColor: '#a4b1c2', hSize: 26, bSize: 15, lightMode: false
+        id: 'arctic', name: 'Arctic', bg: '#eaf3fb', card: '#f4f9ff', accent: 'cyan', lightMode: true,
+        hFont: 'Montserrat', qFont: 'Plus Jakarta Sans', tFont: 'Plus Jakarta Sans',
+        hColor: '#08192e', qColor: '#163050', tColor: '#466080', hSize: 26, qSize: 15, tSize: 13,
       },
       {
-        id: 'aurora', name: 'Aurora', bg: '#041411', card: '#0b2420', accent: 'teal',
-        hFont: 'Syne', bFont: 'DM Sans', hColor: '#e6fffb', bColor: '#94c9c0', hSize: 27, bSize: 15, lightMode: false
+        id: 'terracotta', name: 'Terracotta', bg: '#fdf0e9', card: '#fff8f4', accent: 'coral', lightMode: true,
+        hFont: 'Raleway', qFont: 'Plus Jakarta Sans', tFont: 'Plus Jakarta Sans',
+        hColor: '#381004', qColor: '#581e0e', tColor: '#7a3e2a', hSize: 27, qSize: 15, tSize: 14,
       },
       {
-        id: 'violet', name: 'Violet', bg: '#0d0a1f', card: '#17112d', accent: 'indigo',
-        hFont: 'Montserrat', bFont: 'Lexend', hColor: '#f0edff', bColor: '#beb7de', hSize: 26, bSize: 14, lightMode: false
+        id: 'ivory', name: 'Ivory', bg: '#f7f4ee', card: '#fdfcf7', accent: 'gold', lightMode: true,
+        hFont: 'EB Garamond', qFont: 'DM Sans', tFont: 'DM Sans',
+        hColor: '#181208', qColor: '#30240e', tColor: '#685440', hSize: 36, qSize: 15, tSize: 14,
       },
       {
-        id: 'noirrose', name: 'Noir Rose', bg: '#14070b', card: '#231018', accent: 'rose',
-        hFont: 'Cormorant Garamond', bFont: 'Plus Jakarta Sans', hColor: '#ffe8ef', bColor: '#d7aab8', hSize: 30, bSize: 15, lightMode: false
+        id: 'slate', name: 'Slate', bg: '#eceff5', card: '#f4f6fb', accent: 'teal', lightMode: true,
+        hFont: 'Lexend', qFont: 'Lexend', tFont: 'Plus Jakarta Sans',
+        hColor: '#0e1828', qColor: '#20324a', tColor: '#485d70', hSize: 24, qSize: 14, tSize: 13,
+      },
+      // ── 3 Dark themes ─────────────────────────────────────────────────
+      {
+        id: 'graphite', name: 'Graphite', bg: '#07090f', card: '#111827', accent: 'blue', lightMode: false,
+        hFont: 'Plus Jakarta Sans', qFont: 'Plus Jakarta Sans', tFont: 'Plus Jakarta Sans',
+        hColor: '#eef4ff', qColor: '#c8d8ed', tColor: '#7a90b0', hSize: 26, qSize: 15, tSize: 14,
       },
       {
-        id: 'copper', name: 'Copper', bg: '#120d08', card: '#21170f', accent: 'amber',
-        hFont: 'Playfair Display', bFont: 'DM Sans', hColor: '#fff4df', bColor: '#d0b894', hSize: 28, bSize: 15, lightMode: false
+        id: 'cosmos', name: 'Cosmos', bg: '#060a18', card: '#0d1630', accent: 'purple', lightMode: false,
+        hFont: 'Syne', qFont: 'DM Sans', tFont: 'DM Sans',
+        hColor: '#f0ecff', qColor: '#d0c4f4', tColor: '#9080c0', hSize: 28, qSize: 15, tSize: 14,
       },
       {
-        id: 'deepsea', name: 'Deep Sea', bg: '#020f17', card: '#08212b', accent: 'emerald',
-        hFont: 'Raleway', bFont: 'Plus Jakarta Sans', hColor: '#e2fbf5', bColor: '#9abfb8', hSize: 26, bSize: 15, lightMode: false
+        id: 'obsidian', name: 'Obsidian', bg: '#090909', card: '#171717', accent: 'amber', lightMode: false,
+        hFont: 'Montserrat', qFont: 'Plus Jakarta Sans', tFont: 'Plus Jakarta Sans',
+        hColor: '#f4f0e8', qColor: '#d8c8a0', tColor: '#a89060', hSize: 26, qSize: 15, tSize: 14,
       },
     ];
 
@@ -4997,9 +5009,11 @@
       if (!p) return;
       _S.updateTheme({
         pageColor: p.bg, cardColor: p.card, color: p.accent, lightMode: p.lightMode,
-        headingFont: p.hFont, bodyFont: p.bFont, questionFont: p.bFont, textFont: p.bFont,
-        headerFontColor: p.hColor, bodyFontColor: p.bColor,
-        headerFontSize: p.hSize, bodyFontSize: p.bSize,
+        headingFont: p.hFont, bodyFont: p.qFont, questionFont: p.qFont, textFont: p.tFont,
+        headerFontColor: p.hColor, bodyFontColor: p.qColor,
+        headerFontSize: p.hSize, bodyFontSize: p.qSize,
+        questionFontColor: p.qColor, questionFontSize: p.qSize,
+        textFontColor: p.tColor, textFontSize: p.tSize,
       });
       setSaveStatus('unsaved');
       applyCanvasTheme();
@@ -5149,7 +5163,7 @@
           ${[
             ['Title',     'headerFontSize',   th.headerFontSize   || 26, 16, 48, 'headerFontColor',   th.headerFontColor,   th.lightMode ? '#111827' : '#eef4ff'],
             ['Questions', 'questionFontSize',  th.questionFontSize || 15, 11, 26, 'questionFontColor', th.questionFontColor, th.lightMode ? '#111827' : '#eef4ff'],
-            ['Text',      'textFontSize',      th.textFontSize     || 15, 11, 22, 'textFontColor',     th.textFontColor,     th.lightMode ? '#374151' : '#98b0cc'],
+            ['Text',      'textFontSize',      th.textFontSize     || 14, 11, 15, 'textFontColor',     th.textFontColor,     th.lightMode ? '#374151' : '#98b0cc'],
           ].map(([lbl, sk, sv, smin, smax, ck, cv, cf]) => `
             <div>
               <div style="font-size:10.5px;font-weight:700;color:var(--text-3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px">${lbl}</div>
