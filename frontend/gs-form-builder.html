@@ -3956,9 +3956,8 @@
       document.getElementById('rtabPassBody').style.display = tab === 'pass' ? '' : 'none';
 
       if (tab === 'field') {
-        renderFieldEditor();
+        renderRightPanel();
       } else if (tab === 'settings') {
-        renderSettingsPanel();
         renderSettings();
       } else if (tab === 'pass') {
         if (_S.config?.settings?.passEnabled && canvasTab !== 'pass') {
