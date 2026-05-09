@@ -105,79 +105,247 @@
     /* Forms grid */
     .gsf-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
     }
 
-    /* Form card */
+    /* Form card — Google-Forms-style thumbnail card */
     .gsf-card {
       background: rgba(255, 255, 255, 0.035);
       backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.09);
-      border-radius: 18px;
-      padding: 22px 22px 18px;
+      border-radius: 14px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      cursor: pointer;
       transition: all 0.22s var(--ease);
       position: relative;
     }
 
-    .gsf-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
-      border-radius: inherit;
-      pointer-events: none;
-    }
-
     .gsf-card:hover {
-      border-color: rgba(255, 255, 255, 0.16);
-      transform: translateY(-2px);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+      border-color: rgba(255, 255, 255, 0.18);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 52px rgba(0, 0, 0, 0.4);
     }
 
-    .gsf-card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .gsf-card-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* Preview thumbnail */
+    .gsf-thumb {
+      width: 100%;
+      height: 158px;
+      overflow: hidden;
+      position: relative;
       flex-shrink: 0;
     }
 
-    .gsf-card-icon svg {
-      width: 19px;
-      height: 19px;
+    .gsf-thumb-accent {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      z-index: 1;
     }
 
-    .gsf-card-icon.cyan {
-      background: var(--cyan-dim);
-      color: var(--cyan);
+    .gsf-thumb-inner {
+      position: absolute;
+      inset: 17px 14px 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 7px;
+      padding: 10px 12px 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .gsf-card-icon.purple {
-      background: var(--purple-dim);
-      color: #a78bfa;
+    .gsf-thumb-form-title {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.88);
+      margin-bottom: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.01em;
     }
 
-    .gsf-card-icon.green {
-      background: var(--green-dim);
-      color: var(--green);
+    .gsf-thumb-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+      margin-bottom: 7px;
     }
 
-    .gsf-card-icon.gold {
-      background: var(--gold-dim);
-      color: var(--gold);
+    .gsf-thumb-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .gsf-thumb-field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .gsf-thumb-field-label {
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.28);
+      width: 55%;
+    }
+
+    .gsf-thumb-field-input {
+      height: 13px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    /* Card info bottom */
+    .gsf-card-info {
+      padding: 11px 13px 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .gsf-card-info-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .gsf-card-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gsf-card-resp-count {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 2px;
+      display: block;
+    }
+
+    .gsf-card-info-side {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    /* 3-dot button */
+    .gsf-menu-wrap {
+      position: relative;
+    }
+
+    .gsf-dots-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.14s, color 0.14s;
+    }
+
+    .gsf-dots-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--text);
+    }
+
+    /* Dropdown menu */
+    .gsf-card-menu {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      right: 0;
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 11px;
+      overflow: hidden;
+      min-width: 148px;
+      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.55);
+      z-index: 1000;
+      animation: gsf-menu-in 0.13s ease;
+    }
+
+    @keyframes gsf-menu-in {
+      from { opacity: 0; transform: scale(0.92) translateY(5px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .gsf-menu-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s;
+      font-family: var(--font);
+      text-align: left;
+    }
+
+    .gsf-menu-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text);
+    }
+
+    .gsf-menu-item.danger { color: var(--red); }
+    .gsf-menu-item.danger:hover { background: var(--red-dim); }
+
+    /* Rename modal */
+    .gsf-rename-modal {
+      background: #080f1e;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 30px 28px 24px;
+      width: 420px;
+      max-width: 95%;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+      animation: slideUp 0.22s var(--ease) both;
+    }
+
+    .gsf-rename-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+
+    .gsf-rename-input {
+      width: 100%;
+      background: var(--glass);
+      border: 1px solid var(--glass-border-2);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      color: var(--text);
+      font-family: var(--font);
+      outline: none;
+      box-sizing: border-box;
+      margin-bottom: 18px;
+      transition: border-color 0.15s;
+    }
+
+    .gsf-rename-input:focus { border-color: var(--cyan); }
+
+    .gsf-rename-btns {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
     }
 
     .gsf-status {
@@ -227,116 +395,6 @@
 
     .gsf-status.closed .gsf-status-dot {
       background: var(--red);
-    }
-
-    .gsf-card-name {
-      font-family: var(--font-display);
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.3;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .gsf-card-meta {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 12.5px;
-      color: var(--text-3);
-    }
-
-    .gsf-card-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .gsf-card-meta-item svg {
-      width: 13px;
-      height: 13px;
-    }
-
-    .gsf-card-responses {
-      font-size: 22px;
-      font-weight: 700;
-      font-family: var(--font-display);
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .gsf-card-responses span {
-      font-size: 12px;
-      color: var(--text-3);
-      font-family: var(--font);
-      font-weight: 400;
-      margin-left: 4px;
-    }
-
-    .gsf-card-footer {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-    }
-
-    .gsf-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border-radius: 9px;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      border: none;
-      font-family: var(--font);
-      flex-shrink: 0;
-    }
-
-    .gsf-btn svg {
-      width: 13px;
-      height: 13px;
-    }
-
-    .gsf-btn-primary {
-      background: var(--grad-primary);
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(0, 212, 255, 0.15);
-    }
-
-    .gsf-btn-primary:hover {
-      box-shadow: 0 6px 24px rgba(0, 212, 255, 0.3);
-    }
-
-    .gsf-btn-ghost {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      color: var(--text-2);
-    }
-
-    .gsf-btn-ghost:hover {
-      color: var(--text);
-      border-color: var(--glass-border-2);
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .gsf-btn-danger-ghost {
-      background: transparent;
-      color: var(--text-3);
-      padding: 8px;
-    }
-
-    .gsf-btn-danger-ghost:hover {
-      color: var(--red);
-      background: var(--red-dim);
-      border-radius: 8px;
     }
 
     .gsf-link-btn {
@@ -1143,6 +1201,19 @@
     </div>
   </div>
 
+  <!-- ── Rename Modal ───────────────────────────────────────────────── -->
+  <div class="gsf-modal-overlay" id="renameModal" onclick="if(event.target===this)closeRenameModal()">
+    <div class="gsf-rename-modal">
+      <div class="gsf-rename-title">Rename form</div>
+      <input class="gsf-rename-input" id="renameInput" type="text" placeholder="Form name"
+        onkeydown="if(event.key==='Enter')confirmRename();if(event.key==='Escape')closeRenameModal()" />
+      <div class="gsf-rename-btns">
+        <button class="btn btn-secondary btn-sm" onclick="closeRenameModal()">Cancel</button>
+        <button class="btn btn-primary btn-sm" onclick="confirmRename()" id="renameConfirmBtn">Rename</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="dashboard.js"></script>
   <script src="gs-form-state.js"></script>
@@ -1156,6 +1227,7 @@
     let _allForms = [];  // full list from localStorage + backend sync
     let _selectedTpl = 'blank';
     let _deleteTargetId = null;
+    let _renameTargetId = null;
     let _activeFilter = 'all';
 
     /* ── Load forms on boot ─────────────────────────────────────────── */
@@ -1245,126 +1317,69 @@
     };
 
     function formCard(f) {
-      const tpl = f.config?.meta?.template || 'blank';
-      const icon = ICON_BY_TEMPLATE[tpl] || 'file-text';
-      const color = COLOR_BY_TEMPLATE[tpl] || 'cyan';
       const status = f.status || 'draft';
       const count = f.submission_count || 0;
-      const fields = (f.config?.fields || []).length;
-      const maxSub = f.config?.settings?.maxSubmissions || 0;
-      const closeDate = f.config?.settings?.closeDate || '';
-      const updated = f.updated_at ? new Date(f.updated_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' }) : '—';
-      const isPublished = status === 'published';
-      const isClosed = status === 'closed';
-      const slug = f.slug || '';
-      const pubUrl = `gs-form-view.html?f=${slug}`;
-      const origin = window.location.origin;
-      const fullUrl = `${origin}/${pubUrl}`;
+      const formFields = (f.config?.fields || []).filter(fi => fi.type !== 'section_break');
 
-      // Max responses progress bar
-      let progressHtml = '';
-      if (maxSub > 0 && count > 0) {
-        const pct = Math.min(100, Math.round((count / maxSub) * 100));
-        const color = pct >= 100 ? '#f43f5e' : pct >= 80 ? '#f59e0b' : '#10b981';
-        progressHtml = `
-        <div class="gsf-responses-bar-wrap">
-          <div class="gsf-responses-bar-label">
-            <span>${count} responses</span>
-            <span>${count} / ${maxSub}</span>
-          </div>
-          <div class="gsf-responses-bar-track">
-            <div class="gsf-responses-bar-fill" style="width:${pct}%;background:${color}"></div>
-          </div>
-        </div>`;
-      } else if (count > 0) {
-        progressHtml = `
-        <div class="gsf-card-responses">${count}<span>response${count !== 1 ? 's' : ''}</span></div>`;
-      }
+      // Theme colors for the preview thumbnail
+      const th = f.config?.settings?.theme || {};
+      const previewBg = th.backgroundColor || '#0d0d1a';
+      const previewAccent = th.accentColor || '#00d4ff';
 
-      // Close date badge
-      let closeDateHtml = '';
-      if (closeDate && isPublished) {
-        const cd = new Date(closeDate);
-        const now = new Date();
-        const daysLeft = Math.ceil((cd - now) / 86400000);
-        const label = cd < now ? 'Closed ' + cd.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
-          : daysLeft <= 3 ? `Closes in ${daysLeft}d`
-            : 'Closes ' + cd.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-        const soon = daysLeft <= 3 && cd > now;
-        closeDateHtml = `
-        <div class="gsf-closedate-badge${soon ? ' soon' : ''}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          ${label}
+      // Build 3-4 field skeleton rows from real field labels
+      const skeletonFields = formFields.slice(0, 4).map(fi => {
+        const lbl = escHtml((fi.label || 'Field').substring(0, 24));
+        return `<div class="gsf-thumb-field">
+          <div class="gsf-thumb-field-label" title="${lbl}"></div>
+          <div class="gsf-thumb-field-input"></div>
         </div>`;
-      }
+      }).join('') || `
+        <div class="gsf-thumb-field"><div class="gsf-thumb-field-label" style="width:58%"></div><div class="gsf-thumb-field-input"></div></div>
+        <div class="gsf-thumb-field"><div class="gsf-thumb-field-label" style="width:42%"></div><div class="gsf-thumb-field-input"></div></div>
+        <div class="gsf-thumb-field"><div class="gsf-thumb-field-label" style="width:66%"></div><div class="gsf-thumb-field-input"></div></div>`;
+
+      const responseText = count > 0
+        ? `<span class="gsf-card-resp-count">${count} response${count !== 1 ? 's' : ''}</span>`
+        : '';
 
       return `
-    <div class="gsf-card" id="card-${f.id}">
-      <div class="gsf-card-top">
-        <div class="gsf-card-icon ${color}">
-          <i data-lucide="${icon}"></i>
-        </div>
-        <div class="gsf-status ${status}">
-          <div class="gsf-status-dot"></div>
-          ${STATUS_LABELS[status] || status}
+    <div class="gsf-card" id="card-${f.id}" onclick="editForm('${f.id}')">
+      <div class="gsf-thumb" style="background:${previewBg}">
+        <div class="gsf-thumb-accent" style="background:${previewAccent}"></div>
+        <div class="gsf-thumb-inner">
+          <div class="gsf-thumb-form-title">${escHtml(f.name)}</div>
+          <div class="gsf-thumb-divider"></div>
+          <div class="gsf-thumb-fields">${skeletonFields}</div>
         </div>
       </div>
- 
-      <div class="gsf-card-name">${escHtml(f.name)}</div>
- 
-      <div class="gsf-card-meta">
-        <div class="gsf-card-meta-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-          ${fields} field${fields !== 1 ? 's' : ''}
+      <div class="gsf-card-info">
+        <div class="gsf-card-info-main">
+          <div class="gsf-card-name">${escHtml(f.name)}</div>
+          ${responseText}
         </div>
-        <div class="gsf-card-meta-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          ${updated}
+        <div class="gsf-card-info-side">
+          <div class="gsf-status ${status}">
+            <div class="gsf-status-dot"></div>
+            ${STATUS_LABELS[status] || status}
+          </div>
+          <div class="gsf-menu-wrap" onclick="event.stopPropagation()">
+            <button class="gsf-dots-btn" onclick="toggleCardMenu('${f.id}')" id="dotsbtn-${f.id}" title="More options">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+                <circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/>
+              </svg>
+            </button>
+            <div class="gsf-card-menu" id="menu-${f.id}" style="display:none">
+              <button class="gsf-menu-item" onclick="startRename('${f.id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Rename
+              </button>
+              <button class="gsf-menu-item danger" onclick="openDeleteModal('${f.id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
-        ${closeDateHtml}
-      </div>
- 
-      ${progressHtml}
- 
-      <div class="gsf-card-footer">
-        <button class="gsf-btn gsf-btn-primary" onclick="editForm('${f.id}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          Edit
-        </button>
- 
-        ${isPublished ? `
-        <button class="gsf-link-btn" onclick="copyLink('${fullUrl}','${f.id}')" id="copybtn-${f.id}" title="Copy form link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          Copy Link
-        </button>
-        <button class="gsf-btn gsf-btn-ghost" onclick="openQR(this)" data-form-id="${f.id}" data-form-name="${escAttr(f.name)}" data-form-url="${escAttr(fullUrl)}" title="QR Code" style="padding:7px 9px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="10" y="10" width="2" height="2"/><rect x="14" y="14" width="7" height="7"/></svg>
-        </button>` : ''}
- 
-        ${(isPublished || isClosed) ? `
-        <button class="gsf-close-btn ${isClosed ? 'reopen' : 'close'}" onclick="toggleFormClose('${f.id}','${status}')" id="closebtn-${f.id}">
-          ${isClosed
-            ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Re-open`
-            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Close`}
-        </button>` : ''}
- 
-        ${(isPublished || isClosed) && count > 0 ? `
-        <button class="gsf-btn" onclick="window.location.href='gs-database-view.html?form=${f.id}'"
-                style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--cyan);gap:5px"
-                title="View submissions data">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Data
-        </button>` : ''}
-        ${isPublished && f.config?.settings?.passShowAttendance ? `
-        <a href="gs-scanner.html?scan=1&form=${encodeURIComponent(slug)}" target="_blank"
-           class="gsf-btn" style="background:rgba(16,185,129,0.09);border:1px solid rgba(16,185,129,0.25);color:var(--green);gap:5px;text-decoration:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="10" y="10" width="2" height="2"/><rect x="14" y="14" width="7" height="7"/></svg>
-          Scanner
-        </a>` : ''}
-        <div style="flex:1"></div>
-        <button class="gsf-btn gsf-btn-danger-ghost" onclick="openDeleteModal('${f.id}')" title="Delete form">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-        </button>
       </div>
     </div>`;
     }
@@ -1497,6 +1512,68 @@
     function closeDeleteModal() {
       document.getElementById('deleteModal').classList.remove('open');
       _deleteTargetId = null;
+    }
+
+    /* ── Card 3-dot menu ─────────────────────────────────────────────── */
+    function toggleCardMenu(id) {
+      const menu = document.getElementById('menu-' + id);
+      if (!menu) return;
+      const isOpen = menu.style.display !== 'none';
+      closeAllCardMenus();
+      if (!isOpen) menu.style.display = '';
+    }
+
+    function closeAllCardMenus() {
+      document.querySelectorAll('.gsf-card-menu').forEach(m => m.style.display = 'none');
+    }
+
+    document.addEventListener('click', closeAllCardMenus);
+
+    /* ── Rename ──────────────────────────────────────────────────────── */
+    function startRename(id) {
+      _renameTargetId = id;
+      const form = _allForms.find(f => f.id === id);
+      if (!form) return;
+      closeAllCardMenus();
+      document.getElementById('renameInput').value = form.name;
+      document.getElementById('renameModal').classList.add('open');
+      setTimeout(() => {
+        const inp = document.getElementById('renameInput');
+        inp.focus(); inp.select();
+      }, 80);
+    }
+
+    function closeRenameModal() {
+      document.getElementById('renameModal').classList.remove('open');
+      _renameTargetId = null;
+    }
+
+    async function confirmRename() {
+      if (!_renameTargetId) return;
+      const newName = document.getElementById('renameInput').value.trim();
+      if (!newName) { toast('Name cannot be empty', 'warn'); return; }
+
+      const btn = document.getElementById('renameConfirmBtn');
+      btn.textContent = 'Saving…'; btn.disabled = true;
+
+      // Update locally
+      const forms = JSON.parse(localStorage.getItem(gsf_storageKey()) || '[]');
+      const idx = forms.findIndex(f => f.id === _renameTargetId);
+      if (idx > -1) forms[idx].name = newName;
+      localStorage.setItem(gsf_storageKey(), JSON.stringify(forms));
+      _allForms = forms;
+
+      // Try backend (fire-and-forget)
+      fetch(`https://certiflow-backend-73xk.onrender.com/api/gsforms/rename/${_renameTargetId}`, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + gsf_getToken(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newName })
+      }).catch(() => {});
+
+      closeRenameModal();
+      renderGrid();
+      toast('Form renamed', 'success', 2000);
+      btn.textContent = 'Rename'; btn.disabled = false;
     }
 
     async function confirmDelete() {
