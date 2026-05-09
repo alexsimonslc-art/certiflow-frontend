@@ -650,6 +650,22 @@
       opacity: 0.7;
     }
 
+    .gsfv-upload-progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: -60%;
+      width: 60%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      border-radius: 2px;
+      animation: gsfv-slide-progress 1.4s ease-in-out infinite;
+    }
+
+    @keyframes gsfv-slide-progress {
+      0%   { left: -60%; }
+      100% { left: 110%; }
+    }
+
     .gsfv-upload-zone input[type="file"] {
       position: absolute;
       inset: 0;
@@ -1936,6 +1952,7 @@
     let formSlug = '';
     let formValues = {};      // { fieldId: value }
     let fileObjects = {};      // { fieldId: File } — for upload fields
+    const _uploadingFields = new Set(); // fieldIds currently being uploaded
     let accent = ACCENTS.cyan;
 
     /* ════════════════════════════════════════════════════════════════
@@ -2293,6 +2310,13 @@
 
     function nextPage() {
       if (!validate()) return;
+      // Block navigation if any file on this page is still uploading
+      const page = _pages[_currentPage] || { fields: [] };
+      const uploading = page.fields.find(f => f.type === 'file_upload' && _uploadingFields.has(f.id));
+      if (uploading) {
+        showFieldError(uploading.id, 'File is uploading, please wait…');
+        return;
+      }
       let next = _currentPage + 1;
       while (next < _pages.length && !isPageVisible(_pages[next])) next++;
       if (next < _pages.length) {
@@ -2741,10 +2765,16 @@
             break;
           }
           case 'file_upload': {
+            const zone = document.getElementById('fi-' + f.id);
             const prev = document.getElementById('fp-' + f.id);
             const nameEl = document.getElementById('fn-' + f.id);
-            if (prev) prev.style.display = '';
-            if (nameEl) nameEl.textContent = typeof val === 'string' && val.startsWith('http') ? 'File uploaded ✓' : String(val);
+            const uploaded = typeof val === 'string' && (val.startsWith('http') || val);
+            if (zone) zone.style.display = uploaded ? 'none' : '';
+            if (prev) prev.style.display = uploaded ? '' : 'none';
+            if (nameEl && uploaded) {
+              const fo = fileObjects[f.id];
+              nameEl.textContent = fo ? `${fo.name} (${(fo.size / 1024 / 1024).toFixed(1)} MB) ✓` : 'File uploaded ✓';
+            }
             break;
           }
         }
@@ -2862,13 +2892,20 @@
       }
       clearErr(fieldId);
 
-      // Show uploading state
+      // Show uploading state — lock zone and show progress bar
       const zone = document.getElementById('fi-' + fieldId);
       const prev = document.getElementById('fp-' + fieldId);
       const nameEl = document.getElementById('fn-' + fieldId);
-      if (zone) zone.dataset.uploading = '1';
+      if (zone) {
+        zone.dataset.uploading = '1';
+        const bar = document.createElement('div');
+        bar.className = 'gsfv-upload-progress-bar';
+        bar.id = 'upbar-' + fieldId;
+        zone.appendChild(bar);
+      }
       if (prev) prev.style.display = '';
       if (nameEl) nameEl.textContent = `Uploading ${file.name}…`;
+      _uploadingFields.add(fieldId);
 
       try {
         const fd = new FormData();
@@ -2884,12 +2921,15 @@
         // Store Drive URL so it gets written to the Sheet on submit
         formValues[fieldId] = json.driveUrl || file.name;
         fileObjects[fieldId] = file;
-        if (zone) delete zone.dataset.uploading;
+        _uploadingFields.delete(fieldId);
+        // Hide the drop zone — show only the file name bar
+        if (zone) { zone.style.display = 'none'; document.getElementById('upbar-' + fieldId)?.remove(); }
         if (nameEl) nameEl.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB) ✓`;
       } catch (err) {
         formValues[fieldId] = '';
         delete fileObjects[fieldId];
-        if (zone) delete zone.dataset.uploading;
+        _uploadingFields.delete(fieldId);
+        if (zone) { delete zone.dataset.uploading; zone.style.display = ''; document.getElementById('upbar-' + fieldId)?.remove(); }
         if (prev) prev.style.display = 'none';
         showFieldError(fieldId, err.message || 'File upload failed. Please try again.');
         input.value = '';
@@ -3319,7 +3359,9 @@
           break;
         }
         case 'file_upload': {
+          const zone = document.getElementById('fi-' + fid);
           const prev = document.getElementById('fp-' + fid);
+          if (zone) zone.style.display = '';
           if (prev) prev.style.display = 'none';
           break;
         }
@@ -3484,7 +3526,7 @@
       ctx.textAlign = 'left';
       ctx.font = 'bold 22px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = '#ffffff';
-      ctx.fillText('NAME : ' + (pass.attendeeName || '—'), 24, QB + 28);
+      ctx.fillText('NAME : ' + (pass.attendeeName || '—'), 24, QB + 48);
 
       // Sub Field
       const subLabel = cfg.subFieldLabel || '';
@@ -3492,11 +3534,11 @@
       if (subLabel) {
         ctx.font = '14px "Plus Jakarta Sans",sans-serif';
         ctx.fillStyle = 'rgba(255,255,255,0.62)';
-        ctx.fillText(subLabel + ' : ' + (subValue || '—'), 24, QB + 50);
+        ctx.fillText(subLabel + ' : ' + (subValue || '—'), 24, QB + 70);
       }
 
       // Dashed separator 2
-      const SEP2 = QB + (subLabel ? 68 : 50);
+      const SEP2 = QB + (subLabel ? 88 : 70);
       ctx.save();
       ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.setLineDash([7, 5]);
       ctx.beginPath(); ctx.moveTo(24, SEP2); ctx.lineTo(W - 24, SEP2); ctx.stroke();
