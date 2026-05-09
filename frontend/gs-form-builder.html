@@ -2427,6 +2427,10 @@
       --cc-body-size: 15px;
       --cc-header-color: var(--cc-text);
       --cc-body-color: var(--cc-text-2);
+      --cc-question-size: 15px;
+      --cc-question-color: var(--cc-text);
+      --cc-text-size: 15px;
+      --cc-text-color: var(--cc-text-2);
       font-family: var(--font, 'Plus Jakarta Sans', sans-serif);
     }
 
@@ -2553,10 +2557,10 @@
     }
 
     .gsfc-card-label {
-      font-size: var(--cc-body-size, 15px);
+      font-size: var(--cc-question-size, 15px);
       font-weight: 600;
       font-family: var(--font-question, var(--font, 'Plus Jakarta Sans', sans-serif));
-      color: var(--cc-text);
+      color: var(--cc-question-color, var(--cc-text));
       margin-bottom: 6px;
       user-select: none;
       pointer-events: none;
@@ -2564,9 +2568,9 @@
     }
 
     .gsfc-card-desc {
-      font-size: calc(var(--cc-body-size, 15px) - 1px);
+      font-size: calc(var(--cc-text-size, 15px) - 1px);
       font-family: var(--font-text, var(--font, 'Plus Jakarta Sans', sans-serif));
-      color: var(--cc-text-2);
+      color: var(--cc-text-color, var(--cc-text-2));
       line-height: 1.55;
       margin-bottom: 10px;
       user-select: none;
@@ -2646,7 +2650,8 @@
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.45);
+      border: 2px solid var(--cc-input-border);
+      background: var(--cc-input-bg);
       flex-shrink: 0;
     }
 
@@ -2654,7 +2659,8 @@
       width: 18px;
       height: 18px;
       border-radius: 5px;
-      border: 2px solid rgba(255, 255, 255, 0.45);
+      border: 2px solid var(--cc-input-border);
+      background: var(--cc-input-bg);
       flex-shrink: 0;
     }
 
@@ -4472,6 +4478,14 @@
       else canvas.style.removeProperty('--cc-header-color');
       if (th.bodyFontColor) canvas.style.setProperty('--cc-body-color', th.bodyFontColor);
       else canvas.style.removeProperty('--cc-body-color');
+      if (th.questionFontSize) canvas.style.setProperty('--cc-question-size', th.questionFontSize + 'px');
+      else canvas.style.removeProperty('--cc-question-size');
+      if (th.questionFontColor) canvas.style.setProperty('--cc-question-color', th.questionFontColor);
+      else canvas.style.removeProperty('--cc-question-color');
+      if (th.textFontSize) canvas.style.setProperty('--cc-text-size', th.textFontSize + 'px');
+      else canvas.style.removeProperty('--cc-text-size');
+      if (th.textFontColor) canvas.style.setProperty('--cc-text-color', th.textFontColor);
+      else canvas.style.removeProperty('--cc-text-color');
       const hf = th.headingFont || 'Syne';
       const qf = th.questionFont || th.bodyFont || 'Plus Jakarta Sans';
       const tf = th.textFont || th.bodyFont || 'Plus Jakarta Sans';
@@ -5131,33 +5145,24 @@
             ${TEXT_FONTS.map(f => `<option value="${f}" ${(th.textFont || th.bodyFont || 'Plus Jakarta Sans') === f ? 'selected' : ''}>${f}</option>`).join('')}
           </select>
         </div>
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
-          <div class="gsfb-prop" style="margin-bottom:0">
-            <label class="gsfb-prop-label">Header Size</label>
-            <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="range" min="16" max="48" value="${th.headerFontSize || 26}" style="flex:1;min-width:0;accent-color:var(--cyan)"
-                     oninput="updateThemeLive('headerFontSize',+this.value);this.nextElementSibling.textContent=this.value+'px'"/>
-              <span style="font-size:11px;color:var(--text-2);min-width:32px;text-align:right;flex-shrink:0">${th.headerFontSize || 26}px</span>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+          ${[
+            ['Title',     'headerFontSize',   th.headerFontSize   || 26, 16, 48, 'headerFontColor',   th.headerFontColor,   th.lightMode ? '#111827' : '#eef4ff'],
+            ['Questions', 'questionFontSize',  th.questionFontSize || 15, 11, 26, 'questionFontColor', th.questionFontColor, th.lightMode ? '#111827' : '#eef4ff'],
+            ['Text',      'textFontSize',      th.textFontSize     || 15, 11, 22, 'textFontColor',     th.textFontColor,     th.lightMode ? '#374151' : '#98b0cc'],
+          ].map(([lbl, sk, sv, smin, smax, ck, cv, cf]) => `
+            <div>
+              <div style="font-size:10.5px;font-weight:700;color:var(--text-3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px">${lbl}</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="range" min="${smin}" max="${smax}" value="${sv}" style="flex:1;min-width:0;accent-color:var(--cyan)"
+                       oninput="updateThemeLive('${sk}',+this.value);document.getElementById('sv-${sk}').textContent=this.value+'px'"/>
+                <span id="sv-${sk}" style="font-size:11px;color:var(--text-2);min-width:30px;text-align:right;flex-shrink:0">${sv}px</span>
+                <input type="color" class="gsfb-color-swatch" value="${cv || cf}" style="flex-shrink:0"
+                       oninput="updateThemeLive('${ck}',this.value)"/>
+                ${cv ? `<button onclick="updateThemeVal('${ck}',null)" style="font-size:10px;padding:2px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:4px;color:var(--text-3);cursor:pointer;flex-shrink:0">↺</button>` : ''}
+              </div>
             </div>
-          </div>
-          <div class="gsfb-prop" style="margin-bottom:0">
-            <label class="gsfb-prop-label">Body Size</label>
-            <div style="display:flex;align-items:center;gap:7px;margin-top:6px">
-              <input type="range" min="11" max="22" value="${th.bodyFontSize || 15}" style="flex:1;min-width:0;accent-color:var(--cyan)"
-                     oninput="updateThemeLive('bodyFontSize',+this.value);this.nextElementSibling.textContent=this.value+'px'"/>
-              <span style="font-size:11px;color:var(--text-2);min-width:32px;text-align:right;flex-shrink:0">${th.bodyFontSize || 15}px</span>
-            </div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
-          <div class="gsfb-prop" style="margin-bottom:0">
-            <label class="gsfb-prop-label">Header Color</label>
-            ${colorPicker('headerFontColor', th.headerFontColor, th.lightMode ? '#111827' : '#eef4ff')}
-          </div>
-          <div class="gsfb-prop" style="margin-bottom:0">
-            <label class="gsfb-prop-label">Body Color</label>
-            ${colorPicker('bodyFontColor', th.bodyFontColor, th.lightMode ? '#374151' : '#98b0cc')}
-          </div>
+          `).join('')}
         </div>
       </div>
       <div class="gsfb-settings-section">
@@ -5776,16 +5781,26 @@
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
+    function fmtAccept(acc) {
+      if (!acc || acc === '*' || acc === '*/*') return 'Any file';
+      const MIME_NAMES = { 'image/*': 'Images', 'video/*': 'Videos', 'audio/*': 'Audio',
+        'application/pdf': 'PDF', '.pdf': 'PDF', '.doc': 'Word', '.docx': 'Word',
+        'application/msword': 'Word', 'application/zip': 'ZIP', '.zip': 'ZIP',
+        '.xls': 'Excel', '.xlsx': 'Excel', '.ppt': 'PPT', '.pptx': 'PPT' };
+      const parts = acc.split(',').map(s => s.trim());
+      const names = [...new Set(parts.map(p => MIME_NAMES[p] || p.replace(/.*\//, '').replace(/^\./, '').toUpperCase()))];
+      return names.slice(0, 3).join(', ') + (names.length > 3 ? '…' : '');
+    }
+
     function getFieldPreview(f) {
       const t = f.type;
       if (t === 'phone')
         return `<div style="display:flex;align-items:stretch;gap:0;width:100%">
-          <div style="display:flex;align-items:center;gap:6px;padding:12px 10px;background:var(--cc-input-bg);border:1px solid var(--cc-input-border);border-right:none;border-radius:9px 0 0 9px;font-size:13px;color:var(--cc-text-2);white-space:nowrap;flex-shrink:0;min-width:86px">
+          <div style="display:flex;align-items:center;gap:6px;padding:12px 10px;background:var(--cc-input-bg);border:1px solid var(--cc-input-border);border-right:none;border-radius:9px 0 0 9px;color:var(--cc-text-2);white-space:nowrap;flex-shrink:0;min-width:70px">
             <img src="https://flagcdn.com/w20/in.png" alt="" style="width:20px;height:14px;border-radius:2px;object-fit:cover;display:block">
-            <span>+91</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:10px;height:10px;opacity:0.5;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
-          <div style="flex:1;padding:12px 14px;border:1px solid var(--cc-input-border);border-left:none;border-radius:0 9px 9px 0;font-size:15px;color:var(--cc-text-3);background:var(--cc-input-bg)">${escHtml(f.placeholder || 'Phone number')}</div>
+          <div style="flex:1;padding:12px 14px;border:1px solid var(--cc-input-border);border-left:none;border-radius:0 9px 9px 0;font-size:var(--cc-text-size,15px);color:var(--cc-text-3);background:var(--cc-input-bg)">${escHtml(f.placeholder || 'Phone number')}</div>
         </div>`;
       if (['text', 'email', 'number', 'date', 'time'].includes(t))
         return `<div class="gsfc-text-preview">${escHtml(f.placeholder || 'Short answer text')}</div>`;
@@ -5807,14 +5822,16 @@
             <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
           </svg>
           <div style="font-size:13px;color:var(--cc-body-color)"><strong style="color:var(--cc-accent)">Click to upload</strong> or drag &amp; drop</div>
-          <div style="font-size:11px;color:var(--cc-text-3)">${f.accept && f.accept !== '*' && f.accept !== '*/*' ? f.accept.replace(/[.]/g, '').toUpperCase() : 'Any file'} &middot; Max ${f.maxMB || 10} MB</div>
+          <div style="font-size:11px;color:var(--cc-text-3)">${fmtAccept(f.accept)} &middot; Max ${f.maxMB || 10} MB</div>
         </div>`;
       if (t === 'linear_scale') {
         if (f.style === 'stars') {
           const max = f.max || 5;
           const stars = Array.from({ length: max }, () => `<span class="gsfc-star">★</span>`).join('');
-          return `<div class="gsfc-scale-preview" style="gap:8px">${stars}</div>
-        <div class="gsfc-scale-labels-row"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
+          return `<div style="display:inline-flex;flex-direction:column;gap:4px">
+            <div class="gsfc-scale-preview" style="gap:8px">${stars}</div>
+            <div class="gsfc-scale-labels-row"><span>${escHtml(f.minLabel || 'Poor')}</span><span>${escHtml(f.maxLabel || 'Excellent')}</span></div>
+          </div>`;
         }
         const nums = Array.from({ length: f.max || 5 }, (_, i) => `<div class="gsfc-scale-num">${i + 1}</div>`).join('');
         return `<div class="gsfc-scale-preview"><span class="gsfc-scale-side-label">${escHtml(f.minLabel || 'Poor')}</span><div style="display:flex;gap:8px;flex-wrap:wrap">${nums}</div><span class="gsfc-scale-side-label">${escHtml(f.maxLabel || 'Excellent')}</span></div>`;
@@ -5842,7 +5859,7 @@
         <div class="gsfc-card ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
           ${isSel ? '<div class="gsfc-card-sel-bar"></div>' : ''}
           <div class="gsfc-card-inner">
-            ${f.image ? `<div style="margin-bottom:12px;text-align:center;"><img src="${f.image}" style="max-width:100%;border-radius:8px;object-fit:contain;"/></div>` : ''}
+            ${f.type !== 'image' && f.image ? `<div style="margin-bottom:12px;text-align:center;"><img src="${f.image}" style="max-width:100%;border-radius:8px;object-fit:contain;"/></div>` : ''}
             <div class="gsfc-card-label">${f.label || '<span style="opacity:.4">Untitled Question</span>'}${f.required ? '<span class="gsfc-req">*</span>' : ''}</div>
             ${f.showDesc ? `<div class="gsfc-card-desc">${f.description || '<span style="opacity:.35">Description…</span>'}</div>` : ''}
             <div class="gsfc-preview">${getFieldPreview(f)}</div>

@@ -39,6 +39,10 @@
       --body-color: #98b0cc;
       --header-size: clamp(22px, 4vw, 28px);
       --body-size: 15px;
+      --question-size: 15px;
+      --question-color: #eef4ff;
+      --text-size: 15px;
+      --text-color: #98b0cc;
     }
 
     *,
@@ -315,17 +319,17 @@
       display: flex;
       align-items: baseline;
       gap: 5px;
-      font-size: var(--body-size);
+      font-size: var(--question-size, var(--body-size));
       font-weight: 600;
       font-family: var(--font-question);
-      color: var(--text);
+      color: var(--question-color, var(--text));
       margin-bottom: 5px;
       line-height: 1.4;
     }
     .gsfv-field-desc {
-      font-size: calc(var(--body-size) - 1px);
+      font-size: calc(var(--text-size, var(--body-size)) - 1px);
       font-family: var(--font-text);
-      color: var(--text-2);
+      color: var(--text-color, var(--text-2));
       line-height: 1.6;
       margin-bottom: 9px;
     }
@@ -358,7 +362,7 @@
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: var(--radius);
       color: var(--text);
-      font-size: 15px;
+      font-size: var(--text-size, 15px);
       font-family: var(--font-text);
       outline: none;
       transition: border-color 0.18s;
@@ -1215,6 +1219,8 @@
       --card-bg: #ffffff;
       --header-color: #111827;
       --body-color: #374151;
+      --question-color: #111827;
+      --text-color: #374151;
     }
 
     body.gsfv-light .gsfv-header {
@@ -1238,7 +1244,7 @@
     body.gsfv-light .gsfv-input,
     body.gsfv-light .gsfv-textarea,
     body.gsfv-light .gsfv-select {
-      background: #ffffff;
+      background: rgba(0, 0, 0, 0.03);
       border-color: rgba(0, 0, 0, 0.12);
       color: #111827;
     }
@@ -3360,9 +3366,21 @@
       else body.style.removeProperty('--bg');
 
       if (th.headerFontSize) root.style.setProperty('--header-size', th.headerFontSize + 'px');
+      else root.style.removeProperty('--header-size');
       if (th.bodyFontSize) root.style.setProperty('--body-size', th.bodyFontSize + 'px');
+      else root.style.removeProperty('--body-size');
       if (th.headerFontColor) root.style.setProperty('--header-color', th.headerFontColor);
+      else root.style.removeProperty('--header-color');
       if (th.bodyFontColor) root.style.setProperty('--body-color', th.bodyFontColor);
+      else root.style.removeProperty('--body-color');
+      if (th.questionFontSize) root.style.setProperty('--question-size', th.questionFontSize + 'px');
+      else root.style.removeProperty('--question-size');
+      if (th.questionFontColor) root.style.setProperty('--question-color', th.questionFontColor);
+      else root.style.removeProperty('--question-color');
+      if (th.textFontSize) root.style.setProperty('--text-size', th.textFontSize + 'px');
+      else root.style.removeProperty('--text-size');
+      if (th.textFontColor) root.style.setProperty('--text-color', th.textFontColor);
+      else root.style.removeProperty('--text-color');
       const qf = th.questionFont || th.bodyFont;
       const tf = th.textFont || th.bodyFont;
       if (qf) root.style.setProperty('--font-question', `'${qf}', sans-serif`);
