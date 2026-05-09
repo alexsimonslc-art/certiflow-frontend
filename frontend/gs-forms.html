@@ -105,11 +105,11 @@
     /* Forms grid */
     .gsf-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
     }
 
-    /* Form card — Google-Forms-style thumbnail card */
+    /* Form card — iframe thumbnail card */
     .gsf-card {
       background: rgba(255, 255, 255, 0.035);
       backdrop-filter: blur(24px);
@@ -124,83 +124,97 @@
     }
 
     .gsf-card:hover {
-      border-color: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.22);
       transform: translateY(-3px);
-      box-shadow: 0 20px 52px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 22px 54px rgba(0, 0, 0, 0.45);
     }
 
     /* Preview thumbnail */
     .gsf-thumb {
       width: 100%;
-      height: 158px;
+      height: 240px;
       overflow: hidden;
       position: relative;
       flex-shrink: 0;
+      background: #0d0d1a;
     }
 
-    .gsf-thumb-accent {
+    /* Shimmer shown while iframe loads */
+    .gsf-thumb-shimmer {
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 5px;
+      inset: 0;
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.04) 50%,
+        rgba(255,255,255,0) 100%);
+      background-size: 200% 100%;
+      animation: gsf-shimmer 1.6s ease-in-out infinite;
+      z-index: 2;
+      transition: opacity 0.35s;
+    }
+
+    @keyframes gsf-shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    .gsf-thumb.iframe-loaded .gsf-thumb-shimmer { opacity: 0; pointer-events: none; }
+
+    /* Scaled iframe wrapper — width/height match form's natural size */
+    .gsf-thumb-iframe-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 760px;
+      height: 760px;
+      transform-origin: top left;
+      pointer-events: none;
       z-index: 1;
     }
 
-    .gsf-thumb-inner {
+    .gsf-thumb-frame {
+      display: block;
+      width: 760px;
+      height: 760px;
+      border: none;
+      background: transparent;
+    }
+
+    /* Draft placeholder (no slug) */
+    .gsf-thumb-draft {
       position: absolute;
-      inset: 17px 14px 10px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 7px;
-      padding: 10px 12px 8px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .gsf-thumb-form-title {
-      font-size: 9.5px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.88);
-      margin-bottom: 7px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      letter-spacing: 0.01em;
-    }
-
-    .gsf-thumb-divider {
-      height: 1px;
-      background: rgba(255, 255, 255, 0.12);
-      margin-bottom: 7px;
-    }
-
-    .gsf-thumb-fields {
+      inset: 0;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 1;
     }
 
-    .gsf-thumb-field {
+    .gsf-thumb-draft-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
       display: flex;
-      flex-direction: column;
-      gap: 3px;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.45);
     }
 
-    .gsf-thumb-field-label {
-      height: 5px;
-      border-radius: 3px;
-      background: rgba(255, 255, 255, 0.28);
-      width: 55%;
-    }
-
-    .gsf-thumb-field-input {
-      height: 13px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+    .gsf-thumb-draft-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     /* Card info bottom */
     .gsf-card-info {
-      padding: 11px 13px 11px;
+      padding: 13px 15px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -1298,7 +1312,20 @@
 
       grid.innerHTML = forms.map(f => formCard(f)).join('');
       lucide.createIcons();
+      requestAnimationFrame(scaleCardThumbs);
     }
+
+    /* Scale iframe wrappers to fit each card's actual rendered width */
+    const IFRAME_NATURAL_W = 760;
+    function scaleCardThumbs() {
+      document.querySelectorAll('.gsf-thumb-iframe-wrap').forEach(wrap => {
+        const thumb = wrap.closest('.gsf-thumb');
+        if (!thumb) return;
+        const scale = thumb.offsetWidth / IFRAME_NATURAL_W;
+        wrap.style.transform = `scale(${scale})`;
+      });
+    }
+    window.addEventListener('resize', scaleCardThumbs);
 
     const STATUS_LABELS = { draft: 'Draft', published: 'Published', closed: 'Closed' };
     const ICON_BY_TEMPLATE = {
@@ -1319,24 +1346,29 @@
     function formCard(f) {
       const status = f.status || 'draft';
       const count = f.submission_count || 0;
-      const formFields = (f.config?.fields || []).filter(fi => fi.type !== 'section_break');
-
-      // Theme colors for the preview thumbnail
+      const slug = f.slug || '';
       const th = f.config?.settings?.theme || {};
       const previewBg = th.backgroundColor || '#0d0d1a';
-      const previewAccent = th.accentColor || '#00d4ff';
 
-      // Build 3-4 field skeleton rows from real field labels
-      const skeletonFields = formFields.slice(0, 4).map(fi => {
-        const lbl = escHtml((fi.label || 'Field').substring(0, 24));
-        return `<div class="gsf-thumb-field">
-          <div class="gsf-thumb-field-label" title="${lbl}"></div>
-          <div class="gsf-thumb-field-input"></div>
-        </div>`;
-      }).join('') || `
-        <div class="gsf-thumb-field"><div class="gsf-thumb-field-label" style="width:58%"></div><div class="gsf-thumb-field-input"></div></div>
-        <div class="gsf-thumb-field"><div class="gsf-thumb-field-label" style="width:42%"></div><div class="gsf-thumb-field-input"></div></div>
-        <div class="gsf-thumb-field"><div class="gsf-thumb-field-label" style="width:66%"></div><div class="gsf-thumb-field-input"></div></div>`;
+      // Thumbnail: real iframe for any form with a slug, draft placeholder otherwise
+      const thumbContent = slug
+        ? `<div class="gsf-thumb-shimmer"></div>
+           <div class="gsf-thumb-iframe-wrap">
+             <iframe class="gsf-thumb-frame"
+               src="gs-form-view.html?f=${encodeURIComponent(slug)}&embed=1"
+               scrolling="no" frameborder="0" tabindex="-1"
+               onload="this.closest('.gsf-thumb').classList.add('iframe-loaded')">
+             </iframe>
+           </div>`
+        : `<div class="gsf-thumb-draft">
+             <div class="gsf-thumb-draft-icon">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="22" height="22">
+                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                 <polyline points="14 2 14 8 20 8"/>
+               </svg>
+             </div>
+             <div class="gsf-thumb-draft-label">Draft — not yet published</div>
+           </div>`;
 
       const responseText = count > 0
         ? `<span class="gsf-card-resp-count">${count} response${count !== 1 ? 's' : ''}</span>`
@@ -1344,14 +1376,7 @@
 
       return `
     <div class="gsf-card" id="card-${f.id}" onclick="editForm('${f.id}')">
-      <div class="gsf-thumb" style="background:${previewBg}">
-        <div class="gsf-thumb-accent" style="background:${previewAccent}"></div>
-        <div class="gsf-thumb-inner">
-          <div class="gsf-thumb-form-title">${escHtml(f.name)}</div>
-          <div class="gsf-thumb-divider"></div>
-          <div class="gsf-thumb-fields">${skeletonFields}</div>
-        </div>
-      </div>
+      <div class="gsf-thumb" style="background:${previewBg}">${thumbContent}</div>
       <div class="gsf-card-info">
         <div class="gsf-card-info-main">
           <div class="gsf-card-name">${escHtml(f.name)}</div>
