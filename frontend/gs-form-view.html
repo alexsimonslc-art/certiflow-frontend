@@ -651,13 +651,24 @@
     }
 
     .gsfv-upload-progress-bar {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .gsfv-upload-progress-bar::after {
+      content: '';
       position: absolute;
-      bottom: 0;
+      top: 0;
       left: -60%;
       width: 60%;
-      height: 3px;
+      height: 100%;
       background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      border-radius: 2px;
       animation: gsfv-slide-progress 1.4s ease-in-out infinite;
     }
 
@@ -700,8 +711,7 @@
 
     .gsfv-upload-preview {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      flex-direction: column;
       padding: 10px 13px;
       border-radius: 9px;
       margin-top: 10px;
@@ -709,6 +719,12 @@
       border: 1px solid var(--glass-b);
       font-size: 13px;
       color: var(--text-2);
+    }
+
+    .gsfv-upload-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .gsfv-upload-preview svg {
@@ -988,14 +1004,14 @@
       font-family: var(--font-display);
       font-size: clamp(18px, 4vw, 24px);
       font-weight: 700;
-      color: var(--text);
+      color: var(--question-color, var(--text));
       margin-bottom: 7px;
       line-height: 1.3;
     }
 
     .gsfv-page-hdr-desc {
       font-size: 14.5px;
-      color: var(--text-2);
+      color: var(--text-color, var(--text-2));
       line-height: 1.6;
     }
     .gsfv-page-hdr-desc ul { list-style: disc outside; padding-left: 1.5em; margin: 4px 0; }
@@ -1406,7 +1422,6 @@
     }
 
     body.gsfv-light .gsfv-page-hdr {
-      background: #ffffff;
       border-color: rgba(0, 0, 0, 0.08);
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     }
@@ -2624,8 +2639,10 @@
           <div class="gsfv-upload-sub">${niceAccept(accept)} · Max ${f.maxMB || 10} MB</div>
         </div>
         <div class="gsfv-upload-preview" id="fp-${f.id}" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span id="fn-${f.id}">No file</span>
+          <div class="gsfv-upload-preview-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span id="fn-${f.id}">No file</span>
+          </div>
         </div>`;
           break;
 
@@ -2896,15 +2913,15 @@
       const zone = document.getElementById('fi-' + fieldId);
       const prev = document.getElementById('fp-' + fieldId);
       const nameEl = document.getElementById('fn-' + fieldId);
-      if (zone) {
-        zone.dataset.uploading = '1';
+      if (zone) zone.dataset.uploading = '1';
+      if (prev) prev.style.display = '';
+      if (nameEl) nameEl.textContent = `Uploading ${file.name}…`;
+      if (prev) {
         const bar = document.createElement('div');
         bar.className = 'gsfv-upload-progress-bar';
         bar.id = 'upbar-' + fieldId;
-        zone.appendChild(bar);
+        prev.appendChild(bar);
       }
-      if (prev) prev.style.display = '';
-      if (nameEl) nameEl.textContent = `Uploading ${file.name}…`;
       _uploadingFields.add(fieldId);
 
       try {
@@ -3411,26 +3428,27 @@
       if (th.pageColor) body.style.setProperty('--bg', th.pageColor);
       else body.style.removeProperty('--bg');
 
-      if (th.headerFontSize) root.style.setProperty('--header-size', th.headerFontSize + 'px');
-      else root.style.removeProperty('--header-size');
-      if (th.bodyFontSize) root.style.setProperty('--body-size', th.bodyFontSize + 'px');
-      else root.style.removeProperty('--body-size');
-      if (th.headerFontColor) root.style.setProperty('--header-color', th.headerFontColor);
-      else root.style.removeProperty('--header-color');
-      if (th.bodyFontColor) root.style.setProperty('--body-color', th.bodyFontColor);
-      else root.style.removeProperty('--body-color');
-      if (th.questionFontSize) root.style.setProperty('--question-size', th.questionFontSize + 'px');
-      else root.style.removeProperty('--question-size');
-      if (th.questionFontColor) root.style.setProperty('--question-color', th.questionFontColor);
-      else root.style.removeProperty('--question-color');
-      if (th.textFontSize) root.style.setProperty('--text-size', th.textFontSize + 'px');
-      else root.style.removeProperty('--text-size');
-      if (th.textFontColor) root.style.setProperty('--text-color', th.textFontColor);
-      else root.style.removeProperty('--text-color');
+      // All color/size vars set on body (not root) so body.gsfv-light class vars don't win
+      if (th.headerFontSize) body.style.setProperty('--header-size', th.headerFontSize + 'px');
+      else body.style.removeProperty('--header-size');
+      if (th.bodyFontSize) body.style.setProperty('--body-size', th.bodyFontSize + 'px');
+      else body.style.removeProperty('--body-size');
+      if (th.headerFontColor) body.style.setProperty('--header-color', th.headerFontColor);
+      else body.style.removeProperty('--header-color');
+      if (th.bodyFontColor) body.style.setProperty('--body-color', th.bodyFontColor);
+      else body.style.removeProperty('--body-color');
+      if (th.questionFontSize) body.style.setProperty('--question-size', th.questionFontSize + 'px');
+      else body.style.removeProperty('--question-size');
+      if (th.questionFontColor) body.style.setProperty('--question-color', th.questionFontColor);
+      else body.style.removeProperty('--question-color');
+      if (th.textFontSize) body.style.setProperty('--text-size', th.textFontSize + 'px');
+      else body.style.removeProperty('--text-size');
+      if (th.textFontColor) body.style.setProperty('--text-color', th.textFontColor);
+      else body.style.removeProperty('--text-color');
       const qf = th.questionFont || th.bodyFont;
       const tf = th.textFont || th.bodyFont;
-      if (qf) root.style.setProperty('--font-question', `'${qf}', sans-serif`);
-      if (tf) root.style.setProperty('--font-text', `'${tf}', sans-serif`);
+      if (qf) body.style.setProperty('--font-question', `'${qf}', sans-serif`);
+      if (tf) body.style.setProperty('--font-text', `'${tf}', sans-serif`);
     }
 
     /* ════════════════════════════════════════════════════════════════
