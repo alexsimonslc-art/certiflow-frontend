@@ -513,7 +513,7 @@
             <div class="mse-prop-label">Site URL Slug</div>
             <input type="text" class="mse-prop-input" id="siteSlugInput" placeholder="my-event-2026"
               oninput="onSlugInput(this.value)" />
-            <div class="mse-prop-hint" id="slugHint">Loading…<span id="slugPreview">—</span></div>
+            <div class="mse-prop-hint" id="slugHint">Set a slug to get a public URL</div>
           </div>
         </div>
 
@@ -1685,8 +1685,11 @@
       if (nameInput && document.activeElement !== nameInput) nameInput.value = c.name;
 
       const slugInput = document.getElementById('siteSlugInput');
-      if (slugInput && document.activeElement !== slugInput) slugInput.value = c.slug;
-      document.getElementById('slugPreview').textContent = c.slug || '—';
+      if (slugInput && document.activeElement !== slugInput) slugInput.value = c.slug || '';
+      const slugHintEl = document.getElementById('slugHint');
+      if (slugHintEl) slugHintEl.textContent = c.slug
+        ? `${window.location.origin}/site.html?slug=${c.slug}`
+        : 'Set a slug to get a public URL';
 
       document.querySelectorAll('.mse-theme-box').forEach(b => b.classList.toggle('on', b.dataset.value === c.theme));
 
@@ -1863,14 +1866,16 @@
     function onSlugInput(val) {
       const clean = val.toLowerCase().replace(/[^a-z0-9-]/g, '');
       const input = document.getElementById('siteSlugInput');
-      // Only overwrite the input value (which resets cursor) when we actually stripped chars
       if (clean !== val) input.value = clean;
-      document.getElementById('slugPreview').textContent = clean || '—';
       const pubUrl = clean
         ? `${window.location.origin}/site.html?slug=${clean}`
         : `${window.location.origin}/site.html?slug=…`;
-      document.getElementById('chromeUrl').textContent = pubUrl;
-      document.getElementById('publishUrlDisplay').textContent = pubUrl;
+      const slugHint = document.getElementById('slugHint');
+      if (slugHint) slugHint.textContent = clean ? pubUrl : 'Set a slug to get a public URL';
+      const chromeUrl = document.getElementById('chromeUrl');
+      if (chromeUrl) chromeUrl.textContent = pubUrl;
+      const publishUrl = document.getElementById('publishUrlDisplay');
+      if (publishUrl) publishUrl.textContent = pubUrl;
       MSState.updateConfig({ slug: clean });
     }
 

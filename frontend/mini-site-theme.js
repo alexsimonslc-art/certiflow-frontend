@@ -294,9 +294,81 @@ function mst_renderOverlayPicker(blockId, currentOverlay) {
    rich visual layout: palette grid + font pairs + toggles.
 ═══════════════════════════════════════════════════════════════ */
 function mst_rebuildSiteSettings() {
-  // Delegate to the editor's populateSiteSettings which fills the new static HTML panel
-  if (typeof _mst_origPopulate === 'function') {
-    _mst_origPopulate();
+  const c = MSState.config;
+
+  // 1. Dynamic containers
+  if (typeof buildPrebuiltThemeGrid === 'function') buildPrebuiltThemeGrid();
+  if (typeof buildFontPairList === 'function') buildFontPairList();
+  if (typeof updateFontSelectBoxes === 'function') updateFontSelectBoxes();
+
+  // 2. Site name
+  const nameInput = document.getElementById('siteNameInput');
+  if (nameInput && document.activeElement !== nameInput) nameInput.value = c.name || '';
+
+  // 3. Slug + URL preview
+  const slugEl = document.getElementById('siteSlugInput');
+  if (slugEl && document.activeElement !== slugEl) slugEl.value = c.slug || '';
+  const slugHint = document.getElementById('slugHint');
+  if (slugHint) slugHint.textContent = c.slug
+    ? `${window.location.origin}/site.html?slug=${c.slug}`
+    : 'Set a slug to get a public URL';
+
+  // 4. Dark/light mode
+  document.querySelectorAll('.mse-theme-box').forEach(b =>
+    b.classList.toggle('on', b.dataset.value === c.theme));
+
+  // 5. Accent color
+  const accent = c.accentColor || '#00d4ff';
+  const accentIn = document.getElementById('accentColorInput');
+  const accentHx = document.getElementById('accentColorHex');
+  const accentSw = document.getElementById('accentSwatch');
+  if (accentIn) accentIn.value = accent;
+  if (accentHx && document.activeElement !== accentHx) accentHx.value = accent;
+  if (accentSw) accentSw.style.background = accent;
+
+  // 6. Background color
+  const bg = c.bgOverride || '#0a0f1e';
+  const bgIn = document.getElementById('bgColorInput');
+  const bgHx = document.getElementById('bgColorHex');
+  const bgSw = document.getElementById('bgSwatch');
+  if (bgIn) bgIn.value = bg;
+  if (bgHx && document.activeElement !== bgHx) bgHx.value = bg;
+  if (bgSw) bgSw.style.background = bg;
+
+  // 7. Title color
+  const tc = c.titleColor || '';
+  const tcIn = document.getElementById('titleColorInput');
+  const tcHx = document.getElementById('titleColorHex');
+  const tcSw = document.getElementById('titleColorSwatch');
+  if (tcIn) tcIn.value = tc || '#ffffff';
+  if (tcHx && document.activeElement !== tcHx) tcHx.value = tc;
+  if (tcSw) tcSw.style.background = tc || 'rgba(255,255,255,0.25)';
+
+  // 8. Content color
+  const cc2 = c.contentColor || '';
+  const ccIn = document.getElementById('contentColorInput');
+  const ccHx = document.getElementById('contentColorHex');
+  const ccSw = document.getElementById('contentColorSwatch');
+  if (ccIn) ccIn.value = cc2 || '#ccddee';
+  if (ccHx && document.activeElement !== ccHx) ccHx.value = cc2;
+  if (ccSw) ccSw.style.background = cc2 || 'rgba(255,255,255,0.15)';
+
+  // 9. Registration toggle
+  const regEl = document.getElementById('regToggle');
+  if (regEl) regEl.classList.toggle('on', !!c.registrationOpen);
+  const pubReg = document.getElementById('publishRegToggle');
+  if (pubReg) pubReg.classList.toggle('on', !!c.registrationOpen);
+
+  // 10. Pass UI
+  if (typeof mseRefreshPassUI === 'function') mseRefreshPassUI();
+
+  // 11. Save status
+  if (c.status === 'published') {
+    document.getElementById('saveStatus')?.classList.add('live');
+    const ssT = document.getElementById('saveStatusText');
+    if (ssT) ssT.textContent = 'Live';
+    const pubLbl = document.getElementById('publishBtnLabel');
+    if (pubLbl) pubLbl.textContent = 'Update';
   }
 }
 
