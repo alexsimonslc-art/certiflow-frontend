@@ -1310,7 +1310,44 @@
         return;
       }
 
-      grid.innerHTML = forms.map(f => formCard(f)).join('');
+      // Remove empty-state if present
+      grid.querySelector('.gsf-empty')?.remove();
+
+      const neededIds = new Set(forms.map(f => f.id));
+
+      // Remove cards no longer in filtered list (preserves live iframes for the rest)
+      [...grid.querySelectorAll('.gsf-card')].forEach(el => {
+        if (!neededIds.has(el.id.replace('card-', ''))) el.remove();
+      });
+
+      // Add new cards / update existing ones in order — never replace the iframe
+      forms.forEach((f, i) => {
+        let card = document.getElementById('card-' + f.id);
+        if (!card) {
+          const tmp = document.createElement('div');
+          tmp.innerHTML = formCard(f).trim();
+          card = tmp.firstElementChild;
+        } else {
+          // Card already in DOM — patch only the mutable info, leave iframe untouched
+          const count = f.submission_count || 0;
+          const status = f.status || 'draft';
+          const infoMain = card.querySelector('.gsf-card-info-main');
+          if (infoMain) {
+            infoMain.innerHTML =
+              `<div class="gsf-card-name">${escHtml(f.name)}</div>` +
+              (count > 0 ? `<span class="gsf-card-resp-count">${count} response${count !== 1 ? 's' : ''}</span>` : '');
+          }
+          const statusEl = card.querySelector('.gsf-status');
+          if (statusEl) {
+            statusEl.className = `gsf-status ${status}`;
+            statusEl.innerHTML = `<div class="gsf-status-dot"></div>${STATUS_LABELS[status] || status}`;
+          }
+        }
+        // Maintain correct order without moving nodes that are already in position
+        const slot = grid.children[i];
+        if (slot !== card) grid.insertBefore(card, slot || null);
+      });
+
       lucide.createIcons();
       requestAnimationFrame(scaleCardThumbs);
     }
