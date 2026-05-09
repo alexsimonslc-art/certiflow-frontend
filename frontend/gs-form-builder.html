@@ -3715,7 +3715,7 @@
     ];
 
     // Preview page state
-    let _pv = { page: 0, pages: [], vals: {}, selOpts: {} };
+    let _pv = { page: 0, pages: [], vals: {}, selOpts: {}, history: [] };
 
     /* ════════════════════════════════════════════════════════════════
        BOOT
@@ -4155,6 +4155,7 @@
         </div>
       </div>`;
         html += cardImageHtml;
+        html += renderPageConditionsEditor(f, _S.config.fields);
       } else {
         if (!['radio', 'checkbox', 'file_upload', 'linear_scale', 'date', 'time'].includes(f.type)) {
           html += `
@@ -5606,17 +5607,131 @@
       setSaveStatus('unsaved');
     }
 
+    /* ── Page-level conditional logic ──────────────────────────────── */
+    function renderPageConditionsEditor(field, allFields) {
+      const idx = allFields.findIndex(f => f.id === field.id);
+      const prevFields = allFields.slice(0, idx).filter(f => f.type !== 'section_break');
+      const conditions = field.pageConditions || [];
+      const logic = field.pageConditionLogic || 'all';
+      if (!prevFields.length) return `
+      <div class="gsfb-cond-section">
+        <div class="gsfb-cond-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/><polyline points="15 14 20 9 15 4"/><line x1="4" y1="9" x2="20" y2="9"/></svg>
+          Page Visibility
+        </div>
+        <div class="gsfb-cond-always">Add fields on a previous page to set visibility conditions for this page.</div>
+      </div>`;
+      return `
+      <div class="gsfb-cond-section">
+        <div class="gsfb-cond-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4"/><polyline points="15 14 20 9 15 4"/><line x1="4" y1="9" x2="20" y2="9"/></svg>
+          Page Visibility
+          ${conditions.length > 0 ? `<span style="background:rgba(0,212,255,0.15);color:#00d4ff;border-radius:4px;padding:1px 6px;font-size:10px">${conditions.length}</span>` : ''}
+        </div>
+        ${conditions.length === 0
+          ? `<div class="gsfb-cond-always">Always show this page — no conditions set.</div>`
+          : `<div id="pagecondlist-${field.id}">
+              ${conditions.map(c => renderPageCondRow(c, field.id, prevFields)).join('')}
+            </div>
+            ${conditions.length > 1 ? `<div class="gsfb-cond-logic-row">Show page when
+              <select class="gsfb-select" onchange="updatePageCondLogic('${field.id}',this.value)">
+                <option value="all" ${logic === 'all' ? 'selected' : ''}>ALL</option>
+                <option value="any" ${logic === 'any' ? 'selected' : ''}>ANY</option>
+              </select> conditions match</div>` : ''}`
+        }
+        <button class="gsfb-add-option-btn" onclick="addPageCondition('${field.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add condition
+        </button>
+      </div>`;
+    }
+
+    function renderPageCondRow(cond, fieldId, prevFields) {
+      const ops = [
+        { v: 'equals', l: 'equals' }, { v: 'not_equals', l: 'does not equal' },
+        { v: 'contains', l: 'contains' }, { v: 'not_contains', l: 'does not contain' },
+        { v: 'is_filled', l: 'is filled' }, { v: 'is_empty', l: 'is empty' },
+      ];
+      const needsVal = !['is_filled', 'is_empty'].includes(cond.operator || 'equals');
+      const srcField = prevFields.find(f => f.id === cond.fieldId);
+      const srcOpts = srcField && ['radio', 'dropdown', 'checkbox'].includes(srcField.type) ? srcField.options || [] : [];
+      return `
+      <div class="gsfb-cond-row" id="pagecondrow-${cond.id}">
+        <select class="gsfb-select" onchange="updatePageCond('${fieldId}','${cond.id}','fieldId',this.value)">
+          ${prevFields.map(f => `<option value="${f.id}" ${f.id === cond.fieldId ? 'selected' : ''}>${f.label || 'Untitled'}</option>`).join('')}
+        </select>
+        <select class="gsfb-select" onchange="updatePageCond('${fieldId}','${cond.id}','operator',this.value)">
+          ${ops.map(o => `<option value="${o.v}" ${o.v === (cond.operator || 'equals') ? 'selected' : ''}>${o.l}</option>`).join('')}
+        </select>
+        ${needsVal
+          ? srcOpts.length
+            ? `<select class="gsfb-select" onchange="updatePageCond('${fieldId}','${cond.id}','value',this.value)">
+                <option value="">— pick —</option>
+                ${srcOpts.map(o => `<option value="${escAttr(o)}" ${o === cond.value ? 'selected' : ''}>${escHtml(o)}</option>`).join('')}
+               </select>`
+            : `<input class="gsfb-input" value="${escAttr(cond.value || '')}" placeholder="value"
+                      oninput="updatePageCondValue('${fieldId}','${cond.id}',this.value)"/>`
+          : `<div style="flex:1"></div>`}
+        <button class="gsfb-option-del" onclick="removePageCond('${fieldId}','${cond.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`;
+    }
+
+    function addPageCondition(fieldId) {
+      const field = _S.config.fields.find(f => f.id === fieldId);
+      if (!field) return;
+      const idx = _S.config.fields.findIndex(f => f.id === fieldId);
+      const prevFields = _S.config.fields.slice(0, idx).filter(f => f.type !== 'section_break');
+      if (!prevFields.length) return;
+      const newCond = { id: 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), fieldId: prevFields[0].id, operator: 'equals', value: '' };
+      _S.updateField(fieldId, { pageConditions: [...(field.pageConditions || []), newCond] });
+      setSaveStatus('unsaved');
+      renderRightPanel();
+    }
+    function removePageCond(fieldId, condId) {
+      const field = _S.config.fields.find(f => f.id === fieldId);
+      if (!field) return;
+      _S.updateField(fieldId, { pageConditions: (field.pageConditions || []).filter(c => c.id !== condId) });
+      setSaveStatus('unsaved');
+      renderRightPanel();
+    }
+    function updatePageCond(fieldId, condId, key, value) {
+      const field = _S.config.fields.find(f => f.id === fieldId);
+      if (!field) return;
+      _S.updateField(fieldId, { pageConditions: (field.pageConditions || []).map(c => c.id === condId ? { ...c, [key]: value } : c) });
+      setSaveStatus('unsaved');
+      renderRightPanel();
+    }
+    function updatePageCondValue(fieldId, condId, value) {
+      const field = _S.config.fields.find(f => f.id === fieldId);
+      if (!field) return;
+      _S.updateField(fieldId, { pageConditions: (field.pageConditions || []).map(c => c.id === condId ? { ...c, value } : c) });
+      setSaveStatus('unsaved');
+    }
+    function updatePageCondLogic(fieldId, logic) {
+      _S.updateField(fieldId, { pageConditionLogic: logic });
+      setSaveStatus('unsaved');
+    }
+
     /* ════════════════════════════════════════════════════════════════
        CENTER — Interactive Preview with Pages
     ════════════════════════════════════════════════════════════════ */
     function buildPvPages() {
       const fields = _S.config?.fields || [];
       _pv.pages = [];
-      let page = { title: null, desc: null, fields: [] };
+      _pv.history = [];
+      let page = { title: null, desc: null, pageConditions: [], pageConditionLogic: 'all', fields: [] };
       fields.forEach(f => {
         if (f.type === 'section_break') {
           _pv.pages.push(page);
-          page = { title: f.label || '', desc: f.description || '', fields: [] };
+          page = {
+            title: f.label || '',
+            desc: f.description || '',
+            pageConditions: f.pageConditions || [],
+            pageConditionLogic: f.pageConditionLogic || 'all',
+            fields: []
+          };
         } else {
           page.fields.push(f);
         }
@@ -5712,7 +5827,7 @@
       if (f.type === 'event_pass') return renderPassCanvasCard(f, isSel);
       if (f.type === 'section_break') return `
         <div class="gsfc-page-break ${isSel ? 'selected' : ''}" id="canvas-card-${f.id}" onclick="selectLayer('${f.id}')">
-          <div class="gsfc-page-break-badge">PAGE BREAK — Next Page Title</div>
+          <div class="gsfc-page-break-badge">${(f.pageConditions && f.pageConditions.length) ? '⚡ CONDITIONAL PAGE — shows only when conditions match' : 'PAGE BREAK — Next Page Title'}</div>
           ${f.image ? `<img src="${escAttr(f.image)}" style="width:100%;height:130px;object-fit:cover;display:block;border-radius:4px;"/>` : ''}
           <div class="gsfc-page-break-body">
             <div class="gsfc-page-break-title">${f.label || '<span style="opacity:.4">Untitled Page</span>'}</div>
@@ -5760,12 +5875,31 @@
         </div>`;
     }
 
+    function pvIsPageVisible(page) {
+      if (!page.pageConditions || !page.pageConditions.length) return true;
+      const results = page.pageConditions.map(c => pvEvalCond(c));
+      return page.pageConditionLogic === 'any'
+        ? results.some(Boolean)
+        : results.every(Boolean);
+    }
+    function pvNextPage() {
+      let next = _pv.page + 1;
+      while (next < _pv.pages.length && !pvIsPageVisible(_pv.pages[next])) next++;
+      if (next < _pv.pages.length) {
+        _pv.history.push(_pv.page);
+        pvShowPage(next);
+      }
+    }
+    function pvPrevPage() {
+      if (_pv.history && _pv.history.length) pvShowPage(_pv.history.pop());
+    }
+
     function pvShowPage(n, animate = true) {
       _pv.page = Math.max(0, Math.min(n, _pv.pages.length - 1));
       const page = _pv.pages[_pv.page] || { fields: [] };
       const total = _pv.pages.length;
       const isFirst = _pv.page === 0;
-      const isLast = _pv.page === total - 1;
+      const isLast = !_pv.pages.slice(_pv.page + 1).some(p => pvIsPageVisible(p));
       const s = _S.config?.settings || {};
       const th = _S.config?.theme || {};
       const accent = ACCENT[th.color] || ACCENT.cyan;
@@ -5810,9 +5944,9 @@
       const backVisible = !isFirst;
       const pageStatusText = total > 1 ? `<div style="text-align:center;font-size:12.5px;color:var(--text-3);margin-bottom:10px;font-weight:600;letter-spacing:0.5px;">Page ${_pv.page + 1} of ${total}</div>` : '';
       html += `${pageStatusText}<div class="gsfb-pv-nav">
-    ${backVisible ? `<button class="gsfb-pv-back" onclick="pvShowPage(${_pv.page - 1})">← Back</button>` : ''}
+    ${backVisible ? `<button class="gsfb-pv-back" onclick="pvPrevPage()">← Back</button>` : ''}
     <button class="gsfb-pv-submit" style="background:${accent}"
-            onclick="${isLast ? 'pvFakeSubmit()' : `pvShowPage(${_pv.page + 1})`}">
+            onclick="${isLast ? 'pvFakeSubmit()' : 'pvNextPage()'}">
       ${isLast
           ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg>`
           : ''}${escHtml(submitLabel)}

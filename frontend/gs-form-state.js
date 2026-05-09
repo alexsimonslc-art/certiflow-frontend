@@ -39,7 +39,7 @@ const GSF_FIELD_DEFAULTS = {
   time: () => ({ label: 'Time', placeholder: '', required: false, validation: {}, image: null }),
   file_upload: () => ({ label: 'File Upload', placeholder: 'Upload a file', required: false, accept: '*', maxMB: 10, image: null }),
   linear_scale: () => ({ label: 'Rating', placeholder: '', required: false, min: 1, max: 5, minLabel: 'Poor', maxLabel: 'Excellent', style: 'stars', image: null }),
-  section_break: () => ({ label: 'Section Title', description: 'Add a description for this section.', image: null, required: false }),
+  section_break: () => ({ label: 'Section Title', description: 'Add a description for this section.', image: null, required: false, pageConditions: [], pageConditionLogic: 'all' }),
   image: () => ({ label: 'Image Title', description: 'Add an optional description.', image: null, required: false }),
   event_pass: () => ({
     label: 'Entry Pass',

@@ -2112,19 +2112,28 @@
     /* ════════════════════════════════════════════════════════════════
       MULTI-PAGE ENGINE
     ════════════════════════════════════════════════════════════════ */
-    let _pages = [];   // [{ title, desc, fields[] }]
+    let _pages = [];   // [{ title, desc, fields[], pageConditions[], pageConditionLogic }]
     let _currentPage = 0;
+    let _pageHistory = [];  // stack of visited page indices for correct Back navigation
 
     /** Split fields into pages at section_break boundaries */
     function buildPages() {
       const fields = formConfig?.config?.fields || [];
       _pages = [];
-      let page = { title: null, desc: null, image: null, fields: [] };
+      _pageHistory = [];
+      let page = { title: null, desc: null, image: null, pageConditions: [], pageConditionLogic: 'all', fields: [] };
 
       fields.forEach(f => {
         if (f.type === 'section_break') {
           _pages.push(page);
-          page = { title: f.label || '', desc: f.description || '', image: f.image || null, fields: [] };
+          page = {
+            title: f.label || '',
+            desc: f.description || '',
+            image: f.image || null,
+            pageConditions: f.pageConditions || [],
+            pageConditionLogic: f.pageConditionLogic || 'all',
+            fields: []
+          };
         } else {
           page.fields.push(f);
         }
@@ -2138,13 +2147,21 @@
       _currentPage = 0;
     }
 
+    /** Check whether a page should be shown based on its conditions */
+    function isPageVisible(page) {
+      if (!page.pageConditions || !page.pageConditions.length) return true;
+      const results = page.pageConditions.map(c => evalCondition(c));
+      const logic = page.pageConditionLogic || 'all';
+      return logic === 'any' ? results.some(Boolean) : results.every(Boolean);
+    }
+
     /** Render a specific page */
     function showPage(n) {
       _currentPage = n;
       const page = _pages[n];
       const total = _pages.length;
       const isFirst = n === 0;
-      const isLast = n === total - 1;
+      const isLast = !_pages.slice(n + 1).some(isPageVisible);
       const s = formConfig?.config?.settings || {};
 
       // Progress bar
@@ -2209,11 +2226,16 @@
 
     function nextPage() {
       if (!validate()) return;
-      if (_currentPage < _pages.length - 1) showPage(_currentPage + 1);
+      let next = _currentPage + 1;
+      while (next < _pages.length && !isPageVisible(_pages[next])) next++;
+      if (next < _pages.length) {
+        _pageHistory.push(_currentPage);
+        showPage(next);
+      }
     }
 
     function prevPage() {
-      if (_currentPage > 0) showPage(_currentPage - 1);
+      if (_pageHistory.length) showPage(_pageHistory.pop());
     }
 
     /* ════════════════════════════════════════════════════════════════
