@@ -283,10 +283,11 @@ function msb_speakers(block, cfg) {
 </div>` : '';
 
   const _wrapId = `spkWrap_${uid}`;
+  const _gap = 20;
   const carousel = `
-<div style="position:relative;padding:0 20px">
-  <div id="${_wrapId}" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;scroll-behavior:smooth;margin:0 -20px">
-    <div id="spkTrack_${uid}" style="display:flex;gap:20px;padding:12px 20px 32px 20px">
+<div style="position:relative;padding:0 ${_gap}px">
+  <div id="${_wrapId}" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;scroll-padding-left:${_gap}px;scroll-behavior:smooth;margin:0 -${_gap}px">
+    <div id="spkTrack_${uid}" style="display:flex;gap:20px;padding:12px ${_gap}px 32px ${_gap}px">
       ${items.map(sp => gridCard(sp)).join('')}
     </div>
   </div>
@@ -302,12 +303,13 @@ function msb_speakers(block, cfg) {
   var cards=track.querySelectorAll('.spk-card-${uid}');
   var n=cards.length;
   var cur=0,timer;
+  var PAD=${_gap};
 
   function goTo(i){
     cur=((i%n)+n)%n;
     var rect=cards[cur].getBoundingClientRect();
     var wRect=wrap.getBoundingClientRect();
-    wrap.scrollTo({left:wrap.scrollLeft+(rect.left-wRect.left),behavior:'smooth'});
+    wrap.scrollTo({left:Math.max(0,wrap.scrollLeft+(rect.left-wRect.left)-PAD),behavior:'smooth'});
     updateDots();
   }
   window['spkGoTo_${uid}']=goTo;
@@ -339,7 +341,7 @@ function msb_speakers(block, cfg) {
         wrap.addEventListener('touchend',function(){setTimeout(startAuto,4000);},{passive:true});
         wrap.addEventListener('scroll',function(){
           var best=0,min=Infinity;
-          var wl=wrap.getBoundingClientRect().left;
+          var wl=wrap.getBoundingClientRect().left+PAD;
           for(var i=0;i&lt;n;i++){
             var dx=Math.abs(cards[i].getBoundingClientRect().left-wl);
             if(dx&lt;min){min=dx;best=i;}
