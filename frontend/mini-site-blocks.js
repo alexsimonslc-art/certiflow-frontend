@@ -286,7 +286,7 @@ function msb_speakers(block, cfg) {
   const carousel = `
 <div style="position:relative">
   <div id="${_wrapId}" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;scroll-behavior:smooth">
-    <div id="spkTrack_${uid}" style="display:flex;gap:20px;padding:12px 8px 32px">
+    <div id="spkTrack_${uid}" style="display:flex;gap:20px;padding:12px 16px 32px">
       ${items.map(sp => gridCard(sp)).join('')}
     </div>
   </div>
@@ -364,13 +364,15 @@ function msb_speakers(block, cfg) {
 "></svg>`;
 
   return msb_wrap(`
-<div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Speakers', t, p.alignment || 'center', p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+<div style="padding:40px 0;font-family:'${t.font}',sans-serif">
+  <div style="padding:0 clamp(20px,5%,48px)">
+    ${msb_title(p.title || 'Speakers', t, p.alignment || 'center', p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+  </div>
   ${items.length
       ? (isList
-        ? `<div style="display:flex;flex-direction:column;gap:14px">${items.map(listCard).join('')}</div>`
+        ? `<div style="display:flex;flex-direction:column;gap:14px;padding:0 clamp(20px,5%,48px)">${items.map(listCard).join('')}</div>`
         : carousel)
-      : `<div style="color:${t.muted};font-size:14px;padding:8px 0">Add speakers in the properties panel.</div>`}
+      : `<div style="color:${t.muted};font-size:14px;padding:8px clamp(20px,5%,48px)">Add speakers in the properties panel.</div>`}
 </div>`, bg);
 }
 /* ═══════════════════════════════════════════════════════════════
