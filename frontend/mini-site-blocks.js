@@ -428,7 +428,7 @@ function msb_sponsors(block, cfg) {
           ${s.logo && s.name ? `<span style="font-size:11px;font-weight:500;color:${t.muted};text-align:center;max-width:100px;word-break:break-word">${s.name}</span>` : ''}
         </div>`).join('') :
       `<div style="padding:10px 20px;min-height:${tierSizes[ti] || '48px'};border-radius:10px;border:1.5px dashed ${t.border};display:inline-flex;align-items:center;justify-content:center">
-          <span style="font-size:12px;color:${t.muted}">Add logos →</span>
+          <span style="font-size:12px;color:${t.muted}">Add logos</span>
         </div>`}
     </div>
   </div>`).join('')}
@@ -482,7 +482,7 @@ function msb_form(block, cfg) {
   <!-- Connected form button -->
   <a href="${p.connectUrl}" target="_blank" rel="noopener"
     style="display:inline-flex;align-items:center;gap:10px;padding:15px 36px;background:${btnBg};color:#fff;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;font-family:'${t.font}',sans-serif;box-shadow:0 6px 28px rgba(${br},${bg_},${bb},0.32);transition:opacity 0.15s">
-    ${p.buttonText || 'Register Now →'}
+    ${p.buttonText || 'Register Now'}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
   </a>
   <p style="margin-top:14px;font-size:12.5px;color:${t.muted}">Opens in a new tab</p>
@@ -584,7 +584,7 @@ function msb_video(block, cfg) {
   ${items.length ? items.map(v => videoCard(v)).join('') :
       `<div style="aspect-ratio:16/9;border-radius:12px;background:${t.bgCard};border:1.5px dashed ${t.border};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
     <svg viewBox="0 0 24 24" fill="none" stroke="${t.muted}" stroke-width="1.5" style="width:36px;height:36px"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-    <span style="font-size:13.5px;color:${t.muted}">Paste a YouTube or Drive link →</span>
+    <span style="font-size:13.5px;color:${t.muted}">Paste a YouTube or Drive link</span>
   </div>`}
 </div>`, bg);
 }

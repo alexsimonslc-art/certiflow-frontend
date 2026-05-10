@@ -654,7 +654,7 @@ function renderBlockProps(block) {
 
   <div class="mse-prop-row">
     <div class="mse-prop-label">Button Label</div>
-    <input class="mse-prop-input" value="${p.buttonText || 'Register Now →'}"
+    <input class="mse-prop-input" value="${p.buttonText || 'Register Now'}"
       oninput="msc_set('${bid}','buttonText',this.value)"/>
   </div>
 

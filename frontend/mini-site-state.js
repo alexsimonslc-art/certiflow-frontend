@@ -103,7 +103,7 @@ const BLOCK_REG = {
     defaults: () => ({
       title: 'Register Now',
       subtitle: 'Secure your spot — it only takes a minute.',
-      buttonText: 'Register Now →',
+      buttonText: 'Register Now',
       buttonColor: '',
       connectType: 'url',
       connectUrl: '',

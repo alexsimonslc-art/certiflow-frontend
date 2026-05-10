@@ -115,7 +115,7 @@
     <aside class="mse-left" style="display:flex; flex-direction:column;">
 
       <div class="mse-panel-tabs" style="flex-shrink:0;">
-        <button class="mse-panel-tab active" id="tabBlocks" onclick="switchLeftTab('blocks')">Blocks</button>
+        <button class="mse-panel-tab active" id="tabBlocks" onclick="switchLeftTab('blocks')">Add Blocks</button>
         <button class="mse-panel-tab" id="tabLayers" onclick="switchLeftTab('layers')">Layers</button>
       </div>
 
@@ -209,7 +209,7 @@
             </svg></div>
           <div class="mse-block-btn-info">
             <div class="mse-block-btn-label">Registration Form</div>
-            <div class="mse-block-btn-desc">→ Google Sheets</div>
+            <div class="mse-block-btn-desc">Google Sheets</div>
           </div>
         </button>
         <button class="mse-block-btn" onclick="addBlock('documents')">
@@ -934,7 +934,7 @@
           </div>` : ''}
           <div class="cbp-cover-title" style="color:#fff">${p.siteName || MSState.config.name || 'Site Name'}</div>
           ${p.tagline ? `<div class="cbp-cover-tagline">${p.tagline}</div>` : ''}
-          ${!p.siteName && !p.tagline ? `<div class="cbp-cover-tagline">Add a tagline in the properties panel →</div>` : ''}
+          ${!p.siteName && !p.tagline ? `<div class="cbp-cover-tagline">Add a tagline in the properties panel </div>` : ''}
         </div>`;
           break;
         }
@@ -960,7 +960,7 @@
               <div class="cbp-ann-dot" style="background:${accent}"></div>
               <div class="cbp-ann-text" style="color:${textColor}">${it.text}</div>
             </div>`).join('') :
-              `<div style="color:${subColor};font-size:13px;padding:8px 0">No announcements yet. Add items in the properties panel →</div>`
+              `<div style="color:${subColor};font-size:13px;padding:8px 0">No announcements yet. Add items in the properties panel </div>`
             }
         </div>`;
           break;
@@ -1081,7 +1081,7 @@
             </div>`).join('') :
               `<div class="cbp-doc-item cbp-doc-add" style="border-color:${borderCol}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;opacity:0.3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              <span>Add documents in properties →</span>
+              <span>Add documents in properties </span>
             </div>`
             }
         </div>`;
@@ -1099,7 +1099,7 @@
               ${v.thumbnail ? `<img class="cbp-video-thumb" src="${v.thumbnail}" alt="thumb"/>` : `<div class="cbp-video-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>${v.title || 'Video'}</span></div>`}
               <div class="cbp-video-play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
             </div>`).join('') :
-              `<div class="cbp-video-item"><div class="cbp-video-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Paste a YouTube or Drive link →</span></div></div>`
+              `<div class="cbp-video-item"><div class="cbp-video-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Paste a YouTube or Drive link</span></div></div>`
             }
         </div>`;
           break;
@@ -1452,7 +1452,7 @@
 
         <div class="mse-prop-row">
           <div class="mse-prop-label">Button Label</div>
-          <input class="mse-prop-input" value="${p.buttonText || 'Register Now →'}"
+          <input class="mse-prop-input" value="${p.buttonText || 'Register Now'}"
             oninput="MSState.updateBlock('${block.id}',{buttonText:this.value});refreshCanvas()"/>
         </div>
         ${bgRow}
@@ -2709,7 +2709,7 @@ ${_fontLinks}
       appendGalMessage(
         `Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered site generation, block editing, and design assistance.<br><br>` +
         `<div style="display:flex;flex-direction:column;gap:6px;margin-top:2px">` +
-        `<a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>` +
+        `<a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro</a>` +
         `<button class="gal-ai-sug" onclick="showGalProDetails(this)" style="text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;">What's included in Pro?</button>` +
         `</div>`,
         'bot'
@@ -3991,7 +3991,7 @@ ${_fontLinks}
           </div>
           <div style="margin-bottom:10px;color:var(--text-2)">Gal AI is a <strong style="color:var(--text)">Pro feature</strong>. Upgrade to unlock AI-powered site generation, block editing, and design assistance.</div>
           <div style="display:flex;flex-direction:column;gap:6px">
-            <a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>
+            <a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro </a>
             <button class="gal-ai-sug" onclick="mseShowProDetails(this)" style="text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;">What's included in Pro?</button>
           </div>`;
         history.appendChild(div);
