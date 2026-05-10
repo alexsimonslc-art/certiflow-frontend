@@ -498,81 +498,6 @@
           </div>
         </div>
 
-        <div class="mse-props-section" style="padding-top:14px;padding-bottom:14px">
-          <div class="mse-props-sec-label">Entry Pass</div>
-          <div class="mse-toggle-row">
-            <span>Enable Entry Pass</span>
-            <div class="mse-toggle" id="msPassToggle" onclick="mseTogglePass()"></div>
-          </div>
-          <div id="msPassSettings" style="display:none;margin-top:10px">
-            <div class="mse-prop-row">
-              <div class="mse-prop-label">Event Name (on pass)</div>
-              <input type="text" class="mse-prop-input" id="msPassEventName" placeholder="Annual Tech Summit 2026"
-                oninput="mseUpdatePassConfig({passEventName:this.value})" />
-            </div>
-            <div class="mse-prop-row">
-              <div class="mse-prop-label">Venue</div>
-              <input type="text" class="mse-prop-input" id="msPassVenue" placeholder="City Hall, New Delhi"
-                oninput="mseUpdatePassConfig({passVenue:this.value})" />
-            </div>
-            <div style="display:flex;gap:8px">
-              <div class="mse-prop-row" style="flex:1">
-                <div class="mse-prop-label">Date</div>
-                <input type="date" class="mse-prop-input" id="msPassDate"
-                  oninput="mseUpdatePassConfig({passDate:this.value})" />
-              </div>
-              <div class="mse-prop-row" style="flex:1">
-                <div class="mse-prop-label">Time</div>
-                <input type="time" class="mse-prop-input" id="msPassTime"
-                  oninput="mseUpdatePassConfig({passTime:this.value})" />
-              </div>
-            </div>
-            <div class="mse-prop-row">
-              <div class="mse-prop-label">Rules / Notes (on pass)</div>
-              <textarea class="mse-prop-input" id="msPassRules" rows="2" placeholder="Carry valid ID. No re-entry."
-                style="resize:vertical" oninput="mseUpdatePassConfig({passRules:this.value})"></textarea>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-              <div style="flex:1">
-                <div class="mse-prop-label">Banner Color</div>
-                <input type="color" id="msPassBannerColor" value="#1a1a2e"
-                  oninput="mseUpdatePassConfig({passBannerColor:this.value})"
-                  style="width:100%;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer" />
-              </div>
-              <div style="flex:1">
-                <div class="mse-prop-label">Text Color</div>
-                <input type="color" id="msPassTextColor" value="#ffffff"
-                  oninput="mseUpdatePassConfig({passTextColor:this.value})"
-                  style="width:100%;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer" />
-              </div>
-            </div>
-            <div class="mse-prop-row">
-              <div class="mse-prop-label">Name field key (exact form label)</div>
-              <input type="text" class="mse-prop-input" id="msPassNameField" placeholder="Full Name"
-                oninput="mseUpdatePassConfig({passNameField:this.value})" />
-            </div>
-            <div class="mse-prop-row">
-              <div class="mse-prop-label">Email field key (exact form label)</div>
-              <input type="text" class="mse-prop-input" id="msPassEmailField" placeholder="Email Address"
-                oninput="mseUpdatePassConfig({passEmailField:this.value})" />
-            </div>
-            <div class="mse-toggle-row" style="margin-top:6px">
-              <span>Show Attendance Scanner</span>
-              <div class="mse-toggle" id="msPassShowAttendance" onclick="mseTogglePassAttendance()"></div>
-            </div>
-            <div class="mse-prop-hint" style="margin-bottom:6px">Adds a Scanner button to the site list</div>
-            <div id="msPassStaffCodeBox"
-              style="display:none;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.18);border-radius:8px;padding:10px;margin-top:6px">
-              <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">Staff Scanner Code</div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <span id="msPassStaffCodeDisplay"
-                  style="font-family:monospace;font-size:16px;font-weight:700;color:var(--cyan);letter-spacing:3px"></span>
-                <button id="msPassCodeCopyBtn" onclick="mseCopyPassCode()"
-                  style="padding:3px 10px;background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.25);color:var(--cyan);border-radius:5px;font-size:11px;cursor:pointer">Copy</button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
     </aside>
@@ -2243,11 +2168,13 @@ ${_fontLinks}
       }).join('');
     }
 
-    /* Build font picker options for title/content dropdowns */
+    /* Build font picker options for title/content dropdowns — always rebuilt so selection stays current */
     function buildFontPicker(which) {
       const picker = document.getElementById(which + 'FontPicker');
-      if (!picker || picker.dataset.built) return;
-      const current = MSState.config[which + 'Font'] || (which === 'title' ? 'Syne' : 'Plus Jakarta Sans');
+      if (!picker) return;
+      const current = which === 'title'
+        ? (MSState.config.titleFont || MSState.config.fontHeading || 'Syne')
+        : (MSState.config.contentFont || MSState.config.fontFamily || 'Plus Jakarta Sans');
       picker.innerHTML = MSB_FONT_LIST.map(f =>
         `<button class="mse-font-opt${current === f.name ? ' on' : ''}" data-font="${f.name}"
           style="font-family:${f.stack};font-weight:${f.weight}"
@@ -2256,7 +2183,6 @@ ${_fontLinks}
           <span class="mse-font-opt-name" style="font-family:var(--font)">${f.name.split(' ')[0]}</span>
         </button>`
       ).join('');
-      picker.dataset.built = '1';
     }
 
     /* Apply a prebuilt theme */
@@ -2271,8 +2197,9 @@ ${_fontLinks}
       MSState.updateConfig({
         theme: t.theme || 'dark',
         titleFont: t.titleFont,
+        fontHeading: t.titleFont,
         contentFont: t.contentFont,
-        fontFamily: t.titleFont,
+        fontFamily: t.contentFont,
         accentColor: t.accent,
         bgOverride: t.bg,
         titleColor: t.textColor || '',
@@ -2291,7 +2218,12 @@ ${_fontLinks}
     function applyFontPair(id) {
       const p = MSB_FONT_PAIRS.find(x => x.id === id);
       if (!p) return;
-      MSState.updateConfig({ titleFont: p.titleFont, contentFont: p.contentFont, fontFamily: p.titleFont });
+      MSState.updateConfig({
+        titleFont: p.titleFont,
+        fontHeading: p.titleFont,
+        contentFont: p.contentFont,
+        fontFamily: p.contentFont,
+      });
       refreshCanvas();
       updateFontSelectBoxes();
       buildFontPairList();
@@ -2315,10 +2247,11 @@ ${_fontLinks}
       }
     }
 
-    /* Select a font from the picker */
+    /* Select a font from the picker — title and content are fully independent */
     function selectFont(which, fontName) {
-      const upd = { fontFamily: fontName };
-      upd[which + 'Font'] = fontName;
+      const upd = which === 'title'
+        ? { titleFont: fontName, fontHeading: fontName }
+        : { contentFont: fontName, fontFamily: fontName };
       MSState.updateConfig(upd);
       refreshCanvas();
       updateFontSelectBoxes();
@@ -3268,7 +3201,8 @@ ${_fontLinks}
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 9px 12px;
+      padding: 8px 12px;
+      min-height: 48px;
       border-radius: 9px;
       border: 1.5px solid rgba(255, 255, 255, 0.09);
       background: rgba(255, 255, 255, 0.04);
@@ -3287,25 +3221,29 @@ ${_fontLinks}
     .mse-fp-fonts {
       flex: 1;
       min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
     }
 
     .mse-fp-title {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.3;
+      line-height: 1.15;
     }
 
     .mse-fp-content {
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--text-3);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.3;
+      line-height: 1.15;
     }
 
     .mse-fp-label {
@@ -3313,7 +3251,9 @@ ${_fontLinks}
       font-weight: 600;
       color: var(--text-3);
       flex-shrink: 0;
+      align-self: center;
       letter-spacing: 0.04em;
+      text-align: right;
     }
 
     /* ── Font Select Box (custom dropdown) ───────────────────────── */

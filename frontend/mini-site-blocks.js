@@ -13,14 +13,13 @@ function msb_theme(cfg) {
   const isDark = cfg.theme !== 'light';
   const accent = cfg.accentColor || '#00d4ff';
   const [ar, ag, ab] = msb_hexRgb(accent);
-  const font = cfg.fontFamily || 'Plus Jakarta Sans';
   return {
     isDark,
     accent,
     ar, ag, ab,
     accentRgb: `${ar},${ag},${ab}`,
-    font,
-    fontDisplay: cfg.fontHeading || cfg.fontFamily || 'Syne',
+    font: cfg.contentFont || cfg.fontFamily || 'Plus Jakarta Sans',
+    fontDisplay: cfg.titleFont || cfg.fontHeading || cfg.fontFamily || 'Syne',
     // Text — cfg.titleColor / cfg.contentColor carry the global palette text colors set by prebuilt themes
     text: cfg.titleColor || (isDark ? '#eef4ff' : '#0f172a'),
     sub: cfg.contentColor || (isDark ? 'rgba(255,255,255,0.55)' : 'rgba(15,23,42,0.62)'),
