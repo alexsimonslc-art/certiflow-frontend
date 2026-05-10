@@ -792,6 +792,10 @@
     /* ════════════════════════════════════════════════════════════════
        CANVAS RENDERING
     ════════════════════════════════════════════════════════════════ */
+    let _canvasBlockFP = {};
+    let _canvasGlobalFP = '';
+    let _mobilePreviewStyleKey = '';
+
     function refreshCanvas() {
       const frame = document.getElementById('canvasFrame');
       const body = document.getElementById('canvasBody');
@@ -807,10 +811,48 @@
       if (!MSState.blocks.length) {
         body.innerHTML = '';
         empty.style.display = 'flex';
+        _canvasBlockFP = {};
+        _canvasGlobalFP = '';
         return;
       }
       empty.style.display = 'none';
-      body.innerHTML = MSState.blocks.map(b => renderBlockCanvas(b, isDark)).join('');
+
+      // Global config fingerprint — things that affect ALL blocks' rendering
+      const newGlobalFP = JSON.stringify({
+        theme: MSState.config.theme,
+        accentColor: MSState.config.accentColor,
+        titleFont: MSState.config.titleFont || MSState.config.fontFamily,
+        contentFont: MSState.config.contentFont,
+        titleColor: MSState.config.titleColor,
+        contentColor: MSState.config.contentColor,
+        titleFontSize: MSState.config.titleFontSize,
+        contentFontSize: MSState.config.contentFontSize,
+      });
+
+      const currentIdList = MSState.blocks.map(b => b.id).join(',');
+      const prevIdList = Object.keys(_canvasBlockFP).join(',');
+      const needsFullRender = newGlobalFP !== _canvasGlobalFP || currentIdList !== prevIdList || !body.children.length;
+
+      if (needsFullRender) {
+        body.innerHTML = MSState.blocks.map(b => renderBlockCanvas(b, isDark)).join('');
+        _canvasBlockFP = {};
+        MSState.blocks.forEach(b => { _canvasBlockFP[b.id] = JSON.stringify(b.props); });
+        _canvasGlobalFP = newGlobalFP;
+      } else {
+        // Only replace individual blocks whose props changed — leaves iframes (video/forms) untouched
+        MSState.blocks.forEach((b, idx) => {
+          const newFP = JSON.stringify(b.props);
+          if (newFP !== _canvasBlockFP[b.id]) {
+            const existing = body.children[idx];
+            if (existing) {
+              const tmp = document.createElement('div');
+              tmp.innerHTML = renderBlockCanvas(b, isDark);
+              body.replaceChild(tmp.firstChild, existing);
+            }
+            _canvasBlockFP[b.id] = newFP;
+          }
+        });
+      }
 
       // Wire block click + control events
       document.querySelectorAll('.mse-block-wrap').forEach(wrap => {
@@ -1865,6 +1907,17 @@
       const _fontLinks   = [...new Set([_fontUrlMap[_titleFont], _fontUrlMap[_contentFont]].filter(Boolean))]
                             .map(u => `<link href="${u}" rel="stylesheet"/>`).join('\n');
       const blocksHtml = MSState.blocks.map(b => renderMSBlock(b, t_cfg)).join('');
+
+      // Only the CSS style block depends on these — block content handles the rest inline
+      const _styleKey = [t_cfg.theme, _titleFont, _contentFont,
+        t_cfg.bgOverride || '', t_cfg.titleColor || '', t_cfg.contentColor || ''
+      ].join('|');
+      if (_styleKey === _mobilePreviewStyleKey && frame.contentDocument?.body) {
+        frame.contentDocument.body.innerHTML = blocksHtml;
+        return;
+      }
+      _mobilePreviewStyleKey = _styleKey;
+
       const bg = t_cfg.theme === 'light' ? '#ffffff' : (t_cfg.bgOverride || '#0a0f1e');
       const textColor = t_cfg.theme === 'light' ? '#1e293b' : '#eef4ff';
       frame.srcdoc = `<!DOCTYPE html><html><head>
@@ -1946,8 +1999,8 @@ ${_fontLinks}
   html{scroll-behavior:smooth}
   body{font-family:'${_contentFont}',sans-serif;background:${bg};color:${textColor};-webkit-font-smoothing:antialiased;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.18) transparent}
   h1,h2,h3,h4,h5{font-family:'${_titleFont}',sans-serif}
-  ${t_cfg.titleColor ? `h1,h2,h3,h4,h5{color:${t_cfg.titleColor}!important}` : ''}
-  ${t_cfg.contentColor ? `p,span,li{color:${t_cfg.contentColor}!important}` : ''}
+  ${t_cfg.titleColor ? `h1,h2,h3,h4,h5{color:${t_cfg.titleColor}}` : ''}
+  ${t_cfg.contentColor ? `p,span,li{color:${t_cfg.contentColor}}` : ''}
   ::-webkit-scrollbar{width:3px;height:3px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:99px}

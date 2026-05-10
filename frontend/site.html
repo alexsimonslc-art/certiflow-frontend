@@ -43,11 +43,7 @@
 ════════════════════════════════════════════════════════════════ -->
   <header class="ms-topbar" id="msTopbar" style="display:none">
     <a class="ms-topbar-brand" href="/index.html">
-      <div class="ms-topbar-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-        </svg>
-      </div>
+      <img src="Images/GalSol Logo IC.svg" alt="GalSol" class="ms-topbar-mark" style="width:22px;height:22px;object-fit:contain;flex-shrink:0;border-radius:0;background:none"/>
       <span class="ms-topbar-name">Gal<span>Sol</span></span>
     </a>
     <div class="ms-topbar-right">
@@ -83,7 +79,7 @@
         d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </svg>
     <span>on</span>
-    <a href="/index.html" style="font-weight:700;color:var(--cyan)">GalSol</a>
+    <a href="/index.html"><img src="Images/GalSol GWN.svg" alt="GalSol" class="ms-footer-logo"/></a>
     <div class="ms-footer-dot"></div>
     <a href="/mini-site.html">Create your own event page →</a>
   </footer>
@@ -167,6 +163,11 @@
       root.style.setProperty('--ms-bg', isDark ? '#0a0f1e' : '#ffffff');
       root.style.setProperty('--ms-text', isDark ? '#eef4ff' : '#1e293b');
       root.style.setProperty('--ms-font', `'${font}'`);
+      root.style.setProperty('--ms-topbar-bg', isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)');
+      root.style.setProperty('--ms-topbar-border', isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)');
+      root.style.setProperty('--ms-topbar-text', isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)');
+      root.style.setProperty('--ms-footer-text', isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.35)');
+      root.style.setProperty('--ms-footer-border', isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)');
 
       // Body background
       document.body.style.background = isDark ? '#0a0f1e' : '#ffffff';

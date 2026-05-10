@@ -251,10 +251,10 @@ details summary::-webkit-details-marker {
 /* ── Powered-by header bar ───────────────────────────────────── */
 .ms-topbar {
   height: 42px;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--ms-topbar-bg, rgba(0, 0, 0, 0.6));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--ms-topbar-border, rgba(255, 255, 255, 0.07));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -274,25 +274,15 @@ details summary::-webkit-details-marker {
 .ms-topbar-mark {
   width: 22px;
   height: 22px;
-  background: linear-gradient(135deg, #00d4ff, #7c3aed);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-}
-
-.ms-topbar-mark svg {
-  width: 11px;
-  height: 11px;
-  color: #fff;
+  display: block;
 }
 
 .ms-topbar-name {
   font-family: 'Syne', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ms-topbar-text, rgba(255, 255, 255, 0.6));
 }
 
 .ms-topbar-name span {
@@ -559,17 +549,17 @@ details summary::-webkit-details-marker {
 /* ── Footer ──────────────────────────────────────────────────── */
 .ms-footer {
   padding: 28px clamp(16px, 4%, 40px);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--ms-footer-border, rgba(255, 255, 255, 0.06));
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   font-size: 12.5px;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--ms-footer-text, rgba(255, 255, 255, 0.25));
 }
 
 .ms-footer a {
-  color: rgba(var(--ms-accent-rgb, 0, 212, 255), 0.6);
+  color: rgba(var(--ms-accent-rgb, 0, 212, 255), 0.7);
   font-weight: 600;
   transition: color 0.15s;
 }
@@ -578,11 +568,25 @@ details summary::-webkit-details-marker {
   color: var(--ms-accent, #00d4ff);
 }
 
+.ms-footer-logo {
+  height: 18px;
+  width: auto;
+  vertical-align: middle;
+  display: inline-block;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.ms-footer a:hover .ms-footer-logo {
+  opacity: 1;
+}
+
 .ms-footer-dot {
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--ms-footer-text, rgba(255, 255, 255, 0.25));
+  opacity: 0.6;
 }
 
 /* ── FAQ details animation ───────────────────────────────────── */
