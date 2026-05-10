@@ -180,20 +180,10 @@ textarea {
 }
 
 .mse-logo-mark {
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, #00d4ff, #7c3aed);
-  border-radius: 7px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 7px;
   flex-shrink: 0;
-}
-
-.mse-logo-mark svg {
-  width: 14px;
-  height: 14px;
-  color: #fff;
 }
 
 /* Center cluster */
@@ -211,7 +201,7 @@ textarea {
   border: none;
   outline: none;
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text);
   text-align: center;

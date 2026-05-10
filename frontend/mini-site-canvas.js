@@ -361,6 +361,7 @@ function renderBlockProps(block) {
     ${msc_addBtn('Add Announcement', `msc_addItem('${bid}','items',{id:'a${msc_uid()}',text:'New announcement',date:'',pinned:false})`)}
   </div>
   ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
+  ${msc_fontSizeRow(bid, 'textFontSize', p.textFontSize, 'Content Size', 12, 28, 15)}
   ${msc_colorSection(bid, [
         ['titleColor', 'Section Title', td.text],
         ['itemTextColor', 'Item Text', td.text],

@@ -41,7 +41,7 @@ const BLOCK_REG = {
       items: [{ id: 'a1', text: 'Registration is now open!', date: '', pinned: true }],
       bgColor: '',
       titleColor: '', itemTextColor: '', itemDateColor: '',
-      titleFontSize: '',
+      titleFontSize: '', textFontSize: '',
     }),
   },
 

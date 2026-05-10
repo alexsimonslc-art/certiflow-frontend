@@ -193,7 +193,7 @@ function msb_announcements(block, cfg) {
       <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:${t.accent};border-radius:0 3px 3px 0"></div>
       <div style="width:8px;height:8px;border-radius:50%;background:${t.accent};flex-shrink:0;margin-top:5px;box-shadow:0 0 8px rgba(${t.accentRgb},0.6)"></div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:${t.bodySize};color:${p.itemTextColor || t.text};line-height:1.55;font-weight:500">${item.text || ''}</div>
+        <div style="font-size:${p.textFontSize ? p.textFontSize+'px' : t.bodySize};color:${p.itemTextColor || t.text};line-height:1.55;font-weight:500">${item.text || ''}</div>
         ${item.date ? `<div style="font-size:11.5px;color:${p.itemDateColor || t.muted};margin-top:4px">${item.date}</div>` : ''}
       </div>
       ${item.pinned ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:${t.accent};background:rgba(${t.accentRgb},0.12);border:1px solid rgba(${t.accentRgb},0.25);padding:3px 8px;border-radius:99px;flex-shrink:0">Pinned</div>` : ''}
@@ -250,17 +250,17 @@ function msb_speakers(block, cfg) {
 
   const gridCard = (sp) => `
 <div class="spk-card-${uid}" style="flex-shrink:0;width:210px;scroll-snap-align:start">
-  <div style="border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column">
+  <div style="border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column;height:380px">
     <div style="width:100%;height:240px;overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
       ${sp.photo
         ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
       <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,${t.bgCard})"></div>
     </div>
-    <div style="padding:14px 16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px">
-      <div style="font-size:16px;font-weight:700;color:${p.nameColor || t.text};line-height:1.25">${sp.name || 'Speaker'}</div>
-      ${sp.role ? `<div style="font-size:12.5px;font-weight:500;color:${p.roleColor || t.accent}">${sp.role}</div>` : ''}
-      ${sp.bio ? `<div style="font-size:12px;color:${p.bioColor || t.sub};margin-top:6px;line-height:1.55">${sp.bio}</div>` : ''}
+    <div style="padding:14px 16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px;overflow:hidden">
+      <div style="font-size:16px;font-weight:700;color:${p.nameColor || t.text};line-height:1.25;flex-shrink:0">${sp.name || 'Speaker'}</div>
+      ${sp.role ? `<div style="font-size:12.5px;font-weight:500;color:${p.roleColor || t.accent};flex-shrink:0">${sp.role}</div>` : ''}
+      ${sp.bio ? `<div style="font-size:12px;color:${p.bioColor || t.sub};margin-top:6px;line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">${sp.bio}</div>` : ''}
     </div>
   </div>
 </div>`;

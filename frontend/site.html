@@ -39,27 +39,6 @@
     <div class="ms-loading-text">Loading event page…</div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════════
-     TOP BAR  (sticky — shown after content loads)
-════════════════════════════════════════════════════════════════ -->
-  <header class="ms-topbar" id="msTopbar" style="display:none">
-    <a class="ms-topbar-brand" href="/index.html">
-      <img src="Images/GalSol Logo IC.svg" alt="GalSol" class="ms-topbar-mark" style="width:22px;height:22px;object-fit:contain;flex-shrink:0;border-radius:0;background:none"/>
-      <span class="ms-topbar-name">Gal<span>Sol</span></span>
-    </a>
-    <div class="ms-topbar-right">
-      <button class="ms-topbar-share-btn" onclick="msShareSite()" id="shareBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="18" cy="5" r="3" />
-          <circle cx="6" cy="12" r="3" />
-          <circle cx="18" cy="19" r="3" />
-          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-        </svg>
-        Share
-      </button>
-    </div>
-  </header>
 
   <!-- ════════════════════════════════════════════════════════════
      CONTENT  (filled by JS)
@@ -293,21 +272,8 @@
        TOPBAR + FOOTER WIRING
     ════════════════════════════════════════════════════════════════ */
     function showChrome(siteData) {
-      const topbar = document.getElementById('msTopbar');
       const footer = document.getElementById('msFooter');
-      const badge = document.getElementById('regBadge');
-      const label = document.getElementById('regBadgeLabel');
-
-      if (siteData.registrationOpen !== false) {
-        badge.className = 'ms-topbar-reg-badge open';
-        label.textContent = 'Registrations Open';
-      } else {
-        badge.className = 'ms-topbar-reg-badge closed';
-        label.textContent = 'Registrations Closed';
-      }
-
-      topbar.style.display = 'flex';
-      footer.style.display = 'flex';
+      if (footer) footer.style.display = 'flex';
     }
 
     /* ════════════════════════════════════════════════════════════════
