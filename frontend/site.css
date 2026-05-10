@@ -592,6 +592,21 @@ details summary::-webkit-details-marker {
   opacity: 0.6;
 }
 
+@media (max-width: 520px) {
+  .ms-footer {
+    font-size: 10.5px;
+    gap: 5px;
+    padding: 16px 10px;
+  }
+  .ms-footer-logo {
+    height: 14px;
+  }
+  .ms-footer-dot,
+  .ms-footer > a:last-child {
+    display: none;
+  }
+}
+
 /* ── FAQ details animation ───────────────────────────────────── */
 details>summary {
   cursor: pointer;

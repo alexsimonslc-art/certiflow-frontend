@@ -249,8 +249,8 @@ function msb_speakers(block, cfg) {
   const isList = p.layout === 'list';
 
   const gridCard = (sp) => `
-<div class="spk-card-${uid}" style="flex-shrink:0;width:210px;scroll-snap-align:start">
-  <div style="border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column;height:380px">
+<div class="spk-card-${uid}" style="flex-shrink:0;width:210px;scroll-snap-align:start;display:flex;align-self:stretch">
+  <div style="border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column;flex:1;min-height:0">
     <div style="width:100%;height:240px;overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
       ${sp.photo
         ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
