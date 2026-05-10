@@ -69,17 +69,19 @@ function msc_uid() { return Math.random().toString(36).slice(2, 8); }
 /** Render a common bg-color row (used by every block). */
 function msc_bgRow(bid, val) {
   const v = val || '';
+  const themeBg = MSState.config.bgOverride || (MSState.config.theme === 'light' ? '#f1f5f9' : '#0a0f1e');
+  const displayBg = v || themeBg;
   return `
 <div class="mse-prop-row">
   <div class="mse-prop-label">Section Background</div>
   <div class="mse-color-row">
-    <div class="mse-color-swatch" style="background:${v || '#0a0f1e'}">
-      <input type="color" value="${v || '#0a0f1e'}"
+    <div class="mse-color-swatch" style="background:${displayBg}">
+      <input type="color" value="${displayBg}"
         oninput="msc_set('${bid}','bgColor',this.value)"/>
     </div>
-    <input type="text" class="mse-prop-input" value="${v}" placeholder="Default"
+    <input type="text" class="mse-prop-input" value="${v}" placeholder="Default (theme bg)"
       oninput="msc_set('${bid}','bgColor',this.value)" style="flex:1"/>
-    <button onclick="msc_set('${bid}','bgColor','');this.previousElementSibling.value='';this.previousElementSibling.previousElementSibling.style.background='#0a0f1e'"
+    <button onclick="msc_set('${bid}','bgColor','');updateRightPanel()"
       style="padding:0 8px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font)">Clear</button>
   </div>
 </div>`;

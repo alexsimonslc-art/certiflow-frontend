@@ -15,7 +15,7 @@ const BLOCK_REG = {
       coverImage: '', coverOverlay: 'dark',
       logoImage: '', logoShape: 'circle', showLogo: true,
       siteName: '', tagline: '',
-      bgColor: '#0a0f1e',
+      bgColor: '',
       titleColor: '', taglineColor: '',
     }),
   },

@@ -149,6 +149,9 @@ function mst_applyPalette(id) {
     bgOverride: pal.bg,
     activePalette: id,
   });
+  // Clear per-block bg overrides so global theme bg propagates to all blocks
+  MSState.blocks.forEach(b => { b.props.bgColor = ''; });
+  MSState.dirty = true;
   refreshCanvas();
   mst_rebuildSiteSettings();
   mseToast(`Theme: ${pal.name}`, 'success', 1800);

@@ -2262,6 +2262,9 @@ ${_fontLinks}
         accentColor: t.accent,
         bgOverride: t.bg,
       });
+      // Clear per-block bg overrides so global theme bg propagates to all blocks
+      MSState.blocks.forEach(b => { b.props.bgColor = ''; });
+      MSState.dirty = true;
       refreshCanvas();
       populateSiteSettings();
     }
