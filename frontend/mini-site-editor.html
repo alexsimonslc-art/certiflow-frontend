@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Site Editor — GalSol</title>
+  <link rel="icon" href="Images/GalSol Logo IC.svg" type="image/svg+xml"/>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Core + new professional fonts -->
@@ -36,10 +37,9 @@
           Sites
         </a>
         <div class="mse-topbar-divider"></div>
-        <div class="mse-logo-mark">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-          </svg>
+        <div class="mse-logo-mark" style="display:flex;align-items:center;gap:7px">
+          <img src="Images/GalSol Logo IC.svg" alt="GalSol" style="width:22px;height:22px;object-fit:contain;display:block"/>
+          <span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.7);white-space:nowrap">Mini Site</span>
         </div>
       </div>
 
@@ -282,7 +282,10 @@
           </svg>
         </div>
         <div class="mse-acct-info">
-          <div class="mse-acct-name" id="mseUserDisplayName">Account</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="mse-acct-name" id="mseUserDisplayName">Account</div>
+            <div id="mseProBadge" style="display:none;font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#a78bfa;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.35);padding:2px 6px;border-radius:99px;line-height:1.4;flex-shrink:0">Pro</div>
+          </div>
           <div class="mse-acct-tag">Account & Settings</div>
         </div>
         <svg class="mse-acct-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -746,6 +749,22 @@
         }
       } catch (e) { console.warn("Could not load user profile"); }
 
+      // ── Show Pro badge if plan === 'pro' ──
+      (async () => {
+        try {
+          const token = localStorage.getItem('GalSol_token') || '';
+          if (!token) return;
+          const res = await fetch('https://certiflow-backend-73xk.onrender.com/api/settings/plan', {
+            headers: { 'Authorization': 'Bearer ' + token }
+          });
+          const data = await res.json();
+          if (data?.plan === 'pro') {
+            const badge = document.getElementById('mseProBadge');
+            if (badge) badge.style.display = 'inline-block';
+          }
+        } catch (_) {}
+      })();
+
       refreshCanvas();
       renderLayers();
       updateUndoRedo();
@@ -858,7 +877,7 @@
       document.querySelectorAll('.mse-block-wrap').forEach(wrap => {
         const id = wrap.dataset.id;
         wrap.querySelector('.mse-block-inner')?.addEventListener('click', e => {
-          e.stopPropagation(); MSState.selectBlock(id); updateRightPanel();
+          e.stopPropagation(); MSState.selectBlock(id); switchRightTab('block'); updateRightPanel();
         });
       });
 

@@ -193,7 +193,7 @@ function msb_announcements(block, cfg) {
       <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:${t.accent};border-radius:0 3px 3px 0"></div>
       <div style="width:8px;height:8px;border-radius:50%;background:${t.accent};flex-shrink:0;margin-top:5px;box-shadow:0 0 8px rgba(${t.accentRgb},0.6)"></div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:14.5px;color:${p.itemTextColor || t.text};line-height:1.55;font-weight:500">${item.text || ''}</div>
+        <div style="font-size:${t.bodySize};color:${p.itemTextColor || t.text};line-height:1.55;font-weight:500">${item.text || ''}</div>
         ${item.date ? `<div style="font-size:11.5px;color:${p.itemDateColor || t.muted};margin-top:4px">${item.date}</div>` : ''}
       </div>
       ${item.pinned ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:${t.accent};background:rgba(${t.accentRgb},0.12);border:1px solid rgba(${t.accentRgb},0.25);padding:3px 8px;border-radius:99px;flex-shrink:0">Pinned</div>` : ''}
@@ -214,8 +214,8 @@ function msb_datetime(block, cfg) {
   <div style="flex:1;min-width:140px;padding:20px 16px;border-radius:14px;background:${t.bgCard};border:1px solid ${t.border};display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;box-sizing:border-box">
     <div style="width:44px;height:44px;border-radius:11px;background:rgba(${t.accentRgb},0.12);border:1px solid rgba(${t.accentRgb},0.2);display:flex;align-items:center;justify-content:center">${iconSvg}</div>
     ${link
-      ? `<a href="${link}" target="_blank" style="font-size:clamp(15px,2vw,19px);font-weight:700;color:${t.accent};line-height:1.3;text-decoration:none;word-break:break-word">${value || '—'}</a>`
-      : `<div style="font-size:clamp(15px,2vw,19px);font-weight:700;color:${p.valueColor || t.text};line-height:1.3;word-break:break-word">${value || '—'}</div>`}
+      ? `<a href="${link}" target="_blank" style="font-size:${t.bodySize};font-weight:700;color:${t.accent};line-height:1.3;text-decoration:none;word-break:break-word">${value || '—'}</a>`
+      : `<div style="font-size:${t.bodySize};font-weight:700;color:${p.valueColor || t.text};line-height:1.3;word-break:break-word">${value || '—'}</div>`}
     <div style="font-size:11.5px;color:${p.labelColor || t.muted};text-transform:uppercase;letter-spacing:0.6px;font-weight:600">${label}</div>
   </div>`;
 
@@ -249,17 +249,19 @@ function msb_speakers(block, cfg) {
   const isList = p.layout === 'list';
 
   const gridCard = (sp) => `
-<div class="spk-card-${uid}" style="flex-shrink:0;width:210px;border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column;scroll-snap-align:start">
-  <div style="width:100%;height:240px;overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
-    ${sp.photo
-      ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
-      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
-    <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,${t.bgCard})"></div>
-  </div>
-  <div style="padding:14px 16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px">
-    <div style="font-size:16px;font-weight:700;color:${p.nameColor || t.text};line-height:1.25">${sp.name || 'Speaker'}</div>
-    ${sp.role ? `<div style="font-size:12.5px;font-weight:500;color:${p.roleColor || t.accent}">${sp.role}</div>` : ''}
-    ${sp.bio ? `<div style="font-size:12px;color:${p.bioColor || t.sub};margin-top:6px;line-height:1.55">${sp.bio}</div>` : ''}
+<div class="spk-card-${uid}" style="flex-shrink:0;width:210px;scroll-snap-align:start">
+  <div style="border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column">
+    <div style="width:100%;height:240px;overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
+      ${sp.photo
+        ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
+        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
+      <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,${t.bgCard})"></div>
+    </div>
+    <div style="padding:14px 16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:16px;font-weight:700;color:${p.nameColor || t.text};line-height:1.25">${sp.name || 'Speaker'}</div>
+      ${sp.role ? `<div style="font-size:12.5px;font-weight:500;color:${p.roleColor || t.accent}">${sp.role}</div>` : ''}
+      ${sp.bio ? `<div style="font-size:12px;color:${p.bioColor || t.sub};margin-top:6px;line-height:1.55">${sp.bio}</div>` : ''}
+    </div>
   </div>
 </div>`;
 
@@ -276,30 +278,36 @@ function msb_speakers(block, cfg) {
 </div>`;
 
   const dots = items.length > 1 ? `
-<div id="spkDots_${uid}" style="display:none;justify-content:center;gap:6px;margin-top:16px">
-  ${items.map((_, i) => `<div id="spkDot_${uid}_${i}" style="width:${i === 0 ? '20px' : '6px'};height:6px;border-radius:99px;background:${i === 0 ? t.accent : 'rgba(255,255,255,0.2)'};transition:all 0.3s ease;cursor:pointer" onclick="spkGoTo_${uid}(${i})"></div>`).join('')}
+<div id="spkDots_${uid}" style="display:none;justify-content:center;gap:6px;margin-top:12px">
+  ${items.map((_, i) => `<div id="spkDot_${uid}_${i}" style="width:${i === 0 ? '20px' : '6px'};height:6px;border-radius:99px;background:${i === 0 ? t.accent : `rgba(${t.accentRgb},0.25)`};transition:all 0.3s ease;cursor:pointer" onclick="spkGoTo_${uid}(${i})"></div>`).join('')}
 </div>` : '';
 
+  const _wrapId = `spkWrap_${uid}`;
   const carousel = `
 <div style="position:relative">
-  <div id="spkTrack_${uid}" style="display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 4px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none">
-    ${items.map(sp => gridCard(sp)).join('')}
+  <div id="${_wrapId}" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;scroll-behavior:smooth">
+    <div id="spkTrack_${uid}" style="display:flex;gap:20px;padding:12px 8px 32px">
+      ${items.map(sp => gridCard(sp)).join('')}
+    </div>
   </div>
   ${dots}
 </div>
-<style>#spkTrack_${uid}::-webkit-scrollbar{display:none}</style>
+<style>#${_wrapId}::-webkit-scrollbar{display:none}</style>
 <svg style="display:none" onload="
 (function(){
+  var wrap=document.getElementById('${_wrapId}');
   var track=document.getElementById('spkTrack_${uid}');
   var dotsEl=document.getElementById('spkDots_${uid}');
-  if(!track)return;
+  if(!wrap||!track)return;
   var cards=track.querySelectorAll('.spk-card-${uid}');
   var n=cards.length;
   var cur=0,timer;
 
   function goTo(i){
     cur=((i%n)+n)%n;
-    track.scrollTo({left:cards[cur].offsetLeft,behavior:'smooth'});
+    var rect=cards[cur].getBoundingClientRect();
+    var wRect=wrap.getBoundingClientRect();
+    wrap.scrollTo({left:wrap.scrollLeft+(rect.left-wRect.left),behavior:'smooth'});
     updateDots();
   }
   window['spkGoTo_${uid}']=goTo;
@@ -309,7 +317,7 @@ function msb_speakers(block, cfg) {
       var d=document.getElementById('spkDot_${uid}_'+i);
       if(!d)continue;
       d.style.width=i===cur?'20px':'6px';
-      d.style.background=i===cur?'${t.accent}':'rgba(255,255,255,0.2)';
+      d.style.background=i===cur?'${t.accent}':'rgba(${t.accentRgb},0.25)';
     }
   }
 
@@ -317,34 +325,34 @@ function msb_speakers(block, cfg) {
   function stopAuto(){clearInterval(timer);}
 
   function applyMode(){
-    var overflows=track.scrollWidth > track.clientWidth + 4;
+    var overflows=track.scrollWidth > wrap.clientWidth + 4;
     if(overflows){
-      /* CAROUSEL MODE */
+      /* CAROUSEL MODE — track stays overflow:visible, wrap scrolls */
       track.style.flexWrap='nowrap';
-      track.style.overflowX='auto';
       track.style.justifyContent='flex-start';
-      track.style.scrollSnapType='x mandatory';
       if(dotsEl) dotsEl.style.display='flex';
       stopAuto();
       if(n&gt;1){
-        track.addEventListener('mouseenter',stopAuto);
-        track.addEventListener('mouseleave',startAuto);
-        track.addEventListener('touchstart',stopAuto,{passive:true});
-        track.addEventListener('touchend',function(){setTimeout(startAuto,4000);},{passive:true});
-        track.addEventListener('scroll',function(){
+        wrap.addEventListener('mouseenter',stopAuto);
+        wrap.addEventListener('mouseleave',startAuto);
+        wrap.addEventListener('touchstart',stopAuto,{passive:true});
+        wrap.addEventListener('touchend',function(){setTimeout(startAuto,4000);},{passive:true});
+        wrap.addEventListener('scroll',function(){
           var best=0,min=Infinity;
-          for(var i=0;i&lt;n;i++){var dx=Math.abs(cards[i].offsetLeft-track.scrollLeft);if(dx&lt;min){min=dx;best=i;}}
+          var wl=wrap.getBoundingClientRect().left;
+          for(var i=0;i&lt;n;i++){
+            var dx=Math.abs(cards[i].getBoundingClientRect().left-wl);
+            if(dx&lt;min){min=dx;best=i;}
+          }
           if(best!==cur){cur=best;updateDots();}
         },{passive:true});
         startAuto();
       }
     } else {
-      /* GRID MODE — centered, no scroll, no dots */
+      /* GRID MODE — centered wrap, no dots */
       stopAuto();
       track.style.flexWrap='wrap';
-      track.style.overflowX='visible';
       track.style.justifyContent='center';
-      track.style.scrollSnapType='none';
       if(dotsEl) dotsEl.style.display='none';
     }
   }
@@ -411,7 +419,7 @@ function msb_sponsors(block, cfg) {
       ${tier.items?.length ? tier.items.map(s => `
         <div style="display:flex;flex-direction:column;align-items:center;gap:7px">
           <div style="padding:10px 16px;min-height:${tierSizes[ti] || '48px'};border-radius:10px;background:${t.bgCard};border:1px solid ${t.border};display:inline-flex;align-items:center;justify-content:center">
-            ${s.logo ? `<img src="${s.logo}" style="height:${tierSizes[ti] ? parseInt(tierSizes[ti]) - 20 + 'px' : '28px'};max-width:120px;object-fit:contain" alt="${s.name || ''}"/>` : `<span style="font-size:13px;font-weight:600;color:${t.sub}">${s.name || 'Sponsor'}</span>`}
+            ${s.logo ? `<img src="${s.logo}" style="height:${tierSizes[ti] ? parseInt(tierSizes[ti]) - 20 + 'px' : '28px'};max-width:120px;object-fit:contain" alt="${s.name || ''}"/>` : `<span style="font-size:${t.bodySize};font-weight:600;color:${t.sub}">${s.name || 'Sponsor'}</span>`}
           </div>
           ${s.logo && s.name ? `<span style="font-size:11px;font-weight:500;color:${t.muted};text-align:center;max-width:100px;word-break:break-word">${s.name}</span>` : ''}
         </div>`).join('') :
@@ -521,7 +529,7 @@ function msb_documents(block, cfg) {
         <svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" style="width:18px;height:18px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       </div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:14.5px;font-weight:600;color:${p.itemLabelColor || t.text};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${doc.label || 'Document'}</div>
+        <div style="font-size:${t.bodySize};font-weight:600;color:${p.itemLabelColor || t.text};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${doc.label || 'Document'}</div>
         ${doc.desc ? `<div style="font-size:12px;color:${p.itemDescColor || t.muted};margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${doc.desc}</div>` : ''}
       </div>
       <div style="flex-shrink:0">
