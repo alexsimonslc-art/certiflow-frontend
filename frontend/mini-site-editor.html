@@ -410,25 +410,6 @@
         <div class="mse-props-section" style="padding-top:16px">
           <div class="mse-props-sec-label">Colors</div>
           <div class="mse-prop-row">
-            <div class="mse-prop-label">Mode</div>
-            <div class="mse-theme-grid">
-              <button class="mse-theme-box" data-value="dark" onclick="setThemeBox('dark')">
-                <div class="mse-theme-preview">
-                  <div class="mtp-topbar"></div><div class="mtp-left"></div>
-                  <div class="mtp-body"><div class="mtp-block"></div><div class="mtp-block short"></div><div class="mtp-block"></div></div>
-                </div>
-                <span>Dark</span>
-              </button>
-              <button class="mse-theme-box" data-value="light" onclick="setThemeBox('light')">
-                <div class="mse-theme-preview light">
-                  <div class="mtp-topbar light"></div><div class="mtp-left light"></div>
-                  <div class="mtp-body"><div class="mtp-block light"></div><div class="mtp-block short light"></div><div class="mtp-block light"></div></div>
-                </div>
-                <span>Light</span>
-              </button>
-            </div>
-          </div>
-          <div class="mse-prop-row">
             <div class="mse-prop-label">Accent</div>
             <div class="mse-color-row">
               <div class="mse-color-swatch" id="accentSwatch"><input type="color" id="accentColorInput" oninput="onAccentChange(this.value)" /></div>
@@ -1705,7 +1686,8 @@
       const bgIn = document.getElementById('bgColorInput');
       const bgHx = document.getElementById('bgColorHex');
       const bgSw = document.getElementById('bgSwatch');
-      const bgVal = c.bgOverride || '#0a0f1e';
+      const bgDefault = c.theme === 'light' ? '#f1f5f9' : '#0a0f1e';
+      const bgVal = c.bgOverride || bgDefault;
       if (bgIn) bgIn.value = bgVal;
       if (bgHx && document.activeElement !== bgHx) bgHx.value = bgVal;
       if (bgSw) bgSw.style.background = bgVal;
@@ -2155,16 +2137,22 @@ ${_fontLinks}
        PREBUILT THEMES & FONT PAIRS — data + UI
     ═══════════════════════════════════════════════════════════════ */
     const MSB_PREBUILT_THEMES = [
-      { id:'midnight-pulse',   name:'Midnight Pulse',   titleFont:'Syne',              contentFont:'Plus Jakarta Sans', accent:'#00d4ff', bg:'#030d1e' },
-      { id:'crimson-gala',     name:'Crimson Gala',     titleFont:'Cinzel',            contentFont:'Cormorant Garamond',accent:'#f43f5e', bg:'#0d0408' },
-      { id:'golden-luxe',      name:'Golden Luxe',      titleFont:'Playfair Display',  contentFont:'EB Garamond',       accent:'#f59e0b', bg:'#080602' },
-      { id:'emerald-city',     name:'Emerald City',     titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans', accent:'#10b981', bg:'#020d08' },
-      { id:'royal-dusk',       name:'Royal Dusk',       titleFont:'Cormorant Garamond',contentFont:'Raleway',           accent:'#a78bfa', bg:'#07040f' },
-      { id:'ember',            name:'Ember',            titleFont:'Raleway',           contentFont:'Plus Jakarta Sans', accent:'#f97316', bg:'#0e0602' },
-      { id:'arctic',           name:'Arctic',           titleFont:'Plus Jakarta Sans', contentFont:'Montserrat',        accent:'#38bdf8', bg:'#020b14' },
-      { id:'serif-editorial',  name:'Serif Editorial',  titleFont:'EB Garamond',       contentFont:'Cormorant Garamond',accent:'#d4a96a', bg:'#0a0805' },
-      { id:'blossom',          name:'Blossom',          titleFont:'Dancing Script',    contentFont:'Plus Jakarta Sans', accent:'#f472b6', bg:'#120810' },
-      { id:'matrix',           name:'Matrix',           titleFont:'JetBrains Mono',   contentFont:'JetBrains Mono',    accent:'#4ade80', bg:'#020c04' },
+      // Dark themes
+      { id:'midnight-pulse',  name:'Midnight Pulse',  theme:'dark',  titleFont:'Syne',              contentFont:'Plus Jakarta Sans', accent:'#00d4ff', bg:'#030d1e' },
+      { id:'crimson-gala',    name:'Crimson Gala',    theme:'dark',  titleFont:'Cinzel',            contentFont:'Cormorant Garamond',accent:'#f43f5e', bg:'#0d0408' },
+      { id:'golden-luxe',     name:'Golden Luxe',     theme:'dark',  titleFont:'Playfair Display',  contentFont:'EB Garamond',       accent:'#f59e0b', bg:'#080602' },
+      { id:'emerald-city',    name:'Emerald City',    theme:'dark',  titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans', accent:'#10b981', bg:'#020d08' },
+      { id:'royal-dusk',      name:'Royal Dusk',      theme:'dark',  titleFont:'Cormorant Garamond',contentFont:'Raleway',           accent:'#a78bfa', bg:'#07040f' },
+      { id:'ember',           name:'Ember',           theme:'dark',  titleFont:'Raleway',           contentFont:'Plus Jakarta Sans', accent:'#f97316', bg:'#0e0602' },
+      { id:'arctic',          name:'Arctic',          theme:'dark',  titleFont:'Plus Jakarta Sans', contentFont:'Montserrat',        accent:'#38bdf8', bg:'#020b14' },
+      { id:'serif-editorial', name:'Serif Editorial', theme:'dark',  titleFont:'EB Garamond',       contentFont:'Cormorant Garamond',accent:'#d4a96a', bg:'#0a0805' },
+      { id:'blossom',         name:'Blossom',         theme:'dark',  titleFont:'Dancing Script',    contentFont:'Plus Jakarta Sans', accent:'#f472b6', bg:'#120810' },
+      { id:'matrix',          name:'Matrix',          theme:'dark',  titleFont:'JetBrains Mono',    contentFont:'JetBrains Mono',    accent:'#4ade80', bg:'#020c04' },
+      // Light themes
+      { id:'paper',           name:'Paper',           theme:'light', titleFont:'Playfair Display',  contentFont:'EB Garamond',       accent:'#6366f1', bg:'#f9f7f4' },
+      { id:'clean-white',     name:'Clean White',     theme:'light', titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans', accent:'#0f172a', bg:'#ffffff' },
+      { id:'warm-sunrise',    name:'Warm Sunrise',    theme:'light', titleFont:'Raleway',           contentFont:'Plus Jakarta Sans', accent:'#d97706', bg:'#fffbf0' },
+      { id:'soft-lavender',   name:'Soft Lavender',   theme:'light', titleFont:'Syne',              contentFont:'Plus Jakarta Sans', accent:'#7c3aed', bg:'#f5f3ff' },
     ];
 
     const MSB_FONT_PAIRS = [
@@ -2198,12 +2186,21 @@ ${_fontLinks}
       const grid = document.getElementById('prebuiltThemeGrid');
       if (!grid) return;
       const current = MSState.config;
-      grid.innerHTML = MSB_PREBUILT_THEMES.map(t => {
-        const isOn = current.titleFont === t.titleFont && current.contentFont === t.contentFont &&
-                     current.accentColor === t.accent && current.bgOverride === t.bg;
+
+      // Separate dark and light for section labels
+      const darkThemes  = MSB_PREBUILT_THEMES.filter(t => t.theme === 'dark');
+      const lightThemes = MSB_PREBUILT_THEMES.filter(t => t.theme === 'light');
+
+      function renderTile(t) {
+        const isOn = current.theme === t.theme &&
+                     current.titleFont === t.titleFont &&
+                     current.contentFont === t.contentFont &&
+                     current.accentColor === t.accent &&
+                     current.bgOverride === t.bg;
+        const bgBorder = t.theme === 'light' ? '1px solid rgba(0,0,0,0.12)' : 'none';
         return `<button class="mse-pt${isOn ? ' on' : ''}" data-theme-id="${t.id}" onclick="applyPrebuiltTheme('${t.id}')">
           <div class="mse-pt-swatches">
-            <div class="mse-pt-swatch" style="background:${t.bg}"></div>
+            <div class="mse-pt-swatch" style="background:${t.bg};border:${bgBorder}"></div>
             <div class="mse-pt-swatch accent" style="background:${t.accent}"></div>
           </div>
           <div class="mse-pt-body">
@@ -2211,7 +2208,13 @@ ${_fontLinks}
             <div class="mse-pt-fonts">${t.titleFont.split(' ')[0]} · ${t.contentFont.split(' ')[0]}</div>
           </div>
         </button>`;
-      }).join('');
+      }
+
+      grid.innerHTML =
+        `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-3);margin-bottom:6px;grid-column:1/-1">Dark</div>` +
+        darkThemes.map(renderTile).join('') +
+        `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-3);margin:8px 0 6px;grid-column:1/-1">Light</div>` +
+        lightThemes.map(renderTile).join('');
     }
 
     /* Build font pair list */
@@ -2251,7 +2254,14 @@ ${_fontLinks}
     function applyPrebuiltTheme(id) {
       const t = MSB_PREBUILT_THEMES.find(x => x.id === id);
       if (!t) return;
-      MSState.updateConfig({ titleFont: t.titleFont, contentFont: t.contentFont, fontFamily: t.titleFont, accentColor: t.accent, bgOverride: t.bg });
+      MSState.updateConfig({
+        theme: t.theme || 'dark',
+        titleFont: t.titleFont,
+        contentFont: t.contentFont,
+        fontFamily: t.titleFont,
+        accentColor: t.accent,
+        bgOverride: t.bg,
+      });
       refreshCanvas();
       populateSiteSettings();
     }

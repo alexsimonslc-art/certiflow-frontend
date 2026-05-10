@@ -146,6 +146,7 @@ function mst_applyPalette(id) {
   MSState.updateConfig({
     theme: pal.theme,
     accentColor: pal.accent,
+    bgOverride: pal.bg,
     activePalette: id,
   });
   refreshCanvas();
@@ -313,10 +314,6 @@ function mst_rebuildSiteSettings() {
     ? `${window.location.origin}/site.html?slug=${c.slug}`
     : 'Set a slug to get a public URL';
 
-  // 4. Dark/light mode
-  document.querySelectorAll('.mse-theme-box').forEach(b =>
-    b.classList.toggle('on', b.dataset.value === c.theme));
-
   // 5. Accent color
   const accent = c.accentColor || '#00d4ff';
   const accentIn = document.getElementById('accentColorInput');
@@ -327,7 +324,8 @@ function mst_rebuildSiteSettings() {
   if (accentSw) accentSw.style.background = accent;
 
   // 6. Background color
-  const bg = c.bgOverride || '#0a0f1e';
+  const bgDefault = c.theme === 'light' ? '#f1f5f9' : '#0a0f1e';
+  const bg = c.bgOverride || bgDefault;
   const bgIn = document.getElementById('bgColorInput');
   const bgHx = document.getElementById('bgColorHex');
   const bgSw = document.getElementById('bgSwatch');

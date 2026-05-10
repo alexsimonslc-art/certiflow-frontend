@@ -25,9 +25,11 @@ function msb_theme(cfg) {
     text: isDark ? '#eef4ff' : '#0f172a',
     sub: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(15,23,42,0.62)',
     muted: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(15,23,42,0.38)',
-    // Backgrounds
-    bg: isDark ? (cfg.bgOverride || '#0a0f1e') : '#f1f5f9',
-    bgAlt: isDark ? (cfg.bgOverride ? 'rgba(255,255,255,0.025)' : '#0d1525') : '#ffffff',
+    // Backgrounds — bgOverride is respected for both dark and light modes
+    bg: cfg.bgOverride || (isDark ? '#0a0f1e' : '#f1f5f9'),
+    bgAlt: isDark
+      ? (cfg.bgOverride ? 'rgba(255,255,255,0.04)' : '#0d1525')
+      : (cfg.bgOverride ? '#ffffff' : '#ffffff'),
     bgCard: isDark ? 'rgba(255,255,255,0.045)' : '#ffffff',
     bgInput: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.05)',
     // Borders
@@ -118,11 +120,11 @@ function msb_cover(block, cfg) {
   const bgBase = p.coverImage
     ? 'transparent'
     : (t.isDark
-        ? `linear-gradient(160deg,#0d1f3c 0%,${cfg.bgOverride || '#04080f'} 100%)`
-        : `linear-gradient(160deg,rgba(${t.ar},${t.ag},${t.ab},1) 0%,rgba(${t.ar},${t.ag},${t.ab},0.55) 55%,#1e293b 100%)`);
+        ? `linear-gradient(160deg,#0d1f3c 0%,${t.bg} 100%)`
+        : `linear-gradient(160deg,rgba(${t.ar},${t.ag},${t.ab},0.18) 0%,${t.bg} 100%)`);
 
   return `
-<div style="position:relative;min-height:300px;background:${p.bgColor || (t.isDark ? '#04080f' : '#1e293b')};display:flex;flex-direction:column;align-items:${p.alignment === 'left' ? 'flex-start' : p.alignment === 'right' ? 'flex-end' : 'center'};justify-content:flex-end;padding:0 clamp(24px,6vw,64px) 52px;overflow:hidden;font-family:'${t.font}',sans-serif;box-sizing:border-box">
+<div style="position:relative;min-height:300px;background:${p.bgColor || t.bg};display:flex;flex-direction:column;align-items:${p.alignment === 'left' ? 'flex-start' : p.alignment === 'right' ? 'flex-end' : 'center'};justify-content:flex-end;padding:0 clamp(24px,6vw,64px) 52px;overflow:hidden;font-family:'${t.font}',sans-serif;box-sizing:border-box">
   ${p.coverImage
       ? `<div style="position:absolute;inset:0;background:url('${p.coverImage}') center/cover no-repeat"></div>`
       : `<div style="position:absolute;inset:0;background:${bgBase}"></div>`}
