@@ -286,7 +286,7 @@ function msb_speakers(block, cfg) {
   const carousel = `
 <div style="position:relative">
   <div id="${_wrapId}" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;scroll-behavior:smooth">
-    <div id="spkTrack_${uid}" style="display:flex;gap:20px;padding:12px 16px 32px">
+    <div id="spkTrack_${uid}" style="display:flex;gap:20px;padding:12px 20px 32px 20px">
       ${items.map(sp => gridCard(sp)).join('')}
     </div>
   </div>

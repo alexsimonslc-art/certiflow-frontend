@@ -551,7 +551,8 @@ details summary::-webkit-details-marker {
   padding: 20px clamp(12px, 4%, 40px);
   border-top: 1px solid var(--ms-footer-border, rgba(255, 255, 255, 0.06));
   display: flex;
-  flex-wrap: nowrap;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   align-items: center;
   justify-content: center;
   gap: 6px;
@@ -653,7 +654,8 @@ textarea:focus {
   }
 
   .ms-footer {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 5px;
   }
 }
