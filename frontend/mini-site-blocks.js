@@ -21,9 +21,9 @@ function msb_theme(cfg) {
     accentRgb: `${ar},${ag},${ab}`,
     font,
     fontDisplay: cfg.fontHeading || cfg.fontFamily || 'Syne',
-    // Text
-    text: isDark ? '#eef4ff' : '#0f172a',
-    sub: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(15,23,42,0.62)',
+    // Text — cfg.titleColor / cfg.contentColor carry the global palette text colors set by prebuilt themes
+    text: cfg.titleColor || (isDark ? '#eef4ff' : '#0f172a'),
+    sub: cfg.contentColor || (isDark ? 'rgba(255,255,255,0.55)' : 'rgba(15,23,42,0.62)'),
     muted: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(15,23,42,0.38)',
     // Backgrounds — bgOverride is respected for both dark and light modes
     bg: cfg.bgOverride || (isDark ? '#0a0f1e' : '#f1f5f9'),
@@ -128,21 +128,21 @@ function msb_cover(block, cfg) {
   ${p.coverImage
       ? `<div style="position:absolute;inset:0;background:url('${p.coverImage}') center/cover no-repeat"></div>`
       : `<div style="position:absolute;inset:0;background:${bgBase}"></div>`}
-  <div style="position:absolute;inset:0;background:${overlay}"></div>
-  <div style="position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.45))"></div>
+  ${(p.coverImage || t.isDark) ? `<div style="position:absolute;inset:0;background:${overlay}"></div>` : ''}
+  ${(p.coverImage || t.isDark) ? `<div style="position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.45))"></div>` : ''}
 
   ${p.showLogo !== false ? `
   <div style="position:relative;z-index:3;margin-bottom:18px">
-    <div style="width:min(${logoW}px,42vw);height:min(${logoH}px,${shape === 'rectangle' ? '21vw' : '42vw'});border-radius:${radius};background:${p.logoBorder === false ? 'transparent' : (p.logoImage ? 'transparent' : 'rgba(255,255,255,0.12)')};${p.logoBorder === false ? '' : 'border:2.5px solid rgba(255,255,255,0.28);backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,0,0,0.4),0 0 0 4px rgba(255,255,255,0.06);'}display:flex;align-items:center;justify-content:center;overflow:hidden">
+    <div style="width:min(${logoW}px,42vw);height:min(${logoH}px,${shape === 'rectangle' ? '21vw' : '42vw'});border-radius:${radius};background:${p.logoBorder === false ? 'transparent' : (p.logoImage ? 'transparent' : (t.isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)'))};${p.logoBorder === false ? '' : `border:2.5px solid ${t.isDark ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.14)'};backdrop-filter:blur(6px);box-shadow:${t.shadow};`}display:flex;align-items:center;justify-content:center;overflow:hidden">
       ${p.logoImage
         ? `<img src="${p.logoImage}" style="width:100%;height:100%;object-fit:contain" alt="logo"/>`
-        : `<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" style="width:34px;height:34px"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>`}
+        : `<svg viewBox="0 0 24 24" fill="none" stroke="${t.isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.25)'}" stroke-width="1.2" style="width:34px;height:34px"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>`}
     </div>
   </div>` : '<div style="height:28px;position:relative;z-index:3"></div>'}
 
   <div style="position:relative;z-index:3;text-align:${p.alignment || 'center'};max-width:540px;width:100%">
-    ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:clamp(24px,5vw,40px);font-weight:800;color:${p.titleColor || '#ffffff'};line-height:1.1;letter-spacing:-0.8px;font-family:'${t.fontDisplay}','${t.font}',sans-serif;text-shadow:0 2px 16px rgba(0,0,0,0.4)">${p.siteName || cfg.name}</h1>` : ''}
-    ${p.tagline ? `<p style="margin:0;font-size:clamp(13px,2.2vw,16px);color:${p.taglineColor || 'rgba(255,255,255,0.68)'};font-weight:400;line-height:1.6;letter-spacing:0.1px">${p.tagline}</p>` : ''}
+    ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:clamp(24px,5vw,40px);font-weight:800;color:${p.titleColor || (p.coverImage || t.isDark ? '#ffffff' : t.text)};line-height:1.1;letter-spacing:-0.8px;font-family:'${t.fontDisplay}','${t.font}',sans-serif;${p.coverImage || t.isDark ? 'text-shadow:0 2px 16px rgba(0,0,0,0.4)' : ''}">${p.siteName || cfg.name}</h1>` : ''}
+    ${p.tagline ? `<p style="margin:0;font-size:clamp(13px,2.2vw,16px);color:${p.taglineColor || (p.coverImage || t.isDark ? 'rgba(255,255,255,0.68)' : t.sub)};font-weight:400;line-height:1.6;letter-spacing:0.1px">${p.tagline}</p>` : ''}
   </div>
 
   <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:64px;height:4px;background:${t.accent};border-radius:99px 99px 0 0;z-index:4;box-shadow:0 0 16px rgba(${t.accentRgb},0.6)"></div>

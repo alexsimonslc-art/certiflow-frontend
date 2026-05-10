@@ -149,8 +149,12 @@ function mst_applyPalette(id) {
     bgOverride: pal.bg,
     activePalette: id,
   });
-  // Clear per-block bg overrides so global theme bg propagates to all blocks
-  MSState.blocks.forEach(b => { b.props.bgColor = ''; });
+  // Reset all per-block color overrides so the new global theme takes full effect
+  const _CLEAR = ['bgColor','titleColor','textColor','taglineColor','itemTextColor',
+    'itemDateColor','valueColor','labelColor','nameColor','roleColor','bioColor',
+    'questionColor','answerColor','tierNameColor','subtitleColor','itemLabelColor',
+    'itemDescColor','buttonColor'];
+  MSState.blocks.forEach(b => { _CLEAR.forEach(k => { if (k in b.props) b.props[k] = ''; }); });
   MSState.dirty = true;
   refreshCanvas();
   mst_rebuildSiteSettings();
