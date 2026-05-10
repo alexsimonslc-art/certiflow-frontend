@@ -17,6 +17,7 @@ const BLOCK_REG = {
       siteName: '', tagline: '',
       bgColor: '',
       titleColor: '', taglineColor: '',
+      titleFontSize: '',
     }),
   },
 
@@ -28,6 +29,7 @@ const BLOCK_REG = {
       content: 'Write a description of your event here. Tell people what to expect, who should attend, and why they should register.',
       alignment: 'center', bgColor: '',
       titleColor: '', textColor: '',
+      titleFontSize: '', textFontSize: '',
     }),
   },
 
@@ -39,6 +41,7 @@ const BLOCK_REG = {
       items: [{ id: 'a1', text: 'Registration is now open!', date: '', pinned: true }],
       bgColor: '',
       titleColor: '', itemTextColor: '', itemDateColor: '',
+      titleFontSize: '',
     }),
   },
 
@@ -60,6 +63,7 @@ const BLOCK_REG = {
       title: 'Speakers', layout: 'grid',
       items: [], bgColor: '',
       titleColor: '', nameColor: '', roleColor: '', bioColor: '',
+      titleFontSize: '',
     }),
   },
 
@@ -74,6 +78,7 @@ const BLOCK_REG = {
       ],
       bgColor: '',
       titleColor: '', questionColor: '', answerColor: '',
+      titleFontSize: '', textFontSize: '',
     }),
   },
 
@@ -88,6 +93,7 @@ const BLOCK_REG = {
       ],
       bgColor: '',
       titleColor: '', tierNameColor: '',
+      titleFontSize: '',
     }),
   },
 
@@ -104,6 +110,7 @@ const BLOCK_REG = {
       gsFormId: '',
       bgColor: '',
       titleColor: '', subtitleColor: '',
+      titleFontSize: '',
     }),
   },
 
@@ -114,6 +121,7 @@ const BLOCK_REG = {
       title: 'Resources',
       items: [], bgColor: '',
       titleColor: '', itemLabelColor: '', itemDescColor: '',
+      titleFontSize: '',
     }),
   },
 
@@ -123,6 +131,7 @@ const BLOCK_REG = {
     defaults: () => ({
       title: '', items: [], bgColor: '',
       titleColor: '', videoTitleColor: '',
+      titleFontSize: '',
     }),
   },
 
@@ -132,6 +141,7 @@ const BLOCK_REG = {
     defaults: () => ({
       title: 'Follow Us', links: [], bgColor: '',
       titleColor: '',
+      titleFontSize: '',
     }),
   },
 
@@ -315,6 +325,8 @@ const MSState = {
       contentFont: site.config?.contentFont || site.config?.fontFamily || 'Plus Jakarta Sans',
       titleColor: site.config?.titleColor || '',
       contentColor: site.config?.contentColor || '',
+      titleFontSize: site.config?.titleFontSize || '',
+      contentFontSize: site.config?.contentFontSize || '',
       logoShape: site.config?.logoShape || 'circle',
       registrationOpen: site.config?.registrationOpen !== false,
       activePalette: site.config?.activePalette || null,
@@ -346,6 +358,8 @@ const MSState = {
       contentFont: this.config.contentFont || '',
       titleColor: this.config.titleColor || '',
       contentColor: this.config.contentColor || '',
+      titleFontSize: this.config.titleFontSize || '',
+      contentFontSize: this.config.contentFontSize || '',
       logoShape: this.config.logoShape,
       registrationOpen: this.config.registrationOpen,
       activePalette: this.config.activePalette || null,
@@ -483,6 +497,8 @@ const MSState = {
       contentFont: this.config.contentFont || '',
       titleColor: this.config.titleColor || '',
       contentColor: this.config.contentColor || '',
+      titleFontSize: this.config.titleFontSize || '',
+      contentFontSize: this.config.contentFontSize || '',
       logoShape: this.config.logoShape,
       registrationOpen: this.config.registrationOpen !== false,
       activePalette: this.config.activePalette || null,

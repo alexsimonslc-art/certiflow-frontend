@@ -13,13 +13,22 @@ function msb_theme(cfg) {
   const isDark = cfg.theme !== 'light';
   const accent = cfg.accentColor || '#00d4ff';
   const [ar, ag, ab] = msb_hexRgb(accent);
+  // Reduce visual weight for heavy display fonts that render too bold at 700+
+  const _lightWeightFonts = { 'Bebas Neue':true, 'Abril Fatface':true, 'Pacifico':true, 'Boogaloo':true, 'Great Vibes':true, 'Pinyon Script':true };
+  const _titleFont = cfg.titleFont || cfg.fontHeading || cfg.fontFamily || 'Syne';
+  const headingWeight = _lightWeightFonts[_titleFont] ? '400' : '700';
+  const headingSize = cfg.titleFontSize ? cfg.titleFontSize + 'px' : 'clamp(20px,3vw,32px)';
+  const bodySize = cfg.contentFontSize ? cfg.contentFontSize + 'px' : 'clamp(14px,2.2vw,16px)';
   return {
     isDark,
     accent,
     ar, ag, ab,
     accentRgb: `${ar},${ag},${ab}`,
     font: cfg.contentFont || cfg.fontFamily || 'Plus Jakarta Sans',
-    fontDisplay: cfg.titleFont || cfg.fontHeading || cfg.fontFamily || 'Syne',
+    fontDisplay: _titleFont,
+    headingWeight,
+    headingSize,
+    bodySize,
     // Text — cfg.titleColor / cfg.contentColor carry the global palette text colors set by prebuilt themes
     text: cfg.titleColor || (isDark ? '#eef4ff' : '#0f172a'),
     sub: cfg.contentColor || (isDark ? 'rgba(255,255,255,0.55)' : 'rgba(15,23,42,0.62)'),
@@ -55,21 +64,23 @@ function msb_wrap(content, bg, extraStyle) {
   return `<div style="width:100%;${bg ? `background:${bg};` : ''}${extraStyle || ''}">${content}</div>`;
 }
 
-/** Section title with accent left-bar. Pass optional `color` to override theme text colour. */
-function msb_title(text, t, align, color) {
+/** Section title with accent left-bar. Pass optional `color` to override theme text colour, `size` to override font size. */
+function msb_title(text, t, align, color, size) {
   const a = align || 'center';
   const c = color || t.text;
+  const fs = size || t.headingSize;
+  const fw = t.headingWeight;
   if (a === 'center') return `<div style="text-align:center;margin-bottom:20px">
-    <h2 style="margin:0 0 8px;font-size:clamp(20px,3vw,32px);font-weight:700;color:${c};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
+    <h2 style="margin:0 0 8px;font-size:${fs};font-weight:${fw};color:${c};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
     <div style="width:40px;height:3px;background:${t.accent};border-radius:99px;margin:0 auto"></div>
   </div>`;
   if (a === 'right') return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-direction:row-reverse">
     <div style="width:3px;height:28px;background:${t.accent};border-radius:99px;flex-shrink:0"></div>
-    <h2 style="margin:0;flex:1;text-align:right;font-size:clamp(20px,3vw,32px);font-weight:700;color:${c};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
+    <h2 style="margin:0;flex:1;text-align:right;font-size:${fs};font-weight:${fw};color:${c};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
   </div>`;
   return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
     <div style="width:3px;height:28px;background:${t.accent};border-radius:99px;flex-shrink:0"></div>
-    <h2 style="margin:0;font-size:clamp(20px,3vw,32px);font-weight:700;color:${c};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
+    <h2 style="margin:0;font-size:${fs};font-weight:${fw};color:${c};font-family:'${t.fontDisplay}','${t.font}',sans-serif;letter-spacing:-0.3px;line-height:1.2">${text}</h2>
   </div>`;
 }
 
@@ -140,7 +151,7 @@ function msb_cover(block, cfg) {
   </div>` : '<div style="height:28px;position:relative;z-index:3"></div>'}
 
   <div style="position:relative;z-index:3;text-align:${p.alignment || 'center'};max-width:540px;width:100%">
-    ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:clamp(24px,5vw,40px);font-weight:800;color:${p.titleColor || (p.coverImage || t.isDark ? '#ffffff' : t.text)};line-height:1.1;letter-spacing:-0.8px;font-family:'${t.fontDisplay}','${t.font}',sans-serif;${p.coverImage || t.isDark ? 'text-shadow:0 2px 16px rgba(0,0,0,0.4)' : ''}">${p.siteName || cfg.name}</h1>` : ''}
+    ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:${p.titleFontSize ? p.titleFontSize+'px' : 'clamp(24px,5vw,40px)'};font-weight:${t.headingWeight};color:${p.titleColor || (p.coverImage || t.isDark ? '#ffffff' : t.text)};line-height:1.1;letter-spacing:-0.8px;font-family:'${t.fontDisplay}','${t.font}',sans-serif;${p.coverImage || t.isDark ? 'text-shadow:0 2px 16px rgba(0,0,0,0.4)' : ''}">${p.siteName || cfg.name}</h1>` : ''}
     ${p.tagline ? `<p style="margin:0;font-size:clamp(13px,2.2vw,16px);color:${p.taglineColor || (p.coverImage || t.isDark ? 'rgba(255,255,255,0.68)' : t.sub)};font-weight:400;line-height:1.6;letter-spacing:0.1px">${p.tagline}</p>` : ''}
   </div>
 
@@ -157,8 +168,8 @@ function msb_about(block, cfg) {
   const align = p.alignment || 'center';
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'About This Event', t, p.alignment, p.titleColor)}
-  <p style="margin:0;font-size:clamp(14px,2.2vw,16px);color:${p.textColor || t.sub};line-height:1.8;text-align:${align};white-space:pre-wrap">${p.content || ''}</p>
+  ${msb_title(p.title || 'About This Event', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+  <p style="margin:0;font-size:${p.textFontSize ? p.textFontSize+'px' : t.bodySize};color:${p.textColor || t.sub};line-height:1.8;text-align:${align};white-space:pre-wrap">${p.content || ''}</p>
 </div>`, bg);
 }
 
@@ -171,7 +182,7 @@ function msb_announcements(block, cfg) {
   const items = p.items || [];
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Announcements', t, p.alignment, p.titleColor)}
+  ${msb_title(p.title || 'Announcements', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
   <div style="display:flex;flex-direction:column;gap:10px">
     ${items.length ? items.map(item => `
     <div style="display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-radius:12px;background:rgba(${t.accentRgb},0.07);border:1px solid rgba(${t.accentRgb},0.18);position:relative;overflow:hidden">
@@ -342,7 +353,7 @@ function msb_speakers(block, cfg) {
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Speakers', t, p.alignment || 'center', p.titleColor)}
+  ${msb_title(p.title || 'Speakers', t, p.alignment || 'center', p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
   ${items.length
       ? (isList
         ? `<div style="display:flex;flex-direction:column;gap:14px">${items.map(listCard).join('')}</div>`
@@ -359,18 +370,18 @@ function msb_faq(block, cfg) {
   const items = p.items || [];
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Frequently Asked Questions', t, p.alignment, p.titleColor)}
+  ${msb_title(p.title || 'Frequently Asked Questions', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
   <div style="display:flex;flex-direction:column;gap:10px;max-width:820px;margin:0 auto">
     ${items.map((q, i) => `
     <details style="border:1px solid ${t.border};border-radius:12px;overflow:hidden;background:${t.bgCard}" ${i === 0 ? 'open' : ''}>
       <summary style="list-style:none;padding:16px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;user-select:none">
-        <span style="font-size:15px;font-weight:600;color:${p.questionColor || t.text};line-height:1.4;flex:1">${q.question || ''}</span>
+        <span style="font-size:${p.textFontSize ? p.textFontSize+'px' : '15px'};font-weight:600;color:${p.questionColor || t.text};line-height:1.4;flex:1">${q.question || ''}</span>
         <div style="width:22px;height:22px;border-radius:6px;background:rgba(${t.accentRgb},0.1);border:1px solid rgba(${t.accentRgb},0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="2.5" style="width:12px;height:12px"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </summary>
       <div style="padding:4px 18px 16px;border-top:1px solid ${t.border}">
-        <p style="margin:12px 0 0;font-size:14.5px;color:${p.answerColor || t.sub};line-height:1.75">${q.answer || ''}</p>
+        <p style="margin:12px 0 0;font-size:${p.textFontSize ? Math.max(12, p.textFontSize - 1)+'px' : '14.5px'};color:${p.answerColor || t.sub};line-height:1.75">${q.answer || ''}</p>
       </div>
     </details>`).join('')}
     ${!items.length ? `<div style="color:${t.muted};font-size:14px;padding:8px 0">Add FAQ items in the properties panel.</div>` : ''}
@@ -388,7 +399,7 @@ function msb_sponsors(block, cfg) {
   const tierSizes = { 0: '80px', 1: '64px', 2: '52px', 3: '48px' };
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Our Sponsors', t, p.alignment, p.titleColor)}
+  ${msb_title(p.title || 'Our Sponsors', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
   ${tiers.map((tier, ti) => `
   <div style="margin-bottom:28px">
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${p.tierNameColor || t.muted};margin-bottom:12px;text-align:${p.alignment === 'center' ? 'center' : p.alignment === 'right' ? 'right' : 'left'}">${tier.name}</div>
@@ -430,7 +441,7 @@ function msb_form(block, cfg) {
   return msb_wrap(`
 <div style="padding:48px clamp(20px,5%,56px);font-family:'${t.font}',sans-serif;text-align:center">
 
-  ${msb_title(p.title || 'Register Now', t, 'center', p.titleColor)}
+  ${msb_title(p.title || 'Register Now', t, 'center', p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
   ${p.subtitle ? `<p style="margin:-12px 0 28px;font-size:15px;color:${p.subtitleColor || t.sub};line-height:1.65">${p.subtitle}</p>` : ''}
 
   ${isOpen ? `
@@ -495,7 +506,7 @@ function msb_documents(block, cfg) {
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Resources', t, p.alignment, p.titleColor)}
+  ${msb_title(p.title || 'Resources', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
   <div style="display:flex;flex-direction:column;gap:10px;max-width:600px;margin:0 auto">
     ${items.length ? items.map(doc => {
     const color = doc.iconColor || getColor(doc.url);
@@ -553,7 +564,7 @@ function msb_video(block, cfg) {
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${p.title ? msb_title(p.title, t, p.alignment, p.titleColor) : ''}
+  ${p.title ? msb_title(p.title, t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null) : ''}
   ${items.length ? items.map(v => videoCard(v)).join('') :
       `<div style="aspect-ratio:16/9;border-radius:12px;background:${t.bgCard};border:1.5px dashed ${t.border};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
     <svg viewBox="0 0 24 24" fill="none" stroke="${t.muted}" stroke-width="1.5" style="width:36px;height:36px"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
@@ -571,7 +582,7 @@ function msb_socials(block, cfg) {
   const links = p.links || [];
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif;text-align:center">
-  ${p.title ? `<h3 style="margin:0 0 20px;font-size:18px;font-weight:700;color:${p.titleColor || t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif">${p.title}</h3>` : ''}
+  ${p.title ? msb_title(p.title, t, 'center', p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null) : ''}
   <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px">
     ${links.length ? links.map(lk => {
     const ic = MSB_SOCIAL_ICONS[lk.platform] || MSB_SOCIAL_ICONS.website;

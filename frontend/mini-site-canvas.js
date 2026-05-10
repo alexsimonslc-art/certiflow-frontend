@@ -194,6 +194,29 @@ function msc_colorRow(bid, prop, label, defaultColor) {
 </div>`;
 }
 
+/** Font size slider row — produces a range slider with an Auto reset button. */
+function msc_fontSizeRow(bid, key, val, label, min, max, defaultVal) {
+  const v = val || '';
+  const current = v || defaultVal;
+  const displayLabel = v ? v + 'px' : 'Auto';
+  return `
+<div class="mse-prop-row" style="margin-bottom:6px">
+  <div class="mse-range-row">
+    <div class="mse-range-header">
+      <span class="mse-prop-label">${label}</span>
+      <span class="mse-range-val" id="fsz_${bid}_${key}">${displayLabel}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <input type="range" class="mse-prop-range" min="${min}" max="${max}" step="1" value="${current}"
+        oninput="document.getElementById('fsz_${bid}_${key}').textContent=this.value+'px';msc_set('${bid}','${key}',+this.value)"
+        style="flex:1"/>
+      <button onclick="msc_set('${bid}','${key}','');document.getElementById('fsz_${bid}_${key}').textContent='Auto';this.previousElementSibling.value=${defaultVal}"
+        style="padding:0 8px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font);white-space:nowrap">Auto</button>
+    </div>
+  </div>
+</div>`;
+}
+
 /** Wraps colour rows in a compact "Text Colours" labelled box. */
 function msc_colorSection(bid, fields) {
   return `
@@ -279,6 +302,7 @@ function renderBlockProps(block) {
     <div class="mse-toggle ${p.logoBorder !== false ? 'on' : ''}"
       onclick="msc_set('${bid}','logoBorder',${p.logoBorder === false});updateRightPanel()"></div>
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Site Name Size', 20, 80, 40)}
   ${msc_colorSection(bid, [
       ['titleColor', 'Site Name', '#ffffff'],
       ['taglineColor', 'Tagline', 'rgba(255,255,255,0.68)'],
@@ -306,6 +330,8 @@ function renderBlockProps(block) {
         </svg></button>`).join('')}
     </div>
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
+  ${msc_fontSizeRow(bid, 'textFontSize', p.textFontSize, 'Content Size', 12, 28, 16)}
   ${msc_colorSection(bid, [
       ['titleColor', 'Section Title', td.text],
       ['textColor', 'Content Text', td.sub],
@@ -334,6 +360,7 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Announcement', `msc_addItem('${bid}','items',{id:'a${msc_uid()}',text:'New announcement',date:'',pinned:false})`)}
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
   ${msc_colorSection(bid, [
         ['titleColor', 'Section Title', td.text],
         ['itemTextColor', 'Item Text', td.text],
@@ -442,6 +469,7 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Person', `msc_addItem('${bid}','items',{id:'sp${msc_uid()}',name:'',role:'',photo:'',bio:''})`)}
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
   ${msc_colorSection(bid, [
         ['titleColor', 'Section Title', td.text],
         ['nameColor', 'Speaker Name', td.text],
@@ -468,6 +496,8 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Question', `msc_addItem('${bid}','items',{id:'q${msc_uid()}',question:'',answer:''})`)}
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
+  ${msc_fontSizeRow(bid, 'textFontSize', p.textFontSize, 'Q&A Text Size', 12, 28, 15)}
   ${msc_colorSection(bid, [
         ['titleColor', 'Section Title', td.text],
         ['questionColor', 'Question', td.text],
@@ -552,6 +582,7 @@ function renderBlockProps(block) {
     ${tiersHtml}
     ${msc_addBtn('Add Tier', `msc_addTier('${bid}')`)}
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
   ${msc_colorSection(bid, [
         ['titleColor', 'Section Title', td.text],
         ['tierNameColor', 'Tier Name', td.muted],
@@ -638,6 +669,7 @@ function renderBlockProps(block) {
     </div>
   </div>
 
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
   ${msc_colorSection(bid, [
         ['titleColor', 'Block Title', td.text],
         ['subtitleColor', 'Subtitle', td.sub],
@@ -687,6 +719,7 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Document', `msc_addItem('${bid}','items',{id:'d${msc_uid()}',label:'',desc:'',url:'',linkType:'drive'})`)}
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
   ${msc_colorSection(bid, [
         ['titleColor', 'Section Title', td.text],
         ['itemLabelColor', 'Item Label', td.text],
@@ -740,6 +773,7 @@ function renderBlockProps(block) {
     `)).join('')}
     ${!atMax ? msc_addBtn('Add Video', `msc_addItem('${bid}','items',{id:'v${msc_uid()}',url:'',title:'',thumbnail:''})`) : ''}
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
   ${msc_colorSection(bid, [
             ['titleColor', 'Section Title', td.text],
             ['videoTitleColor', 'Video Title', td.text],
@@ -781,6 +815,7 @@ function renderBlockProps(block) {
     `)).join('')}
     ${msc_addBtn('Add Social Link', `msc_addItem('${bid}','links',{id:'sl${msc_uid()}',platform:'instagram',url:''})`)}
   </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
   ${msc_colorSection(bid, [
         ['titleColor', 'Section Title', td.text],
       ])}

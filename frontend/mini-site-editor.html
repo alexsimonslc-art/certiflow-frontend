@@ -460,6 +460,20 @@
               <input type="text" class="mse-prop-input" id="titleColorHex" maxlength="7" placeholder="Global default" oninput="onTitleColorHexInput(this.value)" style="flex:1" />
             </div>
           </div>
+          <!-- Title font size -->
+          <div class="mse-prop-row">
+            <div class="mse-range-row">
+              <div class="mse-range-header">
+                <span class="mse-prop-label">Title Size</span>
+                <span class="mse-range-val" id="titleFontSizeVal">Auto</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="range" class="mse-prop-range" id="titleFontSizeRange" min="16" max="72" step="1" value="32"
+                  oninput="onTitleSizeChange(+this.value)" style="flex:1"/>
+                <button onclick="onTitleSizeClear()" style="padding:0 8px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font);white-space:nowrap">Auto</button>
+              </div>
+            </div>
+          </div>
 
           <!-- Content font -->
           <div class="mse-prop-row" style="margin-top:10px">
@@ -478,6 +492,20 @@
             <div class="mse-color-row">
               <div class="mse-color-swatch" id="contentColorSwatch"><input type="color" id="contentColorInput" oninput="onContentColorChange(this.value)" /></div>
               <input type="text" class="mse-prop-input" id="contentColorHex" maxlength="7" placeholder="Global default" oninput="onContentColorHexInput(this.value)" style="flex:1" />
+            </div>
+          </div>
+          <!-- Content font size -->
+          <div class="mse-prop-row">
+            <div class="mse-range-row">
+              <div class="mse-range-header">
+                <span class="mse-prop-label">Content Size</span>
+                <span class="mse-range-val" id="contentFontSizeVal">Auto</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="range" class="mse-prop-range" id="contentFontSizeRange" min="12" max="28" step="1" value="16"
+                  oninput="onContentSizeChange(+this.value)" style="flex:1"/>
+                <button onclick="onContentSizeClear()" style="padding:0 8px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font);white-space:nowrap">Auto</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1639,6 +1667,20 @@
       if (ccHx && document.activeElement !== ccHx) ccHx.value = c.contentColor || '';
       if (ccSw) ccSw.style.background = c.contentColor || 'rgba(255,255,255,0.15)';
 
+      // Font sizes
+      const tfsRange = document.getElementById('titleFontSizeRange');
+      const tfsVal = document.getElementById('titleFontSizeVal');
+      if (tfsRange && tfsVal) {
+        if (c.titleFontSize) { tfsRange.value = c.titleFontSize; tfsVal.textContent = c.titleFontSize + 'px'; }
+        else { tfsRange.value = 32; tfsVal.textContent = 'Auto'; }
+      }
+      const cfsRange = document.getElementById('contentFontSizeRange');
+      const cfsVal = document.getElementById('contentFontSizeVal');
+      if (cfsRange && cfsVal) {
+        if (c.contentFontSize) { cfsRange.value = c.contentFontSize; cfsVal.textContent = c.contentFontSize + 'px'; }
+        else { cfsRange.value = 16; cfsVal.textContent = 'Auto'; }
+      }
+
       // Rebuild prebuilt & pair lists
       buildPrebuiltThemeGrid();
       buildFontPairList();
@@ -2349,6 +2391,32 @@ ${_fontLinks}
         MSState.updateConfig({ contentColor: val });
         refreshCanvas();
       }
+    }
+
+    /* Title font size handlers */
+    function onTitleSizeChange(val) {
+      document.getElementById('titleFontSizeVal').textContent = val + 'px';
+      MSState.updateConfig({ titleFontSize: val });
+      refreshCanvas();
+    }
+    function onTitleSizeClear() {
+      MSState.updateConfig({ titleFontSize: '' });
+      document.getElementById('titleFontSizeVal').textContent = 'Auto';
+      document.getElementById('titleFontSizeRange').value = 32;
+      refreshCanvas();
+    }
+
+    /* Content font size handlers */
+    function onContentSizeChange(val) {
+      document.getElementById('contentFontSizeVal').textContent = val + 'px';
+      MSState.updateConfig({ contentFontSize: val });
+      refreshCanvas();
+    }
+    function onContentSizeClear() {
+      MSState.updateConfig({ contentFontSize: '' });
+      document.getElementById('contentFontSizeVal').textContent = 'Auto';
+      document.getElementById('contentFontSizeRange').value = 16;
+      refreshCanvas();
     }
 
     /* Close font pickers when clicking outside */
