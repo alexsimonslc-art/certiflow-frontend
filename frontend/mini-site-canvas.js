@@ -806,7 +806,9 @@ function renderBlockProps(block) {
         return `<button onclick="msc_setItem('${bid}','links',${i},'platform','${pl}');updateRightPanel()"
               title="${pl}"
               style="width:30px;height:30px;border-radius:7px;border:1px solid ${isActive ? 'rgba(0,212,255,0.4)' : 'rgba(255,255,255,0.07)'};background:${isActive ? 'rgba(0,212,255,0.12)' : 'rgba(255,255,255,0.03)'};cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s">
-              <svg viewBox="0 0 24 24" fill="none" stroke="${isActive ? 'var(--cyan)' : 'var(--text-3)'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">${ic.path || '<circle cx="12" cy="12" r="10"/>'}</svg>
+              ${ic.fill
+                ? `<svg viewBox="0 0 24 24" fill="${isActive ? 'var(--cyan)' : 'var(--text-3)'}" stroke="none" style="width:13px;height:13px">${ic.path}</svg>`
+                : `<svg viewBox="0 0 24 24" fill="none" stroke="${isActive ? 'var(--cyan)' : 'var(--text-3)'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px">${ic.path || '<circle cx="12" cy="12" r="10"/>'}</svg>`}
             </button>`;
       }).join('')}
         </div>
