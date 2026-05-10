@@ -1,666 +1,1300 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GalSol — Bulk Mail & Certificate Automation Platform</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
-    rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GalSol — The Grand Event Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+/* ── VARIABLES ── */
+:root{
+  --bg:#080810;--surface:#0f0f1a;--surface-2:#14141f;--surface-off:#1a1a28;
+  --border:rgba(255,255,255,0.07);--border-hi:rgba(255,255,255,0.14);
+  --primary:#7c3aed;--accent-blue:#3b82f6;--accent-teal:#10b981;--accent-gold:#f59e0b;
+  --text:#eef0ff;--text-muted:#8b8ba8;--text-faint:#4a4a6a;
+  --grad-brand:linear-gradient(135deg,#a78bfa,#60a5fa,#34d399);
+  --grad-text:linear-gradient(135deg,#a78bfa 0%,#60a5fa 50%,#34d399 100%);
+  --font-d:'Syne',sans-serif;--font-b:'DM Sans',sans-serif;
+}
+
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-b);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+h1,h2,h3,h4,h5,.logo-text,.plan-name,.how-num,.stat-val{font-family:var(--font-d);}
+a{text-decoration:none;color:inherit;}
+
+.gradient-text{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.container{max-width:1200px;margin:0 auto;padding:0 24px;}
+
+/* ── SKIP LINK ── */
+.skip-link{position:absolute;top:-100px;left:16px;padding:8px 16px;background:var(--primary);color:#fff;border-radius:4px;z-index:9999;font-size:.9rem;transition:top .2s;}
+.skip-link:focus{top:16px;}
+
+/* ── HEADER ── */
+.header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 0;border-bottom:1px solid transparent;transition:background .3s,backdrop-filter .3s,border-color .3s,padding .3s;}
+.header.scrolled{background:rgba(8,8,16,.9);backdrop-filter:blur(16px);border-bottom-color:var(--border);padding:14px 0;}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:32px;}
+
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.logo-img{height:28px;width:auto;}
+.logo-text{font-size:1.25rem;font-weight:700;letter-spacing:-.02em;}
+
+.nav{display:flex;align-items:center;gap:4px;}
+.nav-link{font-size:.9rem;color:var(--text-muted);padding:8px 12px;border-radius:8px;transition:color .2s,background .2s;}
+.nav-link:hover{color:var(--text);background:rgba(255,255,255,.06);}
+
+.header-actions{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+/* ── BUTTONS ── */
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--grad-brand);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-family:var(--font-d);font-size:.9rem;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s;white-space:nowrap;}
+.btn-primary:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 10px 40px rgba(167,139,250,.35);}
+.btn-primary.lg{padding:14px 28px;font-size:1rem;border-radius:12px;}
+
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--text-muted);border:1px solid var(--border-hi);border-radius:10px;padding:10px 20px;font-family:var(--font-d);font-size:.9rem;font-weight:600;cursor:pointer;transition:color .2s,border-color .2s,background .2s;white-space:nowrap;}
+.btn-ghost:hover{color:var(--text);border-color:rgba(167,139,250,.5);background:rgba(167,139,250,.06);}
+.btn-ghost.lg{padding:14px 28px;font-size:1rem;border-radius:12px;}
+
+.hamburger{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:8px;border-radius:8px;}
+.hamburger:hover{background:rgba(255,255,255,.06);}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:100vh;background:#060609;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;pointer-events:none;}
+
+.spotlight{position:absolute;top:-80px;width:320px;height:100vh;transform-origin:top center;will-change:transform;}
+.sp-1{background:conic-gradient(from 170deg at 50% 0%,transparent,rgba(124,58,237,.22) 15%,rgba(124,58,237,.08) 30%,transparent);left:8%;clip-path:polygon(38% 0%,62% 0%,100% 100%,0% 100%);animation:swayA 9s ease-in-out infinite alternate;}
+.sp-2{background:conic-gradient(from 170deg at 50% 0%,transparent,rgba(96,165,250,.20) 15%,rgba(96,165,250,.07) 30%,transparent);left:28%;clip-path:polygon(36% 0%,64% 0%,100% 100%,0% 100%);animation:swayB 13s ease-in-out infinite alternate;}
+.sp-3{background:conic-gradient(from 170deg at 50% 0%,transparent,rgba(52,211,153,.18) 15%,rgba(52,211,153,.06) 30%,transparent);right:20%;clip-path:polygon(37% 0%,63% 0%,100% 100%,0% 100%);animation:swayA 11s ease-in-out infinite alternate;animation-delay:-4s;}
+.sp-4{background:conic-gradient(from 170deg at 50% 0%,transparent,rgba(245,158,11,.12) 20%,rgba(245,158,11,.04) 40%,transparent);right:5%;clip-path:polygon(35% 0%,65% 0%,100% 100%,0% 100%);animation:swayB 16s ease-in-out infinite alternate;animation-delay:-8s;opacity:.7;}
+@keyframes swayA{0%{transform:rotate(-8deg);}100%{transform:rotate(6deg);}}
+@keyframes swayB{0%{transform:rotate(5deg);}100%{transform:rotate(-10deg);}}
+
+.stage-floor{position:absolute;bottom:25%;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(167,139,250,.15) 20%,rgba(96,165,250,.25) 50%,rgba(52,211,153,.15) 80%,transparent 100%);box-shadow:0 4px 40px rgba(124,58,237,.15);}
+#dustCanvas{position:absolute;inset:0;width:100%;height:100%;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);}
+
+.hero-content{position:relative;z-index:2;max-width:800px;margin:0 auto;padding:0 24px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:#a78bfa;border-radius:100px;padding:6px 16px;font-size:.85rem;margin-bottom:32px;}
+.hero-title{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:24px;}
+.hero-sub{font-size:1.125rem;color:var(--text-muted);max-width:600px;margin:0 auto 40px;line-height:1.7;}
+.hero-actions{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:64px;}
+
+.btn-ghost-play{display:inline-flex;align-items:center;gap:10px;color:var(--text-muted);font-family:var(--font-d);font-size:.95rem;font-weight:600;transition:color .2s;}
+.btn-ghost-play:hover{color:var(--text);}
+.play-icon{width:36px;height:36px;background:rgba(255,255,255,.08);border:1px solid var(--border-hi);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;}
+
+.hero-stats{display:flex;align-items:center;justify-content:center;}
+.stat-pill{display:flex;flex-direction:column;align-items:center;gap:4px;padding:20px 40px;background:rgba(255,255,255,.04);border:1px solid var(--border-hi);backdrop-filter:blur(12px);}
+.stat-pill:first-child{border-radius:16px 0 0 16px;}
+.stat-pill:last-child{border-radius:0 16px 16px 0;border-left:none;}
+.stat-pill:not(:first-child):not(:last-child){border-left:none;}
+.stat-val{font-size:1.75rem;font-weight:700;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.stat-label{font-size:.8rem;color:var(--text-muted);}
+
+.hero-scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:2;color:var(--text-faint);animation:bounce 2s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(8px);}}
+
+/* ── TRUST BAR ── */
+.trust-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 0;overflow:hidden;}
+.trust-label{text-align:center;font-size:.75rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+.marquee-track{display:flex;width:max-content;animation:marquee 40s linear infinite;}
+.marquee-track:hover{animation-play-state:paused;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.m-pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface-off);border:1px solid var(--border);border-radius:100px;padding:6px 16px;margin:0 8px;font-size:.83rem;color:var(--text-muted);white-space:nowrap;}
+.m-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* ── SECTIONS COMMON ── */
+section{padding:120px 0;}
+.section-header{text-align:center;margin-bottom:72px;}
+.section-tag{display:inline-block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:#a78bfa;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);border-radius:100px;padding:4px 14px;margin-bottom:20px;}
+.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:700;line-height:1.15;letter-spacing:-.02em;margin-bottom:14px;}
+.section-sub{font-size:1.05rem;color:var(--text-muted);max-width:560px;margin:0 auto;line-height:1.7;}
+
+/* ── PIPELINE OVERVIEW ── */
+.pipeline-overview{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 0;}
+.pipe-scroll{overflow-x:auto;scrollbar-width:none;padding:12px 0 32px;}
+.pipe-scroll::-webkit-scrollbar{display:none;}
+.pipe-track{display:flex;align-items:center;min-width:max-content;padding:0 40px;margin:0 auto;justify-content:center;}
+.pipe-node{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:20px 24px;min-width:140px;transition:border-color .3s,box-shadow .3s,transform .3s;cursor:default;}
+.pipe-node:hover{border-color:rgba(167,139,250,.4);box-shadow:0 0 30px rgba(167,139,250,.1);transform:translateY(-4px);}
+.pipe-node-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.pipe-node-label{font-size:.85rem;font-weight:600;color:var(--text);text-align:center;}
+.pipe-conn{width:52px;height:2px;position:relative;flex-shrink:0;}
+.pipe-conn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(167,139,250,.3),rgba(96,165,250,.3));}
+.pipe-conn::after{content:'';position:absolute;top:50%;right:-1px;transform:translateY(-50%);border-left:7px solid rgba(96,165,250,.5);border-top:4px solid transparent;border-bottom:4px solid transparent;}
+.pn-v{background:rgba(124,58,237,.15);color:#a78bfa;}
+.pn-b{background:rgba(59,130,246,.15);color:#60a5fa;}
+.pn-t{background:rgba(16,185,129,.15);color:#34d399;}
+.pn-o{background:rgba(245,158,11,.15);color:#fbbf24;}
+.pn-p{background:rgba(236,72,153,.15);color:#f472b6;}
+.pn-i{background:rgba(99,102,241,.15);color:#818cf8;}
+
+/* ── TOOL ROWS ── */
+.tools-section-header{text-align:center;padding:120px 24px 72px;}
+.tool-row{padding:100px 0;}
+.tool-row:nth-child(odd){background:var(--surface);}
+.tool-row:nth-child(even){background:var(--surface-2);}
+.tool-row-inner{max-width:1200px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.tool-row.even .tool-row-inner{direction:rtl;}
+.tool-row.even .tool-row-inner>*{direction:ltr;}
+
+.tool-text{transform:translateX(-60px);opacity:0;transition:transform 650ms cubic-bezier(.22,1,.36,1),opacity 650ms ease;}
+.tool-row.even .tool-text{transform:translateX(60px);}
+.tool-row.revealed .tool-text{transform:translateX(0);opacity:1;}
+.tool-mock{transform:translateX(60px);opacity:0;transition:transform 650ms cubic-bezier(.22,1,.36,1),opacity 650ms ease;transition-delay:80ms;}
+.tool-row.even .tool-mock{transform:translateX(-60px);}
+.tool-row.revealed .tool-mock{transform:translateX(0);opacity:1;}
+
+.tool-badge-tag{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa;margin-bottom:14px;}
+.tool-text h3{font-size:clamp(1.5rem,2.5vw,2.1rem);font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:14px;}
+.tool-text p{color:var(--text-muted);line-height:1.7;margin-bottom:22px;}
+.tool-bullets{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:28px;}
+.tool-bullets li{display:flex;align-items:center;gap:9px;color:var(--text-muted);font-size:.93rem;}
+.tool-bullets li i{color:#34d399;flex-shrink:0;width:16px;height:16px;}
+.tool-cta-link{display:inline-flex;align-items:center;gap:6px;color:#a78bfa;font-family:var(--font-d);font-size:.9rem;font-weight:600;transition:gap .2s;}
+.tool-cta-link:hover{gap:10px;}
+
+/* ── MOCK PANELS ── */
+.mock-panel{background:var(--surface-off);border:1px solid var(--border-hi);border-radius:20px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5);}
+.mock-bar-top{display:flex;align-items:center;gap:6px;padding:12px 14px;background:var(--surface-2);border-bottom:1px solid var(--border);}
+.tl{width:10px;height:10px;border-radius:50%;}
+.tl-r{background:#ff5f57;}.tl-y{background:#febc2e;}.tl-g{background:#28c840;}
+.mock-url-bar{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:5px;padding:3px 10px;font-size:.72rem;color:var(--text-faint);margin-left:6px;}
+
+/* Mock 1 — browser */
+.mock-browser-screen{padding:28px 24px;min-height:200px;display:flex;flex-direction:column;align-items:center;gap:14px;background:linear-gradient(180deg,#09091a 0%,#10103a 100%);}
+.mock-ev-title{font-family:var(--font-d);font-size:1.3rem;font-weight:700;opacity:0;transform:translateY(-10px);transition:opacity .4s .3s,transform .4s .3s;}
+.mock-countdown{font-family:var(--font-d);font-size:1rem;font-weight:600;color:#a78bfa;letter-spacing:.1em;opacity:0;transition:opacity .4s .55s;}
+.mock-reg-btn{background:var(--grad-brand);color:#fff;border:none;border-radius:8px;padding:7px 22px;font-family:var(--font-d);font-size:.82rem;font-weight:600;opacity:0;transform:scale(.85);transition:opacity .3s .8s,transform .3s .8s;}
+.tool-row.revealed .mock-ev-title{opacity:1;transform:translateY(0);}
+.tool-row.revealed .mock-countdown{opacity:1;}
+.tool-row.revealed .mock-reg-btn{opacity:1;transform:scale(1);}
+
+/* Mock 2 — form builder */
+.mock-form-body{padding:18px;display:flex;gap:14px;min-height:200px;}
+.mock-fields{flex:1;display:flex;flex-direction:column;gap:7px;}
+.mock-field{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:.75rem;color:var(--text-muted);opacity:0;transform:translateX(-14px);transition:opacity .3s,transform .3s;}
+.tool-row.revealed .mock-field:nth-child(1){opacity:1;transform:none;transition-delay:.15s;}
+.tool-row.revealed .mock-field:nth-child(2){opacity:1;transform:none;transition-delay:.25s;}
+.tool-row.revealed .mock-field:nth-child(3){opacity:1;transform:none;transition-delay:.35s;}
+.tool-row.revealed .mock-field:nth-child(4){opacity:1;transform:none;transition-delay:.45s;}
+.mock-field-icon{width:16px;height:16px;color:#60a5fa;}
+.mock-pass-card{width:120px;background:linear-gradient(135deg,#1a0a35,#091535);border:1px solid rgba(167,139,250,.3);border-radius:12px;padding:14px;flex-shrink:0;opacity:0;transform:translateX(18px);transition:opacity .4s .6s,transform .4s .6s;}
+.tool-row.revealed .mock-pass-card{opacity:1;transform:none;}
+.mock-pass-name{font-size:.68rem;font-weight:700;color:var(--text);font-family:var(--font-d);margin-bottom:3px;}
+.mock-pass-ev{font-size:.6rem;color:var(--text-muted);margin-bottom:10px;}
+.mock-qr{width:48px;height:48px;background:#fff;border-radius:5px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:4px;}
+.mock-qr span{background:#000;border-radius:1px;}
+
+/* Mock 3 — phone scanner */
+.mock-phone-wrap{display:flex;justify-content:center;padding:24px;}
+.mock-phone{width:170px;background:#1a1a2e;border:2px solid var(--border-hi);border-radius:26px;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,.6);opacity:0;transform:translateY(28px) rotateY(15deg);transition:opacity .5s,transform .6s cubic-bezier(.22,1,.36,1);}
+.tool-row.revealed .mock-phone{opacity:1;transform:translateY(0) rotateY(0deg);}
+.mock-notch{width:36px;height:5px;background:var(--border-hi);border-radius:3px;margin:0 auto 10px;}
+.mock-scan-frame{aspect-ratio:1;border-radius:8px;position:relative;overflow:hidden;background:rgba(0,0,0,.6);}
+.mock-scan-corners{position:absolute;inset:7px;}
+.mock-scan-corners::before,.mock-scan-corners::after{content:'';position:absolute;width:18px;height:18px;border-color:#34d399;border-style:solid;}
+.mock-scan-corners::before{top:0;left:0;border-width:2px 0 0 2px;border-radius:2px 0 0 0;}
+.mock-scan-corners::after{bottom:0;right:0;border-width:0 2px 2px 0;border-radius:0 0 2px 0;}
+.mock-scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#34d399,transparent);box-shadow:0 0 8px #34d399;animation:scanMove 2s ease-in-out infinite;top:0;}
+@keyframes scanMove{0%,100%{top:8px;}50%{top:calc(100% - 10px);}}
+.mock-scan-status{text-align:center;font-size:.63rem;color:#34d399;margin-top:8px;}
+
+/* Mock 4 — dashboard */
+.mock-dash-body{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mock-stat-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px;opacity:0;transform:translateY(14px);transition:opacity .4s,transform .4s;}
+.tool-row.revealed .mock-stat-card:nth-child(1){opacity:1;transform:none;transition-delay:.1s;}
+.tool-row.revealed .mock-stat-card:nth-child(2){opacity:1;transform:none;transition-delay:.2s;}
+.mock-stat-v{font-family:var(--font-d);font-size:1.3rem;font-weight:700;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.mock-stat-l{font-size:.68rem;color:var(--text-muted);}
+.mock-chart-area{grid-column:span 2;display:flex;align-items:flex-end;gap:5px;height:72px;padding:0 4px;opacity:0;transition:opacity .4s .3s;}
+.tool-row.revealed .mock-chart-area{opacity:1;}
+.mock-bar{flex:1;background:linear-gradient(180deg,#a78bfa,rgba(167,139,250,.25));border-radius:3px 3px 0 0;height:0;transition:height .7s cubic-bezier(.22,1,.36,1);}
+.tool-row.revealed .mock-bar{height:var(--h,60%);}
+
+/* Mock 5 — certificate */
+.mock-cert-wrap{padding:18px;display:flex;gap:12px;align-items:flex-start;}
+.mock-cert{flex:1;border:2px solid rgba(245,158,11,.3);border-radius:12px;padding:18px;min-height:150px;position:relative;background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(167,139,250,.04));overflow:hidden;opacity:0;transform:translateX(22px);transition:opacity .5s,transform .5s;}
+.tool-row.revealed .mock-cert{opacity:1;transform:none;}
+.mock-cert::before{content:'';position:absolute;inset:6px;border:1px solid rgba(245,158,11,.12);border-radius:7px;pointer-events:none;}
+.mock-cert-shimmer{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);transform:translateX(-100%);transition:transform 0s;}
+.tool-row.revealed .mock-cert-shimmer{transform:translateX(110%);transition:transform .9s ease .5s;}
+.mock-cert-ttl{font-family:var(--font-d);font-size:.65rem;font-weight:600;color:#fbbf24;text-align:center;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;opacity:0;transition:opacity .3s .75s;}
+.mock-cert-nm{font-family:var(--font-d);font-size:1rem;font-weight:700;text-align:center;margin-bottom:4px;opacity:0;transition:opacity .3s .95s;}
+.mock-cert-ev{font-size:.62rem;color:var(--text-muted);text-align:center;opacity:0;transition:opacity .3s 1.05s;}
+.tool-row.revealed .mock-cert-ttl,.tool-row.revealed .mock-cert-nm,.tool-row.revealed .mock-cert-ev{opacity:1;}
+.mock-cert-sidebar{width:105px;display:flex;flex-direction:column;gap:7px;flex-shrink:0;opacity:0;transform:translateX(14px);transition:opacity .4s 1.1s,transform .4s 1.1s;}
+.tool-row.revealed .mock-cert-sidebar{opacity:1;transform:none;}
+.mock-map-row{display:flex;align-items:center;gap:5px;font-size:.62rem;color:var(--text-muted);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:5px;padding:5px 7px;}
+
+/* Mock 6 — mailer */
+.mock-mailer-panels{display:flex;height:230px;}
+.mock-code-side{flex:1;background:#0c0c18;padding:14px;overflow:hidden;border-right:1px solid var(--border);}
+.mock-code-line{font-size:.66rem;color:#6272a4;font-family:monospace;line-height:1.7;opacity:0;transform:translateX(-7px);transition:opacity .2s,transform .2s;}
+.mock-code-line .t-tag{color:#ff79c6;}.mock-code-line .t-attr{color:#50fa7b;}.mock-code-line .t-val{color:#f1fa8c;}
+.tool-row.revealed .mock-code-line:nth-child(1){opacity:1;transform:none;transition-delay:.1s;}
+.tool-row.revealed .mock-code-line:nth-child(2){opacity:1;transform:none;transition-delay:.25s;}
+.tool-row.revealed .mock-code-line:nth-child(3){opacity:1;transform:none;transition-delay:.4s;}
+.tool-row.revealed .mock-code-line:nth-child(4){opacity:1;transform:none;transition-delay:.55s;}
+.tool-row.revealed .mock-code-line:nth-child(5){opacity:1;transform:none;transition-delay:.7s;}
+.tool-row.revealed .mock-code-line:nth-child(6){opacity:1;transform:none;transition-delay:.85s;}
+.mock-preview-side{flex:1;background:#f0f0f8;padding:14px;overflow:hidden;}
+.mock-email-hdr{height:18px;background:linear-gradient(90deg,#a78bfa,#60a5fa);border-radius:4px;margin-bottom:8px;opacity:0;transition:opacity .3s .55s;}
+.tool-row.revealed .mock-email-hdr{opacity:1;}
+.mock-email-line{height:5px;background:#ccd;border-radius:3px;margin-bottom:5px;opacity:0;transition:opacity .2s;}
+.tool-row.revealed .mock-email-line:nth-child(1){opacity:1;transition-delay:.75s;}
+.tool-row.revealed .mock-email-line:nth-child(2){opacity:1;width:82%;transition-delay:.85s;}
+.tool-row.revealed .mock-email-line:nth-child(3){opacity:1;width:93%;transition-delay:.95s;}
+.mock-email-cta{margin-top:10px;background:linear-gradient(90deg,#7c3aed,#3b82f6);border-radius:5px;padding:7px 14px;font-size:.65rem;color:#fff;font-family:var(--font-d);font-weight:600;text-align:center;opacity:0;transition:opacity .3s 1.1s;}
+.tool-row.revealed .mock-email-cta{opacity:1;}
+
+/* ── LUMASHIFT ── */
+.lumashift{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+.ls-blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.18;will-change:transform;}
+.ls-1{width:700px;height:700px;background:radial-gradient(circle,#a78bfa,transparent 65%);top:-200px;left:-150px;animation:ls1 22s ease-in-out infinite alternate;}
+.ls-2{width:550px;height:550px;background:radial-gradient(circle,#3b82f6,transparent 65%);bottom:-180px;right:-100px;animation:ls2 28s ease-in-out infinite alternate;}
+.ls-3{width:450px;height:450px;background:radial-gradient(circle,#10b981,transparent 65%);top:40%;left:30%;animation:ls3 18s ease-in-out infinite alternate;}
+.ls-4{width:300px;height:300px;background:radial-gradient(circle,#f59e0b,transparent 65%);top:15%;right:20%;animation:ls4 24s ease-in-out infinite alternate;opacity:.10;}
+@keyframes ls1{0%{transform:translate(0,0) scale(1);}33%{transform:translate(120px,80px) scale(1.15);}66%{transform:translate(60px,160px) scale(.95);}100%{transform:translate(200px,40px) scale(1.1);}}
+@keyframes ls2{0%{transform:translate(0,0) scale(1);}50%{transform:translate(-140px,-90px) scale(1.2);}100%{transform:translate(-60px,-180px) scale(.9);}}
+@keyframes ls3{0%{transform:translate(0,0) scale(1);}40%{transform:translate(80px,-120px) scale(1.3);}100%{transform:translate(-80px,80px) scale(.85);}}
+@keyframes ls4{0%{transform:translate(0,0) scale(1);}60%{transform:translate(-100px,120px) scale(1.25);}100%{transform:translate(60px,-80px) scale(1.1);}}
+
+/* ── COMBINED PIPELINE ── */
+.combined-section{position:relative;background:#08080f;overflow:hidden;}
+.combined-inner{position:relative;z-index:1;}
+.pipe-flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-top:56px;}
+.pipe-step{display:flex;flex-direction:column;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 24px;width:190px;opacity:0;transform:translateY(22px);transition:opacity .5s,transform .5s;}
+.pipe-step.revealed{opacity:1;transform:none;}
+.pipe-step-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;}
+.pipe-step-title{font-size:.9rem;font-weight:600;text-align:center;}
+.pipe-flow-conn{width:56px;height:2px;position:relative;flex-shrink:0;background:linear-gradient(90deg,rgba(167,139,250,.3),rgba(96,165,250,.3));}
+.pipe-flow-conn::after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-left:7px solid rgba(96,165,250,.5);border-top:4px solid transparent;border-bottom:4px solid transparent;}
+
+/* ── GAL AI ── */
+.ai-section{position:relative;background:#08080f;overflow:hidden;}
+.ai-inner{position:relative;z-index:1;}
+.ai-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px;}
+.ai-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 26px;position:relative;overflow:hidden;transition:border-color .3s,box-shadow .3s;}
+.ai-card:hover{border-color:transparent;box-shadow:0 0 40px rgba(167,139,250,.12);}
+@property --angle{syntax:'<angle>';initial-value:0deg;inherits:false;}
+.ai-card::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:conic-gradient(from var(--angle),#a78bfa 0%,#60a5fa 33%,#34d399 66%,#a78bfa 100%);z-index:-1;opacity:0;transition:opacity .3s;}
+.ai-card:hover::before{opacity:1;animation:rotateGrad 3s linear infinite;}
+@keyframes rotateGrad{to{--angle:360deg;}}
+.ai-card-icon{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.ai-card h4{font-size:1.05rem;font-weight:700;margin-bottom:9px;}
+.ai-card p{font-size:.88rem;color:var(--text-muted);line-height:1.6;}
+.ai-pro-badge{display:inline-block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--grad-brand);color:#fff;border-radius:4px;padding:2px 8px;margin-bottom:10px;}
+
+.ai-tw-wrap{max-width:620px;margin:44px auto 0;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 26px;display:flex;align-items:flex-start;gap:14px;}
+.ai-tw-icon{width:34px;height:34px;border-radius:9px;background:rgba(124,58,237,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#a78bfa;}
+.ai-tw-text{font-size:.88rem;color:var(--text-muted);font-style:italic;line-height:1.6;flex:1;}
+.tw-cursor{display:inline-block;width:2px;height:1em;background:#a78bfa;margin-left:1px;vertical-align:text-bottom;animation:blink .5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* ── PRIVACY ── */
+.privacy-section{background:var(--surface);}
+.privacy-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.privacy-list{display:flex;flex-direction:column;gap:18px;margin-top:28px;}
+.privacy-item{display:flex;align-items:flex-start;gap:13px;}
+.priv-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.privacy-item h5{font-size:.93rem;font-weight:600;margin-bottom:3px;}
+.privacy-item p{font-size:.85rem;color:var(--text-muted);line-height:1.6;}
+.priv-diagram{display:flex;flex-direction:column;}
+.priv-node{background:var(--surface-2);border-radius:12px;padding:13px 16px;display:flex;align-items:flex-start;gap:11px;}
+.priv-node-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.priv-node-lbl{font-size:.83rem;font-weight:600;font-family:var(--font-d);}
+.priv-node-desc{font-size:.73rem;color:var(--text-muted);margin-top:1px;}
+.priv-line{width:2px;height:18px;background:var(--border);margin-left:20px;}
+.priv-node.prv{border:1px solid rgba(124,58,237,.3);}.priv-node-dot.prv{background:#7c3aed;}
+.priv-node.grn{border:1px solid rgba(16,185,129,.3);}.priv-node-dot.grn{background:#10b981;}
+.priv-node.blu{border:1px solid rgba(59,130,246,.3);}.priv-node-dot.blu{background:#3b82f6;}
+.priv-node.amb{border:1px solid rgba(245,158,11,.3);}.priv-node-dot.amb{background:#f59e0b;}
+.priv-note{font-size:.78rem;color:var(--text-muted);padding:10px 14px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.15);border-radius:8px;margin-top:16px;}
+
+/* ── HOW IT WORKS ── */
+.how-section{background:var(--bg);}
+.how-steps{display:flex;align-items:flex-start;gap:0;margin-top:56px;}
+.how-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px;}
+.how-num{font-size:5rem;font-weight:800;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:.15;line-height:1;margin-bottom:14px;}
+.how-icon{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);color:#a78bfa;}
+.how-step h4{font-size:.95rem;font-weight:700;margin-bottom:8px;}
+.how-step p{font-size:.85rem;color:var(--text-muted);line-height:1.6;}
+.how-conn{flex-shrink:0;width:52px;height:1px;margin-top:76px;background:repeating-linear-gradient(90deg,var(--border-hi) 0px,var(--border-hi) 8px,transparent 8px,transparent 16px);}
+
+/* ── PRICING ── */
+.pricing-section{background:var(--surface);}
+.pricing-toggle-wrap{display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:56px;font-size:.88rem;color:var(--text-muted);}
+.save-badge{background:rgba(16,185,129,.15);color:#34d399;border-radius:4px;padding:2px 6px;font-size:.73rem;font-style:normal;font-weight:600;}
+.toggle-sw{width:42px;height:23px;background:var(--surface-off);border:1px solid var(--border-hi);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;}
+.toggle-sw[aria-checked="true"]{background:var(--primary);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:15px;height:15px;background:#fff;border-radius:50%;transition:left .2s;}
+.toggle-sw[aria-checked="true"] .toggle-thumb{left:22px;}
+
+.pricing-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:780px;margin:0 auto;}
+.pricing-card{background:var(--surface-2);border:1px solid var(--border);border-radius:24px;padding:38px 34px;position:relative;opacity:0;transform:translateY(36px) perspective(800px) rotateX(8deg);transition:opacity 600ms ease,transform 600ms cubic-bezier(.22,1,.36,1);}
+.pricing-card.revealed{opacity:1;transform:translateY(0) perspective(800px) rotateX(0deg);}
+.pricing-card.featured{border-color:transparent;}
+.pricing-card.featured::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(135deg,#a78bfa,#60a5fa,#34d399);z-index:-1;animation:featGlow 4s ease-in-out infinite alternate;}
+@keyframes featGlow{from{opacity:.6;}to{opacity:1;}}
+.pricing-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--grad-brand);color:#fff;border-radius:100px;padding:3px 14px;font-size:.75rem;font-weight:600;white-space:nowrap;}
+.plan-name{font-size:1.15rem;font-weight:700;margin-bottom:7px;}
+.plan-price{display:flex;align-items:flex-end;gap:4px;margin-bottom:6px;}
+.price-amt{font-family:var(--font-d);font-size:2.8rem;font-weight:800;line-height:1;}
+.price-curr{font-size:.88rem;color:var(--text-muted);padding-bottom:5px;}
+.price-note{font-size:.75rem;color:var(--text-faint);margin-bottom:18px;min-height:1.2em;}
+.plan-desc{font-size:.88rem;color:var(--text-muted);margin-bottom:24px;line-height:1.6;}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:28px;}
+.plan-features li{display:flex;align-items:center;gap:9px;font-size:.88rem;color:var(--text-muted);}
+.plan-features li i.chk{color:#34d399;width:16px;height:16px;flex-shrink:0;}
+.plan-features li i.crs{color:var(--text-faint);width:16px;height:16px;flex-shrink:0;}
+.btn-plan{width:100%;justify-content:center;}
+
+/* ── CTA BANNER ── */
+.cta-banner{position:relative;background:#060609;overflow:hidden;text-align:center;padding:140px 0;}
+.cta-bg{position:absolute;inset:0;pointer-events:none;}
+.cta-sp-1{position:absolute;top:-80px;left:15%;width:280px;height:100%;background:conic-gradient(from 170deg at 50% 0%,transparent,rgba(124,58,237,.2) 15%,rgba(124,58,237,.07) 30%,transparent);clip-path:polygon(38% 0%,62% 0%,100% 100%,0% 100%);animation:swayA 10s ease-in-out infinite alternate;}
+.cta-sp-2{position:absolute;top:-80px;right:15%;width:280px;height:100%;background:conic-gradient(from 170deg at 50% 0%,transparent,rgba(52,211,153,.16) 15%,rgba(52,211,153,.05) 30%,transparent);clip-path:polygon(37% 0%,63% 0%,100% 100%,0% 100%);animation:swayB 12s ease-in-out infinite alternate;}
+.cta-inner{position:relative;z-index:1;}
+.cta-inner h2{font-size:clamp(2rem,4vw,3.1rem);font-weight:700;letter-spacing:-.02em;margin-bottom:14px;line-height:1.2;}
+.cta-inner p{font-size:1.02rem;color:var(--text-muted);margin-bottom:38px;max-width:460px;margin-left:auto;margin-right:auto;}
+.cta-main-btn{display:inline-flex;align-items:center;gap:10px;padding:17px 42px;font-size:1rem;border-radius:13px;background:var(--grad-brand);color:#fff;font-family:var(--font-d);font-weight:600;transition:transform .2s,box-shadow .2s;}
+.cta-main-btn:hover{transform:scale(1.04) translateY(-2px);box-shadow:0 16px 60px rgba(167,139,250,.35);}
+
+/* ── FOOTER ── */
+.footer{background:var(--surface);border-top:1px solid var(--border);padding:80px 0 40px;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:56px;}
+.footer-brand p{font-size:.88rem;color:var(--text-muted);line-height:1.6;margin-top:14px;margin-bottom:18px;max-width:270px;}
+.footer-social{display:flex;gap:10px;}
+.footer-social a{width:34px;height:34px;border-radius:8px;background:var(--surface-off);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:color .2s,border-color .2s,background .2s;}
+.footer-social a:hover{color:var(--text);border-color:var(--border-hi);background:rgba(255,255,255,.06);}
+.footer-col h5{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+.footer-col a{display:block;font-size:.85rem;color:var(--text-muted);margin-bottom:9px;transition:color .2s;}
+.footer-col a:hover{color:var(--text);}
+.footer-bottom{border-top:1px solid var(--border);padding-top:28px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+.footer-bottom p{font-size:.8rem;color:var(--text-faint);}
+.footer-logo-img{height:22px;width:auto;margin-bottom:4px;}
+
+/* ── SCROLL REVEAL ── */
+[data-reveal]{opacity:0;transform:translateY(28px);transition:opacity 600ms ease,transform 600ms cubic-bezier(.22,1,.36,1);}
+[data-reveal].revealed{opacity:1;transform:translateY(0);}
+
+/* ── MOBILE NAV ── */
+.mobile-nav{position:fixed;inset:0;background:rgba(8,8,16,.98);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;opacity:0;pointer-events:none;transition:opacity .25s;}
+.mobile-nav.open{opacity:1;pointer-events:all;}
+.mobile-nav a{font-family:var(--font-d);font-size:1.4rem;font-weight:700;color:var(--text);transition:color .2s;}
+.mobile-nav a:hover{color:#a78bfa;}
+.mobile-nav-close{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:8px;border-radius:8px;}
+.mobile-nav-close:hover{color:var(--text);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .tool-row-inner{gap:48px;padding:0 32px;}
+  .ai-cards{grid-template-columns:1fr 1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  section{padding:80px 0;}
+  .nav,.header-actions .btn-ghost{display:none;}
+  .hamburger{display:flex;}
+  .hero-stats{flex-direction:column;}
+  .stat-pill{width:260px;border-radius:12px!important;border-left:1px solid var(--border-hi)!important;}
+  .pipe-track{justify-content:flex-start;}
+  .tool-row-inner{grid-template-columns:1fr;gap:36px;}
+  .tool-row.even .tool-row-inner{direction:ltr;}
+  .tool-text,.tool-row.even .tool-text{transform:translateY(22px);}
+  .tool-mock,.tool-row.even .tool-mock{transform:translateY(22px);transition-delay:0s;}
+  .tool-row.revealed .tool-text,.tool-row.revealed .tool-mock{transform:translateY(0);}
+  .ai-cards{grid-template-columns:1fr;}
+  .privacy-inner{grid-template-columns:1fr;gap:48px;}
+  .how-steps{flex-direction:column;align-items:center;gap:0;}
+  .how-conn{width:2px;height:36px;margin:0;background:repeating-linear-gradient(180deg,var(--border-hi) 0px,var(--border-hi) 8px,transparent 8px,transparent 16px);}
+  .pricing-cards{grid-template-columns:1fr;max-width:380px;}
+  .pipe-flow{flex-direction:column;}
+  .pipe-flow-conn{width:2px;height:36px;background:linear-gradient(180deg,rgba(167,139,250,.3),rgba(96,165,250,.3));}
+  .pipe-flow-conn::after{bottom:-1px;right:50%;top:auto;left:auto;transform:translateX(50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:7px solid rgba(96,165,250,.5);border-bottom:none;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .footer-bottom{flex-direction:column;text-align:center;}
+}
+@media(max-width:480px){
+  .hero-actions{flex-direction:column;align-items:center;}
+  .footer-top{grid-template-columns:1fr;}
+  .pricing-cards{padding:0 12px;}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+  [data-reveal],.tool-row,.tool-text,.tool-mock{opacity:1;transform:none;}
+  .spotlight,.marquee-track,.ls-blob{animation:none;}
+}
+  </style>
 </head>
-
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <!-- ───────────────────────── HEADER ───────────────────────── -->
-  <header class="header" id="header">
-    <div class="header-inner">
-      <a href="index.html" class="logo">
-        <div class="logo-icon">
-          <i data-lucide="zap"></i>
-        </div>
-        <span class="logo-text">GalSol</span>
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu"><i data-lucide="x" style="width:24px;height:24px"></i></button>
+  <a href="#products" onclick="closeMobileNav()">Products</a>
+  <a href="#tools" onclick="closeMobileNav()">Tools</a>
+  <a href="#how-it-works" onclick="closeMobileNav()">How It Works</a>
+  <a href="#pricing" onclick="closeMobileNav()">Pricing</a>
+  <a href="login.html" class="btn-primary" style="margin-top:12px">Get Started Free</a>
+</div>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="Images/GalSol WWN.svg" alt="GalSol" class="logo-img">
+      <span class="logo-text">GalSol</span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#products" class="nav-link">Products</a>
+      <a href="#tools" class="nav-link">Tools</a>
+      <a href="#how-it-works" class="nav-link">How It Works</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+    </nav>
+    <div class="header-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="login.html" class="btn-primary">Get Started Free</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <i data-lucide="menu" style="width:22px;height:22px"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero" aria-label="Hero">
+  <div class="hero-bg">
+    <div class="spotlight sp-1" aria-hidden="true"></div>
+    <div class="spotlight sp-2" aria-hidden="true"></div>
+    <div class="spotlight sp-3" aria-hidden="true"></div>
+    <div class="spotlight sp-4" aria-hidden="true"></div>
+    <div class="stage-floor" aria-hidden="true"></div>
+    <canvas id="dustCanvas" aria-hidden="true"></canvas>
+    <div class="hero-grid" aria-hidden="true"></div>
+  </div>
+  <div class="hero-content" id="main-content">
+    <div class="hero-badge">
+      <i data-lucide="star" style="width:14px;height:14px"></i>
+      <span>The Grand Event Console</span>
+    </div>
+    <h1 class="hero-title">
+      Your Grand Event.<br>
+      <span class="gradient-text">Fully Managed.</span>
+    </h1>
+    <p class="hero-sub">GalSol is the all-in-one console for planning, running, and following up on grand events — from registration to certificates to bulk mailing. Everything connected. Nothing manual.</p>
+    <div class="hero-actions">
+      <a href="login.html" class="btn-primary lg">
+        <i data-lucide="chrome" style="width:18px;height:18px"></i>
+        Get Started Free
       </a>
-
-      <nav class="nav" id="nav">
-        <a href="#products" class="nav-link">Products</a>
-        <div class="nav-dropdown">
-          <a href="#tools" class="nav-link">Tools <i data-lucide="chevron-down" class="nav-chevron"></i></a>
-          <div class="dropdown-menu">
-            <a href="login.html" class="dropdown-item">
-              <i data-lucide="mail"></i>
-              <div>
-                <strong>Bulk Mailer</strong>
-                <span>Send personalized mails at scale</span>
-              </div>
-            </a>
-            <a href="login.html" class="dropdown-item">
-              <i data-lucide="award"></i>
-              <div>
-                <strong>Certificate Generator</strong>
-                <span>Auto-generate & distribute PDFs</span>
-              </div>
-            </a>
-            <a href="login.html" class="dropdown-item">
-              <i data-lucide="file-spreadsheet"></i>
-              <div>
-                <strong>Sheet Manager</strong>
-                <span>Sync & manage participant data</span>
-              </div>
-            </a>
-          </div>
-        </div>
-        <a href="#about" class="nav-link">About Us</a>
-        <a href="#guide" class="nav-link">User Guide</a>
-        <a href="#pricing" class="nav-link">Pricing</a>
-      </nav>
-
-      <div class="header-actions">
-        <a href="login.html" class="btn-ghost">Sign In</a>
-        <a href="login.html" class="btn-primary">Get Started Free</a>
-        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-          <i data-lucide="menu"></i>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- ───────────────────────── HERO ───────────────────────── -->
-  <section class="hero" id="hero">
-    <div class="hero-bg">
-      <div class="mesh-gradient"></div>
-      <div class="grid-overlay"></div>
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="orb orb-3"></div>
-    </div>
-
-    <div class="container">
-      <div class="hero-badge">
-        <i data-lucide="sparkles"></i>
-        <span>Powered by Google Workspace APIs</span>
-      </div>
-
-      <h1 class="hero-title">
-        Send Thousands of<br />
-        <span class="gradient-text">Personalized Mails</span><br />
-        Without Writing a Single Script
-      </h1>
-
-      <p class="hero-sub">
-        GalSol connects directly to your Google Account — automate bulk email campaigns, generate and distribute
-        certificates as PDFs, and manage participant data, all from one clean interface.
-      </p>
-
-      <div class="hero-actions">
-        <a href="login.html" class="btn-primary btn-large">
-          <i data-lucide="chrome"></i>
-          Continue with Google — It's Free
-        </a>
-        <a href="#how-it-works" class="btn-outline btn-large">
-          <i data-lucide="play-circle"></i>
-          See How It Works
-        </a>
-      </div>
-
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-number">10,000+</span>
-          <span class="stat-label">Mails Delivered</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-number">500+</span>
-          <span class="stat-label">Certificates Generated</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-number">Zero</span>
-          <span class="stat-label">Scripting Required</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-scroll-indicator">
-      <i data-lucide="chevrons-down"></i>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── LOGO STRIP ───────────────────────── -->
-  <section class="logo-strip">
-    <div class="container">
-      <p class="strip-label">Seamlessly integrates with your existing Google Workspace</p>
-      <div class="strip-logos">
-
-        <div class="strip-item">
-          <img src="https://www.gstatic.com/images/branding/product/2x/gmail_2020q4_48dp.png" alt="Gmail" width="48"
-            height="48">
-          <span>Gmail</span>
-        </div>
-
-        <div class="strip-item">
-          <img src="https://www.gstatic.com/images/branding/product/2x/sheets_2020q4_48dp.png" alt="Google Sheets"
-            width="48" height="48">
-          <span>Google Sheets</span>
-        </div>
-
-        <div class="strip-item">
-          <img src="https://www.gstatic.com/images/branding/product/2x/slides_2020q4_48dp.png" alt="Google Slides"
-            width="48" height="48">
-          <span>Google Slides</span>
-        </div>
-
-        <div class="strip-item">
-          <img src="https://www.gstatic.com/images/branding/product/2x/drive_2020q4_48dp.png" alt="Google Drive"
-            width="48" height="48">
-          <span>Google Drive</span>
-        </div>
-
-        <div class="strip-item">
-          <img src="https://www.gstatic.com/images/branding/product/2x/apps_script_48dp.png" alt="Apps Script"
-            width="48" height="48">
-          <span>Apps Script</span>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── TOOLS ───────────────────────── -->
-  <section class="tools" id="tools">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Core Tools</span>
-        <h2 class="section-title">Everything You Need,<br /><span class="gradient-text">Nothing You Don't</span></h2>
-        <p class="section-sub">Three powerful tools that replace hours of manual work — all connected to your Google
-          Account.</p>
-      </div>
-
-      <div class="tools-grid">
-        <div class="tool-card tool-card-featured" onclick="requireLogin(event)">
-          <div class="tool-card-glow"></div>
-          <div class="tool-icon-wrap">
-            <i data-lucide="send"></i>
-          </div>
-          <div class="tool-badge">Most Used</div>
-          <h3>Bulk Mailer</h3>
-          <p>Upload your participant list from Google Sheets, pick an HTML template, and send thousands of personalized
-            emails through your own Gmail account in minutes.</p>
-          <ul class="tool-features">
-            <li><i data-lucide="check"></i> Custom HTML templates with variable fields</li>
-            <li><i data-lucide="check"></i> Sends via your Gmail — no third-party relay</li>
-            <li><i data-lucide="check"></i> Real-time delivery status tracking</li>
-            <li><i data-lucide="check"></i> Schedule or send immediately</li>
-          </ul>
-          <a href="login.html" class="tool-cta">Launch Tool <i data-lucide="arrow-right"></i></a>
-        </div>
-
-        <div class="tool-card" onclick="requireLogin(event)">
-          <div class="tool-card-glow"></div>
-          <div class="tool-icon-wrap">
-            <i data-lucide="award"></i>
-          </div>
-          <h3>Certificate Generator</h3>
-          <p>Connect your Google Slides template, link your participant sheet — GalSol generates individual PDF
-            certificates, saves them to your Drive, and injects shareable links back into your sheet.</p>
-          <ul class="tool-features">
-            <li><i data-lucide="check"></i> Slide template + participant data = PDF certificates</li>
-            <li><i data-lucide="check"></i> Auto-saves PDFs to your Google Drive folder</li>
-            <li><i data-lucide="check"></i> Shareable Drive links injected into Sheet</li>
-            <li><i data-lucide="check"></i> Batch process hundreds in one click</li>
-          </ul>
-          <a href="login.html" class="tool-cta">Launch Tool <i data-lucide="arrow-right"></i></a>
-        </div>
-
-        <div class="tool-card" onclick="requireLogin(event)">
-          <div class="tool-card-glow"></div>
-          <div class="tool-icon-wrap">
-            <i data-lucide="layers"></i>
-          </div>
-          <div class="tool-badge tool-badge-new">Coming Soon</div>
-          <h3>Campaign Builder</h3>
-          <p>Combine certificate generation and email dispatch into a single automated pipeline. Generate, attach
-            certificate links, and send — all in one scheduled workflow.</p>
-          <ul class="tool-features">
-            <li><i data-lucide="check"></i> End-to-end automation pipeline</li>
-            <li><i data-lucide="check"></i> Certificate links auto-attached to mails</li>
-            <li><i data-lucide="check"></i> Schedule campaigns in advance</li>
-            <li><i data-lucide="check"></i> Analytics and delivery reports</li>
-          </ul>
-          <a href="#" class="tool-cta tool-cta-disabled">Notify Me <i data-lucide="bell"></i></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── HOW IT WORKS ───────────────────────── -->
-  <section class="how-it-works" id="how-it-works">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Workflow</span>
-        <h2 class="section-title">From Zero to Sent<br /><span class="gradient-text">in Four Steps</span></h2>
-      </div>
-
-      <div class="steps-container">
-        <div class="step-line"></div>
-
-        <div class="step">
-          <div class="step-number">01</div>
-          <div class="step-content">
-            <div class="step-icon"><i data-lucide="log-in"></i></div>
-            <h3>Connect Your Google Account</h3>
-            <p>Sign in with Google. GalSol requests only the permissions it needs — Gmail send access, Drive read/write,
-              and Sheets access. You stay in full control.</p>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-number">02</div>
-          <div class="step-content">
-            <div class="step-icon"><i data-lucide="file-plus"></i></div>
-            <h3>Paste Your Sheet & Template IDs</h3>
-            <p>Copy your Google Sheet ID (with participant names and emails) and your Slides template ID. No downloads,
-              no uploads — GalSol reads them directly from your Drive.</p>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-number">03</div>
-          <div class="step-content">
-            <div class="step-icon"><i data-lucide="cpu"></i></div>
-            <h3>GalSol Processes in the Background</h3>
-            <p>For each participant, a personalized certificate PDF is generated from your Slides template, saved to a
-              designated Drive folder, and the shareable link is written back to your Sheet.</p>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-number">04</div>
-          <div class="step-content">
-            <div class="step-icon"><i data-lucide="send"></i></div>
-            <h3>Review and Send</h3>
-            <p>Preview your email template with live variable substitution, review the recipient list, and hit Send.
-              GalSol dispatches all emails via your Gmail — with certificate links embedded.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── FEATURES ───────────────────────── -->
-  <section class="features" id="products">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Why GalSol</span>
-        <h2 class="section-title">Built for Colleges,<br /><span class="gradient-text">NGOs, and Organizers</span></h2>
-        <p class="section-sub">Stop wrestling with App Script. Start focusing on what matters.</p>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon"><i data-lucide="shield-check"></i></div>
-          <h4>Your Data Stays Yours</h4>
-          <p>GalSol never stores your emails or Drive files. All operations run via Google APIs on your own account — we
-            act only as the interface.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i data-lucide="zap"></i></div>
-          <h4>No Code Required</h4>
-          <p>Replace complex App Script pipelines with a clean visual interface. No debugging, no syntax errors, no
-            Stack Overflow tabs.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i data-lucide="users"></i></div>
-          <h4>Designed for Organizations</h4>
-          <p>Built for colleges, NGOs, startups, and event organizers who regularly send certificates and announcements
-            to large groups.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i data-lucide="folder-open"></i></div>
-          <h4>Auto Drive Organization</h4>
-          <p>GalSol creates a dedicated folder in your Google Drive for each campaign, keeping every generated
-            certificate neatly organized.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i data-lucide="link-2"></i></div>
-          <h4>Shareable Links in Sheet</h4>
-          <p>Generated PDF links are automatically written back into a new column in your Google Sheet — ready to share
-            or embed in emails.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i data-lucide="bar-chart-2"></i></div>
-          <h4>Delivery Tracking</h4>
-          <p>Know exactly how many emails were sent, which ones bounced, and the overall campaign status — without
-            leaving the platform.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── USE CASES ───────────────────────── -->
-  <section class="use-cases">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Use Cases</span>
-        <h2 class="section-title">Who Uses <span class="gradient-text">GalSol</span></h2>
-      </div>
-
-      <div class="use-cases-grid">
-        <div class="use-case-card">
-          <div class="use-case-icon"><i data-lucide="graduation-cap"></i></div>
-          <h4>Universities & Colleges</h4>
-          <p>Send course completion certificates, event participation certificates, and semester newsletters to hundreds
-            of students at once.</p>
-          <div class="use-case-tag">E-Certificates</div>
-          <div class="use-case-tag">Bulk Announcements</div>
-        </div>
-        <div class="use-case-card">
-          <div class="use-case-icon"><i data-lucide="heart-handshake"></i></div>
-          <h4>NGOs & Non-Profits</h4>
-          <p>Distribute volunteer appreciation certificates and program completion acknowledgements to your community at
-            no extra cost.</p>
-          <div class="use-case-tag">Volunteer Certificates</div>
-          <div class="use-case-tag">Impact Reports</div>
-        </div>
-        <div class="use-case-card">
-          <div class="use-case-icon"><i data-lucide="calendar-check"></i></div>
-          <h4>Event Organizers</h4>
-          <p>Send post-event thank-you mails, participation certificates, and follow-up communications to all registered
-            attendees in minutes.</p>
-          <div class="use-case-tag">Event Certificates</div>
-          <div class="use-case-tag">Post-Event Mails</div>
-        </div>
-        <div class="use-case-card">
-          <div class="use-case-icon"><i data-lucide="building-2"></i></div>
-          <h4>Corporate Training Teams</h4>
-          <p>Automate training completion certificates and onboarding communications for employees across departments.
-          </p>
-          <div class="use-case-tag">Training Completion</div>
-          <div class="use-case-tag">HR Communications</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── GUIDE ───────────────────────── -->
-  <section class="guide" id="guide">
-    <div class="container">
-      <div class="guide-inner">
-        <div class="guide-content">
-          <span class="section-tag">User Guide</span>
-          <h2 class="section-title">Up and Running<br /><span class="gradient-text">in Under 5 Minutes</span></h2>
-          <p>No installation. No setup. Just connect your Google Account and start your first campaign.</p>
-          <div class="guide-steps">
-            <div class="guide-step">
-              <span class="guide-num">1</span>
-              <p>Sign in with Google and choose your account type (Personal or Organization)</p>
-            </div>
-            <div class="guide-step">
-              <span class="guide-num">2</span>
-              <p>Grant the required Google API permissions (Gmail, Drive, Sheets, Slides)</p>
-            </div>
-            <div class="guide-step">
-              <span class="guide-num">3</span>
-              <p>Open any tool, paste your Sheet ID and template ID</p>
-            </div>
-            <div class="guide-step">
-              <span class="guide-num">4</span>
-              <p>Preview, configure, and launch your campaign</p>
-            </div>
-          </div>
-          <a href="login.html" class="btn-primary">Start Free — No Credit Card</a>
-        </div>
-        <div class="guide-visual">
-          <div class="guide-card">
-            <div class="guide-card-header">
-              <div class="traffic-light">
-                <span class="tl-red"></span>
-                <span class="tl-yellow"></span>
-                <span class="tl-green"></span>
-              </div>
-              <span class="guide-card-title">campaign_setup.GalSol</span>
-            </div>
-            <div class="guide-card-body">
-              <div class="code-line"><span class="code-key">sheet_id</span> <span class="code-op">=</span> <span
-                  class="code-val">"1BxiMVs0XRA..."</span></div>
-              <div class="code-line"><span class="code-key">template_id</span> <span class="code-op">=</span> <span
-                  class="code-val">"1mDpQ2xkZJ..."</span></div>
-              <div class="code-line"><span class="code-key">drive_folder</span> <span class="code-op">=</span> <span
-                  class="code-val">"Certificates_2025"</span></div>
-              <div class="code-line"><span class="code-key">name_col</span> <span class="code-op">=</span> <span
-                  class="code-val">"Column B"</span></div>
-              <div class="code-line"><span class="code-key">email_col</span> <span class="code-op">=</span> <span
-                  class="code-val">"Column C"</span></div>
-              <div class="code-line code-comment"># All templates are auto-detected</div>
-              <div class="code-line code-comment"># from your Slides file</div>
-              <div class="code-run">
-                <button class="run-btn"><i data-lucide="play"></i> Generate &amp; Send</button>
-                <span class="run-status run-success"><i data-lucide="check-circle-2"></i> 247 sent</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── PRICING ───────────────────────── -->
-  <section class="pricing" id="pricing">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Pricing</span>
-        <h2 class="section-title">Simple, Transparent,<br /><span class="gradient-text">Always Free to Start</span></h2>
-        <p class="section-sub">GalSol is free for individuals and small organizations. Scale up only when you need to.
-        </p>
-      </div>
-
-      <div class="pricing-grid">
-        <div class="pricing-card">
-          <div class="pricing-plan">Free</div>
-          <div class="pricing-price"><span class="price-amount">0</span><span class="price-currency">INR/mo</span></div>
-          <p class="pricing-desc">Perfect for individuals, small clubs, and getting started.</p>
-          <ul class="pricing-features">
-            <li><i data-lucide="check"></i> Up to 500 emails per day (Gmail limit)</li>
-            <li><i data-lucide="check"></i> Up to 50 certificates per batch</li>
-            <li><i data-lucide="check"></i> 1 active campaign at a time</li>
-            <li><i data-lucide="check"></i> Google Drive auto-save</li>
-            <li><i data-lucide="check"></i> Basic delivery tracking</li>
-            <li><i data-lucide="x" class="feature-no"></i> Priority processing</li>
-            <li><i data-lucide="x" class="feature-no"></i> Team collaboration</li>
-          </ul>
-          <a href="login.html" class="btn-outline btn-full">Get Started Free</a>
-        </div>
-
-        <div class="pricing-card pricing-card-featured">
-          <div class="pricing-badge">Most Popular</div>
-          <div class="pricing-plan">Pro</div>
-          <div class="pricing-price"><span class="price-amount">299</span><span class="price-currency">INR/mo</span>
-          </div>
-          <p class="pricing-desc">For active organizers, colleges, and growing teams.</p>
-          <ul class="pricing-features">
-            <li><i data-lucide="check"></i> Unlimited emails (Gmail/Workspace limits)</li>
-            <li><i data-lucide="check"></i> Unlimited certificates per batch</li>
-            <li><i data-lucide="check"></i> Unlimited concurrent campaigns</li>
-            <li><i data-lucide="check"></i> Google Drive auto-organize</li>
-            <li><i data-lucide="check"></i> Full delivery analytics</li>
-            <li><i data-lucide="check"></i> Priority background processing</li>
-            <li><i data-lucide="x" class="feature-no"></i> Team collaboration</li>
-          </ul>
-          <a href="login.html" class="btn-primary btn-full">Start Pro Trial</a>
-        </div>
-
-        <div class="pricing-card">
-          <div class="pricing-plan">Organization</div>
-          <div class="pricing-price"><span class="price-amount">999</span><span class="price-currency">INR/mo</span>
-          </div>
-          <p class="pricing-desc">For universities, NGOs, and multi-department organizations.</p>
-          <ul class="pricing-features">
-            <li><i data-lucide="check"></i> Everything in Pro</li>
-            <li><i data-lucide="check"></i> Up to 5 team members</li>
-            <li><i data-lucide="check"></i> Shared campaign templates</li>
-            <li><i data-lucide="check"></i> Organization-level Drive folder</li>
-            <li><i data-lucide="check"></i> Dedicated account manager</li>
-            <li><i data-lucide="check"></i> Priority support</li>
-            <li><i data-lucide="check"></i> Custom domain sender name</li>
-          </ul>
-          <a href="login.html" class="btn-outline btn-full">Contact Sales</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── ABOUT ───────────────────────── -->
-  <section class="about" id="about">
-    <div class="container">
-      <div class="about-inner">
-        <div class="about-content">
-          <span class="section-tag">About GalSol</span>
-          <h2 class="section-title">Built by Someone Who<br /><span class="gradient-text">Got Tired of App Script</span>
-          </h2>
-          <p>GalSol was born out of a real frustration — spending hours managing Google Sheets, writing App Script code,
-            debugging mail merge errors, and repeating the entire process for every event.</p>
-          <p>We built GalSol to be the platform we always wished existed: one that respects your Google setup, works
-            entirely within your existing tools, and requires zero technical knowledge to operate.</p>
-          <div class="about-values">
-            <div class="about-value">
-              <i data-lucide="lock"></i>
-              <span>Privacy-first. Your data never leaves your Google Account.</span>
-            </div>
-            <div class="about-value">
-              <i data-lucide="heart"></i>
-              <span>Built for real workflows, not hypothetical ones.</span>
-            </div>
-            <div class="about-value">
-              <i data-lucide="globe"></i>
-              <span>Accessible to anyone with a Google Account.</span>
-            </div>
-          </div>
-        </div>
-        <div class="about-visual">
-          <div class="about-card-stack">
-            <div class="acard acard-1">
-              <i data-lucide="mail-check"></i>
-              <div>
-                <strong>247 emails sent</strong>
-                <span>Annual Day 2025 — Certificate Dispatch</span>
-              </div>
-            </div>
-            <div class="acard acard-2">
-              <i data-lucide="file-check-2"></i>
-              <div>
-                <strong>247 PDFs generated</strong>
-                <span>Saved to Drive: /Certificates/Annual_Day_2025/</span>
-              </div>
-            </div>
-            <div class="acard acard-3">
-              <i data-lucide="clock"></i>
-              <div>
-                <strong>Time saved: ~4 hours</strong>
-                <span>Compared to manual App Script workflow</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── CTA BANNER ───────────────────────── -->
-  <section class="cta-banner">
-    <div class="cta-bg">
-      <div class="cta-orb cta-orb-1"></div>
-      <div class="cta-orb cta-orb-2"></div>
-    </div>
-    <div class="container">
-      <div class="cta-inner">
-        <h2>Ready to Automate Your<br /><span class="gradient-text">Next Certificate Campaign?</span></h2>
-        <p>Join hundreds of organizers who have replaced manual App Script workflows with GalSol.</p>
-        <a href="login.html" class="btn-primary btn-large">
-          <i data-lucide="chrome"></i>
-          Get Started with Google — Free
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────────────────────── FOOTER ───────────────────────── -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <a href="index.html" class="logo">
-            <div class="logo-icon"><i data-lucide="zap"></i></div>
-            <span class="logo-text">GalSol</span>
-          </a>
-          <p>The fastest way to send personalized bulk emails and generate certificates — powered entirely by your
-            Google Account.</p>
-          <div class="footer-social">
-            <a href="#" aria-label="GitHub"><i data-lucide="github"></i></a>
-            <a href="#" aria-label="Twitter"><i data-lucide="twitter"></i></a>
-            <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin"></i></a>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h5>Product</h5>
-          <a href="login.html">Bulk Mailer</a>
-          <a href="login.html">Certificate Generator</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#">Changelog</a>
-        </div>
-
-        <div class="footer-col">
-          <h5>Company</h5>
-          <a href="#about">About Us</a>
-          <a href="#">Blog</a>
-          <a href="#">Careers</a>
-          <a href="#">Contact</a>
-        </div>
-
-        <div class="footer-col">
-          <h5>Resources</h5>
-          <a href="#guide">User Guide</a>
-          <a href="#">API Docs</a>
-          <a href="#">FAQ</a>
-          <a href="#">Status</a>
-        </div>
-
-        <div class="footer-col">
-          <h5>Legal</h5>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Policy</a>
-          <a href="#">Google API Disclosure</a>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>&copy; 2025 GalSol. All rights reserved.</p>
-        <p class="footer-note">GalSol is not affiliated with Google LLC. Google, Gmail, Drive, and Slides are trademarks
-          of Google LLC.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Login Required Modal -->
-  <div class="modal-overlay" id="loginModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
-      <div class="modal-icon"><i data-lucide="lock"></i></div>
-      <h3>Sign In Required</h3>
-      <p>You need to sign in with your Google Account to access GalSol tools.</p>
-      <a href="login.html" class="btn-primary btn-full">
-        <i data-lucide="chrome"></i> Continue with Google
+      <a href="#how-it-works" class="btn-ghost-play">
+        <span class="play-icon"><i data-lucide="play" style="width:12px;height:12px"></i></span>
+        See How It Works
       </a>
-      <button class="btn-ghost btn-full" onclick="closeModal()">Maybe Later</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-pill">
+        <span class="stat-val" data-count="500" data-suffix="+">0+</span>
+        <span class="stat-label">Events Created</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-val" data-count="50000" data-suffix="+">0+</span>
+        <span class="stat-label">Certificates Issued</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-val" data-count="1000000" data-suffix="+">0+</span>
+        <span class="stat-label">Mails Delivered</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint" aria-hidden="true">
+    <i data-lucide="chevrons-down" style="width:22px;height:22px"></i>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar" aria-label="Event types">
+  <p class="trust-label">Trusted by event organizers worldwide</p>
+  <div class="marquee-track" aria-hidden="true">
+    <span class="m-pill"><span class="m-dot" style="background:#a78bfa"></span>Annual Day</span>
+    <span class="m-pill"><span class="m-dot" style="background:#60a5fa"></span>Hackathon</span>
+    <span class="m-pill"><span class="m-dot" style="background:#34d399"></span>Cultural Fest</span>
+    <span class="m-pill"><span class="m-dot" style="background:#fbbf24"></span>Seminar</span>
+    <span class="m-pill"><span class="m-dot" style="background:#f472b6"></span>Workshop</span>
+    <span class="m-pill"><span class="m-dot" style="background:#818cf8"></span>Tech Summit</span>
+    <span class="m-pill"><span class="m-dot" style="background:#a78bfa"></span>Sports Meet</span>
+    <span class="m-pill"><span class="m-dot" style="background:#60a5fa"></span>Convocation</span>
+    <span class="m-pill"><span class="m-dot" style="background:#34d399"></span>Conference</span>
+    <span class="m-pill"><span class="m-dot" style="background:#fbbf24"></span>Orientation</span>
+    <!-- duplicate for seamless loop -->
+    <span class="m-pill"><span class="m-dot" style="background:#a78bfa"></span>Annual Day</span>
+    <span class="m-pill"><span class="m-dot" style="background:#60a5fa"></span>Hackathon</span>
+    <span class="m-pill"><span class="m-dot" style="background:#34d399"></span>Cultural Fest</span>
+    <span class="m-pill"><span class="m-dot" style="background:#fbbf24"></span>Seminar</span>
+    <span class="m-pill"><span class="m-dot" style="background:#f472b6"></span>Workshop</span>
+    <span class="m-pill"><span class="m-dot" style="background:#818cf8"></span>Tech Summit</span>
+    <span class="m-pill"><span class="m-dot" style="background:#a78bfa"></span>Sports Meet</span>
+    <span class="m-pill"><span class="m-dot" style="background:#60a5fa"></span>Convocation</span>
+    <span class="m-pill"><span class="m-dot" style="background:#34d399"></span>Conference</span>
+    <span class="m-pill"><span class="m-dot" style="background:#fbbf24"></span>Orientation</span>
+  </div>
+</div>
+
+<!-- PIPELINE OVERVIEW -->
+<section class="pipeline-overview" id="products">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Six Tools. One Console.</span>
+      <h2 class="section-title">Every stage of your event,<br><span class="gradient-text">handled end-to-end</span></h2>
+      <p class="section-sub">From building your event page to sending post-event certificates — GalSol connects every step in one seamless pipeline.</p>
+    </div>
+    <div class="pipe-scroll">
+      <div class="pipe-track">
+        <div class="pipe-node" data-reveal>
+          <div class="pipe-node-icon pn-v"><i data-lucide="globe" style="width:20px;height:20px"></i></div>
+          <span class="pipe-node-label">Mini Site</span>
+        </div>
+        <div class="pipe-conn" aria-hidden="true"></div>
+        <div class="pipe-node" data-reveal>
+          <div class="pipe-node-icon pn-b"><i data-lucide="file-text" style="width:20px;height:20px"></i></div>
+          <span class="pipe-node-label">GS Forms</span>
+        </div>
+        <div class="pipe-conn" aria-hidden="true"></div>
+        <div class="pipe-node" data-reveal>
+          <div class="pipe-node-icon pn-t"><i data-lucide="scan-line" style="width:20px;height:20px"></i></div>
+          <span class="pipe-node-label">Entry Pass</span>
+        </div>
+        <div class="pipe-conn" aria-hidden="true"></div>
+        <div class="pipe-node" data-reveal>
+          <div class="pipe-node-icon pn-o"><i data-lucide="layout-dashboard" style="width:20px;height:20px"></i></div>
+          <span class="pipe-node-label">Dashboard</span>
+        </div>
+        <div class="pipe-conn" aria-hidden="true"></div>
+        <div class="pipe-node" data-reveal>
+          <div class="pipe-node-icon pn-p"><i data-lucide="award" style="width:20px;height:20px"></i></div>
+          <span class="pipe-node-label">Certificates</span>
+        </div>
+        <div class="pipe-conn" aria-hidden="true"></div>
+        <div class="pipe-node" data-reveal>
+          <div class="pipe-node-icon pn-i"><i data-lucide="send" style="width:20px;height:20px"></i></div>
+          <span class="pipe-node-label">Bulk Mail</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIX TOOLS -->
+<div class="tools-section" id="tools">
+  <div class="tools-section-header">
+    <span class="section-tag">Deep Dive</span>
+    <h2 class="section-title">Built for the full event lifecycle,<br><span class="gradient-text">not just one piece of it</span></h2>
+    <p class="section-sub">Each tool is purpose-built, yet tightly integrated. Use one or use all six — they work together seamlessly.</p>
+  </div>
+
+  <!-- Tool 1 — Mini Site -->
+  <div class="tool-row">
+    <div class="tool-row-inner">
+      <div class="tool-text">
+        <span class="tool-badge-tag"><i data-lucide="globe" style="width:14px;height:14px"></i> Mini Site Builder</span>
+        <h3>A beautiful event page <span class="gradient-text">in minutes</span></h3>
+        <p>No design skills needed. Build a stunning, mobile-ready event landing page with your schedule, speakers, countdown timer, and registration form — all in one place.</p>
+        <ul class="tool-bullets">
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Drag-and-drop block editor</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Countdown timer and live schedule</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Speaker profiles and sponsor logos</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Published instantly on a shareable URL</li>
+        </ul>
+        <a href="mini-site.html" class="tool-cta-link">Explore Mini Site <i data-lucide="arrow-right" style="width:16px;height:16px"></i></a>
+      </div>
+      <div class="tool-mock">
+        <div class="mock-panel">
+          <div class="mock-bar-top">
+            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
+            <div class="mock-url-bar">galsol.app/e/annual-day-2026</div>
+          </div>
+          <div class="mock-browser-screen">
+            <div class="mock-ev-title">Annual Day 2026</div>
+            <div class="mock-countdown">02 : 14 : 38 : 09</div>
+            <button class="mock-reg-btn">Register Now</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="app.js"></script>
-</body>
+  <!-- Tool 2 — GS Forms -->
+  <div class="tool-row even">
+    <div class="tool-row-inner">
+      <div class="tool-text">
+        <span class="tool-badge-tag"><i data-lucide="file-text" style="width:14px;height:14px"></i> GS Forms</span>
+        <h3>Registration forms that <span class="gradient-text">auto-generate passes</span></h3>
+        <p>Build Google-native registration forms with a drag-and-drop builder. Submissions flow straight into your Google Sheet — and a branded entry pass with QR code is generated automatically.</p>
+        <ul class="tool-bullets">
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Visual field builder — no coding</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Responses saved directly to Sheets</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Auto-generated QR entry passes</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Pass emailed to registrant instantly</li>
+        </ul>
+        <a href="gs-forms.html" class="tool-cta-link">Explore GS Forms <i data-lucide="arrow-right" style="width:16px;height:16px"></i></a>
+      </div>
+      <div class="tool-mock">
+        <div class="mock-panel">
+          <div class="mock-bar-top">
+            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
+            <div class="mock-url-bar">Form Builder</div>
+          </div>
+          <div class="mock-form-body">
+            <div class="mock-fields">
+              <div class="mock-field"><i data-lucide="user" class="mock-field-icon" style="width:14px;height:14px"></i>Full Name</div>
+              <div class="mock-field"><i data-lucide="mail" class="mock-field-icon" style="width:14px;height:14px"></i>Email Address</div>
+              <div class="mock-field"><i data-lucide="building" class="mock-field-icon" style="width:14px;height:14px"></i>Institution</div>
+              <div class="mock-field"><i data-lucide="phone" class="mock-field-icon" style="width:14px;height:14px"></i>Phone Number</div>
+            </div>
+            <div class="mock-pass-card">
+              <div class="mock-pass-name">Alex Johnson</div>
+              <div class="mock-pass-ev">Annual Day 2026</div>
+              <div class="mock-qr">
+                <span></span><span style="background:none"></span><span></span><span style="background:none"></span><span></span>
+                <span style="background:none"></span><span></span><span style="background:none"></span><span></span><span style="background:none"></span>
+                <span></span><span style="background:none"></span><span></span><span style="background:none"></span><span></span>
+                <span style="background:none"></span><span></span><span></span><span style="background:none"></span><span></span>
+                <span></span><span style="background:none"></span><span></span><span></span><span style="background:none"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Tool 3 — Entry Pass Scanner -->
+  <div class="tool-row">
+    <div class="tool-row-inner">
+      <div class="tool-text">
+        <span class="tool-badge-tag"><i data-lucide="scan-line" style="width:14px;height:14px"></i> Entry Pass Scanner</span>
+        <h3>Venue check-in that takes <span class="gradient-text">under a second</span></h3>
+        <p>Open the scanner on any smartphone — no app install needed. Point it at an attendee's QR pass and instantly confirm or deny entry. Attendance syncs to your Sheet in real time.</p>
+        <ul class="tool-bullets">
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Browser-based — works on any device</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Instant QR validation</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Prevents duplicate scan / re-entry</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Live attendance count in Dashboard</li>
+        </ul>
+        <a href="gs-scanner.html" class="tool-cta-link">Explore Scanner <i data-lucide="arrow-right" style="width:16px;height:16px"></i></a>
+      </div>
+      <div class="tool-mock">
+        <div class="mock-panel">
+          <div class="mock-phone-wrap">
+            <div class="mock-phone">
+              <div class="mock-notch"></div>
+              <div class="mock-scan-frame">
+                <div class="mock-scan-corners"></div>
+                <div class="mock-scan-line"></div>
+              </div>
+              <div class="mock-scan-status">Scan entry pass...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 4 — Dashboard -->
+  <div class="tool-row even">
+    <div class="tool-row-inner">
+      <div class="tool-text">
+        <span class="tool-badge-tag"><i data-lucide="layout-dashboard" style="width:14px;height:14px"></i> Live Dashboard</span>
+        <h3>Your event, live, <span class="gradient-text">at a glance</span></h3>
+        <p>Watch registrations roll in, track attendance at the venue, and see session-by-session analytics — all updating in real time without a single refresh.</p>
+        <ul class="tool-bullets">
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Real-time registration and attendance stats</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Session-wise attendance breakdown</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Export reports as CSV or PDF</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Shareable read-only view for organizers</li>
+        </ul>
+        <a href="dashboard.html" class="tool-cta-link">Explore Dashboard <i data-lucide="arrow-right" style="width:16px;height:16px"></i></a>
+      </div>
+      <div class="tool-mock">
+        <div class="mock-panel">
+          <div class="mock-bar-top">
+            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
+            <div class="mock-url-bar">Event Dashboard</div>
+          </div>
+          <div class="mock-dash-body">
+            <div class="mock-stat-card"><div class="mock-stat-v" data-count="247">0</div><div class="mock-stat-l">Registered</div></div>
+            <div class="mock-stat-card"><div class="mock-stat-v" data-count="189">0</div><div class="mock-stat-l">Checked In</div></div>
+            <div class="mock-chart-area">
+              <div class="mock-bar" style="--h:45%"></div>
+              <div class="mock-bar" style="--h:70%"></div>
+              <div class="mock-bar" style="--h:55%"></div>
+              <div class="mock-bar" style="--h:85%"></div>
+              <div class="mock-bar" style="--h:60%"></div>
+              <div class="mock-bar" style="--h:95%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 5 — Certificate Creator -->
+  <div class="tool-row">
+    <div class="tool-row-inner">
+      <div class="tool-text">
+        <span class="tool-badge-tag"><i data-lucide="award" style="width:14px;height:14px"></i> Certificate Creator</span>
+        <h3>Personalized certificates <span class="gradient-text">for every attendee</span></h3>
+        <p>Connect your Google Slides template and participant Sheet. GalSol generates individual PDFs, saves them to your Drive, and injects shareable links back into your Sheet — ready to send.</p>
+        <ul class="tool-bullets">
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Slides template + Sheets data = PDF certificates</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Auto-saved to your Google Drive folder</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Shareable links written back to Sheet</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Batch hundreds in a single click</li>
+        </ul>
+        <a href="cert-tool.html" class="tool-cta-link">Explore Certificates <i data-lucide="arrow-right" style="width:16px;height:16px"></i></a>
+      </div>
+      <div class="tool-mock">
+        <div class="mock-panel">
+          <div class="mock-bar-top">
+            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
+            <div class="mock-url-bar">Certificate Creator</div>
+          </div>
+          <div class="mock-cert-wrap">
+            <div class="mock-cert">
+              <div class="mock-cert-shimmer"></div>
+              <div class="mock-cert-ttl">Certificate of Participation</div>
+              <div class="mock-cert-nm">Alex Johnson</div>
+              <div class="mock-cert-ev">Annual Day 2026 — GalSol Institute</div>
+            </div>
+            <div class="mock-cert-sidebar">
+              <div class="mock-map-row"><i data-lucide="type" style="width:11px;height:11px;color:#a78bfa"></i>Name → Col B</div>
+              <div class="mock-map-row"><i data-lucide="calendar" style="width:11px;height:11px;color:#60a5fa"></i>Date → Col C</div>
+              <div class="mock-map-row"><i data-lucide="link" style="width:11px;height:11px;color:#34d399"></i>PDF → Col D</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 6 — Bulk Mailer -->
+  <div class="tool-row even">
+    <div class="tool-row-inner">
+      <div class="tool-text">
+        <span class="tool-badge-tag"><i data-lucide="send" style="width:14px;height:14px"></i> Bulk Mailer</span>
+        <h3>Send personalized emails <span class="gradient-text">to every attendee</span></h3>
+        <p>Pick an HTML template, map your Sheet columns, preview with live substitution — and dispatch hundreds of personalized emails through your own Gmail account in minutes.</p>
+        <ul class="tool-bullets">
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> HTML template editor with variable fields</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Sends via your Gmail — no third-party relay</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Certificate links auto-attached from Sheet</li>
+          <li><i data-lucide="check" style="width:16px;height:16px"></i> Real-time delivery tracking</li>
+        </ul>
+        <a href="mail-tool.html" class="tool-cta-link">Explore Bulk Mailer <i data-lucide="arrow-right" style="width:16px;height:16px"></i></a>
+      </div>
+      <div class="tool-mock">
+        <div class="mock-panel">
+          <div class="mock-bar-top">
+            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
+            <div class="mock-url-bar">Bulk Mailer — Template Editor</div>
+          </div>
+          <div class="mock-mailer-panels">
+            <div class="mock-code-side">
+              <div class="mock-code-line"><span class="t-tag">&lt;h1&gt;</span>Hi <span class="t-val">{{Name}}</span><span class="t-tag">&lt;/h1&gt;</span></div>
+              <div class="mock-code-line"><span class="t-tag">&lt;p&gt;</span>Thank you for joining<span class="t-tag">&lt;/p&gt;</span></div>
+              <div class="mock-code-line"><span class="t-tag">&lt;p&gt;</span><span class="t-val">{{EventName}}</span><span class="t-tag">&lt;/p&gt;</span></div>
+              <div class="mock-code-line"><span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"{{CertLink}}"</span><span class="t-tag">&gt;</span></div>
+              <div class="mock-code-line">&nbsp;&nbsp;View Certificate</div>
+              <div class="mock-code-line"><span class="t-tag">&lt;/a&gt;</span></div>
+            </div>
+            <div class="mock-preview-side">
+              <div class="mock-email-hdr"></div>
+              <div class="mock-email-line"></div>
+              <div class="mock-email-line"></div>
+              <div class="mock-email-line"></div>
+              <div class="mock-email-cta">View Certificate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMBINED PIPELINE -->
+<section class="combined-section" id="pipeline">
+  <div class="lumashift" aria-hidden="true">
+    <div class="ls-blob ls-1"></div>
+    <div class="ls-blob ls-2"></div>
+    <div class="ls-blob ls-3"></div>
+    <div class="ls-blob ls-4"></div>
+  </div>
+  <div class="combined-inner container">
+    <div class="section-header">
+      <span class="section-tag">Automation Pipeline</span>
+      <h2 class="section-title">Certificates to inboxes,<br><span class="gradient-text">in one automated flow</span></h2>
+      <p class="section-sub">The most powerful use of GalSol: generate all certificates, attach Drive links, and send personalized emails — triggered in a single pipeline run.</p>
+    </div>
+    <div class="pipe-flow">
+      <div class="pipe-step">
+        <div class="pipe-step-icon pn-p"><i data-lucide="award" style="width:22px;height:22px"></i></div>
+        <span class="pipe-step-title">Generate Certificates</span>
+      </div>
+      <div class="pipe-flow-conn" aria-hidden="true"></div>
+      <div class="pipe-step">
+        <div class="pipe-step-icon pn-t"><i data-lucide="folder-open" style="width:22px;height:22px"></i></div>
+        <span class="pipe-step-title">Save to Drive</span>
+      </div>
+      <div class="pipe-flow-conn" aria-hidden="true"></div>
+      <div class="pipe-step">
+        <div class="pipe-step-icon pn-i"><i data-lucide="send" style="width:22px;height:22px"></i></div>
+        <span class="pipe-step-title">Send Emails</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GAL AI -->
+<section class="ai-section" id="gal-ai">
+  <div class="lumashift" aria-hidden="true">
+    <div class="ls-blob ls-1" style="opacity:.12"></div>
+    <div class="ls-blob ls-2" style="opacity:.12"></div>
+    <div class="ls-blob ls-3" style="opacity:.12"></div>
+  </div>
+  <div class="ai-inner container">
+    <div class="section-header">
+      <span class="section-tag">Gal AI</span>
+      <h2 class="section-title">Your AI event assistant,<br><span class="gradient-text">available on Pro</span></h2>
+      <p class="section-sub">Gal AI understands event context and helps you move faster — from drafting registration forms to writing compelling post-event emails.</p>
+    </div>
+    <div class="ai-cards">
+      <div class="ai-card" data-reveal>
+        <div class="ai-pro-badge">Pro Only</div>
+        <div class="ai-card-icon pn-v"><i data-lucide="wand-2" style="width:22px;height:22px"></i></div>
+        <h4>Generate Registration Forms</h4>
+        <p>Describe your event in plain language and Gal AI builds a complete registration form — fields, validation, and all — ready to publish.</p>
+      </div>
+      <div class="ai-card" data-reveal>
+        <div class="ai-pro-badge">Pro Only</div>
+        <div class="ai-card-icon pn-b"><i data-lucide="mail-plus" style="width:22px;height:22px"></i></div>
+        <h4>Write Email Templates</h4>
+        <p>Tell Gal AI the tone and purpose — confirmation, reminder, thank-you, certificate dispatch — and get a polished HTML email template instantly.</p>
+      </div>
+      <div class="ai-card" data-reveal>
+        <div class="ai-pro-badge">Pro Only</div>
+        <div class="ai-card-icon pn-t"><i data-lucide="sparkles" style="width:22px;height:22px"></i></div>
+        <h4>Build Your Event Site</h4>
+        <p>Describe your event, speakers, and schedule — Gal AI drafts the full mini-site content, ready for you to review and publish.</p>
+      </div>
+    </div>
+    <div class="ai-tw-wrap" data-reveal>
+      <div class="ai-tw-icon"><i data-lucide="bot" style="width:18px;height:18px"></i></div>
+      <div class="ai-tw-text" id="aiTypewriter"><span class="tw-cursor"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<section class="privacy-section" id="privacy">
+  <div class="container">
+    <div class="privacy-inner">
+      <div>
+        <span class="section-tag">Data Privacy</span>
+        <h2 class="section-title" style="text-align:left;margin-bottom:8px">Your data never<br><span class="gradient-text">leaves your Google Account</span></h2>
+        <p class="section-sub" style="text-align:left;margin:0">GalSol is an interface, not a data store. Every file, email, and spreadsheet stays in your Google ecosystem.</p>
+        <div class="privacy-list">
+          <div class="privacy-item" data-reveal>
+            <div class="priv-icon" style="background:rgba(124,58,237,.1);color:#a78bfa;"><i data-lucide="shield-check" style="width:18px;height:18px"></i></div>
+            <div>
+              <h5>GalSol reads Sheet IDs only</h5>
+              <p>We store only the Sheet ID and column mappings you configure — never the actual participant data inside your Sheet.</p>
+            </div>
+          </div>
+          <div class="privacy-item" data-reveal>
+            <div class="priv-icon" style="background:rgba(16,185,129,.1);color:#34d399;"><i data-lucide="lock" style="width:18px;height:18px"></i></div>
+            <div>
+              <h5>Emails sent from your Gmail</h5>
+              <p>GalSol never sends email through its own servers. Every email is dispatched via your Gmail account using the Gmail API.</p>
+            </div>
+          </div>
+          <div class="privacy-item" data-reveal>
+            <div class="priv-icon" style="background:rgba(59,130,246,.1);color:#60a5fa;"><i data-lucide="folder-lock" style="width:18px;height:18px"></i></div>
+            <div>
+              <h5>Files saved to your Drive</h5>
+              <p>Generated PDFs are written directly to your designated Google Drive folder. GalSol never copies or stores them on our servers.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="priv-diagram" data-reveal>
+        <div class="priv-node prv">
+          <div class="priv-node-dot prv"></div>
+          <div><div class="priv-node-lbl">GalSol Tools</div><div class="priv-node-desc">Stores: Sheet ID, column config, template ID only</div></div>
+        </div>
+        <div class="priv-line"></div>
+        <div class="priv-node grn">
+          <div class="priv-node-dot grn"></div>
+          <div><div class="priv-node-lbl">Your Google Sheet</div><div class="priv-node-desc">Participant data stays entirely in your account</div></div>
+        </div>
+        <div class="priv-line"></div>
+        <div class="priv-node blu">
+          <div class="priv-node-dot blu"></div>
+          <div><div class="priv-node-lbl">Your Google Drive</div><div class="priv-node-desc">Generated PDFs saved directly to your Drive folder</div></div>
+        </div>
+        <div class="priv-line"></div>
+        <div class="priv-node amb">
+          <div class="priv-node-dot amb"></div>
+          <div><div class="priv-node-lbl">Your Gmail</div><div class="priv-node-desc">All emails dispatched from your own Gmail account</div></div>
+        </div>
+        <div class="priv-note">GalSol is not affiliated with Google LLC. Google, Gmail, Drive, and Sheets are trademarks of Google LLC.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Getting Started</span>
+      <h2 class="section-title">Up and running<br><span class="gradient-text">in under five minutes</span></h2>
+    </div>
+    <div class="how-steps">
+      <div class="how-step" data-reveal>
+        <div class="how-num">01</div>
+        <div class="how-icon"><i data-lucide="log-in" style="width:22px;height:22px"></i></div>
+        <h4>Connect Google Account</h4>
+        <p>Sign in with Google. GalSol requests only the permissions it needs — Gmail, Drive, and Sheets access. You stay in full control.</p>
+      </div>
+      <div class="how-conn" aria-hidden="true"></div>
+      <div class="how-step" data-reveal>
+        <div class="how-num">02</div>
+        <div class="how-icon"><i data-lucide="layout-template" style="width:22px;height:22px"></i></div>
+        <h4>Build Your Event</h4>
+        <p>Create your mini site, set up the registration form, and configure your certificate template — all from the GalSol dashboard.</p>
+      </div>
+      <div class="how-conn" aria-hidden="true"></div>
+      <div class="how-step" data-reveal>
+        <div class="how-num">03</div>
+        <div class="how-icon"><i data-lucide="rocket" style="width:22px;height:22px"></i></div>
+        <h4>Go Live and Automate</h4>
+        <p>Publish your event page, scan passes at the venue, and let GalSol handle certificates and post-event emails automatically.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Pricing</span>
+      <h2 class="section-title">Simple, transparent,<br><span class="gradient-text">always free to start</span></h2>
+      <p class="section-sub">Start for free and upgrade when you need Gal AI and priority processing.</p>
+    </div>
+    <div class="pricing-toggle-wrap">
+      <span>Monthly</span>
+      <button class="toggle-sw" id="billingToggle" role="switch" aria-checked="false">
+        <span class="toggle-thumb"></span>
+      </button>
+      <span>Annually <em class="save-badge">Save 20%</em></span>
+    </div>
+    <div class="pricing-cards">
+      <div class="pricing-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">
+          <span class="price-amt">0</span>
+          <span class="price-curr">INR / mo</span>
+        </div>
+        <div class="price-note">&nbsp;</div>
+        <p class="plan-desc">Perfect for individuals, small clubs, and getting started with event automation.</p>
+        <ul class="plan-features">
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Mini Site Builder</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>GS Forms with QR passes</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Entry Pass Scanner</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Live Event Dashboard</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Certificate Creator (up to 50/batch)</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Bulk Mailer (Gmail daily limit)</li>
+          <li><i data-lucide="x" class="crs" style="width:16px;height:16px"></i>Gal AI assistant</li>
+          <li><i data-lucide="x" class="crs" style="width:16px;height:16px"></i>Priority background processing</li>
+        </ul>
+        <a href="login.html" class="btn-ghost btn-plan">Get Started Free</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">
+          <span class="price-amt" id="proPrice">299</span>
+          <span class="price-curr">INR / mo</span>
+        </div>
+        <div class="price-note" id="proNote">&nbsp;</div>
+        <p class="plan-desc">For active organizers who want AI-powered tools and unlimited processing capacity.</p>
+        <ul class="plan-features">
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Everything in Free</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Unlimited certificates per batch</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Unlimited concurrent campaigns</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Priority background processing</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Full delivery analytics</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Gal AI — form &amp; email generator</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Gal AI — mini site content builder</li>
+          <li><i data-lucide="check" class="chk" style="width:16px;height:16px"></i>Priority support</li>
+        </ul>
+        <a href="login.html" class="btn-primary btn-plan">Start Pro</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <div class="cta-bg" aria-hidden="true">
+    <div class="cta-sp-1"></div>
+    <div class="cta-sp-2"></div>
+  </div>
+  <div class="container cta-inner">
+    <h2>Ready to run your next event<br><span class="gradient-text">without the manual work?</span></h2>
+    <p>Join hundreds of organizers who have replaced manual workflows with GalSol's event console.</p>
+    <a href="login.html" class="cta-main-btn">
+      <i data-lucide="chrome" style="width:20px;height:20px"></i>
+      Get Started with Google — Free
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <img src="Images/GalSol WWN.svg" alt="GalSol" class="footer-logo-img">
+          <span class="logo-text" style="font-size:1.1rem">GalSol</span>
+        </a>
+        <p>The all-in-one console for planning, running, and following up on grand events — powered entirely by your Google Account.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="GitHub"><i data-lucide="github" style="width:16px;height:16px"></i></a>
+          <a href="#" aria-label="Twitter / X"><i data-lucide="twitter" style="width:16px;height:16px"></i></a>
+          <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" style="width:16px;height:16px"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <a href="mini-site.html">Mini Site Builder</a>
+        <a href="gs-forms.html">GS Forms</a>
+        <a href="cert-tool.html">Certificate Creator</a>
+        <a href="mail-tool.html">Bulk Mailer</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#">About Us</a>
+        <a href="#">Blog</a>
+        <a href="#">Contact</a>
+        <a href="#">Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Google API Disclosure</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 GalSol. All rights reserved.</p>
+      <p>GalSol is not affiliated with Google LLC.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── LUCIDE ICONS ──
+lucide.createIcons();
+
+// ── HEADER SCROLL ──
+const header = document.getElementById('header');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ── HAMBURGER / MOBILE NAV ──
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+const mobileNavClose = document.getElementById('mobileNavClose');
+function openMobileNav() {
+  mobileNav.classList.add('open');
+  mobileNav.setAttribute('aria-hidden', 'false');
+  hamburger.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileNav() {
+  mobileNav.classList.remove('open');
+  mobileNav.setAttribute('aria-hidden', 'true');
+  hamburger.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+hamburger.addEventListener('click', openMobileNav);
+mobileNavClose.addEventListener('click', closeMobileNav);
+mobileNav.addEventListener('click', e => { if (e.target === mobileNav) closeMobileNav(); });
+
+// ── SPOTLIGHT MOUSE TRACKING ──
+const spotlights = document.querySelectorAll('.spotlight');
+document.addEventListener('mousemove', e => {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const dx = (e.clientX - cx) / cx;
+  const dy = (e.clientY - cy) / cy;
+  spotlights.forEach((sp, i) => {
+    const f = i % 2 === 0 ? 1 : -1;
+    sp.style.transform = `rotate(${dx * 4 * f}deg) skewX(${dy * 2}deg)`;
+  });
+}, { passive: true });
+
+// ── DUST CANVAS ──
+(function() {
+  const canvas = document.getElementById('dustCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vy: -0.2 - Math.random() * 0.3,
+      vx: (Math.random() - 0.5) * 0.15,
+      size: 0.5 + Math.random() * 1.5,
+      alpha: 0.1 + Math.random() * 0.5,
+      fade: (Math.random() - 0.5) * 0.005
+    });
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha += p.fade;
+      if (p.alpha <= 0.05) p.fade = Math.abs(p.fade);
+      if (p.alpha >= 0.6) p.fade = -Math.abs(p.fade);
+      if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── COUNT-UP ──
+function countUp(el) {
+  const target = parseInt(el.dataset.count);
+  const suffix = el.dataset.suffix || '';
+  const duration = 1800;
+  const start = performance.now();
+  function fmt(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M';
+    if (n >= 1000) return Math.floor(n / 1000) + 'K';
+    return n.toString();
+  }
+  function frame(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmt(Math.floor(e * target)) + suffix;
+    if (p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+// ── INTERSECTION OBSERVER (scroll reveal + tool rows + pipe steps) ──
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    el.classList.add('revealed');
+    // count-up in stat pills
+    el.querySelectorAll('[data-count]').forEach(countUp);
+    // count-up in dashboard mocks
+    if (el.classList.contains('tool-row')) {
+      el.querySelectorAll('.mock-stat-v[data-count]').forEach(countUp);
+    }
+    revealObs.unobserve(el);
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('[data-reveal], .tool-row, .pipe-step, .pricing-card').forEach(el => {
+  revealObs.observe(el);
+});
+
+// Observe hero stats separately (they're always visible on load after scroll)
+const heroStatsObs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll('[data-count]').forEach(countUp);
+    heroStatsObs.unobserve(entry.target);
+  });
+}, { threshold: 0.5 });
+const heroStats = document.querySelector('.hero-stats');
+if (heroStats) heroStatsObs.observe(heroStats);
+
+// ── PRICING TOGGLE ──
+const toggle = document.getElementById('billingToggle');
+const proPrice = document.getElementById('proPrice');
+const proNote = document.getElementById('proNote');
+let isAnnual = false;
+toggle.addEventListener('click', () => {
+  isAnnual = !isAnnual;
+  toggle.setAttribute('aria-checked', isAnnual.toString());
+  proPrice.style.opacity = '0';
+  setTimeout(() => {
+    proPrice.textContent = isAnnual ? '239' : '299';
+    proNote.textContent = isAnnual ? 'Billed annually — save 20%' : ' ';
+    proPrice.style.opacity = '1';
+  }, 100);
+});
+proPrice.style.transition = 'opacity .15s';
+
+// ── GAL AI TYPEWRITER ──
+(function() {
+  const el = document.getElementById('aiTypewriter');
+  if (!el) return;
+  const prompts = [
+    'Create a registration form for a 2-day tech hackathon with team size and project category fields...',
+    'Build a mini site for Annual Cultural Fest 2026 with schedule, speakers, and countdown...',
+    'Write a post-event thank-you email with certificate link for all registered participants...'
+  ];
+  let pi = 0, ci = 0, deleting = false;
+  const cursor = '<span class="tw-cursor"></span>';
+  function tick() {
+    const full = prompts[pi];
+    if (!deleting) {
+      ci++;
+      el.innerHTML = full.slice(0, ci) + cursor;
+      if (ci >= full.length) { deleting = true; setTimeout(tick, 2200); return; }
+      setTimeout(tick, 38);
+    } else {
+      ci--;
+      el.innerHTML = full.slice(0, ci) + cursor;
+      if (ci <= 0) { deleting = false; pi = (pi + 1) % prompts.length; setTimeout(tick, 400); return; }
+      setTimeout(tick, 20);
+    }
+  }
+  setTimeout(tick, 1200);
+})();
+</script>
+</body>
 </html>
