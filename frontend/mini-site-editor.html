@@ -6,7 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Site Editor — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Core + new professional fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@400;600;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <!-- Extended font library -->
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&family=Abril+Fatface&family=Great+Vibes&family=Pinyon+Script&family=Pacifico&family=Boogaloo&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="mini-site-editor.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="mini-site-state.js"></script>
@@ -2087,30 +2091,77 @@ ${_fontLinks}
     ];
 
     const MSB_FONT_PAIRS = [
-      { id:'modern-tech',      name:'Modern Tech',      titleFont:'Syne',              contentFont:'Plus Jakarta Sans' },
-      { id:'editorial',        name:'Editorial',        titleFont:'Syne',              contentFont:'Montserrat' },
-      { id:'classic-serif',    name:'Classic Serif',    titleFont:'Playfair Display',  contentFont:'EB Garamond' },
-      { id:'gothic-elegance',  name:'Gothic Elegance',  titleFont:'Cinzel',            contentFont:'Cormorant Garamond' },
-      { id:'corporate-bold',   name:'Corporate Bold',   titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans' },
-      { id:'creative-flow',    name:'Creative Flow',    titleFont:'Raleway',           contentFont:'Montserrat' },
-      { id:'literary',         name:'Literary',         titleFont:'EB Garamond',       contentFont:'Cormorant Garamond' },
-      { id:'romantic',         name:'Romantic',         titleFont:'Dancing Script',    contentFont:'Plus Jakarta Sans' },
-      { id:'minimal',          name:'Minimal',          titleFont:'Plus Jakarta Sans', contentFont:'Plus Jakarta Sans' },
-      { id:'developer',        name:'Developer',        titleFont:'JetBrains Mono',   contentFont:'Plus Jakarta Sans' },
+      // ── Professional / Website ──────────────────────────────────────────────
+      { id:'noir-cinema',      name:'Noir Cinema',      titleFont:'Bebas Neue',        contentFont:'Oswald' },
+      { id:'tech-clarity',     name:'Tech Clarity',     titleFont:'Space Grotesk',     contentFont:'Lexend' },
+      { id:'press-editorial',  name:'Press Editorial',  titleFont:'Oswald',            contentFont:'Lora' },
+      { id:'grand-serif',      name:'Grand Serif',      titleFont:'Playfair Display',  contentFont:'Lora' },
+      { id:'gothic-luxury',    name:'Gothic Luxury',    titleFont:'Cinzel',            contentFont:'Cormorant Garamond' },
+      { id:'art-deco',         name:'Art Deco',         titleFont:'Abril Fatface',     contentFont:'Raleway' },
+      { id:'contemporary',     name:'Contemporary',     titleFont:'Syne',              contentFont:'Space Grotesk' },
+      { id:'bold-corporate',   name:'Bold Corporate',   titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans' },
+      { id:'literary-mind',    name:'Literary Mind',    titleFont:'EB Garamond',       contentFont:'Lora' },
+      { id:'code-design',      name:'Code & Design',    titleFont:'JetBrains Mono',    contentFont:'Space Grotesk' },
+      // ── Wedding / Elegant ───────────────────────────────────────────────────
+      { id:'wedding-belle',    name:'Wedding Belle',    titleFont:'Pinyon Script',     contentFont:'Cormorant Garamond' },
+      { id:'garden-romance',   name:'Garden Romance',   titleFont:'Great Vibes',       contentFont:'Lora' },
+      // ── Comical / Fun ──────────────────────────────────────────────────────
+      { id:'retro-pop',        name:'Retro Pop',        titleFont:'Pacifico',          contentFont:'Lexend' },
+      { id:'summer-fiesta',    name:'Summer Fiesta',    titleFont:'Boogaloo',          contentFont:'Plus Jakarta Sans' },
     ];
 
     const MSB_FONT_LIST = [
+      // ── Professional Sans-Serif ─────────────────────────────────────────────
       { name:'Plus Jakarta Sans', stack:'Plus Jakarta Sans,sans-serif',   weight:'600' },
+      { name:'Lexend',            stack:'Lexend,sans-serif',              weight:'600' },
+      { name:'Space Grotesk',     stack:'Space Grotesk,sans-serif',       weight:'600' },
       { name:'Syne',              stack:'Syne,sans-serif',                weight:'700' },
       { name:'Montserrat',        stack:'Montserrat,sans-serif',          weight:'600' },
       { name:'Raleway',           stack:'Raleway,sans-serif',             weight:'600' },
+      { name:'Oswald',            stack:'Oswald,sans-serif',              weight:'600' },
+      // ── Professional Serif ──────────────────────────────────────────────────
       { name:'Playfair Display',  stack:'Playfair Display,serif',         weight:'700' },
-      { name:'Cormorant Garamond',stack:'Cormorant Garamond,serif',       weight:'600' },
-      { name:'Dancing Script',    stack:'Dancing Script,cursive',         weight:'600' },
-      { name:'Cinzel',            stack:'Cinzel,serif',                   weight:'600' },
+      { name:'Lora',              stack:'Lora,serif',                     weight:'600' },
       { name:'EB Garamond',       stack:'EB Garamond,serif',              weight:'700' },
+      { name:'Cormorant Garamond',stack:'Cormorant Garamond,serif',       weight:'600' },
+      { name:'Cinzel',            stack:'Cinzel,serif',                   weight:'600' },
+      // ── Display / Impact ────────────────────────────────────────────────────
+      { name:'Bebas Neue',        stack:'Bebas Neue,sans-serif',          weight:'400' },
+      { name:'Abril Fatface',     stack:'Abril Fatface,serif',            weight:'400' },
+      // ── Calligraphy / Script ────────────────────────────────────────────────
+      { name:'Great Vibes',       stack:'Great Vibes,cursive',            weight:'400' },
+      { name:'Pinyon Script',     stack:'Pinyon Script,cursive',          weight:'400' },
+      { name:'Dancing Script',    stack:'Dancing Script,cursive',         weight:'600' },
+      // ── Comical / Fun ──────────────────────────────────────────────────────
+      { name:'Pacifico',          stack:'Pacifico,cursive',               weight:'400' },
+      { name:'Boogaloo',          stack:'Boogaloo,cursive',               weight:'400' },
+      // ── Monospace ───────────────────────────────────────────────────────────
       { name:'JetBrains Mono',    stack:'JetBrains Mono,monospace',       weight:'500' },
     ];
+
+    /* Per-font Google Fonts URLs — used for dynamic loading in mobile preview */
+    const MSB_GOOGLE_FONT_URLS = {
+      'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
+      'Lexend':            'https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap',
+      'Space Grotesk':     'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
+      'Syne':              'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap',
+      'Montserrat':        'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap',
+      'Raleway':           'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap',
+      'Oswald':            'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap',
+      'Playfair Display':  'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+      'Lora':              'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap',
+      'EB Garamond':       'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+      'Cormorant Garamond':'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
+      'Cinzel':            'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+      'Bebas Neue':        'https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap',
+      'Abril Fatface':     'https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap',
+      'Great Vibes':       'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
+      'Pinyon Script':     'https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap',
+      'Dancing Script':    'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap',
+      'Pacifico':          'https://fonts.googleapis.com/css2?family=Pacifico&display=swap',
+      'Boogaloo':          'https://fonts.googleapis.com/css2?family=Boogaloo&display=swap',
+      'JetBrains Mono':    'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+    };
 
     /* Build prebuilt theme grid */
     function buildPrebuiltThemeGrid() {
@@ -2160,8 +2211,14 @@ ${_fontLinks}
         const isOn = c.titleFont === p.titleFont && c.contentFont === p.contentFont;
         return `<button class="mse-fp${isOn ? ' on' : ''}" data-pair-id="${p.id}" onclick="applyFontPair('${p.id}')">
           <div class="mse-fp-fonts">
-            <div class="mse-fp-title" style="font-family:${p.titleFont},serif,sans-serif">${p.titleFont}</div>
-            <div class="mse-fp-content" style="font-family:${p.contentFont},sans-serif">${p.contentFont}</div>
+            <div class="mse-fp-title">
+              <span class="mse-fp-sample" style="font-family:'${p.titleFont}',serif,sans-serif">Aa</span>
+              <span class="mse-fp-fname">${p.titleFont}</span>
+            </div>
+            <div class="mse-fp-content">
+              <span class="mse-fp-sample" style="font-family:'${p.contentFont}',serif,sans-serif">Bb</span>
+              <span class="mse-fp-fname secondary">${p.contentFont}</span>
+            </div>
           </div>
           <div class="mse-fp-label">${p.name}</div>
         </button>`;
@@ -3202,7 +3259,7 @@ ${_fontLinks}
       align-items: center;
       justify-content: space-between;
       padding: 8px 12px;
-      min-height: 48px;
+      min-height: 52px;
       border-radius: 9px;
       border: 1.5px solid rgba(255, 255, 255, 0.09);
       background: rgba(255, 255, 255, 0.04);
@@ -3224,26 +3281,45 @@ ${_fontLinks}
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 3px;
+      gap: 4px;
     }
 
-    .mse-fp-title {
-      font-size: 11.5px;
-      font-weight: 700;
+    /* Each row: sample glyph + font name */
+    .mse-fp-title,
+    .mse-fp-content {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      text-align: left;
+      overflow: hidden;
+    }
+
+    .mse-fp-sample {
+      font-size: 14px;
+      line-height: 1;
+      flex-shrink: 0;
+      color: var(--text);
+    }
+
+    .mse-fp-content .mse-fp-sample {
+      font-size: 12px;
+      color: var(--text-2, var(--text-3));
+    }
+
+    .mse-fp-fname {
+      font-size: 10.5px;
+      font-weight: 600;
       color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.15;
+      font-family: var(--font);
     }
 
-    .mse-fp-content {
-      font-size: 10.5px;
+    .mse-fp-fname.secondary {
+      font-size: 10px;
+      font-weight: 400;
       color: var(--text-3);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.15;
     }
 
     .mse-fp-label {
@@ -3254,6 +3330,7 @@ ${_fontLinks}
       align-self: center;
       letter-spacing: 0.04em;
       text-align: right;
+      white-space: nowrap;
     }
 
     /* ── Font Select Box (custom dropdown) ───────────────────────── */
