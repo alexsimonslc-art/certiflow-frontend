@@ -713,16 +713,32 @@ document.querySelectorAll('[data-ms-form]').forEach(form => {
 </html>`;
 }
 
-/* Google Fonts URL map (used by renderMSSite) */
+/* Google Fonts URL map — used by renderMSSite (public page) and mobile preview iframe */
 const MSB_GOOGLE_FONT_URLS = {
-  'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap',
-  'Syne': 'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap',
-  'Montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap',
-  'Raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap',
-  'Playfair Display': 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
-  'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
-  'Dancing Script': 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap',
-  'Cinzel': 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
-  'EB Garamond': 'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
-  'JetBrains Mono': 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+  // Professional sans-serif
+  'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
+  'Lexend':            'https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap',
+  'Space Grotesk':     'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
+  'Syne':              'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap',
+  'Montserrat':        'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap',
+  'Raleway':           'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap',
+  'Oswald':            'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap',
+  // Professional serif
+  'Playfair Display':  'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+  'Lora':              'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap',
+  'EB Garamond':       'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+  'Cormorant Garamond':'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
+  'Cinzel':            'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+  // Display / Impact
+  'Bebas Neue':        'https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap',
+  'Abril Fatface':     'https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap',
+  // Calligraphy / Script
+  'Great Vibes':       'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
+  'Pinyon Script':     'https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap',
+  'Dancing Script':    'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap',
+  // Comical / Fun
+  'Pacifico':          'https://fonts.googleapis.com/css2?family=Pacifico&display=swap',
+  'Boogaloo':          'https://fonts.googleapis.com/css2?family=Boogaloo&display=swap',
+  // Monospace
+  'JetBrains Mono':    'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
 };

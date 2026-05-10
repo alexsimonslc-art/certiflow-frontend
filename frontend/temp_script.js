@@ -1,707 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Site Editor — GalSol</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Core + new professional fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@400;600;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
-  <!-- Extended font library -->
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&family=Abril+Fatface&family=Great+Vibes&family=Pinyon+Script&family=Pacifico&family=Boogaloo&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="mini-site-editor.css" />
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script src="mini-site-state.js"></script>
-  <script src="mini-site-blocks.js"></script>
-</head>
-
-<body>
-
-  <div class="mse-layout">
-
-    <!-- ═══════════════════════════════════════════════════════
-       TOP BAR
-  ═══════════════════════════════════════════════════════ -->
-    <header class="mse-topbar">
-
-      <!-- Left -->
-      <div class="mse-topbar-left">
-        <a href="#" class="mse-back-btn" id="backBtn" onclick="confirmLeave(event, 'mini-site.html')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-          Sites
-        </a>
-        <div class="mse-topbar-divider"></div>
-        <div class="mse-logo-mark">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-          </svg>
-        </div>
-      </div>
-
-      <!-- Center -->
-      <div class="mse-topbar-center">
-        <input type="text" id="siteNameInput" class="mse-site-name-input" placeholder="Site Name"
-          oninput="onNameInput(this.value)" onblur="onNameBlur(this.value)" />
-        <div class="mse-save-status" id="saveStatus">
-          <div class="mse-save-status-dot"></div>
-          <span id="saveStatusText">Draft</span>
-        </div>
-      </div>
-
-      <!-- Right -->
-      <div class="mse-topbar-right">
-        <button class="mse-icon-btn" id="undoBtn" title="Undo (Ctrl+Z)" onclick="doUndo()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="9 14 4 9 9 4" />
-            <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
-          </svg>
-        </button>
-        <button class="mse-icon-btn" id="redoBtn" title="Redo (Ctrl+Shift+Z)" onclick="doRedo()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="15 14 20 9 15 4" />
-            <path d="M4 20v-7a4 4 0 0 1 4-4h12" />
-          </svg>
-        </button>
-
-        <div class="mse-topbar-divider" style="margin:0 2px"></div>
-
-        <div class="mse-preview-toggle">
-          <button class="mse-preview-btn active" id="btnDesktop" onclick="setPreviewMode('desktop')"
-            title="Desktop preview">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" />
-              <line x1="8" y1="21" x2="16" y2="21" />
-              <line x1="12" y1="17" x2="12" y2="21" />
-            </svg>
-            Desktop
-          </button>
-          <button class="mse-preview-btn" id="btnMobile" onclick="setPreviewMode('mobile')" title="Mobile preview">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="5" y="2" width="14" height="20" rx="2" />
-              <line x1="12" y1="18" x2="12.01" y2="18" />
-            </svg>
-            Mobile
-          </button>
-        </div>
-
-        <div class="mse-topbar-divider" style="margin:0 2px"></div>
-
-        <button class="mse-analytics-btn" id="analyticsBtn" onclick="openGAModal()" title="Connect Google Analytics">
-          <span class="mse-analytics-dot"></span>
-          <svg class="mse-analytics-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 3v18h18" />
-            <rect x="7" y="12" width="3" height="5" rx="1" />
-            <rect x="12" y="8" width="3" height="9" rx="1" />
-            <rect x="17" y="5" width="3" height="12" rx="1" />
-          </svg>
-          <span>Analytics</span>
-        </button>
-        <button class="mse-save-btn" onclick="doSave()" title="Save (Ctrl+S)">Save</button>
-        <button class="mse-publish-btn" onclick="openPublish()" id="publishBtn">
-          <span id="publishBtnLabel">Publish</span>
-        </button>
-      </div>
-
-    </header>
-
-    <!-- ═══════════════════════════════════════════════════════
-       LEFT PANEL — Block Palette + Layers
-  ═══════════════════════════════════════════════════════ -->
-    <aside class="mse-left" style="display:flex; flex-direction:column;">
-
-      <div class="mse-panel-tabs" style="flex-shrink:0;">
-        <button class="mse-panel-tab active" id="tabBlocks" onclick="switchLeftTab('blocks')">Blocks</button>
-        <button class="mse-panel-tab" id="tabLayers" onclick="switchLeftTab('layers')">Layers</button>
-      </div>
-
-      <div class="mse-panel-body" id="blocksTabBody" style="flex:1; overflow-y:auto;">
-
-        <div class="mse-cat-label" style="color:#00d4ff">Structure</div>
-        <button class="mse-block-btn" onclick="addBlock('cover')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <polyline points="21 15 16 10 5 21" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Cover / Hero</div>
-            <div class="mse-block-btn-desc">Background image + logo</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('about')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">About</div>
-            <div class="mse-block-btn-desc">Event description</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('announcements')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Announcements</div>
-            <div class="mse-block-btn-desc">Pinned updates</div>
-          </div>
-        </button>
-
-        <div class="mse-cat-label" style="color:#f59e0b">Event Info</div>
-        <button class="mse-block-btn" onclick="addBlock('datetime')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Date & Venue</div>
-            <div class="mse-block-btn-desc">Date, time, location</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('speakers')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Speakers / Team</div>
-            <div class="mse-block-btn-desc">People cards</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('faq')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">FAQ</div>
-            <div class="mse-block-btn-desc">Questions & answers</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('sponsors')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="8" r="6" />
-              <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Sponsors</div>
-            <div class="mse-block-btn-desc">Partner logos by tier</div>
-          </div>
-        </button>
-
-        <div class="mse-cat-label" style="color:#a78bfa">Engagement</div>
-        <button class="mse-block-btn" onclick="addBlock('form')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 11l3 3L22 4" />
-              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Registration Form</div>
-            <div class="mse-block-btn-desc">→ Google Sheets</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('documents')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Document Links</div>
-            <div class="mse-block-btn-desc">Rule books, brochures</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('video')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10" />
-              <polygon points="10 8 16 12 10 16 10 8" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Video</div>
-            <div class="mse-block-btn-desc">YouTube / Drive (max 2)</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('socials')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="18" cy="5" r="3" />
-              <circle cx="6" cy="12" r="3" />
-              <circle cx="18" cy="19" r="3" />
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Social Links</div>
-            <div class="mse-block-btn-desc">Follow us icons</div>
-          </div>
-        </button>
-
-        <div class="mse-cat-label" style="color:#5a7394">Layout</div>
-        <button class="mse-block-btn" onclick="addBlock('divider')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Divider</div>
-            <div class="mse-block-btn-desc">Section separator</div>
-          </div>
-        </button>
-        <button class="mse-block-btn" onclick="addBlock('spacer')">
-          <div class="mse-block-btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" />
-            </svg></div>
-          <div class="mse-block-btn-info">
-            <div class="mse-block-btn-label">Spacer</div>
-            <div class="mse-block-btn-desc">Empty vertical space</div>
-          </div>
-        </button>
-
-      </div>
-
-      <!-- Layers tab -->
-      <div class="mse-panel-body" id="layersTabBody" style="display:none; flex:1; overflow-y:auto;">
-        <div id="layersList"></div>
-      </div>
-
-      <div class="mse-account-dock" onclick="window.location.href='settings.html'">
-        <div class="mse-acct-avatar" id="mseUserAvatar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-        </div>
-        <div class="mse-acct-info">
-          <div class="mse-acct-name" id="mseUserDisplayName">Account</div>
-          <div class="mse-acct-tag">Account & Settings</div>
-        </div>
-        <svg class="mse-acct-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      </div>
-
-    </aside>
-
-    <!-- ═══════════════════════════════════════════════════════
-       CANVAS AREA
-  ═══════════════════════════════════════════════════════ -->
-    <main class="mse-canvas-area" id="canvasArea" onclick="canvasAreaClick(event)">
-
-      <div class="mse-canvas-wrap" id="canvasWrap">
-        <!-- Browser chrome -->
-        <div class="mse-browser-chrome">
-          <div class="mse-chrome-dots">
-            <div class="mse-chrome-dot"></div>
-            <div class="mse-chrome-dot"></div>
-            <div class="mse-chrome-dot"></div>
-          </div>
-          <div class="mse-chrome-url" id="chromeUrl">Loading…</div>
-        </div>
-        <!-- Page frame -->
-        <div class="mse-canvas-frame" id="canvasFrame">
-          <!-- Blocks render here -->
-          <div id="canvasBody"></div>
-          <!-- Empty state (shown when no blocks) -->
-          <div class="mse-canvas-empty" id="canvasEmpty">
-            <div class="mse-canvas-empty-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <h3>Start building your site</h3>
-            <p>Click any block from the left panel to add it to your site</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile iframe preview — shown when mobile mode is active -->
-      <div id="mse-mobile-wrap"
-        style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 0 32px;width:100%">
-        <!-- Shell wrapper: zoom auto-applied by scaleMobilePhone() -->
-        <div id="mse-phone-shell" style="transform-origin:top center;flex-shrink:0;display:inline-block">
-          <!-- Outer phone body -->
-          <div
-            style="background:linear-gradient(170deg,#1c2533 0%,#0e161f 100%);border-radius:52px;padding:13px;box-shadow:0 28px 80px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.06),inset 0 1px 0 rgba(255,255,255,0.08)">
-            <!-- Side buttons (visual only) -->
-            <div
-              style="position:absolute;left:-4px;top:130px;width:4px;height:36px;background:#1a2535;border-radius:3px 0 0 3px">
-            </div>
-            <div
-              style="position:absolute;left:-4px;top:180px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px">
-            </div>
-            <div
-              style="position:absolute;left:-4px;top:256px;width:4px;height:64px;background:#1a2535;border-radius:3px 0 0 3px">
-            </div>
-            <div
-              style="position:absolute;right:-4px;top:170px;width:4px;height:84px;background:#1a2535;border-radius:0 3px 3px 0">
-            </div>
-            <!-- Screen -->
-            <div style="background:#000;border-radius:42px;overflow:hidden;width:460px;position:relative">
-              <!-- Dynamic island -->
-              <div
-                style="height:48px;background:#050505;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0">
-                <div
-                  style="width:120px;height:32px;background:#000;border-radius:99px;border:1px solid #111;display:flex;align-items:center;justify-content:center;gap:6px">
-                  <div style="width:10px;height:10px;border-radius:50%;background:#111"></div>
-                  <div style="width:6px;height:6px;border-radius:50%;background:#1a1a1a"></div>
-                </div>
-              </div>
-              <!-- iframe — true 430px mobile viewport, no scroll visible -->
-              <iframe id="mse-mobile-frame" style="width:460px;height:932px;border:none;display:block"
-                scrolling="yes"></iframe>
-              <!-- Home indicator -->
-              <div
-                style="height:28px;background:#050505;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                <div style="width:120px;height:5px;background:#1c1c1e;border-radius:99px"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.22);font-family:var(--font);letter-spacing:0.4px">
-          430 × 932 · iPhone 14 Pro Max</div>
-      </div>
-    </main>
-
-    <!-- ═══════════════════════════════════════════════════════
-       RIGHT PANEL — Properties
-  ═══════════════════════════════════════════════════════ -->
-    <!-- Resize handle — grid-area: rhandle -->
-    <div id="mse-resize-handle"></div>
-    <aside class="mse-right" id="mseRight">
-
-      <div class="mse-right-tabs">
-        <div class="mse-right-tab active" id="rtabBlock" onclick="switchRightTab('block')">Block</div>
-        <div class="mse-right-tab" id="rtabSite" onclick="switchRightTab('site')">Site Settings</div>
-      </div>
-
-      <!-- Block props tab -->
-      <div class="mse-right-body" id="rightBlockBody">
-        <div class="mse-right-empty" id="rightBlockEmpty">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <path d="M8 12h8M12 8v8" />
-          </svg>
-          <p>Click any block on the canvas to edit its properties</p>
-        </div>
-        <div id="rightBlockProps" style="display:none"></div>
-      </div>
-
-      <!-- Site settings tab -->
-      <div class="mse-right-body" id="rightSiteBody" style="display:none">
-
-        <!-- ── 1. Prebuilt Themes ── -->
-        <div class="mse-props-section">
-          <div class="mse-props-sec-label">Prebuilt Themes</div>
-          <div class="mse-prebuilt-grid" id="prebuiltThemeGrid">
-            <!-- filled by buildPrebuiltThemeGrid() -->
-          </div>
-        </div>
-
-        <!-- ── 2. Colors ── -->
-        <div class="mse-props-section" style="padding-top:16px">
-          <div class="mse-props-sec-label">Colors</div>
-          <div class="mse-prop-row">
-            <div class="mse-prop-label">Accent</div>
-            <div class="mse-color-row">
-              <div class="mse-color-swatch" id="accentSwatch"><input type="color" id="accentColorInput" oninput="onAccentChange(this.value)" /></div>
-              <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7" placeholder="#00d4ff" oninput="onAccentHexInput(this.value)" style="flex:1" />
-            </div>
-          </div>
-          <div class="mse-prop-row">
-            <div class="mse-prop-label">Background</div>
-            <div class="mse-color-row">
-              <div class="mse-color-swatch" id="bgSwatch"><input type="color" id="bgColorInput" oninput="onBgColorChange(this.value)" /></div>
-              <input type="text" class="mse-prop-input" id="bgColorHex" maxlength="7" placeholder="#0a0f1e" oninput="onBgHexInput(this.value)" style="flex:1" />
-            </div>
-          </div>
-        </div>
-
-        <!-- ── 3. Paired Fonts ── -->
-        <div class="mse-props-section" style="padding-top:16px">
-          <div class="mse-props-sec-label">Paired Fonts</div>
-          <div class="mse-font-pair-list" id="fontPairList">
-            <!-- filled by buildFontPairList() -->
-          </div>
-        </div>
-
-        <!-- ── 4. Custom Fonts ── -->
-        <div class="mse-props-section" style="padding-top:16px">
-          <div class="mse-props-sec-label">Custom Fonts</div>
-
-          <!-- Title font -->
-          <div class="mse-prop-row">
-            <div class="mse-prop-label">Title Font</div>
-            <div class="mse-font-select-wrap">
-              <button class="mse-font-select-box" id="titleFontBox" onclick="toggleFontPicker('title')">
-                <span id="titleFontLabel">Syne</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-              <div class="mse-font-picker" id="titleFontPicker" style="display:none"></div>
-            </div>
-          </div>
-          <!-- Title color -->
-          <div class="mse-prop-row">
-            <div class="mse-prop-label">Title Color</div>
-            <div class="mse-color-row">
-              <div class="mse-color-swatch" id="titleColorSwatch"><input type="color" id="titleColorInput" oninput="onTitleColorChange(this.value)" /></div>
-              <input type="text" class="mse-prop-input" id="titleColorHex" maxlength="7" placeholder="Global default" oninput="onTitleColorHexInput(this.value)" style="flex:1" />
-            </div>
-          </div>
-
-          <!-- Content font -->
-          <div class="mse-prop-row" style="margin-top:10px">
-            <div class="mse-prop-label">Content Font</div>
-            <div class="mse-font-select-wrap">
-              <button class="mse-font-select-box" id="contentFontBox" onclick="toggleFontPicker('content')">
-                <span id="contentFontLabel">Plus Jakarta Sans</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-              <div class="mse-font-picker" id="contentFontPicker" style="display:none"></div>
-            </div>
-          </div>
-          <!-- Content color -->
-          <div class="mse-prop-row">
-            <div class="mse-prop-label">Content Color</div>
-            <div class="mse-color-row">
-              <div class="mse-color-swatch" id="contentColorSwatch"><input type="color" id="contentColorInput" oninput="onContentColorChange(this.value)" /></div>
-              <input type="text" class="mse-prop-input" id="contentColorHex" maxlength="7" placeholder="Global default" oninput="onContentColorHexInput(this.value)" style="flex:1" />
-            </div>
-          </div>
-        </div>
-
-        <div class="mse-props-section" style="padding-top:14px">
-          <div class="mse-props-sec-label">Registration</div>
-          <div class="mse-toggle-row">
-            <span>Registrations Open</span>
-            <div class="mse-toggle" id="regToggle" onclick="toggleRegistration()"></div>
-          </div>
-          <div class="mse-prop-hint" style="margin-bottom:14px">When off, the form shows a "Registration closed" message
-            to visitors</div>
-        </div>
-
-        <div class="mse-props-section" style="padding-top:14px;padding-bottom:14px">
-          <div class="mse-props-sec-label">Site Info</div>
-          <div class="mse-prop-row">
-            <div class="mse-prop-label">Site URL Slug</div>
-            <input type="text" class="mse-prop-input" id="siteSlugInput" placeholder="my-event-2026"
-              oninput="onSlugInput(this.value)" />
-            <div class="mse-prop-hint" id="slugHint">Set a slug to get a public URL</div>
-          </div>
-        </div>
-
-      </div>
-
-    </aside>
-
-  </div>
-
-  <div class="gal-ai-wrapper" id="galAiWrapper" onclick="event.stopPropagation()">
-
-    <div class="gal-ai-tab" id="galAiTab" onclick="openGalAi()">
-      <div style="display:flex; align-items:center; gap:12px; flex:1; overflow:hidden;">
-        <div class="gal-ai-sparkle" style="display:flex; align-items:center; justify-content:center;"><img
-            src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;"></div>
-        <span style="font-weight: 700; font-size: 14.5px; letter-spacing: 0.3px; color:#fff;">Gal AI</span>
-        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.15);"></div>
-        <span class="gal-ai-typewriter" id="galAiTypewriter">I can help you write, design, and build blocks...</span>
-      </div>
-    </div>
-
-    <div class="gal-ai-box" id="galAiBox">
-      <div class="gal-ai-resizer" id="galAiResizer">
-        <div class="gal-ai-resizer-line"></div>
-      </div>
-
-      <div class="gal-ai-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <div class="gal-ai-sparkle"><img src="/Images/GalAI%20Logo.svg" alt="Gal AI" style="width:16px;height:16px;">
-          </div>
-          <span style="font-weight: 700; font-size: 14px; color:var(--text);">Gal AI</span>
-        </div>
-        <button class="gal-ai-close" onclick="closeGalAi()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-
-      <div class="gal-ai-history" id="galAiHistory">
-        <div class="gal-ai-greeting" id="galAiGreeting">
-          <div class="gal-ai-greet-title" id="galAiGreetName">Good to see you.</div>
-          <div class="gal-ai-greet-sub">What shall we build today?</div>
-          <div class="gal-ai-suggestions">
-            <div class="gal-ai-sug"
-              onclick="document.getElementById('galAiInput').value=this.textContent; sendGalAiMessage();">Design a sleek
-              speaker section</div>
-            <div class="gal-ai-sug"
-              onclick="document.getElementById('galAiInput').value=this.textContent; sendGalAiMessage();">Add an FAQ for
-              the event</div>
-            <div class="gal-ai-sug"
-              onclick="document.getElementById('galAiInput').value=this.textContent; sendGalAiMessage();">Change the
-              theme to Dark Cyberpunk</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="gal-ai-input-area">
-        <textarea id="galAiInput" class="gal-ai-input custom-scroll-input" rows="2"
-          placeholder="Ask Gal AI to generate or edit..." autocomplete="off"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendGalAiMessage()}"
-          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,140)+'px'"></textarea>
-
-        <button class="gal-ai-send" id="galAiSendBtn" onclick="sendGalAiMessage()" title="Send">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px; height:18px;">
-            <line x1="22" y1="2" x2="11" y2="13" />
-            <polygon points="22 2 15 22 11 13 2 9 22 2" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════
-     PUBLISH OVERLAY
-═══════════════════════════════════════════════════════ -->
-  <div class="mse-publish-overlay" id="publishOverlay">
-    <div class="mse-publish-panel">
-      <div class="mse-publish-header">
-        <div>
-          <div class="mse-publish-title" id="publishPanelTitle">Publish Site</div>
-          <div style="font-size:13px;color:var(--text-3);margin-top:3px">Your site will be live at the URL below</div>
-        </div>
-        <button class="mse-publish-close" onclick="closePublish()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-      <div class="mse-publish-body">
-        <div class="mse-pub-url-box">
-          <div class="mse-pub-url" id="publishUrlDisplay">Loading…</div>
-          <button class="mse-pub-copy-btn" onclick="copyPublishUrl()">Copy</button>
-        </div>
-        <div class="mse-toggle-row" style="padding:12px 0">
-          <div>
-            <div style="font-size:13.5px;font-weight:600;color:var(--text)">Registrations Open</div>
-            <div style="font-size:12px;color:var(--text-3);margin-top:2px">Visitors can submit the registration form
-            </div>
-          </div>
-          <div class="mse-toggle" id="publishRegToggle" onclick="toggleRegFromPublish()"></div>
-        </div>
-        <div
-          style="padding:12px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.12);border-radius:9px;font-size:13px;color:var(--text-2);line-height:1.55">
-          <strong style="color:var(--cyan)">What happens when you publish:</strong><br />
-          Your site config is saved and the public URL becomes active. Visitor registrations go directly to your Google
-          Sheet.
-        </div>
-      </div>
-      <div class="mse-publish-footer">
-        <button class="mse-btn mse-btn-secondary" onclick="closePublish()">Cancel</button>
-        <button class="mse-btn mse-btn-primary" onclick="doPublish()" id="publishConfirmBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 3l14 9-14 9V3z" />
-          </svg>
-          <span id="publishConfirmLabel">Publish Now</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Google Analytics Setup -->
-  <div class="mse-ga-overlay" id="gaOverlay">
-    <div class="mse-ga-panel">
-      <div class="mse-ga-header">
-        <div>
-          <div class="mse-ga-title">Connect Google Analytics</div>
-          <div class="mse-ga-subtitle" id="gaSubtitle">Follow the steps below to get your free Measurement ID</div>
-        </div>
-        <button class="mse-ga-close" onclick="closeGAModal()" aria-label="Close Google Analytics setup">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-      <div class="mse-ga-body">
-        <div class="mse-ga-tutorial" id="gaTutorial">
-          <div class="mse-ga-step-top">
-            <span id="gaStepLabel">Step 1 of 5</span>
-            <div class="mse-ga-dots" id="gaDots"></div>
-          </div>
-          <div class="mse-ga-image" id="gaStepImage">
-            <span>1</span>
-            <small>[Your screenshot here]</small>
-          </div>
-          <div class="mse-ga-step-title" id="gaStepTitle">Open Google Analytics</div>
-          <div class="mse-ga-step-desc" id="gaStepDesc"></div>
-          <div class="mse-ga-actions">
-            <button class="mse-btn mse-btn-secondary" id="gaBackBtn" onclick="gaBackStep()">Back</button>
-            <button class="mse-btn mse-btn-primary" id="gaNextBtn" onclick="gaNextStep()">Next</button>
-          </div>
-        </div>
-
-        <div class="mse-ga-input-section" id="gaInputSection">
-          <div class="mse-ga-connected-row" id="gaConnectedRow">
-            <span class="mse-ga-badge">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
-              Connected
-            </span>
-            <button class="mse-ga-remove" onclick="removeGAId()">Remove</button>
-          </div>
-          <label class="mse-ga-label" for="gaMeasurementInput">Your GA4 Measurement ID</label>
-          <div class="mse-ga-input-row">
-            <input id="gaMeasurementInput" class="mse-ga-input" placeholder="G-XXXXXXXXXX" autocomplete="off"
-              spellcheck="false" />
-            <button class="mse-btn mse-btn-primary" id="gaVerifyBtn" onclick="verifyAndSaveGA()">Verify & Save</button>
-          </div>
-          <div class="mse-ga-message" id="gaMessage"></div>
-          <div class="mse-ga-helper">Your visitors' data goes only to YOUR Google Analytics account. Other users cannot
-            see your analytics.</div>
-          <button class="mse-btn mse-btn-secondary mse-ga-dashboard" onclick="openGADashboard()">
-            Open Analytics Dashboard
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div id="mse-toast"></div>
-
-  <!-- ═══════════════════════════════════════════════════════
-     SCRIPTS
-═══════════════════════════════════════════════════════ -->
-  <script>
-    /* ════════════════════════════════════════════════════════════════
+﻿
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        INIT
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     document.addEventListener('DOMContentLoaded', () => {
       if (!MSState.init()) return;
       populateSiteSettings();
 
-      // ── Dynamically load user name & profile picture ──
+      // â”€â”€ Dynamically load user name & profile picture â”€â”€
       try {
         const token = localStorage.getItem('GalSol_token');
         if (token) {
@@ -739,7 +44,7 @@
           // 'field-update' means a toggle/dropdown inside a nested array item changed.
           // We must rebuild the right panel so the toggle reflects new state.
           // (Canvas already re-renders via refreshCanvas above.)
-          // 'update' type is intentionally excluded here — it fires on every text
+          // 'update' type is intentionally excluded here â€” it fires on every text
           // keystroke and rebuilding the panel would destroy input focus.
           if (type === 'field-update') updateRightPanel();
         } else {
@@ -761,9 +66,9 @@
       }, 5 * 60 * 1000); // 5 minutes
     });
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        CANVAS RENDERING
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     function refreshCanvas() {
       const frame = document.getElementById('canvasFrame');
       const body = document.getElementById('canvasBody');
@@ -771,10 +76,10 @@
       const isDark = MSState.config.theme === 'dark';
 
       frame.className = `mse-canvas-frame theme-${MSState.config.theme}`;
-      const _slug = MSState.config.slug || '—';
-      document.getElementById('chromeUrl').textContent = _slug !== '—'
+      const _slug = MSState.config.slug || 'â€”';
+      document.getElementById('chromeUrl').textContent = _slug !== 'â€”'
         ? `${window.location.origin}/site.html?slug=${_slug}`
-        : `${window.location.origin}/site.html?slug=…`;
+        : `${window.location.origin}/site.html?slug=â€¦`;
 
       if (!MSState.blocks.length) {
         body.innerHTML = '';
@@ -803,7 +108,7 @@
       });
     }
 
-    /* ── Block canvas renderer ─────────────────────────────────── */
+    /* â”€â”€ Block canvas renderer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function renderBlockCanvas(block, isDark) {
       const def = BLOCK_REG[block.type];
       const accent = MSState.config.accentColor || '#00d4ff';
@@ -824,10 +129,10 @@
       <button class="mse-blk-ctrl del" title="Delete" onclick="event.stopPropagation();blockDelete('${block.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
     </div>`;
 
-      // Use production renderer — accurate real-time preview with fonts, alignment, all props
+      // Use production renderer â€” accurate real-time preview with fonts, alignment, all props
       const inner = renderMSBlock(block, MSState.config);
 
-      // (old CBP switch removed — renderMSBlock from mini-site-blocks.js handles everything)
+      // (old CBP switch removed â€” renderMSBlock from mini-site-blocks.js handles everything)
       if (false) switch (block.type) {
 
         case 'cover': {
@@ -845,7 +150,7 @@
           </div>` : ''}
           <div class="cbp-cover-title" style="color:#fff">${p.siteName || MSState.config.name || 'Site Name'}</div>
           ${p.tagline ? `<div class="cbp-cover-tagline">${p.tagline}</div>` : ''}
-          ${!p.siteName && !p.tagline ? `<div class="cbp-cover-tagline">Add a tagline in the properties panel →</div>` : ''}
+          ${!p.siteName && !p.tagline ? `<div class="cbp-cover-tagline">Add a tagline in the properties panel â†’</div>` : ''}
         </div>`;
           break;
         }
@@ -871,7 +176,7 @@
               <div class="cbp-ann-dot" style="background:${accent}"></div>
               <div class="cbp-ann-text" style="color:${textColor}">${it.text}</div>
             </div>`).join('') :
-              `<div style="color:${subColor};font-size:13px;padding:8px 0">No announcements yet. Add items in the properties panel →</div>`
+              `<div style="color:${subColor};font-size:13px;padding:8px 0">No announcements yet. Add items in the properties panel â†’</div>`
             }
         </div>`;
           break;
@@ -889,7 +194,7 @@
             </div>
             <div class="cbp-dt-card" style="border-color:${borderCol};background:${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'}">
               <div class="cbp-dt-icon" style="background:rgba(${hexToRgb(accent)},0.12)"><svg viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-              <div class="cbp-dt-value" style="color:${textColor}">${p.time ? (p.endTime ? `${p.time} – ${p.endTime}` : p.time) : 'Time'}</div>
+              <div class="cbp-dt-value" style="color:${textColor}">${p.time ? (p.endTime ? `${p.time} â€“ ${p.endTime}` : p.time) : 'Time'}</div>
               <div class="cbp-dt-label" style="color:${subColor}">${p.timezone || 'IST'}</div>
             </div>
             <div class="cbp-dt-card" style="border-color:${borderCol};background:${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'}">
@@ -992,7 +297,7 @@
             </div>`).join('') :
               `<div class="cbp-doc-item cbp-doc-add" style="border-color:${borderCol}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;opacity:0.3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              <span>Add documents in properties →</span>
+              <span>Add documents in properties â†’</span>
             </div>`
             }
         </div>`;
@@ -1010,7 +315,7 @@
               ${v.thumbnail ? `<img class="cbp-video-thumb" src="${v.thumbnail}" alt="thumb"/>` : `<div class="cbp-video-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>${v.title || 'Video'}</span></div>`}
               <div class="cbp-video-play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
             </div>`).join('') :
-              `<div class="cbp-video-item"><div class="cbp-video-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Paste a YouTube or Drive link →</span></div></div>`
+              `<div class="cbp-video-item"><div class="cbp-video-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Paste a YouTube or Drive link â†’</span></div></div>`
             }
         </div>`;
           break;
@@ -1059,7 +364,7 @@
         }
 
         default:
-          // unreachable — kept only for IDE reference
+          // unreachable â€” kept only for IDE reference
           break;
       }
 
@@ -1069,15 +374,15 @@
   </div>`;
     }
 
-    /* ── Hex to RGB helper ─── */
+    /* â”€â”€ Hex to RGB helper â”€â”€â”€ */
     function hexToRgb(hex) {
       const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return r ? `${parseInt(r[1], 16)},${parseInt(r[2], 16)},${parseInt(r[3], 16)}` : '0,212,255';
     }
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        BLOCK CONTROLS
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     function addBlock(type) {
       MSState.addBlock(type, MSState.selectedId);
       switchLeftTab('layers');
@@ -1104,9 +409,9 @@
       }
     }
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        LAYERS PANEL
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     function renderLayers() {
       const el = document.getElementById('layersList');
       if (!MSState.blocks.length) {
@@ -1128,9 +433,9 @@
       }).join('');
     }
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        RIGHT PANEL
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     function updateRightPanel() {
       const block = MSState.getSelected();
       const emptyEl = document.getElementById('rightBlockEmpty');
@@ -1180,7 +485,7 @@
           <input class="mse-prop-input" type="text" value="${p.tagline || ''}" placeholder="A short tagline"
             oninput="MSState.updateBlock('${block.id}',{tagline:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Cover Image URL</div>
-          <input class="mse-prop-input" type="url" value="${p.coverImage || ''}" placeholder="https://… or Drive link"
+          <input class="mse-prop-input" type="url" value="${p.coverImage || ''}" placeholder="https://â€¦ or Drive link"
             oninput="MSState.updateBlock('${block.id}',{coverImage:this.value});refreshCanvas()"/>
           <div class="mse-prop-hint">Paste a public image URL or Google Drive image link</div></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Cover Overlay</div>
@@ -1193,7 +498,7 @@
           <div class="mse-toggle ${p.showLogo ? 'on' : ''}" onclick="MSState.updateBlock('${block.id}',{showLogo:!${p.showLogo}});refreshCanvas()"></div></div>
         ${p.showLogo ? `
         <div class="mse-prop-row"><div class="mse-prop-label">Logo Image URL</div>
-          <input class="mse-prop-input" type="url" value="${p.logoImage || ''}" placeholder="https://… or Drive link"
+          <input class="mse-prop-input" type="url" value="${p.logoImage || ''}" placeholder="https://â€¦ or Drive link"
             oninput="MSState.updateBlock('${block.id}',{logoImage:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Logo Shape</div>
           <div class="mse-shape-row">
@@ -1250,10 +555,10 @@
           <input class="mse-prop-input" value="${p.venueAddress || ''}" placeholder="City, State"
             oninput="MSState.updateBlock('${block.id}',{venueAddress:this.value});refreshCanvas()"/></div>
         <div class="mse-prop-row"><div class="mse-prop-label">Google Maps Link</div>
-          <input class="mse-prop-input" type="url" value="${p.mapLink || ''}" placeholder="https://maps.google.com/…"
+          <input class="mse-prop-input" type="url" value="${p.mapLink || ''}" placeholder="https://maps.google.com/â€¦"
             oninput="MSState.updateBlock('${block.id}',{mapLink:this.value})"/></div>` : `
         <div class="mse-prop-row"><div class="mse-prop-label">Meeting Link</div>
-          <input class="mse-prop-input" type="url" value="${p.onlineLink || ''}" placeholder="https://meet.google.com/…"
+          <input class="mse-prop-input" type="url" value="${p.onlineLink || ''}" placeholder="https://meet.google.com/â€¦"
             oninput="MSState.updateBlock('${block.id}',{onlineLink:this.value})"/></div>`}
         ${bgRow}
       </div>`;
@@ -1264,7 +569,7 @@
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
           <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
-        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Announcement items — full editor in Batch 3</div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Announcement items â€” full editor in Batch 3</div>
         ${bgRow}
       </div>`;
 
@@ -1279,7 +584,7 @@
             <option value="grid" ${p.layout === 'grid' ? 'selected' : ''}>Grid</option>
             <option value="list" ${p.layout === 'list' ? 'selected' : ''}>List</option>
           </select></div>
-        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Speaker cards — full editor in Batch 3</div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Speaker cards â€” full editor in Batch 3</div>
         ${bgRow}
       </div>`;
 
@@ -1289,7 +594,7 @@
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
           <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
-        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">FAQ items — full editor in Batch 3</div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">FAQ items â€” full editor in Batch 3</div>
         ${bgRow}
       </div>`;
 
@@ -1299,7 +604,7 @@
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
           <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
-        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Sponsor tiers & logos — full editor in Batch 3</div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Sponsor tiers & logos â€” full editor in Batch 3</div>
         ${bgRow}
       </div>`;
 
@@ -1330,7 +635,7 @@
               </div>
               <div>
                 <div style="font-size:12.5px;font-weight:600;color:var(--text)">${t === 'url' ? 'Paste any form URL' : 'GS Forms'}</div>
-                <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotform…' : 'Connect your GS Form Builder forms'}</div>
+                <div style="font-size:11px;color:var(--text-3)">${t === 'url' ? 'Google Forms, Typeform, Jotformâ€¦' : 'Connect your GS Form Builder forms'}</div>
               </div>
             </label>`).join('')}
           </div>
@@ -1339,7 +644,7 @@
         ${(p.connectType || 'url') === 'url' ? `
         <div class="mse-prop-row">
           <div class="mse-prop-label">Form URL</div>
-          <input class="mse-prop-input" type="url" value="${p.connectUrl || ''}" placeholder="https://forms.google.com/…"
+          <input class="mse-prop-input" type="url" value="${p.connectUrl || ''}" placeholder="https://forms.google.com/â€¦"
             oninput="MSState.updateBlock('${block.id}',{connectUrl:this.value});refreshCanvas()"/>
           <div class="mse-prop-hint">Paste your Google Forms, Typeform, or any form link</div>
         </div>` : `
@@ -1347,7 +652,7 @@
           <div class="mse-prop-label">Select GS Form</div>
           <select class="mse-prop-select" id="gsfPicker_${block.id}"
                   onchange="msePickHxForm('${block.id}',this.value)">
-            <option value="">Loading your forms…</option>
+            <option value="">Loading your formsâ€¦</option>
           </select>
           <div class="mse-prop-hint">Only published GS Forms appear here</div>
         </div>
@@ -1363,7 +668,7 @@
 
         <div class="mse-prop-row">
           <div class="mse-prop-label">Button Label</div>
-          <input class="mse-prop-input" value="${p.buttonText || 'Register Now →'}"
+          <input class="mse-prop-input" value="${p.buttonText || 'Register Now â†’'}"
             oninput="MSState.updateBlock('${block.id}',{buttonText:this.value});refreshCanvas()"/>
         </div>
         ${bgRow}
@@ -1375,7 +680,7 @@
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
           <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
-        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Document upload/link editor — full implementation in Batch 4</div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Document upload/link editor â€” full implementation in Batch 4</div>
         ${bgRow}
       </div>`;
 
@@ -1385,7 +690,7 @@
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
           <input class="mse-prop-input" value="${p.title || ''}" placeholder="Optional title"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
-        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">YouTube / Drive video editor (max 2) — full implementation in Batch 4</div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">YouTube / Drive video editor (max 2) â€” full implementation in Batch 4</div>
         ${bgRow}
       </div>`;
 
@@ -1395,7 +700,7 @@
         <div class="mse-prop-row"><div class="mse-prop-label">Section Title</div>
           <input class="mse-prop-input" value="${p.title || ''}"
             oninput="MSState.updateBlock('${block.id}',{title:this.value});refreshCanvas()"/></div>
-        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Social platform editor — full implementation in Batch 4</div>
+        <div style="font-size:12px;color:var(--text-3);padding:8px 0 4px">Social platform editor â€” full implementation in Batch 4</div>
         ${bgRow}
       </div>`;
 
@@ -1435,9 +740,9 @@
       }
     }
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        TAB SWITCHING
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     function switchLeftTab(tab) {
       document.getElementById('tabBlocks').classList.toggle('active', tab === 'blocks');
       document.getElementById('tabLayers').classList.toggle('active', tab === 'layers');
@@ -1454,9 +759,9 @@
       if (tab === 'site') populateSiteSettings();
     }
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        SITE SETTINGS
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const GA_STEPS = [
       {
         title: 'Open Google Analytics',
@@ -1712,7 +1017,7 @@
     }
     function toggleRegFromPublish() { toggleRegistration(); }
 
-    /* ── Entry Pass Settings ── */
+    /* â”€â”€ Entry Pass Settings â”€â”€ */
     function mseTogglePass() {
       const pc = MSState.config.passConfig || {};
       const next = !pc.passEnabled;
@@ -1780,7 +1085,7 @@
       if (clean !== val) input.value = clean;
       const pubUrl = clean
         ? `${window.location.origin}/site.html?slug=${clean}`
-        : `${window.location.origin}/site.html?slug=…`;
+        : `${window.location.origin}/site.html?slug=â€¦`;
       const slugHint = document.getElementById('slugHint');
       if (slugHint) slugHint.textContent = clean ? pubUrl : 'Set a slug to get a public URL';
       const chromeUrl = document.getElementById('chromeUrl');
@@ -1790,9 +1095,9 @@
       MSState.updateConfig({ slug: clean });
     }
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        PREVIEW MODE
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     function setPreviewMode(mode) {
       document.getElementById('btnDesktop').classList.toggle('active', mode === 'desktop');
       document.getElementById('btnMobile').classList.toggle('active', mode === 'mobile');
@@ -1832,7 +1137,7 @@
 ${_fontLinks}
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
 <style>
-  /* ── Account Settings Dock ── */
+  /* â”€â”€ Account Settings Dock â”€â”€ */
     .mse-account-dock { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: rgba(255, 255, 255, 0.02); border-top: 1px solid var(--glass-border); cursor: pointer; transition: all 0.2s; margin-top: auto; }
     .mse-account-dock:hover { background: rgba(255, 255, 255, 0.05); }
     .mse-acct-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.2); display: flex; align-items: center; justify-content: center; color: var(--cyan); flex-shrink: 0; }
@@ -1843,11 +1148,11 @@ ${_fontLinks}
     .mse-acct-arrow { width: 16px; height: 16px; color: var(--text-3); opacity: 0; transition: all 0.2s; transform: translateX(-4px); }
     .mse-account-dock:hover .mse-acct-arrow { opacity: 1; transform: translateX(0); color: var(--text); }
 
-    /* ── Gal AI (Google AI Studio Style) ── */
+    /* â”€â”€ Gal AI (Google AI Studio Style) â”€â”€ */
     .gal-ai-wrapper { position: absolute; bottom: 0; width: 480px; max-width: 90%; pointer-events: none; display: flex; justify-content: center; align-items: flex-end; }
-    /* ── Gal AI (Google AI Studio Style) ── */
-    /* ── Sea Wave Glow Effect (4 Layers) ── */
-    /* ── The Full Screen Perimeter Glow Trace ── */
+    /* â”€â”€ Gal AI (Google AI Studio Style) â”€â”€ */
+    /* â”€â”€ Sea Wave Glow Effect (4 Layers) â”€â”€ */
+    /* â”€â”€ The Full Screen Perimeter Glow Trace â”€â”€ */
     .gal-ai-screen-trace {
       position: fixed; inset: 0; width: 100vw; height: 100vh;
       z-index: 9998; pointer-events: none; overflow: visible;
@@ -1874,7 +1179,7 @@ ${_fontLinks}
       /* Dash travels all the way to 100, plus 20 to hide off the end */
       100% { stroke-dashoffset: -100; opacity: 0; }
     }
-    /* ── The Opening Flare Animation ── */
+    /* â”€â”€ The Opening Flare Animation â”€â”€ */
     .gal-ai-tab { background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.12); border-bottom: none; border-radius: 12px 12px 0 0; padding: 10px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 220px; box-shadow: 0 -4px 16px rgba(0,0,0,0.3); pointer-events: auto; transition: all 0.2s; color: var(--text); }
     .gal-ai-tab:hover { background: rgba(25, 30, 45, 0.98); color: var(--cyan); }
     
@@ -1939,9 +1244,9 @@ ${_fontLinks}
     window.addEventListener('resize', () => {
       if (MSState.previewMode === 'mobile') scaleMobilePhone();
     });
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        SAVE / UNDO / REDO
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     function doSave() {
       const ok = MSState.save();
       updateSaveStatus(ok ? 'saved' : 'error');
@@ -1985,14 +1290,14 @@ ${_fontLinks}
       }
     }
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        PUBLISH
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     function openPublish() {
       const _pubSlug = MSState.config.slug || '';
       const _pubUrl = _pubSlug
         ? `${window.location.origin}/site.html?slug=${_pubSlug}`
-        : `${window.location.origin}/site.html?slug=…`;
+        : `${window.location.origin}/site.html?slug=â€¦`;
       document.getElementById('publishUrlDisplay').textContent = _pubUrl;
       document.getElementById('publishRegToggle')?.classList.toggle('on', MSState.config.registrationOpen);
       const lbl = document.getElementById('publishConfirmLabel');
@@ -2003,14 +1308,14 @@ ${_fontLinks}
 
     async function doPublish() {
       if (!MSState.config.slug || MSState.config.slug.length < 3) {
-        mseToast('Set a valid URL slug first (Site Settings → Site Info)', 'error'); return;
+        mseToast('Set a valid URL slug first (Site Settings â†’ Site Info)', 'error'); return;
       }
 
       const btn = document.getElementById('publishConfirmBtn');
       btn.disabled = true;
       btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:7px">
     <span style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:toastIn 0s,spin 0.7s linear infinite;display:inline-block"></span>
-    Publishing…</span>`;
+    Publishingâ€¦</span>`;
 
       try {
         // Force immediate backend sync before publish
@@ -2019,7 +1324,7 @@ ${_fontLinks}
 
         // Build the real public URL (single place to change when domain is ready)
         const publicUrl = result.publicUrl
-          ? `${window.location.origin}${result.publicUrl}`  // server returns /site.html?slug=…
+          ? `${window.location.origin}${result.publicUrl}`  // server returns /site.html?slug=â€¦
           : `${window.location.origin}/site.html?slug=${MSState.config.slug}`;
 
         // Update display
@@ -2030,7 +1335,7 @@ ${_fontLinks}
           const sheetNotice = document.getElementById('mstQRSection') || document.querySelector('.mse-publish-body');
           const sheetDiv = document.createElement('div');
           sheetDiv.style.cssText = 'margin-top:14px;padding:12px 14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:9px;font-size:13px';
-          sheetDiv.innerHTML = `<div style="font-weight:600;color:#34d399;margin-bottom:4px">✓ Registration Sheet created</div>
+          sheetDiv.innerHTML = `<div style="font-weight:600;color:#34d399;margin-bottom:4px">âœ“ Registration Sheet created</div>
             <a href="${result.sheetUrl}" target="_blank" style="color:#34d399;word-break:break-all;font-family:var(--font-mono);font-size:12px">${result.sheetUrl}</a>`;
           document.querySelector('.mse-publish-body')?.appendChild(sheetDiv);
         }
@@ -2050,7 +1355,7 @@ ${_fontLinks}
       }
     }
 
-    /* ── Theme & Font selectors ──────────────────────────────────── */
+    /* â”€â”€ Theme & Font selectors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function setThemeBox(val) {
       MSState.updateConfig({ theme: val });
       refreshCanvas();
@@ -2062,11 +1367,11 @@ ${_fontLinks}
       document.querySelectorAll('.mse-font-pill').forEach(p => p.classList.toggle('on', p.dataset.font === val));
     }
 
-    /* ═══════════════════════════════════════════════════════════════
-       PREBUILT THEMES & FONT PAIRS — data + UI
-    ═══════════════════════════════════════════════════════════════ */
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       PREBUILT THEMES & FONT PAIRS â€” data + UI
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     const MSB_PREBUILT_THEMES = [
-      // ── Dark themes ────────────────────────────────────────────────────────
+      // â”€â”€ Dark themes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { id:'midnight-pulse',  name:'Midnight Pulse',  theme:'dark',  titleFont:'Syne',              contentFont:'Plus Jakarta Sans', accent:'#00d4ff', bg:'#030d1e', textColor:'#dff0ff', subColor:'rgba(223,240,255,0.58)' },
       { id:'crimson-gala',    name:'Crimson Gala',    theme:'dark',  titleFont:'Cinzel',            contentFont:'Cormorant Garamond',accent:'#f43f5e', bg:'#0d0408', textColor:'#fff0f3', subColor:'rgba(255,240,243,0.55)' },
       { id:'golden-luxe',     name:'Golden Luxe',     theme:'dark',  titleFont:'Playfair Display',  contentFont:'EB Garamond',       accent:'#f59e0b', bg:'#080602', textColor:'#fdf4e3', subColor:'rgba(253,244,227,0.55)' },
@@ -2077,7 +1382,7 @@ ${_fontLinks}
       { id:'serif-editorial', name:'Serif Editorial', theme:'dark',  titleFont:'EB Garamond',       contentFont:'Cormorant Garamond',accent:'#d4a96a', bg:'#0a0805', textColor:'#faf6ee', subColor:'rgba(250,246,238,0.55)' },
       { id:'blossom',         name:'Blossom',         theme:'dark',  titleFont:'Dancing Script',    contentFont:'Plus Jakarta Sans', accent:'#f472b6', bg:'#120810', textColor:'#fff0f9', subColor:'rgba(255,240,249,0.55)' },
       { id:'matrix',          name:'Matrix',          theme:'dark',  titleFont:'JetBrains Mono',    contentFont:'JetBrains Mono',    accent:'#4ade80', bg:'#020c04', textColor:'#b8ffbc', subColor:'rgba(184,255,188,0.58)' },
-      // ── Light themes ───────────────────────────────────────────────────────
+      // â”€â”€ Light themes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { id:'paper',           name:'Paper',           theme:'light', titleFont:'Playfair Display',  contentFont:'EB Garamond',       accent:'#6366f1', bg:'#f9f7f4', textColor:'#1a120b', subColor:'rgba(26,18,11,0.62)' },
       { id:'clean-white',     name:'Clean White',     theme:'light', titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans', accent:'#0f172a', bg:'#ffffff', textColor:'#0f172a', subColor:'rgba(15,23,42,0.62)' },
       { id:'warm-sunrise',    name:'Warm Sunrise',    theme:'light', titleFont:'Raleway',           contentFont:'Plus Jakarta Sans', accent:'#d97706', bg:'#fffbf0', textColor:'#271c08', subColor:'rgba(39,28,8,0.62)' },
@@ -2091,7 +1396,7 @@ ${_fontLinks}
     ];
 
     const MSB_FONT_PAIRS = [
-      // ── Professional / Website ──────────────────────────────────────────────
+      // â”€â”€ Professional / Website â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { id:'noir-cinema',      name:'Noir Cinema',      titleFont:'Bebas Neue',        contentFont:'Oswald' },
       { id:'tech-clarity',     name:'Tech Clarity',     titleFont:'Space Grotesk',     contentFont:'Lexend' },
       { id:'press-editorial',  name:'Press Editorial',  titleFont:'Oswald',            contentFont:'Lora' },
@@ -2102,16 +1407,16 @@ ${_fontLinks}
       { id:'bold-corporate',   name:'Bold Corporate',   titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans' },
       { id:'literary-mind',    name:'Literary Mind',    titleFont:'EB Garamond',       contentFont:'Lora' },
       { id:'code-design',      name:'Code & Design',    titleFont:'JetBrains Mono',    contentFont:'Space Grotesk' },
-      // ── Wedding / Elegant ───────────────────────────────────────────────────
+      // â”€â”€ Wedding / Elegant â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { id:'wedding-belle',    name:'Wedding Belle',    titleFont:'Pinyon Script',     contentFont:'Cormorant Garamond' },
       { id:'garden-romance',   name:'Garden Romance',   titleFont:'Great Vibes',       contentFont:'Lora' },
-      // ── Comical / Fun ──────────────────────────────────────────────────────
+      // â”€â”€ Comical / Fun â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { id:'retro-pop',        name:'Retro Pop',        titleFont:'Pacifico',          contentFont:'Lexend' },
       { id:'summer-fiesta',    name:'Summer Fiesta',    titleFont:'Boogaloo',          contentFont:'Plus Jakarta Sans' },
     ];
 
     const MSB_FONT_LIST = [
-      // ── Professional Sans-Serif ─────────────────────────────────────────────
+      // â”€â”€ Professional Sans-Serif â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { name:'Plus Jakarta Sans', stack:'Plus Jakarta Sans,sans-serif',   weight:'600' },
       { name:'Lexend',            stack:'Lexend,sans-serif',              weight:'600' },
       { name:'Space Grotesk',     stack:'Space Grotesk,sans-serif',       weight:'600' },
@@ -2119,25 +1424,49 @@ ${_fontLinks}
       { name:'Montserrat',        stack:'Montserrat,sans-serif',          weight:'600' },
       { name:'Raleway',           stack:'Raleway,sans-serif',             weight:'600' },
       { name:'Oswald',            stack:'Oswald,sans-serif',              weight:'600' },
-      // ── Professional Serif ──────────────────────────────────────────────────
+      // â”€â”€ Professional Serif â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { name:'Playfair Display',  stack:'Playfair Display,serif',         weight:'700' },
       { name:'Lora',              stack:'Lora,serif',                     weight:'600' },
       { name:'EB Garamond',       stack:'EB Garamond,serif',              weight:'700' },
       { name:'Cormorant Garamond',stack:'Cormorant Garamond,serif',       weight:'600' },
       { name:'Cinzel',            stack:'Cinzel,serif',                   weight:'600' },
-      // ── Display / Impact ────────────────────────────────────────────────────
+      // â”€â”€ Display / Impact â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { name:'Bebas Neue',        stack:'Bebas Neue,sans-serif',          weight:'400' },
       { name:'Abril Fatface',     stack:'Abril Fatface,serif',            weight:'400' },
-      // ── Calligraphy / Script ────────────────────────────────────────────────
+      // â”€â”€ Calligraphy / Script â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { name:'Great Vibes',       stack:'Great Vibes,cursive',            weight:'400' },
       { name:'Pinyon Script',     stack:'Pinyon Script,cursive',          weight:'400' },
       { name:'Dancing Script',    stack:'Dancing Script,cursive',         weight:'600' },
-      // ── Comical / Fun ──────────────────────────────────────────────────────
+      // â”€â”€ Comical / Fun â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { name:'Pacifico',          stack:'Pacifico,cursive',               weight:'400' },
       { name:'Boogaloo',          stack:'Boogaloo,cursive',               weight:'400' },
-      // ── Monospace ───────────────────────────────────────────────────────────
+      // â”€â”€ Monospace â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       { name:'JetBrains Mono',    stack:'JetBrains Mono,monospace',       weight:'500' },
     ];
+
+    /* Per-font Google Fonts URLs â€” used for dynamic loading in mobile preview */
+    const MSB_GOOGLE_FONT_URLS = {
+      'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
+      'Lexend':            'https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap',
+      'Space Grotesk':     'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
+      'Syne':              'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap',
+      'Montserrat':        'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap',
+      'Raleway':           'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap',
+      'Oswald':            'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap',
+      'Playfair Display':  'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+      'Lora':              'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap',
+      'EB Garamond':       'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+      'Cormorant Garamond':'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
+      'Cinzel':            'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+      'Bebas Neue':        'https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap',
+      'Abril Fatface':     'https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap',
+      'Great Vibes':       'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
+      'Pinyon Script':     'https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap',
+      'Dancing Script':    'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap',
+      'Pacifico':          'https://fonts.googleapis.com/css2?family=Pacifico&display=swap',
+      'Boogaloo':          'https://fonts.googleapis.com/css2?family=Boogaloo&display=swap',
+      'JetBrains Mono':    'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+    };
 
     /* Build prebuilt theme grid */
     function buildPrebuiltThemeGrid() {
@@ -2166,7 +1495,7 @@ ${_fontLinks}
           </div>
           <div class="mse-pt-body">
             <div class="mse-pt-name">${t.name}</div>
-            <div class="mse-pt-fonts">${t.titleFont.split(' ')[0]} · ${t.contentFont.split(' ')[0]}</div>
+            <div class="mse-pt-fonts">${t.titleFont.split(' ')[0]} Â· ${t.contentFont.split(' ')[0]}</div>
           </div>
         </button>`;
       }
@@ -2201,7 +1530,7 @@ ${_fontLinks}
       }).join('');
     }
 
-    /* Build font picker options for title/content dropdowns — always rebuilt so selection stays current */
+    /* Build font picker options for title/content dropdowns â€” always rebuilt so selection stays current */
     function buildFontPicker(which) {
       const picker = document.getElementById(which + 'FontPicker');
       if (!picker) return;
@@ -2280,7 +1609,7 @@ ${_fontLinks}
       }
     }
 
-    /* Select a font from the picker — title and content are fully independent */
+    /* Select a font from the picker â€” title and content are fully independent */
     function selectFont(which, fontName) {
       const upd = which === 'title'
         ? { titleFont: fontName, fontHeading: fontName }
@@ -2368,9 +1697,9 @@ ${_fontLinks}
       navigator.clipboard.writeText(url).then(() => mseToast('URL copied!', 'success', 1800));
     }
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        KEYBOARD SHORTCUTS
-    ════════════════════════════════════════════════════════════════ */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     document.addEventListener('keydown', e => {
       const tag = document.activeElement?.tagName?.toLowerCase();
       const inField = ['input', 'textarea', 'select'].includes(tag);
@@ -2400,10 +1729,10 @@ ${_fontLinks}
       if (e.target === document.getElementById('gaOverlay')) closeGAModal();
     });
 
-    /* ════════════════════════════════════════════════════════════════
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        TOAST
-    ════════════════════════════════════════════════════════════════ */
-    /* ── GS Forms live picklist ──────────────────────────────── */
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* â”€â”€ GS Forms live picklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     async function mseLoadHxForms(blockId, selectedSlug) {
       const sel = document.getElementById('gsfPicker_' + blockId);
       if (!sel) return;
@@ -2439,7 +1768,7 @@ ${_fontLinks}
       refreshCanvas();
     }
 
-    /* ── Gal AI Logic & Resizer ── */
+    /* â”€â”€ Gal AI Logic & Resizer â”€â”€ */
     function openGalAi() {
       document.getElementById('galAiWrapper').classList.add('open');
       document.getElementById('galAiInput').focus();
@@ -2450,7 +1779,7 @@ ${_fontLinks}
       document.getElementById('galAiWrapper').classList.remove('open');
     }
 
-    // ── SHIELD FLAG: Prevents closing right after dragging ──
+    // â”€â”€ SHIELD FLAG: Prevents closing right after dragging â”€â”€
     let _justFinishedResizing = false;
 
     document.addEventListener('click', (e) => {
@@ -2463,7 +1792,7 @@ ${_fontLinks}
       }
     });
 
-    // ── Handle Drag-to-Resize ──
+    // â”€â”€ Handle Drag-to-Resize â”€â”€
     let _aiResizing = false, _aiStartY, _aiStartH;
     document.addEventListener('DOMContentLoaded', () => {
       const resizer = document.getElementById('galAiResizer');
@@ -2505,10 +1834,10 @@ ${_fontLinks}
     function mseToast(msg, type = 'info', duration = 3000) {
       const el = document.getElementById('mse-toast');
       const colors = {
-        success: { bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.3)', icon: '#10b981', sym: '✓' },
-        error: { bg: 'rgba(244,63,94,0.12)', border: 'rgba(244,63,94,0.3)', icon: '#f43f5e', sym: '✕' },
-        info: { bg: 'rgba(0,212,255,0.10)', border: 'rgba(0,212,255,0.25)', icon: '#00d4ff', sym: 'ℹ' },
-        warn: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: '#f59e0b', sym: '⚠' },
+        success: { bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.3)', icon: '#10b981', sym: 'âœ“' },
+        error: { bg: 'rgba(244,63,94,0.12)', border: 'rgba(244,63,94,0.3)', icon: '#f43f5e', sym: 'âœ•' },
+        info: { bg: 'rgba(0,212,255,0.10)', border: 'rgba(0,212,255,0.25)', icon: '#00d4ff', sym: 'â„¹' },
+        warn: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: '#f59e0b', sym: 'âš ' },
       };
       const c = colors[type] || colors.info;
       el.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;background:${c.bg};border:1px solid ${c.border};backdrop-filter:blur(20px);color:#dde6f5;font-size:13.5px;font-weight:500;padding:11px 18px;border-radius:11px;display:flex;align-items:center;gap:9px;box-shadow:0 8px 32px rgba(0,0,0,0.4);font-family:var(--font);max-width:300px;animation:toastIn 0.25s ease;`;
@@ -2517,9 +1846,9 @@ ${_fontLinks}
       clearTimeout(el._t);
       el._t = setTimeout(() => { el.className = ''; el.style.display = 'none'; }, duration);
     }
-    /* ════════════════════════════════════════════════════════════════
-       GAL AI — GEMINI CHAT ENGINE
-    ════════════════════════════════════════════════════════════════ */
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       GAL AI â€” GEMINI CHAT ENGINE
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     let galChatHistory = [];
 
     // Inject User Name into Greeting & Setup Inputs
@@ -2569,7 +1898,7 @@ ${_fontLinks}
       appendGalMessage(
         `Gal AI is a <strong>Pro feature</strong>. Upgrade to unlock AI-powered site generation, block editing, and design assistance.<br><br>` +
         `<div style="display:flex;flex-direction:column;gap:6px;margin-top:2px">` +
-        `<a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>` +
+        `<a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">ðŸš€ Upgrade to Pro â†’</a>` +
         `<button class="gal-ai-sug" onclick="showGalProDetails(this)" style="text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;">What's included in Pro?</button>` +
         `</div>`,
         'bot'
@@ -2579,7 +1908,7 @@ ${_fontLinks}
     function showGalProDetails(btn) {
       btn.remove();
       appendGalMessage(
-        `✦ AI-powered site generation<br>✦ Block editing via chat<br>✦ Smart design suggestions<br>✦ Theme &amp; layout assistance<br>✦ Priority sending quota`,
+        `âœ¦ AI-powered site generation<br>âœ¦ Block editing via chat<br>âœ¦ Smart design suggestions<br>âœ¦ Theme &amp; layout assistance<br>âœ¦ Priority sending quota`,
         'bot'
       );
     }
@@ -2589,7 +1918,7 @@ ${_fontLinks}
       const text = inputEl.value.trim();
       if (!text) return;
 
-      // Frontend-first Pro gate — never touches AI server for free users
+      // Frontend-first Pro gate â€” never touches AI server for free users
       const isPro = await _galSendCheckPro();
       if (!isPro) {
         inputEl.value = '';
@@ -2636,7 +1965,7 @@ ${_fontLinks}
           user: frontendUser // Pass user info for personalization
         };
 
-        // ── FIXED: Native Fetch with Authorization ──
+        // â”€â”€ FIXED: Native Fetch with Authorization â”€â”€
         const response = await fetch('https://certiflow-backend-73xk.onrender.com/api/minisite-ai/chat', {
           method: 'POST',
           headers: {
@@ -2647,7 +1976,7 @@ ${_fontLinks}
         });
         const res = await response.json();
         if (!response.ok) throw new Error(res.error || 'Request failed: ' + response.status);
-        // ──────────────────────────────────────────
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         clearInterval(document.getElementById(loadingId)?.dataset.thinkTimer);
         document.getElementById(loadingId)?.remove();
@@ -2658,7 +1987,7 @@ ${_fontLinks}
         // Execute Actions
         if (res.action === 'replace_all') {
           MSState.blocks = (res.blocks || []).map(b => ({ ...b, id: 'b_' + Date.now() + Math.random().toString(36).substr(2, 5) }));
-          refreshCanvas(); mseToast('Page generated ✨', 'success');
+          refreshCanvas(); mseToast('Page generated âœ¨', 'success');
         }
         else if (res.action === 'add_block') {
           MSState.blocks.push({ id: 'b_' + Date.now(), type: res.type, props: res.props });
@@ -2705,17 +2034,17 @@ ${_fontLinks}
       return id;
     }
   </script>
-  <!-- ═══════════════════════════════════════════════════════
-     EXTENSION SCRIPTS — load after inline to allow overrides
-     Load order matters: blocks → canvas → special → theme
-═══════════════════════════════════════════════════════ -->
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     EXTENSION SCRIPTS â€” load after inline to allow overrides
+     Load order matters: blocks â†’ canvas â†’ special â†’ theme
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <script src="mini-site-canvas.js"></script>
   <script src="mini-site-special.js"></script>
   <script src="mini-site-theme.js"></script>
 
-  <!-- ═══ Glass hover + Resize — injected last ═══ -->
+  <!-- â•â•â• Glass hover + Resize â€” injected last â•â•â• -->
   <style>
-    /* ── Account Settings Dock ── */
+    /* â”€â”€ Account Settings Dock â”€â”€ */
     .mse-account-dock {
       display: flex;
       align-items: center;
@@ -2785,7 +2114,7 @@ ${_fontLinks}
       color: var(--text);
     }
 
-    /* ── Gal AI (Google AI Studio Style) ── */
+    /* â”€â”€ Gal AI (Google AI Studio Style) â”€â”€ */
     .gal-ai-wrapper {
       position: fixed;
       bottom: 0;
@@ -2811,8 +2140,8 @@ ${_fontLinks}
       }
     }
 
-    /* ── The Opening Flare Animation ── */
-    /* ── The Opening Flare Animation ── */
+    /* â”€â”€ The Opening Flare Animation â”€â”€ */
+    /* â”€â”€ The Opening Flare Animation â”€â”€ */
     @keyframes gal-flare {
 
       /* 0%: Starts instantly with a massive, vibrant glow (matching your click) */
@@ -3055,7 +2384,7 @@ ${_fontLinks}
       transform: translateX(-1px);
     }
 
-    /* ── The Full Screen Perimeter Glow Trace (GPU OPTIMIZED) ── */
+    /* â”€â”€ The Full Screen Perimeter Glow Trace (GPU OPTIMIZED) â”€â”€ */
     .gal-ai-screen-trace {
       position: fixed;
       top: 0;
@@ -3162,7 +2491,7 @@ ${_fontLinks}
       box-shadow: inset 0 1px 0 rgba(0, 212, 255, 0.25) !important;
     }
 
-    /* ── Prebuilt Theme Grid ─────────────────────────────────────── */
+    /* â”€â”€ Prebuilt Theme Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .mse-prebuilt-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -3223,7 +2552,7 @@ ${_fontLinks}
       text-overflow: ellipsis;
     }
 
-    /* ── Font Pair List ──────────────────────────────────────────── */
+    /* â”€â”€ Font Pair List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .mse-font-pair-list {
       display: flex;
       flex-direction: column;
@@ -3309,7 +2638,7 @@ ${_fontLinks}
       white-space: nowrap;
     }
 
-    /* ── Font Select Box (custom dropdown) ───────────────────────── */
+    /* â”€â”€ Font Select Box (custom dropdown) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .mse-font-select-wrap {
       position: relative;
     }
@@ -3471,7 +2800,7 @@ ${_fontLinks}
       background: rgba(0, 212, 255, 0.28);
     }
 
-    /* ── GEMINI CHAT UI ── */
+    /* â”€â”€ GEMINI CHAT UI â”€â”€ */
     /* The Greeting */
     .gal-ai-greeting {
       display: flex;
@@ -3659,7 +2988,7 @@ ${_fontLinks}
   </style>
 
   <script>
-    /* ── Glass hover via JS — direct inline style, cannot be blocked by CSS ── */
+    /* â”€â”€ Glass hover via JS â€” direct inline style, cannot be blocked by CSS â”€â”€ */
     (function () {
       var HBG = 'linear-gradient(135deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.11) 55%, rgba(255,255,255,0.05) 100%)';
       var HBORDER = 'rgba(255,255,255,0.60)';
@@ -3684,7 +3013,7 @@ ${_fontLinks}
         : init();
     })();
 
-    /* ── Resizable right panel — CSS Grid var mutation ── */
+    /* â”€â”€ Resizable right panel â€” CSS Grid var mutation â”€â”€ */
     (function () {
       var MIN_W = 260, MAX_W = 640;
       var handle = document.getElementById('mse-resize-handle');
@@ -3728,7 +3057,7 @@ ${_fontLinks}
       });
     })();
 
-    /* ── Leave warning ── */
+    /* â”€â”€ Leave warning â”€â”€ */
     let _leaveTarget = null;
 
     function confirmLeave(e, url) {
@@ -3755,7 +3084,7 @@ ${_fontLinks}
 
     async function saveAndLeave() {
       const btn = document.querySelector('#mse-leave-modal button:last-child');
-      btn.textContent = 'Saving…';
+      btn.textContent = 'Savingâ€¦';
       btn.disabled = true;
       await MSState.saveToBackendNow();
       const url = _leaveTarget;
@@ -3796,7 +3125,7 @@ ${_fontLinks}
   </div>
 
   <script>
-    /* ── Gal AI Chat for Mini-Site Editor ── */
+    /* â”€â”€ Gal AI Chat for Mini-Site Editor â”€â”€ */
     (function () {
       let mseChatHistory = [];
       let mseIsLoading = false;
@@ -3833,7 +3162,7 @@ ${_fontLinks}
         const div = document.createElement('div');
         div.className = 'gal-ai-msg bot';
         div.id = 'galAiTyping';
-        div.innerHTML = '<span style="opacity:0.5">Gal AI is thinking</span> <span style="animation:galDot 1.2s infinite;display:inline-block">●</span><span style="animation:galDot 1.2s 0.2s infinite;display:inline-block">●</span><span style="animation:galDot 1.2s 0.4s infinite;display:inline-block">●</span>';
+        div.innerHTML = '<span style="opacity:0.5">Gal AI is thinking</span> <span style="animation:galDot 1.2s infinite;display:inline-block">â—</span><span style="animation:galDot 1.2s 0.2s infinite;display:inline-block">â—</span><span style="animation:galDot 1.2s 0.4s infinite;display:inline-block">â—</span>';
         history.appendChild(div);
         history.scrollTop = history.scrollHeight;
         return div;
@@ -3851,7 +3180,7 @@ ${_fontLinks}
           </div>
           <div style="margin-bottom:10px;color:var(--text-2)">Gal AI is a <strong style="color:var(--text)">Pro feature</strong>. Upgrade to unlock AI-powered site generation, block editing, and design assistance.</div>
           <div style="display:flex;flex-direction:column;gap:6px">
-            <a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">🚀 Upgrade to Pro →</a>
+            <a href="settings.html#billing" class="gal-ai-sug" style="color:var(--accent);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08);font-weight:600;text-decoration:none;display:block;">ðŸš€ Upgrade to Pro â†’</a>
             <button class="gal-ai-sug" onclick="mseShowProDetails(this)" style="text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;">What's included in Pro?</button>
           </div>`;
         history.appendChild(div);
@@ -3868,11 +3197,11 @@ ${_fontLinks}
             <span style="font-weight:600;font-size:13px">Gal AI</span>
           </div>
           <div style="line-height:1.9;color:var(--text-2)">
-            ✦ AI-powered site generation<br>
-            ✦ Block editing via chat<br>
-            ✦ Smart design suggestions<br>
-            ✦ Theme and layout assistance<br>
-            ✦ Priority sending quota
+            âœ¦ AI-powered site generation<br>
+            âœ¦ Block editing via chat<br>
+            âœ¦ Smart design suggestions<br>
+            âœ¦ Theme and layout assistance<br>
+            âœ¦ Priority sending quota
           </div>`;
         btn.closest('.gal-ai-msg')?.insertAdjacentElement('afterend', div);
         btn.remove();
@@ -3881,7 +3210,7 @@ ${_fontLinks}
 
       // Apply a structured action from Gal AI to MSState
       function mseApplyAction(data) {
-        // MSState and BLOCK_REG are top-level const — accessible as globals, NOT via window.*
+        // MSState and BLOCK_REG are top-level const â€” accessible as globals, NOT via window.*
         if (typeof MSState === 'undefined') return;
 
         switch (data.action) {
@@ -3945,7 +3274,7 @@ ${_fontLinks}
         const msg = (input?.value || '').trim();
         if (!msg) return;
 
-        // Frontend-first Pro gate — never touches backend AI for free users
+        // Frontend-first Pro gate â€” never touches backend AI for free users
         const isPro = await _mseCheckPro();
         if (!isPro) {
           input.value = '';
@@ -4006,7 +3335,7 @@ ${_fontLinks}
       style.textContent = `@keyframes galDot{0%,60%,100%{opacity:0.2}30%{opacity:1}}`;
       document.head.appendChild(style);
 
-      /* ── Auto-scroll suggestions carousel ── */
+      /* â”€â”€ Auto-scroll suggestions carousel â”€â”€ */
       setTimeout(() => {
         const sugCont = document.querySelector('.gal-ai-suggestions');
         if (sugCont) {
@@ -4045,7 +3374,4 @@ ${_fontLinks}
         }
       }, 500);
     })();
-  </script>
-</body>
-
-</html>
+  
