@@ -1,96 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terms of Service — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
+    rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#050C12;--surface:rgba(255,255,255,0.04);--surface-2:rgba(255,255,255,0.06);
-  --border:rgba(255,255,255,0.08);--border-hi:rgba(255,255,255,0.15);
-  --primary:#7F3FEE;--cyan:#0ECDFE;--violet:#A689F9;
-  --text:#eef0ff;--text-muted:#8892aa;--text-faint:#3d4a60;
-  --grad-brand:linear-gradient(135deg,#0ECDFE,#A689F9,#7F3FEE);
-  --grad-text:linear-gradient(135deg,#0ECDFE 0%,#A689F9 50%,#7F3FEE 100%);
-  --font-d:'Syne',sans-serif;--font-b:'DM Sans',sans-serif;
-}
-html{scroll-behavior:smooth;}
-body{font-family:var(--font-b);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
-h1,h2,h3,h4,h5,.logo-text{font-family:var(--font-d);}
-a{text-decoration:none;color:inherit;}
-img{display:block;max-width:100%;}
-.gradient-text{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.container{max-width:1200px;margin:0 auto;padding:0 24px;}
-.site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(ellipse 900px 700px at -5% 0%,rgba(127,63,238,.12) 0%,transparent 65%),
-    radial-gradient(ellipse 700px 600px at 108% 2%,rgba(14,205,254,.07) 0%,transparent 65%),
-    radial-gradient(ellipse 500px 400px at 55% 85%,rgba(166,137,249,.05) 0%,transparent 65%);
-}
-.header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 0;border-bottom:1px solid transparent;transition:background .3s,backdrop-filter .3s,border-color .3s,padding .3s;}
-.header.scrolled{background:rgba(5,12,18,.92);backdrop-filter:blur(20px);border-bottom-color:var(--border);padding:13px 0;}
-.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:32px;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-img{height:26px;width:auto;}
-.logo-text {
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #050C12;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-2: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hi: rgba(255, 255, 255, 0.15);
+      --primary: #7F3FEE;
+      --cyan: #0ECDFE;
+      --violet: #A689F9;
+      --text: #eef0ff;
+      --text-muted: #8892aa;
+      --text-faint: #3d4a60;
+      --grad-brand: linear-gradient(135deg, #0ECDFE, #A689F9, #7F3FEE);
+      --grad-text: linear-gradient(135deg, #0ECDFE 0%, #A689F9 50%, #7F3FEE 100%);
+      --font-d: 'Syne', sans-serif;
+      --font-b: 'DM Sans', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    .logo-text {
+      font-family: var(--font-d);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .gradient-text {
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .site-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 900px 700px at -5% 0%, rgba(127, 63, 238, .12) 0%, transparent 65%),
+        radial-gradient(ellipse 700px 600px at 108% 2%, rgba(14, 205, 254, .07) 0%, transparent 65%),
+        radial-gradient(ellipse 500px 400px at 55% 85%, rgba(166, 137, 249, .05) 0%, transparent 65%);
+    }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      border-bottom: 1px solid transparent;
+      transition: background .3s, backdrop-filter .3s, border-color .3s, padding .3s;
+    }
+
+    .header.scrolled {
+      background: rgba(5, 12, 18, .92);
+      backdrop-filter: blur(20px);
+      border-bottom-color: var(--border);
+      padding: 13px 0;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      height: 26px;
+      width: auto;
+    }
+
+    .logo-text {
       font-size: 1.45rem;
-      font-weight: 700;letter-spacing:-.02em;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.nav{display:flex;align-items:center;gap:4px;}
-.nav-link{font-size:.88rem;color:var(--text-muted);padding:7px 12px;border-radius:8px;transition:color .2s,background .2s;}
-.nav-link:hover{color:var(--text);background:rgba(255,255,255,.06);}
-.header-actions{display:flex;align-items:center;gap:12px;}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--grad-brand);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-family:var(--font-d);font-size:.88rem;font-weight:600;cursor:pointer;transition:transform .25s,box-shadow .25s;white-space:nowrap;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(127,63,238,.35);}
-.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);color:var(--text-muted);border:1px solid var(--border-hi);border-radius:10px;padding:10px 20px;font-family:var(--font-d);font-size:.88rem;font-weight:600;cursor:pointer;transition:color .2s,border-color .2s,background .2s,transform .2s;white-space:nowrap;}
-.btn-ghost:hover{color:var(--text);border-color:rgba(14,205,254,.4);background:rgba(14,205,254,.05);transform:translateY(-2px);}
-.page-hero{padding:140px 0 72px;text-align:center;border-bottom:1px solid var(--border);}
-.page-hero .breadcrumb{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.8rem;color:var(--text-faint);margin-bottom:20px;}
-.page-hero .breadcrumb a{color:var(--text);transition:color .2s;}
-.page-hero .breadcrumb a:hover{color:var(--cyan);}
-.page-hero .breadcrumb span{color:var(--text-faint);}
-.page-hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:700;letter-spacing:-.03em;margin-bottom:12px;}
-.page-hero p{color:var(--text-muted);font-size:.95rem;max-width:480px;margin:0 auto;}
-.page-hero .meta{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:24px;font-size:1rem;color:var(--text-muted);}
-.page-hero .meta span{display:flex;align-items:center;gap:5px;}
-.legal-layout{display:grid;grid-template-columns:220px 1fr;gap:60px;padding:64px 0 120px;align-items:start;}
-.legal-toc{position:sticky;top:96px;}
-.legal-toc h6{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:14px;}
-.legal-toc a{display:block;font-size:.82rem;color:var(--text-muted);padding:6px 10px;border-left:2px solid var(--border);margin-bottom:2px;transition:color .2s,border-color .2s,padding-left .2s;}
-.legal-toc a:hover,.legal-toc a.active{color:var(--cyan);border-left-color:var(--cyan);padding-left:14px;}
-.legal-body{min-width:0;}
-.legal-section{margin-bottom:56px;padding-bottom:56px;border-bottom:1px solid var(--border);}
-.legal-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
-.legal-section h2{font-size:1.3rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
-.legal-section h2 .sec-num{font-size:.72rem;font-weight:700;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:var(--text-muted);font-family:var(--font-b);letter-spacing:.04em;}
-.legal-section .placeholder-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;margin-top:18px;}
-.legal-section .placeholder-block p{color:var(--text-muted);font-size:.88rem;line-height:1.8;}
-.ph-lines{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
-.ph-line{height:10px;border-radius:4px;background:rgba(255,255,255,.05);}
-.ph-line.w-full{width:100%;}.ph-line.w-3q{width:75%;}.ph-line.w-half{width:50%;}.ph-line.w-2q{width:60%;}
-.footer{border-top:1px solid var(--border);padding:72px 0 36px;}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:52px;}
-.footer-brand p{font-size:.86rem;color:var(--text-muted);line-height:1.6;margin-top:14px;margin-bottom:18px;max-width:260px;}
-.footer-social{display:flex;gap:10px;}
-.footer-social a{width:33px;height:33px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:color .2s,border-color .2s,background .2s,transform .2s;}
-.footer-social a:hover{color:var(--text);border-color:rgba(14,205,254,.35);background:rgba(14,205,254,.06);transform:translateY(-2px);}
-.footer-col h5{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;color:var(--text);}
-.footer-col a{display:block;font-size:.83rem;color:var(--text-muted);margin-bottom:9px;transition:color .2s,transform .2s;display:flex;align-items:center;}
-.footer-col a:hover{color:var(--cyan);transform:translateX(3px);}
-.footer-bottom{border-top:1px solid var(--border);padding-top:26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
-.footer-bottom p{font-size:.78rem;color:var(--text-faint);}
-@media(max-width:900px){.legal-layout{grid-template-columns:1fr;}.legal-toc{display:none;}.footer-top{grid-template-columns:1fr 1fr;}.footer-bottom{flex-direction:column;text-align:center;}}
-@media(max-width:480px){.footer-top{grid-template-columns:1fr;}}
+      font-weight: 700;
+      letter-spacing: -.02em;
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-link {
+      font-size: .88rem;
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--grad-brand);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-family: var(--font-d);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .25s, box-shadow .25s;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(127, 63, 238, .35);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, .05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-hi);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-family: var(--font-d);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s, transform .2s;
+      white-space: nowrap;
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(14, 205, 254, .4);
+      background: rgba(14, 205, 254, .05);
+      transform: translateY(-2px);
+    }
+
+    .page-hero {
+      padding: 140px 0 72px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-hero .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: .8rem;
+      color: var(--text-faint);
+      margin-bottom: 20px;
+    }
+
+    .page-hero .breadcrumb a {
+      color: var(--text);
+      transition: color .2s;
+    }
+
+    .page-hero .breadcrumb a:hover {
+      color: var(--cyan);
+    }
+
+    .page-hero .breadcrumb span {
+      color: var(--text-faint);
+    }
+
+    .page-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      margin-bottom: 12px;
+    }
+
+    .page-hero p {
+      color: var(--text-muted);
+      font-size: .95rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .page-hero .meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 24px;
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .page-hero .meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legal-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 60px;
+      padding: 64px 0 120px;
+      align-items: start;
+    }
+
+    .legal-toc {
+      position: sticky;
+      top: 96px;
+    }
+
+    .legal-toc h6 {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 14px;
+    }
+
+    .legal-toc a {
+      display: block;
+      font-size: .82rem;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-left: 2px solid var(--border);
+      margin-bottom: 2px;
+      transition: color .2s, border-color .2s, padding-left .2s;
+    }
+
+    .legal-toc a:hover,
+    .legal-toc a.active {
+      color: var(--cyan);
+      border-left-color: var(--cyan);
+      padding-left: 14px;
+    }
+
+    .legal-body {
+      min-width: 0;
+    }
+
+    .legal-section {
+      margin-bottom: 56px;
+      padding-bottom: 56px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .legal-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .legal-section h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legal-section h2 .sec-num {
+      font-size: .72rem;
+      font-weight: 700;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+      color: var(--text-muted);
+      font-family: var(--font-b);
+      letter-spacing: .04em;
+    }
+
+    .legal-section .placeholder-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-top: 18px;
+    }
+
+    .legal-section .placeholder-block p {
+      color: var(--text-muted);
+      font-size: .88rem;
+      line-height: 1.8;
+    }
+
+    .ph-lines {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ph-line {
+      height: 10px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .ph-line.w-full {
+      width: 100%;
+    }
+
+    .ph-line.w-3q {
+      width: 75%;
+    }
+
+    .ph-line.w-half {
+      width: 50%;
+    }
+
+    .ph-line.w-2q {
+      width: 60%;
+    }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 72px 0 36px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 52px;
+    }
+
+    .footer-brand p {
+      font-size: .86rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 14px;
+      margin-bottom: 18px;
+      max-width: 260px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-social a {
+      width: 33px;
+      height: 33px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: color .2s, border-color .2s, background .2s, transform .2s;
+    }
+
+    .footer-social a:hover {
+      color: var(--text);
+      border-color: rgba(14, 205, 254, .35);
+      background: rgba(14, 205, 254, .06);
+      transform: translateY(-2px);
+    }
+
+    .footer-col h5 {
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: .83rem;
+      color: var(--text-muted);
+      margin-bottom: 9px;
+      transition: color .2s, transform .2s;
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-col a:hover {
+      color: var(--cyan);
+      transform: translateX(3px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .footer-bottom p {
+      font-size: .78rem;
+      color: var(--text-faint);
+    }
+
+    @media(max-width:900px) {
+      .legal-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .legal-toc {
+        display: none;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media(max-width:480px) {
+      .footer-top {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
-<body>
-<div class="site-bg" aria-hidden="true"></div>
 
-<header class="header" id="header">
+<body>
+  <div class="site-bg" aria-hidden="true"></div>
+
+  <header class="header" id="header">
     <div class="header-inner">
       <a href="index.html" class="logo">
         <img src="Images/GalSol Logo IC.svg" alt="GalSol icon" class="logo-img" style="height:24px;">
@@ -106,152 +522,239 @@ img{display:block;max-width:100%;}
       <div class="header-actions">
         <a href="login.html" class="btn-ghost">Sign In</a>
         <a href="login.html" class="btn-primary">Get Started Free</a>
-        </div>
+      </div>
     </div>
   </header>
 
-<main>
-  <div class="page-hero">
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a>
+          <span>/</span>
+          <span>Terms of Service</span>
+        </div>
+        <h1 class="gradient-text">GalSol Terms of Service</h1>
+        <p>The rules and conditions that govern your use of the GalSol platform.</p>
+        <div class="meta">
+          <span><i data-lucide="calendar" style="width:13px;height:13px"></i> Last updated: May 11, 2026</span>
+          <span><i data-lucide="clock" style="width:13px;height:13px"></i> 10 min read</span>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html">Home</a>
-        <span>/</span>
-        <span>Terms of Service</span>
+      <div class="legal-layout">
+        <aside class="legal-toc">
+          <h6>On this page</h6>
+          <a href="#s1">1. Service Description</a>
+          <a href="#s2">2. Account Registration & Security</a>
+          <a href="#s3">3. Acceptable Use Policy</a>
+          <a href="#s4">4. Creator Responsibilities</a>
+          <a href="#s5">5. Intellectual Property Rights</a>
+          <a href="#s6">6. Unverified App Status & API Limits</a>
+          <a href="#s7">7. Disclaimer of Warranties</a>
+          <a href="#s8">8. Limitation of Liability</a>
+          <a href="#s9">9. Indemnification</a>
+          <a href="#s10">10. AI Disclaimer</a>
+          <a href="#s11">11. Modifications to Terms</a>
+          <a href="#s12">12. Governing Law & Jurisdiction</a>
+        </aside>
+
+        <div class="legal-body">
+          <div class="legal-intro"
+            style="margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+            <p style="font-size: 1.05rem; color: var(--text);">By accessing or using the GalSol platform, you agree to
+              be bound by these Terms of Service ("Terms").</p>
+          </div>
+
+          <div class="legal-section" id="s1">
+            <h2><span class="sec-num">1</span> Service Description</h2>
+            <p>GalSol provides automated workflow tools, including certificate generation, bulk emailing, Mini Site
+              building, and event registration forms (GS Forms).</p>
+          </div>
+
+          <div class="legal-section" id="s2">
+            <h2><span class="sec-num">2</span> Account Registration & Security</h2>
+            <p>To use GalSol, you must authenticate via your Google Account.</p>
+            <ul
+              style="list-style-type: none; margin-left: 0; padding-left: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+              <li
+                style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
+                <strong style="color: var(--cyan);">Age Requirement:</strong> You must be at least 12 years old, or the
+                age of legal majority in your jurisdiction, to form a binding contract.
+              </li>
+              <li
+                style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
+                <strong style="color: var(--cyan);">Account Security:</strong> You are fully responsible for all
+                activities that occur under your Google account. You must immediately notify us of any unauthorized use
+                of your GalSol workspace.
+              </li>
+            </ul>
+          </div>
+
+          <div class="legal-section" id="s3">
+            <h2><span class="sec-num">3</span> Acceptable Use Policy <span
+                style="font-size: 0.8rem; background: rgba(255,100,100,0.15); color: #ff6b6b; padding: 3px 8px; border-radius: 4px; margin-left: 10px; vertical-align: middle;">STRICTLY
+                PROHIBITED CONDUCT</span></h2>
+            <p>GalSol provides powerful publishing and mailing tools. You agree that you are solely responsible for the
+              content you create, host, or email using GalSol. You shall <strong>NOT</strong> use GalSol to:</p>
+
+            <ul
+              style="list-style-type: none; margin-left: 0; padding-left: 0; margin-top: 20px; display: grid; grid-template-columns: 1fr; gap: 12px;">
+              <li style="padding-left: 20px; position: relative;"><span
+                  style="position: absolute; left: 0; top: 2px; color: #ff6b6b;">&bull;</span> <strong
+                  style="color: var(--text);">Phishing & Fraud:</strong> Create forms or Mini Sites designed to deceive
+                users into providing passwords, financial data (credit card numbers, bank details), Aadhaar/SSN numbers,
+                or other sensitive credentials.</li>
+              <li style="padding-left: 20px; position: relative;"><span
+                  style="position: absolute; left: 0; top: 2px; color: #ff6b6b;">&bull;</span> <strong
+                  style="color: var(--text);">Spam:</strong> Send unsolicited bulk emails (spam) in violation of the
+                CAN-SPAM Act, GDPR, or Indian IT Act guidelines. You must have explicit consent from recipients before
+                emailing them.</li>
+              <li style="padding-left: 20px; position: relative;"><span
+                  style="position: absolute; left: 0; top: 2px; color: #ff6b6b;">&bull;</span> <strong
+                  style="color: var(--text);">Illegal Content:</strong> Host or transmit content that is defamatory,
+                obscene, pornographic, promotes violence, violates intellectual property rights, or is otherwise
+                unlawful under Indian law.</li>
+              <li style="padding-left: 20px; position: relative;"><span
+                  style="position: absolute; left: 0; top: 2px; color: #ff6b6b;">&bull;</span> <strong
+                  style="color: var(--text);">Impersonation:</strong> Impersonate any person or entity, including
+                GalSol, Google, or any government agency.</li>
+            </ul>
+
+            <div
+              style="margin-top: 25px; background: rgba(255, 68, 68, 0.08); padding: 20px; border-left: 4px solid #ff4444; border-radius: 4px;">
+              <p style="margin: 0; color: #ffdddd;"><strong>Enforcement:</strong> GalSol reserves the right to employ
+                automated scanning and manual review of public forms/sites. We will immediately suspend, block, and
+                terminate any account found violating these rules, and we will report illegal activities (such as
+                phishing) to the relevant cybercrime authorities.</p>
+            </div>
+          </div>
+
+          <div class="legal-section" id="s4">
+            <h2><span class="sec-num">4</span> Creator Responsibilities (Data Controller)</h2>
+            <p>When you use GS Forms or the Mini Site builder to collect data, you are the Data Controller.</p>
+            <ul
+              style="list-style-type: disc; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+              <li>You are legally responsible for obtaining consent from your respondents to collect their data.</li>
+              <li>You must include your own Privacy Policy on your public-facing forms.</li>
+              <li>You acknowledge that if you enable the "Entry Pass" feature, you authorize GalSol to temporarily store
+                the respondent's Name, Email, and Pass Token to enable your staff scanner tool.</li>
+            </ul>
+          </div>
+
+          <div class="legal-section" id="s5">
+            <h2><span class="sec-num">5</span> Intellectual Property Rights</h2>
+            <ul
+              style="list-style-type: none; margin-left: 0; padding-left: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+              <li
+                style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
+                <strong style="color: var(--cyan);">Your Content:</strong> You retain all ownership rights to the text,
+                images, logos, and participant data you upload or create using GalSol. By using the platform, you grant
+                GalSol a limited license to host, copy, and display this content solely to provide the Service to you.
+              </li>
+              <li
+                style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
+                <strong style="color: var(--cyan);">GalSol's Property:</strong> GalSol retains all rights, title, and
+                interest in and to the platform, including its code, design, UI/UX, and AI integrations. You may not
+                copy, modify, or reverse-engineer any part of the GalSol software.
+              </li>
+            </ul>
+          </div>
+
+          <div class="legal-section" id="s6">
+            <h2><span class="sec-num">6</span> Service Quotas & API Sending Limits</h2>
+            <p>GalSol connects directly to your Google Workspace to send emails and generate files. To protect the
+              integrity of the platform, prevent spam, and comply with Google's API thresholds, GalSol enforces strict
+              daily usage limits.</p>
+            <ul
+              style="list-style-type: disc; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+              <li><strong>Standard Gmail Accounts (<code>@gmail.com</code>):</strong> Restricted to sending a maximum of
+                <strong>100 emails per day</strong> via the GalSol platform.</li>
+              <li><strong>Google Workspace Accounts (Custom Domains):</strong> Restricted to sending a maximum of
+                <strong>1,000 emails per day</strong> via the GalSol platform.</li>
+            </ul>
+            <p style="margin-top: 15px; font-weight: 600;">Important Considerations Regarding Limits:</p>
+            <ol
+              style="list-style-type: decimal; margin-left: 20px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+              <li><strong>Google's Absolute Limits:</strong> While Google’s theoretical limits are higher (500 for
+                standard, 2,000 for Workspace), GalSol artificially caps these lower to prevent fraud, account
+                suspension, and API abuse.</li>
+              <li><strong>Account Suspension:</strong> Attempting to bypass these limits using multiple accounts or
+                exploiting the system will result in an immediate, permanent ban from GalSol.</li>
+              <li><strong>No Liability for Halted Campaigns:</strong> GalSol is not liable for any delays, halted
+                campaigns, or business losses resulting from you hitting these daily sending limits or if Google
+                independently suspends your account for violating their spam policies. By bypassing the Google
+                "Unverified App" warning screen, you explicitly trust GalSol to execute your requested automated
+                campaigns subject to these restrictions.</li>
+            </ol>
+          </div>
+
+          <div class="legal-section" id="s7">
+            <h2><span class="sec-num">7</span> Unverified App Status & API Limits</h2>
+            <p>By bypassing the Google "Unverified App" warning screen, you explicitly trust GalSol to access your
+              designated Drive, Sheets, and Gmail data for the sole purpose of executing your requested automated
+              campaigns.</p>
+            <p style="margin-top: 10px;">GalSol is not liable for campaigns halted due to Google Workspace rate limits
+              or suspensions of your Google account due to your own spam violations.</p>
+          </div>
+
+          <div class="legal-section" id="s8">
+            <h2><span class="sec-num">8</span> Disclaimer of Warranties</h2>
+            <p>THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. GalSol expressly disclaims all warranties
+              of any kind, whether express or implied, including, but not limited to, the implied warranties of
+              merchantability, fitness for a particular purpose, and non-infringement. We do not guarantee that the
+              Service will be uninterrupted, error-free, or completely secure.</p>
+          </div>
+
+          <div class="legal-section" id="s9">
+            <h2><span class="sec-num">9</span> Limitation of Liability</h2>
+            <p>To the maximum extent permitted by applicable law, in no event shall GalSol, its affiliates, directors,
+              or employees be liable for any indirect, punitive, incidental, special, or consequential damages,
+              including without limitation damages for loss of profits, goodwill, data, or other intangible losses,
+              arising out of or relating to the use of, or inability to use, this service.</p>
+          </div>
+
+          <div class="legal-section" id="s10">
+            <h2><span class="sec-num">10</span> Indemnification (Protecting GalSol)</h2>
+            <p>You agree to defend, indemnify, and hold harmless GalSol, its creators, and affiliates from any claims,
+              damages, obligations, losses, liabilities, costs, or debt arising from:</p>
+            <ul
+              style="list-style-type: disc; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+              <li>Your violation of any term of these Terms of Service (especially the Acceptable Use Policy).</li>
+              <li>Your violation of any third-party right, including copyright, privacy, or property right.</li>
+              <li>Any claim that a form, site, or email campaign you created caused damage to a third party (e.g., via a
+                phishing scam or data breach on your end).</li>
+            </ul>
+          </div>
+
+          <div class="legal-section" id="s11">
+            <h2><span class="sec-num">11</span> AI Disclaimer</h2>
+            <p>Content generated by Gal AI (Gemini 3 Flash) is provided "AS IS." You are strictly responsible for
+              reviewing all AI-generated content for accuracy and legality before publishing it.</p>
+          </div>
+
+          <div class="legal-section" id="s12">
+            <h2><span class="sec-num">12</span> Modifications to Terms</h2>
+            <p>We reserve the right to modify or replace these Terms at any time. If a revision is material, we will
+              provide at least 30 days' notice prior to any new terms taking effect. By continuing to access or use our
+              Service after those revisions become effective, you agree to be bound by the revised terms.</p>
+          </div>
+
+          <div class="legal-section" id="s13">
+            <h2><span class="sec-num">13</span> Governing Law and Jurisdiction</h2>
+            <p>These Terms shall be governed by and construed in accordance with the laws of India, specifically the
+              Information Technology Act, 2000 and the DPDP Act, 2023. You agree that any legal action or dispute
+              arising out of or relating to these Terms shall be filed exclusively in the competent courts located in
+              Chennai, Tamil Nadu, India, and you hereby consent to the personal jurisdiction of such courts.</p>
+          </div>
+        </div>
       </div>
-      <h1 class="gradient-text">GalSol Terms of Service</h1>
-      <p>The rules and conditions that govern your use of the GalSol platform.</p>
-      <div class="meta">
-        <span><i data-lucide="calendar" style="width:13px;height:13px"></i> Last updated: May 11, 2026</span>
-        <span><i data-lucide="clock" style="width:13px;height:13px"></i> 10 min read</span>
-      </div>
     </div>
-  </div>
+  </main>
 
-  <div class="container">
-    <div class="legal-layout">
-      <aside class="legal-toc">
-  <h6>On this page</h6>
-  <a href="#s1">1. Service Description</a>
-  <a href="#s2">2. Account Registration & Security</a>
-  <a href="#s3">3. Acceptable Use Policy</a>
-  <a href="#s4">4. Creator Responsibilities</a>
-  <a href="#s5">5. Intellectual Property Rights</a>
-  <a href="#s6">6. Unverified App Status & API Limits</a>
-  <a href="#s7">7. Disclaimer of Warranties</a>
-  <a href="#s8">8. Limitation of Liability</a>
-  <a href="#s9">9. Indemnification</a>
-  <a href="#s10">10. AI Disclaimer</a>
-  <a href="#s11">11. Modifications to Terms</a>
-  <a href="#s12">12. Governing Law & Jurisdiction</a>
-</aside>
-
-      <div class="legal-body">
-  <div class="legal-intro" style="margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-    <p style="font-size: 1.05rem; color: var(--text);">By accessing or using the GalSol platform, you agree to be bound by these Terms of Service ("Terms").</p>
-  </div>
-
-  <div class="legal-section" id="s1">
-    <h2><span class="sec-num">1</span> Service Description</h2>
-    <p>GalSol provides automated workflow tools, including certificate generation, bulk emailing, Mini Site building, and event registration forms (GS Forms).</p>
-  </div>
-
-  <div class="legal-section" id="s2">
-    <h2><span class="sec-num">2</span> Account Registration & Security</h2>
-    <p>To use GalSol, you must authenticate via your Google Account.</p>
-    <ul style="list-style-type: none; margin-left: 0; padding-left: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
-        <li style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
-            <strong style="color: var(--cyan);">Age Requirement:</strong> You must be at least 12 years old, or the age of legal majority in your jurisdiction, to form a binding contract.
-        </li>
-        <li style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
-            <strong style="color: var(--cyan);">Account Security:</strong> You are fully responsible for all activities that occur under your Google account. You must immediately notify us of any unauthorized use of your GalSol workspace.
-        </li>
-    </ul>
-  </div>
-
-  <div class="legal-section" id="s3">
-    <h2><span class="sec-num">3</span> Acceptable Use Policy <span style="font-size: 0.8rem; background: rgba(255,100,100,0.15); color: #ff6b6b; padding: 3px 8px; border-radius: 4px; margin-left: 10px; vertical-align: middle;">STRICTLY PROHIBITED CONDUCT</span></h2>
-    <p>GalSol provides powerful publishing and mailing tools. You agree that you are solely responsible for the content you create, host, or email using GalSol. You shall <strong>NOT</strong> use GalSol to:</p>
-    
-    <ul style="list-style-type: none; margin-left: 0; padding-left: 0; margin-top: 20px; display: grid; grid-template-columns: 1fr; gap: 12px;">
-        <li style="padding-left: 20px; position: relative;"><span style="position: absolute; left: 0; top: 2px; color: #ff6b6b;">&bull;</span> <strong style="color: var(--text);">Phishing & Fraud:</strong> Create forms or Mini Sites designed to deceive users into providing passwords, financial data (credit card numbers, bank details), Aadhaar/SSN numbers, or other sensitive credentials.</li>
-        <li style="padding-left: 20px; position: relative;"><span style="position: absolute; left: 0; top: 2px; color: #ff6b6b;">&bull;</span> <strong style="color: var(--text);">Spam:</strong> Send unsolicited bulk emails (spam) in violation of the CAN-SPAM Act, GDPR, or Indian IT Act guidelines. You must have explicit consent from recipients before emailing them.</li>
-        <li style="padding-left: 20px; position: relative;"><span style="position: absolute; left: 0; top: 2px; color: #ff6b6b;">&bull;</span> <strong style="color: var(--text);">Illegal Content:</strong> Host or transmit content that is defamatory, obscene, pornographic, promotes violence, violates intellectual property rights, or is otherwise unlawful under Indian law.</li>
-        <li style="padding-left: 20px; position: relative;"><span style="position: absolute; left: 0; top: 2px; color: #ff6b6b;">&bull;</span> <strong style="color: var(--text);">Impersonation:</strong> Impersonate any person or entity, including GalSol, Google, or any government agency.</li>
-    </ul>
-
-    <div style="margin-top: 25px; background: rgba(255, 68, 68, 0.08); padding: 20px; border-left: 4px solid #ff4444; border-radius: 4px;">
-        <p style="margin: 0; color: #ffdddd;"><strong>Enforcement:</strong> GalSol reserves the right to employ automated scanning and manual review of public forms/sites. We will immediately suspend, block, and terminate any account found violating these rules, and we will report illegal activities (such as phishing) to the relevant cybercrime authorities.</p>
-    </div>
-  </div>
-
-  <div class="legal-section" id="s4">
-    <h2><span class="sec-num">4</span> Creator Responsibilities (Data Controller)</h2>
-    <p>When you use GS Forms or the Mini Site builder to collect data, you are the Data Controller.</p>
-    <ul style="list-style-type: disc; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
-        <li>You are legally responsible for obtaining consent from your respondents to collect their data.</li>
-        <li>You must include your own Privacy Policy on your public-facing forms.</li>
-        <li>You acknowledge that if you enable the "Entry Pass" feature, you authorize GalSol to temporarily store the respondent's Name, Email, and Pass Token to enable your staff scanner tool.</li>
-    </ul>
-  </div>
-
-  <div class="legal-section" id="s5">
-    <h2><span class="sec-num">5</span> Intellectual Property Rights</h2>
-    <ul style="list-style-type: none; margin-left: 0; padding-left: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
-        <li style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
-            <strong style="color: var(--cyan);">Your Content:</strong> You retain all ownership rights to the text, images, logos, and participant data you upload or create using GalSol. By using the platform, you grant GalSol a limited license to host, copy, and display this content solely to provide the Service to you.
-        </li>
-        <li style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
-            <strong style="color: var(--cyan);">GalSol's Property:</strong> GalSol retains all rights, title, and interest in and to the platform, including its code, design, UI/UX, and AI integrations. You may not copy, modify, or reverse-engineer any part of the GalSol software.
-        </li>
-    </ul>
-  </div>
-
-  <div class="legal-section" id="s6">
-    <h2><span class="sec-num">6</span> Unverified App Status & API Limits</h2>
-    <p>By bypassing the Google "Unverified App" warning screen, you explicitly trust GalSol to access your designated Drive, Sheets, and Gmail data for the sole purpose of executing your requested automated campaigns.</p>
-    <p style="margin-top: 10px;">GalSol is not liable for campaigns halted due to Google Workspace rate limits or suspensions of your Google account due to your own spam violations.</p>
-  </div>
-
-  <div class="legal-section" id="s7">
-    <h2><span class="sec-num">7</span> Disclaimer of Warranties</h2>
-    <p>THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. GalSol expressly disclaims all warranties of any kind, whether express or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement. We do not guarantee that the Service will be uninterrupted, error-free, or completely secure.</p>
-  </div>
-
-  <div class="legal-section" id="s8">
-    <h2><span class="sec-num">8</span> Limitation of Liability</h2>
-    <p>To the maximum extent permitted by applicable law, in no event shall GalSol, its affiliates, directors, or employees be liable for any indirect, punitive, incidental, special, or consequential damages, including without limitation damages for loss of profits, goodwill, data, or other intangible losses, arising out of or relating to the use of, or inability to use, this service.</p>
-  </div>
-
-  <div class="legal-section" id="s9">
-    <h2><span class="sec-num">9</span> Indemnification (Protecting GalSol)</h2>
-    <p>You agree to defend, indemnify, and hold harmless GalSol, its creators, and affiliates from any claims, damages, obligations, losses, liabilities, costs, or debt arising from:</p>
-    <ul style="list-style-type: disc; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
-        <li>Your violation of any term of these Terms of Service (especially the Acceptable Use Policy).</li>
-        <li>Your violation of any third-party right, including copyright, privacy, or property right.</li>
-        <li>Any claim that a form, site, or email campaign you created caused damage to a third party (e.g., via a phishing scam or data breach on your end).</li>
-    </ul>
-  </div>
-
-  <div class="legal-section" id="s10">
-    <h2><span class="sec-num">10</span> AI Disclaimer</h2>
-    <p>Content generated by Gal AI (Gemini 3 Flash) is provided "AS IS." You are strictly responsible for reviewing all AI-generated content for accuracy and legality before publishing it.</p>
-  </div>
-
-  <div class="legal-section" id="s11">
-    <h2><span class="sec-num">11</span> Modifications to Terms</h2>
-    <p>We reserve the right to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days' notice prior to any new terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.</p>
-  </div>
-
-  <div class="legal-section" id="s12">
-    <h2><span class="sec-num">12</span> Governing Law and Jurisdiction</h2>
-    <p>These Terms shall be governed by and construed in accordance with the laws of India, specifically the Information Technology Act, 2000 and the DPDP Act, 2023. You agree that any legal action or dispute arising out of or relating to these Terms shall be filed exclusively in the competent courts located in Chennai, Tamil Nadu, India, and you hereby consent to the personal jurisdiction of such courts.</p>
-  </div>
-</div>
-    </div>
-  </div>
-</main>
-
-<footer class="footer">
+  <footer class="footer">
     <div class="container">
       <div class="footer-top">
         <div class="footer-brand">
@@ -271,7 +774,7 @@ img{display:block;max-width:100%;}
                 style="width:15px;height:15px"></i></a>
           </div>
         </div>
-                <div class="footer-col">
+        <div class="footer-col">
           <h5>Product</h5>
           <a href="mini-site.html">Mini Site</a>
           <a href="gs-forms.html">GS Forms</a>
@@ -301,46 +804,46 @@ img{display:block;max-width:100%;}
     </div>
   </footer>
 
-<script>
-lucide.createIcons();
-const header = document.getElementById('header');
-window.addEventListener('scroll', () => { header.classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
-const sections = document.querySelectorAll('.legal-section');
-const tocLinks = document.querySelectorAll('.legal-toc a');
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const id = e.target.id;
-      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-    }
-  });
-}, { rootMargin: '-20% 0px -70% 0px' });
-sections.forEach(s => observer.observe(s));
-</script>
+  <script>
+    lucide.createIcons();
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => { header.classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
+    const sections = document.querySelectorAll('.legal-section');
+    const tocLinks = document.querySelectorAll('.legal-toc a');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => observer.observe(s));
+  </script>
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
 
-    const token = localStorage.getItem('GalSol_token');
-    let user = null;
-    if (token) {
-       try {
+      const token = localStorage.getItem('GalSol_token');
+      let user = null;
+      if (token) {
+        try {
           const payload = JSON.parse(atob(token.split('.')[1]));
-          if (payload.exp && payload.exp * 1000 > Date.now()) { user = payload; } 
+          if (payload.exp && payload.exp * 1000 > Date.now()) { user = payload; }
           else { localStorage.removeItem('GalSol_token'); }
-       } catch(e) {}
-    }
-    
-    if(user) {
-        const actionsContainer = document.querySelector('.header-actions');
-        if(actionsContainer) {
-            const desktopLinks = actionsContainer.querySelectorAll('a.btn-ghost, a.btn-primary');
-            desktopLinks.forEach(l => l.style.display = 'none');
+        } catch (e) { }
+      }
 
-            const profileMenu = document.createElement('div');
-            profileMenu.className = 'profile-menu';
-            profileMenu.style.position = 'relative';
-            profileMenu.innerHTML = `
+      if (user) {
+        const actionsContainer = document.querySelector('.header-actions');
+        if (actionsContainer) {
+          const desktopLinks = actionsContainer.querySelectorAll('a.btn-ghost, a.btn-primary');
+          desktopLinks.forEach(l => l.style.display = 'none');
+
+          const profileMenu = document.createElement('div');
+          profileMenu.className = 'profile-menu';
+          profileMenu.style.position = 'relative';
+          profileMenu.innerHTML = `
                 <button class="profile-btn" id="landingProfileBtn" style="background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center;">
                    <img src="${user.picture || 'Images/GalSol Logo IC.svg'}" alt="Profile" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border-hi); background: var(--surface); padding: 2px;">
                 </button>
@@ -353,32 +856,33 @@ sections.forEach(s => observer.observe(s));
                    <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.href='login.html'" style="padding:10px; color:var(--text); font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Switch Account</a>
                    <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.reload()" style="padding:10px; color:#ff6b6b; font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Log Out</a>
                 </div>`;
-            
-            const hamburger = document.querySelector('.hamburger');
-            if(hamburger) {
-               actionsContainer.insertBefore(profileMenu, hamburger);
-            } else {
-               actionsContainer.appendChild(profileMenu);
-            }
 
-            const btn = profileMenu.querySelector('#landingProfileBtn');
-            const drop = profileMenu.querySelector('#landingProfileDropdown');
-            
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                drop.style.display = drop.style.display === 'none' ? 'flex' : 'none';
-            });
-            
-            document.addEventListener('click', () => { drop.style.display = 'none'; });
+          const hamburger = document.querySelector('.hamburger');
+          if (hamburger) {
+            actionsContainer.insertBefore(profileMenu, hamburger);
+          } else {
+            actionsContainer.appendChild(profileMenu);
+          }
 
-            drop.querySelectorAll('a').forEach(a => {
-               a.addEventListener('mouseenter', () => a.style.background = 'rgba(255,255,255,0.05)');
-               a.addEventListener('mouseleave', () => a.style.background = 'transparent');
-            });
+          const btn = profileMenu.querySelector('#landingProfileBtn');
+          const drop = profileMenu.querySelector('#landingProfileDropdown');
+
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            drop.style.display = drop.style.display === 'none' ? 'flex' : 'none';
+          });
+
+          document.addEventListener('click', () => { drop.style.display = 'none'; });
+
+          drop.querySelectorAll('a').forEach(a => {
+            a.addEventListener('mouseenter', () => a.style.background = 'rgba(255,255,255,0.05)');
+            a.addEventListener('mouseleave', () => a.style.background = 'transparent');
+          });
         }
-    }
-  
-  });
+      }
+
+    });
   </script>
 </body>
+
 </html>
