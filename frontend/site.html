@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="icon" href="Images/GalSol Logo IC.svg" type="image/svg+xml"/>
+  <link rel="icon" href="Images/GalSol Logo IC.svg" type="image/svg+xml" />
   <!-- Dynamic meta — updated by JS after config loads -->
   <title>Loading… — GalSol</title>
   <meta name="description" content="" />
@@ -28,11 +28,8 @@
      LOADING SCREEN
 ════════════════════════════════════════════════════════════════ -->
   <div class="ms-loading-screen" id="loadingScreen">
-    <div class="ms-loading-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-      </svg>
-    </div>
+    <img src="Images/GalSol Logo IC.svg" alt="GalSol Logo"
+      style="width: 42px; height: 42px; margin-bottom: 16px; opacity: 0.9;" />
     <div class="ms-loading-bar-wrap">
       <div class="ms-loading-bar"></div>
     </div>
@@ -46,16 +43,31 @@
   <main id="ms-content"></main>
 
   <!-- ════════════════════════════════════════════════════════════
-     FOOTER
+     FOOTER & DISCLAIMER
 ════════════════════════════════════════════════════════════════ -->
-  <footer class="ms-footer" id="msFooter" style="display:none;flex-wrap:nowrap;align-items:center;justify-content:center;gap:6px;white-space:nowrap">
+  <div id="siteDisclaimer"
+    style="display:none; text-align:center; padding: 40px 16px 0; font-size: 11.5px; color: var(--ms-footer-text, #6b7280); line-height: 1.6; max-width: 600px; margin: 0 auto;">
+    This content is neither created nor endorsed by GalSol.<br>
+    <a href="mailto:galsol.co@gmail.com?subject=Report%20Abuse:%20Mini%20Site"
+      style="text-decoration:underline;text-underline-offset:2px;color:inherit;transition:opacity 0.2s"
+      onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">Report Abuse</a> |
+    <a href="terms-of-service.html" target="_blank"
+      style="text-decoration:underline;text-underline-offset:2px;color:inherit;transition:opacity 0.2s"
+      onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">Terms of Service</a> |
+    <a href="privacy-policy.html" target="_blank"
+      style="text-decoration:underline;text-underline-offset:2px;color:inherit;transition:opacity 0.2s"
+      onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">Privacy Policy</a>
+  </div>
+
+  <footer class="ms-footer" id="msFooter"
+    style="display:none;flex-wrap:nowrap;align-items:center;justify-content:center;gap:6px;white-space:nowrap">
     <span>Built with</span>
     <svg viewBox="0 0 24 24" fill="#f43f5e" style="width:13px;height:13px">
       <path
         d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </svg>
     <span>on</span>
-    <a href="/index.html"><img src="Images/GalSol GWN.svg" alt="GalSol" class="ms-footer-logo"/></a>
+    <a href="/index.html"><img src="Images/GalSol GWN.svg" alt="GalSol" class="ms-footer-logo" /></a>
     <div class="ms-footer-dot"></div>
     <a href="/mini-site.html">Create your own event page</a>
   </footer>
@@ -274,6 +286,8 @@
     function showChrome(siteData) {
       const footer = document.getElementById('msFooter');
       if (footer) footer.style.display = 'flex';
+      const disclaimer = document.getElementById('siteDisclaimer');
+      if (disclaimer) disclaimer.style.display = 'block';
     }
 
     /* ════════════════════════════════════════════════════════════════
