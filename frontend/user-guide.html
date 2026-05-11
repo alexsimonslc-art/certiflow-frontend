@@ -762,10 +762,90 @@
   <li>The exported file includes all table metrics along with exact timestamps and backup sheet links.</li>
 </ul>
 </div>
-      <div id="entry-pass" class="guide-section">
-        <h1>Entry Pass System Guide</h1>
-        <p>Entry Pass features are integrated directly within the GS Forms and Mini Site Builder. Please refer to those guides for complete details on creating and scanning digital entry passes.</p>
-      </div>
+      
+        <div id="entry-pass" class="guide-section">
+          <h1>🎟️ Entry Pass System: The Complete User Guide</h1>
+          <p>The GalSol Entry Pass system is a complete end-to-end ticketing and access control solution. It bridges two tools: GS Forms (where you design and issue the passes) and the GS Database (where you manage attendees and provide your staff with scanning tools).</p>
+          <p>Follow this guide to set up your event ticketing, equip your door staff, and manage live access.</p>
+
+          <h2 style="margin-top:40px;">Part 1: Designing & Issuing Passes (in GS Forms)</h2>
+          <p>Turn any standard registration form into a fully functional ticketing portal in just a few clicks.</p>
+          
+          <h3>Step 1: Add the Entry Pass Field</h3>
+          <ol>
+            <li>Open your event registration form in the GS Forms Builder.</li>
+            <li>On the Left Panel, scroll down to the "Specialty Fields" section and click <strong>Entry Pass</strong>.</li>
+            <li>This automatically enables ticketing for your form.</li>
+          </ol>
+
+          <h3>Step 2: Customize the Pass Design</h3>
+          <ol>
+            <li>Look at the top of your center canvas and click the <strong>Pass</strong> toggle (switching away from the standard 'Form' view). This reveals the live preview of what your attendees will receive.</li>
+            <li>Click the pass on the canvas to open the Right Panel Settings.</li>
+            <li><strong>Styling:</strong> Customize the Banner Color and Text Color to match your event's branding. You can also adjust the scale of the QR Code Size.</li>
+            <li><strong>Event Details:</strong> Fill in the essential information that will appear on the pass, including the Venue Name, Date, Time, and any specific Entry Rules (e.g., "Doors close at 8 PM. Please bring valid ID.").</li>
+          </ol>
+
+          <h3>Step 3: Automated Delivery</h3>
+          <p>You don't need to manually email tickets! As soon as you publish your form, the system handles the rest.</p>
+          <ul>
+            <li>When a respondent successfully submits the form, they instantly receive a beautifully formatted digital Entry Pass pop-up.</li>
+            <li>This pass contains their Name, a secure QR Code, a Unique Pass Token, and a button to download/save the pass to their device.</li>
+          </ul>
+
+          <h2 style="margin-top:40px;">Part 2: Scanning at the Door</h2>
+          <p>Equip your event staff with a secure, mobile-friendly QR scanner—no app downloads required.</p>
+          
+          <h3>Step 1: Generate the Scanner Link</h3>
+          <ol>
+            <li>While still in the GS Forms Builder, look at the top-right toolbar and click the <strong>Scanner</strong> button.</li>
+            <li>The system will generate a secure Scanner Link and a unique Access Code.</li>
+          </ol>
+
+          <h3>Step 2: Equip Your Staff</h3>
+          <ol>
+            <li>Share the link and the Access Code with your door staff or volunteers.</li>
+            <li>Staff members simply open the link on their mobile phone's web browser and enter the Access Code to log in.</li>
+            <li>The web app will request camera permissions. Once granted, they can instantly start scanning attendee QR codes at the gate.</li>
+            <li>The scanner provides instant, color-coded feedback:
+              <ul>
+                <li><strong>Green (Admitted):</strong> Ticket is valid and successfully checked in.</li>
+                <li><strong>Red (Blocked/Invalid):</strong> Ticket is either fake, already scanned, or manually blocked by the organizer.</li>
+              </ul>
+            </li>
+          </ol>
+
+          <h2 style="margin-top:40px;">Part 3: Live Management & Access Control (in GS Database)</h2>
+          <p>Monitor your event's capacity and handle ticketing disputes in real-time from your centralized dashboard.</p>
+          
+          <h3>Step 1: Access the Manage Passes Tab</h3>
+          <ol>
+            <li>Open the GS Database tool from your main GalSol Dashboard.</li>
+            <li>Click on your specific event form to open its data view.</li>
+            <li>At the top of the workspace, click the <strong>Manage Passes</strong> tab.</li>
+          </ol>
+
+          <h3>Step 2: Monitor Live Stats</h3>
+          <p>At the top of the Manage Passes tab, you'll see real-time Hero Stats updating as your staff scans tickets:</p>
+          <ul>
+            <li><strong>Pending (Valid):</strong> Passes that have been issued but haven't arrived at the door yet.</li>
+            <li><strong>Admitted:</strong> The total number of attendees currently checked in.</li>
+            <li><strong>Blocked:</strong> Passes that have been manually denied entry.</li>
+          </ul>
+
+          <h3>Step 3: Search & Filter Attendees</h3>
+          <ul>
+            <li>If an attendee forgets their QR code, use the Search Bar to look them up by Name, Email, or Pass Token.</li>
+            <li>The table tracks the exact moment their pass was generated, their current status, their exact check-in time, and which staff member scanned them in.</li>
+          </ul>
+
+          <h3>Step 4: Block or Unblock Access</h3>
+          <p>You have full control over who gets into your event.</p>
+          <ul>
+            <li><strong>Revoking Entry:</strong> If a guest cancels, requests a refund, or violates policies, locate their row in the table and click the red <strong>Block</strong> button. A confirmation modal will appear. Once blocked, if they try to scan their QR code at the door, the staff scanner will flash red and deny them entry.</li>
+            <li><strong>Restoring Entry:</strong> If a block was made in error or an issue is resolved, locate the blocked pass and click the green <strong>Unblock</strong> button to instantly restore their gate access.</li>
+          </ul>
+        </div>
 </main>
 
   </div>
