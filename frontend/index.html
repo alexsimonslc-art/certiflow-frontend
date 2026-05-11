@@ -268,7 +268,7 @@ section{padding:110px 0;}
 /* ── PASS SLIDESHOW ── */
 .pass-show{border-radius:16px;border:1px solid var(--border-hi);background:rgba(6,10,20,.7);overflow:hidden;backdrop-filter:blur(6px);}
 .pass-slides-wrap{overflow:hidden;}
-.pass-slides{display:flex;transition:transform .42s cubic-bezier(.4,0,.2,1);}
+.pass-slides{display:flex;transition:transform .28s cubic-bezier(.4,0,.2,1);}
 .ps-slide{min-width:100%;padding:22px 24px 18px;}
 .ps-header{display:flex;align-items:center;gap:9px;margin-bottom:16px;}
 .ps-chip{font-family:var(--font-d);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;border-radius:100px;padding:3px 10px;}
@@ -322,6 +322,13 @@ section{padding:110px 0;}
 .pass-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s,width .3s,border-radius .3s;cursor:pointer;}
 .pass-dot.active{background:var(--cyan);width:16px;border-radius:3px;}
 
+/* ── DASHBOARD SLIDESHOW ── */
+.dash-show{display:flex;flex-direction:column;}
+.dash-slides-wrap{overflow:hidden;}
+.dash-slides{display:flex;transition:transform .28s cubic-bezier(.4,0,.2,1);}
+.dash-slide{min-width:100%;display:block;}
+.dash-slide img{width:100%;display:block;object-fit:cover;}
+
 /* ── GAL AI ── */
 @property --aib1{syntax:'<color>';inherits:false;initial-value:#7F3FEE;}
 @property --aib2{syntax:'<color>';inherits:false;initial-value:#0ECDFE;}
@@ -337,9 +344,8 @@ section{padding:110px 0;}
 .ai-inner{position:relative;z-index:1;}
 .ai-brand-wrap{text-align:center;margin-bottom:60px;}
 .ai-name-row{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:14px;}
-.ai-brand-logo{width:clamp(44px,5vw,60px);height:clamp(44px,5vw,60px);object-fit:contain;filter:drop-shadow(0 0 18px rgba(14,205,254,.55)) drop-shadow(0 0 36px rgba(127,63,238,.4));}
-.ai-brand-name{font-family:var(--font-d);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:700;letter-spacing:-.04em;line-height:1;}
-.ai-brand-name{font-family:var(--font-d);font-size:clamp(3.5rem,7vw,6rem);font-weight:800;letter-spacing:-.04em;line-height:1;margin-bottom:12px;}
+.ai-brand-logo{width:clamp(56px,6.5vw,76px);height:clamp(56px,6.5vw,76px);object-fit:contain;filter:drop-shadow(0 0 18px rgba(14,205,254,.55)) drop-shadow(0 0 36px rgba(127,63,238,.4));}
+.ai-brand-name{font-family:var(--font-d);font-size:clamp(3.5rem,7vw,6rem);font-weight:600;letter-spacing:-.04em;line-height:1;margin-bottom:12px;}
 .ai-brand-sub{font-size:1rem;color:var(--text-muted);max-width:480px;margin:0 auto;}
 
 .ai-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:48px;}
@@ -672,7 +678,7 @@ section{padding:110px 0;}
       <div class="tool-mock">
         <div class="mock-frame">
           <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">galsol.app/e/annual-day-2026</div></div>
-          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Mini Site Preview</span></div></div>
+          <div class="mock-screen"><img src="Images/minisite.webp" alt="Mini Site" loading="lazy"></div>
         </div>
       </div>
     </div>
@@ -696,7 +702,7 @@ section{padding:110px 0;}
       <div class="tool-mock">
         <div class="mock-frame">
           <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">GS Forms — Workspace</div></div>
-          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>GS Forms Preview</span></div></div>
+          <div class="mock-screen"><img src="Images/forms.webp" alt="GS Forms" loading="lazy"></div>
         </div>
       </div>
     </div>
@@ -719,8 +725,25 @@ section{padding:110px 0;}
       </div>
       <div class="tool-mock">
         <div class="mock-frame">
-          <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">GalSol — Dashboard</div></div>
-          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Dashboard Preview</span></div></div>
+          <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar" id="dashUrlBar">GalSol — Dashboard</div></div>
+          <div class="mock-screen" style="padding:0;min-height:unset;display:block;background:transparent;">
+            <div class="dash-show">
+              <div class="dash-slides-wrap">
+                <div class="dash-slides" id="dashSlides">
+                  <div class="dash-slide"><img src="Images/dashboard.webp" alt="Dashboard" loading="lazy"></div>
+                  <div class="dash-slide"><img src="Images/database.webp" alt="Database" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="pass-nav">
+                <button class="pass-nav-btn" id="dashPrev" aria-label="Previous"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
+                <div class="pass-dots" id="dashDots">
+                  <span class="pass-dot active" data-idx="0"></span>
+                  <span class="pass-dot" data-idx="1"></span>
+                </div>
+                <button class="pass-nav-btn" id="dashNext" aria-label="Next"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -746,56 +769,22 @@ section{padding:110px 0;}
         <div class="pass-show" id="passShow">
           <div class="pass-slides-wrap">
             <div class="pass-slides" id="passSlides">
-              <!-- Slide 1: Customize Pass -->
-              <div class="ps-slide">
+              <!-- Slide 1: Pass Editor -->
+              <div class="ps-slide ps-img-slide">
                 <div class="ps-header"><span class="ps-chip ps-chip-cyan">GS Forms</span><span class="ps-label">Customize Your Pass</span></div>
-                <div class="ps-pass-card">
-                  <div class="ps-pass-top"><div class="ps-pass-event">Annual Tech Fest 2026</div><div class="ps-pass-badge">Attendee</div></div>
-                  <div class="ps-pass-name">Arjun Mehta</div>
-                  <div class="ps-pass-meta">Hall A &middot; Session 2</div>
-                  <div class="ps-pass-bottom">
-                    <div class="ps-qr-box">
-                      <div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div>
-                      <div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div>
-                      <div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div>
-                      <div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div>
-                      <div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div>
-                    </div>
-                    <div class="ps-pass-id">REG · 2026 · 0042</div>
-                  </div>
-                </div>
-                <p class="ps-caption">Pass generated automatically on every form submission</p>
+                <div class="ps-img-wrap"><img src="Images/passeditor.webp" alt="Pass Editor" loading="lazy" class="ps-slide-img"></div>
+                <p class="ps-caption">Pass auto-generated on every registration — design it your way</p>
               </div>
               <!-- Slide 2: Scanner -->
-              <div class="ps-slide">
+              <div class="ps-slide ps-img-slide">
                 <div class="ps-header"><span class="ps-chip ps-chip-violet">Scanner</span><span class="ps-label">Check-In at the Door</span></div>
-                <div class="ps-phone-wrap">
-                  <div class="ps-phone">
-                    <div class="ps-phone-screen">
-                      <div class="ps-scan-frame">
-                        <div class="ps-scan-corner tl"></div><div class="ps-scan-corner tr"></div>
-                        <div class="ps-scan-corner bl"></div><div class="ps-scan-corner br"></div>
-                        <div class="ps-scan-line"></div>
-                      </div>
-                      <div class="ps-scan-stats">
-                        <span class="ps-stat-pill admitted">42 Admitted</span>
-                        <span class="ps-stat-pill pending">8 Pending</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <p class="ps-caption">Share a secure link &amp; event code with your check-in team — works on any phone, no app needed</p>
+                <div class="ps-img-wrap"><img src="Images/scanner.webp" alt="Scanner" loading="lazy" class="ps-slide-img"></div>
+                <p class="ps-caption">Share a secure link &amp; event code with your team — any phone, no app</p>
               </div>
-              <!-- Slide 3: Database -->
-              <div class="ps-slide">
+              <!-- Slide 3: Manage Passes -->
+              <div class="ps-slide ps-img-slide">
                 <div class="ps-header"><span class="ps-chip ps-chip-green">Database</span><span class="ps-label">Manage &amp; Track Passes</span></div>
-                <div class="ps-db-list">
-                  <div class="ps-db-row"><div class="ps-db-name">Arjun Mehta</div><div class="ps-db-status admitted">Admitted</div></div>
-                  <div class="ps-db-row"><div class="ps-db-name">Priya Sharma</div><div class="ps-db-status admitted">Admitted</div></div>
-                  <div class="ps-db-row"><div class="ps-db-name">Kiran Rao</div><div class="ps-db-status pending">Pending</div></div>
-                  <div class="ps-db-row"><div class="ps-db-name">Meera Iyer</div><div class="ps-db-status blocked">Blocked</div></div>
-                  <div class="ps-db-row"><div class="ps-db-name">Rahul Singh</div><div class="ps-db-status admitted">Admitted</div></div>
-                </div>
+                <div class="ps-img-wrap"><img src="Images/MPasses.webp" alt="Manage Passes" loading="lazy" class="ps-slide-img"></div>
                 <p class="ps-caption">Search, filter, and export all attendance data from the Database tool</p>
               </div>
             </div>
@@ -833,7 +822,7 @@ section{padding:110px 0;}
       <div class="tool-mock">
         <div class="mock-frame">
           <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">Certificate Generator</div></div>
-          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Certificate Generator Preview</span></div></div>
+          <div class="mock-screen"><img src="Images/certificate.webp" alt="Certificate Generator" loading="lazy"></div>
         </div>
       </div>
     </div>
@@ -857,7 +846,7 @@ section{padding:110px 0;}
       <div class="tool-mock">
         <div class="mock-frame">
           <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">Bulk Mailer</div></div>
-          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Bulk Mailer Preview</span></div></div>
+          <div class="mock-screen"><img src="Images/mail.webp" alt="Bulk Mailer" loading="lazy"></div>
         </div>
       </div>
     </div>
@@ -1340,7 +1329,7 @@ document.querySelectorAll('[data-reveal], .pricing-card, .how-step, .privacy-ite
   }
   function startAuto() {
     clearInterval(timer);
-    timer = setInterval(function() { goTo(cur + 1); }, 4000);
+    timer = setInterval(function() { goTo(cur + 1); }, 2500);
   }
   prev.addEventListener('click', function() { goTo(cur - 1); startAuto(); });
   next.addEventListener('click', function() { goTo(cur + 1); startAuto(); });
@@ -1353,6 +1342,37 @@ document.querySelectorAll('[data-reveal], .pricing-card, .how-step, .privacy-ite
   startAuto();
 })();
 
+// ── DASHBOARD SLIDESHOW ──
+(function() {
+  var slides = document.getElementById('dashSlides');
+  var dotsEl = document.getElementById('dashDots');
+  var prev = document.getElementById('dashPrev');
+  var next = document.getElementById('dashNext');
+  var urlBar = document.getElementById('dashUrlBar');
+  if (!slides || !prev || !next) return;
+  var dots = dotsEl ? Array.from(dotsEl.querySelectorAll('.pass-dot')) : [];
+  var labels = ['GalSol — Dashboard', 'GalSol — Database'];
+  var cur = 0, total = 2, timer;
+  function goTo(idx) {
+    cur = (idx + total) % total;
+    slides.style.transform = 'translateX(-' + (cur * 100) + '%)';
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === cur); });
+    if (urlBar) urlBar.textContent = labels[cur] || labels[0];
+  }
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(function() { goTo(cur + 1); }, 2500);
+  }
+  prev.addEventListener('click', function() { goTo(cur - 1); startAuto(); });
+  next.addEventListener('click', function() { goTo(cur + 1); startAuto(); });
+  dots.forEach(function(d) { d.addEventListener('click', function() { goTo(+d.dataset.idx); startAuto(); }); });
+  var showEl = slides.closest('.dash-show');
+  if (showEl) {
+    showEl.addEventListener('mouseenter', function() { clearInterval(timer); });
+    showEl.addEventListener('mouseleave', startAuto);
+  }
+  startAuto();
+})();
 
 // ── GAL AI TYPEWRITER (single line) ──
 (function() {
