@@ -388,465 +388,617 @@
 
     <!-- CONTENT -->
     <main class="content-area">
-<div id="cert-generator" class="guide-section active">
-  <h1>Certificate Generator: The Complete User Guide</h1>
-<p>Transform your participant data into professional, high-quality PDF certificates in minutes. Follow this guide to master the visual editor, data mapping, and bulk generation features.</p>
-<h2>Step 1: Connect Your Participant Data</h2>
-<p>The journey begins by providing the list of people who will receive the certificates. GalSol supports four flexible data sources:</p>
-<ul>
-  <li>Google Sheets: Paste your Sheet ID (the long string in your spreadsheet URL) to pull live data directly from your Google Drive.</li>
-  <li>File Upload: Drag and drop your existing .csv, .xlsx, or .xls files.</li>
-  <li>GS Form: Import responses directly from your published GalSol Forms that have at least one submission.</li>
-  <li>Manual Entry: Type recipient details directly into a built-in table. You can add custom columns (like "Rank" or "Score") on the fly.</li>
-</ul>
-<h2>Step 2: Visual Template Designer</h2>
-<p>Design your certificate without ever leaving the browser. This Canva-like editor allows you to create a professional layout with zero coding.</p>
-<ul>
-  <li>Set the Canvas: Choose from industry standards like A4 Landscape, A4 Portrait, or HD 16:9.</li>
-  <li>Background Options: Upload your own high-resolution branding image (PNG/JPG) or select a solid background color.</li>
-  <li>Adding Dynamic Fields: Click "+ Add Field" to place placeholder tags like {{name}} or {{date}}.</li>
-  <li>Pro Styling Tools:</li>
-  <li>Typography: Select from premium font families (Sans, Serif, or Calligraphy) and adjust size, bold/italic, and letter spacing.</li>
-  <li>Precision Positioning: Drag fields freely or use X/Y percentage inputs for pixel-perfect alignment.</li>
-  <li>Rotation: Use the rotation handle to tilt text for artistic layouts.</li>
-</ul>
-<h2>Step 3: Field Mapping & Naming</h2>
-<p>Tell the system which column in your data matches which placeholder on your design.</p>
-<ul>
-  <li>Link Data to Design: Match your {{name}} tag to the "Participant Name" column in your sheet.</li>
-  <li>The Primary Field: Star (★) one field as Primary. This field is used to name your PDF files (e.g., Alex_Simon_01.pdf).</li>
-  <li>Custom Naming: Add an optional event prefix to your filenames for better organization.</li>
-  <li>Google Sheets Write-back: If using Google Sheets, enable this to have the system automatically write the unique Google Drive Link for each certificate back into your original spreadsheet.</li>
-</ul>
-<h2>Step 4: Preview & Quality Check</h2>
-<p>Before generating hundreds of files, use the Certificate Preview tool.</p>
-<ul>
-  <li>Live Flip-through: Navigate through your actual participant data to see how long names or different data points look on the final design.</li>
-  <li>Generation Summary: Review the total participant count and estimated total file size to ensure everything is correct.</li>
-</ul>
-<h2>Step 5: Bulk Generation</h2>
-<p>Click Generate to start the engine.</p>
-<ul>
-  <li>Real-time Tracking: Watch the progress bar and activity log as GalSol creates each PDF and uploads it to your Google Drive.</li>
-  <li>Safety First: The tool uses your own Google OAuth token, meaning your data stays private and never passes through external servers.</li>
-</ul>
-<h2>Step 6: Accessing Results</h2>
-<p>Once complete, you have instant access to your certificates.</p>
-<ul>
-  <li>Instant Links: A results table provides "Open PDF" links for every successful generation.</li>
-  <li>Export Data: Download a final Excel report containing all participant details along with their corresponding certificate links.</li>
-  <li>Campaign History: All runs are saved to your local dashboard so you can track your total certificates generated over time.</li>
-</ul>
-<p>Pro Tips for GalSol Users:</p>
-<ul>
-  <li>Keyboard Shortcuts: Use Ctrl + and Ctrl - to zoom the canvas, and Arrow Keys for fine-tuned text movement.</li>
-  <li>Duplicate Feature: Quickly copy a field’s styling by selecting it and clicking the Duplicate icon in the action bar.</li>
-  <li>Sanitization: The system automatically cleans filenames to ensure they are compatible with all operating systems.</li>
-</ul>
-</div>
-<div id="bulk-mailer" class="guide-section">
-  <h1>Bulk Mailer: The Complete User Guide</h1>
-<p>Personalize and send hundreds of professional emails directly from your own account. Use this guide to master data connection, template building, and secure dispatch.</p>
-<h2>Step 1: Connect Your Recipient Data</h2>
-<p>Start by importing the list of people you want to contact. The Bulk Mailer supports four primary data sources:</p>
-<ul>
-  <li>Google Sheets: Paste your Sheet ID to pull live recipient data.</li>
-  <li>File Upload: Drag and drop .csv, .xlsx, or .xls files directly into the tool.</li>
-  <li>GS Form: Import responses from your published GalSol Forms to turn them into an email list.</li>
-  <li>Manual Entry: Type your recipients into the built-in table. GalSol defaults to Name and Email columns, but you can add custom columns for more personalization.</li>
-</ul>
-<h2>Step 2: Compose Your Template (Visual & HTML Modes)</h2>
-<p>GalSol provides two distinct ways to build your message, ensuring both ease of use for beginners and full creative control for advanced users.</p>
-<p>Option A: Visual Rich Text Editor</p>
-<p>The visual editor works like a standard word processor, allowing you to design your email without touching a single line of code.</p>
-<ul>
-  <li>Intuitive Toolbar: Apply formatting such as bold, italics, and underlined text instantly.</li>
-  <li>Lists & Links: Organize information with bulleted or numbered lists and embed hyperlinks to external resources.</li>
-  <li>Real-time Styling: See exactly how your text looks as you type it.</li>
-</ul>
-<p>Option B: Professional HTML Editor</p>
-<p>For users who need custom branding, complex layouts, or specialized CSS, the tool includes a dedicated HTML mode.</p>
-<ul>
-  <li>Direct Code Entry: Switch to the HTML view to paste or write raw source code for your email.</li>
-  <li>Complete Layout Control: Use HTML tables, inline styles, and advanced formatting that standard visual editors might restrict.</li>
-  <li>Hybrid Workflow: You can start your design in the Visual Editor and switch to HTML to fine-tune the underlying code.</li>
-</ul>
-<p>Shared Composition Features</p>
-<p>Regardless of which editor mode you choose, you have access to these core features:</p>
-<ul>
-  <li>Personalization Tags: Insert dynamic placeholders like {{Name}} or {{Company}} anywhere in the subject line or email body to tailor each message to the recipient.</li>
-  <li>Subject & From Name: Define a clear subject line and a personalized "From" name to increase open rates.</li>
-  <li>Universal Attachments: Drag and drop files to attach them to every email in the campaign (supports files up to 25MB).</li>
-</ul>
-<h2>Step 3: Field Mapping</h2>
-<p>Ensure the tool knows where to find the essential information in your data.</p>
-<ul>
-  <li>Email Column: Select which column in your data contains the recipient's email address.</li>
-  <li>Name Column: Select the column containing the recipient's name.</li>
-  <li>Dynamic Placeholders: Verify that the placeholders you used in Step 2 match the column headers in your imported data.</li>
-</ul>
-<h2>Step 4: Preview & Test</h2>
-<p>Avoid mistakes by reviewing your email exactly as your recipients will see it.</p>
-<ul>
-  <li>Live Preview: Toggle through your actual data list to see how the placeholders populate for different recipients.</li>
-  <li>Send Test Mail: Send a single copy of the email to your own address to check formatting and attachments before starting the full batch.</li>
-</ul>
-<h2>Step 5: Sending & Tracking</h2>
-<p>Dispatch your campaign with real-time status updates.</p>
-<ul>
-  <li>Bulk Dispatch: Once you click "Start Sending," GalSol processes the emails through your own Google Mail (SMTP) connection.</li>
-  <li>Real-time Log: Monitor the activity log to see successful sends and any errors (such as invalid email addresses) as they happen.</li>
-  <li>Safe Throttling: The tool includes built-in delays between emails to help maintain your sender reputation and comply with provider limits.</li>
-</ul>
-<h2>Step 6: Completion Report</h2>
-<p>Analyze the results of your campaign.</p>
-<ul>
-  <li>Success Stats: View a breakdown of total recipients, successful deliveries, and failures.</li>
-  <li>Export Logs: Download an Excel report containing your recipient list and the final status of every email sent.</li>
-  <li>Database Backup: Your campaign details and status are automatically backed up to your GalSol account for future reference.</li>
-</ul>
-<p>Pro Tips for GalSol Mailer Users:</p>
-<ul>
-  <li>Data Integrity: Always ensure your "Email" column contains valid email formats to prevent delivery failures.</li>
-  <li>Privacy First: GalSol uses your own Google OAuth token; your email content and recipient data are never stored on external servers.</li>
-  <li>Clean Restart: Use the "New Campaign" button to clear all current data and logs when starting a fresh mailing project.</li>
-</ul>
-</div>
-<div id="combined-pipeline" class="guide-section">
-  <h1>Combined Pipeline: The Complete User Guide</h1>
-<p>The Combined Pipeline is GalSol’s most powerful feature. It allows you to design a certificate, connect your participant data, build a personalized email, and launch the entire automated delivery workflow in one seamless process.</p>
-<h2>Step 1: Campaign Setup & Data Connection</h2>
-<p>Start by naming your campaign and importing the list of participants.</p>
-<ul>
-  <li>Campaign Name: Give your project a clear name (e.g., "React Bootcamp 2025"). This is used for your internal tracking.</li>
-  <li>Participant Data Source: Choose how to import your recipients:</li>
-  <li>Google Sheets: Paste your Sheet ID to pull live data. (This method enables the Write-back feature in Step 3).</li>
-  <li>Upload File: Drag and drop .csv, .xlsx, or .xls files.</li>
-  <li>Manual Entry: Type recipient details directly into the built-in table. Add custom columns as needed.</li>
-  <li>GS Form: Directly import historical responses from your published GalSol Forms.</li>
-</ul>
-<h2>Step 2: Visual Certificate Designer</h2>
-<p>Design the certificate that will be attached to your emails.</p>
-<ul>
-  <li>Set the Canvas: Choose your dimensions (A4 Landscape, A4 Portrait, HD 16:9, or Wide).</li>
-  <li>Background: Upload a high-resolution base image or select a solid background color.</li>
-  <li>Add Fields: Click "+ Add Field" to place dynamic text blocks (like {{name}} or {{course}}).</li>
-  <li>Design & Style: Click any field on the canvas to open its properties. You can adjust the font family, size, color, letter spacing, and alignment.</li>
-  <li>Set Primary Field: You must star (★) one field as Primary (usually the participant's name). This dictates the filename of the generated PDF.</li>
-</ul>
-<h2>Step 3: Field Mapping & Output Configuration</h2>
-<p>Tell the system how to merge your data with your designs.</p>
-<ul>
-  <li>Email Delivery Mapping: Select which column from your data contains the participants' email addresses.</li>
-  <li>Certificate Mappings: Match every {{placeholder}} on your certificate canvas to the correct column in your data source.</li>
-  <li>Output File Naming: Define how the PDFs will be named. You can add an optional Event Prefix (e.g., Alex_ReactBootcamp_01.pdf).</li>
-  <li>Google Sheets Write-back: Available only if you connected a Google Sheet in Step 1. Enable this to have the system automatically create a "Certificate Link" column in your spreadsheet and populate it with the Google Drive URL of every generated PDF.</li>
-</ul>
-<h2>Step 4: Email Template Designer</h2>
-<p>Compose the message that will deliver the certificate. This step features a powerful builder and built-in AI assistance.</p>
-<ul>
-  <li>Choose a Starting Template: Pick a pre-built layout (Welcome, Promotional, Newsletter), start from a Blank Canvas, or select "Paste Code" to write raw HTML.</li>
-  <li>Subject & Tags: Enter your subject line. Use the Insert Tag bar to easily drop in placeholders. The most important tag is {{Certificate Link}} — this dynamically inserts the URL to the participant's newly generated PDF.</li>
-  <li>Visual Editor: Drag and drop layout blocks like Logos, Headings, Text, Buttons, Images, Dividers, and Social Links. Click any block to edit its properties (colors, padding, links) in the right-hand panel.</li>
-  <li>Gal AI Assistant: Click the Gal AI button to open the intelligent assistant. You can ask the AI to write your email copy, suggest subject lines, or even generate specific HTML blocks for you.</li>
-  <li>Live Preview: Toggle to the Preview tab to see how your email looks on Desktop and Mobile devices using real data from your first participant.</li>
-</ul>
-<h2>Step 5: Review & Quality Check</h2>
-<p>Before pushing the launch button, do a final review.</p>
-<ul>
-  <li>Dual Preview: Flip through your actual participant list to see side-by-side previews of their personalized Certificate and their personalized Email.</li>
-  <li>Configuration Summary: Verify your data source, field mappings, total recipient count, and estimated Google Drive storage size.</li>
-</ul>
-<h2>Step 6: Launch & Track Results</h2>
-<p>Start the engine and watch your campaign execute in real-time.</p>
-<ul>
-  <li>Live Dashboard: Click "Launch Delivery Pipeline". The system will display a live progress ring and an activity log.</li>
-  <li>The Process: GalSol systematically generates each PDF, uploads it securely to your Google Drive, and instantly dispatches the personalized email via your Gmail account.</li>
-  <li>Delivery Report: Once finished, view the final success/failure table. You can click "Open PDF" to verify the files or click Export Excel to download a full CSV report of the delivery status for your records.</li>
-</ul>
-<p>Pro Tips for the Combined Pipeline:</p>
-<ul>
-  <li>The Golden Tag: Always ensure you include the {{Certificate Link}} tag in your email body or attach it to a Button block so recipients can actually access their files!</li>
-  <li>Safe Testing: If it's your first time running a large batch, try running a "Manual Entry" test with just your own email address to see the final flow in action.</li>
-  <li>HTML Pro-Mode: In the Email Designer, you can switch to the "Code" tab at any time to fine-tune the HTML generated by the visual blocks.</li>
-</ul>
-</div>
-<div id="mini-site" class="guide-section">
-  <h1>Mini Site Builder: The Complete User Guide</h1>
-<p>Create stunning, mobile-responsive event websites in minutes. The GalSol Mini Site Builder is a no-code visual editor that combines drag-and-drop design with powerful registration and ticketing tools.</p>
-<h2>Step 1: Initial Site Configuration</h2>
-<p>Before adding content, set the foundational look and feel of your site using the Site Settings tab on the right panel.</p>
-<ul>
-  <li>Prebuilt Themes: Choose from dozens of one-click professional themes. Options are split into Dark Themes (e.g., Midnight Pulse, Emerald City) and Light Themes (e.g., Clean White, Ocean Mist). Applying a theme instantly updates your colors and fonts.</li>
-  <li>Colors: Set your global Accent Color (used for buttons, links, and highlights) and Background Color.</li>
-  <li>Typography: Choose from curated Paired Fonts designed for perfect readability (e.g., Noir Cinema, Contemporary, Wedding Belle). Or, use Custom Fonts to independently set your Title and Content fonts from the premium Google Fonts library.</li>
-  <li>Site URL Slug: Type a unique name (e.g., my-event-2026) into the Site Info section. This will become your public GalSol URL.</li>
-</ul>
-<h2>Step 2: Building Your Layout (Adding Blocks)</h2>
-<p>Use the Add Blocks tab on the left panel to construct your site. Click any block to instantly add it to your canvas.</p>
-<p>Structure Blocks:</p>
-<ul>
-  <li>Cover / Hero: The striking top section of your site. Supports a background image/color, a dark/blur overlay, a customizable logo, Event Name, and Tagline.</li>
-  <li>About: A clean text block for your event description.</li>
-  <li>Announcements: A bulletin-board style block to display pinned updates.</li>
-</ul>
-<p>Event Info Blocks:</p>
-<ul>
-  <li>Date & Venue: Displays three smart cards indicating Date, Time (with timezone), and Location. Adapts automatically for "In-Person" (Google Maps) or "Online" (Meeting Link) events.</li>
-  <li>Speakers / Team: Showcase your guests with photos, names, roles, and bios. Formats as a swipeable carousel or a vertical list based on settings.</li>
-  <li>FAQ: An interactive, collapsible accordion for Frequently Asked Questions.</li>
-  <li>Sponsors: Display partner logos organized by tiered sizes (Platinum, Gold, Silver).</li>
-</ul>
-<p>Engagement Blocks:</p>
-<ul>
-  <li>Registration Form: The most powerful block. Embed a registration portal directly into your site (Detailed in Step 4).</li>
-  <li>Document Links: Provide downloadable resources like Rulebooks or Agendas.</li>
-  <li>Video: Embed up to two promotional YouTube videos or Google Drive video links.</li>
-  <li>Social Links: Add clickable icons for your Instagram, X/Twitter, LinkedIn, YouTube, Discord, WhatsApp, and more.</li>
-</ul>
-<h2>Step 3: Editing Blocks & Layers</h2>
-<ul>
-  <li>Editing Content: Click any block on your canvas. The right panel will switch to the Block tab, revealing all customizable properties for that specific block.</li>
-  <li>Layers Management: Switch to the Layers tab on the left panel to view a list of all your active blocks.</li>
-  <li>Reordering & Deleting: Use the floating action menu on the top right of any selected block to Move Up, Move Down, Duplicate, or Delete it.</li>
-</ul>
-<h2>Step 4: The Registration Engine & Entry Passes</h2>
-<p>The Registration Form block turns your informational site into a functional event portal.</p>
-<ul>
-  <li>Connection Types:</li>
-  <li>External URL: Paste a link to a Typeform, Google Form, or Jotform to create a simple "Register Now" button that redirects users.</li>
-  <li>GS Forms (Native): Select any of your published GalSol Forms. This embeds the form directly into your Mini Site for a seamless user experience.</li>
-  <li>Registration Toggle: You can easily close sign-ups by toggling "Registrations Open" off. The site will instantly replace the form with a polite "Registrations Closed" message.</li>
-  <li>Digital Entry Passes: If your connected GS Form has the "Pass" feature enabled, visitors who successfully submit the form will instantly receive a beautifully generated Digital Entry Pass pop-up, containing a secure QR code for gate check-in.</li>
-</ul>
-<h2>Step 5: Gal AI Design Assistant (Pro Feature)</h2>
-<p>Need help designing? Click the glowing Gal AI tab at the bottom of the screen.</p>
-<ul>
-  <li>Chat Interface: Tell the AI what you want (e.g., "Design a sleek speaker section", or "Change the theme to Dark Cyberpunk").</li>
-  <li>Smart Generation: Gal AI can write copy, configure block properties, or even generate the entire webpage layout from scratch based on a single prompt.</li>
-</ul>
-<h2>Step 6: Previewing & Analytics</h2>
-<p>Ensure your site is perfect before going live.</p>
-<ul>
-  <li>Device Preview: Use the top bar toggle to switch between Desktop mode and an interactive Mobile Phone simulator.</li>
-  <li>Google Analytics: Click the "Analytics" button in the top bar to connect your free GA4 Measurement ID (G-XXXXXXXXXX). This allows you to track visitor traffic privately in your own Google account.</li>
-</ul>
-<h2>Step 7: Publishing</h2>
-<p>When you are ready to launch, click the Publish button in the top right.</p>
-<ul>
-  <li>Live URL: The system will confirm your custom slug and provide your public, shareable link.</li>
-  <li>Database Setup: If using a native GS Form, publishing automatically secures the connection so all visitor registrations pipe directly into your connected Google Sheet and database.</li>
-  <li>Live Updates: Need to make a change after launching? Just edit the canvas and click Update Site. Changes are pushed to your live link instantly.</li>
-</ul>
-</div>
-<div id="gs-forms" class="guide-section">
-  <h1>GS Forms: The Complete User Guide</h1>
-<p>GS Forms is a powerful, drag-and-drop form builder designed for modern data collection. Whether you need a simple contact form, a multi-page survey, or a complex event registration portal with digital entry passes, this guide will walk you through every feature.</p>
-<h2>Step 1: Starting Your Form</h2>
-<p>Begin in the GS Forms Dashboard, where you can view your form metrics and start a new project.</p>
-<ul>
-  <li>Choose a Template: Click Create Form and select a pre-built template to save time (e.g., Event Registration, Workshop, Event Feedback, RSVP).</li>
-  <li>Start from Scratch: Select Blank Form to build your custom layout from the ground up.</li>
-  <li>Name Your Form: Give your form a working title. This will be used to generate your unique public URL slug.</li>
-</ul>
-<h2>Step 2: Adding Fields (The Left Panel)</h2>
-<p>The Left Panel is your toolkit for constructing the form. Switch between the + Add Field and Layers tabs to build and organize.</p>
-<ul>
-  <li>Standard Fields: Click to add Short Text, Paragraph, Email, Phone, Number, Date, Time, Dropdown, Multiple Choice, and Checkboxes.</li>
-  <li>Specialty Fields:</li>
-  <li>File Upload: Allow users to upload files. You can restrict accepted file types (Images, PDFs, Spreadsheets, ZIPs, Code files) and set a strict Max File Size (up to 100MB).</li>
-  <li>Rating Scale: Collect feedback using an adjustable scale. Choose between a visual ★ Stars format or a numeric 1-10 Scale, and define your Low/High labels.</li>
-  <li>Add New Page (Section Break): Turn a long form into a multi-page experience by dropping in a Section Break.</li>
-  <li>Layer Management: Switch to the Layers tab to view all your added fields. Simply drag and drop the fields using the handle to reorder them on your canvas.</li>
-</ul>
-<h2>Step 3: Editing & Advanced Field Logic (The Right Panel)</h2>
-<p>When you click any field on the center canvas or in your Layers list, the Right Panel opens the Edit Field properties.</p>
-<ul>
-  <li>Rich Text Labels: Format your question labels and descriptions with bold, italics, underlines, bulleted lists, and hyperlinks.</li>
-  <li>Validation & Limits: Set Minimum/Maximum values for Number fields, or toggle the Required switch to ensure mandatory completion.</li>
-  <li>Option Seat Caps: Perfect for workshops and ticketing. When using Dropdowns, Multiple Choice, or Checkboxes, you can set a Cap (seats) for individual options. Once that option is selected by enough respondents, it automatically disables!</li>
-  <li>Conditional Logic: Build smart forms. Set rules so a field only appears if the user answered a previous question a specific way.</li>
-</ul>
-<h2>Step 4: Visual Theming & Design</h2>
-<p>Make your form look like a premium landing page using the Settings tab in the Right Panel.</p>
-<ul>
-  <li>Header Design: Upload a custom Cover Image for the top of your form and define your Form Title and Description.</li>
-  <li>1-Click Themes: Choose from 12 curated visual themes divided into Light Mode (e.g., Porcelain, Sakura, Sage) and Dark Mode (e.g., Graphite, Cosmos, Obsidian).</li>
-  <li>Custom Styling: Further customize your chosen theme by changing the global Accent Color (used for buttons and active states) and independently selecting fonts for your Titles, Questions, and Body Text.</li>
-</ul>
-<h2>Step 5: Digital Entry Passes & Staff Scanner</h2>
-<p>Turn your form into a complete event ticketing system by adding the Entry Pass field from the left panel.</p>
-<ul>
-  <li>Pass Designer: Once added, toggle your center canvas to the Pass tab. Use the Right Panel to customize the pass's Banner Color, Text Color, and QR Code size. Add the Venue name, Date, Time, and specific entry rules.</li>
-  <li>Automated Delivery: When a respondent submits the form, they instantly receive this beautifully formatted digital pass containing a secure QR code.</li>
-  <li>Staff Scanner Tool: In the top toolbar, click Scanner to generate a secure link and access code. Send this to your event staff so they can scan attendee QR codes at the door using their mobile phones.</li>
-</ul>
-<h2>Step 6: Form Configuration & Gal AI</h2>
-<p>Finalize how your form behaves before launching.</p>
-<ul>
-  <li>Post-Submission Settings: Customize the "Submit" button text and write a personalized Success Message.</li>
-  <li>Redirects & Limits: Automatically redirect users to another website upon completion, set a strict Close Date/Time, or define a Maximum Submissions limit to automatically close the form when full.</li>
-  <li>Gal AI Assistant: Stuck on what to ask? Click the glowing Gal AI tab at the bottom of the screen. You can ask the AI to generate a list of questions, suggest themes, or write professional form descriptions for you.</li>
-</ul>
-<h2>Step 7: Publishing & Database Sync</h2>
-<p>Launch your form and manage your incoming data securely.</p>
-<ul>
-  <li>Publish & Share: Click Publish in the top right. You will instantly receive your live public URL and a downloadable QR Code to print on posters or share on social media.</li>
-  <li>Google Sheets Integration: Click the Sheet button in the top toolbar to automatically sync all live responses directly to a connected Google Sheet in your Drive.</li>
-  <li>Live Database: Return to the Dashboard at any time to view real-time analytics. Monitor your Total Responses, visually track your submission limits, view detailed individual submissions, and export your data to Excel.</li>
-</ul>
-</div>
-<div id="dashboard" class="guide-section">
-  <h1>Dashboard: Your Command Center</h1>
-<p>The Dashboard is your central hub for monitoring usage, launching tools, and tracking the status of your automated campaigns.</p>
-<h2>Step 1: Workspace Overview & Analytics</h2>
-<p>At the top of your dashboard, you will find a real-time snapshot of your workspace limits and active metrics.</p>
-<ul>
-  <li>Certs Generated: Tracks the total number of PDFs successfully generated across all campaigns.</li>
-  <li>Bulk Mail Sent: Displays your monthly email usage against your sending limits (e.g., 0 / 500).</li>
-  <li>Drive Storage: Monitors your Google Drive capacity, showing exactly how many GBs you have used and indicating if you are on the Free or Pro tier.</li>
-  <li>Total Forms & Mini Sites: Displays your active data collection endpoints and site traffic at a glance.</li>
-</ul>
-<h2>Step 2: The Tool Launchpad</h2>
-<p>Access the entire GalSol suite directly from the central grid. Clicking a card instantly launches the respective application:</p>
-<ul>
-  <li>Certificate Generator: Build and generate PDFs via Google Drive API.</li>
-  <li>Bulk Mail Sender: Dispatch personalized HTML emails via Gmail API.</li>
-  <li>Combined Pipeline: Automate both certificates and emails in one flow.</li>
-  <li>Mini Sites: Launch the visual event site builder.</li>
-  <li>GS Forms: Open the drag-and-drop form creator.</li>
-  <li>GS DB: Access your centralized data management hub.</li>
-</ul>
-<h2>Step 3: Campaign History & Quick Links</h2>
-<ul>
-  <li>Recent Campaigns Table: Below the launchpad, view a live feed of your latest automation runs. It displays the Campaign Name, Type (Cert, Mail, or Combined), Date, Total Items, and the Success percentage.</li>
-  <li>Quick Links Sidebar: Jump instantly to external connected services like Google Drive and Google Sheets without leaving the platform.</li>
-</ul>
-<h2>Step 4: Global Controls & Navigation</h2>
-<ul>
-  <li>Collapsible Sidebar: Use the left navigation menu to switch between tools. You can manually collapse it for a distraction-free workspace, or use the keyboard shortcut Ctrl + . (or Cmd + . on Mac) to instantly toggle the sidebar visibility.</li>
-  <li>Account Settings: Click your user profile at the bottom of the sidebar to manage your account or upgrade to GalSol Pro for increased limits.</li>
-</ul>
-</div>
-<div id="campaigns" class="guide-section">
-  <h1>Campaign History: The Complete User Guide</h1>
-<p>The Campaigns page serves as your master log for every automated process you have run through GalSol. It provides a centralized view of your Certificate, Bulk Mail, and Combined Pipeline histories.</p>
-<h2>Step 1: High-Level Analytics</h2>
-<p>At the top of the Campaigns page, you will find four summary cards giving you a quick breakdown of your historical activity:</p>
-<ul>
-  <li>Total Campaigns: The absolute number of campaigns run from your account.</li>
-  <li>Certificate Runs: Total isolated PDF generation campaigns.</li>
-  <li>Email Campaigns: Total isolated bulk mailing campaigns.</li>
-  <li>Combined Pipelines: Total fully automated generation-and-delivery campaigns.</li>
-</ul>
-<h2>Step 2: Searching & Filtering</h2>
-<p>Quickly locate past projects using the top control bar.</p>
-<ul>
-  <li>Smart Search: Type into the "Search campaigns..." bar to instantly filter your history by the specific campaign name.</li>
-  <li>Tab Filters: Click the tabs (All, Certificates, Emails, Combined) to toggle the table view and isolate specific types of automation runs.</li>
-</ul>
-<h2>Step 3: Understanding the Campaign Table</h2>
-<p>The central table provides a detailed ledger of every run. It includes:</p>
-<ul>
-  <li>Campaign Name & Type: The custom name you gave the project, accompanied by a color-coded badge indicating the tool used (Purple for Certificates, Cyan for Mail, Gold for Combined).</li>
-  <li>Date & Time: The exact timestamp of when the campaign was initiated.</li>
-  <li>Sent / Total: A numerical breakdown showing how many items were successfully processed out of the total requested in your data source.</li>
-  <li>Dynamic Action Column: The final column adapts based on the type of campaign:</li>
-  <li>For Email Campaigns: It displays a color-coded Success Rate percentage (Green for 90%+, Gold for 50%+, Red for lower).</li>
-  <li>For Certificate & Combined Campaigns: If you enabled the Google Sheets Write-back feature during setup, this column generates an Open Sheet button. Clicking this takes you directly to the specific Google Sheet containing your participant data and the generated Google Drive PDF links.</li>
-</ul>
-<h2>Step 4: Exporting Logs</h2>
-<p>For auditing, external reporting, or team sharing, click the Export CSV button in the top toolbar.</p>
-<ul>
-  <li>This instantly downloads your entire filtered campaign history to your local device.</li>
-  <li>The exported file includes all table metrics along with exact timestamps and backup sheet links.</li>
-</ul>
-</div>
-      
-        <div id="entry-pass" class="guide-section">
-          <h1>🎟️ Entry Pass System: The Complete User Guide</h1>
-          <p>The GalSol Entry Pass system is a complete end-to-end ticketing and access control solution. It bridges two tools: GS Forms (where you design and issue the passes) and the GS Database (where you manage attendees and provide your staff with scanning tools).</p>
-          <p>Follow this guide to set up your event ticketing, equip your door staff, and manage live access.</p>
+      <div id="cert-generator" class="guide-section active">
+        <h1>Certificate Generator: The Complete User Guide</h1>
+        <p>Transform your participant data into professional, high-quality PDF certificates in minutes. Follow this
+          guide to master the visual editor, data mapping, and bulk generation features.</p>
+        <h2>Step 1: Connect Your Participant Data</h2>
+        <p>The journey begins by providing the list of people who will receive the certificates. GalSol supports four
+          flexible data sources:</p>
+        <ul>
+          <li>Google Sheets: Paste your Sheet ID (the long string in your spreadsheet URL) to pull live data directly
+            from your Google Drive.</li>
+          <li>File Upload: Drag and drop your existing .csv, .xlsx, or .xls files.</li>
+          <li>GS Form: Import responses directly from your published GalSol Forms that have at least one submission.
+          </li>
+          <li>Manual Entry: Type recipient details directly into a built-in table. You can add custom columns (like
+            "Rank" or "Score") on the fly.</li>
+        </ul>
+        <h2>Step 2: Visual Template Designer</h2>
+        <p>Design your certificate without ever leaving the browser. This Canva-like editor allows you to create a
+          professional layout with zero coding.</p>
+        <ul>
+          <li>Set the Canvas: Choose from industry standards like A4 Landscape, A4 Portrait, or HD 16:9.</li>
+          <li>Background Options: Upload your own high-resolution branding image (PNG/JPG) or select a solid background
+            color.</li>
+          <li>Adding Dynamic Fields: Click "+ Add Field" to place placeholder tags like {{name}} or {{date}}.</li>
+          <li>Pro Styling Tools:</li>
+          <li>Typography: Select from premium font families (Sans, Serif, or Calligraphy) and adjust size, bold/italic,
+            and letter spacing.</li>
+          <li>Precision Positioning: Drag fields freely or use X/Y percentage inputs for pixel-perfect alignment.</li>
+          <li>Rotation: Use the rotation handle to tilt text for artistic layouts.</li>
+        </ul>
+        <h2>Step 3: Field Mapping & Naming</h2>
+        <p>Tell the system which column in your data matches which placeholder on your design.</p>
+        <ul>
+          <li>Link Data to Design: Match your {{name}} tag to the "Participant Name" column in your sheet.</li>
+          <li>The Primary Field: Star (★) one field as Primary. This field is used to name your PDF files (e.g.,
+            Alex_Simon_01.pdf).</li>
+          <li>Custom Naming: Add an optional event prefix to your filenames for better organization.</li>
+          <li>Google Sheets Write-back: If using Google Sheets, enable this to have the system automatically write the
+            unique Google Drive Link for each certificate back into your original spreadsheet.</li>
+        </ul>
+        <h2>Step 4: Preview & Quality Check</h2>
+        <p>Before generating hundreds of files, use the Certificate Preview tool.</p>
+        <ul>
+          <li>Live Flip-through: Navigate through your actual participant data to see how long names or different data
+            points look on the final design.</li>
+          <li>Generation Summary: Review the total participant count and estimated total file size to ensure everything
+            is correct.</li>
+        </ul>
+        <h2>Step 5: Bulk Generation</h2>
+        <p>Click Generate to start the engine.</p>
+        <ul>
+          <li>Real-time Tracking: Watch the progress bar and activity log as GalSol creates each PDF and uploads it to
+            your Google Drive.</li>
+          <li>Safety First: The tool uses your own Google OAuth token, meaning your data stays private and never passes
+            through external servers.</li>
+        </ul>
+        <h2>Step 6: Accessing Results</h2>
+        <p>Once complete, you have instant access to your certificates.</p>
+        <ul>
+          <li>Instant Links: A results table provides "Open PDF" links for every successful generation.</li>
+          <li>Export Data: Download a final Excel report containing all participant details along with their
+            corresponding certificate links.</li>
+          <li>Campaign History: All runs are saved to your local dashboard so you can track your total certificates
+            generated over time.</li>
+        </ul>
+        <p>Pro Tips for GalSol Users:</p>
+        <ul>
+          <li>Keyboard Shortcuts: Use Ctrl + and Ctrl - to zoom the canvas, and Arrow Keys for fine-tuned text movement.
+          </li>
+          <li>Duplicate Feature: Quickly copy a field’s styling by selecting it and clicking the Duplicate icon in the
+            action bar.</li>
+          <li>Sanitization: The system automatically cleans filenames to ensure they are compatible with all operating
+            systems.</li>
+        </ul>
+      </div>
+      <div id="bulk-mailer" class="guide-section">
+        <h1>Bulk Mailer: The Complete User Guide</h1>
+        <p>Personalize and send hundreds of professional emails directly from your own account. Use this guide to master
+          data connection, template building, and secure dispatch.</p>
+        <h2>Step 1: Connect Your Recipient Data</h2>
+        <p>Start by importing the list of people you want to contact. The Bulk Mailer supports four primary data
+          sources:</p>
+        <ul>
+          <li>Google Sheets: Paste your Sheet ID to pull live recipient data.</li>
+          <li>File Upload: Drag and drop .csv, .xlsx, or .xls files directly into the tool.</li>
+          <li>GS Form: Import responses from your published GalSol Forms to turn them into an email list.</li>
+          <li>Manual Entry: Type your recipients into the built-in table. GalSol defaults to Name and Email columns, but
+            you can add custom columns for more personalization.</li>
+        </ul>
+        <h2>Step 2: Compose Your Template (Visual & HTML Modes)</h2>
+        <p>GalSol provides two distinct ways to build your message, ensuring both ease of use for beginners and full
+          creative control for advanced users.</p>
+        <p>Option A: Visual Rich Text Editor</p>
+        <p>The visual editor works like a standard word processor, allowing you to design your email without touching a
+          single line of code.</p>
+        <ul>
+          <li>Intuitive Toolbar: Apply formatting such as bold, italics, and underlined text instantly.</li>
+          <li>Lists & Links: Organize information with bulleted or numbered lists and embed hyperlinks to external
+            resources.</li>
+          <li>Real-time Styling: See exactly how your text looks as you type it.</li>
+        </ul>
+        <p>Option B: Professional HTML Editor</p>
+        <p>For users who need custom branding, complex layouts, or specialized CSS, the tool includes a dedicated HTML
+          mode.</p>
+        <ul>
+          <li>Direct Code Entry: Switch to the HTML view to paste or write raw source code for your email.</li>
+          <li>Complete Layout Control: Use HTML tables, inline styles, and advanced formatting that standard visual
+            editors might restrict.</li>
+          <li>Hybrid Workflow: You can start your design in the Visual Editor and switch to HTML to fine-tune the
+            underlying code.</li>
+        </ul>
+        <p>Shared Composition Features</p>
+        <p>Regardless of which editor mode you choose, you have access to these core features:</p>
+        <ul>
+          <li>Personalization Tags: Insert dynamic placeholders like {{Name}} or {{Company}} anywhere in the subject
+            line or email body to tailor each message to the recipient.</li>
+          <li>Subject & From Name: Define a clear subject line and a personalized "From" name to increase open rates.
+          </li>
+          <li>Universal Attachments: Drag and drop files to attach them to every email in the campaign (supports files
+            up to 25MB).</li>
+        </ul>
+        <h2>Step 3: Field Mapping</h2>
+        <p>Ensure the tool knows where to find the essential information in your data.</p>
+        <ul>
+          <li>Email Column: Select which column in your data contains the recipient's email address.</li>
+          <li>Name Column: Select the column containing the recipient's name.</li>
+          <li>Dynamic Placeholders: Verify that the placeholders you used in Step 2 match the column headers in your
+            imported data.</li>
+        </ul>
+        <h2>Step 4: Preview & Test</h2>
+        <p>Avoid mistakes by reviewing your email exactly as your recipients will see it.</p>
+        <ul>
+          <li>Live Preview: Toggle through your actual data list to see how the placeholders populate for different
+            recipients.</li>
+          <li>Send Test Mail: Send a single copy of the email to your own address to check formatting and attachments
+            before starting the full batch.</li>
+        </ul>
+        <h2>Step 5: Sending & Tracking</h2>
+        <p>Dispatch your campaign with real-time status updates.</p>
+        <ul>
+          <li>Bulk Dispatch: Once you click "Start Sending," GalSol processes the emails through your own Google Mail
+            (SMTP) connection.</li>
+          <li>Real-time Log: Monitor the activity log to see successful sends and any errors (such as invalid email
+            addresses) as they happen.</li>
+          <li>Safe Throttling: The tool includes built-in delays between emails to help maintain your sender reputation
+            and comply with provider limits.</li>
+        </ul>
+        <h2>Step 6: Completion Report</h2>
+        <p>Analyze the results of your campaign.</p>
+        <ul>
+          <li>Success Stats: View a breakdown of total recipients, successful deliveries, and failures.</li>
+          <li>Export Logs: Download an Excel report containing your recipient list and the final status of every email
+            sent.</li>
+          <li>Database Backup: Your campaign details and status are automatically backed up to your GalSol account for
+            future reference.</li>
+        </ul>
+        <p>Pro Tips for GalSol Mailer Users:</p>
+        <ul>
+          <li>Data Integrity: Always ensure your "Email" column contains valid email formats to prevent delivery
+            failures.</li>
+          <li>Privacy First: GalSol uses your own Google OAuth token; your email content and recipient data are never
+            stored on external servers.</li>
+          <li>Clean Restart: Use the "New Campaign" button to clear all current data and logs when starting a fresh
+            mailing project.</li>
+        </ul>
+      </div>
+      <div id="combined-pipeline" class="guide-section">
+        <h1>Combined Pipeline: The Complete User Guide</h1>
+        <p>The Combined Pipeline is GalSol’s most powerful feature. It allows you to design a certificate, connect your
+          participant data, build a personalized email, and launch the entire automated delivery workflow in one
+          seamless process.</p>
+        <h2>Step 1: Campaign Setup & Data Connection</h2>
+        <p>Start by naming your campaign and importing the list of participants.</p>
+        <ul>
+          <li>Campaign Name: Give your project a clear name (e.g., "React Bootcamp 2025"). This is used for your
+            internal tracking.</li>
+          <li>Participant Data Source: Choose how to import your recipients:</li>
+          <li>Google Sheets: Paste your Sheet ID to pull live data. (This method enables the Write-back feature in Step
+            3).</li>
+          <li>Upload File: Drag and drop .csv, .xlsx, or .xls files.</li>
+          <li>Manual Entry: Type recipient details directly into the built-in table. Add custom columns as needed.</li>
+          <li>GS Form: Directly import historical responses from your published GalSol Forms.</li>
+        </ul>
+        <h2>Step 2: Visual Certificate Designer</h2>
+        <p>Design the certificate that will be attached to your emails.</p>
+        <ul>
+          <li>Set the Canvas: Choose your dimensions (A4 Landscape, A4 Portrait, HD 16:9, or Wide).</li>
+          <li>Background: Upload a high-resolution base image or select a solid background color.</li>
+          <li>Add Fields: Click "+ Add Field" to place dynamic text blocks (like {{name}} or {{course}}).</li>
+          <li>Design & Style: Click any field on the canvas to open its properties. You can adjust the font family,
+            size, color, letter spacing, and alignment.</li>
+          <li>Set Primary Field: You must star (★) one field as Primary (usually the participant's name). This dictates
+            the filename of the generated PDF.</li>
+        </ul>
+        <h2>Step 3: Field Mapping & Output Configuration</h2>
+        <p>Tell the system how to merge your data with your designs.</p>
+        <ul>
+          <li>Email Delivery Mapping: Select which column from your data contains the participants' email addresses.
+          </li>
+          <li>Certificate Mappings: Match every {{placeholder}} on your certificate canvas to the correct column in your
+            data source.</li>
+          <li>Output File Naming: Define how the PDFs will be named. You can add an optional Event Prefix (e.g.,
+            Alex_ReactBootcamp_01.pdf).</li>
+          <li>Google Sheets Write-back: Available only if you connected a Google Sheet in Step 1. Enable this to have
+            the system automatically create a "Certificate Link" column in your spreadsheet and populate it with the
+            Google Drive URL of every generated PDF.</li>
+        </ul>
+        <h2>Step 4: Email Template Designer</h2>
+        <p>Compose the message that will deliver the certificate. This step features a powerful builder and built-in AI
+          assistance.</p>
+        <ul>
+          <li>Choose a Starting Template: Pick a pre-built layout (Welcome, Promotional, Newsletter), start from a Blank
+            Canvas, or select "Paste Code" to write raw HTML.</li>
+          <li>Subject & Tags: Enter your subject line. Use the Insert Tag bar to easily drop in placeholders. The most
+            important tag is {{Certificate Link}} — this dynamically inserts the URL to the participant's newly
+            generated PDF.</li>
+          <li>Visual Editor: Drag and drop layout blocks like Logos, Headings, Text, Buttons, Images, Dividers, and
+            Social Links. Click any block to edit its properties (colors, padding, links) in the right-hand panel.</li>
+          <li>Gal AI Assistant: Click the Gal AI button to open the intelligent assistant. You can ask the AI to write
+            your email copy, suggest subject lines, or even generate specific HTML blocks for you.</li>
+          <li>Live Preview: Toggle to the Preview tab to see how your email looks on Desktop and Mobile devices using
+            real data from your first participant.</li>
+        </ul>
+        <h2>Step 5: Review & Quality Check</h2>
+        <p>Before pushing the launch button, do a final review.</p>
+        <ul>
+          <li>Dual Preview: Flip through your actual participant list to see side-by-side previews of their personalized
+            Certificate and their personalized Email.</li>
+          <li>Configuration Summary: Verify your data source, field mappings, total recipient count, and estimated
+            Google Drive storage size.</li>
+        </ul>
+        <h2>Step 6: Launch & Track Results</h2>
+        <p>Start the engine and watch your campaign execute in real-time.</p>
+        <ul>
+          <li>Live Dashboard: Click "Launch Delivery Pipeline". The system will display a live progress ring and an
+            activity log.</li>
+          <li>The Process: GalSol systematically generates each PDF, uploads it securely to your Google Drive, and
+            instantly dispatches the personalized email via your Gmail account.</li>
+          <li>Delivery Report: Once finished, view the final success/failure table. You can click "Open PDF" to verify
+            the files or click Export Excel to download a full CSV report of the delivery status for your records.</li>
+        </ul>
+        <p>Pro Tips for the Combined Pipeline:</p>
+        <ul>
+          <li>The Golden Tag: Always ensure you include the {{Certificate Link}} tag in your email body or attach it to
+            a Button block so recipients can actually access their files!</li>
+          <li>Safe Testing: If it's your first time running a large batch, try running a "Manual Entry" test with just
+            your own email address to see the final flow in action.</li>
+          <li>HTML Pro-Mode: In the Email Designer, you can switch to the "Code" tab at any time to fine-tune the HTML
+            generated by the visual blocks.</li>
+        </ul>
+      </div>
+      <div id="mini-site" class="guide-section">
+        <h1>Mini Site Builder: The Complete User Guide</h1>
+        <p>Create stunning, mobile-responsive event websites in minutes. The GalSol Mini Site Builder is a no-code
+          visual editor that combines drag-and-drop design with powerful registration and ticketing tools.</p>
+        <h2>Step 1: Initial Site Configuration</h2>
+        <p>Before adding content, set the foundational look and feel of your site using the Site Settings tab on the
+          right panel.</p>
+        <ul>
+          <li>Prebuilt Themes: Choose from dozens of one-click professional themes. Options are split into Dark Themes
+            (e.g., Midnight Pulse, Emerald City) and Light Themes (e.g., Clean White, Ocean Mist). Applying a theme
+            instantly updates your colors and fonts.</li>
+          <li>Colors: Set your global Accent Color (used for buttons, links, and highlights) and Background Color.</li>
+          <li>Typography: Choose from curated Paired Fonts designed for perfect readability (e.g., Noir Cinema,
+            Contemporary, Wedding Belle). Or, use Custom Fonts to independently set your Title and Content fonts from
+            the premium Google Fonts library.</li>
+          <li>Site URL Slug: Type a unique name (e.g., my-event-2026) into the Site Info section. This will become your
+            public GalSol URL.</li>
+        </ul>
+        <h2>Step 2: Building Your Layout (Adding Blocks)</h2>
+        <p>Use the Add Blocks tab on the left panel to construct your site. Click any block to instantly add it to your
+          canvas.</p>
+        <p>Structure Blocks:</p>
+        <ul>
+          <li>Cover / Hero: The striking top section of your site. Supports a background image/color, a dark/blur
+            overlay, a customizable logo, Event Name, and Tagline.</li>
+          <li>About: A clean text block for your event description.</li>
+          <li>Announcements: A bulletin-board style block to display pinned updates.</li>
+        </ul>
+        <p>Event Info Blocks:</p>
+        <ul>
+          <li>Date & Venue: Displays three smart cards indicating Date, Time (with timezone), and Location. Adapts
+            automatically for "In-Person" (Google Maps) or "Online" (Meeting Link) events.</li>
+          <li>Speakers / Team: Showcase your guests with photos, names, roles, and bios. Formats as a swipeable carousel
+            or a vertical list based on settings.</li>
+          <li>FAQ: An interactive, collapsible accordion for Frequently Asked Questions.</li>
+          <li>Sponsors: Display partner logos organized by tiered sizes (Platinum, Gold, Silver).</li>
+        </ul>
+        <p>Engagement Blocks:</p>
+        <ul>
+          <li>Registration Form: The most powerful block. Embed a registration portal directly into your site (Detailed
+            in Step 4).</li>
+          <li>Document Links: Provide downloadable resources like Rulebooks or Agendas.</li>
+          <li>Video: Embed up to two promotional YouTube videos or Google Drive video links.</li>
+          <li>Social Links: Add clickable icons for your Instagram, X/Twitter, LinkedIn, YouTube, Discord, WhatsApp, and
+            more.</li>
+        </ul>
+        <h2>Step 3: Editing Blocks & Layers</h2>
+        <ul>
+          <li>Editing Content: Click any block on your canvas. The right panel will switch to the Block tab, revealing
+            all customizable properties for that specific block.</li>
+          <li>Layers Management: Switch to the Layers tab on the left panel to view a list of all your active blocks.
+          </li>
+          <li>Reordering & Deleting: Use the floating action menu on the top right of any selected block to Move Up,
+            Move Down, Duplicate, or Delete it.</li>
+        </ul>
+        <h2>Step 4: The Registration Engine & Entry Passes</h2>
+        <p>The Registration Form block turns your informational site into a functional event portal.</p>
+        <ul>
+          <li>Connection Types:</li>
+          <li>External URL: Paste a link to a Typeform, Google Form, or Jotform to create a simple "Register Now" button
+            that redirects users.</li>
+          <li>GS Forms (Native): Select any of your published GalSol Forms. This embeds the form directly into your Mini
+            Site for a seamless user experience.</li>
+          <li>Registration Toggle: You can easily close sign-ups by toggling "Registrations Open" off. The site will
+            instantly replace the form with a polite "Registrations Closed" message.</li>
+          <li>Digital Entry Passes: If your connected GS Form has the "Pass" feature enabled, visitors who successfully
+            submit the form will instantly receive a beautifully generated Digital Entry Pass pop-up, containing a
+            secure QR code for gate check-in.</li>
+        </ul>
+        <h2>Step 5: Gal AI Design Assistant (Pro Feature)</h2>
+        <p>Need help designing? Click the glowing Gal AI tab at the bottom of the screen.</p>
+        <ul>
+          <li>Chat Interface: Tell the AI what you want (e.g., "Design a sleek speaker section", or "Change the theme to
+            Dark Cyberpunk").</li>
+          <li>Smart Generation: Gal AI can write copy, configure block properties, or even generate the entire webpage
+            layout from scratch based on a single prompt.</li>
+        </ul>
+        <h2>Step 6: Previewing & Analytics</h2>
+        <p>Ensure your site is perfect before going live.</p>
+        <ul>
+          <li>Device Preview: Use the top bar toggle to switch between Desktop mode and an interactive Mobile Phone
+            simulator.</li>
+          <li>Google Analytics: Click the "Analytics" button in the top bar to connect your free GA4 Measurement ID
+            (G-XXXXXXXXXX). This allows you to track visitor traffic privately in your own Google account.</li>
+        </ul>
+        <h2>Step 7: Publishing</h2>
+        <p>When you are ready to launch, click the Publish button in the top right.</p>
+        <ul>
+          <li>Live URL: The system will confirm your custom slug and provide your public, shareable link.</li>
+          <li>Database Setup: If using a native GS Form, publishing automatically secures the connection so all visitor
+            registrations pipe directly into your connected Google Sheet and database.</li>
+          <li>Live Updates: Need to make a change after launching? Just edit the canvas and click Update Site. Changes
+            are pushed to your live link instantly.</li>
+        </ul>
+      </div>
+      <div id="gs-forms" class="guide-section">
+        <h1>GS Forms: The Complete User Guide</h1>
+        <p>GS Forms is a powerful, drag-and-drop form builder designed for modern data collection. Whether you need a
+          simple contact form, a multi-page survey, or a complex event registration portal with digital entry passes,
+          this guide will walk you through every feature.</p>
+        <h2>Step 1: Starting Your Form</h2>
+        <p>Begin in the GS Forms Dashboard, where you can view your form metrics and start a new project.</p>
+        <ul>
+          <li>Choose a Template: Click Create Form and select a pre-built template to save time (e.g., Event
+            Registration, Workshop, Event Feedback, RSVP).</li>
+          <li>Start from Scratch: Select Blank Form to build your custom layout from the ground up.</li>
+          <li>Name Your Form: Give your form a working title. This will be used to generate your unique public URL slug.
+          </li>
+        </ul>
+        <h2>Step 2: Adding Fields (The Left Panel)</h2>
+        <p>The Left Panel is your toolkit for constructing the form. Switch between the + Add Field and Layers tabs to
+          build and organize.</p>
+        <ul>
+          <li>Standard Fields: Click to add Short Text, Paragraph, Email, Phone, Number, Date, Time, Dropdown, Multiple
+            Choice, and Checkboxes.</li>
+          <li>Specialty Fields:</li>
+          <li>File Upload: Allow users to upload files. You can restrict accepted file types (Images, PDFs,
+            Spreadsheets, ZIPs, Code files) and set a strict Max File Size (up to 100MB).</li>
+          <li>Rating Scale: Collect feedback using an adjustable scale. Choose between a visual ★ Stars format or a
+            numeric 1-10 Scale, and define your Low/High labels.</li>
+          <li>Add New Page (Section Break): Turn a long form into a multi-page experience by dropping in a Section
+            Break.</li>
+          <li>Layer Management: Switch to the Layers tab to view all your added fields. Simply drag and drop the fields
+            using the handle to reorder them on your canvas.</li>
+        </ul>
+        <h2>Step 3: Editing & Advanced Field Logic (The Right Panel)</h2>
+        <p>When you click any field on the center canvas or in your Layers list, the Right Panel opens the Edit Field
+          properties.</p>
+        <ul>
+          <li>Rich Text Labels: Format your question labels and descriptions with bold, italics, underlines, bulleted
+            lists, and hyperlinks.</li>
+          <li>Validation & Limits: Set Minimum/Maximum values for Number fields, or toggle the Required switch to ensure
+            mandatory completion.</li>
+          <li>Option Seat Caps: Perfect for workshops and ticketing. When using Dropdowns, Multiple Choice, or
+            Checkboxes, you can set a Cap (seats) for individual options. Once that option is selected by enough
+            respondents, it automatically disables!</li>
+          <li>Conditional Logic: Build smart forms. Set rules so a field only appears if the user answered a previous
+            question a specific way.</li>
+        </ul>
+        <h2>Step 4: Visual Theming & Design</h2>
+        <p>Make your form look like a premium landing page using the Settings tab in the Right Panel.</p>
+        <ul>
+          <li>Header Design: Upload a custom Cover Image for the top of your form and define your Form Title and
+            Description.</li>
+          <li>1-Click Themes: Choose from 12 curated visual themes divided into Light Mode (e.g., Porcelain, Sakura,
+            Sage) and Dark Mode (e.g., Graphite, Cosmos, Obsidian).</li>
+          <li>Custom Styling: Further customize your chosen theme by changing the global Accent Color (used for buttons
+            and active states) and independently selecting fonts for your Titles, Questions, and Body Text.</li>
+        </ul>
+        <h2>Step 5: Digital Entry Passes & Staff Scanner</h2>
+        <p>Turn your form into a complete event ticketing system by adding the Entry Pass field from the left panel.</p>
+        <ul>
+          <li>Pass Designer: Once added, toggle your center canvas to the Pass tab. Use the Right Panel to customize the
+            pass's Banner Color, Text Color, and QR Code size. Add the Venue name, Date, Time, and specific entry rules.
+          </li>
+          <li>Automated Delivery: When a respondent submits the form, they instantly receive this beautifully formatted
+            digital pass containing a secure QR code.</li>
+          <li>Staff Scanner Tool: In the top toolbar, click Scanner to generate a secure link and access code. Send this
+            to your event staff so they can scan attendee QR codes at the door using their mobile phones.</li>
+        </ul>
+        <h2>Step 6: Form Configuration & Gal AI</h2>
+        <p>Finalize how your form behaves before launching.</p>
+        <ul>
+          <li>Post-Submission Settings: Customize the "Submit" button text and write a personalized Success Message.
+          </li>
+          <li>Redirects & Limits: Automatically redirect users to another website upon completion, set a strict Close
+            Date/Time, or define a Maximum Submissions limit to automatically close the form when full.</li>
+          <li>Gal AI Assistant: Stuck on what to ask? Click the glowing Gal AI tab at the bottom of the screen. You can
+            ask the AI to generate a list of questions, suggest themes, or write professional form descriptions for you.
+          </li>
+        </ul>
+        <h2>Step 7: Publishing & Database Sync</h2>
+        <p>Launch your form and manage your incoming data securely.</p>
+        <ul>
+          <li>Publish & Share: Click Publish in the top right. You will instantly receive your live public URL and a
+            downloadable QR Code to print on posters or share on social media.</li>
+          <li>Google Sheets Integration: Click the Sheet button in the top toolbar to automatically sync all live
+            responses directly to a connected Google Sheet in your Drive.</li>
+          <li>Live Database: Return to the Dashboard at any time to view real-time analytics. Monitor your Total
+            Responses, visually track your submission limits, view detailed individual submissions, and export your data
+            to Excel.</li>
+        </ul>
+      </div>
+      <div id="dashboard" class="guide-section">
+        <h1>Dashboard: Your Command Center</h1>
+        <p>The Dashboard is your central hub for monitoring usage, launching tools, and tracking the status of your
+          automated campaigns.</p>
+        <h2>Step 1: Workspace Overview & Analytics</h2>
+        <p>At the top of your dashboard, you will find a real-time snapshot of your workspace limits and active metrics.
+        </p>
+        <ul>
+          <li>Certs Generated: Tracks the total number of PDFs successfully generated across all campaigns.</li>
+          <li>Bulk Mail Sent: Displays your monthly email usage against your sending limits (e.g., 0 / 500).</li>
+          <li>Drive Storage: Monitors your Google Drive capacity, showing exactly how many GBs you have used and
+            indicating if you are on the Free or Pro tier.</li>
+          <li>Total Forms & Mini Sites: Displays your active data collection endpoints and site traffic at a glance.
+          </li>
+        </ul>
+        <h2>Step 2: The Tool Launchpad</h2>
+        <p>Access the entire GalSol suite directly from the central grid. Clicking a card instantly launches the
+          respective application:</p>
+        <ul>
+          <li>Certificate Generator: Build and generate PDFs via Google Drive API.</li>
+          <li>Bulk Mail Sender: Dispatch personalized HTML emails via Gmail API.</li>
+          <li>Combined Pipeline: Automate both certificates and emails in one flow.</li>
+          <li>Mini Sites: Launch the visual event site builder.</li>
+          <li>GS Forms: Open the drag-and-drop form creator.</li>
+          <li>GS DB: Access your centralized data management hub.</li>
+        </ul>
+        <h2>Step 3: Campaign History & Quick Links</h2>
+        <ul>
+          <li>Recent Campaigns Table: Below the launchpad, view a live feed of your latest automation runs. It displays
+            the Campaign Name, Type (Cert, Mail, or Combined), Date, Total Items, and the Success percentage.</li>
+          <li>Quick Links Sidebar: Jump instantly to external connected services like Google Drive and Google Sheets
+            without leaving the platform.</li>
+        </ul>
+        <h2>Step 4: Global Controls & Navigation</h2>
+        <ul>
+          <li>Collapsible Sidebar: Use the left navigation menu to switch between tools. You can manually collapse it
+            for a distraction-free workspace, or use the keyboard shortcut Ctrl + . (or Cmd + . on Mac) to instantly
+            toggle the sidebar visibility.</li>
+          <li>Account Settings: Click your user profile at the bottom of the sidebar to manage your account or upgrade
+            to GalSol Pro for increased limits.</li>
+        </ul>
+      </div>
+      <div id="campaigns" class="guide-section">
+        <h1>Campaign History: The Complete User Guide</h1>
+        <p>The Campaigns page serves as your master log for every automated process you have run through GalSol. It
+          provides a centralized view of your Certificate, Bulk Mail, and Combined Pipeline histories.</p>
+        <h2>Step 1: High-Level Analytics</h2>
+        <p>At the top of the Campaigns page, you will find four summary cards giving you a quick breakdown of your
+          historical activity:</p>
+        <ul>
+          <li>Total Campaigns: The absolute number of campaigns run from your account.</li>
+          <li>Certificate Runs: Total isolated PDF generation campaigns.</li>
+          <li>Email Campaigns: Total isolated bulk mailing campaigns.</li>
+          <li>Combined Pipelines: Total fully automated generation-and-delivery campaigns.</li>
+        </ul>
+        <h2>Step 2: Searching & Filtering</h2>
+        <p>Quickly locate past projects using the top control bar.</p>
+        <ul>
+          <li>Smart Search: Type into the "Search campaigns..." bar to instantly filter your history by the specific
+            campaign name.</li>
+          <li>Tab Filters: Click the tabs (All, Certificates, Emails, Combined) to toggle the table view and isolate
+            specific types of automation runs.</li>
+        </ul>
+        <h2>Step 3: Understanding the Campaign Table</h2>
+        <p>The central table provides a detailed ledger of every run. It includes:</p>
+        <ul>
+          <li>Campaign Name & Type: The custom name you gave the project, accompanied by a color-coded badge indicating
+            the tool used (Purple for Certificates, Cyan for Mail, Gold for Combined).</li>
+          <li>Date & Time: The exact timestamp of when the campaign was initiated.</li>
+          <li>Sent / Total: A numerical breakdown showing how many items were successfully processed out of the total
+            requested in your data source.</li>
+          <li>Dynamic Action Column: The final column adapts based on the type of campaign:</li>
+          <li>For Email Campaigns: It displays a color-coded Success Rate percentage (Green for 90%+, Gold for 50%+, Red
+            for lower).</li>
+          <li>For Certificate & Combined Campaigns: If you enabled the Google Sheets Write-back feature during setup,
+            this column generates an Open Sheet button. Clicking this takes you directly to the specific Google Sheet
+            containing your participant data and the generated Google Drive PDF links.</li>
+        </ul>
+        <h2>Step 4: Exporting Logs</h2>
+        <p>For auditing, external reporting, or team sharing, click the Export CSV button in the top toolbar.</p>
+        <ul>
+          <li>This instantly downloads your entire filtered campaign history to your local device.</li>
+          <li>The exported file includes all table metrics along with exact timestamps and backup sheet links.</li>
+        </ul>
+      </div>
 
-          <h2 style="margin-top:40px;">Part 1: Designing & Issuing Passes (in GS Forms)</h2>
-          <p>Turn any standard registration form into a fully functional ticketing portal in just a few clicks.</p>
-          
-          <h3>Step 1: Add the Entry Pass Field</h3>
-          <ol>
-            <li>Open your event registration form in the GS Forms Builder.</li>
-            <li>On the Left Panel, scroll down to the "Specialty Fields" section and click <strong>Entry Pass</strong>.</li>
-            <li>This automatically enables ticketing for your form.</li>
-          </ol>
+      <div id="entry-pass" class="guide-section">
+        <h1>Entry Pass System Guide</h1>
+        <p>The GalSol Entry Pass system is a complete end-to-end ticketing and access control solution. It bridges two
+          tools: GS Forms (where you design and issue the passes) and the GS Database (where you manage attendees and
+          provide your staff with scanning tools).</p>
+        <p>Follow this guide to set up your event ticketing, equip your door staff, and manage live access.</p>
 
-          <h3>Step 2: Customize the Pass Design</h3>
-          <ol>
-            <li>Look at the top of your center canvas and click the <strong>Pass</strong> toggle (switching away from the standard 'Form' view). This reveals the live preview of what your attendees will receive.</li>
-            <li>Click the pass on the canvas to open the Right Panel Settings.</li>
-            <li><strong>Styling:</strong> Customize the Banner Color and Text Color to match your event's branding. You can also adjust the scale of the QR Code Size.</li>
-            <li><strong>Event Details:</strong> Fill in the essential information that will appear on the pass, including the Venue Name, Date, Time, and any specific Entry Rules (e.g., "Doors close at 8 PM. Please bring valid ID.").</li>
-          </ol>
+        <h2>Part 1: Designing & Issuing Passes (GS Forms)</h2>
+        <p>Turn any standard registration form into a fully functional ticketing portal in just a few clicks.</p>
 
-          <h3>Step 3: Automated Delivery</h3>
-          <p>You don't need to manually email tickets! As soon as you publish your form, the system handles the rest.</p>
-          <ul>
-            <li>When a respondent successfully submits the form, they instantly receive a beautifully formatted digital Entry Pass pop-up.</li>
-            <li>This pass contains their Name, a secure QR Code, a Unique Pass Token, and a button to download/save the pass to their device.</li>
-          </ul>
+        <h2>Step 1: Add the Entry Pass Field</h2>
+        <ul>
+          <li>Open your event registration form in the GS Forms Builder.</li>
+          <li>On the Left Panel, scroll down to the "Specialty Fields" section and click <strong>Entry Pass</strong>.
+          </li>
+          <li>This automatically enables ticketing for your form.</li>
+        </ul>
 
-          <h2 style="margin-top:40px;">Part 2: Scanning at the Door</h2>
-          <p>Equip your event staff with a secure, mobile-friendly QR scanner—no app downloads required.</p>
-          
-          <h3>Step 1: Generate the Scanner Link</h3>
-          <ol>
-            <li>While still in the GS Forms Builder, look at the top-right toolbar and click the <strong>Scanner</strong> button.</li>
-            <li>The system will generate a secure Scanner Link and a unique Access Code.</li>
-          </ol>
+        <h2>Step 2: Customize the Pass Design</h2>
+        <ul>
+          <li>At the top of your center canvas, switch to the <strong>Pass</strong> toggle (instead of the standard Form
+            view) to see a live preview.</li>
+          <li>Click the pass on the canvas to open the Right Panel settings.</li>
+          <li><strong>Styling:</strong> Set Banner Color and Text Color to match your branding, and adjust QR Code Size.
+          </li>
+          <li><strong>Event Details:</strong> Add Venue Name, Date, Time, and entry rules (for example: "Doors close at
+            8 PM. Please bring valid ID.").</li>
+        </ul>
 
-          <h3>Step 2: Equip Your Staff</h3>
-          <ol>
-            <li>Share the link and the Access Code with your door staff or volunteers.</li>
-            <li>Staff members simply open the link on their mobile phone's web browser and enter the Access Code to log in.</li>
-            <li>The web app will request camera permissions. Once granted, they can instantly start scanning attendee QR codes at the gate.</li>
-            <li>The scanner provides instant, color-coded feedback:
-              <ul>
-                <li><strong>Green (Admitted):</strong> Ticket is valid and successfully checked in.</li>
-                <li><strong>Red (Blocked/Invalid):</strong> Ticket is either fake, already scanned, or manually blocked by the organizer.</li>
-              </ul>
-            </li>
-          </ol>
+        <h2>Step 3: Automated Delivery</h2>
+        <p>You don’t need to email tickets manually. Once the form is published, delivery is automatic.</p>
+        <ul>
+          <li>After a successful submission, the attendee instantly receives a digital Entry Pass pop-up.</li>
+          <li>The pass includes their Name, a secure QR Code, a unique Pass Token, and a save/download option.</li>
+        </ul>
 
-          <h2 style="margin-top:40px;">Part 3: Live Management & Access Control (in GS Database)</h2>
-          <p>Monitor your event's capacity and handle ticketing disputes in real-time from your centralized dashboard.</p>
-          
-          <h3>Step 1: Access the Manage Passes Tab</h3>
-          <ol>
-            <li>Open the GS Database tool from your main GalSol Dashboard.</li>
-            <li>Click on your specific event form to open its data view.</li>
-            <li>At the top of the workspace, click the <strong>Manage Passes</strong> tab.</li>
-          </ol>
+        <h2>Part 2: Scanning at the Door</h2>
+        <p>Equip your staff with a secure, mobile-friendly QR scanner (no app install required).</p>
 
-          <h3>Step 2: Monitor Live Stats</h3>
-          <p>At the top of the Manage Passes tab, you'll see real-time Hero Stats updating as your staff scans tickets:</p>
-          <ul>
-            <li><strong>Pending (Valid):</strong> Passes that have been issued but haven't arrived at the door yet.</li>
-            <li><strong>Admitted:</strong> The total number of attendees currently checked in.</li>
-            <li><strong>Blocked:</strong> Passes that have been manually denied entry.</li>
-          </ul>
+        <h2>Step 1: Generate the Scanner Link</h2>
+        <ul>
+          <li>In the GS Forms Builder, click the <strong>Scanner</strong> button in the top-right toolbar.</li>
+          <li>Copy the generated Scanner Link and Access Code.</li>
+        </ul>
 
-          <h3>Step 3: Search & Filter Attendees</h3>
-          <ul>
-            <li>If an attendee forgets their QR code, use the Search Bar to look them up by Name, Email, or Pass Token.</li>
-            <li>The table tracks the exact moment their pass was generated, their current status, their exact check-in time, and which staff member scanned them in.</li>
-          </ul>
+        <h2>Step 2: Equip Your Staff</h2>
+        <ul>
+          <li>Share the link and access code with staff/volunteers.</li>
+          <li>They open the link on their phone browser and enter the code to log in.</li>
+          <li>Grant camera permissions when prompted to begin scanning QR codes.</li>
+          <li>Instant scan feedback:
+            <ul>
+              <li><strong>Green (Admitted):</strong> Valid ticket, check-in recorded.</li>
+              <li><strong>Red (Blocked/Invalid):</strong> Fake, already scanned, or manually blocked.</li>
+            </ul>
+          </li>
+        </ul>
 
-          <h3>Step 4: Block or Unblock Access</h3>
-          <p>You have full control over who gets into your event.</p>
-          <ul>
-            <li><strong>Revoking Entry:</strong> If a guest cancels, requests a refund, or violates policies, locate their row in the table and click the red <strong>Block</strong> button. A confirmation modal will appear. Once blocked, if they try to scan their QR code at the door, the staff scanner will flash red and deny them entry.</li>
-            <li><strong>Restoring Entry:</strong> If a block was made in error or an issue is resolved, locate the blocked pass and click the green <strong>Unblock</strong> button to instantly restore their gate access.</li>
-          </ul>
-        </div>
-</main>
+        <h2>Part 3: Live Management & Access Control (GS Database)</h2>
+        <p>Manage capacity and resolve disputes in real-time from the central dashboard.</p>
+
+        <h2>Step 1: Access the Manage Passes Tab</h2>
+        <ul>
+          <li>Open GS Database from your GalSol Dashboard.</li>
+          <li>Open the relevant event/form data view.</li>
+          <li>Click <strong>Manage Passes</strong> at the top of the workspace.</li>
+        </ul>
+
+        <h2>Step 2: Monitor Live Stats</h2>
+        <p>At the top of Manage Passes, you’ll see live stats updating as tickets are scanned.</p>
+        <ul>
+          <li><strong>Pending (Valid):</strong> Issued, not yet checked in.</li>
+          <li><strong>Admitted:</strong> Successfully checked in.</li>
+          <li><strong>Blocked:</strong> Manually denied entry.</li>
+        </ul>
+
+        <h2>Step 3: Search & Filter Attendees</h2>
+        <ul>
+          <li>Search by Name, Email, or Pass Token if someone can’t find their QR code.</li>
+          <li>Track generation time, status, check-in time, and scanned-by staff.</li>
+        </ul>
+
+        <h2>Step 4: Block or Unblock Access</h2>
+        <p>You control who gets in — instantly.</p>
+        <ul>
+          <li><strong>Block:</strong> Use the red Block action to revoke entry. Scanner will deny entry immediately.
+          </li>
+          <li><strong>Unblock:</strong> Use the green Unblock action to restore entry in real-time.</li>
+        </ul>
+      </div>
+    </main>
 
   </div>
 
@@ -871,7 +1023,7 @@
                 style="width:15px;height:15px"></i></a>
           </div>
         </div>
-                <div class="footer-col">
+        <div class="footer-col">
           <h5>Product</h5>
           <a href="mini-site.html">Mini Site</a>
           <a href="gs-forms.html">GS Forms</a>
@@ -928,28 +1080,28 @@
   </script>
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
 
-    const token = localStorage.getItem('GalSol_token');
-    let user = null;
-    if (token) {
-       try {
+      const token = localStorage.getItem('GalSol_token');
+      let user = null;
+      if (token) {
+        try {
           const payload = JSON.parse(atob(token.split('.')[1]));
-          if (payload.exp && payload.exp * 1000 > Date.now()) { user = payload; } 
+          if (payload.exp && payload.exp * 1000 > Date.now()) { user = payload; }
           else { localStorage.removeItem('GalSol_token'); }
-       } catch(e) {}
-    }
-    
-    if(user) {
-        const actionsContainer = document.querySelector('.header-actions');
-        if(actionsContainer) {
-            const desktopLinks = actionsContainer.querySelectorAll('a.btn-ghost, a.btn-primary');
-            desktopLinks.forEach(l => l.style.display = 'none');
+        } catch (e) { }
+      }
 
-            const profileMenu = document.createElement('div');
-            profileMenu.className = 'profile-menu';
-            profileMenu.style.position = 'relative';
-            profileMenu.innerHTML = `
+      if (user) {
+        const actionsContainer = document.querySelector('.header-actions');
+        if (actionsContainer) {
+          const desktopLinks = actionsContainer.querySelectorAll('a.btn-ghost, a.btn-primary');
+          desktopLinks.forEach(l => l.style.display = 'none');
+
+          const profileMenu = document.createElement('div');
+          profileMenu.className = 'profile-menu';
+          profileMenu.style.position = 'relative';
+          profileMenu.innerHTML = `
                 <button class="profile-btn" id="landingProfileBtn" style="background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center;">
                    <img src="${user.picture || 'Images/GalSol Logo IC.svg'}" alt="Profile" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border-hi); background: var(--surface); padding: 2px;">
                 </button>
@@ -962,32 +1114,32 @@
                    <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.href='login.html'" style="padding:10px; color:var(--text); font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Switch Account</a>
                    <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.reload()" style="padding:10px; color:#ff6b6b; font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Log Out</a>
                 </div>`;
-            
-            const hamburger = document.querySelector('.hamburger');
-            if(hamburger) {
-               actionsContainer.insertBefore(profileMenu, hamburger);
-            } else {
-               actionsContainer.appendChild(profileMenu);
-            }
 
-            const btn = profileMenu.querySelector('#landingProfileBtn');
-            const drop = profileMenu.querySelector('#landingProfileDropdown');
-            
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                drop.style.display = drop.style.display === 'none' ? 'flex' : 'none';
-            });
-            
-            document.addEventListener('click', () => { drop.style.display = 'none'; });
+          const hamburger = document.querySelector('.hamburger');
+          if (hamburger) {
+            actionsContainer.insertBefore(profileMenu, hamburger);
+          } else {
+            actionsContainer.appendChild(profileMenu);
+          }
 
-            drop.querySelectorAll('a').forEach(a => {
-               a.addEventListener('mouseenter', () => a.style.background = 'rgba(255,255,255,0.05)');
-               a.addEventListener('mouseleave', () => a.style.background = 'transparent');
-            });
+          const btn = profileMenu.querySelector('#landingProfileBtn');
+          const drop = profileMenu.querySelector('#landingProfileDropdown');
+
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            drop.style.display = drop.style.display === 'none' ? 'flex' : 'none';
+          });
+
+          document.addEventListener('click', () => { drop.style.display = 'none'; });
+
+          drop.querySelectorAll('a').forEach(a => {
+            a.addEventListener('mouseenter', () => a.style.background = 'rgba(255,255,255,0.05)');
+            a.addEventListener('mouseleave', () => a.style.background = 'transparent');
+          });
         }
-    }
-  
-  });
+      }
+
+    });
   </script>
 </body>
 
