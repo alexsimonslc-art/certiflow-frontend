@@ -77,106 +77,101 @@ img{display:block;max-width:100%;}
 .btn-ghost.lg{padding:14px 30px;font-size:1rem;border-radius:12px;}
 
 /* ── HERO ── */
-.hero{position:relative;min-height:100vh;background:#020608;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;}
+.hero{position:relative;min-height:100vh;background:#020608;display:flex;flex-direction:column;align-items:stretch;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
 
 /* ── HERO GRADIENT BLOBS ── */
-/* Register colors as <color> type so keyframes can interpolate them */
 @property --hbc1{syntax:'<color>';inherits:false;initial-value:#7F3FEE;}
 @property --hbc2{syntax:'<color>';inherits:false;initial-value:#0ECDFE;}
 @property --hbc3{syntax:'<color>';inherits:false;initial-value:#A689F9;}
 @property --hbc4{syntax:'<color>';inherits:false;initial-value:#7F3FEE;}
 
-/* Color-cycle keyframes — each blob starts at a different brand color phase */
 @keyframes hbc1{0%{--hbc1:#7F3FEE;}34%{--hbc1:#0ECDFE;}67%{--hbc1:#A689F9;}100%{--hbc1:#7F3FEE;}}
 @keyframes hbc2{0%{--hbc2:#0ECDFE;}34%{--hbc2:#A689F9;}67%{--hbc2:#7F3FEE;}100%{--hbc2:#0ECDFE;}}
 @keyframes hbc3{0%{--hbc3:#A689F9;}34%{--hbc3:#7F3FEE;}67%{--hbc3:#0ECDFE;}100%{--hbc3:#A689F9;}}
 @keyframes hbc4{0%{--hbc4:#7F3FEE;}50%{--hbc4:#0ECDFE;}100%{--hbc4:#7F3FEE;}}
 
-/* Movement keyframes — organic drift with translate + scale */
-@keyframes hbm1{
-  0%  {transform:translate(0px,0px) scale(1);}
-  30% {transform:translate(90px,70px) scale(1.14);}
-  65% {transform:translate(40px,130px) scale(.92);}
-  100%{transform:translate(170px,30px) scale(1.09);}
-}
-@keyframes hbm2{
-  0%  {transform:translate(0px,0px) scale(1);}
-  45% {transform:translate(-110px,-80px) scale(1.2);}
-  100%{transform:translate(-55px,-155px) scale(.88);}
-}
-@keyframes hbm3{
-  0%  {transform:translate(0px,0px) scale(1);}
-  40% {transform:translate(70px,-100px) scale(1.22);}
-  100%{transform:translate(-70px,70px) scale(.84);}
-}
-@keyframes hbm4{
-  0%  {transform:translate(0px,0px) scale(1);}
-  55% {transform:translate(-90px,100px) scale(1.32);}
-  100%{transform:translate(55px,-70px) scale(1.12);}
-}
+@keyframes hbm1{0%{transform:translate(0,0) scale(1);}30%{transform:translate(90px,70px) scale(1.14);}65%{transform:translate(40px,130px) scale(.92);}100%{transform:translate(170px,30px) scale(1.09);}}
+@keyframes hbm2{0%{transform:translate(0,0) scale(1);}45%{transform:translate(-110px,-80px) scale(1.2);}100%{transform:translate(-55px,-155px) scale(.88);}}
+@keyframes hbm3{0%{transform:translate(0,0) scale(1);}40%{transform:translate(70px,-100px) scale(1.22);}100%{transform:translate(-70px,70px) scale(.84);}}
+@keyframes hbm4{0%{transform:translate(0,0) scale(1);}55%{transform:translate(-90px,100px) scale(1.32);}100%{transform:translate(55px,-70px) scale(1.12);}}
 
 .hero-blobs{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
 .hb{position:absolute;border-radius:50%;will-change:transform;}
-
-/* hb1 — large anchor blob, top-left, starts violet */
-.hb1{
-  width:760px;height:760px;
-  background:radial-gradient(circle,var(--hbc1),transparent 65%);
-  opacity:.5;
-  filter:blur(85px);
-  top:-220px;left:-150px;
-  animation:hbc1 10s ease-in-out infinite, hbm1 22s ease-in-out infinite alternate;
-}
-/* hb2 — medium blob, top-right, starts cyan */
-.hb2{
-  width:600px;height:600px;
-  background:radial-gradient(circle,var(--hbc2),transparent 65%);
-  opacity:.44;
-  filter:blur(80px);
-  top:-130px;right:-130px;
-  animation:hbc2 13s ease-in-out infinite, hbm2 27s ease-in-out infinite alternate;
-  animation-delay:-4s,-9s;
-}
-/* hb3 — medium blob, bottom area, starts light violet */
-.hb3{
-  width:540px;height:540px;
-  background:radial-gradient(circle,var(--hbc3),transparent 65%);
-  opacity:.38;
-  filter:blur(80px);
-  bottom:-170px;left:18%;
-  animation:hbc3 8s ease-in-out infinite, hbm3 19s ease-in-out infinite alternate;
-  animation-delay:-7s,-4s;
-}
-/* hb4 — small accent blob, center-right, bridges the other blobs */
-.hb4{
-  width:360px;height:360px;
-  background:radial-gradient(circle,var(--hbc4),transparent 65%);
-  opacity:.32;
-  filter:blur(70px);
-  top:38%;left:48%;
-  animation:hbc4 15s ease-in-out infinite, hbm4 25s ease-in-out infinite alternate;
-  animation-delay:-2s,-14s;
-}
+.hb1{width:760px;height:760px;background:radial-gradient(circle,var(--hbc1),transparent 65%);opacity:.5;filter:blur(85px);top:-220px;left:-150px;animation:hbc1 10s ease-in-out infinite,hbm1 22s ease-in-out infinite alternate;}
+.hb2{width:600px;height:600px;background:radial-gradient(circle,var(--hbc2),transparent 65%);opacity:.44;filter:blur(80px);top:-130px;right:-130px;animation:hbc2 13s ease-in-out infinite,hbm2 27s ease-in-out infinite alternate;animation-delay:-4s,-9s;}
+.hb3{width:540px;height:540px;background:radial-gradient(circle,var(--hbc3),transparent 65%);opacity:.38;filter:blur(80px);bottom:-170px;left:18%;animation:hbc3 8s ease-in-out infinite,hbm3 19s ease-in-out infinite alternate;animation-delay:-7s,-4s;}
+.hb4{width:380px;height:380px;background:radial-gradient(circle,var(--hbc4),transparent 65%);opacity:.3;filter:blur(75px);top:35%;left:42%;animation:hbc4 15s ease-in-out infinite,hbm4 25s ease-in-out infinite alternate;animation-delay:-2s,-14s;}
 
 #dustCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 100%);}
 
-/* Hero content */
-.hero-content{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 24px;}
+/* ── HERO TWO-COLUMN LAYOUT ── */
+.hero-inner{position:relative;z-index:2;flex:1;display:flex;align-items:center;max-width:1300px;width:100%;margin:0 auto;padding:100px 64px 80px;gap:48px;}
+.hero-content{flex:1;min-width:0;text-align:left;}
 
-.hero-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:20px;animation:heroRise .9s .1s ease both;}
-.hero-icon{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 0 30px rgba(14,205,254,.4)) drop-shadow(0 0 60px rgba(127,63,238,.3));margin-bottom:12px;}
-.hero-brand-name{font-family:var(--font-d);font-size:clamp(4rem,9vw,7rem);font-weight:500;letter-spacing:-.04em;line-height:1;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(14,205,254,.25));}
-.hero-tagline{font-family:var(--font-b);font-size:clamp(1rem,2vw,1.35rem);font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.04em;text-transform:uppercase;margin-bottom:28px;animation:heroRise .9s .35s ease both;}
-.hero-sub{font-size:1.05rem;color:var(--text-muted);max-width:520px;margin:0 auto 36px;line-height:1.7;animation:heroRise .9s .55s ease both;}
-.hero-actions{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;animation:heroRise .9s .75s ease both;}
+/* Logo + text inline (like header, but bigger) */
+.hero-logo-wrap{display:flex;flex-direction:row;align-items:center;gap:14px;margin-bottom:30px;animation:heroRise .9s .1s ease both;}
+.hero-icon{width:58px;height:58px;flex-shrink:0;object-fit:contain;filter:drop-shadow(0 0 22px rgba(14,205,254,.55)) drop-shadow(0 0 44px rgba(127,63,238,.4));}
+.hero-brand-name{font-family:var(--font-d);font-size:clamp(2.5rem,3.6vw,3.4rem);font-weight:700;letter-spacing:-.04em;line-height:1;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-tagline{font-family:var(--font-d);font-size:clamp(1.9rem,2.9vw,2.7rem);font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.18;margin-bottom:16px;animation:heroRise .9s .35s ease both;}
+.hero-sub{font-size:1rem;color:var(--text-muted);max-width:440px;margin:0 0 36px;line-height:1.7;animation:heroRise .9s .55s ease both;}
+.hero-actions{display:flex;align-items:center;justify-content:flex-start;gap:16px;flex-wrap:wrap;animation:heroRise .9s .75s ease both;}
 
 @keyframes heroRise{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
 @keyframes hdrIn{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
 
 .hero-scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:2;color:var(--text-faint);animation:bounce 2.2s ease-in-out infinite;}
 @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(9px);}}
+
+/* ── ORBIT CAROUSEL (hero right column) ── */
+.hero-right{flex-shrink:0;width:490px;height:580px;display:flex;align-items:center;justify-content:center;}
+.orbit-scene{width:430px;height:560px;perspective:980px;perspective-origin:50% 42%;}
+.orbit-ring{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:orbit-spin 30s linear infinite;}
+@keyframes orbit-spin{from{transform:rotateX(24deg) rotateY(0deg);}to{transform:rotateX(24deg) rotateY(-360deg);}}
+
+/* Each card: positioned by --i (0–5), equidistant on the ring */
+.orbit-card{
+  position:absolute;top:50%;left:50%;
+  width:148px;height:192px;
+  margin-left:-74px;margin-top:-96px;
+  transform:rotateY(calc(var(--i,0) * 60deg)) translateZ(212px);
+  transform-style:preserve-3d;
+  /* depth animation: syncs opacity with ring-face position */
+  animation:orbit-depth 30s linear infinite;
+  animation-delay:calc((var(--i,0) - 6) * (30s / 6));
+}
+@keyframes orbit-depth{
+  0%,100%{opacity:.94;}   /* front — fully visible */
+  20%    {opacity:.72;}   /* side — slightly dimmed */
+  50%    {opacity:.28;}   /* back — clearly behind, still visible */
+  80%    {opacity:.72;}   /* opposite side */
+}
+.orbit-card-inner{
+  width:100%;height:100%;
+  background:rgba(14,10,28,.55);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 0 1px rgba(14,205,254,.07),inset 0 1px 0 rgba(255,255,255,.06);
+  display:flex;flex-direction:column;
+  backdrop-filter:blur(4px);
+}
+.orbit-card-img{
+  flex:1;
+  background:rgba(255,255,255,.03);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;color:rgba(255,255,255,.15);
+}
+.orbit-card-img img{width:100%;height:100%;object-fit:cover;}
+.orbit-card-label{
+  padding:9px 12px;
+  font-family:var(--font-d);font-size:.77rem;font-weight:600;
+  color:rgba(255,255,255,.85);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:rgba(255,255,255,.03);
+}
 
 /* ── SECTIONS COMMON ── */
 section{padding:110px 0;}
@@ -386,15 +381,29 @@ section{padding:110px 0;}
 .mobile-nav-close{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--text-muted);cursor:pointer;padding:8px;border-radius:8px;}
 
 /* ── RESPONSIVE ── */
+@media(max-width:1200px){
+  .hero-inner{padding:100px 48px 80px;gap:36px;}
+  .hero-right{width:440px;height:540px;}
+  .orbit-scene{width:390px;height:510px;}
+}
 @media(max-width:1024px){
+  .hero-right{width:380px;height:480px;}
+  .orbit-scene{width:340px;height:450px;}
+  .orbit-card{width:132px;height:172px;margin-left:-66px;margin-top:-86px;transform:rotateY(calc(var(--i,0)*60deg)) translateZ(185px);}
   .tool-row-inner{gap:48px;padding:0 28px;}
   .ai-cards{grid-template-columns:1fr 1fr;}
   .footer-top{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:900px){
+  .hero-right{display:none;}
+  .hero-inner{padding:100px 40px 80px;}
+  .hero-content{max-width:600px;}
 }
 @media(max-width:768px){
   section{padding:80px 0;}
   .nav,.header-actions .btn-ghost{display:none;}
   .hamburger{display:flex;}
+  .hero-inner{padding:90px 28px 70px;}
   .tool-row-inner{grid-template-columns:1fr;gap:36px;}
   .tool-row.even .tool-row-inner{direction:ltr;}
   .tool-text,.tool-row.even .tool-text{transform:translateY(20px);}
@@ -410,14 +419,15 @@ section{padding:110px 0;}
   .footer-bottom{flex-direction:column;text-align:center;}
 }
 @media(max-width:480px){
-  .hero-actions{flex-direction:column;align-items:center;}
+  .hero-actions{flex-direction:column;align-items:flex-start;}
   .footer-top{grid-template-columns:1fr;}
   .pipe-cards-row{justify-content:flex-start;}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
   [data-reveal],.tool-row,.tool-text,.tool-mock,.how-step,.privacy-item,.pipe-step-card{opacity:1;transform:none;}
-  .ls-blob,.hb{animation:none;}
+  .ls-blob,.hb,.orbit-ring,.orbit-card{animation:none;}
+  .orbit-card{opacity:.9;}
 }
   </style>
 </head>
@@ -460,36 +470,101 @@ section{padding:110px 0;}
 
 <!-- HERO -->
 <section class="hero" id="hero" aria-label="Hero">
-  <div class="hero-bg">
-    <!-- Gradient blob background — color-morphs through brand palette -->
-    <div class="hero-blobs" aria-hidden="true">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="hero-blobs">
       <div class="hb hb1"></div>
       <div class="hb hb2"></div>
       <div class="hb hb3"></div>
       <div class="hb hb4"></div>
     </div>
-    <canvas id="dustCanvas" aria-hidden="true"></canvas>
-    <div class="hero-grid" aria-hidden="true"></div>
+    <canvas id="dustCanvas"></canvas>
+    <div class="hero-grid"></div>
   </div>
 
-  <div class="hero-content" id="main-content">
-    <div class="hero-logo-wrap">
-      <img src="Images/GalSol Logo IC.svg" alt="GalSol" class="hero-icon">
-      <span class="hero-brand-name">GalSol</span>
+  <div class="hero-inner">
+    <!-- LEFT: text + CTAs -->
+    <div class="hero-content" id="main-content">
+      <div class="hero-logo-wrap">
+        <img src="Images/GalSol Logo IC.svg" alt="GalSol" class="hero-icon">
+        <span class="hero-brand-name">GalSol</span>
+      </div>
+      <p class="hero-tagline">The Grand Event Console</p>
+      <p class="hero-sub">Plan, run, and follow up on grand events — from registration to certificates to bulk mailing. Everything connected. Nothing manual.</p>
+      <div class="hero-actions">
+        <a href="login.html" class="btn-primary lg">
+          <i data-lucide="chrome" style="width:18px;height:18px"></i>
+          Get Started Free
+        </a>
+        <a href="#products" class="btn-ghost lg">
+          <i data-lucide="arrow-down" style="width:16px;height:16px"></i>
+          See What's Inside
+        </a>
+      </div>
     </div>
-    <p class="hero-tagline">The Grand Event Console</p>
-    <p class="hero-sub">Plan, run, and follow up on grand events — from registration to certificates to bulk mailing. Everything connected. Nothing manual.</p>
-    <div class="hero-actions">
-      <a href="login.html" class="btn-primary lg">
-        <i data-lucide="chrome" style="width:18px;height:18px"></i>
-        Get Started Free
-      </a>
-      <a href="#products" class="btn-ghost lg">
-        <i data-lucide="arrow-down" style="width:16px;height:16px"></i>
-        See What's Inside
-      </a>
+
+    <!-- RIGHT: 3D orbit carousel -->
+    <div class="hero-right" aria-hidden="true">
+      <div class="orbit-scene">
+        <div class="orbit-ring">
+          <!-- Card 0 — Mini Site -->
+          <div class="orbit-card" style="--i:0">
+            <div class="orbit-card-inner">
+              <div class="orbit-card-img">
+                <i data-lucide="image" style="width:22px;height:22px"></i>
+              </div>
+              <div class="orbit-card-label">Mini Site</div>
+            </div>
+          </div>
+          <!-- Card 1 — GS Forms -->
+          <div class="orbit-card" style="--i:1">
+            <div class="orbit-card-inner">
+              <div class="orbit-card-img">
+                <i data-lucide="image" style="width:22px;height:22px"></i>
+              </div>
+              <div class="orbit-card-label">GS Forms</div>
+            </div>
+          </div>
+          <!-- Card 2 — Entry Pass -->
+          <div class="orbit-card" style="--i:2">
+            <div class="orbit-card-inner">
+              <div class="orbit-card-img">
+                <i data-lucide="image" style="width:22px;height:22px"></i>
+              </div>
+              <div class="orbit-card-label">Entry Pass</div>
+            </div>
+          </div>
+          <!-- Card 3 — Dashboard -->
+          <div class="orbit-card" style="--i:3">
+            <div class="orbit-card-inner">
+              <div class="orbit-card-img">
+                <i data-lucide="image" style="width:22px;height:22px"></i>
+              </div>
+              <div class="orbit-card-label">Dashboard</div>
+            </div>
+          </div>
+          <!-- Card 4 — Certificates -->
+          <div class="orbit-card" style="--i:4">
+            <div class="orbit-card-inner">
+              <div class="orbit-card-img">
+                <i data-lucide="image" style="width:22px;height:22px"></i>
+              </div>
+              <div class="orbit-card-label">Certificates</div>
+            </div>
+          </div>
+          <!-- Card 5 — Bulk Mailer -->
+          <div class="orbit-card" style="--i:5">
+            <div class="orbit-card-inner">
+              <div class="orbit-card-img">
+                <i data-lucide="image" style="width:22px;height:22px"></i>
+              </div>
+              <div class="orbit-card-label">Bulk Mailer</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
   <div class="hero-scroll-hint" aria-hidden="true">
     <i data-lucide="chevrons-down" style="width:22px;height:22px"></i>
   </div>
