@@ -53,12 +53,12 @@ img{display:block;max-width:100%;}
 /* PAGE HERO */
 .page-hero{padding:140px 0 72px;text-align:center;border-bottom:1px solid var(--border);}
 .page-hero .breadcrumb{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.8rem;color:var(--text-faint);margin-bottom:20px;}
-.page-hero .breadcrumb a{color:var(--text-muted);transition:color .2s;}
+.page-hero .breadcrumb a{color:var(--text);transition:color .2s;}
 .page-hero .breadcrumb a:hover{color:var(--cyan);}
 .page-hero .breadcrumb span{color:var(--text-faint);}
 .page-hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:700;letter-spacing:-.03em;margin-bottom:12px;}
 .page-hero p{color:var(--text-muted);font-size:.95rem;max-width:480px;margin:0 auto;}
-.page-hero .meta{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:24px;font-size:.78rem;color:var(--text-faint);}
+.page-hero .meta{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:24px;font-size:1rem;color:var(--text-muted);}
 .page-hero .meta span{display:flex;align-items:center;gap:5px;}
 
 /* LEGAL CONTENT */
@@ -114,8 +114,8 @@ img{display:block;max-width:100%;}
       <span class="logo-text">GalSol</span>
     </a>
     <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
       <a href="index.html#tools" class="nav-link">Tools</a>
-      <a href="index.html#pipeline" class="nav-link">Pipeline</a>
       <a href="index.html#pricing" class="nav-link">Pricing</a>
     </nav>
     <div class="header-actions">
@@ -147,66 +147,65 @@ img{display:block;max-width:100%;}
       <!-- Table of Contents -->
       <aside class="legal-toc">
   <h6>On this page</h6>
-  <a href="#s1">1. Our Role in Data Processing</a>
-  <a href="#s2">A. Pass-Through Data: For standard GS Forms and Bulk Mail campaigns, we route participant data directly into the Creator's connected Google Sheets and Google Drive. We do not permanently store this general submission data on GalSol servers.</a>
-  <a href="#s3">B. Entry Pass Data Storage: If a Creator utilizes the "Digital Entry Pass" feature for an event, GalSol does store specific, limited data on our secure databases to facilitate the QR code scanning and check-in process. This data includes:</a>
-  <a href="#s4">2. Google API Services & Limited Use Disclosure</a>
-  <a href="#s5">3. Artificial Intelligence (Gal AI)</a>
-  <a href="#s6">4. Information We Collect About You (The Creator)</a>
-  <a href="#s7">5. Security</a>
-  <a href="#s8">6. Contact Us</a>
+  <a href="#s1">1. Information We Collect</a>
+  <a href="#s2">2. Google API Services & Limited Use Disclosure</a>
+  <a href="#s3">3. Artificial Intelligence (Gal AI)</a>
+  <a href="#s4">4. Information We Collect About You (The Creator)</a>
+  <a href="#s5">5. Security</a>
+  <a href="#s6">6. Contact Us</a>
 </aside>
 
       <!-- Body -->
       <div class="legal-body">
   <div class="legal-section" id="s1">
-    <h2><span class="sec-num">1</span> Our Role in Data Processing</h2>
-    <p>GalSol acts primarily as a Data Processor for the "Creators" (event organizers, educators, businesses) who use our platform to build forms and send emails.</p>
+    <h2><span class="sec-num">1</span> Information We Collect</h2>
+    <p>Our Role in Data Processing: GalSol acts primarily as a Data Processor for the "Creators" (event organizers, educators, businesses) who use our platform to build forms and send emails.</p>
+    
+    <ul style="list-style-type: upper-alpha; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+        <li><strong>Pass-Through Data:</strong> For standard GS Forms and Bulk Mail campaigns, we route participant data directly into the Creator's connected Google Sheets and Google Drive. We do not permanently store this general submission data on GalSol servers.</li>
+        <li><strong>Entry Pass Data Storage:</strong> If a Creator utilizes the "Digital Entry Pass" feature for an event, GalSol does store specific, limited data on our secure databases to facilitate the QR code scanning and check-in process. This data includes:
+            <ul style="list-style-type: disc; margin-left: 20px; margin-top: 5px;">
+                <li>The respondent's Name and Email Address (or other identifiers chosen by the Creator).</li>
+                <li>A randomly generated Unique Pass Token.</li>
+                <li>The check-in status (Valid, Admitted, or Blocked) and timestamp of scan.</li>
+            </ul>
+            <p style="margin-top: 5px;">This data is stored strictly for access-control purposes and is deleted when the Creator deletes the associated campaign.</p>
+        </li>
+    </ul>
   </div>
   <div class="legal-section" id="s2">
-    <h2><span class="sec-num">A</span> Pass-Through Data: For standard GS Forms and Bulk Mail campaigns, we route participant data directly into the Creator's connected Google Sheets and Google Drive. We do not permanently store this general submission data on GalSol servers.</h2>
-  </div>
-  <div class="legal-section" id="s3">
-    <h2><span class="sec-num">B</span> Entry Pass Data Storage: If a Creator utilizes the "Digital Entry Pass" feature for an event, GalSol does store specific, limited data on our secure databases to facilitate the QR code scanning and check-in process. This data includes:</h2>
-    <ul>
-      <li>The respondent's Name and Email Address (or other identifiers chosen by the Creator).</li>
-      <li>A randomly generated Unique Pass Token.</li>
-      <li>The check-in status (Valid, Admitted, or Blocked) and timestamp of scan.</li>
-    </ul>
-    <p>This data is stored strictly for access-control purposes and is deleted when the Creator deletes the associated campaign.</p>
-  </div>
-  <div class="legal-section" id="s4">
     <h2><span class="sec-num">2</span> Google API Services & Limited Use Disclosure</h2>
     <p>GalSol relies on Google Workspace APIs to function. When you authenticate your account, you grant GalSol access to specific scopes (including Gmail Send, Google Drive full access, Google Sheets, and Google Slides).</p>
-    <p>Google API Limited Use Policy:</p>
+    <p><strong>Google API Limited Use Policy:</strong></p>
     <p>GalSol's use and transfer to any other app of information received from Google APIs will adhere strictly to the Google API Services User Data Policy, including the Limited Use requirements.</p>
-    <ul>
-      <li>Allowed Use: We only use the authorized data to provide the core features of the GalSol platform (e.g., reading your templates, creating certificates in your Drive, and sending your bulk emails via your Gmail).</li>
-      <li>No Advertising: We do not use your Google user data for targeted or retargeted advertising.</li>
-      <li>No Human Access: We do not allow humans to read your data unless we have your affirmative agreement for specific support requests, doing so is necessary for security purposes (e.g., investigating abuse), or to comply with applicable law.</li>
+    <ul style="list-style-type: disc; margin-left: 20px; margin-top: 10px;">
+      <li><strong>Allowed Use:</strong> We only use the authorized data to provide the core features of the GalSol platform (e.g., reading your templates, creating certificates in your Drive, and sending your bulk emails via your Gmail).</li>
+      <li><strong>No Advertising:</strong> We do not use your Google user data for targeted or retargeted advertising.</li>
+      <li><strong>No Human Access:</strong> We do not allow humans to read your data unless we have your affirmative agreement for specific support requests, doing so is necessary for security purposes (e.g., investigating abuse), or to comply with applicable law.</li>
     </ul>
   </div>
-  <div class="legal-section" id="s5">
+  <div class="legal-section" id="s3">
     <h2><span class="sec-num">3</span> Artificial Intelligence (Gal AI)</h2>
     <p>GalSol integrates "Gal AI," powered by Google's Gemini 3 Flash model, to assist Creators in designing forms, generating email templates, and building sites.</p>
-    <ul>
+    <ul style="list-style-type: disc; margin-left: 20px; margin-top: 10px;">
       <li>When you use Gal AI, your prompts are processed by the Gemini API.</li>
-      <li>Data Protection: We do not send your participants' Personally Identifiable Information (PII) to the AI models. Furthermore, your prompts and data are not used by Google to train their foundational AI models.</li>
+      <li><strong>Data Protection:</strong> We do not send your participants' Personally Identifiable Information (PII) to the AI models. Furthermore, your prompts and data are not used by Google to train their foundational AI models.</li>
     </ul>
   </div>
-  <div class="legal-section" id="s6">
+  <div class="legal-section" id="s4">
     <h2><span class="sec-num">4</span> Information We Collect About You (The Creator)</h2>
     <p>To provide our service, we collect your Google Profile information (Name, Email, Avatar) via OAuth, alongside platform usage metadata (number of campaigns, storage limits) to enforce billing and service quotas.</p>
   </div>
-  <div class="legal-section" id="s7">
+  <div class="legal-section" id="s5">
     <h2><span class="sec-num">5</span> Security</h2>
     <p>We use industry-standard encryption (HTTPS/TLS) for all data in transit. Entry Pass data stored on our servers is protected using modern database security protocols. However, the security of your generated certificates and sent emails relies on the security of your personal Google Account.</p>
   </div>
-  <div class="legal-section" id="s8">
+  <div class="legal-section" id="s6">
     <h2><span class="sec-num">6</span> Contact Us</h2>
     <p>For data deletion requests or privacy inquiries, please contact our Data Protection Officer at: galsol.co@gmail.com.</p>
   </div>
-</div></div>
+</div>
+    </div>
     </div>
   </div>
 </main>
@@ -234,6 +233,8 @@ img{display:block;max-width:100%;}
         </div>
                 <div class="footer-col">
           <h5>Product</h5>
+          <a href="dashboard.html">Dashboard + Database</a>
+          <a href="combined-tool.html">Combined Pipeline</a>
           <a href="mini-site.html">Mini Site Builder</a>
           <a href="gs-forms.html">GS Forms</a>
           <a href="cert-tool.html">Certificates</a>
@@ -255,8 +256,7 @@ img{display:block;max-width:100%;}
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 GalSol. All rights reserved.</p>
-        <p>GalSol is an independent platform, not affiliated with Google LLC.</p>
+        <p style="color: var(--text); font-weight: 500;">&copy; 2026 GalSol. All rights reserved.</p>
       </div>
     </div>
   </footer>
