@@ -1,115 +1,516 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy — GalSol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
+    rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#050C12;--surface:rgba(255,255,255,0.04);--surface-2:rgba(255,255,255,0.06);
-  --border:rgba(255,255,255,0.08);--border-hi:rgba(255,255,255,0.15);
-  --primary:#7F3FEE;--cyan:#0ECDFE;--violet:#A689F9;
-  --text:#eef0ff;--text-muted:#8892aa;--text-faint:#3d4a60;
-  --grad-brand:linear-gradient(135deg,#0ECDFE,#A689F9,#7F3FEE);
-  --grad-text:linear-gradient(135deg,#0ECDFE 0%,#A689F9 50%,#7F3FEE 100%);
-  --font-d:'Syne',sans-serif;--font-b:'DM Sans',sans-serif;
-}
-html{scroll-behavior:smooth;}
-body{font-family:var(--font-b);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
-h1,h2,h3,h4,h5,.logo-text{font-family:var(--font-d);}
-a{text-decoration:none;color:inherit;}
-img{display:block;max-width:100%;}
-.gradient-text{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.container{max-width:1200px;margin:0 auto;padding:0 24px;}
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-.site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(ellipse 900px 700px at -5% 0%,rgba(127,63,238,.12) 0%,transparent 65%),
-    radial-gradient(ellipse 700px 600px at 108% 2%,rgba(14,205,254,.07) 0%,transparent 65%),
-    radial-gradient(ellipse 500px 400px at 55% 85%,rgba(166,137,249,.05) 0%,transparent 65%);
-}
+    :root {
+      --bg: #050C12;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-2: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hi: rgba(255, 255, 255, 0.15);
+      --primary: #7F3FEE;
+      --cyan: #0ECDFE;
+      --violet: #A689F9;
+      --text: #eef0ff;
+      --text-muted: #8892aa;
+      --text-faint: #3d4a60;
+      --grad-brand: linear-gradient(135deg, #0ECDFE, #A689F9, #7F3FEE);
+      --grad-text: linear-gradient(135deg, #0ECDFE 0%, #A689F9 50%, #7F3FEE 100%);
+      --font-d: 'Syne', sans-serif;
+      --font-b: 'DM Sans', sans-serif;
+    }
 
-/* HEADER */
-.header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 0;border-bottom:1px solid transparent;transition:background .3s,backdrop-filter .3s,border-color .3s,padding .3s;}
-.header.scrolled{background:rgba(5,12,18,.92);backdrop-filter:blur(20px);border-bottom-color:var(--border);padding:13px 0;}
-.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:32px;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-img{height:26px;width:auto;}
-.logo-text {
-      font-size: 1.45rem;
-      font-weight: 700;letter-spacing:-.02em;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.nav{display:flex;align-items:center;gap:4px;}
-.nav-link{font-size:.88rem;color:var(--text-muted);padding:7px 12px;border-radius:8px;transition:color .2s,background .2s;}
-.nav-link:hover{color:var(--text);background:rgba(255,255,255,.06);}
-.header-actions{display:flex;align-items:center;gap:12px;}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--grad-brand);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-family:var(--font-d);font-size:.88rem;font-weight:600;cursor:pointer;transition:transform .25s,box-shadow .25s;white-space:nowrap;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(127,63,238,.35);}
-.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);color:var(--text-muted);border:1px solid var(--border-hi);border-radius:10px;padding:10px 20px;font-family:var(--font-d);font-size:.88rem;font-weight:600;cursor:pointer;transition:color .2s,border-color .2s,background .2s,transform .2s;white-space:nowrap;}
-.btn-ghost:hover{color:var(--text);border-color:rgba(14,205,254,.4);background:rgba(14,205,254,.05);transform:translateY(-2px);}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* PAGE HERO */
-.page-hero{padding:140px 0 72px;text-align:center;border-bottom:1px solid var(--border);}
-.page-hero .breadcrumb{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.8rem;color:var(--text-faint);margin-bottom:20px;}
-.page-hero .breadcrumb a{color:var(--text);transition:color .2s;}
-.page-hero .breadcrumb a:hover{color:var(--cyan);}
-.page-hero .breadcrumb span{color:var(--text-faint);}
-.page-hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:700;letter-spacing:-.03em;margin-bottom:12px;}
-.page-hero p{color:var(--text-muted);font-size:.95rem;max-width:480px;margin:0 auto;}
-.page-hero .meta{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:24px;font-size:1rem;color:var(--text-muted);}
-.page-hero .meta span{display:flex;align-items:center;gap:5px;}
+    body {
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-/* LEGAL CONTENT */
-.legal-layout{display:grid;grid-template-columns:220px 1fr;gap:60px;padding:64px 0 120px;align-items:start;}
-.legal-toc{position:sticky;top:96px;}
-.legal-toc h6{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:14px;}
-.legal-toc a{display:block;font-size:.82rem;color:var(--text-muted);padding:6px 10px;border-left:2px solid var(--border);margin-bottom:2px;transition:color .2s,border-color .2s,padding-left .2s;}
-.legal-toc a:hover,.legal-toc a.active{color:var(--cyan);border-left-color:var(--cyan);padding-left:14px;}
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    .logo-text {
+      font-family: var(--font-d);
+    }
 
-.legal-body{min-width:0;}
-.legal-section{margin-bottom:56px;padding-bottom:56px;border-bottom:1px solid var(--border);}
-.legal-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
-.legal-section h2{font-size:1.3rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
-.legal-section h2 .sec-num{font-size:.72rem;font-weight:700;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:var(--text-muted);font-family:var(--font-b);letter-spacing:.04em;}
-.legal-section .placeholder-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;margin-top:18px;}
-.legal-section .placeholder-block p{color:var(--text-muted);font-size:.88rem;line-height:1.8;}
-.ph-lines{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
-.ph-line{height:10px;border-radius:4px;background:rgba(255,255,255,.05);}
-.ph-line.w-full{width:100%;}
-.ph-line.w-3q{width:75%;}
-.ph-line.w-half{width:50%;}
-.ph-line.w-2q{width:60%;}
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
 
-/* FOOTER */
-.footer{border-top:1px solid var(--border);padding:72px 0 36px;}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:52px;}
-.footer-brand p{font-size:.86rem;color:var(--text-muted);line-height:1.6;margin-top:14px;margin-bottom:18px;max-width:260px;}
-.footer-social{display:flex;gap:10px;}
-.footer-social a{width:33px;height:33px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:color .2s,border-color .2s,background .2s,transform .2s;}
-.footer-social a:hover{color:var(--text);border-color:rgba(14,205,254,.35);background:rgba(14,205,254,.06);transform:translateY(-2px);}
-.footer-col h5{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;color:var(--text);}
-.footer-col a{display:block;font-size:.83rem;color:var(--text-muted);margin-bottom:9px;transition:color .2s,transform .2s;display:flex;align-items:center;}
-.footer-col a:hover{color:var(--cyan);transform:translateX(3px);}
-.footer-bottom{border-top:1px solid var(--border);padding-top:26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
-.footer-bottom p{font-size:.78rem;color:var(--text-faint);}
+    img {
+      display: block;
+      max-width: 100%;
+    }
 
-@media(max-width:900px){
-  .legal-layout{grid-template-columns:1fr;}
-  .legal-toc{display:none;}
-  .footer-top{grid-template-columns:1fr 1fr;}
-  .footer-bottom{flex-direction:column;text-align:center;}
-}
-@media(max-width:480px){.footer-top{grid-template-columns:1fr;}}
+    .gradient-text {
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .site-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 900px 700px at -5% 0%, rgba(127, 63, 238, .12) 0%, transparent 65%),
+        radial-gradient(ellipse 700px 600px at 108% 2%, rgba(14, 205, 254, .07) 0%, transparent 65%),
+        radial-gradient(ellipse 500px 400px at 55% 85%, rgba(166, 137, 249, .05) 0%, transparent 65%);
+    }
+
+    /* HEADER */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      border-bottom: 1px solid transparent;
+      transition: background .3s, backdrop-filter .3s, border-color .3s, padding .3s;
+    }
+
+    .header.scrolled {
+      background: rgba(5, 12, 18, .92);
+      backdrop-filter: blur(20px);
+      border-bottom-color: var(--border);
+      padding: 13px 0;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      height: 26px;
+      width: auto;
+    }
+
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -.02em;
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-link {
+      font-size: .88rem;
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--grad-brand);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-family: var(--font-d);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .25s, box-shadow .25s;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(127, 63, 238, .35);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, .05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-hi);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-family: var(--font-d);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s, transform .2s;
+      white-space: nowrap;
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(14, 205, 254, .4);
+      background: rgba(14, 205, 254, .05);
+      transform: translateY(-2px);
+    }
+
+    /* PAGE HERO */
+    .page-hero {
+      padding: 140px 0 72px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-hero .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: .8rem;
+      color: var(--text-faint);
+      margin-bottom: 20px;
+    }
+
+    .page-hero .breadcrumb a {
+      color: var(--text);
+      transition: color .2s;
+    }
+
+    .page-hero .breadcrumb a:hover {
+      color: var(--cyan);
+    }
+
+    .page-hero .breadcrumb span {
+      color: var(--text-faint);
+    }
+
+    .page-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      margin-bottom: 12px;
+    }
+
+    .page-hero p {
+      color: var(--text-muted);
+      font-size: .95rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .page-hero .meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 24px;
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .page-hero .meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* LEGAL CONTENT */
+    .legal-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 60px;
+      padding: 64px 0 120px;
+      align-items: start;
+    }
+
+    .legal-toc {
+      position: sticky;
+      top: 96px;
+    }
+
+    .legal-toc h6 {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 14px;
+    }
+
+    .legal-toc a {
+      display: block;
+      font-size: .82rem;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-left: 2px solid var(--border);
+      margin-bottom: 2px;
+      transition: color .2s, border-color .2s, padding-left .2s;
+    }
+
+    .legal-toc a:hover,
+    .legal-toc a.active {
+      color: var(--cyan);
+      border-left-color: var(--cyan);
+      padding-left: 14px;
+    }
+
+    .legal-body {
+      min-width: 0;
+    }
+
+    .legal-section {
+      margin-bottom: 56px;
+      padding-bottom: 56px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .legal-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .legal-section h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legal-section h2 .sec-num {
+      font-size: .72rem;
+      font-weight: 700;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+      color: var(--text-muted);
+      font-family: var(--font-b);
+      letter-spacing: .04em;
+    }
+
+    .legal-section .placeholder-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-top: 18px;
+    }
+
+    .legal-section .placeholder-block p {
+      color: var(--text-muted);
+      font-size: .88rem;
+      line-height: 1.8;
+    }
+
+    .ph-lines {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ph-line {
+      height: 10px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .ph-line.w-full {
+      width: 100%;
+    }
+
+    .ph-line.w-3q {
+      width: 75%;
+    }
+
+    .ph-line.w-half {
+      width: 50%;
+    }
+
+    .ph-line.w-2q {
+      width: 60%;
+    }
+
+    /* FOOTER */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 72px 0 36px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 52px;
+    }
+
+    .footer-brand p {
+      font-size: .86rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 14px;
+      margin-bottom: 18px;
+      max-width: 260px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-social a {
+      width: 33px;
+      height: 33px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: color .2s, border-color .2s, background .2s, transform .2s;
+    }
+
+    .footer-social a:hover {
+      color: var(--text);
+      border-color: rgba(14, 205, 254, .35);
+      background: rgba(14, 205, 254, .06);
+      transform: translateY(-2px);
+    }
+
+    .footer-col h5 {
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: .83rem;
+      color: var(--text-muted);
+      margin-bottom: 9px;
+      transition: color .2s, transform .2s;
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-col a:hover {
+      color: var(--cyan);
+      transform: translateX(3px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .footer-bottom p {
+      font-size: .78rem;
+      color: var(--text-faint);
+    }
+
+    @media(max-width:900px) {
+      .legal-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .legal-toc {
+        display: none;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media(max-width:480px) {
+      .footer-top {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
-<body>
-<div class="site-bg" aria-hidden="true"></div>
 
-<header class="header" id="header">
+<body>
+  <div class="site-bg" aria-hidden="true"></div>
+
+  <header class="header" id="header">
     <div class="header-inner">
       <a href="index.html" class="logo">
         <img src="Images/GalSol Logo IC.svg" alt="GalSol icon" class="logo-img" style="height:24px;">
@@ -125,92 +526,150 @@ img{display:block;max-width:100%;}
       <div class="header-actions">
         <a href="login.html" class="btn-ghost">Sign In</a>
         <a href="login.html" class="btn-primary">Get Started Free</a>
-        </div>
+      </div>
     </div>
   </header>
 
-<main>
-  <div class="page-hero">
+  <main>
+    <div class="page-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a>
+          <span>/</span>
+          <span>Privacy Policy</span>
+        </div>
+        <h1 class="gradient-text">GalSol Privacy Policy</h1>
+        <p>Welcome to GalSol. This Privacy Policy explains how we collect, use, process, and protect your information
+          when you use our website, tools, and services.</p>
+        <div class="meta">
+          <span><i data-lucide="calendar" style="width:13px;height:13px"></i> Last updated: May 11, 2026</span>
+          <span><i data-lucide="clock" style="width:13px;height:13px"></i> 8 min read</span>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html">Home</a>
-        <span>/</span>
-        <span>Privacy Policy</span>
+      <div class="legal-layout">
+        <!-- Table of Contents -->
+        <aside class="legal-toc">
+          <h6>On this page</h6>
+          <a href="#s1">1. Our Role in Data Processing & Indian Law Compliance</a>
+          <a href="#s2">2. Google API Services & Limited Use Disclosure</a>
+          <a href="#s3">3. Artificial Intelligence (Gal AI)</a>
+          <a href="#s4">4. Information We Collect About You (The Creator)</a>
+          <a href="#s5">5. Security</a>
+          <a href="#s6">6. Information for Form Respondents (End-Users)</a>
+          <a href="#s7">7. Grievance Officer & Contact</a>
+        </aside>
+
+        <!-- Body -->
+        <div class="legal-body">
+          <div class="legal-section" id="s1">
+            <h2><span class="sec-num">1</span> Our Role in Data Processing & Indian Law Compliance</h2>
+            <p>GalSol is headquartered in Chennai, Tamil Nadu, India. We comply with applicable Indian laws, including
+              the Information Technology Act, 2000, and the Digital Personal Data Protection Act (DPDP Act), 2023.</p>
+            <p style="margin-top: 10px;">GalSol acts primarily as a Data Processor for the "Creators" (event organizers,
+              educators, businesses) who use our platform to build forms and send emails.</p>
+
+            <ul
+              style="list-style-type: upper-alpha; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+              <li><strong>Pass-Through Data:</strong> For standard GS Forms and Bulk Mail campaigns, we route
+                participant data directly into the Creator's connected Google Sheets and Google Drive. We do not
+                permanently store this general submission data on GalSol servers.</li>
+              <li><strong>Entry Pass Data Storage:</strong> If a Creator utilizes the "Digital Entry Pass" feature,
+                GalSol stores specific, limited data (Name, Email, Pass Token, and check-in status) securely to
+                facilitate QR code scanning. This is stored strictly for access-control purposes.</li>
+            </ul>
+          </div>
+
+          <div class="legal-section" id="s2">
+            <h2><span class="sec-num">2</span> Google API Services & Limited Use Disclosure</h2>
+            <p>GalSol relies on Google Workspace APIs to function. When you authenticate your account, you grant GalSol
+              access to specific scopes (including Gmail Send, Google Drive full access, Google Sheets, and Google
+              Slides).</p>
+
+            <div
+              style="background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-top: 15px;">
+              <p style="font-weight: 600; color: var(--cyan); margin-bottom: 10px;">Google API Limited Use Policy:</p>
+              <p style="margin-bottom: 10px;">GalSol's use and transfer to any other app of information received from
+                Google APIs will adhere strictly to the Google API Services User Data Policy, including the Limited Use
+                requirements.</p>
+              <ul style="list-style-type: disc; margin-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+                <li>We only use the authorized data to provide the core features of the GalSol platform.</li>
+                <li>We do not use your Google user data for targeted or retargeted advertising.</li>
+                <li>We do not allow humans to read your data unless required for security purposes, to provide technical
+                  support with your explicit consent, or to comply with applicable law.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="legal-section" id="s3">
+            <h2><span class="sec-num">3</span> Artificial Intelligence (Gal AI)</h2>
+            <p>GalSol integrates "Gal AI," powered by Google's Gemini 3 Flash model.</p>
+            <ul
+              style="list-style-type: disc; margin-left: 20px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+              <li>We do not send your participants' Personally Identifiable Information (PII) to the AI models.</li>
+              <li>Your prompts and data are not used by Google to train their foundational AI models.</li>
+            </ul>
+          </div>
+
+          <div class="legal-section" id="s4">
+            <h2><span class="sec-num">4</span> Information We Collect About You (The Creator)</h2>
+            <p>To provide our service, we collect your Google Profile information (Name, Email, Avatar) via OAuth,
+              alongside platform usage metadata (number of campaigns, storage limits) to enforce billing and service
+              quotas.</p>
+          </div>
+
+          <div class="legal-section" id="s5">
+            <h2><span class="sec-num">5</span> Security</h2>
+            <p>We use industry-standard encryption (HTTPS/TLS) for all data in transit. Entry Pass data stored on our
+              servers is protected using modern database security protocols. However, the security of your generated
+              certificates and sent emails ultimately relies on the security of your personal Google Account.</p>
+          </div>
+
+          <div class="legal-section" id="s6">
+            <h2><span class="sec-num">6</span> Information for Form Respondents (End-Users)</h2>
+            <p>If you are an individual filling out a registration form, RSVP, or Mini Site powered by GalSol (an
+              "End-User"), please note the following regarding your personal data under the DPDP Act, 2023:</p>
+            <ul
+              style="list-style-type: disc; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+              <li><strong>Data Fiduciary vs. Data Processor:</strong> The event organizer or business that created the
+                form is the Data Fiduciary. They are responsible for obtaining your consent and determining how your
+                data is used. GalSol acts strictly as a Data Processor providing the technical infrastructure.</li>
+              <li><strong>General Submissions:</strong> Your general submission data is routed securely and directly
+                into the Data Fiduciary's private database. GalSol does not intercept or permanently store this data.
+              </li>
+              <li><strong>Entry Pass Ticketing Data:</strong> If the form generates a Digital Entry Pass (QR Code) for
+                gate check-in, GalSol temporarily stores a limited subset of your data (Name, Email, and a Unique Pass
+                Token) on our secure servers exclusively to facilitate the organizer's live QR scanning tools.</li>
+              <li><strong>Exercising Your Rights:</strong> Under the DPDP Act, you have the right to access, correct, or
+                erase your personal data. To exercise these rights, you must contact the Data Fiduciary (the event
+                organizer) directly. GalSol will assist the Data Fiduciary in fulfilling your technical requests upon
+                their authorized instruction.</li>
+            </ul>
+          </div>
+
+          <div class="legal-section" id="s7">
+            <h2><span class="sec-num">7</span> Grievance Officer & Contact</h2>
+            <p>In accordance with the Information Technology Act, 2000 and rules made thereunder, the name and contact
+              details of the Grievance Officer are provided below:</p>
+
+            <div
+              style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border); margin-top: 15px; display: inline-block;">
+              <p style="margin-bottom: 5px;"><strong>Email:</strong> <a href="mailto:galsol.co@gmail.com"
+                  style="color: var(--cyan); text-decoration: underline;">galsol.co@gmail.com</a></p>
+              <p><strong>Subject Line:</strong> "Privacy Grievance"</p>
+            </div>
+
+            <p style="margin-top: 15px;">If you have data deletion requests or privacy inquiries, please contact us
+              immediately.</p>
+          </div>
+        </div>
       </div>
-      <h1 class="gradient-text">GalSol Privacy Policy</h1>
-      <p>Welcome to GalSol. This Privacy Policy explains how we collect, use, process, and protect your information when you use our website, tools, and services.</p>
-      <div class="meta">
-        <span><i data-lucide="calendar" style="width:13px;height:13px"></i> Last updated: May 11, 2026</span>
-        <span><i data-lucide="clock" style="width:13px;height:13px"></i> 8 min read</span>
-      </div>
     </div>
-  </div>
+  </main>
 
-  <div class="container">
-    <div class="legal-layout">
-      <!-- Table of Contents -->
-      <aside class="legal-toc">
-  <h6>On this page</h6>
-  <a href="#s1">1. Our Role in Data Processing & Indian Law Compliance</a>
-  <a href="#s2">2. Google API Services & Limited Use Disclosure</a>
-  <a href="#s3">3. Artificial Intelligence (Gal AI)</a>
-  <a href="#s4">4. Grievance Officer & Contact</a>
-</aside>
-
-      <!-- Body -->
-      <div class="legal-body">
-  <div class="legal-section" id="s1">
-    <h2><span class="sec-num">1</span> Our Role in Data Processing & Indian Law Compliance</h2>
-    <p>GalSol is headquartered in Chennai, Tamil Nadu, India. We comply with applicable Indian laws, including the Information Technology Act, 2000, and the Digital Personal Data Protection Act (DPDP Act), 2023.</p>
-    <p style="margin-top: 10px;">GalSol acts primarily as a Data Processor (or "Data Fiduciary" depending on the context of the DPDP Act) for the "Creators" (event organizers, educators, businesses) who use our platform to build forms and send emails.</p>
-    
-    <ul style="list-style-type: upper-alpha; margin-left: 20px; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
-        <li><strong>Pass-Through Data:</strong> For standard GS Forms and Bulk Mail campaigns, we route participant data directly into the Creator's connected Google Sheets and Google Drive. We do not permanently store this general submission data on GalSol servers.</li>
-        <li><strong>Entry Pass Data Storage:</strong> If a Creator utilizes the "Digital Entry Pass" feature, GalSol stores specific, limited data (Name, Email, Pass Token, and check-in status) securely to facilitate QR code scanning. This is stored strictly for access-control purposes.</li>
-    </ul>
-  </div>
-
-  <div class="legal-section" id="s2">
-    <h2><span class="sec-num">2</span> Google API Services & Limited Use Disclosure</h2>
-    <p>GalSol relies on Google Workspace APIs to function. When you authenticate your account, you grant GalSol access to specific scopes (including Gmail Send, Google Drive full access, Google Sheets, and Google Slides).</p>
-    
-    <div style="background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-top: 15px;">
-        <p style="font-weight: 600; color: var(--cyan); margin-bottom: 10px;">Google API Limited Use Policy:</p>
-        <p style="margin-bottom: 10px;">GalSol's use and transfer to any other app of information received from Google APIs will adhere strictly to the Google API Services User Data Policy, including the Limited Use requirements.</p>
-        <ul style="list-style-type: disc; margin-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-            <li>We only use the authorized data to provide the core features of the GalSol platform.</li>
-            <li>We do not use your Google user data for targeted or retargeted advertising.</li>
-            <li>We do not allow humans to read your data unless required for security purposes or to comply with applicable law.</li>
-        </ul>
-    </div>
-  </div>
-
-  <div class="legal-section" id="s3">
-    <h2><span class="sec-num">3</span> Artificial Intelligence (Gal AI)</h2>
-    <p>GalSol integrates "Gal AI," powered by Google's Gemini 3 Flash model.</p>
-    <ul style="list-style-type: disc; margin-left: 20px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
-        <li>We do not send your participants' Personally Identifiable Information (PII) to the AI models.</li>
-        <li>Your prompts and data are not used by Google to train their foundational AI models.</li>
-    </ul>
-  </div>
-
-  <div class="legal-section" id="s4">
-    <h2><span class="sec-num">4</span> Grievance Officer & Contact</h2>
-    <p>In accordance with the Information Technology Act, 2000 and rules made thereunder, the name and contact details of the Grievance Officer are provided below:</p>
-    
-    <div style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border); margin-top: 15px; display: inline-block;">
-        <p style="margin-bottom: 5px;"><strong>Email:</strong> <a href="mailto:galsol.co@gmail.com" style="color: var(--cyan); text-decoration: underline;">galsol.co@gmail.com</a></p>
-        <p><strong>Subject Line:</strong> "Privacy Grievance"</p>
-    </div>
-    
-    <p style="margin-top: 15px;">If you have data deletion requests or privacy inquiries, please contact us immediately.</p>
-  </div>
-</div>
-    </div>
-  </div>
-</main>
-
-<footer class="footer">
+  <footer class="footer">
     <div class="container">
       <div class="footer-top">
         <div class="footer-brand">
@@ -230,7 +689,7 @@ img{display:block;max-width:100%;}
                 style="width:15px;height:15px"></i></a>
           </div>
         </div>
-                <div class="footer-col">
+        <div class="footer-col">
           <h5>Product</h5>
           <a href="mini-site.html">Mini Site</a>
           <a href="gs-forms.html">GS Forms</a>
@@ -260,86 +719,24 @@ img{display:block;max-width:100%;}
     </div>
   </footer>
 
-<script>
-lucide.createIcons();
-const header = document.getElementById('header');
-window.addEventListener('scroll', () => { header.classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
-
-// Highlight active TOC link on scroll
-const sections = document.querySelectorAll('.legal-section');
-const tocLinks = document.querySelectorAll('.legal-toc a');
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const id = e.target.id;
-      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-    }
-  });
-}, { rootMargin: '-20% 0px -70% 0px' });
-sections.forEach(s => observer.observe(s));
-</script>
-
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
+    lucide.createIcons();
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => { header.classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
 
-    const token = localStorage.getItem('GalSol_token');
-    let user = null;
-    if (token) {
-       try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          if (payload.exp && payload.exp * 1000 > Date.now()) { user = payload; } 
-          else { localStorage.removeItem('GalSol_token'); }
-       } catch(e) {}
-    }
-    
-    if(user) {
-        const actionsContainer = document.querySelector('.header-actions');
-        if(actionsContainer) {
-            const desktopLinks = actionsContainer.querySelectorAll('a.btn-ghost, a.btn-primary');
-            desktopLinks.forEach(l => l.style.display = 'none');
-
-            const profileMenu = document.createElement('div');
-            profileMenu.className = 'profile-menu';
-            profileMenu.style.position = 'relative';
-            profileMenu.innerHTML = `
-                <button class="profile-btn" id="landingProfileBtn" style="background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center;">
-                   <img src="${user.picture || 'Images/GalSol Logo IC.svg'}" alt="Profile" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border-hi); background: var(--surface); padding: 2px;">
-                </button>
-                <div class="profile-dropdown" id="landingProfileDropdown" style="position:absolute; top:calc(100% + 10px); right:0; background:#050C12; border:1px solid var(--border-hi); border-radius:10px; width:180px; padding:8px; display:none; flex-direction:column; gap:4px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
-                   <div style="padding:10px; border-bottom:1px solid var(--border); margin-bottom:4px;">
-                      <span style="display:block; font-size:0.85rem; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${user.name}</span>
-                      <span style="display:block; font-size:0.75rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${user.email}</span>
-                   </div>
-                   <a href="dashboard.html" style="padding:10px; color:var(--text); font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Dashboard</a>
-                   <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.href='login.html'" style="padding:10px; color:var(--text); font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Switch Account</a>
-                   <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.reload()" style="padding:10px; color:#ff6b6b; font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Log Out</a>
-                </div>`;
-            
-            const hamburger = document.querySelector('.hamburger');
-            if(hamburger) {
-               actionsContainer.insertBefore(profileMenu, hamburger);
-            } else {
-               actionsContainer.appendChild(profileMenu);
-            }
-
-            const btn = profileMenu.querySelector('#landingProfileBtn');
-            const drop = profileMenu.querySelector('#landingProfileDropdown');
-            
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                drop.style.display = drop.style.display === 'none' ? 'flex' : 'none';
-            });
-            
-            document.addEventListener('click', () => { drop.style.display = 'none'; });
-
-            drop.querySelectorAll('a').forEach(a => {
-               a.addEventListener('mouseenter', () => a.style.background = 'rgba(255,255,255,0.05)');
-               a.addEventListener('mouseleave', () => a.style.background = 'transparent');
-            });
+    // Highlight active TOC link on scroll
+    const sections = document.querySelectorAll('.legal-section');
+    const tocLinks = document.querySelectorAll('.legal-toc a');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
         }
-    }
-  
-  });
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => observer.observe(s));
   </script>
 </body>
+
 </html>
