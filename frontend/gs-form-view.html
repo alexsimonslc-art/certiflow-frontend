@@ -130,35 +130,38 @@
       max-width: 620px;
     }
 
-    /* ── Loading skeleton ───────────────────────────────────────── */
-    .gsfv-skeleton {
-      animation: skPulse 1.4s ease infinite;
+    /* ── Loading Screen ───────────────────────────────────────── */
+    .gsfv-loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 20px;
     }
-
-    @keyframes skPulse {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: 0.4
-      }
-    }
-
-    .gsfv-sk-line {
-      height: 14px;
-      border-radius: 6px;
+    .gsfv-loading-bar-wrap {
+      width: 180px;
+      height: 3px;
       background: rgba(255, 255, 255, 0.08);
-      margin-bottom: 12px;
+      border-radius: 99px;
+      overflow: hidden;
     }
-
-    .gsfv-sk-box {
-      height: 48px;
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.06);
-      margin-bottom: 18px;
+    .gsfv-loading-bar {
+      height: 100%;
+      background: var(--accent-grad);
+      border-radius: 99px;
+      animation: gsfvLoadBar 1.4s ease-in-out infinite;
+    }
+    .gsfv-loading-text {
+      font-size: 13px;
+      color: var(--text-3);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    @keyframes gsfvLoadBar {
+      0% { width: 0%; margin-left: 0%; }
+      50% { width: 70%; margin-left: 15%; }
+      100% { width: 0%; margin-left: 100%; }
     }
 
     /* ── Error / Closed state ───────────────────────────────────── */
@@ -1527,10 +1530,8 @@
       color: #111827;
     }
 
-    /* skeleton */
-    body.gsfv-light .gsfv-sk-line,
-    body.gsfv-light .gsfv-sk-box {
-      background: rgba(0, 0, 0, 0.07);
+    body.gsfv-light .gsfv-loading-bar-wrap {
+      background: rgba(0, 0, 0, 0.08);
     }
 
     /* error icon */
@@ -1926,14 +1927,12 @@
 
   <!-- ── Loading State ──────────────────────────────────────────── -->
   <div class="gsfv-page" id="loadingState">
-    <div class="gsfv-container gsfv-skeleton">
-      <div class="gsfv-sk-line" style="width:60%;height:32px;margin-bottom:16px"></div>
-      <div class="gsfv-sk-line" style="width:85%;height:14px;margin-bottom:6px"></div>
-      <div class="gsfv-sk-line" style="width:70%;height:14px;margin-bottom:32px"></div>
-      <div class="gsfv-sk-box"></div>
-      <div class="gsfv-sk-box"></div>
-      <div class="gsfv-sk-box" style="height:90px"></div>
-      <div class="gsfv-sk-box"></div>
+    <div class="gsfv-loading-screen">
+      <img src="Images/GalSol Logo IC.svg" alt="GalSol Logo" style="width: 42px; height: 42px; margin-bottom: 16px; opacity: 0.9;" />
+      <div class="gsfv-loading-bar-wrap">
+        <div class="gsfv-loading-bar"></div>
+      </div>
+      <div class="gsfv-loading-text">Loading form…</div>
     </div>
   </div>
 
