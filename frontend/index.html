@@ -77,7 +77,7 @@ img{display:block;max-width:100%;}
 .btn-ghost.lg{padding:14px 30px;font-size:1rem;border-radius:12px;}
 
 /* ── HERO ── */
-.hero{position:relative;min-height:100vh;background:#020608;display:flex;flex-direction:column;align-items:stretch;overflow:hidden;}
+.hero{position:relative;min-height:90vh;background:#020608;display:flex;flex-direction:column;align-items:stretch;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
 
 /* ── HERO GRADIENT BLOBS ── */
@@ -107,13 +107,13 @@ img{display:block;max-width:100%;}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 100%);}
 
 /* ── HERO TWO-COLUMN LAYOUT ── */
-.hero-inner{position:relative;z-index:2;flex:1;display:flex;align-items:center;max-width:1300px;width:100%;margin:0 auto;padding:100px 64px 80px;gap:48px;}
+.hero-inner{position:relative;z-index:2;flex:1;display:flex;align-items:center;max-width:1300px;width:100%;margin:0 auto;padding:76px 64px 54px;gap:48px;}
 .hero-content{flex:1;min-width:0;text-align:left;}
 
-/* Logo + text inline (like header, but bigger) */
-.hero-logo-wrap{display:flex;flex-direction:row;align-items:center;gap:14px;margin-bottom:30px;animation:heroRise .9s .1s ease both;}
-.hero-icon{width:58px;height:58px;flex-shrink:0;object-fit:contain;filter:drop-shadow(0 0 22px rgba(14,205,254,.55)) drop-shadow(0 0 44px rgba(127,63,238,.4));}
-.hero-brand-name{font-family:var(--font-d);font-size:clamp(2.5rem,3.6vw,3.4rem);font-weight:700;letter-spacing:-.04em;line-height:1;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+/* Logo + text inline — larger than header */
+.hero-logo-wrap{display:flex;flex-direction:row;align-items:center;gap:16px;margin-bottom:30px;animation:heroRise .9s .1s ease both;}
+.hero-icon{width:72px;height:72px;flex-shrink:0;object-fit:contain;filter:drop-shadow(0 0 26px rgba(14,205,254,.6)) drop-shadow(0 0 52px rgba(127,63,238,.45));}
+.hero-brand-name{font-family:var(--font-d);font-size:clamp(3rem,4.4vw,4.2rem);font-weight:700;letter-spacing:-.04em;line-height:1;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .hero-tagline{font-family:var(--font-d);font-size:clamp(1.9rem,2.9vw,2.7rem);font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.18;margin-bottom:16px;animation:heroRise .9s .35s ease both;}
 .hero-sub{font-size:1rem;color:var(--text-muted);max-width:440px;margin:0 0 36px;line-height:1.7;animation:heroRise .9s .55s ease both;}
 .hero-actions{display:flex;align-items:center;justify-content:flex-start;gap:16px;flex-wrap:wrap;animation:heroRise .9s .75s ease both;}
@@ -125,50 +125,70 @@ img{display:block;max-width:100%;}
 @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(9px);}}
 
 /* ── ORBIT CAROUSEL (hero right column) ── */
-.hero-right{flex-shrink:0;width:490px;height:580px;display:flex;align-items:center;justify-content:center;}
-.orbit-scene{width:430px;height:560px;perspective:980px;perspective-origin:50% 42%;}
+.hero-right{flex-shrink:0;width:560px;height:420px;display:flex;align-items:center;justify-content:center;}
+.orbit-scene{width:510px;height:400px;perspective:1100px;perspective-origin:50% 40%;}
 .orbit-ring{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:orbit-spin 30s linear infinite;}
-@keyframes orbit-spin{from{transform:rotateX(24deg) rotateY(0deg);}to{transform:rotateX(24deg) rotateY(-360deg);}}
+@keyframes orbit-spin{from{transform:rotateX(22deg) rotateY(0deg);}to{transform:rotateX(22deg) rotateY(-360deg);}}
 
-/* Each card: positioned by --i (0–5), equidistant on the ring */
+/* Pause the whole ring when hovering the scene */
+.orbit-scene:hover .orbit-ring,
+.orbit-scene:hover .orbit-card{animation-play-state:paused;}
+
+/* Each card — landscape (wider than tall) for desktop screenshots */
 .orbit-card{
   position:absolute;top:50%;left:50%;
-  width:148px;height:192px;
-  margin-left:-74px;margin-top:-96px;
-  transform:rotateY(calc(var(--i,0) * 60deg)) translateZ(212px);
+  width:204px;height:136px;
+  margin-left:-102px;margin-top:-68px;
+  transform:rotateY(calc(var(--i,0) * 60deg)) translateZ(252px);
   transform-style:preserve-3d;
-  /* depth animation: syncs opacity with ring-face position */
   animation:orbit-depth 30s linear infinite;
   animation-delay:calc((var(--i,0) - 6) * (30s / 6));
+  text-decoration:none;display:block;
+  cursor:pointer;
 }
+/* Force full opacity + glow on the card being hovered */
+.orbit-card:hover{opacity:1 !important;}
+.orbit-card:hover .orbit-card-inner{
+  border-color:rgba(14,205,254,.55);
+  box-shadow:
+    0 0 0 1px rgba(14,205,254,.3),
+    0 0 24px rgba(14,205,254,.3),
+    0 0 60px rgba(14,205,254,.12),
+    0 16px 48px rgba(0,0,0,.65);
+}
+
 @keyframes orbit-depth{
-  0%,100%{opacity:.94;}   /* front — fully visible */
-  20%    {opacity:.72;}   /* side — slightly dimmed */
-  50%    {opacity:.28;}   /* back — clearly behind, still visible */
-  80%    {opacity:.72;}   /* opposite side */
+  0%,100%{opacity:.93;}
+  20%    {opacity:.7;}
+  50%    {opacity:.28;}
+  80%    {opacity:.7;}
 }
 .orbit-card-inner{
   width:100%;height:100%;
-  background:rgba(14,10,28,.55);
+  background:rgba(12,8,26,.6);
   border:1px solid rgba(255,255,255,.13);
-  border-radius:14px;
+  border-radius:12px;
   overflow:hidden;
-  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 0 1px rgba(14,205,254,.07),inset 0 1px 0 rgba(255,255,255,.06);
+  box-shadow:0 10px 36px rgba(0,0,0,.55),0 0 0 1px rgba(14,205,254,.06),inset 0 1px 0 rgba(255,255,255,.07);
   display:flex;flex-direction:column;
   backdrop-filter:blur(4px);
+  transition:border-color .25s ease,box-shadow .25s ease;
 }
+/* Screenshot area — landscape proportion */
 .orbit-card-img{
   flex:1;
   background:rgba(255,255,255,.03);
-  border-bottom:1px solid rgba(255,255,255,.08);
+  border-bottom:1px solid rgba(255,255,255,.07);
   display:flex;align-items:center;justify-content:center;
-  overflow:hidden;color:rgba(255,255,255,.15);
+  overflow:hidden;color:rgba(255,255,255,.14);
 }
 .orbit-card-img img{width:100%;height:100%;object-fit:cover;}
+/* Name strip at the bottom */
 .orbit-card-label{
-  padding:9px 12px;
-  font-family:var(--font-d);font-size:.77rem;font-weight:600;
-  color:rgba(255,255,255,.85);
+  flex-shrink:0;
+  padding:7px 11px;
+  font-family:var(--font-d);font-size:.74rem;font-weight:600;
+  color:rgba(255,255,255,.82);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   background:rgba(255,255,255,.03);
 }
@@ -382,21 +402,21 @@ section{padding:110px 0;}
 
 /* ── RESPONSIVE ── */
 @media(max-width:1200px){
-  .hero-inner{padding:100px 48px 80px;gap:36px;}
-  .hero-right{width:440px;height:540px;}
-  .orbit-scene{width:390px;height:510px;}
+  .hero-inner{padding:76px 48px 54px;gap:32px;}
+  .hero-right{width:490px;height:380px;}
+  .orbit-scene{width:450px;height:360px;}
 }
 @media(max-width:1024px){
-  .hero-right{width:380px;height:480px;}
-  .orbit-scene{width:340px;height:450px;}
-  .orbit-card{width:132px;height:172px;margin-left:-66px;margin-top:-86px;transform:rotateY(calc(var(--i,0)*60deg)) translateZ(185px);}
+  .hero-right{width:400px;height:340px;}
+  .orbit-scene{width:370px;height:320px;}
+  .orbit-card{width:172px;height:116px;margin-left:-86px;margin-top:-58px;transform:rotateY(calc(var(--i,0)*60deg)) translateZ(212px);}
   .tool-row-inner{gap:48px;padding:0 28px;}
   .ai-cards{grid-template-columns:1fr 1fr;}
   .footer-top{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:900px){
   .hero-right{display:none;}
-  .hero-inner{padding:100px 40px 80px;}
+  .hero-inner{padding:80px 40px 60px;}
   .hero-content{max-width:600px;}
 }
 @media(max-width:768px){
@@ -502,64 +522,65 @@ section{padding:110px 0;}
       </div>
     </div>
 
-    <!-- RIGHT: 3D orbit carousel -->
-    <div class="hero-right" aria-hidden="true">
+    <!-- RIGHT: 3D orbit carousel — landscape cards link to each tool section -->
+    <div class="hero-right">
       <div class="orbit-scene">
         <div class="orbit-ring">
           <!-- Card 0 — Mini Site -->
-          <div class="orbit-card" style="--i:0">
+          <a class="orbit-card" href="#tool-mini-site" style="--i:0" aria-label="Mini Site — go to section">
             <div class="orbit-card-inner">
               <div class="orbit-card-img">
-                <i data-lucide="image" style="width:22px;height:22px"></i>
+                <!-- Replace with: <img src="Images/screenshots/mini-site.png" alt="Mini Site"> -->
+                <i data-lucide="image" style="width:20px;height:20px"></i>
               </div>
               <div class="orbit-card-label">Mini Site</div>
             </div>
-          </div>
+          </a>
           <!-- Card 1 — GS Forms -->
-          <div class="orbit-card" style="--i:1">
+          <a class="orbit-card" href="#tool-gs-forms" style="--i:1" aria-label="GS Forms — go to section">
             <div class="orbit-card-inner">
               <div class="orbit-card-img">
-                <i data-lucide="image" style="width:22px;height:22px"></i>
+                <i data-lucide="image" style="width:20px;height:20px"></i>
               </div>
               <div class="orbit-card-label">GS Forms</div>
             </div>
-          </div>
+          </a>
           <!-- Card 2 — Entry Pass -->
-          <div class="orbit-card" style="--i:2">
+          <a class="orbit-card" href="#tool-entry-pass" style="--i:2" aria-label="Entry Pass — go to section">
             <div class="orbit-card-inner">
               <div class="orbit-card-img">
-                <i data-lucide="image" style="width:22px;height:22px"></i>
+                <i data-lucide="image" style="width:20px;height:20px"></i>
               </div>
               <div class="orbit-card-label">Entry Pass</div>
             </div>
-          </div>
+          </a>
           <!-- Card 3 — Dashboard -->
-          <div class="orbit-card" style="--i:3">
+          <a class="orbit-card" href="#tool-dashboard" style="--i:3" aria-label="Dashboard — go to section">
             <div class="orbit-card-inner">
               <div class="orbit-card-img">
-                <i data-lucide="image" style="width:22px;height:22px"></i>
+                <i data-lucide="image" style="width:20px;height:20px"></i>
               </div>
               <div class="orbit-card-label">Dashboard</div>
             </div>
-          </div>
+          </a>
           <!-- Card 4 — Certificates -->
-          <div class="orbit-card" style="--i:4">
+          <a class="orbit-card" href="#tool-certificates" style="--i:4" aria-label="Certificates — go to section">
             <div class="orbit-card-inner">
               <div class="orbit-card-img">
-                <i data-lucide="image" style="width:22px;height:22px"></i>
+                <i data-lucide="image" style="width:20px;height:20px"></i>
               </div>
               <div class="orbit-card-label">Certificates</div>
             </div>
-          </div>
+          </a>
           <!-- Card 5 — Bulk Mailer -->
-          <div class="orbit-card" style="--i:5">
+          <a class="orbit-card" href="#tool-bulk-mailer" style="--i:5" aria-label="Bulk Mailer — go to section">
             <div class="orbit-card-inner">
               <div class="orbit-card-img">
-                <i data-lucide="image" style="width:22px;height:22px"></i>
+                <i data-lucide="image" style="width:20px;height:20px"></i>
               </div>
               <div class="orbit-card-label">Bulk Mailer</div>
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -631,7 +652,7 @@ section{padding:110px 0;}
   <!-- Intro joins with Mini Site -->
 
   <!-- Tool 1 — Mini Site -->
-  <div class="tool-row">
+  <div class="tool-row" id="tool-mini-site">
     <div class="tool-row-inner">
       <div class="tool-text">
         <p style="font-size:.95rem;color:var(--text-muted);line-height:1.7;margin-bottom:28px;border-left:2px solid rgba(14,205,254,.4);padding-left:16px;">Built for the full event lifecycle, not just one piece of it. Each tool is purpose-built, yet tightly integrated — use one or use all six, they work together seamlessly.</p>
@@ -662,7 +683,7 @@ section{padding:110px 0;}
   </div>
 
   <!-- Tool 2 — GS Forms -->
-  <div class="tool-row even">
+  <div class="tool-row even" id="tool-gs-forms">
     <div class="tool-row-inner">
       <div class="tool-text">
         <h2 class="tool-name">GS Forms</h2>
@@ -691,7 +712,7 @@ section{padding:110px 0;}
   </div>
 
   <!-- Tool 3 — Entry Pass -->
-  <div class="tool-row">
+  <div class="tool-row" id="tool-entry-pass">
     <div class="tool-row-inner">
       <div class="tool-text">
         <h2 class="tool-name">Entry Pass</h2>
@@ -720,7 +741,7 @@ section{padding:110px 0;}
   </div>
 
   <!-- Tool 4 — Dashboard + Database -->
-  <div class="tool-row even">
+  <div class="tool-row even" id="tool-dashboard">
     <div class="tool-row-inner">
       <div class="tool-text">
         <h2 class="tool-name">Dashboard + Database</h2>
@@ -749,7 +770,7 @@ section{padding:110px 0;}
   </div>
 
   <!-- Tool 5 — Certificates -->
-  <div class="tool-row">
+  <div class="tool-row" id="tool-certificates">
     <div class="tool-row-inner">
       <div class="tool-text">
         <h2 class="tool-name">Certificates</h2>
@@ -778,7 +799,7 @@ section{padding:110px 0;}
   </div>
 
   <!-- Tool 6 — Bulk Mailer -->
-  <div class="tool-row even">
+  <div class="tool-row even" id="tool-bulk-mailer">
     <div class="tool-row-inner">
       <div class="tool-text">
         <h2 class="tool-name">Bulk Mailer</h2>
