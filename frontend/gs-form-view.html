@@ -290,12 +290,36 @@
       color: var(--body-color);
       line-height: 1.65;
     }
-    .gsfv-desc ul { list-style: disc outside; padding-left: 1.5em; margin: 5px 0; }
-    .gsfv-desc ol { list-style: decimal outside; padding-left: 1.5em; margin: 5px 0; }
-    .gsfv-desc li { margin-bottom: 3px; display: list-item; }
-    .gsfv-desc a { color: var(--accent); text-decoration: underline; }
-    .gsfv-desc p { margin: 0 0 6px; }
-    .gsfv-desc p:last-child { margin-bottom: 0; }
+
+    .gsfv-desc ul {
+      list-style: disc outside;
+      padding-left: 1.5em;
+      margin: 5px 0;
+    }
+
+    .gsfv-desc ol {
+      list-style: decimal outside;
+      padding-left: 1.5em;
+      margin: 5px 0;
+    }
+
+    .gsfv-desc li {
+      margin-bottom: 3px;
+      display: list-item;
+    }
+
+    .gsfv-desc a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .gsfv-desc p {
+      margin: 0 0 6px;
+    }
+
+    .gsfv-desc p:last-child {
+      margin-bottom: 0;
+    }
 
     /* ── Field wrapper ──────────────────────────────────────────── */
     .gsfv-field {
@@ -326,6 +350,7 @@
       margin-bottom: 5px;
       line-height: 1.4;
     }
+
     .gsfv-field-desc {
       font-size: calc(var(--text-size, var(--body-size)) - 1px);
       font-family: var(--font-text);
@@ -333,11 +358,34 @@
       line-height: 1.6;
       margin-bottom: 9px;
     }
-    .gsfv-field-desc ul { list-style: disc outside; padding-left: 1.5em; margin: 4px 0; }
-    .gsfv-field-desc ol { list-style: decimal outside; padding-left: 1.5em; margin: 4px 0; }
-    .gsfv-field-desc li { margin-bottom: 2px; display: list-item; }
-    .gsfv-field-desc a { color: var(--accent); text-decoration: underline; }
-    .gsfv-field-desc img { max-width: 100%; border-radius: 6px; margin: 4px 0; }
+
+    .gsfv-field-desc ul {
+      list-style: disc outside;
+      padding-left: 1.5em;
+      margin: 4px 0;
+    }
+
+    .gsfv-field-desc ol {
+      list-style: decimal outside;
+      padding-left: 1.5em;
+      margin: 4px 0;
+    }
+
+    .gsfv-field-desc li {
+      margin-bottom: 2px;
+      display: list-item;
+    }
+
+    .gsfv-field-desc a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .gsfv-field-desc img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin: 4px 0;
+    }
 
     .gsfv-req {
       color: var(--red);
@@ -673,8 +721,13 @@
     }
 
     @keyframes gsfv-slide-progress {
-      0%   { left: -60%; }
-      100% { left: 110%; }
+      0% {
+        left: -60%;
+      }
+
+      100% {
+        left: 110%;
+      }
     }
 
     .gsfv-upload-zone input[type="file"] {
@@ -754,9 +807,22 @@
       color: var(--text-2);
       line-height: 1.55;
     }
-    .gsfv-section-desc ul { list-style-type: disc; padding-left: 20px; margin: 4px 0; }
-    .gsfv-section-desc ol { list-style-type: decimal; padding-left: 20px; margin: 4px 0; }
-    .gsfv-section-desc li { margin-bottom: 3px; }
+
+    .gsfv-section-desc ul {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin: 4px 0;
+    }
+
+    .gsfv-section-desc ol {
+      list-style-type: decimal;
+      padding-left: 20px;
+      margin: 4px 0;
+    }
+
+    .gsfv-section-desc li {
+      margin-bottom: 3px;
+    }
 
     /* ── Submit button ──────────────────────────────────────────── */
     .gsfv-submit {
@@ -909,6 +975,28 @@
       transition: all 0.18s;
     }
 
+    /* ── Disclaimer ─────────────────────────────────────────────── */
+    .gsfv-disclaimer {
+      text-align: center;
+      padding: 16px 16px 0;
+      font-size: 11.5px;
+      color: var(--text-3);
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto 12px;
+    }
+
+    .gsfv-disclaimer a {
+      color: var(--text-2);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color 0.2s;
+    }
+
+    .gsfv-disclaimer a:hover {
+      color: var(--text);
+    }
+
     .gsfv-ty-another:hover {
       color: var(--text);
       background: rgba(255, 255, 255, 0.07);
@@ -1014,11 +1102,32 @@
       color: var(--text-color, var(--text-2));
       line-height: 1.6;
     }
-    .gsfv-page-hdr-desc ul { list-style: disc outside; padding-left: 1.5em; margin: 4px 0; }
-    .gsfv-page-hdr-desc ol { list-style: decimal outside; padding-left: 1.5em; margin: 4px 0; }
-    .gsfv-page-hdr-desc li { margin-bottom: 2px; display: list-item; }
-    .gsfv-page-hdr-desc a { color: var(--accent); text-decoration: underline; }
-    .gsfv-page-hdr-title { font-family: var(--font-display); }
+
+    .gsfv-page-hdr-desc ul {
+      list-style: disc outside;
+      padding-left: 1.5em;
+      margin: 4px 0;
+    }
+
+    .gsfv-page-hdr-desc ol {
+      list-style: decimal outside;
+      padding-left: 1.5em;
+      margin: 4px 0;
+    }
+
+    .gsfv-page-hdr-desc li {
+      margin-bottom: 2px;
+      display: list-item;
+    }
+
+    .gsfv-page-hdr-desc a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .gsfv-page-hdr-title {
+      font-family: var(--font-display);
+    }
 
     /* ── Nav row: Back + Next/Submit ────────────────────────────── */
     .gsfv-nav-row {
@@ -1404,6 +1513,18 @@
     body.gsfv-light .gsfv-back-btn:hover {
       color: var(--text);
       border-color: rgba(0, 0, 0, 0.22);
+    }
+
+    body.gsfv-light .gsfv-disclaimer {
+      color: #6b7280;
+    }
+
+    body.gsfv-light .gsfv-disclaimer a {
+      color: #4b5563;
+    }
+
+    body.gsfv-light .gsfv-disclaimer a:hover {
+      color: #111827;
     }
 
     /* skeleton */
@@ -1906,7 +2027,8 @@
         <div id="tyPassSection" style="display:none;width:100%;margin-top:20px">
           <div class="gsfv-ty-pass-cta">Please download your Entry Pass</div>
           <div class="gsfv-pass-canvas-wrap">
-            <canvas id="passCanvas" width="520" height="693" style="max-width:320px;width:100%;border-radius:16px"></canvas>
+            <canvas id="passCanvas" width="520" height="693"
+              style="max-width:320px;width:100%;border-radius:16px"></canvas>
           </div>
           <div class="gsfv-pass-actions">
             <button class="gsfv-pass-btn gsfv-pass-btn-dl" onclick="downloadPass()">⬇ Download Pass</button>
@@ -1920,8 +2042,18 @@
   </div>
 
   <!-- ── Footer ─────────────────────────────────────────────────── -->
+  <div class="gsfv-disclaimer" id="formDisclaimer" style="display:none">
+    This content is neither created nor endorsed by GalSol.<br>
+    <span id="contactOwnerSpan"><a href="#" id="contactOwnerLink">Contact form owner</a> - </span><a
+      href="terms-of-service.html" target="_blank">Terms of Service</a> - <a href="privacy-policy.html"
+      target="_blank">Privacy Policy</a><br>
+    Does this form look suspicious? <a href="mailto:galsol.co@gmail.com?subject=Report%20Suspicious%20Form">Report</a>
+  </div>
+
   <footer class="gsfv-footer">
-    Powered by <a href="/index.html" target="_blank"><img src="Images/GalSol GWN.svg" alt="GalSol" style="height:18px;vertical-align:middle;opacity:0.75;transition:opacity 0.2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'"/></a>
+    Powered by <a href="/index.html" target="_blank"><img src="Images/GalSol GWN.svg" alt="GalSol"
+        style="height:18px;vertical-align:middle;opacity:0.75;transition:opacity 0.2s"
+        onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'" /></a>
   </footer>
 
   <!-- ── Entry Pass Modal (kept for structure, pass is now inline) ── -->
@@ -1948,18 +2080,18 @@
 
     /* ── Accent colour map ─────────────────────────────────────────── */
     const ACCENTS = {
-      cyan:    { solid: '#00d4ff', grad: 'linear-gradient(135deg,#00d4ff,#7c3aed)',    dim: 'rgba(0,212,255,0.10)' },
-      purple:  { solid: '#a78bfa', grad: 'linear-gradient(135deg,#7c3aed,#a855f7)',    dim: 'rgba(124,58,237,0.10)' },
-      green:   { solid: '#10b981', grad: 'linear-gradient(135deg,#10b981,#06b6d4)',    dim: 'rgba(16,185,129,0.10)' },
-      gold:    { solid: '#f59e0b', grad: 'linear-gradient(135deg,#f59e0b,#ef4444)',    dim: 'rgba(245,158,11,0.10)' },
-      pink:    { solid: '#ec4899', grad: 'linear-gradient(135deg,#ec4899,#8b5cf6)',    dim: 'rgba(236,72,153,0.10)' },
-      blue:    { solid: '#2563eb', grad: 'linear-gradient(135deg,#2563eb,#06b6d4)',    dim: 'rgba(37,99,235,0.10)' },
-      teal:    { solid: '#0d9488', grad: 'linear-gradient(135deg,#0d9488,#22c55e)',    dim: 'rgba(13,148,136,0.10)' },
-      indigo:  { solid: '#6366f1', grad: 'linear-gradient(135deg,#4f46e5,#8b5cf6)',    dim: 'rgba(99,102,241,0.10)' },
-      rose:    { solid: '#e11d48', grad: 'linear-gradient(135deg,#e11d48,#f97316)',    dim: 'rgba(225,29,72,0.10)' },
-      amber:   { solid: '#d97706', grad: 'linear-gradient(135deg,#d97706,#eab308)',    dim: 'rgba(217,119,6,0.10)' },
-      emerald: { solid: '#059669', grad: 'linear-gradient(135deg,#059669,#14b8a6)',    dim: 'rgba(5,150,105,0.10)' },
-      coral:   { solid: '#f43f5e', grad: 'linear-gradient(135deg,#f43f5e,#fb7185)',    dim: 'rgba(244,63,94,0.10)' },
+      cyan: { solid: '#00d4ff', grad: 'linear-gradient(135deg,#00d4ff,#7c3aed)', dim: 'rgba(0,212,255,0.10)' },
+      purple: { solid: '#a78bfa', grad: 'linear-gradient(135deg,#7c3aed,#a855f7)', dim: 'rgba(124,58,237,0.10)' },
+      green: { solid: '#10b981', grad: 'linear-gradient(135deg,#10b981,#06b6d4)', dim: 'rgba(16,185,129,0.10)' },
+      gold: { solid: '#f59e0b', grad: 'linear-gradient(135deg,#f59e0b,#ef4444)', dim: 'rgba(245,158,11,0.10)' },
+      pink: { solid: '#ec4899', grad: 'linear-gradient(135deg,#ec4899,#8b5cf6)', dim: 'rgba(236,72,153,0.10)' },
+      blue: { solid: '#2563eb', grad: 'linear-gradient(135deg,#2563eb,#06b6d4)', dim: 'rgba(37,99,235,0.10)' },
+      teal: { solid: '#0d9488', grad: 'linear-gradient(135deg,#0d9488,#22c55e)', dim: 'rgba(13,148,136,0.10)' },
+      indigo: { solid: '#6366f1', grad: 'linear-gradient(135deg,#4f46e5,#8b5cf6)', dim: 'rgba(99,102,241,0.10)' },
+      rose: { solid: '#e11d48', grad: 'linear-gradient(135deg,#e11d48,#f97316)', dim: 'rgba(225,29,72,0.10)' },
+      amber: { solid: '#d97706', grad: 'linear-gradient(135deg,#d97706,#eab308)', dim: 'rgba(217,119,6,0.10)' },
+      emerald: { solid: '#059669', grad: 'linear-gradient(135deg,#059669,#14b8a6)', dim: 'rgba(5,150,105,0.10)' },
+      coral: { solid: '#f43f5e', grad: 'linear-gradient(135deg,#f43f5e,#fb7185)', dim: 'rgba(244,63,94,0.10)' },
     };
 
     /* ── Runtime state ─────────────────────────────────────────────── */
@@ -2357,23 +2489,35 @@
 
       // 3. Load form config from Supabase (instant — always on)
       try {
+        let form = null;
+        let ownerEmail = '';
         const { data, error } = await sb
           .from('gs_forms')
-          .select('id, name, slug, status, config, submission_count')
+          .select('id, name, slug, status, config, submission_count, user_id')
           .eq('slug', formSlug)
           .in('status', ['published', 'closed'])
           .order('updated_at', { ascending: false })
           .limit(1);
 
-        const form = Array.isArray(data) ? data[0] : null;
+        form = Array.isArray(data) ? data[0] : null;
 
-        if (error || !form) {
-          // 4. Fallback: try backend (in case Supabase hiccup)
+        if (!error && form) {
+          // Try getting email from supabase users table
+          if (form.user_id) {
+            const { data: uData } = await sb.from('users').select('email').eq('google_id', form.user_id).single();
+            if (uData && uData.email) ownerEmail = uData.email;
+          }
+        }
+
+        if (error || !form || !ownerEmail) {
+          // 4. Fallback: try backend (in case Supabase hiccup or RLS blocks user email read)
           const res = await fetch(`${BACKEND}/api/gsforms/view/${encodeURIComponent(formSlug)}`);
           if (!res.ok) throw new Error('not-found');
           const json = await res.json();
-          renderForm(json.form);
+          form = json.form;
+          ownerEmail = form.ownerEmail || '';
         } else {
+          if (ownerEmail) form.ownerEmail = ownerEmail;
           renderForm(form);
         }
       } catch (e) {
@@ -2453,6 +2597,16 @@
 
       // Allow multiple → show "submit another" after
       if (s.allowMultiple) document.getElementById('tyAnotherBtn').style.display = '';
+
+      // Set contact owner email link
+      const contactLink = document.getElementById('contactOwnerLink');
+      const contactSpan = document.getElementById('contactOwnerSpan');
+      if (form.ownerEmail && contactLink) {
+        contactLink.href = `mailto:${form.ownerEmail}?subject=Regarding%20Form:%20${encodeURIComponent(title)}`;
+      } else if (contactSpan) {
+        contactSpan.style.display = 'none';
+      }
+      document.getElementById('formDisclaimer').style.display = 'block';
 
       // Build pages from section_breaks + show page 1
       buildPages();
@@ -2602,8 +2756,8 @@
             <span class="gsfv-scale-label min-label">${esc(f.minLabel || 'Poor')}</span>
             <div class="gsfv-stars">
               ${Array.from({ length: max }, (_, i) =>
-                `<button type="button" class="gsfv-star-btn" data-val="${i + 1}" onclick="pickStar('${f.id}',${i + 1},${max})">★</button>`
-              ).join('')}
+              `<button type="button" class="gsfv-star-btn" data-val="${i + 1}" onclick="pickStar('${f.id}',${i + 1},${max})">★</button>`
+            ).join('')}
             </div>
             <span class="gsfv-scale-label max-label">${esc(f.maxLabel || 'Excellent')}</span>
           </div>`;
@@ -2814,7 +2968,7 @@
     function _progressKey() { return 'gsf_progress_' + formSlug; }
 
     function _saveProgress() {
-      try { sessionStorage.setItem(_progressKey(), JSON.stringify(formValues)); } catch(e) {}
+      try { sessionStorage.setItem(_progressKey(), JSON.stringify(formValues)); } catch (e) { }
     }
 
     function _restoreProgress() {
@@ -2836,11 +2990,11 @@
             el.value = val;
           }
         });
-      } catch(e) {}
+      } catch (e) { }
     }
 
     function _clearProgress() {
-      try { sessionStorage.removeItem(_progressKey()); } catch(e) {}
+      try { sessionStorage.removeItem(_progressKey()); } catch (e) { }
     }
     function pickRadio(fieldId, idx, total) {
       formValues[fieldId] = (formConfig.config.fields.find(f => f.id === fieldId)?.options || [])[idx] || '';
@@ -3475,15 +3629,15 @@
 
       const cfg = pass.config || {};
       const primary = cfg.bannerColor || '#003087';
-      const darker  = _darken(primary, 0.28);
+      const darker = _darken(primary, 0.28);
       const SPLIT = 402, FOOTER_H = 44, R = 24;
 
       // Card clip + zone fills
       ctx.save();
       _rr(ctx, 0, 0, W, H, R); ctx.clip();
       ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, SPLIT);
-      ctx.fillStyle = primary;   ctx.fillRect(0, SPLIT, W, H - SPLIT);
-      ctx.fillStyle = darker;    ctx.fillRect(0, H - FOOTER_H, W, FOOTER_H);
+      ctx.fillStyle = primary; ctx.fillRect(0, SPLIT, W, H - SPLIT);
+      ctx.fillStyle = darker; ctx.fillRect(0, H - FOOTER_H, W, FOOTER_H);
       ctx.restore();
 
       // ── WHITE ZONE ──────────────────────────────────────────────────
@@ -3517,7 +3671,7 @@
       })() : '';
       ctx.font = '14px "Plus Jakarta Sans",sans-serif';
       ctx.fillStyle = '#444';
-      if (dateLabel) { ctx.textAlign = 'left';  ctx.fillText(dateLabel, 24, 164); }
+      if (dateLabel) { ctx.textAlign = 'left'; ctx.fillText(dateLabel, 24, 164); }
       if (timeLabel) { ctx.textAlign = 'right'; ctx.fillText(timeLabel, W - 24, 164); }
 
       // Venue (left)
@@ -3603,25 +3757,25 @@
     }
 
     function _rr(ctx, x, y, w, h, r) {
-      const tl = typeof r==='object'?(r.tl||0):r, tr=typeof r==='object'?(r.tr||0):r,
-            br = typeof r==='object'?(r.br||0):r, bl=typeof r==='object'?(r.bl||0):r;
+      const tl = typeof r === 'object' ? (r.tl || 0) : r, tr = typeof r === 'object' ? (r.tr || 0) : r,
+        br = typeof r === 'object' ? (r.br || 0) : r, bl = typeof r === 'object' ? (r.bl || 0) : r;
       ctx.beginPath();
-      ctx.moveTo(x+tl,y); ctx.lineTo(x+w-tr,y); ctx.quadraticCurveTo(x+w,y,x+w,y+tr);
-      ctx.lineTo(x+w,y+h-br); ctx.quadraticCurveTo(x+w,y+h,x+w-br,y+h);
-      ctx.lineTo(x+bl,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-bl);
-      ctx.lineTo(x,y+tl); ctx.quadraticCurveTo(x,y,x+tl,y); ctx.closePath();
+      ctx.moveTo(x + tl, y); ctx.lineTo(x + w - tr, y); ctx.quadraticCurveTo(x + w, y, x + w, y + tr);
+      ctx.lineTo(x + w, y + h - br); ctx.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+      ctx.lineTo(x + bl, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - bl);
+      ctx.lineTo(x, y + tl); ctx.quadraticCurveTo(x, y, x + tl, y); ctx.closePath();
     }
     function _wrapText(ctx, text, x, y, maxW, lineH) {
-      const words = String(text||'').split(' '); let line='';
+      const words = String(text || '').split(' '); let line = '';
       for (const w of words) {
-        const t = line?line+' '+w:w;
-        if (ctx.measureText(t).width>maxW&&line){ctx.fillText(line,x,y);y+=lineH;line=w;}else line=t;
+        const t = line ? line + ' ' + w : w;
+        if (ctx.measureText(t).width > maxW && line) { ctx.fillText(line, x, y); y += lineH; line = w; } else line = t;
       }
       if (line) ctx.fillText(line, x, y);
     }
     function _darken(hex, amt) {
-      hex=hex.replace('#',''); if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
-      return `rgb(${Math.max(0,parseInt(hex.slice(0,2),16)-Math.round(255*amt))},${Math.max(0,parseInt(hex.slice(2,4),16)-Math.round(255*amt))},${Math.max(0,parseInt(hex.slice(4,6),16)-Math.round(255*amt))})`;
+      hex = hex.replace('#', ''); if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+      return `rgb(${Math.max(0, parseInt(hex.slice(0, 2), 16) - Math.round(255 * amt))},${Math.max(0, parseInt(hex.slice(2, 4), 16) - Math.round(255 * amt))},${Math.max(0, parseInt(hex.slice(4, 6), 16) - Math.round(255 * amt))})`;
     }
 
     function downloadPass() {
