@@ -89,22 +89,27 @@ img{display:block;max-width:100%;}
 <div class="site-bg" aria-hidden="true"></div>
 
 <header class="header" id="header">
-  <div class="header-inner">
-    <a href="index.html" class="logo">
-      <img src="Images/GalSol Logo IC.svg" alt="GalSol" class="logo-img">
-      <span class="logo-text">GalSol</span>
-    </a>
-    <nav class="nav">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="Images/GalSol Logo IC.svg" alt="GalSol icon" class="logo-img" style="height:24px;">
+        <span class="logo-text">GalSol</span>
+      </a>
+      <nav class="nav" aria-label="Main navigation">
         <a href="index.html" class="nav-link">Home</a>
-      <a href="index.html#tools" class="nav-link">Tools</a>
-      <a href="index.html#pricing" class="nav-link">Pricing</a>
-    </nav>
-    <div class="header-actions">
-      <a href="login.html" class="btn-ghost">Sign In</a>
-      <a href="login.html" class="btn-primary">Get Started Free</a>
+        <a href="#tools" class="nav-link">Products</a>
+        <a href="#" class="nav-link">About Us</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="user-guide.html" class="nav-link">User Guide</a>
+      </nav>
+      <div class="header-actions">
+        <a href="login.html" class="btn-ghost">Sign In</a>
+        <a href="login.html" class="btn-primary">Get Started Free</a>
+        <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+          <i data-lucide="menu" style="width:22px;height:22px"></i>
+        </button>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
 <main>
   <div class="page-hero">
@@ -114,7 +119,7 @@ img{display:block;max-width:100%;}
         <span>/</span>
         <span>Terms of Service</span>
       </div>
-      <h1>GalSol Terms of Service</h1>
+      <h1 class="gradient-text">GalSol Terms of Service</h1>
       <p>The rules and conditions that govern your use of the GalSol platform.</p>
       <div class="meta">
         <span><i data-lucide="calendar" style="width:13px;height:13px"></i> Last updated: May 11, 2026</span>

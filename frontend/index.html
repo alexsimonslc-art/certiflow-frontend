@@ -3712,6 +3712,95 @@
       setTimeout(tick, 1000);
     })();
   </script>
+
+<!-- COOKIE BANNER -->
+<div class="cookie-banner" id="cookieBanner" style="position:fixed; bottom:20px; left:20px; z-index:9999; background:var(--surface); backdrop-filter:blur(20px); border:1px solid var(--border-hi); border-radius:14px; padding:20px; width:calc(100% - 40px); max-width:360px; display:flex; flex-direction:column; gap:16px; transform:translateY(150%); transition:transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 15px 40px rgba(0,0,0,0.5);">
+  <p style="font-size:0.85rem; color:var(--text); margin:0; line-height:1.5;">We use cookies to ensure you get the best experience on our platform. <a href="cookies-policy.html" style="color:var(--cyan); text-decoration:underline;">Learn more</a>.</p>
+  <div style="display:flex; gap:12px;">
+    <button class="btn-ghost" id="declineCookies" style="flex:1; padding:8px 0; font-size:0.8rem;">Decline</button>
+    <button class="btn-primary" id="acceptCookies" style="flex:1; padding:8px 0; font-size:0.8rem;">Accept</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+     // 1. Cookie Logic
+     const banner = document.getElementById('cookieBanner');
+     if(!localStorage.getItem('galsol_cookie_consent')) {
+         setTimeout(() => { banner.style.transform = 'translateY(0)'; }, 1000);
+     }
+     
+     document.getElementById('acceptCookies')?.addEventListener('click', () => {
+         localStorage.setItem('galsol_cookie_consent', 'accepted');
+         banner.style.transform = 'translateY(150%)';
+     });
+     
+     document.getElementById('declineCookies')?.addEventListener('click', () => {
+         localStorage.setItem('galsol_cookie_consent', 'declined');
+         banner.style.transform = 'translateY(150%)';
+     });
+
+     // 2. Auth State Logic
+     const token = localStorage.getItem('GalSol_token');
+     let user = null;
+     if (token) {
+        try {
+           const payload = JSON.parse(atob(token.split('.')[1]));
+           if (payload.exp && payload.exp * 1000 > Date.now()) { user = payload; } 
+           else { localStorage.removeItem('GalSol_token'); }
+        } catch(e) {}
+     }
+     
+     if(user) {
+         const actionsContainer = document.querySelector('.header-actions');
+         if(actionsContainer) {
+             const desktopLinks = actionsContainer.querySelectorAll('a.btn-ghost, a.btn-primary');
+             desktopLinks.forEach(l => l.style.display = 'none');
+
+             const profileMenu = document.createElement('div');
+             profileMenu.className = 'profile-menu';
+             profileMenu.style.position = 'relative';
+             profileMenu.innerHTML = `
+                 <button class="profile-btn" id="landingProfileBtn" style="background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center;">
+                    <img src="${user.picture || 'Images/GalSol Logo IC.svg'}" alt="Profile" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border-hi); background: var(--surface); padding: 2px;">
+                 </button>
+                 <div class="profile-dropdown" id="landingProfileDropdown" style="position:absolute; top:calc(100% + 10px); right:0; background:#050C12; border:1px solid var(--border-hi); border-radius:10px; width:180px; padding:8px; display:none; flex-direction:column; gap:4px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                    <div style="padding:10px; border-bottom:1px solid var(--border); margin-bottom:4px;">
+                       <span style="display:block; font-size:0.85rem; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${user.name}</span>
+                       <span style="display:block; font-size:0.75rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${user.email}</span>
+                    </div>
+                    <a href="dashboard.html" style="padding:10px; color:var(--text); font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Dashboard</a>
+                    <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.href='login.html'" style="padding:10px; color:var(--text); font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Switch Account</a>
+                    <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.reload()" style="padding:10px; color:#ff6b6b; font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Log Out</a>
+                 </div>`;
+             
+             const hamburger = document.getElementById('hamburger');
+             if(hamburger) {
+                actionsContainer.insertBefore(profileMenu, hamburger);
+             } else {
+                actionsContainer.appendChild(profileMenu);
+             }
+
+             const btn = profileMenu.querySelector('#landingProfileBtn');
+             const drop = profileMenu.querySelector('#landingProfileDropdown');
+             
+             btn.addEventListener('click', (e) => {
+                 e.stopPropagation();
+                 drop.style.display = drop.style.display === 'none' ? 'flex' : 'none';
+             });
+             
+             document.addEventListener('click', () => { drop.style.display = 'none'; });
+
+             drop.querySelectorAll('a').forEach(a => {
+                a.addEventListener('mouseenter', () => a.style.background = 'rgba(255,255,255,0.06)');
+                a.addEventListener('mouseleave', () => a.style.background = 'transparent');
+             });
+         }
+     }
+  });
+</script>
+
 </body>
 
 </html>
