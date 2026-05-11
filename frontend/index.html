@@ -203,6 +203,13 @@ section{padding:110px 0;}
 /* ── TOOL SECTION ── */
 .tools-intro{padding:0 24px 80px;text-align:center;max-width:700px;margin:0 auto;}
 .tools-section-hdr{padding:90px 0 0;}
+#tools{position:relative;}
+.tools-ambient{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.ta-blob{position:absolute;border-radius:50%;filter:blur(110px);}
+.ta-b1{width:640px;height:640px;background:radial-gradient(circle,rgba(127,63,238,.14),transparent 65%);top:2%;left:-12%;}
+.ta-b2{width:520px;height:520px;background:radial-gradient(circle,rgba(14,205,254,.11),transparent 65%);top:38%;right:-10%;}
+.ta-b3{width:440px;height:440px;background:radial-gradient(circle,rgba(166,137,249,.1),transparent 65%);bottom:8%;left:28%;}
+#tools .tool-row{position:relative;z-index:1;}
 .tools-intro p{font-size:1rem;color:var(--text-muted);line-height:1.7;}
 .tool-row{padding:100px 0;transition:background .3s;}
 .tool-row:nth-child(odd){background:rgba(255,255,255,.02);}
@@ -258,6 +265,63 @@ section{padding:110px 0;}
 .cpipe-title{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.2;}
 .cpipe-item.done .cpipe-title{color:#34d399;}
 
+/* ── PASS SLIDESHOW ── */
+.pass-show{border-radius:16px;border:1px solid var(--border-hi);background:rgba(6,10,20,.7);overflow:hidden;backdrop-filter:blur(6px);}
+.pass-slides-wrap{overflow:hidden;}
+.pass-slides{display:flex;transition:transform .42s cubic-bezier(.4,0,.2,1);}
+.ps-slide{min-width:100%;padding:22px 24px 18px;}
+.ps-header{display:flex;align-items:center;gap:9px;margin-bottom:16px;}
+.ps-chip{font-family:var(--font-d);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;border-radius:100px;padding:3px 10px;}
+.ps-chip-cyan{background:rgba(14,205,254,.12);color:var(--cyan);border:1px solid rgba(14,205,254,.25);}
+.ps-chip-violet{background:rgba(127,63,238,.14);color:var(--violet);border:1px solid rgba(127,63,238,.3);}
+.ps-chip-green{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.25);}
+.ps-label{font-family:var(--font-d);font-size:.82rem;font-weight:600;color:var(--text);}
+.ps-caption{font-size:.76rem;color:var(--text-muted);text-align:center;margin-top:12px;line-height:1.5;}
+/* Slide 1 — Pass card */
+.ps-pass-card{background:rgba(255,255,255,.04);border:1px solid rgba(14,205,254,.2);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+.ps-pass-top{display:flex;align-items:center;justify-content:space-between;}
+.ps-pass-event{font-size:.72rem;font-weight:600;color:var(--cyan);font-family:var(--font-d);}
+.ps-pass-badge{font-size:.62rem;background:rgba(14,205,254,.1);color:var(--cyan);border-radius:4px;padding:2px 7px;}
+.ps-pass-name{font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--text);}
+.ps-pass-meta{font-size:.72rem;color:var(--text-muted);}
+.ps-pass-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+.ps-qr-box{width:52px;height:52px;background:rgba(255,255,255,.07);border-radius:6px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:6px;}
+.ps-qr-cell{border-radius:1px;background:rgba(255,255,255,.7);}
+.ps-qr-cell.on{background:rgba(255,255,255,.85);}
+.ps-qr-cell.off{background:transparent;}
+.ps-pass-id{font-size:.62rem;color:var(--text-faint);font-family:var(--font-d);letter-spacing:.06em;}
+/* Slide 2 — Scanner phone */
+.ps-phone-wrap{display:flex;justify-content:center;}
+.ps-phone{width:120px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:8px;position:relative;}
+.ps-phone-screen{background:#000;border-radius:12px;overflow:hidden;height:140px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.ps-scan-frame{position:relative;width:72px;height:72px;}
+.ps-scan-corner{position:absolute;width:14px;height:14px;border-color:var(--cyan);border-style:solid;}
+.ps-scan-corner.tl{top:0;left:0;border-width:2px 0 0 2px;}
+.ps-scan-corner.tr{top:0;right:0;border-width:2px 2px 0 0;}
+.ps-scan-corner.bl{bottom:0;left:0;border-width:0 0 2px 2px;}
+.ps-scan-corner.br{bottom:0;right:0;border-width:0 2px 2px 0;}
+.ps-scan-line{position:absolute;left:0;right:0;height:1px;background:var(--cyan);top:50%;opacity:.7;animation:scanPulse 2s ease-in-out infinite;}
+@keyframes scanPulse{0%,100%{top:10%;opacity:.4;}50%{top:90%;opacity:.9;}}
+.ps-scan-stats{display:flex;gap:6px;}
+.ps-stat-pill{font-size:.6rem;font-weight:700;border-radius:100px;padding:2px 8px;}
+.ps-stat-pill.admitted{background:rgba(52,211,153,.15);color:#34d399;}
+.ps-stat-pill.pending{background:rgba(255,255,255,.08);color:var(--text-muted);}
+/* Slide 3 — DB list */
+.ps-db-list{display:flex;flex-direction:column;gap:6px;}
+.ps-db-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:8px 12px;}
+.ps-db-name{font-size:.78rem;font-weight:500;color:var(--text);}
+.ps-db-status{font-size:.65rem;font-weight:700;border-radius:4px;padding:2px 8px;}
+.ps-db-status.admitted{background:rgba(52,211,153,.12);color:#34d399;}
+.ps-db-status.pending{background:rgba(255,255,255,.06);color:var(--text-muted);}
+.ps-db-status.blocked{background:rgba(239,68,68,.1);color:#f87171;}
+/* Nav bar */
+.pass-nav{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,.25);}
+.pass-nav-btn{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text-muted);width:28px;height:28px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s,border-color .2s;}
+.pass-nav-btn:hover{background:rgba(14,205,254,.1);color:var(--cyan);border-color:rgba(14,205,254,.3);}
+.pass-dots{display:flex;gap:6px;align-items:center;}
+.pass-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s,width .3s,border-radius .3s;cursor:pointer;}
+.pass-dot.active{background:var(--cyan);width:16px;border-radius:3px;}
+
 /* ── GAL AI ── */
 @property --aib1{syntax:'<color>';inherits:false;initial-value:#7F3FEE;}
 @property --aib2{syntax:'<color>';inherits:false;initial-value:#0ECDFE;}
@@ -272,7 +336,9 @@ section{padding:110px 0;}
 .ai-section{position:relative;overflow:hidden;padding:120px 0;}
 .ai-inner{position:relative;z-index:1;}
 .ai-brand-wrap{text-align:center;margin-bottom:60px;}
-.ai-brand-logo{width:64px;height:64px;object-fit:contain;margin:0 auto 20px;filter:drop-shadow(0 0 20px rgba(14,205,254,.5)) drop-shadow(0 0 40px rgba(127,63,238,.4));}
+.ai-name-row{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:14px;}
+.ai-brand-logo{width:clamp(44px,5vw,60px);height:clamp(44px,5vw,60px);object-fit:contain;filter:drop-shadow(0 0 18px rgba(14,205,254,.55)) drop-shadow(0 0 36px rgba(127,63,238,.4));}
+.ai-brand-name{font-family:var(--font-d);font-size:clamp(2.8rem,6vw,5.2rem);font-weight:700;letter-spacing:-.04em;line-height:1;}
 .ai-brand-name{font-family:var(--font-d);font-size:clamp(3.5rem,7vw,6rem);font-weight:800;letter-spacing:-.04em;line-height:1;margin-bottom:12px;}
 .ai-brand-sub{font-size:1rem;color:var(--text-muted);max-width:480px;margin:0 auto;}
 
@@ -324,18 +390,12 @@ section{padding:110px 0;}
 
 /* ── PRICING ── */
 .pricing-section{padding:110px 0;}
-.pricing-toggle-wrap{display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:52px;font-size:.88rem;color:var(--text-muted);}
-.save-badge{background:rgba(14,205,254,.12);color:var(--cyan);border-radius:4px;padding:2px 6px;font-size:.72rem;font-style:normal;font-weight:600;}
-.toggle-sw{width:42px;height:23px;background:rgba(255,255,255,.08);border:1px solid var(--border-hi);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;}
-.toggle-sw[aria-checked="true"]{background:var(--primary);}
-.toggle-thumb{position:absolute;top:3px;left:3px;width:15px;height:15px;background:#fff;border-radius:50%;transition:left .2s;}
-.toggle-sw[aria-checked="true"] .toggle-thumb{left:22px;}
 .pricing-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:780px;margin:0 auto;}
 .pricing-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:22px;padding:36px 32px;position:relative;opacity:0;transform:translateY(32px) perspective(800px) rotateX(6deg);transition:opacity 600ms ease,transform 600ms cubic-bezier(.22,1,.36,1);}
 .pricing-card.revealed{opacity:1;transform:translateY(0) perspective(800px) rotateX(0deg);}
 .pricing-card:hover{border-color:rgba(14,205,254,.25);box-shadow:0 20px 60px rgba(14,205,254,.06);}
-.pricing-card.featured{border-color:transparent;background:rgba(255,255,255,.05);}
-.pricing-card.featured::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(135deg,#0ECDFE,#A689F9,#7F3FEE);z-index:-1;opacity:.65;}
+.pricing-card.featured{border-color:rgba(14,205,254,.5);background:rgba(14,205,254,.03);animation:featBorderGlow 3s ease-in-out infinite alternate;}
+@keyframes featBorderGlow{from{border-color:rgba(14,205,254,.35);box-shadow:0 0 0 1px rgba(14,205,254,.12),0 0 20px rgba(14,205,254,.1);}to{border-color:rgba(14,205,254,.7);box-shadow:0 0 0 1px rgba(14,205,254,.25),0 0 36px rgba(14,205,254,.2),0 0 60px rgba(14,205,254,.08);}}
 .pricing-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--grad-brand);color:#fff;border-radius:100px;padding:3px 14px;font-size:.73rem;font-weight:600;white-space:nowrap;}
 .plan-name{font-size:1.15rem;font-weight:700;margin-bottom:7px;}
 .plan-price{display:flex;align-items:flex-end;gap:4px;margin-bottom:5px;}
@@ -350,6 +410,8 @@ section{padding:110px 0;}
 .btn-plan{width:100%;justify-content:center;}
 
 /* ── CTA BANNER ── */
+@keyframes swL2{0%{transform:rotate(0deg) skewX(0deg);}30%{transform:rotate(-5deg) skewX(-2deg) translateX(-18px);}70%{transform:rotate(3deg) skewX(1deg) translateX(12px);}100%{transform:rotate(-2deg) skewX(-1deg) translateX(-8px);}}
+@keyframes swR1{0%{transform:rotate(0deg) skewX(0deg);}30%{transform:rotate(5deg) skewX(2deg) translateX(18px);}70%{transform:rotate(-3deg) skewX(-1deg) translateX(-12px);}100%{transform:rotate(2deg) skewX(1deg) translateX(8px);}}
 .cta-banner{position:relative;overflow:hidden;text-align:center;padding:130px 0;background:#020608;}
 .cta-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
 .cta-sp-1{position:absolute;top:-10px;left:12%;width:260px;height:78vh;mix-blend-mode:screen;clip-path:polygon(44% 0%,56% 0%,90% 100%,10% 100%);filter:blur(20px);background:linear-gradient(180deg,rgba(127,63,238,.85) 0%,rgba(127,63,238,.3) 30%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,black 0%,black 45%,transparent 100%);mask-image:linear-gradient(to bottom,black 0%,black 45%,transparent 100%);animation:swL2 10s ease-in-out infinite alternate;}
@@ -586,32 +648,31 @@ section{padding:110px 0;}
   </div>
 </div>
 <div id="tools">
+  <div class="tools-ambient" aria-hidden="true">
+    <div class="ta-blob ta-b1"></div>
+    <div class="ta-blob ta-b2"></div>
+    <div class="ta-blob ta-b3"></div>
+  </div>
 
   <!-- Tool 1 — Mini Site -->
   <div class="tool-row" id="tool-mini-site">
     <div class="tool-row-inner">
       <div class="tool-text">
-        <h2 class="tool-name">Mini Site</h2>
-        <h3 class="tool-subtitle">A beautiful event page in minutes</h3>
-        <p>No design skills needed. Build a stunning, mobile-ready event landing page with your schedule, speakers, countdown timer, and registration form — all in one place.</p>
+        <h2 class="tool-name">Build Your Event <span class="gradient-text">Mini Site</span></h2>
+        <h3 class="tool-subtitle">A stunning event page, live in minutes</h3>
+        <p>Choose from pre-designed templates, add your event details, and publish on a dedicated GalSol link — no hosting setup, no code required.</p>
         <ul class="tool-bullets">
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Drag-and-drop block editor</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Countdown timer and live schedule</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Speaker profiles and sponsor logos</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Published instantly on a shareable URL</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Pick from ready-made event page templates</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Publish instantly with a dedicated shareable URL</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Embed your registration form directly in the page</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Manage up to 10 event sites from your workspace</li>
         </ul>
-        <a href="mini-site.html" class="tool-cta-link">Explore Mini Site <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
+        <a href="mini-site.html" class="tool-cta-link">Open Mini Site Builder <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
       </div>
       <div class="tool-mock">
         <div class="mock-frame">
-          <div class="mock-frame-bar">
-            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
-            <div class="mock-url-bar">galsol.app/e/annual-day-2026</div>
-          </div>
-          <div class="mock-screen">
-            <!-- Add screenshot: <img src="Images/screenshots/mini-site-preview.png" alt="Mini Site preview"> -->
-            <div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Mini Site Screenshot</span></div>
-          </div>
+          <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">galsol.app/e/annual-day-2026</div></div>
+          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Mini Site Preview</span></div></div>
         </div>
       </div>
     </div>
@@ -621,113 +682,158 @@ section{padding:110px 0;}
   <div class="tool-row even" id="tool-gs-forms">
     <div class="tool-row-inner">
       <div class="tool-text">
-        <h2 class="tool-name">GS Forms</h2>
-        <h3 class="tool-subtitle">Registration forms that auto-generate passes</h3>
-        <p>Build Google-native registration forms with a drag-and-drop builder. Submissions flow straight into your Google Sheet — and a branded entry pass with QR code is generated automatically.</p>
+        <h2 class="tool-name">Create <span class="gradient-text">Registration Forms</span></h2>
+        <h3 class="tool-subtitle">Forms that auto-generate QR entry passes</h3>
+        <p>Start from a blank form or pick a template — Event Registration, Workshop, Feedback, or RSVP. Every submission automatically generates a QR-coded entry pass for that attendee.</p>
         <ul class="tool-bullets">
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Visual field builder — no coding</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Responses saved directly to Sheets</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Auto-generated QR entry passes</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Pass emailed to registrant instantly</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Templates: Event, Workshop, Feedback, RSVP</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>QR entry pass generated per submission</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Publish, close, and track live response counts</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Share forms via link or scannable QR code</li>
         </ul>
-        <a href="gs-forms.html" class="tool-cta-link">Explore GS Forms <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
+        <a href="gs-forms.html" class="tool-cta-link">Open GS Forms <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
       </div>
       <div class="tool-mock">
         <div class="mock-frame">
-          <div class="mock-frame-bar">
-            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
-            <div class="mock-url-bar">GS Forms — Builder</div>
-          </div>
-          <div class="mock-screen">
-            <div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>GS Forms Screenshot</span></div>
-          </div>
+          <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">GS Forms — Workspace</div></div>
+          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>GS Forms Preview</span></div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Tool 3 — Entry Pass -->
-  <div class="tool-row" id="tool-entry-pass">
+  <!-- Tool 3 — Dashboard + Database -->
+  <div class="tool-row" id="tool-dashboard">
     <div class="tool-row-inner">
       <div class="tool-text">
-        <h2 class="tool-name">Entry Pass</h2>
-        <h3 class="tool-subtitle">Venue check-in under a second</h3>
-        <p>Open the scanner on any smartphone — no app install. Point it at an attendee's QR pass and instantly confirm or deny entry. Attendance syncs to your Sheet in real time.</p>
+        <h2 class="tool-name">Track Everything, <span class="gradient-text">Live</span></h2>
+        <h3 class="tool-subtitle">Your workspace metrics and campaign history</h3>
+        <p>One dashboard for your full workspace — certificates generated, emails sent, Drive storage, form count, and mini sites, all at a glance. Launch any tool or review past campaigns in one click.</p>
         <ul class="tool-bullets">
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Browser-based — works on any device</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Instant QR validation</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Prevents duplicate scan and re-entry</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Live attendance count in Dashboard</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Live metrics: certs, emails, storage, forms, sites</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Full campaign history with success rates</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>One-click launch to any GalSol tool</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Google Drive storage quota monitor</li>
         </ul>
-        <a href="gs-scanner.html" class="tool-cta-link">Explore Entry Pass <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
+        <a href="dashboard.html" class="tool-cta-link">Open Dashboard <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
       </div>
       <div class="tool-mock">
         <div class="mock-frame">
-          <div class="mock-frame-bar">
-            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
-            <div class="mock-url-bar">Entry Pass Scanner</div>
-          </div>
-          <div class="mock-screen">
-            <div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Scanner Screenshot</span></div>
-          </div>
+          <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">GalSol — Dashboard</div></div>
+          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Dashboard Preview</span></div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Tool 4 — Dashboard + Database -->
-  <div class="tool-row even" id="tool-dashboard">
+  <!-- Tool 4 — Entry Pass (Slideshow) -->
+  <div class="tool-row even" id="tool-entry-pass">
     <div class="tool-row-inner">
       <div class="tool-text">
-        <h2 class="tool-name">Dashboard + Database</h2>
-        <h3 class="tool-subtitle">Your event, live, at a glance</h3>
-        <p>Watch registrations roll in, track venue attendance, and see session analytics — all real-time. The integrated database lets you search, filter, and manage every participant record.</p>
+        <h2 class="tool-name">Verify Every <span class="gradient-text">Entry Pass</span></h2>
+        <h3 class="tool-subtitle">From form submission to venue check-in, end-to-end</h3>
+        <p>A complete pass system built across two tools. GS Forms generates QR-coded passes on registration. The scanner verifies them at the door in real time — no app install on any device.</p>
         <ul class="tool-bullets">
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Real-time registration and attendance stats</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Session-wise attendance breakdown</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Searchable participant database</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Export reports as CSV or PDF</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>QR pass auto-generated on every registration</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Scanner works on any phone via a shared link</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Staff login with event code — secure and simple</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Pass states: Valid, Admitted, Blocked, Invalid</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Live admit count updates as guests enter</li>
         </ul>
-        <a href="dashboard.html" class="tool-cta-link">Explore Dashboard <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
+        <a href="gs-scanner.html" class="tool-cta-link">Open Entry Pass Scanner <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
       </div>
       <div class="tool-mock">
-        <div class="mock-frame">
-          <div class="mock-frame-bar">
-            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
-            <div class="mock-url-bar">Event Dashboard</div>
+        <div class="pass-show" id="passShow">
+          <div class="pass-slides-wrap">
+            <div class="pass-slides" id="passSlides">
+              <!-- Slide 1: Customize Pass -->
+              <div class="ps-slide">
+                <div class="ps-header"><span class="ps-chip ps-chip-cyan">GS Forms</span><span class="ps-label">Customize Your Pass</span></div>
+                <div class="ps-pass-card">
+                  <div class="ps-pass-top"><div class="ps-pass-event">Annual Tech Fest 2026</div><div class="ps-pass-badge">Attendee</div></div>
+                  <div class="ps-pass-name">Arjun Mehta</div>
+                  <div class="ps-pass-meta">Hall A &middot; Session 2</div>
+                  <div class="ps-pass-bottom">
+                    <div class="ps-qr-box">
+                      <div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div>
+                      <div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div>
+                      <div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div>
+                      <div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div>
+                      <div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell off"></div><div class="ps-qr-cell on"></div><div class="ps-qr-cell on"></div>
+                    </div>
+                    <div class="ps-pass-id">REG · 2026 · 0042</div>
+                  </div>
+                </div>
+                <p class="ps-caption">Pass generated automatically on every form submission</p>
+              </div>
+              <!-- Slide 2: Scanner -->
+              <div class="ps-slide">
+                <div class="ps-header"><span class="ps-chip ps-chip-violet">Scanner</span><span class="ps-label">Check-In at the Door</span></div>
+                <div class="ps-phone-wrap">
+                  <div class="ps-phone">
+                    <div class="ps-phone-screen">
+                      <div class="ps-scan-frame">
+                        <div class="ps-scan-corner tl"></div><div class="ps-scan-corner tr"></div>
+                        <div class="ps-scan-corner bl"></div><div class="ps-scan-corner br"></div>
+                        <div class="ps-scan-line"></div>
+                      </div>
+                      <div class="ps-scan-stats">
+                        <span class="ps-stat-pill admitted">42 Admitted</span>
+                        <span class="ps-stat-pill pending">8 Pending</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p class="ps-caption">Share a secure link &amp; event code with your check-in team — works on any phone, no app needed</p>
+              </div>
+              <!-- Slide 3: Database -->
+              <div class="ps-slide">
+                <div class="ps-header"><span class="ps-chip ps-chip-green">Database</span><span class="ps-label">Manage &amp; Track Passes</span></div>
+                <div class="ps-db-list">
+                  <div class="ps-db-row"><div class="ps-db-name">Arjun Mehta</div><div class="ps-db-status admitted">Admitted</div></div>
+                  <div class="ps-db-row"><div class="ps-db-name">Priya Sharma</div><div class="ps-db-status admitted">Admitted</div></div>
+                  <div class="ps-db-row"><div class="ps-db-name">Kiran Rao</div><div class="ps-db-status pending">Pending</div></div>
+                  <div class="ps-db-row"><div class="ps-db-name">Meera Iyer</div><div class="ps-db-status blocked">Blocked</div></div>
+                  <div class="ps-db-row"><div class="ps-db-name">Rahul Singh</div><div class="ps-db-status admitted">Admitted</div></div>
+                </div>
+                <p class="ps-caption">Search, filter, and export all attendance data from the Database tool</p>
+              </div>
+            </div>
           </div>
-          <div class="mock-screen">
-            <div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Dashboard Screenshot</span></div>
+          <div class="pass-nav">
+            <button class="pass-nav-btn" id="passPrev" aria-label="Previous slide"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
+            <div class="pass-dots" id="passDots">
+              <span class="pass-dot active" data-idx="0"></span>
+              <span class="pass-dot" data-idx="1"></span>
+              <span class="pass-dot" data-idx="2"></span>
+            </div>
+            <button class="pass-nav-btn" id="passNext" aria-label="Next slide"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Tool 5 — Certificates -->
+  <!-- Tool 5 — Bulk Certificates -->
   <div class="tool-row" id="tool-certificates">
     <div class="tool-row-inner">
       <div class="tool-text">
-        <h2 class="tool-name">Certificates</h2>
-        <h3 class="tool-subtitle">Personalized certificates for every attendee</h3>
-        <p>Connect your Google Slides template and participant Sheet. GalSol generates individual PDFs, saves them to your Drive, and injects shareable links back into your Sheet — ready to send.</p>
+        <h2 class="tool-name">Generate <span class="gradient-text">Certificates in Bulk</span></h2>
+        <h3 class="tool-subtitle">Google Slides template + Sheets data = PDF batch</h3>
+        <p>Walk through a guided 4-step workflow — connect your participant Sheet, design your certificate template visually, configure merge fields, then generate every PDF in one run.</p>
         <ul class="tool-bullets">
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Slides template + Sheets data = PDF certificates</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Auto-saved to your Google Drive folder</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Shareable links written back to Sheet</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Batch hundreds in a single click</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Step-by-step guided workflow — no confusion</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Connect Google Sheet or upload CSV/Excel</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Visual template designer with merge field mapping</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Preview any certificate before running the batch</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>PDFs auto-saved to your Google Drive folder</li>
         </ul>
-        <a href="cert-tool.html" class="tool-cta-link">Explore Certificates <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
+        <a href="cert-tool.html" class="tool-cta-link">Open Certificate Generator <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
       </div>
       <div class="tool-mock">
         <div class="mock-frame">
-          <div class="mock-frame-bar">
-            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
-            <div class="mock-url-bar">Certificate Creator</div>
-          </div>
-          <div class="mock-screen">
-            <div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Certificate Creator Screenshot</span></div>
-          </div>
+          <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">Certificate Generator</div></div>
+          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Certificate Generator Preview</span></div></div>
         </div>
       </div>
     </div>
@@ -737,26 +843,21 @@ section{padding:110px 0;}
   <div class="tool-row even" id="tool-bulk-mailer">
     <div class="tool-row-inner">
       <div class="tool-text">
-        <h2 class="tool-name">Bulk Mailer</h2>
-        <h3 class="tool-subtitle">Personalized emails to every attendee</h3>
-        <p>Pick an HTML template, map your Sheet columns, preview with live substitution — and dispatch hundreds of personalized emails through your own Gmail account in minutes.</p>
+        <h2 class="tool-name">Send <span class="gradient-text">Personalised Emails</span> at Scale</h2>
+        <h3 class="tool-subtitle">Your Gmail. Your templates. Hundreds of recipients.</h3>
+        <p>Write HTML emails with the built-in syntax editor, map merge fields to your Sheet columns, and dispatch personalised emails directly from your own Gmail account — no marketing platform needed.</p>
         <ul class="tool-bullets">
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>HTML template editor with variable fields</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Sends via your Gmail — no third-party relay</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Certificate links auto-attached from Sheet</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Real-time delivery tracking</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Built-in HTML editor with syntax highlighting</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Merge fields pull from any column in your Sheet</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Dispatched via your Gmail — not a third-party relay</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Track send status and delivery in real time</li>
         </ul>
-        <a href="mail-tool.html" class="tool-cta-link">Explore Bulk Mailer <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
+        <a href="mail-tool.html" class="tool-cta-link">Open Bulk Mailer <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
       </div>
       <div class="tool-mock">
         <div class="mock-frame">
-          <div class="mock-frame-bar">
-            <span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span>
-            <div class="mock-url-bar">Bulk Mailer</div>
-          </div>
-          <div class="mock-screen">
-            <div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Bulk Mailer Screenshot</span></div>
-          </div>
+          <div class="mock-frame-bar"><span class="tl tl-r"></span><span class="tl tl-y"></span><span class="tl tl-g"></span><div class="mock-url-bar">Bulk Mailer</div></div>
+          <div class="mock-screen"><div class="mock-placeholder"><i data-lucide="monitor" style="width:36px;height:36px;opacity:.2"></i><span>Bulk Mailer Preview</span></div></div>
         </div>
       </div>
     </div>
@@ -766,15 +867,14 @@ section{padding:110px 0;}
   <div class="tool-row" id="pipeline">
     <div class="tool-row-inner">
       <div class="tool-text">
-        <span class="section-tag" style="margin-bottom:16px;display:inline-block;">Combined Pipeline</span>
-        <h2 class="tool-name">Certificates to inboxes,<br>in one flow</h2>
-        <h3 class="tool-subtitle">Every step automated from a single trigger</h3>
-        <p>The most powerful GalSol workflow — connect your Slides template and participant Sheet, click Run, and receive a complete delivery report when done.</p>
+        <h2 class="tool-name">Bulk Certificates <span class="gradient-text">+ Mail</span>, One Trigger</h2>
+        <h3 class="tool-subtitle">Every step automated — start to finish</h3>
+        <p>Connect your Slides template and participant Sheet, hit Run. GalSol generates every certificate, saves them to Drive, writes links back to your Sheet, then emails every attendee — and delivers a final report.</p>
         <ul class="tool-bullets">
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>7 automated steps, zero manual work</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>PDFs generated and organized in your Drive</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Certificate links written back to Sheet</li>
-          <li><i data-lucide="check" style="width:15px;height:15px"></i>Final delivery report on completion</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>7 automated steps from a single click</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>PDFs organized in a timestamped Drive folder</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Certificate links written back to each row in your Sheet</li>
+          <li><i data-lucide="check" style="width:15px;height:15px"></i>Final delivery report with counts and Drive link</li>
         </ul>
         <a href="cert-tool.html" class="tool-cta-link">Explore Combined Pipeline <i data-lucide="arrow-right" style="width:15px;height:15px"></i></a>
       </div>
@@ -810,8 +910,10 @@ section{padding:110px 0;}
   </div>
   <div class="ai-inner container">
     <div class="ai-brand-wrap ai-reveal">
-      <img src="Images/GalAI Logo.svg" alt="Gal AI" class="ai-brand-logo">
-      <h2 class="ai-brand-name">Gal <span class="gradient-text">AI</span></h2>
+      <div class="ai-name-row">
+        <img src="Images/GalAI Logo.svg" alt="Gal AI" class="ai-brand-logo">
+        <h2 class="ai-brand-name">Gal <span class="gradient-text">AI</span></h2>
+      </div>
       <p class="ai-brand-sub">Your intelligent event assistant — available exclusively on Pro. Describe what you need, and Gal AI builds it.</p>
     </div>
     <div class="ai-cards">
@@ -929,13 +1031,6 @@ section{padding:110px 0;}
       <h2 class="section-title">Simple, transparent,<br><span class="gradient-text">always free to start</span></h2>
       <p class="section-sub">Start for free and upgrade when you need Gal AI and priority processing.</p>
     </div>
-    <div class="pricing-toggle-wrap">
-      <span>Monthly</span>
-      <button class="toggle-sw" id="billingToggle" role="switch" aria-checked="false">
-        <span class="toggle-thumb"></span>
-      </button>
-      <span>Annually <em class="save-badge">Save 20%</em></span>
-    </div>
     <div class="pricing-cards">
       <div class="pricing-card">
         <div class="plan-name">Free</div>
@@ -1003,7 +1098,7 @@ section{padding:110px 0;}
         </a>
         <p>The all-in-one console for planning, running, and following up on grand events — powered entirely by your Google Account.</p>
         <div class="footer-social">
-          <a href="#" aria-label="Instagram"><i data-lucide="instagram" style="width:15px;height:15px"></i></a>
+          <a href="#" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
           <a href="mailto:hello@galsol.app" aria-label="Email"><i data-lucide="mail" style="width:15px;height:15px"></i></a>
         </div>
       </div>
@@ -1212,22 +1307,52 @@ document.querySelectorAll('[data-reveal], .pricing-card, .how-step, .privacy-ite
   aiObs.observe(aiSect);
 })();
 
-// ── PRICING TOGGLE ──
-const toggle = document.getElementById('billingToggle');
-const proPrice = document.getElementById('proPrice');
-const proNote = document.getElementById('proNote');
-let isAnnual = false;
-proPrice.style.transition = 'opacity .15s';
-toggle.addEventListener('click', () => {
-  isAnnual = !isAnnual;
-  toggle.setAttribute('aria-checked', isAnnual.toString());
-  proPrice.style.opacity = '0';
-  setTimeout(() => {
-    proPrice.textContent = isAnnual ? '239' : '299';
-    proNote.textContent = isAnnual ? 'Billed annually — save 20%' : ' ';
-    proPrice.style.opacity = '1';
-  }, 120);
-});
+// ── TOOLS HEADER SCROLL OPACITY ──
+(function() {
+  const hdr = document.querySelector('.tools-section-hdr');
+  if (!hdr) return;
+  hdr.style.opacity = '0.08';
+  function syncHdr() {
+    const rect = hdr.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const progress = Math.max(0, Math.min(1, (vh - rect.top) / (vh * 0.5)));
+    hdr.style.opacity = String(0.08 + progress * 0.92);
+  }
+  syncHdr();
+  window.addEventListener('scroll', syncHdr, { passive: true });
+  window.addEventListener('resize', syncHdr, { passive: true });
+  const inner = hdr.querySelector('[data-reveal]');
+  if (inner) { inner.removeAttribute('data-reveal'); inner.style.opacity = 'inherit'; inner.style.transform = 'none'; }
+})();
+
+// ── ENTRY PASS SLIDESHOW ──
+(function() {
+  const slides = document.getElementById('passSlides');
+  const dots = document.querySelectorAll('#passDots .pass-dot');
+  const prev = document.getElementById('passPrev');
+  const next = document.getElementById('passNext');
+  if (!slides || !dots.length) return;
+  let cur = 0, total = dots.length, timer;
+  function goTo(idx) {
+    cur = (idx + total) % total;
+    slides.style.transform = 'translateX(-' + (cur * 100) + '%)';
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === cur); });
+  }
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(function() { goTo(cur + 1); }, 4000);
+  }
+  prev.addEventListener('click', function() { goTo(cur - 1); startAuto(); });
+  next.addEventListener('click', function() { goTo(cur + 1); startAuto(); });
+  dots.forEach(function(d) { d.addEventListener('click', function() { goTo(+d.dataset.idx); startAuto(); }); });
+  const show = document.getElementById('passShow');
+  if (show) {
+    show.addEventListener('mouseenter', function() { clearInterval(timer); });
+    show.addEventListener('mouseleave', startAuto);
+  }
+  startAuto();
+})();
+
 
 // ── GAL AI TYPEWRITER (single line) ──
 (function() {
