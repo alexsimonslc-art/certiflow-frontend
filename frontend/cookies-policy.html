@@ -123,7 +123,7 @@ img{display:block;max-width:100%;}
         <span>/</span>
         <span>Cookie Policy</span>
       </div>
-      <h1>GalSol Cookies & Local Storage Policy</h1>
+      <h1 class="gradient-text">GalSol Cookies & Local Storage Policy</h1>
       <p>How GalSol uses cookies and similar tracking technologies on our platform.</p>
       <div class="meta">
         <span><i data-lucide="calendar" style="width:13px;height:13px"></i> Last updated: May 11, 2026</span>
@@ -144,35 +144,48 @@ img{display:block;max-width:100%;}
 </aside>
 
       <div class="legal-body">
+  <div class="legal-intro" style="margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+    <p style="font-size: 1.05rem; color: var(--text);">This Cookie Policy explains how GalSol uses cookies, local storage, and similar technologies to ensure the platform functions securely.</p>
+  </div>
+
   <div class="legal-section" id="s1">
     <h2><span class="sec-num">1</span> What We Use</h2>
     <p>GalSol uses Local Storage and strictly necessary cookies to ensure the platform functions securely. We do not use invasive, cross-site tracking cookies.</p>
   </div>
+
   <div class="legal-section" id="s2">
     <h2><span class="sec-num">2</span> Essential Technologies</h2>
-    <ul>
-      <li>Authentication Tokens: We store a secure JSON Web Token (JWT) in your browser's Local Storage to maintain your session after you log in via Google OAuth.</li>
-      <li>Security & State: We use local storage to remember your UI preferences (like sidebar state) and temporarily cache your dashboard statistics to reduce loading times.</li>
+    <ul style="list-style-type: none; margin-left: 0; padding-left: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+        <li style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
+            <strong style="color: var(--cyan);">Authentication Tokens:</strong> We store a secure JSON Web Token (JWT) in your browser's Local Storage to maintain your session after you log in via Google OAuth.
+        </li>
+        <li style="background: var(--surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border);">
+            <strong style="color: var(--cyan);">Security & State:</strong> We use local storage to remember your UI preferences (like sidebar state) and temporarily cache your dashboard statistics to reduce loading times.
+        </li>
     </ul>
   </div>
+
   <div class="legal-section" id="s3">
     <h2><span class="sec-num">3</span> Third-Party Cookies</h2>
-    <ul>
-      <li>Google OAuth: During the login process, Google will place authentication cookies on your browser. These are governed by Google's Privacy Policy.</li>
-      <li>Analytics: If a Creator attaches a Google Analytics (GA4) ID to their published GalSol Mini Site, Google Analytics will place cookies on the site visitor's browser to track aggregated traffic.</li>
+    <ul style="list-style-type: none; margin-left: 0; padding-left: 0; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+        <li style="padding-left: 20px; position: relative;"><span style="position: absolute; left: 0; top: 2px; color: var(--cyan);">&bull;</span> <strong style="color: var(--text);">Google OAuth:</strong> During the login process, Google will place authentication cookies on your browser. These are governed by Google's Privacy Policy.</li>
+        <li style="padding-left: 20px; position: relative;"><span style="position: absolute; left: 0; top: 2px; color: var(--cyan);">&bull;</span> <strong style="color: var(--text);">Analytics:</strong> If a Creator attaches a Google Analytics (GA4) ID to their published GalSol Mini Site, Google Analytics will place cookies on the site visitor's browser to track aggregated traffic.</li>
     </ul>
   </div>
+
   <div class="legal-section" id="s4">
     <h2><span class="sec-num">4</span> Managing Your Storage</h2>
     <p>You can clear your Local Storage and cookies at any time through your browser settings. Please note that clearing Local Storage will immediately log you out of the GalSol workspace.</p>
   </div>
+
   <div class="legal-section" id="s5">
     <h2><span class="sec-num">5</span> Contact Us</h2>
-    <p>If you have any questions about our use of cookies or other technologies, please email us at: galsol.co@gmail.com.</p>
+    <p>If you have any questions about our use of cookies or other technologies, please email us at: <a href="mailto:galsol.co@gmail.com" style="color: var(--cyan); text-decoration: underline;">galsol.co@gmail.com</a>.</p>
   </div>
-</div></div>
+</div>
     </div>
   </div>
+</main>
 </main>
 
 <footer class="footer">
@@ -198,17 +211,17 @@ img{display:block;max-width:100%;}
         </div>
                 <div class="footer-col">
           <h5>Product</h5>
-          <a href="dashboard.html">Dashboard + Database</a>
-          <a href="combined-tool.html">Combined Pipeline</a>
-          <a href="mini-site.html">Mini Site Builder</a>
+          <a href="mini-site.html">Mini Site</a>
           <a href="gs-forms.html">GS Forms</a>
-          <a href="cert-tool.html">Certificates</a>
-          <a href="mail-tool.html">Bulk Mailer</a>
+          <a href="gs-database.html">Dashboard + Database</a>
+          <a href="cert-tool.html">Bulk Certificate generator</a>
+          <a href="mail-tool.html">Bulk Mail sender</a>
+          <a href="combined-tool.html">Combined Pipeline</a>
           <a href="index.html#pricing">Pricing</a>
         </div>
         <div class="footer-col">
           <h5>Company</h5>
-          <a href="#">About Us</a>
+          <a href="about-us.html">About Us</a>
           <br>
           <h5 style="margin-top: 15px;">Users</h5>
           <a href="user-guide.html">Documentation / Guide</a>

@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="GalSol is the grand event console: build event sites, collect registrations, generate bulk certificates, send bulk mails, and run the complete pipeline in one shot. Every event under one sun.">
+  <meta property="og:title" content="About GalSol - The Grand Event Console">
+  <meta property="og:description"
+    content="Build, automate, certify, and deliver every event workflow from one professional console.">
+  <meta property="og:image" content="Images/GalSol Logo IC.png">
+  <title>About Us - GalSol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #050C12;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-2: rgba(255, 255, 255, 0.06);
+      --surface-3: rgba(255, 255, 255, 0.09);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hi: rgba(255, 255, 255, 0.15);
+      --primary: #7F3FEE;
+      --cyan: #0ECDFE;
+      --violet: #A689F9;
+      --green: #34d399;
+      --amber: #fbbf24;
+      --text: #eef0ff;
+      --text-muted: #8892aa;
+      --text-faint: #3d4a60;
+      --grad-brand: linear-gradient(135deg, #0ECDFE, #A689F9, #7F3FEE);
+      --grad-text: linear-gradient(135deg, #0ECDFE 0%, #A689F9 50%, #7F3FEE 100%);
+      --font-d: 'Syne', sans-serif;
+      --font-b: 'DM Sans', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    .logo-text {
+      font-family: var(--font-d);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .gradient-text {
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .site-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 900px 700px at -5% 0%, rgba(127, 63, 238, .14) 0%, transparent 65%),
+        radial-gradient(ellipse 700px 600px at 108% 2%, rgba(14, 205, 254, .09) 0%, transparent 65%),
+        radial-gradient(ellipse 620px 520px at 65% 100%, rgba(52, 211, 153, .05) 0%, transparent 65%);
+    }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      border-bottom: 1px solid transparent;
+      transition: background .3s, backdrop-filter .3s, border-color .3s, padding .3s;
+    }
+
+    .header.scrolled {
+      background: rgba(5, 12, 18, .92);
+      backdrop-filter: blur(20px);
+      border-bottom-color: var(--border);
+      padding: 13px 0;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      height: 26px;
+      width: auto;
+    }
+
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-link {
+      font-size: .88rem;
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--text);
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .hamburger {
+      display: none;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      padding: 9px;
+      border-radius: 10px;
+    }
+
+    .mobile-nav {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      background: rgba(5, 12, 18, .97);
+      backdrop-filter: blur(22px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 32px;
+    }
+
+    .mobile-nav.open {
+      display: flex;
+    }
+
+    .mobile-nav a {
+      color: var(--text);
+      font-family: var(--font-d);
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .mobile-nav-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-family: var(--font-d);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .25s, box-shadow .25s, color .2s, border-color .2s, background .2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--grad-brand);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(127, 63, 238, .35);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, .05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-hi);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(14, 205, 254, .4);
+      background: rgba(14, 205, 254, .05);
+      transform: translateY(-2px);
+    }
+
+    .hero {
+      min-height: 96vh;
+      padding: 138px 0 86px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .7), transparent 78%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(340px, .98fr);
+      gap: 56px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      font-size: .74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.55rem, 6vw, 5.9rem);
+      line-height: .95;
+      letter-spacing: 0;
+      font-weight: 800;
+      max-width: 760px;
+      margin-bottom: 24px;
+    }
+
+    .hero-lede {
+      color: var(--text-muted);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+      max-width: 650px;
+      line-height: 1.75;
+      margin-bottom: 30px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-panel {
+      position: relative;
+      min-height: 520px;
+      border: 1px solid var(--border-hi);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .025)),
+        rgba(5, 12, 18, .74);
+      box-shadow: 0 30px 100px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .08);
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      padding: 28px;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(14, 205, 254, .12), transparent 35%, rgba(127, 63, 238, .14));
+      pointer-events: none;
+    }
+
+    .solar-console {
+      position: relative;
+      min-height: 464px;
+      display: grid;
+      place-items: center;
+    }
+
+    .sun-core {
+      width: 172px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 255, 255, .42), transparent 25%),
+        var(--grad-brand);
+      box-shadow: 0 0 70px rgba(14, 205, 254, .28), 0 0 120px rgba(127, 63, 238, .24);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    .sun-core img {
+      width: 92px;
+      height: auto;
+      filter: drop-shadow(0 12px 20px rgba(0, 0, 0, .28));
+    }
+
+    .orbit-path {
+      position: absolute;
+      border: 1px solid rgba(255, 255, 255, .10);
+      border-radius: 50%;
+    }
+
+    .orbit-path.one {
+      width: 330px;
+      height: 330px;
+    }
+
+    .orbit-path.two {
+      width: 430px;
+      height: 260px;
+      transform: rotate(-18deg);
+    }
+
+    .orbit-card {
+      position: absolute;
+      width: 142px;
+      min-height: 76px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 14px;
+      background: rgba(6, 13, 22, .82);
+      backdrop-filter: blur(10px);
+      padding: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, .26);
+    }
+
+    .orbit-card i {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      background: rgba(14, 205, 254, .1);
+      flex-shrink: 0;
+    }
+
+    .orbit-card strong {
+      display: block;
+      font-family: var(--font-d);
+      font-size: .78rem;
+      line-height: 1.2;
+    }
+
+    .orbit-card span {
+      display: block;
+      color: var(--text-muted);
+      font-size: .67rem;
+      line-height: 1.2;
+      margin-top: 2px;
+    }
+
+    .oc-1 {
+      top: 28px;
+      left: 32px;
+    }
+
+    .oc-2 {
+      top: 34px;
+      right: 16px;
+    }
+
+    .oc-3 {
+      right: 0;
+      bottom: 118px;
+    }
+
+    .oc-4 {
+      bottom: 30px;
+      right: 82px;
+    }
+
+    .oc-5 {
+      bottom: 92px;
+      left: 0;
+    }
+
+    .oc-6 {
+      top: 206px;
+      left: 20px;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.035);
+      }
+    }
+
+    .section {
+      padding: 110px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header {
+      max-width: 760px;
+      margin-bottom: 42px;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.04;
+      letter-spacing: 0;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, .95fr);
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .story-copy {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 34px;
+    }
+
+    .story-copy p {
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      font-size: .98rem;
+    }
+
+    .story-copy p:last-child {
+      margin-bottom: 0;
+    }
+
+    .quote-line {
+      color: var(--text);
+      font-family: var(--font-d);
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.35;
+      margin: 4px 0 22px;
+    }
+
+    .workflow-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .workflow-card {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .workflow-icon,
+    .value-icon,
+    .objective-icon,
+    .feature-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      background: rgba(14, 205, 254, .1);
+      border: 1px solid rgba(14, 205, 254, .18);
+    }
+
+    .workflow-card h3,
+    .feature-card h3,
+    .value-card h3,
+    .objective-card h3 {
+      font-size: 1rem;
+      letter-spacing: 0;
+      margin-bottom: 4px;
+    }
+
+    .workflow-card p,
+    .feature-card p,
+    .value-card p,
+    .objective-card p {
+      color: var(--text-muted);
+      font-size: .88rem;
+      line-height: 1.62;
+    }
+
+    .name-section {
+      background: linear-gradient(180deg, rgba(255, 255, 255, .025), rgba(255, 255, 255, .01));
+    }
+
+    .name-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .name-card {
+      min-height: 250px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .name-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 3px;
+      background: var(--grad-brand);
+      opacity: .8;
+    }
+
+    .name-card .word {
+      font-family: var(--font-d);
+      font-size: clamp(2.1rem, 5vw, 3.8rem);
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .name-card p {
+      color: var(--text-muted);
+      margin-top: 20px;
+      line-height: 1.7;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .035);
+      padding: 24px;
+      min-height: 218px;
+      transition: transform .25s, border-color .25s, background .25s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(14, 205, 254, .32);
+      background: rgba(14, 205, 254, .05);
+    }
+
+    .feature-icon {
+      margin-bottom: 18px;
+    }
+
+    .values-wrap {
+      display: grid;
+      grid-template-columns: minmax(300px, .82fr) minmax(0, 1.18fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .vision-card {
+      border: 1px solid rgba(14, 205, 254, .18);
+      border-radius: 20px;
+      background:
+        linear-gradient(145deg, rgba(14, 205, 254, .08), rgba(127, 63, 238, .08)),
+        rgba(255, 255, 255, .035);
+      padding: 34px;
+      position: sticky;
+      top: 96px;
+    }
+
+    .vision-card img {
+      height: 52px;
+      margin-bottom: 24px;
+    }
+
+    .vision-card h3 {
+      font-size: 1.75rem;
+      line-height: 1.1;
+      letter-spacing: 0;
+      margin-bottom: 16px;
+    }
+
+    .vision-card p {
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .value-card,
+    .objective-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 22px;
+    }
+
+    .value-icon,
+    .objective-icon {
+      margin-bottom: 16px;
+    }
+
+    .team-section {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .team-panel {
+      border: 1px solid var(--border-hi);
+      border-radius: 22px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .075), rgba(255, 255, 255, .025)),
+        rgba(6, 13, 22, .7);
+      padding: 38px;
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+      gap: 34px;
+      align-items: start;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .team-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(14, 205, 254, .08), transparent 48%, rgba(127, 63, 238, .1));
+      pointer-events: none;
+    }
+
+    .team-panel>* {
+      position: relative;
+    }
+
+    .team-panel p {
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+
+    .objectives-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .objective-card {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+    }
+
+    .objective-icon {
+      margin-bottom: 0;
+    }
+
+    .cta {
+      padding: 110px 0;
+    }
+
+    .cta-panel {
+      border: 1px solid rgba(14, 205, 254, .2);
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(14, 205, 254, .12), rgba(127, 63, 238, .12)),
+        rgba(255, 255, 255, .035);
+      padding: clamp(32px, 6vw, 64px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .07), transparent);
+      transform: translateX(-100%);
+      animation: sweep 7s ease-in-out infinite;
+    }
+
+    @keyframes sweep {
+      0%, 45% {
+        transform: translateX(-100%);
+      }
+
+      70%, 100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .cta-panel>* {
+      position: relative;
+    }
+
+    .cta-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .cta-logo img {
+      height: 42px;
+    }
+
+    .cta h2 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+      margin-bottom: 18px;
+    }
+
+    .cta p {
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 28px;
+      font-size: 1.03rem;
+    }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 72px 0 36px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 52px;
+    }
+
+    .footer-brand p {
+      font-size: .86rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 14px;
+      margin-bottom: 18px;
+      max-width: 260px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-social a {
+      width: 33px;
+      height: 33px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: color .2s, border-color .2s, background .2s, transform .2s;
+    }
+
+    .footer-social a:hover {
+      color: var(--text);
+      border-color: rgba(14, 205, 254, .35);
+      background: rgba(14, 205, 254, .06);
+      transform: translateY(-2px);
+    }
+
+    .footer-col h5 {
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    .footer-col a {
+      font-size: .83rem;
+      color: var(--text-muted);
+      margin-bottom: 9px;
+      transition: color .2s, transform .2s;
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-col a:hover,
+    .footer-col a.active {
+      color: var(--cyan);
+      transform: translateX(3px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .footer-bottom p {
+      font-size: .78rem;
+      color: var(--text-faint);
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    [data-reveal].visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .nav {
+        display: none;
+      }
+
+      .hamburger {
+        display: grid;
+        place-items: center;
+      }
+
+      .header-actions .btn-ghost,
+      .header-actions .btn-primary {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-inner,
+      .story-grid,
+      .values-wrap,
+      .team-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel {
+        min-height: 430px;
+      }
+
+      .solar-console {
+        min-height: 374px;
+      }
+
+      .orbit-card {
+        width: 130px;
+      }
+
+      .orbit-path.two {
+        width: 360px;
+      }
+
+      .vision-card {
+        position: relative;
+        top: auto;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .hero {
+        padding-top: 118px;
+      }
+
+      .section {
+        padding: 78px 0;
+      }
+
+      .hero-panel {
+        padding: 18px;
+        min-height: 560px;
+      }
+
+      .solar-console {
+        min-height: 520px;
+      }
+
+      .sun-core {
+        width: 138px;
+      }
+
+      .orbit-path {
+        display: none;
+      }
+
+      .orbit-card {
+        width: calc(50% - 8px);
+        min-height: 86px;
+      }
+
+      .oc-1 {
+        top: 0;
+        left: 0;
+      }
+
+      .oc-2 {
+        top: 0;
+        right: 0;
+      }
+
+      .oc-3 {
+        top: 120px;
+        right: 0;
+        bottom: auto;
+      }
+
+      .oc-4 {
+        top: 120px;
+        left: 0;
+        right: auto;
+        bottom: auto;
+      }
+
+      .oc-5 {
+        bottom: 0;
+        left: 0;
+      }
+
+      .oc-6 {
+        bottom: 0;
+        right: 0;
+        left: auto;
+        top: auto;
+      }
+
+      .name-grid,
+      .feature-grid,
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .story-copy,
+      .team-panel {
+        padding: 24px;
+      }
+
+      .hero-actions,
+      .cta .hero-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-ghost {
+        width: 100%;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      [data-reveal] {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="site-bg" aria-hidden="true"></div>
+
+  <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+    <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">
+      <i data-lucide="x" style="width:24px;height:24px"></i>
+    </button>
+    <a href="index.html">Home</a>
+    <a href="index.html#tools">Products</a>
+    <a href="about-us.html">About Us</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="user-guide.html">User Guide</a>
+    <a href="login.html" class="btn-primary">Get Started Free</a>
+  </div>
+
+  <header class="header" id="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="Images/GalSol Logo IC.svg" alt="GalSol icon" class="logo-img">
+        <span class="logo-text">GalSol</span>
+      </a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.html#tools" class="nav-link">Products</a>
+        <a href="about-us.html" class="nav-link active">About Us</a>
+        <a href="index.html#pricing" class="nav-link">Pricing</a>
+        <a href="user-guide.html" class="nav-link">User Guide</a>
+      </nav>
+      <div class="header-actions">
+        <a href="login.html" class="btn-ghost">Sign In</a>
+        <a href="login.html" class="btn-primary">Get Started Free</a>
+        <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+          <i data-lucide="menu" style="width:22px;height:22px"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="container hero-inner">
+        <div class="hero-copy" data-reveal>
+          <div class="eyebrow"><i data-lucide="sun-medium" style="width:16px;height:16px"></i>The Grand Event Console
+          </div>
+          <h1>We built the console every event organiser always needed.</h1>
+          <p class="hero-lede">GalSol brings event sites, registration forms, attendee data, certificate generation,
+            bulk email, and pipeline automation into one focused command center.</p>
+          <div class="hero-actions">
+            <a href="#story" class="btn-primary"><i data-lucide="book-open" style="width:17px;height:17px"></i>Read Our
+              Story</a>
+            <a href="login.html" class="btn-ghost"><i data-lucide="sparkles" style="width:17px;height:17px"></i>Start
+              Free</a>
+          </div>
+        </div>
+
+        <div class="hero-panel" data-reveal>
+          <div class="solar-console" aria-label="GalSol event workflow visual">
+            <div class="orbit-path one"></div>
+            <div class="orbit-path two"></div>
+            <div class="sun-core"><img src="Images/GalSol Logo IC.svg" alt="GalSol"></div>
+            <div class="orbit-card oc-1">
+              <i data-lucide="globe-2"></i>
+              <div><strong>GalSites</strong><span>Mini-sites</span></div>
+            </div>
+            <div class="orbit-card oc-2">
+              <i data-lucide="clipboard-list"></i>
+              <div><strong>GalForms</strong><span>Registrations</span></div>
+            </div>
+            <div class="orbit-card oc-3">
+              <i data-lucide="layout-dashboard"></i>
+              <div><strong>SolDeck</strong><span>Command data</span></div>
+            </div>
+            <div class="orbit-card oc-4">
+              <i data-lucide="award"></i>
+              <div><strong>GalCerts</strong><span>Bulk certs</span></div>
+            </div>
+            <div class="orbit-card oc-5">
+              <i data-lucide="send"></i>
+              <div><strong>SolMail</strong><span>Bulk mails</span></div>
+            </div>
+            <div class="orbit-card oc-6">
+              <i data-lucide="zap"></i>
+              <div><strong>SolFlow</strong><span>One trigger</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="story">
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <span class="section-tag"><i data-lucide="door-open" style="width:15px;height:15px"></i>The Story</span>
+          <h2 class="section-title">We've been in the room.</h2>
+          <p class="section-sub">The platform began with a very ordinary pain: the gap between how polished events should
+            feel and how fragmented the organiser's workflow usually is.</p>
+        </div>
+
+        <div class="story-grid">
+          <div class="story-copy" data-reveal>
+            <div class="quote-line">That's not a workflow. That's chaos wearing a spreadsheet.</div>
+            <p>We've seen organisers stay up until 2 AM copying participant names into certificate templates one by one.
+              We've watched college fest coordinators send hundreds of emails manually from personal inboxes.</p>
+            <p>We've seen corporate event managers juggle a website builder, form tool, spreadsheet, design app, and
+              mailing platform just to run a single conference. Something always falls through the cracks.</p>
+            <p>GalSol exists because event organising is painfully fragmented. We built it to collapse that chaos into one
+              grand console: your event site, smart forms, attendee database, bulk certificates, and personalised emails
+              working together.</p>
+            <p><strong style="color:var(--text);">One console. Every tool. Zero chaos.</strong></p>
+          </div>
+
+          <div class="workflow-stack" data-reveal>
+            <div class="workflow-card">
+              <div class="workflow-icon"><i data-lucide="copy-check" style="width:20px;height:20px"></i></div>
+              <div>
+                <h3>Manual work becomes mapped work</h3>
+                <p>Names, fields, certificate placeholders, and email variables move through one connected flow.</p>
+              </div>
+            </div>
+            <div class="workflow-card">
+              <div class="workflow-icon"><i data-lucide="blocks" style="width:20px;height:20px"></i></div>
+              <div>
+                <h3>Five tools become one console</h3>
+                <p>Website, forms, database, certificates, and mailer live under a single event workspace.</p>
+              </div>
+            </div>
+            <div class="workflow-card">
+              <div class="workflow-icon"><i data-lucide="radio-tower" style="width:20px;height:20px"></i></div>
+              <div>
+                <h3>Follow-up becomes instant</h3>
+                <p>Generate PDFs, store them in Drive, write links back, and dispatch emails from one pipeline.</p>
+              </div>
+            </div>
+            <div class="workflow-card">
+              <div class="workflow-icon"><i data-lucide="badge-check" style="width:20px;height:20px"></i></div>
+              <div>
+                <h3>Recognition becomes reliable</h3>
+                <p>Every attendee can be seen, certified, and celebrated without the organiser losing a night of sleep.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section name-section">
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <span class="section-tag"><i data-lucide="orbit" style="width:15px;height:15px"></i>Why GalSol</span>
+          <h2 class="section-title">The solar console of grand events.</h2>
+        </div>
+        <div class="name-grid">
+          <div class="name-card" data-reveal>
+            <div class="word gradient-text">Gal</div>
+            <p>Derived from Gala, the grandest form of an event. It also draws from Galaxy, because every event is its own
+              universe worth celebrating.</p>
+          </div>
+          <div class="name-card" data-reveal>
+            <div class="word gradient-text">Sol</div>
+            <p>The Sun: the singular center that everything orbits around. The console that powers, warms, and commands
+              everything in its system.</p>
+          </div>
+          <div class="name-card" data-reveal>
+            <div class="word gradient-text">GalSol</div>
+            <p>One powerful center for every event's universe. Every event, every workflow, every follow-up under one
+              sun.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="products">
+      <div class="container">
+        <div class="section-header" data-reveal>
+          <span class="section-tag"><i data-lucide="component" style="width:15px;height:15px"></i>What We Do</span>
+          <h2 class="section-title">Everything your event needs, under one sun.</h2>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-card" data-reveal>
+            <div class="feature-icon"><i data-lucide="globe-2" style="width:21px;height:21px"></i></div>
+            <h3>GalSites</h3>
+            <p>Build beautiful, mobile-responsive mini-sites for your event in minutes.</p>
+          </div>
+          <div class="feature-card" data-reveal>
+            <div class="feature-icon"><i data-lucide="clipboard-list" style="width:21px;height:21px"></i></div>
+            <h3>GalForms</h3>
+            <p>Deploy smart registration forms directly connected to a live database.</p>
+          </div>
+          <div class="feature-card" data-reveal>
+            <div class="feature-icon"><i data-lucide="layout-dashboard" style="width:21px;height:21px"></i></div>
+            <h3>SolDeck</h3>
+            <p>Track registrations, limits, and pipelines from a real-time command dashboard.</p>
+          </div>
+          <div class="feature-card" data-reveal>
+            <div class="feature-icon"><i data-lucide="award" style="width:21px;height:21px"></i></div>
+            <h3>GalCerts</h3>
+            <p>Design, map, and generate personalised bulk certificates at scale.</p>
+          </div>
+          <div class="feature-card" data-reveal>
+            <div class="feature-icon"><i data-lucide="send" style="width:21px;height:21px"></i></div>
+            <h3>SolMail</h3>
+            <p>Send beautiful, personalised bulk emails with precision from your workflow.</p>
+          </div>
+          <div class="feature-card" data-reveal>
+            <div class="feature-icon"><i data-lucide="zap" style="width:21px;height:21px"></i></div>
+            <h3>SolFlow</h3>
+            <p>Generate certificates and dispatch emails in one single combined pipeline.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="values-wrap">
+          <div class="vision-card" data-reveal>
+            <img src="Images/GalSol Logo IC.svg" alt="GalSol">
+            <span class="section-tag"><i data-lucide="telescope" style="width:15px;height:15px"></i>Our Vision</span>
+            <h3>To become the singular sun every event orbits around.</h3>
+            <p>A world where no organiser juggles five tools, no attendee goes unrecognised, and no event goes
+              uncelebrated.</p>
+          </div>
+          <div>
+            <div class="section-header" style="margin-bottom:28px" data-reveal>
+              <span class="section-tag"><i data-lucide="magnet" style="width:15px;height:15px"></i>Core Values</span>
+              <h2 class="section-title">The gravity that pulls us.</h2>
+            </div>
+            <div class="values-grid">
+              <div class="value-card" data-reveal>
+                <div class="value-icon"><i data-lucide="circle-dot" style="width:21px;height:21px"></i></div>
+                <h3>Centrality</h3>
+                <p>One sun. Everything orbits it. No fragmented event operations.</p>
+              </div>
+              <div class="value-card" data-reveal>
+                <div class="value-icon"><i data-lucide="workflow" style="width:21px;height:21px"></i></div>
+                <h3>Automation</h3>
+                <p>If it can flow, it should flow without repeated human effort.</p>
+              </div>
+              <div class="value-card" data-reveal>
+                <div class="value-icon"><i data-lucide="medal" style="width:21px;height:21px"></i></div>
+                <h3>Recognition</h3>
+                <p>Every attendee deserves to be seen, certified, and celebrated.</p>
+              </div>
+              <div class="value-card" data-reveal>
+                <div class="value-icon"><i data-lucide="accessibility" style="width:21px;height:21px"></i></div>
+                <h3>Accessibility</h3>
+                <p>Any organiser, any event, any scale: GalSol should feel effortless.</p>
+              </div>
+              <div class="value-card" data-reveal>
+                <div class="value-icon"><i data-lucide="crosshair" style="width:21px;height:21px"></i></div>
+                <h3>Precision</h3>
+                <p>Bulk mails, certificates, and pipelines delivered accurately.</p>
+              </div>
+              <div class="value-card" data-reveal>
+                <div class="value-icon"><i data-lucide="sparkles" style="width:21px;height:21px"></i></div>
+                <h3>Beauty</h3>
+                <p>Operational tools can still feel premium, calm, and deeply usable.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section team-section">
+      <div class="container">
+        <div class="team-panel" data-reveal>
+          <div>
+            <span class="section-tag"><i data-lucide="users" style="width:15px;height:15px"></i>Team & Founders</span>
+            <h2 class="section-title">Built by organisers. For organisers.</h2>
+            <p>We are builders, designers, and event enthusiasts who have lived the pain of fragmented event tools
+              firsthand.</p>
+            <p>GalSol is the platform we always wished existed when we were in the room, running the show: powerful,
+              intelligent, and effortlessly beautiful.</p>
+          </div>
+          <div>
+            <div class="objectives-grid">
+              <div class="objective-card">
+                <div class="objective-icon"><i data-lucide="target" style="width:20px;height:20px"></i></div>
+                <div>
+                  <h3>Lead the category</h3>
+                  <p>Become the all-in-one event console for colleges, corporates, and communities in India by 2027.</p>
+                </div>
+              </div>
+              <div class="objective-card">
+                <div class="objective-icon"><i data-lucide="timer-reset" style="width:20px;height:20px"></i></div>
+                <div>
+                  <h3>Reduce admin time</h3>
+                  <p>Cut average event admin time by 70% through intelligent pipeline automation.</p>
+                </div>
+              </div>
+              <div class="objective-card">
+                <div class="objective-icon"><i data-lucide="users-round" style="width:20px;height:20px"></i></div>
+                <div>
+                  <h3>Power organisers</h3>
+                  <p>Support 10,000+ active organisers within 18 months of launch.</p>
+                </div>
+              </div>
+              <div class="objective-card">
+                <div class="objective-icon"><i data-lucide="badge-check" style="width:20px;height:20px"></i></div>
+                <div>
+                  <h3>Own bulk generation</h3>
+                  <p>Make the certificate and mail pipeline synonymous with GalSol.</p>
+                </div>
+              </div>
+              <div class="objective-card">
+                <div class="objective-icon"><i data-lucide="stamp" style="width:20px;height:20px"></i></div>
+                <div>
+                  <h3>Build trust</h3>
+                  <p>Make "Sent via GalSol" the most recognised event footer in the industry.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <div class="cta-panel" data-reveal>
+          <div class="cta-logo">
+            <img src="Images/GalSol Logo IC.svg" alt="GalSol">
+            <span class="logo-text" style="font-size:1.7rem">GalSol</span>
+          </div>
+          <h2>Your event deserves more than five tools.</h2>
+          <p>Join the organisers bringing their event sites, forms, data, certificates, and mail pipelines under one
+            sun.</p>
+          <div class="hero-actions" style="justify-content:center">
+            <a href="login.html" class="btn-primary"><i data-lucide="rocket" style="width:17px;height:17px"></i>Start
+              Free</a>
+            <a href="mailto:galsol.co@gmail.com" class="btn-ghost"><i data-lucide="calendar-check"
+                style="width:17px;height:17px"></i>Book a Demo</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <img src="Images/GalSol Logo IC.svg" alt="GalSol" style="height:26px;">
+            <span class="logo-text" style="font-size:1.35rem">GalSol</span>
+          </a>
+          <p>The all-in-one console for planning, running, and following up on grand events, powered entirely by your
+            Google Account.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><i data-lucide="instagram" style="width:15px;height:15px"></i></a>
+            <a href="mailto:galsol.co@gmail.com" aria-label="Email"><i data-lucide="mail"
+                style="width:15px;height:15px"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h5>Product</h5>
+          <a href="mini-site.html">Mini Site</a>
+          <a href="gs-forms.html">GS Forms</a>
+          <a href="gs-database.html">Dashboard + Database</a>
+          <a href="cert-tool.html">Bulk Certificate generator</a>
+          <a href="mail-tool.html">Bulk Mail sender</a>
+          <a href="combined-tool.html">Combined Pipeline</a>
+          <a href="index.html#pricing">Pricing</a>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="about-us.html">About Us</a>
+          <br>
+          <h5 style="margin-top: 15px;">Users</h5>
+          <a href="user-guide.html">Documentation / Guide</a>
+        </div>
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms-of-service.html">Terms of Service</a>
+          <a href="cookies-policy.html">Cookie Policy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p style="color: var(--text); font-weight: 500;">&copy; 2026 GalSol. All rights reserved.</p>
+        <p>Every event under one sun.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    const mobileNav = document.getElementById('mobileNav');
+    const hamburger = document.getElementById('hamburger');
+    const mobileNavClose = document.getElementById('mobileNavClose');
+
+    function setMobileNav(open) {
+      mobileNav.classList.toggle('open', open);
+      mobileNav.setAttribute('aria-hidden', String(!open));
+      hamburger.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    hamburger.addEventListener('click', () => setMobileNav(true));
+    mobileNavClose.addEventListener('click', () => setMobileNav(false));
+    mobileNav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMobileNav(false)));
+
+    const revealItems = document.querySelectorAll('[data-reveal]');
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .14 });
+    revealItems.forEach(item => revealObserver.observe(item));
+  </script>
+</body>
+
+</html>
