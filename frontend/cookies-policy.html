@@ -256,5 +256,68 @@ const observer = new IntersectionObserver(entries => {
 }, { rootMargin: '-20% 0px -70% 0px' });
 sections.forEach(s => observer.observe(s));
 </script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const token = localStorage.getItem('GalSol_token');
+    let user = null;
+    if (token) {
+       try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          if (payload.exp && payload.exp * 1000 > Date.now()) { user = payload; } 
+          else { localStorage.removeItem('GalSol_token'); }
+       } catch(e) {}
+    }
+    
+    if(user) {
+        const actionsContainer = document.querySelector('.header-actions');
+        if(actionsContainer) {
+            const desktopLinks = actionsContainer.querySelectorAll('a.btn-ghost, a.btn-primary');
+            desktopLinks.forEach(l => l.style.display = 'none');
+
+            const profileMenu = document.createElement('div');
+            profileMenu.className = 'profile-menu';
+            profileMenu.style.position = 'relative';
+            profileMenu.innerHTML = `
+                <button class="profile-btn" id="landingProfileBtn" style="background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center;">
+                   <img src="${user.picture || 'Images/GalSol Logo IC.svg'}" alt="Profile" style="width:36px; height:36px; border-radius:50%; border:1px solid var(--border-hi); background: var(--surface); padding: 2px;">
+                </button>
+                <div class="profile-dropdown" id="landingProfileDropdown" style="position:absolute; top:calc(100% + 10px); right:0; background:#050C12; border:1px solid var(--border-hi); border-radius:10px; width:180px; padding:8px; display:none; flex-direction:column; gap:4px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                   <div style="padding:10px; border-bottom:1px solid var(--border); margin-bottom:4px;">
+                      <span style="display:block; font-size:0.85rem; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${user.name}</span>
+                      <span style="display:block; font-size:0.75rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${user.email}</span>
+                   </div>
+                   <a href="dashboard.html" style="padding:10px; color:var(--text); font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Dashboard</a>
+                   <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.href='login.html'" style="padding:10px; color:var(--text); font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Switch Account</a>
+                   <a href="#" onclick="localStorage.removeItem('GalSol_token'); window.location.reload()" style="padding:10px; color:#ff6b6b; font-size:0.85rem; border-radius:6px; text-decoration:none; transition: background 0.2s;">Log Out</a>
+                </div>`;
+            
+            const hamburger = document.querySelector('.hamburger');
+            if(hamburger) {
+               actionsContainer.insertBefore(profileMenu, hamburger);
+            } else {
+               actionsContainer.appendChild(profileMenu);
+            }
+
+            const btn = profileMenu.querySelector('#landingProfileBtn');
+            const drop = profileMenu.querySelector('#landingProfileDropdown');
+            
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                drop.style.display = drop.style.display === 'none' ? 'flex' : 'none';
+            });
+            
+            document.addEventListener('click', () => { drop.style.display = 'none'; });
+
+            drop.querySelectorAll('a').forEach(a => {
+               a.addEventListener('mouseenter', () => a.style.background = 'rgba(255,255,255,0.05)');
+               a.addEventListener('mouseleave', () => a.style.background = 'transparent');
+            });
+        }
+    }
+  
+  });
+  </script>
 </body>
 </html>
