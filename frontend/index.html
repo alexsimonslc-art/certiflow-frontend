@@ -2936,16 +2936,14 @@
     <div class="tool-row" id="tool-dashboard">
       <div class="tool-row-inner">
         <div class="tool-text">
-          <h2 class="tool-name">Track Everything, <span class="gradient-text">Live</span></h2>
-          <h3 class="tool-subtitle">Your workspace metrics and campaign history</h3>
-          <p>One dashboard for your full workspace — certificates generated, emails sent, Drive storage, form count, and
-            mini sites, all at a glance. Launch any tool or review past campaigns in one click.</p>
+          <h2 class="tool-name">Track Every Response, <span class="gradient-text">Live</span></h2>
+          <h3 class="tool-subtitle">Visual analytics and advanced data management</h3>
+          <p>Turn raw form submissions into actionable insights instantly. Watch live responses populate a fully customizable visual dashboard with your own drag-and-drop charts. Dive deep into your raw database using smart filters, or switch to the advanced Pivot tab for complex, formula-free cross-analysis.</p>
           <ul class="tool-bullets">
-            <li><i data-lucide="check" style="width:15px;height:15px"></i>Live metrics: certs, emails, storage, forms,
-              sites</li>
-            <li><i data-lucide="check" style="width:15px;height:15px"></i>Full campaign history with success rates</li>
-            <li><i data-lucide="check" style="width:15px;height:15px"></i>One-click launch to any GalSol tool</li>
-            <li><i data-lucide="check" style="width:15px;height:15px"></i>Google Drive storage quota monitor</li>
+            <li><i data-lucide="activity"></i> Real-time dashboard updates as responses flow in</li>
+            <li><i data-lucide="pie-chart"></i> Customizable drag-and-drop visual charts</li>
+            <li><i data-lucide="filter"></i> Smart data filters & detailed row insights</li>
+            <li><i data-lucide="table-2"></i> Formula-free Pivot tables for deep analysis</li>
           </ul>
           <a href="dashboard.html" class="tool-cta-link">Open Dashboard <i data-lucide="arrow-right"
               style="width:15px;height:15px"></i></a>
@@ -3649,8 +3647,18 @@
       if (show) {
         show.addEventListener('mouseenter', function () { clearInterval(timer); });
         show.addEventListener('mouseleave', startAuto);
+
+        // Only start animation when 50% of the section is visible
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              startAuto();
+              observer.disconnect();
+            }
+          });
+        }, { threshold: 0.5 });
+        observer.observe(show);
       }
-      startAuto();
     })();
 
     // ── DASHBOARD SLIDESHOW ──
@@ -3681,8 +3689,18 @@
       if (showEl) {
         showEl.addEventListener('mouseenter', function () { clearInterval(timer); });
         showEl.addEventListener('mouseleave', startAuto);
+
+        // Only start animation when 50% of the section is visible
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              startAuto();
+              observer.disconnect();
+            }
+          });
+        }, { threshold: 0.5 });
+        observer.observe(showEl);
       }
-      startAuto();
     })();
 
     // ── GAL AI TYPEWRITER (single line) ──
