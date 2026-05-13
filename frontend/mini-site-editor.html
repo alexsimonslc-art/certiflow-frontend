@@ -5,13 +5,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Site Editor — GalSol</title>
-  <link rel="icon" href="Images/GalSol Logo IC.svg" type="image/svg+xml"/>
+  <link rel="icon" href="Images/GalSol Logo IC.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Core + new professional fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@400;600;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@400;600;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet" />
   <!-- Extended font library -->
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&family=Abril+Fatface&family=Great+Vibes&family=Pinyon+Script&family=Pacifico&family=Boogaloo&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Bebas+Neue&family=Abril+Fatface&family=Great+Vibes&family=Pinyon+Script&family=Pacifico&family=Boogaloo&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="mini-site-editor.css" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="mini-site-state.js"></script>
@@ -38,8 +42,11 @@
         </a>
         <div class="mse-topbar-divider"></div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <img src="Images/GalSol Logo IC.svg" alt="GalSol" style="width:24px;height:24px;object-fit:contain;display:block"/>
-          <span style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,0.9);white-space:nowrap;letter-spacing:-0.2px">Mini Site</span>
+          <img src="Images/GalSol Logo IC.svg" alt="GalSol"
+            style="width:24px;height:24px;object-fit:contain;display:block" />
+          <span
+            style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,0.9);white-space:nowrap;letter-spacing:-0.2px">Mini
+            Site</span>
         </div>
       </div>
 
@@ -284,7 +291,9 @@
         <div class="mse-acct-info">
           <div style="display:flex;align-items:center;gap:6px">
             <div class="mse-acct-name" id="mseUserDisplayName">Account</div>
-            <div id="mseProBadge" style="display:none;font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#a78bfa;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.35);padding:2px 6px;border-radius:99px;line-height:1.4;flex-shrink:0">Pro</div>
+            <div id="mseProBadge"
+              style="display:none;font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#a78bfa;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.35);padding:2px 6px;border-radius:99px;line-height:1.4;flex-shrink:0">
+              Pro</div>
           </div>
           <div class="mse-acct-tag">Account & Settings</div>
         </div>
@@ -419,15 +428,19 @@
           <div class="mse-prop-row">
             <div class="mse-prop-label">Accent</div>
             <div class="mse-color-row">
-              <div class="mse-color-swatch" id="accentSwatch"><input type="color" id="accentColorInput" oninput="onAccentChange(this.value)" /></div>
-              <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7" placeholder="#00d4ff" oninput="onAccentHexInput(this.value)" style="flex:1" />
+              <div class="mse-color-swatch" id="accentSwatch"><input type="color" id="accentColorInput"
+                  oninput="onAccentChange(this.value)" /></div>
+              <input type="text" class="mse-prop-input" id="accentColorHex" maxlength="7" placeholder="#00d4ff"
+                oninput="onAccentHexInput(this.value)" style="flex:1" />
             </div>
           </div>
           <div class="mse-prop-row">
             <div class="mse-prop-label">Background</div>
             <div class="mse-color-row">
-              <div class="mse-color-swatch" id="bgSwatch"><input type="color" id="bgColorInput" oninput="onBgColorChange(this.value)" /></div>
-              <input type="text" class="mse-prop-input" id="bgColorHex" maxlength="7" placeholder="#0a0f1e" oninput="onBgHexInput(this.value)" style="flex:1" />
+              <div class="mse-color-swatch" id="bgSwatch"><input type="color" id="bgColorInput"
+                  oninput="onBgColorChange(this.value)" /></div>
+              <input type="text" class="mse-prop-input" id="bgColorHex" maxlength="7" placeholder="#0a0f1e"
+                oninput="onBgHexInput(this.value)" style="flex:1" />
             </div>
           </div>
         </div>
@@ -450,7 +463,9 @@
             <div class="mse-font-select-wrap">
               <button class="mse-font-select-box" id="titleFontBox" onclick="toggleFontPicker('title')">
                 <span id="titleFontLabel">Syne</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
               </button>
               <div class="mse-font-picker" id="titleFontPicker" style="display:none"></div>
             </div>
@@ -459,8 +474,10 @@
           <div class="mse-prop-row">
             <div class="mse-prop-label">Title Color</div>
             <div class="mse-color-row">
-              <div class="mse-color-swatch" id="titleColorSwatch"><input type="color" id="titleColorInput" oninput="onTitleColorChange(this.value)" /></div>
-              <input type="text" class="mse-prop-input" id="titleColorHex" maxlength="7" placeholder="Global default" oninput="onTitleColorHexInput(this.value)" style="flex:1" />
+              <div class="mse-color-swatch" id="titleColorSwatch"><input type="color" id="titleColorInput"
+                  oninput="onTitleColorChange(this.value)" /></div>
+              <input type="text" class="mse-prop-input" id="titleColorHex" maxlength="7" placeholder="Global default"
+                oninput="onTitleColorHexInput(this.value)" style="flex:1" />
             </div>
           </div>
           <!-- Title font size -->
@@ -472,8 +489,9 @@
               </div>
               <div style="display:flex;align-items:center;gap:8px">
                 <input type="range" class="mse-prop-range" id="titleFontSizeRange" min="16" max="72" step="1" value="32"
-                  oninput="onTitleSizeChange(+this.value)" style="flex:1"/>
-                <button onclick="onTitleSizeClear()" style="padding:0 8px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font);white-space:nowrap">Auto</button>
+                  oninput="onTitleSizeChange(+this.value)" style="flex:1" />
+                <button onclick="onTitleSizeClear()"
+                  style="padding:0 8px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font);white-space:nowrap">Auto</button>
               </div>
             </div>
           </div>
@@ -484,7 +502,9 @@
             <div class="mse-font-select-wrap">
               <button class="mse-font-select-box" id="contentFontBox" onclick="toggleFontPicker('content')">
                 <span id="contentFontLabel">Plus Jakarta Sans</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
               </button>
               <div class="mse-font-picker" id="contentFontPicker" style="display:none"></div>
             </div>
@@ -493,8 +513,10 @@
           <div class="mse-prop-row">
             <div class="mse-prop-label">Content Color</div>
             <div class="mse-color-row">
-              <div class="mse-color-swatch" id="contentColorSwatch"><input type="color" id="contentColorInput" oninput="onContentColorChange(this.value)" /></div>
-              <input type="text" class="mse-prop-input" id="contentColorHex" maxlength="7" placeholder="Global default" oninput="onContentColorHexInput(this.value)" style="flex:1" />
+              <div class="mse-color-swatch" id="contentColorSwatch"><input type="color" id="contentColorInput"
+                  oninput="onContentColorChange(this.value)" /></div>
+              <input type="text" class="mse-prop-input" id="contentColorHex" maxlength="7" placeholder="Global default"
+                oninput="onContentColorHexInput(this.value)" style="flex:1" />
             </div>
           </div>
           <!-- Content font size -->
@@ -505,9 +527,10 @@
                 <span class="mse-range-val" id="contentFontSizeVal">Auto</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
-                <input type="range" class="mse-prop-range" id="contentFontSizeRange" min="12" max="28" step="1" value="16"
-                  oninput="onContentSizeChange(+this.value)" style="flex:1"/>
-                <button onclick="onContentSizeClear()" style="padding:0 8px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font);white-space:nowrap">Auto</button>
+                <input type="range" class="mse-prop-range" id="contentFontSizeRange" min="12" max="28" step="1"
+                  value="16" oninput="onContentSizeChange(+this.value)" style="flex:1" />
+                <button onclick="onContentSizeClear()"
+                  style="padding:0 8px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--text-3);cursor:pointer;font-size:11px;font-family:var(--font);white-space:nowrap">Auto</button>
               </div>
             </div>
           </div>
@@ -762,7 +785,7 @@
             const badge = document.getElementById('mseProBadge');
             if (badge) badge.style.display = 'inline-block';
           }
-        } catch (_) {}
+        } catch (_) { }
       })();
 
       refreshCanvas();
@@ -1746,7 +1769,7 @@
       buildPrebuiltThemeGrid();
       buildFontPairList();
       // Force rebuild font pickers on next open
-      ['title','content'].forEach(w => {
+      ['title', 'content'].forEach(w => {
         const p = document.getElementById(w + 'FontPicker');
         if (p) delete p.dataset.built;
       });
@@ -1920,16 +1943,16 @@
       const frame = document.getElementById('mse-mobile-frame');
       if (!frame) return;
       const t_cfg = MSState.config;
-      const _titleFont   = t_cfg.titleFont   || t_cfg.fontFamily || 'Syne';
+      const _titleFont = t_cfg.titleFont || t_cfg.fontFamily || 'Syne';
       const _contentFont = t_cfg.contentFont || 'Plus Jakarta Sans';
-      const _fontUrlMap  = typeof MSB_GOOGLE_FONT_URLS !== 'undefined' ? MSB_GOOGLE_FONT_URLS : {};
-      const _fontLinks   = [...new Set([_fontUrlMap[_titleFont], _fontUrlMap[_contentFont]].filter(Boolean))]
-                            .map(u => `<link href="${u}" rel="stylesheet"/>`).join('\n');
+      const _fontUrlMap = typeof MSB_GOOGLE_FONT_URLS !== 'undefined' ? MSB_GOOGLE_FONT_URLS : {};
+      const _fontLinks = [...new Set([_fontUrlMap[_titleFont], _fontUrlMap[_contentFont]].filter(Boolean))]
+        .map(u => `<link href="${u}" rel="stylesheet"/>`).join('\n');
       const blocksHtml = MSState.blocks.map(b => renderMSBlock(b, t_cfg)).join('');
 
       // Only the CSS style block depends on these — block content handles the rest inline
       const _styleKey = [t_cfg.theme, _titleFont, _contentFont,
-        t_cfg.bgOverride || '', t_cfg.titleColor || '', t_cfg.contentColor || ''
+      t_cfg.bgOverride || '', t_cfg.titleColor || '', t_cfg.contentColor || ''
       ].join('|');
       if (_styleKey === _mobilePreviewStyleKey && frame.contentDocument?.body) {
         frame.contentDocument.body.innerHTML = blocksHtml;
@@ -2181,76 +2204,76 @@ ${_fontLinks}
     ═══════════════════════════════════════════════════════════════ */
     const MSB_PREBUILT_THEMES = [
       // ── Dark themes ────────────────────────────────────────────────────────
-      { id:'midnight-pulse',  name:'Midnight Pulse',  theme:'dark',  titleFont:'Syne',              contentFont:'Plus Jakarta Sans', accent:'#00d4ff', bg:'#030d1e', textColor:'#dff0ff', subColor:'rgba(223,240,255,0.58)' },
-      { id:'crimson-gala',    name:'Crimson Gala',    theme:'dark',  titleFont:'Cinzel',            contentFont:'Cormorant Garamond',accent:'#f43f5e', bg:'#0d0408', textColor:'#fff0f3', subColor:'rgba(255,240,243,0.55)' },
-      { id:'golden-luxe',     name:'Golden Luxe',     theme:'dark',  titleFont:'Playfair Display',  contentFont:'EB Garamond',       accent:'#f59e0b', bg:'#080602', textColor:'#fdf4e3', subColor:'rgba(253,244,227,0.55)' },
-      { id:'emerald-city',    name:'Emerald City',    theme:'dark',  titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans', accent:'#10b981', bg:'#020d08', textColor:'#e8fff5', subColor:'rgba(232,255,245,0.55)' },
-      { id:'royal-dusk',      name:'Royal Dusk',      theme:'dark',  titleFont:'Cormorant Garamond',contentFont:'Raleway',           accent:'#a78bfa', bg:'#07040f', textColor:'#f0eeff', subColor:'rgba(240,238,255,0.55)' },
-      { id:'ember',           name:'Ember',           theme:'dark',  titleFont:'Raleway',           contentFont:'Plus Jakarta Sans', accent:'#f97316', bg:'#0e0602', textColor:'#fff3ee', subColor:'rgba(255,243,238,0.55)' },
-      { id:'arctic',          name:'Arctic',          theme:'dark',  titleFont:'Plus Jakarta Sans', contentFont:'Montserrat',        accent:'#38bdf8', bg:'#020b14', textColor:'#e8f7ff', subColor:'rgba(232,247,255,0.55)' },
-      { id:'serif-editorial', name:'Serif Editorial', theme:'dark',  titleFont:'EB Garamond',       contentFont:'Cormorant Garamond',accent:'#d4a96a', bg:'#0a0805', textColor:'#faf6ee', subColor:'rgba(250,246,238,0.55)' },
-      { id:'blossom',         name:'Blossom',         theme:'dark',  titleFont:'Dancing Script',    contentFont:'Plus Jakarta Sans', accent:'#f472b6', bg:'#120810', textColor:'#fff0f9', subColor:'rgba(255,240,249,0.55)' },
-      { id:'matrix',          name:'Matrix',          theme:'dark',  titleFont:'JetBrains Mono',    contentFont:'JetBrains Mono',    accent:'#4ade80', bg:'#020c04', textColor:'#b8ffbc', subColor:'rgba(184,255,188,0.58)' },
+      { id: 'midnight-pulse', name: 'Midnight Pulse', theme: 'dark', titleFont: 'Syne', contentFont: 'Plus Jakarta Sans', accent: '#00d4ff', bg: '#030d1e', textColor: '#dff0ff', subColor: 'rgba(223,240,255,0.58)' },
+      { id: 'crimson-gala', name: 'Crimson Gala', theme: 'dark', titleFont: 'Cinzel', contentFont: 'Cormorant Garamond', accent: '#f43f5e', bg: '#0d0408', textColor: '#fff0f3', subColor: 'rgba(255,240,243,0.55)' },
+      { id: 'golden-luxe', name: 'Golden Luxe', theme: 'dark', titleFont: 'Playfair Display', contentFont: 'EB Garamond', accent: '#f59e0b', bg: '#080602', textColor: '#fdf4e3', subColor: 'rgba(253,244,227,0.55)' },
+      { id: 'emerald-city', name: 'Emerald City', theme: 'dark', titleFont: 'Montserrat', contentFont: 'Plus Jakarta Sans', accent: '#10b981', bg: '#020d08', textColor: '#e8fff5', subColor: 'rgba(232,255,245,0.55)' },
+      { id: 'royal-dusk', name: 'Royal Dusk', theme: 'dark', titleFont: 'Cormorant Garamond', contentFont: 'Raleway', accent: '#a78bfa', bg: '#07040f', textColor: '#f0eeff', subColor: 'rgba(240,238,255,0.55)' },
+      { id: 'ember', name: 'Ember', theme: 'dark', titleFont: 'Raleway', contentFont: 'Plus Jakarta Sans', accent: '#f97316', bg: '#0e0602', textColor: '#fff3ee', subColor: 'rgba(255,243,238,0.55)' },
+      { id: 'arctic', name: 'Arctic', theme: 'dark', titleFont: 'Plus Jakarta Sans', contentFont: 'Montserrat', accent: '#38bdf8', bg: '#020b14', textColor: '#e8f7ff', subColor: 'rgba(232,247,255,0.55)' },
+      { id: 'serif-editorial', name: 'Serif Editorial', theme: 'dark', titleFont: 'EB Garamond', contentFont: 'Cormorant Garamond', accent: '#d4a96a', bg: '#0a0805', textColor: '#faf6ee', subColor: 'rgba(250,246,238,0.55)' },
+      { id: 'blossom', name: 'Blossom', theme: 'dark', titleFont: 'Dancing Script', contentFont: 'Plus Jakarta Sans', accent: '#f472b6', bg: '#120810', textColor: '#fff0f9', subColor: 'rgba(255,240,249,0.55)' },
+      { id: 'matrix', name: 'Matrix', theme: 'dark', titleFont: 'JetBrains Mono', contentFont: 'JetBrains Mono', accent: '#4ade80', bg: '#020c04', textColor: '#b8ffbc', subColor: 'rgba(184,255,188,0.58)' },
       // ── Light themes ───────────────────────────────────────────────────────
-      { id:'paper',           name:'Paper',           theme:'light', titleFont:'Playfair Display',  contentFont:'EB Garamond',       accent:'#6366f1', bg:'#f9f7f4', textColor:'#1a120b', subColor:'rgba(26,18,11,0.62)' },
-      { id:'clean-white',     name:'Clean White',     theme:'light', titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans', accent:'#0f172a', bg:'#ffffff', textColor:'#0f172a', subColor:'rgba(15,23,42,0.62)' },
-      { id:'warm-sunrise',    name:'Warm Sunrise',    theme:'light', titleFont:'Raleway',           contentFont:'Plus Jakarta Sans', accent:'#d97706', bg:'#fffbf0', textColor:'#271c08', subColor:'rgba(39,28,8,0.62)' },
-      { id:'soft-lavender',   name:'Soft Lavender',   theme:'light', titleFont:'Syne',              contentFont:'Plus Jakarta Sans', accent:'#7c3aed', bg:'#f5f3ff', textColor:'#2e1065', subColor:'rgba(46,16,101,0.62)' },
-      { id:'sage-garden',     name:'Sage Garden',     theme:'light', titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans', accent:'#2d6a4f', bg:'#f0f4f0', textColor:'#1b2e25', subColor:'rgba(27,46,37,0.62)' },
-      { id:'blush-rose',      name:'Blush Rose',      theme:'light', titleFont:'Cormorant Garamond',contentFont:'Plus Jakarta Sans', accent:'#be185d', bg:'#fdf2f5', textColor:'#3d0f1f', subColor:'rgba(61,15,31,0.62)' },
-      { id:'ocean-mist',      name:'Ocean Mist',      theme:'light', titleFont:'Raleway',           contentFont:'Plus Jakarta Sans', accent:'#0369a1', bg:'#f0f7fb', textColor:'#0c2d44', subColor:'rgba(12,45,68,0.62)' },
-      { id:'ivory-editorial', name:'Ivory Editorial', theme:'light', titleFont:'Playfair Display',  contentFont:'Cormorant Garamond',accent:'#92400e', bg:'#faf8f3', textColor:'#1c1108', subColor:'rgba(28,17,8,0.60)' },
-      { id:'citrus-bold',     name:'Citrus Bold',     theme:'light', titleFont:'Syne',              contentFont:'Montserrat',        accent:'#b45309', bg:'#fefce8', textColor:'#292218', subColor:'rgba(41,34,24,0.62)' },
-      { id:'mint-modern',     name:'Mint Modern',     theme:'light', titleFont:'Plus Jakarta Sans', contentFont:'Montserrat',        accent:'#0d9488', bg:'#f0faf8', textColor:'#0f3431', subColor:'rgba(15,52,49,0.62)' },
+      { id: 'paper', name: 'Paper', theme: 'light', titleFont: 'Playfair Display', contentFont: 'EB Garamond', accent: '#6366f1', bg: '#f9f7f4', textColor: '#1a120b', subColor: 'rgba(26,18,11,0.62)' },
+      { id: 'clean-white', name: 'Clean White', theme: 'light', titleFont: 'Montserrat', contentFont: 'Plus Jakarta Sans', accent: '#0f172a', bg: '#ffffff', textColor: '#0f172a', subColor: 'rgba(15,23,42,0.62)' },
+      { id: 'warm-sunrise', name: 'Warm Sunrise', theme: 'light', titleFont: 'Raleway', contentFont: 'Plus Jakarta Sans', accent: '#d97706', bg: '#fffbf0', textColor: '#271c08', subColor: 'rgba(39,28,8,0.62)' },
+      { id: 'soft-lavender', name: 'Soft Lavender', theme: 'light', titleFont: 'Syne', contentFont: 'Plus Jakarta Sans', accent: '#7c3aed', bg: '#f5f3ff', textColor: '#2e1065', subColor: 'rgba(46,16,101,0.62)' },
+      { id: 'sage-garden', name: 'Sage Garden', theme: 'light', titleFont: 'Montserrat', contentFont: 'Plus Jakarta Sans', accent: '#2d6a4f', bg: '#f0f4f0', textColor: '#1b2e25', subColor: 'rgba(27,46,37,0.62)' },
+      { id: 'blush-rose', name: 'Blush Rose', theme: 'light', titleFont: 'Cormorant Garamond', contentFont: 'Plus Jakarta Sans', accent: '#be185d', bg: '#fdf2f5', textColor: '#3d0f1f', subColor: 'rgba(61,15,31,0.62)' },
+      { id: 'ocean-mist', name: 'Ocean Mist', theme: 'light', titleFont: 'Raleway', contentFont: 'Plus Jakarta Sans', accent: '#0369a1', bg: '#f0f7fb', textColor: '#0c2d44', subColor: 'rgba(12,45,68,0.62)' },
+      { id: 'ivory-editorial', name: 'Ivory Editorial', theme: 'light', titleFont: 'Playfair Display', contentFont: 'Cormorant Garamond', accent: '#92400e', bg: '#faf8f3', textColor: '#1c1108', subColor: 'rgba(28,17,8,0.60)' },
+      { id: 'citrus-bold', name: 'Citrus Bold', theme: 'light', titleFont: 'Syne', contentFont: 'Montserrat', accent: '#b45309', bg: '#fefce8', textColor: '#292218', subColor: 'rgba(41,34,24,0.62)' },
+      { id: 'mint-modern', name: 'Mint Modern', theme: 'light', titleFont: 'Plus Jakarta Sans', contentFont: 'Montserrat', accent: '#0d9488', bg: '#f0faf8', textColor: '#0f3431', subColor: 'rgba(15,52,49,0.62)' },
     ];
 
     const MSB_FONT_PAIRS = [
       // ── Professional / Website ──────────────────────────────────────────────
-      { id:'noir-cinema',      name:'Noir Cinema',      titleFont:'Bebas Neue',        contentFont:'Oswald' },
-      { id:'tech-clarity',     name:'Tech Clarity',     titleFont:'Space Grotesk',     contentFont:'Lexend' },
-      { id:'press-editorial',  name:'Press Editorial',  titleFont:'Oswald',            contentFont:'Lora' },
-      { id:'grand-serif',      name:'Grand Serif',      titleFont:'Playfair Display',  contentFont:'Lora' },
-      { id:'gothic-luxury',    name:'Gothic Luxury',    titleFont:'Cinzel',            contentFont:'Cormorant Garamond' },
-      { id:'art-deco',         name:'Art Deco',         titleFont:'Abril Fatface',     contentFont:'Raleway' },
-      { id:'contemporary',     name:'Contemporary',     titleFont:'Syne',              contentFont:'Space Grotesk' },
-      { id:'bold-corporate',   name:'Bold Corporate',   titleFont:'Montserrat',        contentFont:'Plus Jakarta Sans' },
-      { id:'literary-mind',    name:'Literary Mind',    titleFont:'EB Garamond',       contentFont:'Lora' },
-      { id:'code-design',      name:'Code & Design',    titleFont:'JetBrains Mono',    contentFont:'Space Grotesk' },
+      { id: 'noir-cinema', name: 'Noir Cinema', titleFont: 'Bebas Neue', contentFont: 'Oswald' },
+      { id: 'tech-clarity', name: 'Tech Clarity', titleFont: 'Space Grotesk', contentFont: 'Lexend' },
+      { id: 'press-editorial', name: 'Press Editorial', titleFont: 'Oswald', contentFont: 'Lora' },
+      { id: 'grand-serif', name: 'Grand Serif', titleFont: 'Playfair Display', contentFont: 'Lora' },
+      { id: 'gothic-luxury', name: 'Gothic Luxury', titleFont: 'Cinzel', contentFont: 'Cormorant Garamond' },
+      { id: 'art-deco', name: 'Art Deco', titleFont: 'Abril Fatface', contentFont: 'Raleway' },
+      { id: 'contemporary', name: 'Contemporary', titleFont: 'Syne', contentFont: 'Space Grotesk' },
+      { id: 'bold-corporate', name: 'Bold Corporate', titleFont: 'Montserrat', contentFont: 'Plus Jakarta Sans' },
+      { id: 'literary-mind', name: 'Literary Mind', titleFont: 'EB Garamond', contentFont: 'Lora' },
+      { id: 'code-design', name: 'Code & Design', titleFont: 'JetBrains Mono', contentFont: 'Space Grotesk' },
       // ── Wedding / Elegant ───────────────────────────────────────────────────
-      { id:'wedding-belle',    name:'Wedding Belle',    titleFont:'Pinyon Script',     contentFont:'Cormorant Garamond' },
-      { id:'garden-romance',   name:'Garden Romance',   titleFont:'Great Vibes',       contentFont:'Lora' },
+      { id: 'wedding-belle', name: 'Wedding Belle', titleFont: 'Pinyon Script', contentFont: 'Cormorant Garamond' },
+      { id: 'garden-romance', name: 'Garden Romance', titleFont: 'Great Vibes', contentFont: 'Lora' },
       // ── Comical / Fun ──────────────────────────────────────────────────────
-      { id:'retro-pop',        name:'Retro Pop',        titleFont:'Pacifico',          contentFont:'Lexend' },
-      { id:'summer-fiesta',    name:'Summer Fiesta',    titleFont:'Boogaloo',          contentFont:'Plus Jakarta Sans' },
+      { id: 'retro-pop', name: 'Retro Pop', titleFont: 'Pacifico', contentFont: 'Lexend' },
+      { id: 'summer-fiesta', name: 'Summer Fiesta', titleFont: 'Boogaloo', contentFont: 'Plus Jakarta Sans' },
     ];
 
     const MSB_FONT_LIST = [
       // ── Professional Sans-Serif ─────────────────────────────────────────────
-      { name:'Plus Jakarta Sans', stack:'Plus Jakarta Sans,sans-serif',   weight:'600' },
-      { name:'Lexend',            stack:'Lexend,sans-serif',              weight:'600' },
-      { name:'Space Grotesk',     stack:'Space Grotesk,sans-serif',       weight:'600' },
-      { name:'Syne',              stack:'Syne,sans-serif',                weight:'700' },
-      { name:'Montserrat',        stack:'Montserrat,sans-serif',          weight:'600' },
-      { name:'Raleway',           stack:'Raleway,sans-serif',             weight:'600' },
-      { name:'Oswald',            stack:'Oswald,sans-serif',              weight:'600' },
+      { name: 'Plus Jakarta Sans', stack: 'Plus Jakarta Sans,sans-serif', weight: '600' },
+      { name: 'Lexend', stack: 'Lexend,sans-serif', weight: '600' },
+      { name: 'Space Grotesk', stack: 'Space Grotesk,sans-serif', weight: '600' },
+      { name: 'Syne', stack: 'Syne,sans-serif', weight: '700' },
+      { name: 'Montserrat', stack: 'Montserrat,sans-serif', weight: '600' },
+      { name: 'Raleway', stack: 'Raleway,sans-serif', weight: '600' },
+      { name: 'Oswald', stack: 'Oswald,sans-serif', weight: '600' },
       // ── Professional Serif ──────────────────────────────────────────────────
-      { name:'Playfair Display',  stack:'Playfair Display,serif',         weight:'700' },
-      { name:'Lora',              stack:'Lora,serif',                     weight:'600' },
-      { name:'EB Garamond',       stack:'EB Garamond,serif',              weight:'700' },
-      { name:'Cormorant Garamond',stack:'Cormorant Garamond,serif',       weight:'600' },
-      { name:'Cinzel',            stack:'Cinzel,serif',                   weight:'600' },
+      { name: 'Playfair Display', stack: 'Playfair Display,serif', weight: '700' },
+      { name: 'Lora', stack: 'Lora,serif', weight: '600' },
+      { name: 'EB Garamond', stack: 'EB Garamond,serif', weight: '700' },
+      { name: 'Cormorant Garamond', stack: 'Cormorant Garamond,serif', weight: '600' },
+      { name: 'Cinzel', stack: 'Cinzel,serif', weight: '600' },
       // ── Display / Impact ────────────────────────────────────────────────────
-      { name:'Bebas Neue',        stack:'Bebas Neue,sans-serif',          weight:'400' },
-      { name:'Abril Fatface',     stack:'Abril Fatface,serif',            weight:'400' },
+      { name: 'Bebas Neue', stack: 'Bebas Neue,sans-serif', weight: '400' },
+      { name: 'Abril Fatface', stack: 'Abril Fatface,serif', weight: '400' },
       // ── Calligraphy / Script ────────────────────────────────────────────────
-      { name:'Great Vibes',       stack:'Great Vibes,cursive',            weight:'400' },
-      { name:'Pinyon Script',     stack:'Pinyon Script,cursive',          weight:'400' },
-      { name:'Dancing Script',    stack:'Dancing Script,cursive',         weight:'600' },
+      { name: 'Great Vibes', stack: 'Great Vibes,cursive', weight: '400' },
+      { name: 'Pinyon Script', stack: 'Pinyon Script,cursive', weight: '400' },
+      { name: 'Dancing Script', stack: 'Dancing Script,cursive', weight: '600' },
       // ── Comical / Fun ──────────────────────────────────────────────────────
-      { name:'Pacifico',          stack:'Pacifico,cursive',               weight:'400' },
-      { name:'Boogaloo',          stack:'Boogaloo,cursive',               weight:'400' },
+      { name: 'Pacifico', stack: 'Pacifico,cursive', weight: '400' },
+      { name: 'Boogaloo', stack: 'Boogaloo,cursive', weight: '400' },
       // ── Monospace ───────────────────────────────────────────────────────────
-      { name:'JetBrains Mono',    stack:'JetBrains Mono,monospace',       weight:'500' },
+      { name: 'JetBrains Mono', stack: 'JetBrains Mono,monospace', weight: '500' },
     ];
 
     /* Build prebuilt theme grid */
@@ -2260,17 +2283,17 @@ ${_fontLinks}
       const current = MSState.config;
 
       // Separate dark and light for section labels
-      const darkThemes  = MSB_PREBUILT_THEMES.filter(t => t.theme === 'dark');
+      const darkThemes = MSB_PREBUILT_THEMES.filter(t => t.theme === 'dark');
       const lightThemes = MSB_PREBUILT_THEMES.filter(t => t.theme === 'light');
 
       function renderTile(t) {
         const isOn = current.theme === t.theme &&
-                     current.titleFont === t.titleFont &&
-                     current.contentFont === t.contentFont &&
-                     current.accentColor === t.accent &&
-                     current.bgOverride === t.bg &&
-                     (current.titleColor || '') === (t.textColor || '') &&
-                     (current.contentColor || '') === (t.subColor || '');
+          current.titleFont === t.titleFont &&
+          current.contentFont === t.contentFont &&
+          current.accentColor === t.accent &&
+          current.bgOverride === t.bg &&
+          (current.titleColor || '') === (t.textColor || '') &&
+          (current.contentColor || '') === (t.subColor || '');
         const lightBorder = t.theme === 'light' ? '1px solid rgba(0,0,0,0.12)' : 'none';
         return `<button class="mse-pt${isOn ? ' on' : ''}" data-theme-id="${t.id}" onclick="applyPrebuiltTheme('${t.id}')">
           <div class="mse-pt-swatches">
@@ -2333,10 +2356,10 @@ ${_fontLinks}
     }
 
     /* Apply a prebuilt theme */
-    const MSB_BLOCK_COLOR_PROPS = ['bgColor','titleColor','textColor','taglineColor',
-      'itemTextColor','itemDateColor','valueColor','labelColor','nameColor','roleColor',
-      'bioColor','questionColor','answerColor','tierNameColor','subtitleColor',
-      'itemLabelColor','itemDescColor','buttonColor'];
+    const MSB_BLOCK_COLOR_PROPS = ['bgColor', 'titleColor', 'textColor', 'taglineColor',
+      'itemTextColor', 'itemDateColor', 'valueColor', 'labelColor', 'nameColor', 'roleColor',
+      'bioColor', 'questionColor', 'answerColor', 'tierNameColor', 'subtitleColor',
+      'itemLabelColor', 'itemDescColor', 'buttonColor'];
 
     function applyPrebuiltTheme(id) {
       const t = MSB_PREBUILT_THEMES.find(x => x.id === id);
@@ -2379,11 +2402,11 @@ ${_fontLinks}
     /* Toggle the font picker dropdown */
     function toggleFontPicker(which) {
       const picker = document.getElementById(which + 'FontPicker');
-      const box    = document.getElementById(which + 'FontBox');
+      const box = document.getElementById(which + 'FontBox');
       if (!picker || !box) return;
       const isOpen = picker.style.display !== 'none';
       // Close both first
-      ['title','content'].forEach(w => {
+      ['title', 'content'].forEach(w => {
         document.getElementById(w + 'FontPicker').style.display = 'none';
         document.getElementById(w + 'FontBox')?.classList.remove('open');
       });
@@ -2468,6 +2491,7 @@ ${_fontLinks}
     /* Title font size handlers */
     function onTitleSizeChange(val) {
       document.getElementById('titleFontSizeVal').textContent = val + 'px';
+      MSState.blocks.forEach(b => b.props.titleFontSize = '');
       MSState.updateConfig({ titleFontSize: val });
       refreshCanvas();
     }
@@ -2481,6 +2505,12 @@ ${_fontLinks}
     /* Content font size handlers */
     function onContentSizeChange(val) {
       document.getElementById('contentFontSizeVal').textContent = val + 'px';
+      MSState.blocks.forEach(b => {
+        if (!b.props) return;
+        ['textFontSize', 'contentFontSize', 'nameFontSize', 'roleFontSize', 'bioFontSize', 'questionFontSize', 'answerFontSize', 'subtitleFontSize', 'itemFontSize', 'taglineFontSize'].forEach(k => {
+          b.props[k] = '';
+        });
+      });
       MSState.updateConfig({ contentFontSize: val });
       refreshCanvas();
     }
@@ -2494,7 +2524,7 @@ ${_fontLinks}
     /* Close font pickers when clicking outside */
     document.addEventListener('click', e => {
       if (!e.target.closest('.mse-font-select-wrap')) {
-        ['title','content'].forEach(w => {
+        ['title', 'content'].forEach(w => {
           document.getElementById(w + 'FontPicker').style.display = 'none';
           document.getElementById(w + 'FontBox')?.classList.remove('open');
         });
@@ -3322,7 +3352,9 @@ ${_fontLinks}
       padding: 0;
     }
 
-    .mse-pt:hover { border-color: rgba(255, 255, 255, 0.22); }
+    .mse-pt:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+    }
 
     .mse-pt.on {
       border-color: rgba(0, 212, 255, 0.75);
@@ -3339,7 +3371,9 @@ ${_fontLinks}
       flex: 1;
     }
 
-    .mse-pt-swatch.accent { flex: 0.55; }
+    .mse-pt-swatch.accent {
+      flex: 0.55;
+    }
 
     .mse-pt-body {
       padding: 7px 9px 8px;
@@ -3384,7 +3418,9 @@ ${_fontLinks}
       gap: 10px;
     }
 
-    .mse-fp:hover { border-color: rgba(255, 255, 255, 0.2); }
+    .mse-fp:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
 
     .mse-fp.on {
       border-color: rgba(0, 212, 255, 0.7);
@@ -3472,11 +3508,23 @@ ${_fontLinks}
       text-align: left;
     }
 
-    .mse-font-select-box:hover { border-color: rgba(255, 255, 255, 0.28); }
-    .mse-font-select-box.open { border-color: var(--cyan); }
+    .mse-font-select-box:hover {
+      border-color: rgba(255, 255, 255, 0.28);
+    }
 
-    .mse-font-select-box svg { flex-shrink: 0; color: var(--text-3); transition: transform 0.18s; }
-    .mse-font-select-box.open svg { transform: rotate(180deg); }
+    .mse-font-select-box.open {
+      border-color: var(--cyan);
+    }
+
+    .mse-font-select-box svg {
+      flex-shrink: 0;
+      color: var(--text-3);
+      transition: transform 0.18s;
+    }
+
+    .mse-font-select-box.open svg {
+      transform: rotate(180deg);
+    }
 
     .mse-font-picker {
       width: 100%;
@@ -3490,8 +3538,15 @@ ${_fontLinks}
     }
 
     @keyframes mse-picker-in {
-      from { opacity: 0; transform: translateY(-4px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .mse-font-opt {
@@ -3507,7 +3562,9 @@ ${_fontLinks}
       gap: 10px;
     }
 
-    .mse-font-opt:hover { background: rgba(255, 255, 255, 0.06); }
+    .mse-font-opt:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
 
     .mse-font-opt.on {
       background: rgba(0, 212, 255, 0.1);

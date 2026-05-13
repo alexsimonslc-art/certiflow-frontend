@@ -179,6 +179,25 @@ function mst_applyFontPair(id) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   FONT SIZE ADJUSTERS (GLOBAL)
+═══════════════════════════════════════════════════════════════ */
+window.mst_setTitleFontSize = function(val) {
+  const v = parseInt(val, 10);
+  MSState.updateConfig({ titleFontSize: isNaN(v) ? '' : v });
+  const valEl = document.getElementById('mstTitleSizeVal') || document.getElementById('titleFontSizeVal');
+  if (valEl) valEl.textContent = isNaN(v) ? 'Auto' : v + 'px';
+  if (typeof refreshCanvas === 'function') refreshCanvas();
+};
+
+window.mst_setContentFontSize = function(val) {
+  const v = parseInt(val, 10);
+  MSState.updateConfig({ contentFontSize: isNaN(v) ? '' : v });
+  const valEl = document.getElementById('mstContentSizeVal') || document.getElementById('contentFontSizeVal');
+  if (valEl) valEl.textContent = isNaN(v) ? 'Auto' : v + 'px';
+  if (typeof refreshCanvas === 'function') refreshCanvas();
+};
+
+/* ═══════════════════════════════════════════════════════════════
    PALETTE GRID RENDERER
 ═══════════════════════════════════════════════════════════════ */
 function mst_renderPaletteGrid() {
@@ -357,6 +376,21 @@ function mst_rebuildSiteSettings() {
   if (ccIn) ccIn.value = cc2 || '#ccddee';
   if (ccHx && document.activeElement !== ccHx) ccHx.value = cc2;
   if (ccSw) ccSw.style.background = cc2 || 'rgba(255,255,255,0.15)';
+
+  // 8b. Font Sizes
+  const titleFsIn = document.getElementById('mstTitleSizeInput') || document.getElementById('titleFontSizeInput');
+  const titleFsVal = document.getElementById('mstTitleSizeVal') || document.getElementById('titleFontSizeVal');
+  if (titleFsIn) {
+    titleFsIn.value = c.titleFontSize || 32;
+    if (titleFsVal) titleFsVal.textContent = c.titleFontSize ? c.titleFontSize + 'px' : 'Auto';
+  }
+
+  const contentFsIn = document.getElementById('mstContentSizeInput') || document.getElementById('contentFontSizeInput');
+  const contentFsVal = document.getElementById('mstContentSizeVal') || document.getElementById('contentFontSizeVal');
+  if (contentFsIn) {
+    contentFsIn.value = c.contentFontSize || 16;
+    if (contentFsVal) contentFsVal.textContent = c.contentFontSize ? c.contentFontSize + 'px' : 'Auto';
+  }
 
   // 9. Registration toggle
   const regEl = document.getElementById('regToggle');

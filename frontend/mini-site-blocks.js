@@ -14,7 +14,7 @@ function msb_theme(cfg) {
   const accent = cfg.accentColor || '#00d4ff';
   const [ar, ag, ab] = msb_hexRgb(accent);
   // Reduce visual weight for heavy display fonts that render too bold at 700+
-  const _lightWeightFonts = { 'Bebas Neue':true, 'Abril Fatface':true, 'Pacifico':true, 'Boogaloo':true, 'Great Vibes':true, 'Pinyon Script':true };
+  const _lightWeightFonts = { 'Bebas Neue': true, 'Abril Fatface': true, 'Pacifico': true, 'Boogaloo': true, 'Great Vibes': true, 'Pinyon Script': true };
   const _titleFont = cfg.titleFont || cfg.fontHeading || cfg.fontFamily || 'Syne';
   const headingWeight = _lightWeightFonts[_titleFont] ? '400' : '700';
   const headingSize = cfg.titleFontSize ? cfg.titleFontSize + 'px' : 'clamp(20px,3vw,32px)';
@@ -134,8 +134,8 @@ function msb_cover(block, cfg) {
   const bgBase = p.coverImage
     ? 'transparent'
     : (t.isDark
-        ? `linear-gradient(160deg,#0d1f3c 0%,${t.bg} 100%)`
-        : `linear-gradient(160deg,rgba(${t.ar},${t.ag},${t.ab},0.18) 0%,${t.bg} 100%)`);
+      ? `linear-gradient(160deg,#0d1f3c 0%,${t.bg} 100%)`
+      : `linear-gradient(160deg,rgba(${t.ar},${t.ag},${t.ab},0.18) 0%,${t.bg} 100%)`);
 
   return `
 <div style="position:relative;min-height:300px;background:${p.bgColor || t.bg};display:flex;flex-direction:column;align-items:${p.alignment === 'left' ? 'flex-start' : p.alignment === 'right' ? 'flex-end' : 'center'};justify-content:flex-end;padding:0 clamp(24px,6vw,64px) 52px;overflow:hidden;font-family:'${t.font}',sans-serif;box-sizing:border-box">
@@ -155,7 +155,7 @@ function msb_cover(block, cfg) {
   </div>` : '<div style="height:28px;position:relative;z-index:3"></div>'}
 
   <div style="position:relative;z-index:3;text-align:${p.alignment || 'center'};max-width:540px;width:100%">
-    ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:${p.titleFontSize ? p.titleFontSize+'px' : 'clamp(24px,5vw,40px)'};font-weight:${t.headingWeight};color:${p.titleColor || (p.coverImage || t.isDark ? '#ffffff' : t.text)};line-height:1.1;letter-spacing:-0.8px;font-family:'${t.fontDisplay}','${t.font}',sans-serif;${p.coverImage || t.isDark ? 'text-shadow:0 2px 16px rgba(0,0,0,0.4)' : ''}">${p.siteName || cfg.name}</h1>` : ''}
+    ${(p.siteName || cfg.name) ? `<h1 style="margin:0 0 10px;font-size:${p.titleFontSize ? p.titleFontSize + 'px' : (cfg.titleFontSize ? Math.round(cfg.titleFontSize * 1.3) + 'px' : 'clamp(24px,5vw,40px)')};font-weight:${t.headingWeight};color:${p.titleColor || (p.coverImage || t.isDark ? '#ffffff' : t.text)};line-height:1.1;letter-spacing:-0.8px;font-family:'${t.fontDisplay}','${t.font}',sans-serif;${p.coverImage || t.isDark ? 'text-shadow:0 2px 16px rgba(0,0,0,0.4)' : ''}">${p.siteName || cfg.name}</h1>` : ''}
     ${p.tagline ? `<p style="margin:0;font-size:clamp(13px,2.2vw,16px);color:${p.taglineColor || (p.coverImage || t.isDark ? 'rgba(255,255,255,0.68)' : t.sub)};font-weight:400;line-height:1.6;letter-spacing:0.1px">${p.tagline}</p>` : ''}
   </div>
 
@@ -172,8 +172,8 @@ function msb_about(block, cfg) {
   const align = p.alignment || 'center';
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'About This Event', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
-  <p style="margin:0;font-size:${p.textFontSize ? p.textFontSize+'px' : t.bodySize};color:${p.textColor || t.sub};line-height:1.8;text-align:${align};white-space:pre-wrap">${p.content || ''}</p>
+  ${msb_title(p.title || 'About This Event', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null)}
+  <p style="margin:0;font-size:${p.textFontSize ? p.textFontSize + 'px' : t.bodySize};color:${p.textColor || t.sub};line-height:1.8;text-align:${align};white-space:pre-wrap">${p.content || ''}</p>
 </div>`, bg);
 }
 
@@ -186,14 +186,14 @@ function msb_announcements(block, cfg) {
   const items = p.items || [];
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Announcements', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+  ${msb_title(p.title || 'Announcements', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null)}
   <div style="display:flex;flex-direction:column;gap:10px">
     ${items.length ? items.map(item => `
     <div style="display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-radius:12px;background:rgba(${t.accentRgb},0.07);border:1px solid rgba(${t.accentRgb},0.18);position:relative;overflow:hidden">
       <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:${t.accent};border-radius:0 3px 3px 0"></div>
       <div style="width:8px;height:8px;border-radius:50%;background:${t.accent};flex-shrink:0;margin-top:5px;box-shadow:0 0 8px rgba(${t.accentRgb},0.6)"></div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:${p.textFontSize ? p.textFontSize+'px' : t.bodySize};color:${p.itemTextColor || t.text};line-height:1.55;font-weight:500">${item.text || ''}</div>
+        <div style="font-size:${p.textFontSize ? p.textFontSize + 'px' : t.bodySize};color:${p.itemTextColor || t.text};line-height:1.55;font-weight:500">${item.text || ''}</div>
         ${item.date ? `<div style="font-size:11.5px;color:${p.itemDateColor || t.muted};margin-top:4px">${item.date}</div>` : ''}
       </div>
       ${item.pinned ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:${t.accent};background:rgba(${t.accentRgb},0.12);border:1px solid rgba(${t.accentRgb},0.25);padding:3px 8px;border-radius:99px;flex-shrink:0">Pinned</div>` : ''}
@@ -253,14 +253,14 @@ function msb_speakers(block, cfg) {
   <div style="border-radius:16px;overflow:hidden;background:${t.bgCard};border:1px solid ${t.border2};box-shadow:0 4px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column;flex:1;min-height:0">
     <div style="width:100%;height:240px;overflow:hidden;background:rgba(${t.accentRgb},0.10);flex-shrink:0;position:relative">
       ${sp.photo
-        ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
-        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
+      ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${sp.name || ''}"/>`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:800;color:${t.accent};opacity:0.35">${(sp.name || '?')[0].toUpperCase()}</div>`}
       <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,transparent,${t.bgCard})"></div>
     </div>
     <div style="padding:14px 16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px;overflow:hidden">
-      <div style="font-size:16px;font-weight:700;color:${p.nameColor || t.text};line-height:1.25;flex-shrink:0">${sp.name || 'Speaker'}</div>
-      ${sp.role ? `<div style="font-size:12.5px;font-weight:500;color:${p.roleColor || t.accent};flex-shrink:0">${sp.role}</div>` : ''}
-      ${sp.bio ? `<div style="font-size:12px;color:${p.bioColor || t.sub};margin-top:6px;line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">${sp.bio}</div>` : ''}
+      <div style="font-size:${p.nameFontSize ? p.nameFontSize + 'px' : '16px'};font-weight:700;color:${p.nameColor || t.text};line-height:1.25;flex-shrink:0">${sp.name || 'Speaker'}</div>
+      ${sp.role ? `<div style="font-size:${p.roleFontSize ? p.roleFontSize + 'px' : '12.5px'};font-weight:500;color:${p.roleColor || t.accent};flex-shrink:0">${sp.role}</div>` : ''}
+      ${sp.bio ? `<div style="font-size:${p.bioFontSize ? p.bioFontSize + 'px' : '12px'};color:${p.bioColor || t.sub};margin-top:6px;line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical">${sp.bio}</div>` : ''}
     </div>
   </div>
 </div>`;
@@ -271,9 +271,9 @@ function msb_speakers(block, cfg) {
     ${sp.photo ? `<img src="${sp.photo}" style="width:100%;height:100%;object-fit:cover" alt="${sp.name || ''}"/>` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${t.accent}">${(sp.name || '?')[0]}</div>`}
   </div>
   <div>
-    <div style="font-size:15px;font-weight:700;color:${p.nameColor || t.text}">${sp.name || 'Speaker'}</div>
-    ${sp.role ? `<div style="font-size:13px;color:${p.roleColor || t.muted};margin-top:2px">${sp.role}</div>` : ''}
-    ${sp.bio ? `<div style="font-size:12.5px;color:${p.bioColor || t.sub};margin-top:6px;line-height:1.5">${sp.bio}</div>` : ''}
+    <div style="font-size:${p.nameFontSize ? p.nameFontSize + 'px' : '15px'};font-weight:700;color:${p.nameColor || t.text}">${sp.name || 'Speaker'}</div>
+    ${sp.role ? `<div style="font-size:${p.roleFontSize ? p.roleFontSize + 'px' : '13px'};color:${p.roleColor || t.muted};margin-top:2px">${sp.role}</div>` : ''}
+    ${sp.bio ? `<div style="font-size:${p.bioFontSize ? p.bioFontSize + 'px' : '12.5px'};color:${p.bioColor || t.sub};margin-top:6px;line-height:1.5">${sp.bio}</div>` : ''}
   </div>
 </div>`;
 
@@ -368,7 +368,7 @@ function msb_speakers(block, cfg) {
   return msb_wrap(`
 <div style="padding:40px 0;font-family:'${t.font}',sans-serif">
   <div style="padding:0 clamp(20px,5%,48px)">
-    ${msb_title(p.title || 'Speakers', t, p.alignment || 'center', p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+    ${msb_title(p.title || 'Speakers', t, p.alignment || 'center', p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null)}
   </div>
   ${items.length
       ? (isList
@@ -384,20 +384,21 @@ function msb_faq(block, cfg) {
   const p = block.props, t = msb_theme(cfg);
   const bg = p.bgColor || t.bg;
   const items = p.items || [];
+  const answerSize = p.textFontSize ? Math.max(12, p.textFontSize - 1) + 'px' : (cfg.contentFontSize ? Math.max(12, cfg.contentFontSize - 1) + 'px' : '14.5px');
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Frequently Asked Questions', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+  ${msb_title(p.title || 'Frequently Asked Questions', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null)}
   <div style="display:flex;flex-direction:column;gap:10px;max-width:820px;margin:0 auto">
     ${items.map((q, i) => `
     <details style="border:1px solid ${t.border};border-radius:12px;overflow:hidden;background:${t.bgCard}" ${i === 0 ? 'open' : ''}>
       <summary style="list-style:none;padding:16px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;user-select:none">
-        <span style="font-size:${p.textFontSize ? p.textFontSize+'px' : '15px'};font-weight:600;color:${p.questionColor || t.text};line-height:1.4;flex:1">${q.question || ''}</span>
+        <span style="font-size:${p.textFontSize ? p.textFontSize + 'px' : t.bodySize};font-weight:600;color:${p.questionColor || t.text};line-height:1.4;flex:1">${q.question || ''}</span>
         <div style="width:22px;height:22px;border-radius:6px;background:rgba(${t.accentRgb},0.1);border:1px solid rgba(${t.accentRgb},0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg viewBox="0 0 24 24" fill="none" stroke="${t.accent}" stroke-width="2.5" style="width:12px;height:12px"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </summary>
       <div style="padding:4px 18px 16px;border-top:1px solid ${t.border}">
-        <p style="margin:12px 0 0;font-size:${p.textFontSize ? Math.max(12, p.textFontSize - 1)+'px' : '14.5px'};color:${p.answerColor || t.sub};line-height:1.75">${q.answer || ''}</p>
+        <p style="margin:12px 0 0;font-size:${answerSize};color:${p.answerColor || t.sub};line-height:1.75">${q.answer || ''}</p>
       </div>
     </details>`).join('')}
     ${!items.length ? `<div style="color:${t.muted};font-size:14px;padding:8px 0">Add FAQ items in the properties panel.</div>` : ''}
@@ -415,7 +416,7 @@ function msb_sponsors(block, cfg) {
   const tierSizes = { 0: '80px', 1: '64px', 2: '52px', 3: '48px' };
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Our Sponsors', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+  ${msb_title(p.title || 'Our Sponsors', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null)}
   ${tiers.map((tier, ti) => `
   <div style="margin-bottom:28px">
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${p.tierNameColor || t.muted};margin-bottom:12px;text-align:${p.alignment === 'center' ? 'center' : p.alignment === 'right' ? 'right' : 'left'}">${tier.name}</div>
@@ -457,7 +458,7 @@ function msb_form(block, cfg) {
   return msb_wrap(`
 <div style="padding:48px clamp(20px,5%,56px);font-family:'${t.font}',sans-serif;text-align:center">
 
-  ${msb_title(p.title || 'Register Now', t, 'center', p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+  ${msb_title(p.title || 'Register Now', t, 'center', p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null)}
   ${p.subtitle ? `<p style="margin:-12px 0 28px;font-size:15px;color:${p.subtitleColor || t.sub};line-height:1.65">${p.subtitle}</p>` : ''}
 
   ${isOpen ? `
@@ -522,7 +523,7 @@ function msb_documents(block, cfg) {
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${msb_title(p.title || 'Resources', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null)}
+  ${msb_title(p.title || 'Resources', t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null)}
   <div style="display:flex;flex-direction:column;gap:10px;max-width:600px;margin:0 auto">
     ${items.length ? items.map(doc => {
     const color = doc.iconColor || getColor(doc.url);
@@ -580,7 +581,7 @@ function msb_video(block, cfg) {
 
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
-  ${p.title ? msb_title(p.title, t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null) : ''}
+  ${p.title ? msb_title(p.title, t, p.alignment, p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null) : ''}
   ${items.length ? items.map(v => videoCard(v)).join('') :
       `<div style="aspect-ratio:16/9;border-radius:12px;background:${t.bgCard};border:1.5px dashed ${t.border};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
     <svg viewBox="0 0 24 24" fill="none" stroke="${t.muted}" stroke-width="1.5" style="width:36px;height:36px"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
@@ -598,7 +599,7 @@ function msb_socials(block, cfg) {
   const links = p.links || [];
   return msb_wrap(`
 <div style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif;text-align:center">
-  ${p.title ? msb_title(p.title, t, 'center', p.titleColor, p.titleFontSize ? p.titleFontSize+'px' : null) : ''}
+  ${p.title ? msb_title(p.title, t, 'center', p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null) : ''}
   <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px">
     ${links.length ? links.map(lk => {
     const ic = MSB_SOCIAL_ICONS[lk.platform] || MSB_SOCIAL_ICONS.website;
@@ -683,14 +684,14 @@ function renderMSBlock(block, config) {
  */
 function renderMSSite(siteConfig, blocks) {
   const t = msb_theme(siteConfig);
-  const titleFont   = siteConfig.titleFont   || siteConfig.fontFamily || 'Syne';
+  const titleFont = siteConfig.titleFont || siteConfig.fontFamily || 'Syne';
   const contentFont = siteConfig.contentFont || siteConfig.fontFamily || 'Plus Jakarta Sans';
   const fontUrls = [...new Set([
-    MSB_GOOGLE_FONT_URLS[titleFont]   || '',
+    MSB_GOOGLE_FONT_URLS[titleFont] || '',
     MSB_GOOGLE_FONT_URLS[contentFont] || '',
     'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap',
   ])].filter(Boolean).map(u => `  <link href="${u}" rel="stylesheet"/>`).join('\n');
-  const titleColorRule  = siteConfig.titleColor   ? `h1,h2,h3,h4,h5{color:${siteConfig.titleColor}!important}` : '';
+  const titleColorRule = siteConfig.titleColor ? `h1,h2,h3,h4,h5{color:${siteConfig.titleColor}!important}` : '';
   const contentColorRule = siteConfig.contentColor ? `p,li,span{color:${siteConfig.contentColor}!important}` : '';
   const body = (blocks || []).map(b => renderMSBlock(b, siteConfig)).join('\n');
   return `<!DOCTYPE html>
@@ -746,28 +747,28 @@ document.querySelectorAll('[data-ms-form]').forEach(form => {
 const MSB_GOOGLE_FONT_URLS = {
   // Professional sans-serif
   'Plus Jakarta Sans': 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
-  'Lexend':            'https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap',
-  'Space Grotesk':     'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
-  'Syne':              'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap',
-  'Montserrat':        'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap',
-  'Raleway':           'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap',
-  'Oswald':            'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap',
+  'Lexend': 'https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap',
+  'Space Grotesk': 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
+  'Syne': 'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap',
+  'Montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap',
+  'Raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap',
+  'Oswald': 'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap',
   // Professional serif
-  'Playfair Display':  'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
-  'Lora':              'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap',
-  'EB Garamond':       'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
-  'Cormorant Garamond':'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
-  'Cinzel':            'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+  'Playfair Display': 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap',
+  'Lora': 'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap',
+  'EB Garamond': 'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap',
+  'Cormorant Garamond': 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap',
+  'Cinzel': 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
   // Display / Impact
-  'Bebas Neue':        'https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap',
-  'Abril Fatface':     'https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap',
+  'Bebas Neue': 'https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap',
+  'Abril Fatface': 'https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap',
   // Calligraphy / Script
-  'Great Vibes':       'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
-  'Pinyon Script':     'https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap',
-  'Dancing Script':    'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap',
+  'Great Vibes': 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
+  'Pinyon Script': 'https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap',
+  'Dancing Script': 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap',
   // Comical / Fun
-  'Pacifico':          'https://fonts.googleapis.com/css2?family=Pacifico&display=swap',
-  'Boogaloo':          'https://fonts.googleapis.com/css2?family=Boogaloo&display=swap',
+  'Pacifico': 'https://fonts.googleapis.com/css2?family=Pacifico&display=swap',
+  'Boogaloo': 'https://fonts.googleapis.com/css2?family=Boogaloo&display=swap',
   // Monospace
-  'JetBrains Mono':    'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+  'JetBrains Mono': 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
 };
