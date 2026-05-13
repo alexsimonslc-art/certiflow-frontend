@@ -4096,6 +4096,7 @@ ${_fontLinks}
             });
             MSState.blocks = newBlocks;
             MSState.selectedId = newBlocks[0]?.id || null;
+            if (data.config) MSState.updateConfig(data.config);
             MSState._pushHistory();
             MSState._notify('add');
             break;
@@ -4110,6 +4111,7 @@ ${_fontLinks}
             };
             MSState.blocks.push(block);
             MSState.selectedId = block.id;
+            if (data.config) MSState.config = Object.assign({}, MSState.config, data.config);
             MSState._pushHistory();
             MSState._notify('add');
             break;
@@ -4121,10 +4123,26 @@ ${_fontLinks}
               MSState.dirty = true;
               MSState._notify('update');
             }
+            if (data.config) MSState.updateConfig(data.config);
+            break;
+          }
+          case 'update_blocks': {
+            if (data.updates && Array.isArray(data.updates)) {
+              data.updates.forEach(u => {
+                const block = MSState.blocks.find(b => b.id === u.blockId);
+                if (block && u.props) {
+                  Object.assign(block.props, u.props);
+                }
+              });
+              MSState.dirty = true;
+              MSState._notify('update');
+            }
+            if (data.config) MSState.updateConfig(data.config);
             break;
           }
           case 'remove_block': {
             MSState.removeBlock(data.blockId);
+            if (data.config) MSState.config = Object.assign({}, MSState.config, data.config);
             break;
           }
           case 'config_update': {
