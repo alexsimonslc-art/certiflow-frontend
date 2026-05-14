@@ -1278,6 +1278,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      container-type: size;
     }
 
     .grid-stack-item-content:hover {
@@ -1332,6 +1333,106 @@
 
     .grid-stack.grid-edit-mode .widget-remove {
       display: flex;
+    }
+
+    .dbv-countdown-widget {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: clamp(10px, 2.5cqh, 18px);
+    }
+
+    .dbv-countdown-top {
+      min-width: 0;
+    }
+
+    .dbv-countdown-title {
+      font-family: var(--font-display);
+      font-size: clamp(13px, 2.4cqw, 17px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+      padding-right: 28px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dbv-countdown-sub {
+      margin-top: 5px;
+      font-size: clamp(10px, 1.9cqw, 12px);
+      color: var(--text-3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dbv-countdown-days {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .dbv-countdown-days strong {
+      font-family: var(--font-display);
+      font-size: clamp(34px, 13cqw, 74px);
+      line-height: 0.9;
+      font-weight: 800;
+      color: var(--cyan);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dbv-countdown-days span {
+      font-size: clamp(11px, 2.6cqw, 15px);
+      font-weight: 700;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .dbv-countdown-units {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(6px, 1.5cqw, 10px);
+    }
+
+    .dbv-countdown-unit {
+      min-width: 0;
+      padding: clamp(7px, 1.8cqw, 11px) clamp(5px, 1.5cqw, 10px);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.075);
+      text-align: center;
+    }
+
+    .dbv-countdown-unit strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(16px, 4.5cqw, 26px);
+      line-height: 1;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dbv-countdown-unit span {
+      display: block;
+      margin-top: 5px;
+      font-size: clamp(8px, 1.7cqw, 10px);
+      font-weight: 700;
+      letter-spacing: 0.45px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dbv-countdown-ended .dbv-countdown-days strong,
+    .dbv-countdown-ended .dbv-countdown-days span {
+      color: var(--green);
     }
 
     /* Builder Modal */
@@ -2435,15 +2536,45 @@
               <div class="chart-card-sub">Trends over time</div>
             </div>
           </div>
+          <div class="chart-card-option" onclick="selectChartType('countdown', this)">
+            <svg class="chart-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="13" r="8" />
+              <path d="M12 9v4l3 2" />
+              <path d="M9 2h6" />
+              <path d="M12 2v3" />
+            </svg>
+            <div>
+              <div class="chart-card-label">Countdown</div>
+              <div class="chart-card-sub">Days until a deadline</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="builder-field-wrap" style="margin-top: 8px;">
+      <div class="builder-field-wrap" id="primaryFieldWrap" style="margin-top: 8px;">
         <label class="builder-label">2. Primary Data Field (X-Axis)</label>
         <select class="builder-select" id="bwField"></select>
       </div>
 
-      <div>
+      <div class="builder-field-wrap" id="countdownTargetWrap" style="display:none; margin-top: 8px;">
+        <label class="builder-label">2. Countdown Target</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <input class="builder-input" id="bwCountdownDate" type="date" />
+          <input class="builder-input" id="bwCountdownTime" type="time" value="00:00" />
+        </div>
+        <select class="builder-select" id="bwCountdownTz" style="margin-top:10px">
+          <option value="+05:30">IST (UTC+05:30)</option>
+          <option value="+00:00">UTC / GMT</option>
+          <option value="-05:00">EST (UTC-05:00)</option>
+          <option value="-08:00">PST (UTC-08:00)</option>
+          <option value="+01:00">CET (UTC+01:00)</option>
+          <option value="+04:00">GST (UTC+04:00)</option>
+          <option value="+08:00">SGT (UTC+08:00)</option>
+          <option value="+10:00">AEST (UTC+10:00)</option>
+        </select>
+      </div>
+
+      <div id="advancedWrap">
         <div class="adv-toggle-wrap">
           <div class="adv-toggle-label">
             Cross Analysis (Group By)
@@ -2879,6 +3010,7 @@
     let _grid = null;
     let _isEditing = false;
     let _selectedChartType = 'bar';
+    let _countdownTimers = {};
 
     const CHART_COLORS = [
       'rgba(0,212,255,0.85)', 'rgba(124,58,237,0.85)', 'rgba(16,185,129,0.85)',
@@ -2944,6 +3076,8 @@
       _grid.removeAll();
       Object.values(_charts).forEach(c => c.destroy());
       _charts = {};
+      Object.values(_countdownTimers).forEach(clearInterval);
+      _countdownTimers = {};
 
       // Build widgets synchronously
       layout.forEach(w => {
@@ -2963,7 +3097,13 @@
 
       // Lock Config safely into the DOM
       itemEl.setAttribute('data-widget-config', JSON.stringify({
-        type: w.type, field: w.field, secondaryField: w.secondaryField, title: w.title
+        type: w.type,
+        field: w.field,
+        secondaryField: w.secondaryField,
+        title: w.title,
+        targetDate: w.targetDate,
+        targetTime: w.targetTime,
+        timezoneOffset: w.timezoneOffset,
       }));
       itemEl.setAttribute('data-chart-id', `chart_${w.id}`);
 
@@ -2973,6 +3113,8 @@
         let val = w.field === 'total' ? rows.length : calculateFieldStat(w.field, rows, headers);
         if (isNaN(val)) val = 0;
         contentEl.innerHTML = removeBtn + `<div class="dbv-stat-label" style="font-family:var(--font-display); font-size:13px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div class="dbv-stat-num" style="font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--text); line-height:1;">${val.toLocaleString()}</div>`;
+      } else if (w.type === 'countdown') {
+        renderCountdownWidget(contentEl, w, removeBtn);
       } else {
         contentEl.innerHTML = removeBtn + `<div class="dbv-chart-title" style="font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:14px;">${escHtml(w.title)}</div><div style="flex:1; position:relative; min-height:0; width:100%;"><canvas id="chart_${w.id}"></canvas></div>`;
 
@@ -2982,6 +3124,61 @@
           renderCustomChart(`chart_${w.id}`, w.type, w.field, rows, headers, w.secondaryField);
         }
       }
+    }
+
+    function renderCountdownWidget(contentEl, w, removeBtn) {
+      if (_countdownTimers[w.id]) {
+        clearInterval(_countdownTimers[w.id]);
+        delete _countdownTimers[w.id];
+      }
+      const id = `countdown_${w.id}`;
+      const targetDate = w.targetDate || '';
+      const targetTime = w.targetTime || '00:00';
+      const tz = w.timezoneOffset || '+05:30';
+      const targetIso = targetDate ? `${targetDate}T${targetTime || '00:00'}:00${tz}` : '';
+      const targetMs = targetIso ? new Date(targetIso).getTime() : NaN;
+      const targetLabel = targetDate
+        ? new Date(targetIso).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+        : 'Set a target date';
+
+      contentEl.innerHTML = removeBtn + `
+        <div class="dbv-countdown-widget" id="${id}">
+          <div class="dbv-countdown-top">
+            <div class="dbv-countdown-title">${escHtml(w.title || 'Countdown')}</div>
+            <div class="dbv-countdown-sub">${escHtml(targetLabel)}</div>
+          </div>
+          <div class="dbv-countdown-days">
+            <strong data-cd-days>0</strong>
+            <span data-cd-day-label>Days</span>
+          </div>
+          <div class="dbv-countdown-units">
+            <div class="dbv-countdown-unit"><strong data-cd-hours>00</strong><span>Hours</span></div>
+            <div class="dbv-countdown-unit"><strong data-cd-minutes>00</strong><span>Minutes</span></div>
+            <div class="dbv-countdown-unit"><strong data-cd-seconds>00</strong><span>Seconds</span></div>
+          </div>
+        </div>`;
+
+      if (!Number.isFinite(targetMs)) return;
+      const root = contentEl.querySelector(`#${id}`);
+      const write = () => {
+        const remaining = Math.max(0, targetMs - Date.now());
+        const days = Math.floor(remaining / 86400000);
+        const hours = Math.floor((remaining % 86400000) / 3600000);
+        const minutes = Math.floor((remaining % 3600000) / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+        root.querySelector('[data-cd-days]').textContent = days.toLocaleString();
+        root.querySelector('[data-cd-day-label]').textContent = days === 1 ? 'Day' : 'Days';
+        root.querySelector('[data-cd-hours]').textContent = String(hours).padStart(2, '0');
+        root.querySelector('[data-cd-minutes]').textContent = String(minutes).padStart(2, '0');
+        root.querySelector('[data-cd-seconds]').textContent = String(seconds).padStart(2, '0');
+        root.classList.toggle('dbv-countdown-ended', remaining <= 0);
+        if (remaining <= 0 && _countdownTimers[w.id]) {
+          clearInterval(_countdownTimers[w.id]);
+          delete _countdownTimers[w.id];
+        }
+      };
+      write();
+      _countdownTimers[w.id] = setInterval(write, 1000);
     }
 
     function calculateFieldStat(fieldLabel, rows, headers) {
@@ -3149,6 +3346,9 @@
     function closeWidgetBuilder() {
       document.getElementById('widgetModal').classList.remove('open');
       document.getElementById('bwTitle').value = '';
+      document.getElementById('bwCountdownDate').value = '';
+      document.getElementById('bwCountdownTime').value = '00:00';
+      document.getElementById('bwCountdownTz').value = '+05:30';
       document.getElementById('advToggle').checked = false;
       toggleAdvanced();
     }
@@ -3159,7 +3359,18 @@
       el.classList.add('selected');
 
       const advToggle = document.getElementById('advToggle');
-      if (type === 'stat' || type === 'timeline') {
+      const primaryWrap = document.getElementById('primaryFieldWrap');
+      const countdownWrap = document.getElementById('countdownTargetWrap');
+      const advancedWrap = document.getElementById('advancedWrap');
+      const titleInput = document.getElementById('bwTitle');
+      const isCountdown = type === 'countdown';
+
+      primaryWrap.style.display = isCountdown ? 'none' : '';
+      countdownWrap.style.display = isCountdown ? 'flex' : 'none';
+      advancedWrap.style.display = isCountdown ? 'none' : '';
+      titleInput.placeholder = isCountdown ? 'Countdown title...' : 'Leave blank to use field name...';
+
+      if (type === 'stat' || type === 'timeline' || isCountdown) {
         advToggle.checked = false;
         advToggle.disabled = true;
         advToggle.parentElement.style.opacity = '0.4';
@@ -3182,20 +3393,34 @@
       const field = document.getElementById('bwField').value;
       const secondaryField = document.getElementById('bwField2').value;
       let title = document.getElementById('bwTitle').value.trim();
-      if (!title) title = secondaryField ? `${field} by ${secondaryField}` : field;
+      const targetDate = document.getElementById('bwCountdownDate').value;
+      const targetTime = document.getElementById('bwCountdownTime').value || '00:00';
+      const timezoneOffset = document.getElementById('bwCountdownTz').value || '+05:30';
+
+      if (type === 'countdown' && !targetDate) {
+        toast('Pick a countdown target date', 'warning');
+        return;
+      }
+
+      if (!title) title = type === 'countdown' ? 'Countdown' : (secondaryField ? `${field} by ${secondaryField}` : field);
 
       const id = 'w_' + Math.random().toString(36).substr(2, 9);
       let w = 6, h = 4;
       if (type === 'stat') { w = 3; h = 2; }
       if (type === 'timeline') { w = 9; h = 4; }
+      if (type === 'countdown') { w = 4; h = 3; }
 
       _grid.addWidget({ id, x: 0, y: 0, w, h });
       const itemEl = document.querySelector(`.grid-stack-item[gs-id="${id}"]`);
-      if (itemEl) buildWidgetDOM(itemEl, { id, type, field, secondaryField, title }, _data.rows, _data.headers);
+      if (itemEl) buildWidgetDOM(itemEl, { id, type, field: type === 'countdown' ? 'countdown' : field, secondaryField, title, targetDate, targetTime, timezoneOffset }, _data.rows, _data.headers);
       closeWidgetBuilder();
     }
 
     function removeWidget(id) {
+      if (_countdownTimers[id]) {
+        clearInterval(_countdownTimers[id]);
+        delete _countdownTimers[id];
+      }
       const el = document.querySelector(`.grid-stack-item[gs-id="${id}"]`);
       if (el) _grid.removeWidget(el);
     }
@@ -3226,7 +3451,16 @@
           if (raw) config = JSON.parse(raw);
         } catch (e) { }
 
-        layout.push({ id, x, y, w, h, type: config.type, field: config.field, secondaryField: config.secondaryField, title: config.title });
+        layout.push({
+          id, x, y, w, h,
+          type: config.type,
+          field: config.field,
+          secondaryField: config.secondaryField,
+          title: config.title,
+          targetDate: config.targetDate,
+          targetTime: config.targetTime,
+          timezoneOffset: config.timezoneOffset,
+        });
       });
 
       try {
