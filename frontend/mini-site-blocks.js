@@ -250,12 +250,12 @@ function msb_countdown(block, cfg) {
     ? `${p.endDate}T${p.endTime || '00:00'}:00${p.timezoneOffset || '+00:00'}`
     : '';
   const justify = align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
-  const numberSize = p.numberFontSize ? `${p.numberFontSize}px` : 'clamp(26px,7vw,48px)';
+  const numberSize = p.numberFontSize ? `clamp(20px,8vw,${p.numberFontSize}px)` : 'clamp(22px,8vw,48px)';
   const cardBg = p.cardColor || t.bgCard;
   const unitCard = (key, label) => `
-    <div style="flex:1 1 96px;min-width:76px;max-width:140px;padding:16px 12px;border-radius:${p.layout === 'minimal' ? '0' : '14px'};background:${p.layout === 'minimal' ? 'transparent' : cardBg};border:${p.layout === 'minimal' ? 'none' : `1px solid ${t.border}`};text-align:center;box-shadow:${p.layout === 'minimal' ? 'none' : t.shadow}">
+    <div style="min-width:0;padding:clamp(8px,2.4vw,16px) clamp(4px,1.8vw,12px);border-radius:${p.layout === 'minimal' ? '0' : '14px'};background:${p.layout === 'minimal' ? 'transparent' : cardBg};border:${p.layout === 'minimal' ? 'none' : `1px solid ${t.border}`};text-align:center;box-shadow:${p.layout === 'minimal' ? 'none' : t.shadow};overflow:hidden">
       <div data-ms-cd-unit="${key}" style="font-size:${numberSize};line-height:1;font-weight:800;color:${p.numberColor || t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;font-variant-numeric:tabular-nums">00</div>
-      ${p.showLabels !== false ? `<div style="margin-top:8px;font-size:11px;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;color:${p.labelColor || t.muted}">${label}</div>` : ''}
+      ${p.showLabels !== false ? `<div style="margin-top:clamp(5px,1.6vw,8px);font-size:clamp(8px,2.2vw,11px);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:${p.labelColor || t.muted};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>` : ''}
     </div>`;
 
   return msb_wrap(`
@@ -263,7 +263,7 @@ function msb_countdown(block, cfg) {
   ${p.title ? msb_title(p.title, t, align, p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null) : ''}
   ${p.subtitle ? `<p style="margin:-8px 0 22px;text-align:${align};font-size:${t.bodySize};line-height:1.65;color:${p.subtitleColor || t.sub}">${p.subtitle}</p>` : ''}
   ${target ? `
-  <div data-ms-cd-grid style="display:flex;flex-wrap:wrap;gap:12px;justify-content:${justify};max-width:660px;margin:${align === 'center' ? '0 auto' : align === 'right' ? '0 0 0 auto' : '0 auto 0 0'}">
+  <div data-ms-cd-grid style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(6px,2vw,12px);width:100%;max-width:660px;margin:${align === 'center' ? '0 auto' : align === 'right' ? '0 0 0 auto' : '0 auto 0 0'};justify-content:${justify}">
     ${unitCard('days', 'Days')}
     ${unitCard('hours', 'Hours')}
     ${unitCard('minutes', 'Minutes')}
