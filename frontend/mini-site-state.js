@@ -4,7 +4,7 @@
 ================================================================ */
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK REGISTRY — 13 block types with full default props
+   BLOCK REGISTRY — block types with full default props
 ═══════════════════════════════════════════════════════════════ */
 const BLOCK_REG = {
 
@@ -53,6 +53,26 @@ const BLOCK_REG = {
       venueName: '', venueAddress: '', venueType: 'in-person',
       onlineLink: '', mapLink: '', bgColor: '',
       valueColor: '', labelColor: '',
+    }),
+  },
+
+  countdown: {
+    label: 'Countdown', icon: 'timer', cat: 'event',
+    desc: 'Live timer until a deadline',
+    defaults: () => ({
+      title: 'Event Starts In',
+      subtitle: 'Mark your calendar and get ready.',
+      endDate: '',
+      endTime: '10:00',
+      timezoneOffset: '+05:30',
+      expiredMessage: 'The countdown has ended.',
+      showLabels: true,
+      layout: 'cards',
+      alignment: 'center',
+      bgColor: '',
+      titleColor: '', subtitleColor: '',
+      numberColor: '', labelColor: '', cardColor: '',
+      titleFontSize: '', numberFontSize: '',
     }),
   },
 

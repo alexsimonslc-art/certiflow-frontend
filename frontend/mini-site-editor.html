@@ -906,6 +906,7 @@
 
       refreshBlockSelection();
       lucide.createIcons();
+      if (typeof msb_initCountdowns === 'function') msb_initCountdowns(body);
       refreshMobilePreview();
     }
 
@@ -1956,6 +1957,7 @@
       ].join('|');
       if (_styleKey === _mobilePreviewStyleKey && frame.contentDocument?.body) {
         frame.contentDocument.body.innerHTML = blocksHtml;
+        if (typeof msb_initCountdowns === 'function') msb_initCountdowns(frame.contentDocument.body);
         return;
       }
       _mobilePreviewStyleKey = _styleKey;
@@ -2051,7 +2053,7 @@ ${_fontLinks}
   details[open]>summary svg{transform:rotate(180deg)}
   details>summary svg{transition:transform 0.2s}
 </style>
-</head><body>${blocksHtml}</body></html>`;
+</head><body>${blocksHtml}<script>${typeof msb_initCountdowns === 'function' ? msb_initCountdowns.toString() + ';msb_initCountdowns();' : ''}<\/script></body></html>`;
     }
 
     // ADD after refreshMobilePreview function:
@@ -2359,7 +2361,7 @@ ${_fontLinks}
     const MSB_BLOCK_COLOR_PROPS = ['bgColor', 'titleColor', 'textColor', 'taglineColor',
       'itemTextColor', 'itemDateColor', 'valueColor', 'labelColor', 'nameColor', 'roleColor',
       'bioColor', 'questionColor', 'answerColor', 'tierNameColor', 'subtitleColor',
-      'itemLabelColor', 'itemDescColor', 'buttonColor'];
+      'itemLabelColor', 'itemDescColor', 'buttonColor', 'numberColor', 'cardColor'];
 
     function applyPrebuiltTheme(id) {
       const t = MSB_PREBUILT_THEMES.find(x => x.id === id);

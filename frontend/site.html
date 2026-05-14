@@ -245,6 +245,7 @@
     </div>`;
       } else {
         content.innerHTML = blocks.map(b => renderMSBlock(b, config)).join('');
+        if (typeof msb_initCountdowns === 'function') msb_initCountdowns(content);
         // Re-fire SVG onload handlers — innerHTML silently strips <script> but SVG onload survives
         content.querySelectorAll('svg[onload]').forEach(svg => {
           try { new Function(svg.getAttribute('onload'))(); } catch (e) { console.warn('carousel init error', e); }

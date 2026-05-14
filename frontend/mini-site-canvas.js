@@ -435,6 +435,73 @@ function renderBlockProps(block) {
   ${msc_bgRow(bid, p.bgColor)}
 </div>`;
 
+    /* ─── COUNTDOWN ─────────────────────────────────────────── */
+    case 'countdown': return `
+<div class="mse-props-section">
+  <div class="mse-props-sec-label" style="color:#f59e0b">Countdown</div>
+  ${msc_titleRow(bid, p.title, 'Event Starts In')}
+  <div class="mse-prop-row">
+    <div class="mse-prop-label">Subtitle</div>
+    <input class="mse-prop-input" value="${(p.subtitle || '').replace(/"/g, '&quot;')}" placeholder="Optional supporting text"
+      oninput="msc_set('${bid}','subtitle',this.value)"/>
+  </div>
+  ${msc_alignRow(bid, p)}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div class="mse-prop-row">
+      <div class="mse-prop-label">End Date</div>
+      <input class="mse-prop-input" type="date" value="${p.endDate || ''}"
+        oninput="msc_set('${bid}','endDate',this.value)"/>
+    </div>
+    <div class="mse-prop-row">
+      <div class="mse-prop-label">End Time</div>
+      <input class="mse-prop-input" type="time" value="${p.endTime || ''}"
+        oninput="msc_set('${bid}','endTime',this.value)"/>
+    </div>
+  </div>
+  <div class="mse-prop-row">
+    <div class="mse-prop-label">Timezone</div>
+    <select class="mse-prop-select" onchange="msc_set('${bid}','timezoneOffset',this.value)">
+      ${[
+        ['+05:30', 'IST (UTC+05:30)'],
+        ['+00:00', 'UTC / GMT'],
+        ['-05:00', 'EST (UTC-05:00)'],
+        ['-08:00', 'PST (UTC-08:00)'],
+        ['+01:00', 'CET (UTC+01:00)'],
+        ['+04:00', 'GST (UTC+04:00)'],
+        ['+08:00', 'SGT (UTC+08:00)'],
+        ['+10:00', 'AEST (UTC+10:00)'],
+      ].map(([v, label]) => `<option value="${v}" ${(p.timezoneOffset || '+05:30') === v ? 'selected' : ''}>${label}</option>`).join('')}
+    </select>
+  </div>
+  <div class="mse-prop-row">
+    <div class="mse-prop-label">Expired Message</div>
+    <input class="mse-prop-input" value="${(p.expiredMessage || '').replace(/"/g, '&quot;')}" placeholder="Shown when the timer reaches zero"
+      oninput="msc_set('${bid}','expiredMessage',this.value)"/>
+  </div>
+  <div class="mse-prop-row">
+    <div class="mse-prop-label">Display Style</div>
+    <select class="mse-prop-select" onchange="msc_set('${bid}','layout',this.value)">
+      <option value="cards" ${p.layout !== 'minimal' ? 'selected' : ''}>Cards</option>
+      <option value="minimal" ${p.layout === 'minimal' ? 'selected' : ''}>Minimal</option>
+    </select>
+  </div>
+  <div class="mse-toggle-row">
+    <span>Show Unit Labels</span>
+    <div class="mse-toggle ${p.showLabels !== false ? 'on' : ''}"
+      onclick="msc_set('${bid}','showLabels',${p.showLabels === false});updateRightPanel()"></div>
+  </div>
+  ${msc_fontSizeRow(bid, 'titleFontSize', p.titleFontSize, 'Title Size', 16, 60, 32)}
+  ${msc_fontSizeRow(bid, 'numberFontSize', p.numberFontSize, 'Number Size', 22, 72, 48)}
+  ${msc_colorSection(bid, [
+      ['titleColor', 'Section Title', td.text],
+      ['subtitleColor', 'Subtitle', td.sub],
+      ['numberColor', 'Numbers', td.text],
+      ['labelColor', 'Unit Labels', td.muted],
+      ['cardColor', 'Card Background', td.text],
+    ])}
+  ${msc_bgRow(bid, p.bgColor)}
+</div>`;
+
     /* ─── SPEAKERS ──────────────────────────────────────────── */
     case 'speakers': {
       const items = p.items || [];

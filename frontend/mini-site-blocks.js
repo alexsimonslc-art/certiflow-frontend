@@ -239,7 +239,76 @@ function msb_datetime(block, cfg) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 5 — SPEAKERS / TEAM
+   BLOCK 5 — COUNTDOWN
+═══════════════════════════════════════════════════════════════ */
+function msb_countdown(block, cfg) {
+  const p = block.props, t = msb_theme(cfg);
+  const bg = p.bgColor || t.bgAlt;
+  const uid = msb_attr(block.id || ('cd' + Math.random().toString(36).slice(2, 8)));
+  const align = p.alignment || 'center';
+  const target = p.endDate
+    ? `${p.endDate}T${p.endTime || '00:00'}:00${p.timezoneOffset || '+00:00'}`
+    : '';
+  const justify = align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
+  const numberSize = p.numberFontSize ? `${p.numberFontSize}px` : 'clamp(26px,7vw,48px)';
+  const cardBg = p.cardColor || t.bgCard;
+  const unitCard = (key, label) => `
+    <div style="flex:1 1 96px;min-width:76px;max-width:140px;padding:16px 12px;border-radius:${p.layout === 'minimal' ? '0' : '14px'};background:${p.layout === 'minimal' ? 'transparent' : cardBg};border:${p.layout === 'minimal' ? 'none' : `1px solid ${t.border}`};text-align:center;box-shadow:${p.layout === 'minimal' ? 'none' : t.shadow}">
+      <div data-ms-cd-unit="${key}" style="font-size:${numberSize};line-height:1;font-weight:800;color:${p.numberColor || t.text};font-family:'${t.fontDisplay}','${t.font}',sans-serif;font-variant-numeric:tabular-nums">00</div>
+      ${p.showLabels !== false ? `<div style="margin-top:8px;font-size:11px;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;color:${p.labelColor || t.muted}">${label}</div>` : ''}
+    </div>`;
+
+  return msb_wrap(`
+<div data-ms-countdown="${uid}" data-ms-countdown-target="${msb_attr(target)}" data-ms-countdown-expired="${msb_attr(p.expiredMessage || 'The countdown has ended.')}" style="padding:40px clamp(20px,5%,48px);font-family:'${t.font}',sans-serif">
+  ${p.title ? msb_title(p.title, t, align, p.titleColor, p.titleFontSize ? p.titleFontSize + 'px' : null) : ''}
+  ${p.subtitle ? `<p style="margin:-8px 0 22px;text-align:${align};font-size:${t.bodySize};line-height:1.65;color:${p.subtitleColor || t.sub}">${p.subtitle}</p>` : ''}
+  ${target ? `
+  <div data-ms-cd-grid style="display:flex;flex-wrap:wrap;gap:12px;justify-content:${justify};max-width:660px;margin:${align === 'center' ? '0 auto' : align === 'right' ? '0 0 0 auto' : '0 auto 0 0'}">
+    ${unitCard('days', 'Days')}
+    ${unitCard('hours', 'Hours')}
+    ${unitCard('minutes', 'Minutes')}
+    ${unitCard('seconds', 'Seconds')}
+  </div>
+  <div data-ms-cd-expired style="display:none;margin-top:18px;text-align:${align};font-size:${t.bodySize};font-weight:700;color:${p.numberColor || t.text}"></div>` : `
+  <div style="padding:18px;border-radius:14px;background:${cardBg};border:1px dashed ${t.border2};color:${p.labelColor || t.muted};font-size:14px;text-align:${align}">Set an end date and time in the properties panel.</div>`}
+</div>`, bg);
+}
+
+function msb_initCountdowns(root) {
+  const scope = root || document;
+  const blocks = scope.querySelectorAll ? scope.querySelectorAll('[data-ms-countdown-target]') : [];
+  blocks.forEach(block => {
+    if (block.dataset.msCountdownReady === '1') return;
+    block.dataset.msCountdownReady = '1';
+    const target = new Date(block.dataset.msCountdownTarget || '').getTime();
+    const expiredText = block.dataset.msCountdownExpired || 'The countdown has ended.';
+    const setText = (unit, value) => {
+      const el = block.querySelector(`[data-ms-cd-unit="${unit}"]`);
+      if (el) el.textContent = String(value).padStart(unit === 'days' ? 2 : 2, '0');
+    };
+    const tick = () => {
+      const remaining = Number.isFinite(target) ? Math.max(0, target - Date.now()) : 0;
+      const days = Math.floor(remaining / 86400000);
+      const hours = Math.floor((remaining % 86400000) / 3600000);
+      const minutes = Math.floor((remaining % 3600000) / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      setText('days', days);
+      setText('hours', hours);
+      setText('minutes', minutes);
+      setText('seconds', seconds);
+      if (remaining <= 0) {
+        const msg = block.querySelector('[data-ms-cd-expired]');
+        if (msg) { msg.textContent = expiredText; msg.style.display = 'block'; }
+        clearInterval(timer);
+      }
+    };
+    const timer = setInterval(tick, 1000);
+    tick();
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BLOCK 6 — SPEAKERS / TEAM
 ═══════════════════════════════════════════════════════════════ */
 function msb_speakers(block, cfg) {
   const p = block.props, t = msb_theme(cfg);
@@ -659,6 +728,7 @@ const MSB_RENDERERS = {
   about: msb_about,
   announcements: msb_announcements,
   datetime: msb_datetime,
+  countdown: msb_countdown,
   speakers: msb_speakers,
   faq: msb_faq,
   sponsors: msb_sponsors,
@@ -738,6 +808,8 @@ document.querySelectorAll('[data-ms-form]').forEach(form => {
     }
   });
 });
+${msb_initCountdowns.toString()}
+msb_initCountdowns();
 </script>
 </body>
 </html>`;
