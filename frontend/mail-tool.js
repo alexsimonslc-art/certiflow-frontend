@@ -456,23 +456,23 @@ function meBlockToHtml(block) {
   switch (block.type) {
     case 'logo':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
-  <div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fontStack}">${p.text}</div>
-  ${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fontStack}">${p.tagline}</div>` : ''}
+  <div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${blockFont}">${p.text}</div>
+  ${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${blockFont}">${p.tagline}</div>` : ''}
 </div>`;
 
     case 'header':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}">
-  <h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fontStack};font-style:${p.fontStyle || 'normal'}">${p.text}</h1>
+  <h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${blockFont};font-style:${p.fontStyle || 'normal'}">${p.text}</h1>
 </div>`;
 
     case 'text':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}">
-  <p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fontStack};font-weight:${p.fontWeight || 400};font-style:${p.fontStyle || 'normal'}">${p.text.replace(/\n/g, '<br/>')}</p>
+  <p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${blockFont};font-weight:${p.fontWeight || 400};font-style:${p.fontStyle || 'normal'}">${p.text.replace(/\n/g, '<br/>')}</p>
 </div>`;
 
     case 'button':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
-  <a class="me-btn-block" href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fontStack}">${p.text}</a>
+  <a class="me-btn-block" href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${blockFont}">${p.text}</a>
 </div>`;
 
     case 'image':
@@ -482,7 +482,7 @@ function meBlockToHtml(block) {
 </div>`;
       }
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center">
-  <div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;font-family:${fontStack}">[Image — add a URL in the properties panel]</div>
+  <div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;font-family:${blockFont}">[Image — add a URL in the properties panel]</div>
 </div>`;
 
     case 'divider':
@@ -495,7 +495,7 @@ function meBlockToHtml(block) {
 
     case 'footer':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
-  <p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fontStack}">${p.text.replace(/\n/g, '<br/>')}</p>
+  <p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${blockFont}">${p.text.replace(/\n/g, '<br/>')}</p>
 </div>`;
     case 'social': {
       // PNG icons at 64 px (2× retina) — SVG via <img> is blocked/blurry in Gmail & Outlook
@@ -552,8 +552,8 @@ function meBlockToHtml(block) {
           // Force-clean rogue styles and apply !important to strictly enforce user colors
           let cleanCell = typeof cell === 'string' ? cell.replace(/color\s*:\s*[^;"]+;?/gi, '') : cell;
           return isHeader
-            ? `<th style="padding:${pad}px;background:${hBg};color:${hColor} !important;font-family:${fontStack};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cleanCell}</th>`
-            : `<td style="padding:${pad}px;background:${cBg};color:${cColor} !important;font-family:${fontStack};font-size:${fSize}px;border:${bst}">${cleanCell}</td>`;
+            ? `<th style="padding:${pad}px;background:${hBg};color:${hColor} !important;font-family:${blockFont};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cleanCell}</th>`
+            : `<td style="padding:${pad}px;background:${cBg};color:${cColor} !important;font-family:${blockFont};font-size:${fSize}px;border:${bst}">${cleanCell}</td>`;
         }).join('');
         return `<tr>${cells}</tr>`;
       }).join('');

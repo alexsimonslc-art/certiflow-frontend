@@ -1771,31 +1771,32 @@ function resizeMailPreview() {
 
 function meGetHtmlFromBlocks(blocks) {
   const inner = blocks.map(b => meBlockToHtml(b)).join('\n');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet"/></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:'Plus Jakarta Sans',sans-serif"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:32px 16px"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><tr><td>${inner}</td></tr></table></td></tr></table></body></html>`;
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Cinzel:wght@400;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;1,400&family=Raleway:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/></head><body style="margin:0;padding:0;background:#f1f5f9;font-family:'Plus Jakarta Sans',sans-serif"><table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:32px 16px"><table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><tr><td>${inner}</td></tr></table></td></tr></table></body></html>`;
 }
 function meGetHtml() { return meGetHtmlFromBlocks(ME.blocks); }
 function meBlockToHtml(block) {
   const p = block.props;
   const fs = "'Montserrat','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
+  const blockFont = (p.fontFamily && p.fontFamily !== 'inherit') ? `${p.fontFamily},${fs}` : fs;
   switch (block.type) {
     case 'logo':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${fs}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${fs}">${p.tagline}</div>` : ''}</div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${blockFont}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${blockFont}">${p.tagline}</div>` : ''}</div>`;
     case 'header':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${fs};font-style:${p.fontStyle || 'normal'}">${p.text}</h1></div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${blockFont};font-style:${p.fontStyle || 'normal'}">${p.text}</h1></div>`;
     case 'text':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${fs};font-weight:${p.fontWeight || 400};font-style:${p.fontStyle || 'normal'}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:${p.lineHeight};text-align:${p.align};font-family:${blockFont};font-weight:${p.fontWeight || 400};font-style:${p.fontStyle || 'normal'}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
     case 'button':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${fs}">${p.text}</a></div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><a href="${p.link}" style="display:inline-block;padding:14px 38px;background:${p.btnBg};color:${p.btnColor};text-decoration:none;border-radius:${p.borderRadius}px;font-weight:${p.fontWeight};font-size:${p.fontSize}px;font-family:${blockFont}">${p.text}</a></div>`;
     case 'image':
       return p.src
         ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt}" style="width:${p.width}%;max-width:100%;height:auto;border-radius:${p.borderRadius}px;display:block;margin:0 auto"/></div>`
-        : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;font-family:${fs}">[Image — add a URL in the properties panel]</div></div>`;
+        : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><div style="width:100%;height:160px;background:#e2e8f0;border-radius:${p.borderRadius}px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:14px;font-family:${blockFont}">[Image — add a URL in the properties panel]</div></div>`;
     case 'divider':
       return `<div style="padding:${p.paddingV}px 40px;background:${p.bgColor}"><div style="height:${p.thickness}px;background:${p.color}"></div></div>`;
     case 'spacer':
       return `<div style="height:${p.height}px;background:${p.bgColor};font-size:0;line-height:0">&nbsp;</div>`;
     case 'footer':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${fs}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};line-height:1.6;font-family:${blockFont}">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
     case 'social': {
       // PNG icons at 64 px (2× retina) — SVG via <img> is blocked/blurry in Gmail & Outlook
       const pngMap = {
@@ -1841,8 +1842,8 @@ function meBlockToHtml(block) {
         const cells = row.map(cell => {
           const cleanCell = typeof cell === 'string' ? cell.replace(/color\s*:\s*[^;"]+;?/gi, '') : cell;
           return isHeader
-            ? `<th style="padding:${pad}px;background:${hBg};color:${hColor} !important;font-family:${fs};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cleanCell}</th>`
-            : `<td style="padding:${pad}px;background:${cBg};color:${cColor} !important;font-family:${fs};font-size:${fSize}px;border:${bst}">${cleanCell}</td>`;
+          ? `<th style="padding:${pad}px;background:${hBg};color:${hColor} !important;font-family:${blockFont};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cleanCell}</th>`
+          : `<td style="padding:${pad}px;background:${cBg};color:${cColor} !important;font-family:${blockFont};font-size:${fSize}px;border:${bst}">${cleanCell}</td>`;
         }).join('');
         return `<tr>${cells}</tr>`;
       }).join('');
