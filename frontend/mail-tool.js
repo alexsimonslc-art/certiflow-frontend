@@ -1045,7 +1045,7 @@ function meFieldFont(label, id, key, val) {
     
     ['Georgia,serif',                                   'Georgia'],
     ["'Times New Roman',Times,serif",                   'Times New Roman'],
-    ["'Dancing Script'",                        'Dancing Script'],
+    ["'Dancing Script',cursive",                        'Dancing Script'],
     ["'Courier New',Courier,monospace",                 'Courier New'],
   ];
   return `<div class="me-field">
