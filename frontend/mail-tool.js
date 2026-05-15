@@ -375,19 +375,19 @@ function mPersonalise(tmpl, data) {
 const ME_DEFS = {
   logo: {
     label: 'Logo / Banner',
-    defaults: () => ({ text: 'GalSol', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }),
+    defaults: () => ({ text: 'GalSol', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40, fontFamily: 'inherit' }),
   },
   header: {
     label: 'Heading',
-    defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }),
+    defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }),
   },
   text: {
     label: 'Text',
-    defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }),
+    defaults: () => ({ text: 'Write your message here...', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75, fontFamily: 'inherit' }),
   },
   button: {
     label: 'Button',
-    defaults: () => ({ text: 'Click Here', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 }),
+    defaults: () => ({ text: 'Click Here', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700, fontFamily: 'inherit' }),
   },
   image: {
     label: 'Image',
@@ -440,6 +440,7 @@ const ME_DEFS = {
       paddingV: 20,
       paddingH: 40,
       width: '100%',
+      fontFamily: 'inherit',
     }),
   },
 };
@@ -450,6 +451,7 @@ const ME_DEFS = {
 function meBlockToHtml(block) {
   const p = block.props;
   const fontStack = "'Montserrat','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
+  const blockFont = (p.fontFamily && p.fontFamily !== 'inherit') ? `${p.fontFamily},${fontStack}` : fontStack;
 
   switch (block.type) {
     case 'logo':
@@ -867,6 +869,7 @@ function meRenderProps(block) {
     rows.push(meFieldColor('Button Text Color', block.id, 'btnColor', p.btnColor));
     rows.push(meFieldRange('Border Radius', block.id, 'borderRadius', p.borderRadius, 0, 40));
     rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 28));
+    rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
   }
   if (block.type === 'image') {
     rows.push(meFieldText('Image URL', block.id, 'src', p.src));
@@ -948,6 +951,7 @@ function meRenderProps(block) {
     rows.push(meFieldColor('Cell Text', block.id, 'cellColor', p.cellColor));
     rows.push(meFieldRange('Cell Padding', block.id, 'cellPadding', p.cellPadding, 4, 32));
     rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 24));
+    rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
   }
   if (block.type === 'spacer') {
     rows.push(meFieldRange('Height (px)', block.id, 'height', p.height, 8, 120));
@@ -957,10 +961,12 @@ function meRenderProps(block) {
   if (['logo', 'header', 'text', 'button', 'footer'].includes(block.type)) {
     rows.push(meFieldAlign(block.id, p.align));
     if (['header', 'text', 'footer'].includes(block.type)) {
+      rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
       rows.push(meFieldColor('Text Color', block.id, 'color', p.color));
       rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 48));
     }
     if (['logo'].includes(block.type)) {
+      rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
       rows.push(meFieldColor('Text Color', block.id, 'color', p.color));
       rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 12, 40));
     }
@@ -1015,19 +1021,25 @@ function meFieldRange(label, id, key, val, min, max) {
     <input class="me-range" type="range" min="${min}" max="${max}" value="${val}" oninput="document.getElementById('rv_${id}_${key}').textContent=this.value;meUpdateProp('${id}','${key}',Number(this.value))"/>
   </div>`;
 }
-function meFieldAlign(id, val) {
-  const opts = [
-    ['left', '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>'],
-    ['center', '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/>'],
-    ['right', '<line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="21" y2="6"/><line x1="21" y1="14" x2="21" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/>'],
+function meFieldFont(label, id, key, val) {
+  const fonts = [
+    ['inherit', 'Default (Montserrat)'],
+    ["'Montserrat',sans-serif", 'Montserrat'],
+    ["'Plus Jakarta Sans',sans-serif", 'Plus Jakarta Sans'],
+    ["'Playfair Display',serif", 'Playfair Display'],
+    ["'EB Garamond',serif", 'EB Garamond'],
+    ["'Cormorant Garamond',serif", 'Cormorant Garamond'],
+    ["'Dancing Script',cursive", 'Dancing Script'],
+    ["'Cinzel',serif", 'Cinzel'],
+    ["'Raleway',sans-serif", 'Raleway'],
+    ["'JetBrains Mono',monospace", 'JetBrains Mono'],
   ];
   return `<div class="me-field">
-    <div class="me-field-label">Alignment</div>
-    <div class="me-align-btns">
-      ${opts.map(([a, svg]) => `<button class="me-align-btn ${val === a ? 'active' : ''}" onclick="meUpdateProp('${id}','align','${a}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">${svg}</svg>
-      </button>`).join('')}
-    </div>
+    <div class="me-field-label">${label}</div>
+    <select class="me-input" style="width:100%;font-size:13px;padding:6px 8px;"
+      onchange="meUpdateProp('${id}','${key}',this.value)">
+      ${fonts.map(([v, n]) => `<option value="${v}" ${(val||'inherit') === v ? 'selected' : ''}>${n}</option>`).join('')}
+    </select>
   </div>`;
 }
 
