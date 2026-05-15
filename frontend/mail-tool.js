@@ -1038,16 +1038,16 @@ function meFieldRange(label, id, key, val, min, max) {
 }
 function meFieldFont(label, id, key, val) {
   const fonts = [
-    ['inherit', 'Default (Montserrat)'],
-    ["'Montserrat',sans-serif", 'Montserrat'],
-    ["'Plus Jakarta Sans',sans-serif", 'Plus Jakarta Sans'],
-    ["'Playfair Display',serif", 'Playfair Display'],
-    ["'EB Garamond',serif", 'EB Garamond'],
-    ["'Cormorant Garamond',serif", 'Cormorant Garamond'],
-    ["'Dancing Script',cursive", 'Dancing Script'],
-    ["'Cinzel',serif", 'Cinzel'],
-    ["'Raleway',sans-serif", 'Raleway'],
-    ["'JetBrains Mono',monospace", 'JetBrains Mono'],
+    ['inherit',                                         'Default (Arial)'],
+    ['Arial,Helvetica,sans-serif',                      'Arial'],
+    ["'Helvetica Neue',Helvetica,Arial,sans-serif",     'Helvetica Neue'],
+    ['Verdana,Geneva,Tahoma,sans-serif',                'Verdana'],
+    ["'Trebuchet MS',Helvetica,sans-serif",             'Trebuchet MS'],
+    ["'Gill Sans','Gill Sans MT',Calibri,sans-serif",   'Gill Sans'],
+    ['Georgia,serif',                                   'Georgia'],
+    ["'Times New Roman',Times,serif",                   'Times New Roman'],
+    ['Palatino,serif',                                  'Palatino'],
+    ["'Courier New',Courier,monospace",                 'Courier New'],
   ];
   return `<div class="me-field">
     <div class="me-field-label">${label}</div>
