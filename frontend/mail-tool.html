@@ -1493,7 +1493,6 @@
     }
 
     .gal-ai-panel.open {
-      width: var(--gal-width, 380px);
       border-left: 1px solid rgba(255,255,255,0.09);  /* FIX: only show border when open */
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
@@ -2171,7 +2170,21 @@
       }
     }
 
-    
+    /* ── Hover & Glow State ── */
+    .me-ai-toggle:hover {
+      /* Creates a vibrant cyan and purple combined glow */
+      box-shadow:
+        0 0 15px rgba(0, 212, 255, 0.4),
+        0 0 30px rgba(124, 58, 237, 0.3);
+      transform: translateY(-1px);
+      /* Slight lift effect */
+    }
+
+    /* Press state */
+    .me-ai-toggle:active {
+      transform: translateY(1px);
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    }
   </style>
 </head>
 
@@ -2529,6 +2542,7 @@
                 </div>
                 <div style="display:flex;align-items:center;gap:10px" id="meHeadActions">
 
+                  <!-- AI toggle — shown after template selected -->
                   
                 </div>
                 <!-- Tab bar — shown after template selected -->
