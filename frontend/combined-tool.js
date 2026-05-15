@@ -2523,8 +2523,7 @@ async function launchPipeline() {
 
         <div id="doneState" style="display: none; animation: fadeInUp 0.6s ease; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--glass-border);">
           <div style="text-align:center;margin-bottom:32px;">
-            <h2 id="doneTitle" style="font-family: var(--font); font-size: 48px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Pipeline completed successfully.</h2>
-            <h2 id="doneTitle" style="font-family: var(--font-display, 'Syne', sans-serif); font-size: 48px; font-weight: 500; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Pipeline Completed!</h2>
+            
             <p id="doneSub" style="color:var(--text-2);font-size:15px;">Results</p>
             
             <p id="doneSub" style="color:var(--text-2);font-size:15px;">Your automated workflow has finished processing.</p>
