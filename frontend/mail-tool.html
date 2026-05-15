@@ -1493,6 +1493,7 @@
     }
 
     .gal-ai-panel.open {
+      width: var(--gal-width, 380px);
       border-left: 1px solid rgba(255,255,255,0.09);  /* FIX: only show border when open */
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
@@ -1992,7 +1993,10 @@
       height: 15px;
     }
 
-    
+    /* Old toggle button hidden — replaced by FAB */
+    .me-ai-toggle {
+      display: none !important;
+    }
 
     /* ─── Drag handle for sortable blocks ───────────────────────── */
     .me-drag-handle {
@@ -2157,7 +2161,13 @@
 
     
 
-    
+    /* Icon alignment and sizing */
+    .me-ai-toggle svg {
+      width: 16px;
+      height: 16px;
+      margin-bottom: 1px;
+      /* Optically centers the icon with the text */
+    }
 
     /* Keyframes to pan the gradient border */
     @keyframes aiBorderPan {
