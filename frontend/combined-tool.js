@@ -1242,16 +1242,16 @@ function initStep4() {
 }
 
 const ME_DEFS = {
-  logo: { label: 'Logo / Banner', defaults: () => ({ text: 'GalSol', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40 }) },
-  header: { label: 'Heading', defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40 }) },
-  text: { label: 'Text', defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75 }) },
-  button: { label: 'Button', defaults: () => ({ text: 'Click Here', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700 }) },
+  logo: { label: 'Logo / Banner', defaults: () => ({ text: 'GalSol', tagline: '', src: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40, fontFamily: 'inherit' }) },
+  header: { label: 'Heading', defaults: () => ({ text: 'Your Email Heading', fontSize: 28, fontWeight: 700, color: '#1e293b', bgColor: '#ffffff', align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
+  text: { label: 'Text', defaults: () => ({ text: 'Write your message here. Use {{name}} to personalize each email for your recipients.', fontSize: 16, color: '#475569', bgColor: '#ffffff', align: 'left', paddingV: 14, paddingH: 40, lineHeight: 1.75, fontFamily: 'inherit' }) },
+  button: { label: 'Button', defaults: () => ({ text: 'Click Here', link: '{{certificateLink}}', btnBg: 'linear-gradient(135deg,#00d4ff,#7c3aed)', btnColor: '#ffffff', bgColor: '#ffffff', align: 'center', paddingV: 24, paddingH: 40, borderRadius: 10, fontSize: 15, fontWeight: 700, fontFamily: 'inherit' }) },
   image: { label: 'Image', defaults: () => ({ src: '', alt: 'Image', width: 100, bgColor: '#f8fafc', paddingV: 20, paddingH: 40, borderRadius: 8 }) },
   divider: { label: 'Divider', defaults: () => ({ color: '#e2e8f0', bgColor: '#ffffff', paddingV: 12, thickness: 1 }) },
   spacer: { label: 'Spacer', defaults: () => ({ height: 40, bgColor: '#ffffff' }) },
-  footer: { label: 'Footer', defaults: () => ({ text: 'This email was sent via GalSol. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40 }) },
+  footer: { label: 'Footer', defaults: () => ({ text: 'This email was sent via GalSol. If you have questions, contact the organiser directly.', bgColor: '#f8fafc', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 24, paddingH: 40, fontFamily: 'inherit' }) },
   social: { label: 'Social Links', defaults: () => ({ platforms: [{ name: 'LinkedIn', url: '', icon: 'linkedin' }, { name: 'Twitter/X', url: '', icon: 'x' }, { name: 'Instagram', url: '', icon: 'instagram' }], bgColor: '#ffffff', align: 'center', paddingV: 20, paddingH: 40, iconSize: 32, style: 'plain', color: '#475569' }) },
-  table: { label: 'Table', defaults: () => ({ rows: 3, cols: 3, data: [['Header 1', 'Header 2', 'Header 3'], ['Cell', 'Cell', 'Cell'], ['Cell', 'Cell', 'Cell']], headerRow: true, borderWidth: 1, borderColor: '#e2e8f0', headerBg: '#f1f5f9', headerColor: '#1e293b', cellBg: '#ffffff', cellColor: '#475569', cellPadding: 10, fontSize: 14, bgColor: '#ffffff', paddingV: 20, paddingH: 40, width: '100%' }) },
+  table: { label: 'Table', defaults: () => ({ rows: 3, cols: 3, data: [['Header 1', 'Header 2', 'Header 3'], ['Cell', 'Cell', 'Cell'], ['Cell', 'Cell', 'Cell']], headerRow: true, borderWidth: 1, borderColor: '#e2e8f0', headerBg: '#f1f5f9', headerColor: '#1e293b', cellBg: '#ffffff', cellColor: '#475569', cellPadding: 10, fontSize: 14, bgColor: '#ffffff', paddingV: 20, paddingH: 40, width: '100%', fontFamily: 'inherit' }) },
 };
 
 const ME_TEMPLATES = {
@@ -1515,7 +1515,10 @@ function meRenderProps(block) {
       </div>
     </div>`);
   }
-  if (block.type === 'logo') rows.push(meFieldText('Tagline', block.id, 'tagline', p.tagline || ''));
+  if (block.type === 'logo') {
+    rows.push(meFieldImageUpload('Logo Image', block.id, 'src', p.src));
+    rows.push(meFieldText('Tagline', block.id, 'tagline', p.tagline || ''));
+  }
   if (block.type === 'button') {
     rows.push(meFieldText('Button Text', block.id, 'text', p.text));
     rows.push(meFieldText('Link / URL', block.id, 'link', p.link));
@@ -1523,9 +1526,10 @@ function meRenderProps(block) {
     rows.push(meFieldColor('Button Text Color', block.id, 'btnColor', p.btnColor));
     rows.push(meFieldRange('Border Radius', block.id, 'borderRadius', p.borderRadius, 0, 40));
     rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 28));
+    rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
   }
   if (block.type === 'image') {
-    rows.push(meFieldText('Image URL', block.id, 'src', p.src));
+    rows.push(meFieldImageUpload('Image Source', block.id, 'src', p.src));
     rows.push(meFieldText('Alt Text', block.id, 'alt', p.alt));
     rows.push(meFieldRange('Width %', block.id, 'width', p.width, 20, 100));
     rows.push(meFieldRange('Border Radius', block.id, 'borderRadius', p.borderRadius, 0, 40));
@@ -1597,6 +1601,7 @@ function meRenderProps(block) {
     rows.push(meFieldColor('Cell Text', block.id, 'cellColor', p.cellColor));
     rows.push(meFieldRange('Cell Padding', block.id, 'cellPadding', p.cellPadding, 4, 32));
     rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 24));
+    rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
   }
   if (block.type === 'spacer') rows.push(meFieldRange('Height (px)', block.id, 'height', p.height, 8, 120));
 
@@ -1604,10 +1609,12 @@ function meRenderProps(block) {
   if (['logo', 'header', 'text', 'button', 'footer'].includes(block.type)) {
     rows.push(meFieldAlign(block.id, p.align));
     if (['header', 'text', 'footer'].includes(block.type)) {
+      rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
       rows.push(meFieldColor('Text Color', block.id, 'color', p.color));
       rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 10, 48));
     }
     if (block.type === 'logo') {
+      rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
       rows.push(meFieldColor('Text Color', block.id, 'color', p.color));
       rows.push(meFieldRange('Font Size', block.id, 'fontSize', p.fontSize, 12, 40));
     }
@@ -1632,6 +1639,48 @@ function meFieldTextarea(label, id, key, val) {
   return `<div class="me-field"><div class="me-field-label">${label}</div>
     <textarea class="me-textarea" oninput="meUpdateProp('${id}','${key}',this.value)">${(val || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea></div>`;
 }
+
+function meFieldImageUpload(label, id, key, val) {
+  return `<div class="me-field">
+    <div class="me-field-label" style="display:flex;justify-content:space-between">
+      <span>${label}</span> <span style="font-size:10px;opacity:0.7;font-weight:400">(Max 200KB)</span>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:6px">
+      <button class="me-align-btn" onclick="document.getElementById('file_${id}_${key}').click()" style="flex:1;padding:8px;font-weight:600">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:6px;vertical-align:-2px;display:inline-block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload File
+      </button>
+      <input type="file" id="file_${id}_${key}" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp" style="display:none" onchange="meHandleImageUpload(event, '${id}', '${key}')" />
+    </div>
+    <input class="me-input" type="url" value="${(val || '').replace(/"/g, '&quot;')}" placeholder="Or paste image URL here..."
+      onfocus="meLastFocusedField={id:'${id}',key:'${key}',el:this}"
+      oninput="meUpdateProp('${id}','${key}',this.value)"/>
+  </div>`;
+}
+
+function meHandleImageUpload(event, blockId, key) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 200 * 1024) {
+    toast('File exceeds 200KB limit. Please choose a smaller image.', 'error');
+    event.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    meUpdateProp(blockId, key, e.target.result);
+    const block = ME.blocks.find(b => b.id === blockId);
+    if (block && ME.selectedId === blockId) meRenderProps(block);
+    toast('Image uploaded successfully', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function meFieldFont(label, id, key, val) {
+  const fonts = [['Arial,Helvetica,sans-serif', 'Arial'], ["'Playfair Display',serif", 'Playfair Display'], ['Georgia,serif', 'Georgia'], ["'Times New Roman',Times,serif", 'Times New Roman'], ["'Dancing Script',cursive", 'Dancing Script'], ["'Courier New',Courier,monospace", 'Courier New']];
+  return `<div class="me-field"><div class="me-field-label">${label}</div><select class="me-input" style="width:100%;font-size:13px;padding:6px 8px;" onchange="meUpdateProp('${id}','${key}',this.value)">${fonts.map(([v, n]) => `<option value="${v}" ${(val||'inherit') === v ? 'selected' : ''}>${n}</option>`).join('')}</select></div>`;
+}
+
 function meFieldColor(label, id, key, val) {
   return `<div class="me-field"><div class="me-field-label">${label}</div>
     <div class="me-color-row">
@@ -1778,7 +1827,10 @@ function meBlockToHtml(block) {
   const blockFont = (p.fontFamily && p.fontFamily !== 'inherit') ? `${p.fontFamily},${fs}` : fs;
   switch (block.type) {
     case 'logo':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight || 800};font-style:${p.fontStyle || 'normal'};color:${p.color};letter-spacing:3px;font-family:${blockFont}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${blockFont}">${p.tagline}</div>` : ''}</div>`;
+      const logoContent = p.src 
+        ? `<img src="${p.src}" alt="${p.text}" style="max-height:80px;max-width:100%;height:auto;display:inline-block;border:none;outline:none" />`
+        : `<div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight || 800};font-style:${p.fontStyle || 'normal'};color:${p.color};letter-spacing:3px;font-family:${blockFont}">${p.text}</div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">${logoContent}${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${blockFont}">${p.tagline}</div>` : ''}</div>`;
     case 'header':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${blockFont};font-style:${p.fontStyle || 'normal'}">${p.text}</h1></div>`;
     case 'text':
