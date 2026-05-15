@@ -2526,6 +2526,8 @@ async function launchPipeline() {
             <h2 id="doneTitle" style="font-family: var(--font); font-size: 48px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Pipeline completed successfully.</h2>
             <h2 id="doneTitle" style="font-family: var(--font-display, 'Syne', sans-serif); font-size: 48px; font-weight: 500; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Pipeline Completed!</h2>
             <p id="doneSub" style="color:var(--text-2);font-size:15px;">Results</p>
+            <h2 id="doneTitle" style="font-family: var(--font); font-size: 48px; font-weight: 800; color: transparent; background: linear-gradient(135deg, #10b981, #00d4ff); -webkit-background-clip: text; background-clip: text; margin-bottom: 8px; letter-spacing: -1px;">Pipeline Completed!</h2>
+            <p id="doneSub" style="color:var(--text-2);font-size:15px;">Your automated workflow has finished processing.</p>
           </div>
           <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 32px;">
             <button class="btn btn-primary btn-lg" onclick="downloadFullReport()" style="box-shadow: 0 4px 20px rgba(0,212,255,0.25);">
@@ -2740,8 +2742,10 @@ function showDone(certs, mails, failed, total) {
   if (ds) {
     if (failed === 0) {
       ds.textContent = `Pipeline completed! ${certs} certificates generated, ${mails} emails sent.`;
+      ds.textContent = `All tasks executed successfully! ${certs} certificates generated and ${mails} emails dispatched.`;
     } else {
       ds.textContent = `Completed with ${failed} failure(s). ${certs} certificates generated, ${mails} emails sent.`;
+      ds.textContent = `Finished with ${failed} issue(s) to review. ${certs} certificates generated and ${mails} emails dispatched.`;
     }
   }
 
