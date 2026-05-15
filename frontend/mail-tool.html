@@ -2141,7 +2141,7 @@
     .gal-ai-panel {
       background: linear-gradient(180deg, rgba(4, 8, 15, 0.97) 0%, rgba(10, 14, 25, 0.99) 100%),
         radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.08) 0%, transparent 50%) !important;
-        clip-path: inset(0);   /* FIX: clips the gradient AND any overflow painting to the element's own box */
+          overflow: hidden;    /* FIX: clips the gradient AND any overflow painting to the element's own box */
     }
 
     /* ── 2. Kill the CSS Glass Glitches ── */
