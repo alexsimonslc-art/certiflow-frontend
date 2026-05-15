@@ -2732,8 +2732,13 @@ function showDone(certs, mails, failed, total) {
     dt.textContent = 'Results';
     dt.textContent = 'Pipeline Completed!';
     if (failed === 0) {
+          dt.textContent = 'Pipeline Completed!';
       dt.style.background = 'linear-gradient(135deg, #10b981, #00d4ff)';
+        } else if (certs === 0 && mails === 0) {
+          dt.textContent = 'Pipeline Failed';
+          dt.style.background = 'linear-gradient(135deg, #ef4444, #f43f5e)';
     } else {
+          dt.textContent = 'Completed with Issues';
       dt.style.background = 'linear-gradient(135deg, #f59e0b, #ef4444)';
     }
     dt.style.webkitBackgroundClip = 'text';
@@ -2743,6 +2748,8 @@ function showDone(certs, mails, failed, total) {
     if (failed === 0) {
       ds.textContent = `Pipeline completed! ${certs} certificates generated, ${mails} emails sent.`;
       ds.textContent = `All tasks executed successfully! ${certs} certificates generated and ${mails} emails dispatched.`;
+        } else if (certs === 0 && mails === 0) {
+          ds.textContent = `Workflow failed. 0 certificates generated, 0 emails dispatched. Please review the errors below.`;
     } else {
       ds.textContent = `Completed with ${failed} failure(s). ${certs} certificates generated, ${mails} emails sent.`;
       ds.textContent = `Finished with ${failed} issue(s) to review. ${certs} certificates generated and ${mails} emails dispatched.`;
