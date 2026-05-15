@@ -838,7 +838,7 @@ function meRenderProps(block) {
 
   // Build property rows based on block type
   if (['logo', 'header', 'text', 'footer'].includes(block.type)) {
-    rows.push(meFieldTextarea('Text', block.id, 'text', p.text));
+    rows.push(meFieldTextarea('Text', block.id, 'text', p.text || ''));
     if (['header', 'text', 'footer'].includes(block.type)) {
       rows.push(`<div class="me-field">
         <div class="me-field-label">Formatting</div>
