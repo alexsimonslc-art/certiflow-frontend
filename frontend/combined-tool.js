@@ -1497,25 +1497,23 @@ function meRenderProps(block) {
 
   if (['logo', 'header', 'text', 'footer'].includes(block.type)) {
     rows.push(meFieldTextarea('Text', block.id, 'text', p.text));
-    if (['header', 'text', 'footer'].includes(block.type)) {
-      rows.push(`<div class="me-field">
-        <div class="me-field-label">Formatting</div>
-        <div class="me-align-btns">
-          <button class="me-align-btn ${p.fontWeight >= 700 ? 'active' : ''}" title="Bold"
-            onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight >= 700 ? 400 : 700});this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach((b,i)=>{if(i===0)b.classList.toggle('active',${p.fontWeight < 700})})">
-            <strong style="font-size:13px">B</strong>
-          </button>
-          <button class="me-align-btn ${p.fontWeight === 600 ? 'active' : ''}" title="Semi-Bold"
-            onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight === 600 ? 400 : 600});this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach((b,i)=>{if(i===1)b.classList.toggle('active',${p.fontWeight !== 600})})">
-            <span style="font-size:13px;font-weight:600">S</span>
-          </button>
-          <button class="me-align-btn ${p.fontStyle === 'italic' ? 'active' : ''}" title="Italic"
-            onclick="meUpdateProp('${block.id}','fontStyle',${p.fontStyle === 'italic' ? "'normal'" : "'italic'"})">
-            <em style="font-size:13px">I</em>
-          </button>
-        </div>
-      </div>`);
-    }
+    rows.push(`<div class="me-field">
+      <div class="me-field-label">Formatting</div>
+      <div class="me-align-btns">
+        <button class="me-align-btn ${p.fontWeight >= 700 ? 'active' : ''}" title="Bold"
+          onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight >= 700 ? 400 : 700}); meRenderProps(ME.blocks.find(b=>b.id==='${block.id}'))">
+          <strong style="font-size:13px">B</strong>
+        </button>
+        <button class="me-align-btn ${p.fontWeight === 600 ? 'active' : ''}" title="Semi-Bold"
+          onclick="meUpdateProp('${block.id}','fontWeight',${p.fontWeight === 600 ? 400 : 600}); meRenderProps(ME.blocks.find(b=>b.id==='${block.id}'))">
+          <span style="font-size:13px;font-weight:600">S</span>
+        </button>
+        <button class="me-align-btn ${p.fontStyle === 'italic' ? 'active' : ''}" title="Italic"
+          onclick="meUpdateProp('${block.id}','fontStyle',${p.fontStyle === 'italic' ? "'normal'" : "'italic'"}); meRenderProps(ME.blocks.find(b=>b.id==='${block.id}'))">
+          <em style="font-size:13px">I</em>
+        </button>
+      </div>
+    </div>`);
   }
   if (block.type === 'logo') rows.push(meFieldText('Tagline', block.id, 'tagline', p.tagline || ''));
   if (block.type === 'button') {
@@ -1780,7 +1778,7 @@ function meBlockToHtml(block) {
   const blockFont = (p.fontFamily && p.fontFamily !== 'inherit') ? `${p.fontFamily},${fs}` : fs;
   switch (block.type) {
     case 'logo':
-      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};letter-spacing:3px;font-family:${blockFont}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${blockFont}">${p.tagline}</div>` : ''}</div>`;
+      return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight || 800};font-style:${p.fontStyle || 'normal'};color:${p.color};letter-spacing:3px;font-family:${blockFont}">${p.text}</div>${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${blockFont}">${p.tagline}</div>` : ''}</div>`;
     case 'header':
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><h1 style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 700};color:${p.color};line-height:1.2;text-align:${p.align};font-family:${blockFont};font-style:${p.fontStyle || 'normal'}">${p.text}</h1></div>`;
     case 'text':
@@ -1842,8 +1840,8 @@ function meBlockToHtml(block) {
         const cells = row.map(cell => {
           const cleanCell = typeof cell === 'string' ? cell.replace(/color\s*:\s*[^;"]+;?/gi, '') : cell;
           return isHeader
-          ? `<th style="padding:${pad}px;background:${hBg};color:${hColor} !important;font-family:${blockFont};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cleanCell}</th>`
-          : `<td style="padding:${pad}px;background:${cBg};color:${cColor} !important;font-family:${blockFont};font-size:${fSize}px;border:${bst}">${cleanCell}</td>`;
+            ? `<th style="padding:${pad}px;background:${hBg};color:${hColor} !important;font-family:${blockFont};font-weight:700;font-size:${fSize}px;border:${bst};text-align:left">${cleanCell}</th>`
+            : `<td style="padding:${pad}px;background:${cBg};color:${cColor} !important;font-family:${blockFont};font-size:${fSize}px;border:${bst}">${cleanCell}</td>`;
         }).join('');
         return `<tr>${cells}</tr>`;
       }).join('');
