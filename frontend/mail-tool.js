@@ -1040,14 +1040,12 @@ function meFieldFont(label, id, key, val) {
   const fonts = [
     
     ['Arial,Helvetica,sans-serif',                      'Arial'],
-    ["'Helvetica Neue',Helvetica,Arial,sans-serif",     'Helvetica Neue'],
+    
     ["'Playfair Display',serif",                        'Playfair Display'],
-    ['Verdana,Geneva,Tahoma,sans-serif',                'Verdana'],
-    ["'Trebuchet MS',Helvetica,sans-serif",             'Trebuchet MS'],
-    ["'Gill Sans','Gill Sans MT',Calibri,sans-serif",   'Gill Sans'],
+    
     ['Georgia,serif',                                   'Georgia'],
     ["'Times New Roman',Times,serif",                   'Times New Roman'],
-    ["'Dancing Script',cursive",                        'Dancing Script'],
+    ["'Dancing Script'",                        'Dancing Script'],
     ["'Courier New',Courier,monospace",                 'Courier New'],
   ];
   return `<div class="me-field">
