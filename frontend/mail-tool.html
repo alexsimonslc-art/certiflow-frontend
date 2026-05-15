@@ -1470,10 +1470,10 @@
     }
 
     /* ─── Gal AI — Fixed Full-Height Right Panel ─────────────────── */
+        
     .gal-ai-panel {
       position: fixed;
-      top: 0;
-      right: 0;
+      top: 0; right: 0;
       height: 100vh;
       width: 0;
       overflow: hidden;
@@ -1482,21 +1482,22 @@
       display: flex;
       flex-direction: column;
       background: rgba(4, 8, 15, 0.97);
-      border-left: 1px solid rgba(255, 255, 255, 0.09);
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-      box-shadow: -12px 0 60px rgba(0, 0, 0, 0.6);
+      border-left: none;           /* FIX: no border when closed */
+      backdrop-filter: none;       /* FIX: no blur layer when closed */
+      -webkit-backdrop-filter: none;
+      box-shadow: none;            /* FIX: no shadow when closed */
       font-family: 'Plus Jakarta Sans', sans-serif;
-      /* FIX: Hardware acceleration to stop slide-in glitch */
-      will-change: width, transform, box-shadow;
+      will-change: width;
       transform: translateZ(0);
       backface-visibility: hidden;
     }
 
     .gal-ai-panel.open {
-      width: var(--gal-width, 380px);
+      border-left: 1px solid rgba(255,255,255,0.09);  /* FIX: only show border when open */
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      box-shadow: -12px 0 60px rgba(0,0,0,0.6);
     }
-
     /* Main area shifts when panel open */
     .main-area {
       transition: margin-right 0.32s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1952,7 +1953,9 @@
       animation: galAiBorderPan 9s linear infinite;
 
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      transition: all 0.3s ease;
+      isolation: isolate;                                     /* FIX: own stacking context, no cross-element repaints */
+      contain: layout style;                                  /* FIX: contain repaints to this element */
+      transition: box-shadow 0.3s ease, transform 0.25s ease; /* FIX: specific props only, NOT 'all' */
     }
 
     .gal-ai-fab.visible {
@@ -1970,11 +1973,8 @@
       }
     }
 
-    .gal-ai-fab:hover {
-      /* Cyan & Purple Neon Glow */
-      box-shadow:
-        0 0 15px rgba(0, 212, 255, 0.5),
-        0 0 30px rgba(124, 58, 237, 0.4);
+   .gal-ai-fab:hover {
+      box-shadow: 0 0 12px rgba(0,212,255,0.4), 0 0 22px rgba(124,58,237,0.3); /* FIX: tighter spread */
       transform: translateY(-2px);
     }
 
@@ -2141,6 +2141,7 @@
     .gal-ai-panel {
       background: linear-gradient(180deg, rgba(4, 8, 15, 0.97) 0%, rgba(10, 14, 25, 0.99) 100%),
         radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.08) 0%, transparent 50%) !important;
+        clip-path: inset(0);   /* FIX: clips the gradient AND any overflow painting to the element's own box */
     }
 
     /* ── 2. Kill the CSS Glass Glitches ── */
