@@ -375,7 +375,7 @@ function mPersonalise(tmpl, data) {
 const ME_DEFS = {
   logo: {
     label: 'Logo / Banner',
-    defaults: () => ({ text: 'GalSol', tagline: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40, fontFamily: 'inherit' }),
+    defaults: () => ({ text: 'GalSol', tagline: '', src: '', bgColor: '#0d1728', color: '#00d4ff', fontSize: 22, fontWeight: 800, align: 'center', paddingV: 28, paddingH: 40, fontFamily: 'inherit' }),
   },
   header: {
     label: 'Heading',
@@ -455,8 +455,12 @@ function meBlockToHtml(block) {
 
   switch (block.type) {
     case 'logo':
+      const logoContent = p.src 
+        ? `<img src="${p.src}" alt="${p.text}" style="max-height:80px;max-width:100%;height:auto;display:inline-block;border:none;outline:none" />`
+        : `<div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight || 800};font-style:${p.fontStyle || 'normal'};color:${p.color};letter-spacing:3px;font-family:${blockFont}">${p.text}</div>`;
+
       return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}">
-  <div style="font-size:${p.fontSize}px;font-weight:${p.fontWeight || 800};font-style:${p.fontStyle || 'normal'};color:${p.color};letter-spacing:3px;font-family:${blockFont}">${p.text}</div>
+  ${logoContent}
   ${p.tagline ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px;font-family:${blockFont}">${p.tagline}</div>` : ''}
 </div>`;
 
@@ -873,6 +877,7 @@ function meRenderProps(block) {
     </div>`);
   }
   if (block.type === 'logo') {
+    rows.push(meFieldImageUpload('Logo Image', block.id, 'src', p.src));
     rows.push(meFieldText('Tagline', block.id, 'tagline', p.tagline || ''));
   }
   if (block.type === 'button') {
@@ -885,7 +890,7 @@ function meRenderProps(block) {
     rows.push(meFieldFont('Font Family', block.id, 'fontFamily', p.fontFamily || 'inherit'));
   }
   if (block.type === 'image') {
-    rows.push(meFieldText('Image URL', block.id, 'src', p.src));
+    rows.push(meFieldImageUpload('Image Source', block.id, 'src', p.src));
     rows.push(meFieldText('Alt Text', block.id, 'alt', p.alt));
     rows.push(meFieldRange('Width %', block.id, 'width', p.width, 20, 100));
     rows.push(meFieldRange('Border Radius', block.id, 'borderRadius', p.borderRadius, 0, 40));
@@ -1014,6 +1019,41 @@ function meFieldTextarea(label, id, key, val) {
     <div class="me-field-label">${label}</div>
     <textarea class="me-textarea" oninput="meUpdateProp('${id}','${key}',this.value)">${(val || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
   </div>`;
+}
+function meFieldImageUpload(label, id, key, val) {
+  return `<div class="me-field">
+    <div class="me-field-label" style="display:flex;justify-content:space-between">
+      <span>${label}</span> <span style="font-size:10px;opacity:0.7;font-weight:400">(Max 200KB)</span>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:6px">
+      <button class="me-align-btn" onclick="document.getElementById('file_${id}_${key}').click()" style="flex:1;padding:8px;font-weight:600">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;margin-right:6px;vertical-align:-2px;display:inline-block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload File
+      </button>
+      <input type="file" id="file_${id}_${key}" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp" style="display:none" onchange="meHandleImageUpload(event, '${id}', '${key}')" />
+    </div>
+    <input class="me-input" type="url" value="${(val || '').replace(/"/g, '&quot;')}" placeholder="Or paste image URL here..."
+      onfocus="meLastFocusedField={id:'${id}',key:'${key}',el:this}"
+      oninput="meUpdateProp('${id}','${key}',this.value)"/>
+  </div>`;
+}
+
+function meHandleImageUpload(event, blockId, key) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 200 * 1024) {
+    toast('File exceeds 200KB limit. Please choose a smaller image.', 'error');
+    event.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    meUpdateProp(blockId, key, e.target.result);
+    const block = ME.blocks.find(b => b.id === blockId);
+    if (block && ME.selectedId === blockId) meRenderProps(block);
+    toast('Image uploaded successfully', 'success');
+  };
+  reader.readAsDataURL(file);
 }
 function meFieldColor(label, id, key, val) {
   return `<div class="me-field">
