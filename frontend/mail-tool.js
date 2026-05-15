@@ -817,6 +817,21 @@ function meSelectBlock(id) {
   meRenderProps(block);
 }
 
+function meFieldAlign(id, val) {
+  const opts = [
+    ['left', '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>'],
+    ['center', '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/>'],
+    ['right', '<line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="21" y2="6"/><line x1="21" y1="14" x2="21" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/>'],
+  ];
+  return `<div class="me-field">
+    <div class="me-field-label">Alignment</div>
+    <div class="me-align-btns">
+      ${opts.map(([a, svg]) => `<button class="me-align-btn ${val === a ? 'active' : ''}" onclick="meUpdateProp('${id}','align','${a}');this.closest('.me-align-btns').querySelectorAll('.me-align-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">${svg}</svg>
+      </button>`).join('')}
+    </div>
+  </div>`;
+}
 /* ══════════════════════════════════════════════════════════════
    PROPERTY PANEL
 ══════════════════════════════════════════════════════════════ */
