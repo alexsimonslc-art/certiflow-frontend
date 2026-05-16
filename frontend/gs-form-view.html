@@ -3335,7 +3335,10 @@
       if (pass) {
         _passData = pass;
         document.getElementById('tyPassSection').style.display = '';
-        renderPassCanvas(pass);
+        const passRender = renderPassCanvas(pass);
+        if (pass.autoMailPending) {
+          passRender.then(() => sendPassMailWithCanvas(pass)).catch(() => sendPassMailWithCanvas(pass));
+        }
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -3738,22 +3741,51 @@
       ctx.fillText('Powered by', W / 2 - 4, H - FOOTER_H + 27);
 
       // ── ASYNC ────────────────────────────────────────────────────────
+      const imageJobs = [];
       if (cfg.logoUrl) {
         const li = new Image(); li.crossOrigin = 'anonymous';
-        li.onload = () => { ctx.save(); _rr(ctx, LX, LY, LS, LS, 8); ctx.clip(); ctx.drawImage(li, LX, LY, LS, LS); ctx.restore(); };
+        imageJobs.push(new Promise(resolve => {
+          li.onload = () => { ctx.save(); _rr(ctx, LX, LY, LS, LS, 8); ctx.clip(); ctx.drawImage(li, LX, LY, LS, LS); ctx.restore(); resolve(); };
+          li.onerror = resolve;
+        }));
         li.src = cfg.logoUrl;
       }
 
       const qi = new Image();
-      qi.onload = () => { ctx.drawImage(qi, QX + 6, QY + 6, QS - 12, QS - 12); };
+      imageJobs.push(new Promise(resolve => {
+        qi.onload = () => { ctx.drawImage(qi, QX + 6, QY + 6, QS - 12, QS - 12); resolve(); };
+        qi.onerror = resolve;
+      }));
       qi.src = pass.qrDataUrl;
 
       const fi = new Image();
-      fi.onload = () => {
-        const fh = 14, fw = fi.naturalWidth > 0 ? Math.round(fh * fi.naturalWidth / fi.naturalHeight) : 42;
-        ctx.drawImage(fi, W / 2 + 2, H - FOOTER_H + 16, fw, fh);
-      };
+      imageJobs.push(new Promise(resolve => {
+        fi.onload = () => {
+          const fh = 14, fw = fi.naturalWidth > 0 ? Math.round(fh * fi.naturalWidth / fi.naturalHeight) : 42;
+          ctx.drawImage(fi, W / 2 + 2, H - FOOTER_H + 16, fw, fh);
+          resolve();
+        };
+        fi.onerror = resolve;
+      }));
       fi.src = 'Images/GalSol GWN.svg';
+
+      return Promise.allSettled(imageJobs);
+    }
+
+    async function sendPassMailWithCanvas(pass) {
+      try {
+        if (!pass?.token) return;
+        const canvas = document.getElementById('passCanvas');
+        const passPngDataUrl = canvas.toDataURL('image/png');
+        const res = await fetch(`${BACKEND}/api/gsforms/send-pass-mail/${encodeURIComponent(formSlug)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ passToken: pass.token, passPngDataUrl }),
+        });
+        if (!res.ok) throw new Error('Pass mail request failed');
+      } catch (e) {
+        console.warn('[gsforms] pass mail send failed:', e.message);
+      }
     }
 
     function _rr(ctx, x, y, w, h, r) {
