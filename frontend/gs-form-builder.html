@@ -4166,14 +4166,7 @@
           <button class="gsfb-rtab active" id="rtabField" onclick="switchRTab('field')">Edit Field</button>
           <button class="gsfb-rtab" id="rtabSettings" onclick="switchRTab('settings')">Settings</button>
           <button class="gsfb-rtab" id="rtabPass" onclick="switchRTab('pass')">Entry Pass</button>
-          <button class="gsfb-rtab" id="rtabMailing" onclick="switchRTab('mailing')">
-            <svg viewBox="0 0 14 14" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"
-              style="flex-shrink:0">
-              <rect x="1" y="2.5" width="12" height="9" rx="1.2" />
-              <polyline points="1,2.5 7,8 13,2.5" />
-            </svg>
-            Mailing
-          </button>
+          <button class="gsfb-rtab" id="rtabMailing" onclick="switchRTab('mailing')">Mailing</button>
         </div>
         <div class="gsfb-right-body" id="rtabFieldBody"></div>
         <div class="gsfb-right-body" id="rtabSettingsBody" style="display:none"></div>
@@ -4346,7 +4339,7 @@
     let rightTab = 'field';
     let canvasTab = 'form';      // 'form' | 'pass' | 'email'
 
-    const AM_API = 'https://certiflow-backend-73xk.onrender.com/api/gsforms';
+    const AM_API = 'https://certiflow-backend-73xk.onrender.com/api/automail';
 
     /* ── AutoMail helpers ───────────────────────────────────────────── */
     function amGet() {
@@ -4381,7 +4374,7 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
       try {
         const token = localStorage.getItem('GalSol_token') || '';
-        const res = await fetch(`${AM_API}/automail/${_S.formId}/test`, {
+        const res = await fetch(`${AM_API}/${_S.formId}/test`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
         });
@@ -5855,10 +5848,6 @@
             </div>`).join('')}
         </div>
 
-        <button class="am-edit-email-btn" onclick="switchCanvasTab('email')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          Edit Email Template
-        </button>
         <button class="am-test-btn" id="amTestBtn" onclick="amSendTest()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           Send Test Email
@@ -5913,10 +5902,12 @@
       // Sync blocks from saved state first so FBME reflects latest
       FBME.blocks = JSON.parse(JSON.stringify(am.emailBlocks || []));
 
+      const themeBg = AM_THEME_BG[amGet().theme] || '#f0f4f9';
+
       if (key === 'entryPass') {
         if (checked) {
           if (!FBME.blocks.some(b => b.type === 'entry_pass')) {
-            FBME.blocks.push({ id: 'b' + (FBME.nextId++), type: 'entry_pass', props: {} });
+            FBME.blocks.push({ id: 'b' + (FBME.nextId++), type: 'entry_pass', props: { bgColor: themeBg } });
           }
         } else {
           FBME.blocks = FBME.blocks.filter(b => b.type !== 'entry_pass');
@@ -5925,7 +5916,7 @@
       if (key === 'responseReceipt') {
         if (checked) {
           if (!FBME.blocks.some(b => b.type === 'response_summary')) {
-            FBME.blocks.push({ id: 'b' + (FBME.nextId++), type: 'response_summary', props: {} });
+            FBME.blocks.push({ id: 'b' + (FBME.nextId++), type: 'response_summary', props: { bgColor: themeBg } });
           }
         } else {
           FBME.blocks = FBME.blocks.filter(b => b.type !== 'response_summary');
@@ -5938,15 +5929,38 @@
       renderMailingPanel();
     }
 
+    // Exposed theme body-bg lookup (used by amApplyTheme and amToggleSendOption)
+    const AM_THEME_BG = {
+      classic: '#ffffff', dark: '#161b22', warm: '#fdf6ec',
+      minimal: '#ffffff', bold: '#2e2a5e', formal: '#1e293b',
+    };
+
     function amApplyTheme(themeId) {
       const theme = AM_THEMES.find(t => t.id === themeId);
       if (!theme) return;
-      const am = amGet();
-      // Build a default block array for this theme
+      const am      = amGet();
       const am_title = _S.config?.settings?.title || _S.name || 'Event Registration';
-      const blocks = _amThemeBlocks(themeId, am_title);
-      amSave({ theme: themeId, emailBlocks: blocks });
-      // Reload canvas if on email tab
+      const baseBlocks = _amThemeBlocks(themeId, am_title);
+      const themeBg    = AM_THEME_BG[themeId] || '#f0f4f9';
+
+      // Preserve any special blocks the user already added; re-apply theme bg to them
+      const specialBlocks = (am.emailBlocks || [])
+        .filter(b => b.type === 'entry_pass' || b.type === 'response_summary')
+        .map(b => ({ ...b, props: { ...b.props, bgColor: themeBg } }));
+
+      // Insert specials before the footer block so layout stays sensible
+      const footerBlock = baseBlocks.find(b => b.type === 'footer');
+      const coreBlocks  = baseBlocks.filter(b => b.type !== 'footer');
+      const merged      = footerBlock
+        ? [...coreBlocks, ...specialBlocks, footerBlock]
+        : [...coreBlocks, ...specialBlocks];
+
+      amSave({ theme: themeId, emailBlocks: merged });
+      FBME.blocks = JSON.parse(JSON.stringify(merged));
+      FBME.blocks.forEach(b => {
+        const n = parseInt((b.id || '').replace('b', ''), 10);
+        if (!isNaN(n) && n >= FBME.nextId) FBME.nextId = n + 1;
+      });
       if (canvasTab === 'email') fbmeInitCanvas();
       renderMailingPanel();
       toast('Theme applied!', 'success', 1500);
@@ -6019,8 +6033,8 @@
       divider: { label: 'Divider', defaults: () => ({ color: '#e2e8f0', thickness: 1, bgColor: '#ffffff', paddingV: 8, paddingH: 40 }) },
       spacer: { label: 'Spacer', defaults: () => ({ height: 24, bgColor: '#ffffff' }) },
       footer: { label: 'Footer', defaults: () => ({ text: 'Sent via GalSol · The Grand Event Console', bgColor: '#f1f5f9', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 16, paddingH: 40, fontFamily: 'inherit' }) },
-      entry_pass: { label: 'Entry Pass', defaults: () => ({}) },
-      response_summary: { label: 'Response Summary', defaults: () => ({}) },
+      entry_pass:       { label: 'Entry Pass',       defaults: () => ({ bgColor: '#f0f4f9' }) },
+      response_summary: { label: 'Response Summary', defaults: () => ({ bgColor: '#ffffff' }) },
     };
 
     function fbmeBlockToHtml(block) {
@@ -6048,7 +6062,8 @@
           const rawDate = s.passDate || '';
           const dateStr = rawDate ? rawDate.split('-').reverse().map(Number).join('/') : 'Date TBD';
           const venue = s.passVenue || '';
-          return `<div style="padding:20px 40px;background:#f0f4f9;text-align:center;font-family:Arial,sans-serif">
+          const epBg  = p.bgColor || '#f0f4f9';
+          return `<div style="padding:20px 40px;background:${epBg};text-align:center;font-family:Arial,sans-serif">
             <table width="240" cellpadding="0" cellspacing="0" style="margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.22)">
               <tr><td style="background:#ffffff;padding:10px 12px 0">
                 <span style="font-size:6px;font-weight:700;letter-spacing:1px;color:#888;background:#f0f4f8;border-radius:6px;padding:2px 7px;text-transform:uppercase">ENTRY PASS</span>
@@ -6069,13 +6084,14 @@
           const fields = (typeof _S !== 'undefined')
             ? (_S.config?.fields || []).filter(f => !['section_break', 'event_pass', 'image'].includes(f.type)).slice(0, 3)
             : [];
+          const rsBg = p.bgColor || '#ffffff';
           const rowsHtml = fields.map(f =>
             `<tr>
               <td style="padding:5px 10px;font-size:10px;font-weight:600;color:#5f6368;background:#f8f9fa;width:40%;border-bottom:1px solid #eee">${f.label || f.type}</td>
               <td style="padding:5px 10px;font-size:10px;color:#1a1a1a;border-bottom:1px solid #eee">Respondent's answer</td>
             </tr>`
           ).join('') || `<tr><td colspan="2" style="padding:10px;font-size:11px;color:#9aa0a6;text-align:center">Form fields will appear here</td></tr>`;
-          return `<div style="padding:16px 40px;font-family:Arial,sans-serif">
+          return `<div style="padding:16px 40px;background:${rsBg};font-family:Arial,sans-serif">
             <div style="background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0">
               <div style="padding:10px 14px;background:#f8f9fa;border-bottom:1px solid #e0e0e0;font-size:12px;font-weight:700;color:#1a1a1a">Form Response Summary</div>
               <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${rowsHtml}</table>
@@ -6105,8 +6121,8 @@
       const canvas = document.getElementById('fbmeCanvas');
       const empty = document.getElementById('fbmeCanvasEmpty');
       if (!canvas) return;
-      // Remove old block wraps (keep empty placeholder in DOM)
-      canvas.querySelectorAll('.fbme-block-wrap').forEach(el => el.remove());
+      // Remove old block wraps and previous watermark (keep empty placeholder)
+      canvas.querySelectorAll('.fbme-block-wrap, .fbme-watermark').forEach(el => el.remove());
       if (!FBME.blocks.length) {
         if (empty) empty.style.display = '';
         return;
@@ -6133,6 +6149,13 @@
         wrap.addEventListener('click', () => fbmeSelectBlock(block.id));
         canvas.appendChild(wrap);
       });
+
+      // Always append non-removable GalSol watermark at the bottom
+      const wm = document.createElement('div');
+      wm.className = 'fbme-watermark';
+      wm.style.cssText = 'padding:10px 40px;background:#f4f5f7;border-top:1px solid #e4e7ed;text-align:center;font-family:Arial,sans-serif;font-size:11px;color:#a0a9b8;user-select:none;cursor:default';
+      wm.innerHTML = `Sent via <strong style="color:#7c3aed">GalSol</strong> &nbsp;&middot;&nbsp; <a href="https://galsol.com" target="_blank" style="color:#7c3aed;text-decoration:none;font-weight:600">Learn More</a> &nbsp;&middot;&nbsp; <a href="https://galsol.com/report" target="_blank" style="color:#a0a9b8;text-decoration:none">Report</a>`;
+      canvas.appendChild(wm);
     }
 
     function fbmeSelectBlock(id) {
@@ -6259,13 +6282,26 @@
     }
 
     function fbmeRenderSpecialBlockProps(block, container) {
+      const colorRow = (label, key, val) => `
+        <div class="am-prop" style="margin-top:14px">
+          <label class="am-prop-label">${label}</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="color" value="${val || '#f0f4f9'}"
+              style="width:32px;height:32px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;background:none;padding:2px"
+              oninput="fbmeUpdateProp('${block.id}','${key}',this.value)">
+            <input class="am-input" style="flex:1" type="text" value="${val || ''}"
+              oninput="fbmeUpdateProp('${block.id}','${key}',this.value)">
+          </div>
+        </div>`;
+
       if (block.type === 'entry_pass') {
         container.innerHTML = `
           <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--cyan);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07)">ENTRY PASS BLOCK</div>
           <div style="font-size:12px;color:var(--text-3);line-height:1.65;margin-bottom:10px">The full pass card you designed in the <strong style="color:var(--text-2)">Entry Pass</strong> tab will be embedded here — including the respondent's QR code.</div>
-          <div class="am-lock-msg">
+          ${colorRow('Section Background', 'bgColor', block.props.bgColor || '#f0f4f9')}
+          <div class="am-lock-msg" style="margin-top:12px">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Reorder freely on the canvas. Edit the pass design in the Entry Pass tab.
+            Reorder freely. Edit the pass design in the Entry Pass tab.
           </div>`;
         return true;
       }
@@ -6273,9 +6309,10 @@
         container.innerHTML = `
           <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--cyan);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07)">RESPONSE SUMMARY BLOCK</div>
           <div style="font-size:12px;color:var(--text-3);line-height:1.65;margin-bottom:10px">All of the respondent's form answers will be shown in a clean table at this position in the email.</div>
-          <div class="am-lock-msg">
+          ${colorRow('Section Background', 'bgColor', block.props.bgColor || '#ffffff')}
+          <div class="am-lock-msg" style="margin-top:12px">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Reorder freely on the canvas. Content is auto-generated at send time.
+            Reorder freely. Content is auto-generated at send time.
           </div>`;
         return true;
       }
