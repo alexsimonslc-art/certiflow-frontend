@@ -5589,32 +5589,24 @@
           <select class="am-select" onchange="amSave({emailFieldId:this.value})">${emailFieldOptions}</select>
         </div>` : ''}
 
-        <div class="am-section-hdr">What to Send</div>
-        <div class="am-send-row${am.send.confirmation ? ' active' : ''}" onclick="amSave({send:{...amGet().send,confirmation:!amGet().send.confirmation}});renderMailingPanel()">
-          <div class="am-send-check"></div>
-          <div class="am-send-info">
-            <div class="am-send-title">Confirmation Mail</div>
-            <div class="am-send-sub">Branded "you're registered" email using your template below</div>
-          </div>
-        </div>
-        <div class="am-send-row${am.send.responseReceipt ? ' active' : ''}" onclick="amSave({send:{...amGet().send,responseReceipt:!amGet().send.responseReceipt}});renderMailingPanel()">
-          <div class="am-send-check"></div>
-          <div class="am-send-info">
-            <div class="am-send-title">Form Response Copy</div>
-            <div class="am-send-sub">Auto-generated receipt of their answers</div>
-          </div>
-        </div>
-        <div class="am-send-row${am.send.entryPass ? ' active' : ''}${!_S.config?.settings?.passEnabled ? ' ' : ''}"
-          onclick="${_S.config?.settings?.passEnabled ? `amSave({send:{...amGet().send,entryPass:!amGet().send.entryPass}});renderMailingPanel()` : 'toast(\'Design an Entry Pass first in the Entry Pass tab\',\'warn\')'}">
+        <div class="am-section-hdr">Include in Email</div>
+        <div class="am-send-row${am.send.entryPass ? ' active' : ''}"
+          onclick="${_S.config?.settings?.passEnabled ? `amToggleSendOption('entryPass',${!am.send.entryPass})` : 'toast(\'Design an Entry Pass first in the Entry Pass tab\',\'warn\')'}">
           <div class="am-send-check" style="${!_S.config?.settings?.passEnabled ? 'opacity:0.35' : ''}"></div>
           <div class="am-send-info">
             <div class="am-send-title" style="${!_S.config?.settings?.passEnabled ? 'opacity:0.45' : ''}">Entry Pass</div>
-            <div class="am-send-sub" style="${!_S.config?.settings?.passEnabled ? 'opacity:0.45' : ''}">Attach and embed respondent's QR pass</div>
+            <div class="am-send-sub" style="${!_S.config?.settings?.passEnabled ? 'opacity:0.45' : ''}">Adds respondent's full pass card to the email</div>
             ${!_S.config?.settings?.passEnabled ? `<div class="am-send-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Design your Entry Pass first</div>` : ''}
           </div>
         </div>
+        <div class="am-send-row${am.send.responseReceipt ? ' active' : ''}" onclick="amToggleSendOption('responseReceipt',${!am.send.responseReceipt})">
+          <div class="am-send-check"></div>
+          <div class="am-send-info">
+            <div class="am-send-title">Form Response Copy</div>
+            <div class="am-send-sub">Adds a summary of their answers to the email</div>
+          </div>
+        </div>
 
-        ${am.send.confirmation ? `
         <div class="am-section-hdr">Email Theme</div>
         <div class="am-theme-grid">
           ${AM_THEMES.map(t => `
@@ -5632,7 +5624,7 @@
         <button class="am-test-btn" id="amTestBtn" onclick="amSendTest()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           Send Test Email
-        </button>` : ''}
+        </button>
       ` : '';
 
       body.innerHTML = `
@@ -5660,7 +5652,6 @@
         return;
       }
       const am = amGet();
-      // Auto-assign emailFieldId if not set
       if (checked && !am.emailFieldId) {
         const ef = amEmailFields()[0];
         if (ef) am.emailFieldId = ef.id;
@@ -5671,6 +5662,39 @@
       if (checked && !am.emailBlocks.length) {
         amApplyTheme(am.theme || 'classic');
       }
+    }
+
+    function amToggleSendOption(key, checked) {
+      const am = amGet();
+      const send = { ...(am.send || {}), [key]: checked };
+      amSave({ send });
+
+      // Sync blocks from saved state first so FBME reflects latest
+      FBME.blocks = JSON.parse(JSON.stringify(am.emailBlocks || []));
+
+      if (key === 'entryPass') {
+        if (checked) {
+          if (!FBME.blocks.some(b => b.type === 'entry_pass')) {
+            FBME.blocks.push({ id: 'b' + (FBME.nextId++), type: 'entry_pass', props: {} });
+          }
+        } else {
+          FBME.blocks = FBME.blocks.filter(b => b.type !== 'entry_pass');
+        }
+      }
+      if (key === 'responseReceipt') {
+        if (checked) {
+          if (!FBME.blocks.some(b => b.type === 'response_summary')) {
+            FBME.blocks.push({ id: 'b' + (FBME.nextId++), type: 'response_summary', props: {} });
+          }
+        } else {
+          FBME.blocks = FBME.blocks.filter(b => b.type !== 'response_summary');
+        }
+      }
+
+      fbmeSaveBlocks();
+      // Re-render canvas only if we're already on the email tab
+      if (canvasTab === 'email') fbmeRenderCanvas();
+      renderMailingPanel();
     }
 
     function amApplyTheme(themeId) {
@@ -5747,13 +5771,15 @@
     };
 
     const FBME_DEFS = {
-      header: { label: 'Header',  defaults: () => ({ text: 'Event Name', bgColor: '#00d4ff', color: '#000000', fontSize: 26, fontWeight: 700, align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
-      text:   { label: 'Text',    defaults: () => ({ text: 'Hello {{name}},', bgColor: '#ffffff', color: '#1e293b', fontSize: 15, fontWeight: 400, fontStyle: 'normal', align: 'left', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
-      button: { label: 'Button',  defaults: () => ({ text: 'Click Here', link: '#', btnBg: '#00d4ff', btnColor: '#000000', fontSize: 15, borderRadius: 8, align: 'center', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
-      image:  { label: 'Image',   defaults: () => ({ src: '', alt: '', width: 100, borderRadius: 0, bgColor: '#ffffff', paddingV: 16, paddingH: 40 }) },
-      divider:{ label: 'Divider', defaults: () => ({ color: '#e2e8f0', thickness: 1, bgColor: '#ffffff', paddingV: 8, paddingH: 40 }) },
-      spacer: { label: 'Spacer',  defaults: () => ({ height: 24, bgColor: '#ffffff' }) },
-      footer: { label: 'Footer',  defaults: () => ({ text: 'Sent via GalSol · The Grand Event Console', bgColor: '#f1f5f9', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 16, paddingH: 40, fontFamily: 'inherit' }) },
+      header:           { label: 'Header',           defaults: () => ({ text: 'Event Name', bgColor: '#00d4ff', color: '#000000', fontSize: 26, fontWeight: 700, align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
+      text:             { label: 'Text',             defaults: () => ({ text: 'Hello {{name}},', bgColor: '#ffffff', color: '#1e293b', fontSize: 15, fontWeight: 400, fontStyle: 'normal', align: 'left', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
+      button:           { label: 'Button',           defaults: () => ({ text: 'Click Here', link: '#', btnBg: '#00d4ff', btnColor: '#000000', fontSize: 15, borderRadius: 8, align: 'center', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
+      image:            { label: 'Image',            defaults: () => ({ src: '', alt: '', width: 100, borderRadius: 0, bgColor: '#ffffff', paddingV: 16, paddingH: 40 }) },
+      divider:          { label: 'Divider',          defaults: () => ({ color: '#e2e8f0', thickness: 1, bgColor: '#ffffff', paddingV: 8, paddingH: 40 }) },
+      spacer:           { label: 'Spacer',           defaults: () => ({ height: 24, bgColor: '#ffffff' }) },
+      footer:           { label: 'Footer',           defaults: () => ({ text: 'Sent via GalSol · The Grand Event Console', bgColor: '#f1f5f9', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 16, paddingH: 40, fontFamily: 'inherit' }) },
+      entry_pass:       { label: 'Entry Pass',       defaults: () => ({}) },
+      response_summary: { label: 'Response Summary', defaults: () => ({}) },
     };
 
     function fbmeBlockToHtml(block) {
@@ -5774,6 +5800,48 @@
           return `<div style="height:${p.height}px;background:${p.bgColor}"></div>`;
         case 'footer':
           return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align||'center'}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};font-family:${ff};line-height:1.6">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+        case 'entry_pass': {
+          const s = (typeof _S !== 'undefined' && _S?.config?.settings) ? _S.config.settings : {};
+          const primary  = s.passBannerColor || '#003087';
+          const evtName  = s.passEventName || (typeof _S !== 'undefined' ? _S.name : '') || 'Event Name';
+          const rawDate  = s.passDate || '';
+          const dateStr  = rawDate ? rawDate.split('-').reverse().map(Number).join('/') : 'Date TBD';
+          const venue    = s.passVenue || '';
+          return `<div style="padding:20px 40px;background:#f0f4f9;text-align:center;font-family:Arial,sans-serif">
+            <table width="240" cellpadding="0" cellspacing="0" style="margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.22)">
+              <tr><td style="background:#ffffff;padding:10px 12px 0">
+                <span style="font-size:6px;font-weight:700;letter-spacing:1px;color:#888;background:#f0f4f8;border-radius:6px;padding:2px 7px;text-transform:uppercase">ENTRY PASS</span>
+              </td></tr>
+              <tr><td style="background:#ffffff;padding:6px 12px;font-size:13px;font-weight:800;color:#0d1b3e;text-align:center">${evtName}</td></tr>
+              <tr><td style="background:#ffffff;padding:2px 12px 6px;font-size:8px;color:#666;text-align:center">${dateStr}${venue ? ' &middot; ' + venue : ''}</td></tr>
+              <tr><td style="background:#ffffff;padding:6px 12px 10px;text-align:center">
+                <div style="width:70px;height:70px;margin:0 auto;background:#f0f0f0;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:#aaa">QR Code</div>
+              </td></tr>
+              <tr><td style="background:${primary};padding:9px 12px">
+                <div style="font-size:10px;font-weight:800;color:#fff">NAME: {{name}}</div>
+              </td></tr>
+            </table>
+            <div style="margin-top:8px;font-size:10px;color:#94a3b8;font-style:italic">Entry Pass block &mdash; rendered with real QR at send time</div>
+          </div>`;
+        }
+        case 'response_summary': {
+          const fields = (typeof _S !== 'undefined')
+            ? (_S.config?.fields || []).filter(f => !['section_break','event_pass','image'].includes(f.type)).slice(0, 3)
+            : [];
+          const rowsHtml = fields.map(f =>
+            `<tr>
+              <td style="padding:5px 10px;font-size:10px;font-weight:600;color:#5f6368;background:#f8f9fa;width:40%;border-bottom:1px solid #eee">${f.label || f.type}</td>
+              <td style="padding:5px 10px;font-size:10px;color:#1a1a1a;border-bottom:1px solid #eee">Respondent's answer</td>
+            </tr>`
+          ).join('') || `<tr><td colspan="2" style="padding:10px;font-size:11px;color:#9aa0a6;text-align:center">Form fields will appear here</td></tr>`;
+          return `<div style="padding:16px 40px;font-family:Arial,sans-serif">
+            <div style="background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0">
+              <div style="padding:10px 14px;background:#f8f9fa;border-bottom:1px solid #e0e0e0;font-size:12px;font-weight:700;color:#1a1a1a">Form Response Summary</div>
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">${rowsHtml}</table>
+            </div>
+            <div style="margin-top:6px;font-size:10px;color:#94a3b8;text-align:center;font-style:italic">Response Summary block &mdash; rendered with real answers at send time</div>
+          </div>`;
+        }
         default: return '';
       }
     }
@@ -5834,8 +5902,10 @@
         el.classList.toggle('selected', el.dataset.id === id)
       );
       const block = FBME.blocks.find(b => b.id === id);
-      const body = document.getElementById('rtabMailingBody');
-      if (body && block) fbmeRenderProps(block, body);
+      const body  = document.getElementById('rtabMailingBody');
+      if (!body || !block) return;
+      if (fbmeRenderSpecialBlockProps(block, body)) return;
+      fbmeRenderProps(block, body);
     }
 
     function fbmeAddBlock(type) {
@@ -5956,6 +6026,36 @@
       </button>`);
 
       container.innerHTML = rows.join('');
+    }
+
+    function fbmeRenderSpecialBlockProps(block, container) {
+      const backBtn = `<button class="am-test-btn" style="margin-top:12px" onclick="FBME.selectedId=null;renderMailingPanel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Mailing Settings
+      </button>`;
+      if (block.type === 'entry_pass') {
+        container.innerHTML = `
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--cyan);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07)">ENTRY PASS BLOCK</div>
+          <div style="font-size:12px;color:var(--text-3);line-height:1.65;margin-bottom:10px">The full pass card you designed in the <strong style="color:var(--text-2)">Entry Pass</strong> tab will be embedded here — including the respondent's QR code.</div>
+          <div class="am-lock-msg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Reorder freely on the canvas. Edit the pass design in the Entry Pass tab.
+          </div>
+          ${backBtn}`;
+        return true;
+      }
+      if (block.type === 'response_summary') {
+        container.innerHTML = `
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--cyan);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07)">RESPONSE SUMMARY BLOCK</div>
+          <div style="font-size:12px;color:var(--text-3);line-height:1.65;margin-bottom:10px">All of the respondent's form answers will be shown in a clean table at this position in the email.</div>
+          <div class="am-lock-msg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Reorder freely on the canvas. Content is auto-generated at send time.
+          </div>
+          ${backBtn}`;
+        return true;
+      }
+      return false;
     }
 
     function fbmeBuildMergeBar() {
