@@ -3233,6 +3233,426 @@
       width: 16px;
       height: 16px;
     }
+
+    /* ══════════════════════════════════════════════════════════════
+       AUTO MAIL PANEL STYLES
+    ══════════════════════════════════════════════════════════════ */
+
+    /* Toggle switch */
+    .am-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 14px;
+    }
+    .am-toggle-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .am-toggle-label svg { width: 15px; height: 15px; color: var(--cyan); }
+    .am-toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .am-toggle input { opacity: 0; width: 0; height: 0; }
+    .am-toggle-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .am-toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--text-3);
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .am-toggle input:checked + .am-toggle-track {
+      background: rgba(0,212,255,0.18);
+      border-color: rgba(0,212,255,0.4);
+    }
+    .am-toggle input:checked + .am-toggle-track::after {
+      transform: translateX(18px);
+      background: var(--cyan);
+    }
+
+    /* Lock state */
+    .am-lock-msg {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 11px 13px;
+      background: rgba(245,158,11,0.07);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 9px;
+      font-size: 12px;
+      color: var(--gold);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .am-lock-msg svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+
+    /* Section headers inside mailing panel */
+    .am-section-hdr {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin: 16px 0 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Mailing panel prop rows */
+    .am-prop { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    .am-prop-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .am-input {
+      width: 100%;
+      padding: 8px 11px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 12.5px;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .am-input:focus { border-color: rgba(0,212,255,0.4); }
+    .am-input::placeholder { color: var(--text-3); }
+
+    /* Send toggles */
+    .am-send-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 9px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-bottom: 4px;
+      border: 1px solid transparent;
+    }
+    .am-send-row:hover { background: rgba(255,255,255,0.03); }
+    .am-send-row.active {
+      background: rgba(0,212,255,0.05);
+      border-color: rgba(0,212,255,0.15);
+    }
+    .am-send-check {
+      width: 17px;
+      height: 17px;
+      border-radius: 4px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .am-send-row.active .am-send-check {
+      background: var(--cyan);
+      border-color: var(--cyan);
+    }
+    .am-send-row.active .am-send-check::after {
+      content: '';
+      width: 9px;
+      height: 5px;
+      border-left: 2px solid #000;
+      border-bottom: 2px solid #000;
+      transform: rotate(-45deg) translateY(-1px);
+      display: block;
+    }
+    .am-send-info { flex: 1; min-width: 0; }
+    .am-send-title { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .am-send-sub   { font-size: 11px;   color: var(--text-3); line-height: 1.4; }
+    .am-send-note  {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      padding: 7px 10px;
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.15);
+      border-radius: 7px;
+      font-size: 11px;
+      color: rgba(245,158,11,0.85);
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+    .am-send-note svg { width: 12px; height: 12px; flex-shrink: 0; margin-top: 1px; }
+
+    /* Email field mapping dropdown */
+    .am-select {
+      width: 100%;
+      padding: 8px 11px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 12.5px;
+      font-family: var(--font);
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235a7394' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    .am-select option { background: #0d1728; }
+
+    /* Theme picker */
+    .am-theme-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+    .am-theme-card {
+      border-radius: 8px;
+      padding: 8px 6px;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      text-align: center;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-3);
+      transition: all 0.15s;
+      overflow: hidden;
+    }
+    .am-theme-card:hover {
+      border-color: rgba(255,255,255,0.2);
+      color: var(--text);
+    }
+    .am-theme-card.active {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(0,212,255,0.06);
+    }
+    .am-theme-swatch {
+      height: 28px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+
+    /* "Edit Email" CTA button at bottom of mailing panel */
+    .am-edit-email-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      margin-top: 14px;
+      border-radius: 9px;
+      background: rgba(0,212,255,0.10);
+      border: 1px solid rgba(0,212,255,0.3);
+      color: var(--cyan);
+      font-size: 12.5px;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .am-edit-email-btn:hover {
+      background: rgba(0,212,255,0.16);
+      box-shadow: 0 4px 16px rgba(0,212,255,0.15);
+    }
+    .am-edit-email-btn svg { width: 14px; height: 14px; }
+
+    /* Test email button */
+    .am-test-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px;
+      margin-top: 8px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text-2);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .am-test-btn:hover {
+      border-color: rgba(255,255,255,0.25);
+      color: var(--text);
+    }
+    .am-test-btn svg { width: 13px; height: 13px; }
+
+    /* Email Canvas (center panel - Email tab) */
+    #gsfbEmailCanvasWrap {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding-bottom: 40px;
+    }
+
+    .fbme-merge-bar {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+    .fbme-merge-bar-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      flex-shrink: 0;
+    }
+    .fbme-merge-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      cursor: pointer;
+      font-family: var(--font-mono, monospace);
+      transition: all 0.13s;
+      user-select: none;
+    }
+    .fbme-merge-tag:hover {
+      background: rgba(0,212,255,0.15);
+      border-color: rgba(0,212,255,0.4);
+    }
+
+    .fbme-canvas-wrap {
+      width: 100%;
+      max-width: 600px;
+      background: #1a1a2e;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    .fbme-block-wrap {
+      position: relative;
+      cursor: pointer;
+      outline: 2px solid transparent;
+      outline-offset: -2px;
+      transition: outline-color 0.12s;
+    }
+    .fbme-block-wrap:hover   { outline-color: rgba(0,212,255,0.35); }
+    .fbme-block-wrap.selected { outline-color: var(--cyan); }
+
+    .fbme-block-ctrl {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      display: none;
+      align-items: center;
+      gap: 2px;
+      background: rgba(4,8,20,0.9);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      padding: 2px 3px;
+      z-index: 10;
+    }
+    .fbme-block-wrap:hover .fbme-block-ctrl,
+    .fbme-block-wrap.selected .fbme-block-ctrl { display: flex; }
+    .fbme-block-ctrl button {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: transparent;
+      border: none;
+      color: var(--text-3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      transition: color 0.12s, background 0.12s;
+    }
+    .fbme-block-ctrl button:hover { color: var(--text); background: rgba(255,255,255,0.07); }
+    .fbme-block-ctrl button.del:hover { color: var(--red); }
+
+    .fbme-canvas-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      color: var(--text-3);
+      font-size: 12.5px;
+      text-align: center;
+      gap: 8px;
+    }
+    .fbme-canvas-empty svg { width: 32px; height: 32px; opacity: 0.2; }
+
+    /* Left panel block-add grid (when in email tab) */
+    #ltabEmailAddBody { display: none; }
+    .fbme-block-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      padding: 12px 10px;
+    }
+    .fbme-block-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 12px 6px 10px;
+      color: var(--text-2);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s;
+      font-family: var(--font);
+      text-align: center;
+    }
+    .fbme-block-card:hover {
+      background: rgba(0,212,255,0.07);
+      border-color: rgba(0,212,255,0.3);
+      color: var(--text);
+    }
+    .fbme-block-card svg { width: 18px; height: 18px; color: var(--cyan); opacity: 0.85; }
   </style>
 </head>
 
@@ -3496,6 +3916,13 @@
             </svg>
             Pass
           </button>
+          <button class="gsfb-ctab" id="ctabEmail" onclick="switchCanvasTab('email')" style="display:none">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="1" y="3" width="14" height="10" rx="1.5"/>
+              <polyline points="1,3 8,9.5 15,3"/>
+            </svg>
+            Email
+          </button>
         </div>
 
         <!-- Form Canvas (active on 'form' tab) -->
@@ -3519,21 +3946,45 @@
         <!-- Pass Canvas Editor (active on 'pass' tab) -->
         <div id="gsfbPassCanvasWrap" style="display:none"></div>
 
+        <!-- Email Canvas Editor (active on 'email' tab) -->
+        <div id="gsfbEmailCanvasWrap" style="display:none;flex-direction:column;align-items:center;width:100%;padding-bottom:40px;">
+          <!-- Merge tag bar -->
+          <div class="fbme-merge-bar" id="fbmeMergeBar">
+            <span class="fbme-merge-bar-label">Tags:</span>
+            <!-- populated by fbmeBuildMergeBar() -->
+          </div>
+          <!-- Block canvas -->
+          <div class="fbme-canvas-wrap" id="fbmeCanvas">
+            <div class="fbme-canvas-empty" id="fbmeCanvasEmpty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+              <div>Add blocks from the left panel<br>to design your email</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Hidden canvas used only for pass image generation -->
         <canvas id="pvPassCanvas" width="520" height="693" style="display:none"></canvas>
 
       </main>
 
-      <!-- RIGHT: Field Editor + Settings + Entry Pass -->
+      <!-- RIGHT: Field Editor + Settings + Entry Pass + Mailing -->
       <aside class="gsfb-right">
         <div class="gsfb-right-tabs">
           <button class="gsfb-rtab active" id="rtabField" onclick="switchRTab('field')">Edit Field</button>
           <button class="gsfb-rtab" id="rtabSettings" onclick="switchRTab('settings')">Settings</button>
           <button class="gsfb-rtab" id="rtabPass" onclick="switchRTab('pass')">Entry Pass</button>
+          <button class="gsfb-rtab" id="rtabMailing" onclick="switchRTab('mailing')">
+            <svg viewBox="0 0 14 14" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" style="flex-shrink:0">
+              <rect x="1" y="2.5" width="12" height="9" rx="1.2"/>
+              <polyline points="1,2.5 7,8 13,2.5"/>
+            </svg>
+            Mailing
+          </button>
         </div>
         <div class="gsfb-right-body" id="rtabFieldBody"></div>
         <div class="gsfb-right-body" id="rtabSettingsBody" style="display:none"></div>
         <div class="gsfb-right-body" id="rtabPassBody" style="display:none"></div>
+        <div class="gsfb-right-body" id="rtabMailingBody" style="display:none"></div>
       </aside>
 
     </div>
@@ -3691,7 +4142,56 @@
     let publishedUrl = null;
     let leaveTarget = 'gs-forms.html';
     let rightTab = 'field';
-    let canvasTab = 'form';      // 'form' | 'pass'
+    let canvasTab = 'form';      // 'form' | 'pass' | 'email'
+
+    const AM_API = 'https://certiflow-backend-73xk.onrender.com/api/gsforms';
+
+    /* ── AutoMail helpers ───────────────────────────────────────────── */
+    function amGet() {
+      if (!_S.config.autoMail) {
+        _S.config.autoMail = {
+          enabled: false, subject: 'Thanks for registering — {{name}}',
+          replyTo: '', emailFieldId: null,
+          send: { confirmation: true, responseReceipt: false, entryPass: false },
+          theme: null, emailBlocks: [],
+        };
+      }
+      return _S.config.autoMail;
+    }
+
+    function amSave(patch) {
+      const am = amGet();
+      Object.assign(am, patch);
+      _S.dirty = true;
+      _S.save();
+      setSaveStatus('unsaved');
+    }
+
+    function amEmailFields() {
+      return (_S.config?.fields || []).filter(f => f.type === 'email');
+    }
+
+    function amHasEmailField() { return amEmailFields().length > 0; }
+
+    async function amSendTest() {
+      if (!_S.formId) { toast('Save the form first.', 'warn'); return; }
+      const btn = document.getElementById('amTestBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+      try {
+        const token = localStorage.getItem('GalSol_token') || '';
+        const res = await fetch(`${AM_API}/automail/${_S.formId}/test`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        });
+        const d = await res.json();
+        if (!res.ok) throw new Error(d.error || 'Failed');
+        toast('Test email sent to your address!', 'success');
+      } catch (e) {
+        toast('Test failed: ' + e.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Send Test Email'; }
+      }
+    }
 
     const PALETTES = [
       // ── 9 Light themes ────────────────────────────────────────────────
@@ -4114,15 +4614,17 @@
       document.getElementById('rtabField').classList.toggle('active', tab === 'field');
       document.getElementById('rtabSettings').classList.toggle('active', tab === 'settings');
       document.getElementById('rtabPass').classList.toggle('active', tab === 'pass');
+      document.getElementById('rtabMailing').classList.toggle('active', tab === 'mailing');
       document.getElementById('rtabFieldBody').style.display = tab === 'field' ? '' : 'none';
       document.getElementById('rtabSettingsBody').style.display = tab === 'settings' ? '' : 'none';
       document.getElementById('rtabPassBody').style.display = tab === 'pass' ? '' : 'none';
+      document.getElementById('rtabMailingBody').style.display = tab === 'mailing' ? '' : 'none';
 
       if (tab === 'field') {
-        if (canvasTab === 'pass') switchCanvasTab('form');
+        if (canvasTab === 'pass' || canvasTab === 'email') switchCanvasTab('form');
         renderRightPanel();
       } else if (tab === 'settings') {
-        if (canvasTab === 'pass') switchCanvasTab('form');
+        if (canvasTab === 'pass' || canvasTab === 'email') switchCanvasTab('form');
         renderSettings();
       } else if (tab === 'pass') {
         if (_S.config?.settings?.passEnabled && canvasTab !== 'pass') {
@@ -4130,6 +4632,8 @@
           return;
         }
         renderPassSettings();
+      } else if (tab === 'mailing') {
+        renderMailingPanel();
       }
     }
 
@@ -4908,11 +5412,16 @@
       canvasTab = tab;
       document.getElementById('ctabForm')?.classList.toggle('active', tab === 'form');
       document.getElementById('ctabPass')?.classList.toggle('active', tab === 'pass');
+      document.getElementById('ctabEmail')?.classList.toggle('active', tab === 'email');
       document.getElementById('gsfbFormCanvasWrap').style.display = tab === 'form' ? '' : 'none';
       document.getElementById('gsfbPassCanvasWrap').style.display = tab === 'pass' ? '' : 'none';
+      document.getElementById('gsfbEmailCanvasWrap').style.display = tab === 'email' ? 'flex' : 'none';
       if (tab === 'pass') {
         renderPassCanvas();
         switchRTab('pass');
+      } else if (tab === 'email') {
+        fbmeInitCanvas();
+        switchRTab('mailing');
       }
     }
 
@@ -5011,9 +5520,505 @@
     function updateCanvasTabVisibility() {
       const bar = document.getElementById('gsfbCanvasTabBar');
       if (!bar) return;
-      const enabled = !!_S.config?.settings?.passEnabled;
-      bar.style.display = enabled ? '' : 'none';
-      if (!enabled && canvasTab === 'pass') switchCanvasTab('form');
+      const passEnabled = !!_S.config?.settings?.passEnabled;
+      const mailEnabled = !!_S.config?.autoMail?.enabled;
+      const show = passEnabled || mailEnabled;
+      bar.style.display = show ? '' : 'none';
+      const passTab = document.getElementById('ctabPass');
+      const emailTab = document.getElementById('ctabEmail');
+      if (passTab) passTab.style.display = passEnabled ? '' : 'none';
+      if (emailTab) emailTab.style.display = mailEnabled ? '' : 'none';
+      if (!passEnabled && canvasTab === 'pass') switchCanvasTab('form');
+      if (!mailEnabled && canvasTab === 'email') switchCanvasTab('form');
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       MAILING PANEL — renderMailingPanel
+    ════════════════════════════════════════════════════════════════ */
+    const AM_THEMES = [
+      { id: 'classic',   name: 'Classic',   bg: '#ffffff', accent: '#00d4ff', swatchA: '#ffffff', swatchB: '#00d4ff' },
+      { id: 'dark',      name: 'Dark',      bg: '#0d1117', accent: '#00d4ff', swatchA: '#0d1117', swatchB: '#00d4ff' },
+      { id: 'warm',      name: 'Warm',      bg: '#fdf6ec', accent: '#f59e0b', swatchA: '#fdf6ec', swatchB: '#f59e0b' },
+      { id: 'minimal',   name: 'Minimal',   bg: '#f8fafc', accent: '#64748b', swatchA: '#f8fafc', swatchB: '#64748b' },
+      { id: 'bold',      name: 'Bold',      bg: '#1e1b4b', accent: '#a78bfa', swatchA: '#1e1b4b', swatchB: '#a78bfa' },
+      { id: 'formal',    name: 'Formal',    bg: '#0f172a', accent: '#f59e0b', swatchA: '#0f172a', swatchB: '#f59e0b' },
+    ];
+
+    function renderMailingPanel() {
+      const body = document.getElementById('rtabMailingBody');
+      if (!body) return;
+      const am = amGet();
+      const emailFields = amEmailFields();
+      const locked = !amHasEmailField();
+
+      // If we're in email canvas mode, show block props instead of panel settings
+      if (canvasTab === 'email' && FBME.selectedId) {
+        const block = FBME.blocks.find(b => b.id === FBME.selectedId);
+        if (block) { fbmeRenderProps(block, body); return; }
+      }
+
+      const lockHtml = locked ? `
+        <div class="am-lock-msg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          An <strong>Email</strong> field is required to enable Mailing. Add one first.
+        </div>` : '';
+
+      const toggleChecked = am.enabled && !locked ? 'checked' : '';
+
+      const emailFieldOptions = emailFields.map(f =>
+        `<option value="${f.id}" ${am.emailFieldId === f.id ? 'selected' : ''}>${f.label || 'Email Field'}</option>`
+      ).join('');
+
+      const sendSection = am.enabled && !locked ? `
+        <div class="am-section-hdr">Email Settings</div>
+        <div class="am-prop">
+          <label class="am-prop-label">Subject Line</label>
+          <input class="am-input" type="text" value="${escAttr(am.subject || '')}"
+            placeholder="Thanks for registering — {{name}}"
+            oninput="amSave({subject:this.value})">
+        </div>
+        <div class="am-prop">
+          <label class="am-prop-label">Reply-To (optional)</label>
+          <input class="am-input" type="email" value="${escAttr(am.replyTo || '')}"
+            placeholder="your@email.com"
+            oninput="amSave({replyTo:this.value})">
+        </div>
+        ${emailFields.length > 1 ? `
+        <div class="am-prop">
+          <label class="am-prop-label">Recipient Email Field</label>
+          <select class="am-select" onchange="amSave({emailFieldId:this.value})">${emailFieldOptions}</select>
+        </div>` : ''}
+
+        <div class="am-section-hdr">What to Send</div>
+        <div class="am-send-row${am.send.confirmation ? ' active' : ''}" onclick="amSave({send:{...amGet().send,confirmation:!amGet().send.confirmation}});renderMailingPanel()">
+          <div class="am-send-check"></div>
+          <div class="am-send-info">
+            <div class="am-send-title">Confirmation Mail</div>
+            <div class="am-send-sub">Branded "you're registered" email using your template below</div>
+          </div>
+        </div>
+        <div class="am-send-row${am.send.responseReceipt ? ' active' : ''}" onclick="amSave({send:{...amGet().send,responseReceipt:!amGet().send.responseReceipt}});renderMailingPanel()">
+          <div class="am-send-check"></div>
+          <div class="am-send-info">
+            <div class="am-send-title">Form Response Copy</div>
+            <div class="am-send-sub">Auto-generated receipt of their answers</div>
+          </div>
+        </div>
+        <div class="am-send-row${am.send.entryPass ? ' active' : ''}${!_S.config?.settings?.passEnabled ? ' ' : ''}"
+          onclick="${_S.config?.settings?.passEnabled ? `amSave({send:{...amGet().send,entryPass:!amGet().send.entryPass}});renderMailingPanel()` : 'toast(\'Design an Entry Pass first in the Entry Pass tab\',\'warn\')'}">
+          <div class="am-send-check" style="${!_S.config?.settings?.passEnabled ? 'opacity:0.35' : ''}"></div>
+          <div class="am-send-info">
+            <div class="am-send-title" style="${!_S.config?.settings?.passEnabled ? 'opacity:0.45' : ''}">Entry Pass</div>
+            <div class="am-send-sub" style="${!_S.config?.settings?.passEnabled ? 'opacity:0.45' : ''}">Attach and embed respondent's QR pass</div>
+            ${!_S.config?.settings?.passEnabled ? `<div class="am-send-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Design your Entry Pass first</div>` : ''}
+          </div>
+        </div>
+
+        ${am.send.confirmation ? `
+        <div class="am-section-hdr">Email Theme</div>
+        <div class="am-theme-grid">
+          ${AM_THEMES.map(t => `
+            <div class="am-theme-card${am.theme === t.id ? ' active' : ''}"
+              onclick="amApplyTheme('${t.id}')">
+              <div class="am-theme-swatch" style="background:linear-gradient(135deg,${t.swatchA},${t.swatchB})"></div>
+              ${t.name}
+            </div>`).join('')}
+        </div>
+
+        <button class="am-edit-email-btn" onclick="switchCanvasTab('email')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Email Template
+        </button>
+        <button class="am-test-btn" id="amTestBtn" onclick="amSendTest()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send Test Email
+        </button>` : ''}
+      ` : '';
+
+      body.innerHTML = `
+        <div class="am-toggle-row">
+          <span class="am-toggle-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3,5 12,13 21,5"/></svg>
+            Send Automated Mails
+          </span>
+          <label class="am-toggle">
+            <input type="checkbox" ${toggleChecked} ${locked ? 'disabled' : ''}
+              onchange="amToggleEnabled(this.checked)">
+            <span class="am-toggle-track"></span>
+          </label>
+        </div>
+        ${lockHtml}
+        ${!am.enabled && !locked ? `<div style="font-size:12px;color:var(--text-3);line-height:1.6">Turn on to automatically send emails to respondents when they submit this form.</div>` : ''}
+        ${sendSection}
+      `;
+    }
+
+    function amToggleEnabled(checked) {
+      if (checked && !amHasEmailField()) {
+        toast('Add an Email field to your form first.', 'warn');
+        setTimeout(() => renderMailingPanel(), 0);
+        return;
+      }
+      const am = amGet();
+      // Auto-assign emailFieldId if not set
+      if (checked && !am.emailFieldId) {
+        const ef = amEmailFields()[0];
+        if (ef) am.emailFieldId = ef.id;
+      }
+      amSave({ enabled: checked });
+      updateCanvasTabVisibility();
+      renderMailingPanel();
+      if (checked && !am.emailBlocks.length) {
+        amApplyTheme(am.theme || 'classic');
+      }
+    }
+
+    function amApplyTheme(themeId) {
+      const theme = AM_THEMES.find(t => t.id === themeId);
+      if (!theme) return;
+      const am = amGet();
+      // Build a default block array for this theme
+      const am_title = _S.config?.settings?.title || _S.name || 'Event Registration';
+      const blocks = _amThemeBlocks(themeId, am_title);
+      amSave({ theme: themeId, emailBlocks: blocks });
+      // Reload canvas if on email tab
+      if (canvasTab === 'email') fbmeInitCanvas();
+      renderMailingPanel();
+      toast('Theme applied!', 'success', 1500);
+    }
+
+    function _amThemeBlocks(themeId, title) {
+      const configs = {
+        classic: {
+          headerBg: '#00d4ff', headerColor: '#000000',
+          bodyBg: '#ffffff',   bodyColor: '#1e293b',
+          btnBg: '#00d4ff',    btnColor: '#000000',
+          footerBg: '#f1f5f9', footerColor: '#94a3b8',
+        },
+        dark: {
+          headerBg: '#0d1117', headerColor: '#00d4ff',
+          bodyBg: '#161b22',   bodyColor: '#e6edf3',
+          btnBg: '#00d4ff',    btnColor: '#000000',
+          footerBg: '#0d1117', footerColor: '#8b949e',
+        },
+        warm: {
+          headerBg: '#f59e0b', headerColor: '#ffffff',
+          bodyBg: '#fdf6ec',   bodyColor: '#92400e',
+          btnBg: '#f59e0b',    btnColor: '#ffffff',
+          footerBg: '#fef3c7', footerColor: '#a16207',
+        },
+        minimal: {
+          headerBg: '#f8fafc', headerColor: '#0f172a',
+          bodyBg: '#ffffff',   bodyColor: '#475569',
+          btnBg: '#0f172a',    btnColor: '#ffffff',
+          footerBg: '#f8fafc', footerColor: '#94a3b8',
+        },
+        bold: {
+          headerBg: '#1e1b4b', headerColor: '#a78bfa',
+          bodyBg: '#2e2a5e',   bodyColor: '#e0d9ff',
+          btnBg: '#a78bfa',    btnColor: '#1e1b4b',
+          footerBg: '#1e1b4b', footerColor: '#6d63a8',
+        },
+        formal: {
+          headerBg: '#0f172a', headerColor: '#f59e0b',
+          bodyBg: '#1e293b',   bodyColor: '#cbd5e1',
+          btnBg: '#f59e0b',    btnColor: '#0f172a',
+          footerBg: '#0f172a', footerColor: '#64748b',
+        },
+      };
+      const c = configs[themeId] || configs.classic;
+      const nextId = () => 'b' + (FBME.nextId++);
+      return [
+        { id: nextId(), type: 'header', props: { ...FBME_DEFS.header.defaults(), text: title, bgColor: c.headerBg, color: c.headerColor } },
+        { id: nextId(), type: 'text',   props: { ...FBME_DEFS.text.defaults(),   text: 'Hi {{name}},\n\nThank you for registering! We\'re excited to have you.', bgColor: c.bodyBg, color: c.bodyColor } },
+        { id: nextId(), type: 'button', props: { ...FBME_DEFS.button.defaults(), text: 'View Your Registration', link: '#', btnBg: c.btnBg, btnColor: c.btnColor } },
+        { id: nextId(), type: 'footer', props: { ...FBME_DEFS.footer.defaults(), text: 'This email was sent automatically. Please do not reply.', bgColor: c.footerBg, color: c.footerColor } },
+      ];
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       FBME — Form Builder Mail Editor (embedded block email system)
+       Mirrors the ME system from mail-tool.js, scoped to the builder.
+    ════════════════════════════════════════════════════════════════ */
+    const FBME = {
+      blocks: [],
+      selectedId: null,
+      nextId: 1,
+    };
+
+    const FBME_DEFS = {
+      header: { label: 'Header',  defaults: () => ({ text: 'Event Name', bgColor: '#00d4ff', color: '#000000', fontSize: 26, fontWeight: 700, align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
+      text:   { label: 'Text',    defaults: () => ({ text: 'Hello {{name}},', bgColor: '#ffffff', color: '#1e293b', fontSize: 15, fontWeight: 400, fontStyle: 'normal', align: 'left', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
+      button: { label: 'Button',  defaults: () => ({ text: 'Click Here', link: '#', btnBg: '#00d4ff', btnColor: '#000000', fontSize: 15, borderRadius: 8, align: 'center', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
+      image:  { label: 'Image',   defaults: () => ({ src: '', alt: '', width: 100, borderRadius: 0, bgColor: '#ffffff', paddingV: 16, paddingH: 40 }) },
+      divider:{ label: 'Divider', defaults: () => ({ color: '#e2e8f0', thickness: 1, bgColor: '#ffffff', paddingV: 8, paddingH: 40 }) },
+      spacer: { label: 'Spacer',  defaults: () => ({ height: 24, bgColor: '#ffffff' }) },
+      footer: { label: 'Footer',  defaults: () => ({ text: 'Sent via GalSol · The Grand Event Console', bgColor: '#f1f5f9', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 16, paddingH: 40, fontFamily: 'inherit' }) },
+    };
+
+    function fbmeBlockToHtml(block) {
+      const p = block.props;
+      const ff = p.fontFamily && p.fontFamily !== 'inherit' ? p.fontFamily : 'Arial,sans-serif';
+      switch (block.type) {
+        case 'header':
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};font-family:${ff};line-height:1.3">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+        case 'text':
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align||'left'}"><p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight||400};font-style:${p.fontStyle||'normal'};color:${p.color};font-family:${ff};line-height:1.7">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+        case 'button':
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor||'#ffffff'};text-align:${p.align}"><a href="${p.link||'#'}" style="display:inline-block;padding:12px 28px;background:${p.btnBg};color:${p.btnColor};font-size:${p.fontSize}px;font-weight:700;font-family:${ff};text-decoration:none;border-radius:${p.borderRadius}px">${p.text||'Click Here'}</a></div>`;
+        case 'image':
+          return p.src ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt||''}" style="max-width:${p.width}%;border-radius:${p.borderRadius}px;display:inline-block"/></div>` : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center;color:#94a3b8;font-size:13px">No image set</div>`;
+        case 'divider':
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><hr style="border:none;border-top:${p.thickness}px solid ${p.color};margin:0"/></div>`;
+        case 'spacer':
+          return `<div style="height:${p.height}px;background:${p.bgColor}"></div>`;
+        case 'footer':
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align||'center'}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};font-family:${ff};line-height:1.6">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+        default: return '';
+      }
+    }
+
+    function fbmeInitCanvas() {
+      // Sync blocks from saved config
+      const am = amGet();
+      FBME.blocks = JSON.parse(JSON.stringify(am.emailBlocks || []));
+      // Ensure nextId is ahead of any existing block IDs
+      FBME.blocks.forEach(b => {
+        const n = parseInt((b.id || '').replace('b', ''), 10);
+        if (!isNaN(n) && n >= FBME.nextId) FBME.nextId = n + 1;
+      });
+      FBME.selectedId = null;
+      fbmeRenderCanvas();
+      fbmeBuildMergeBar();
+      // Show block-add panel in left sidebar
+      fbmeShowLeftPanel();
+    }
+
+    function fbmeRenderCanvas() {
+      const canvas = document.getElementById('fbmeCanvas');
+      const empty  = document.getElementById('fbmeCanvasEmpty');
+      if (!canvas) return;
+      // Remove old block wraps (keep empty placeholder in DOM)
+      canvas.querySelectorAll('.fbme-block-wrap').forEach(el => el.remove());
+      if (!FBME.blocks.length) {
+        if (empty) empty.style.display = '';
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+      FBME.blocks.forEach(block => {
+        const wrap = document.createElement('div');
+        wrap.className = 'fbme-block-wrap' + (FBME.selectedId === block.id ? ' selected' : '');
+        wrap.dataset.id = block.id;
+
+        const ctrl = document.createElement('div');
+        ctrl.className = 'fbme-block-ctrl';
+        ctrl.innerHTML = `
+          <button title="Move up"    onclick="event.stopPropagation();fbmeMoveBlock('${block.id}',-1)">↑</button>
+          <button title="Move down"  onclick="event.stopPropagation();fbmeMoveBlock('${block.id}',1)">↓</button>
+          <button title="Duplicate"  onclick="event.stopPropagation();fbmeDuplicateBlock('${block.id}')">⧉</button>
+          <button title="Delete" class="del" onclick="event.stopPropagation();fbmeDeleteBlock('${block.id}')">✕</button>
+        `;
+        const inner = document.createElement('div');
+        inner.innerHTML = fbmeBlockToHtml(block);
+
+        wrap.appendChild(ctrl);
+        wrap.appendChild(inner);
+        wrap.addEventListener('click', () => fbmeSelectBlock(block.id));
+        canvas.appendChild(wrap);
+      });
+    }
+
+    function fbmeSelectBlock(id) {
+      FBME.selectedId = id;
+      document.querySelectorAll('.fbme-block-wrap').forEach(el =>
+        el.classList.toggle('selected', el.dataset.id === id)
+      );
+      const block = FBME.blocks.find(b => b.id === id);
+      const body = document.getElementById('rtabMailingBody');
+      if (body && block) fbmeRenderProps(block, body);
+    }
+
+    function fbmeAddBlock(type) {
+      const def = FBME_DEFS[type];
+      if (!def) return;
+      const block = { id: 'b' + (FBME.nextId++), type, props: def.defaults() };
+      FBME.blocks.push(block);
+      fbmeRenderCanvas();
+      fbmeSelectBlock(block.id);
+      fbmeSaveBlocks();
+      const canvas = document.getElementById('fbmeCanvas');
+      if (canvas) canvas.scrollTop = canvas.scrollHeight;
+    }
+
+    function fbmeDeleteBlock(id) {
+      FBME.blocks = FBME.blocks.filter(b => b.id !== id);
+      if (FBME.selectedId === id) {
+        FBME.selectedId = null;
+        renderMailingPanel();
+      }
+      fbmeRenderCanvas();
+      fbmeSaveBlocks();
+    }
+
+    function fbmeDuplicateBlock(id) {
+      const idx = FBME.blocks.findIndex(b => b.id === id);
+      if (idx < 0) return;
+      const orig = FBME.blocks[idx];
+      const copy = { id: 'b' + (FBME.nextId++), type: orig.type, props: JSON.parse(JSON.stringify(orig.props)) };
+      FBME.blocks.splice(idx + 1, 0, copy);
+      fbmeRenderCanvas();
+      fbmeSelectBlock(copy.id);
+      fbmeSaveBlocks();
+    }
+
+    function fbmeMoveBlock(id, dir) {
+      const idx = FBME.blocks.findIndex(b => b.id === id);
+      if (idx < 0) return;
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= FBME.blocks.length) return;
+      [FBME.blocks[idx], FBME.blocks[newIdx]] = [FBME.blocks[newIdx], FBME.blocks[idx]];
+      fbmeRenderCanvas();
+      fbmeSaveBlocks();
+    }
+
+    function fbmeUpdateProp(id, key, value) {
+      const block = FBME.blocks.find(b => b.id === id);
+      if (!block) return;
+      block.props[key] = value;
+      // Re-render just this block's inner HTML
+      const wrap = document.querySelector(`.fbme-block-wrap[data-id="${id}"]`);
+      if (wrap) {
+        const inner = wrap.querySelector('div:not(.fbme-block-ctrl)');
+        if (inner) inner.innerHTML = fbmeBlockToHtml(block);
+      }
+      fbmeSaveBlocks();
+    }
+
+    function fbmeSaveBlocks() {
+      amSave({ emailBlocks: JSON.parse(JSON.stringify(FBME.blocks)) });
+    }
+
+    function fbmeRenderProps(block, container) {
+      const p = block.props;
+      const id = block.id;
+      const fld = (label, inputHtml) => `<div class="am-prop"><label class="am-prop-label">${label}</label>${inputHtml}</div>`;
+      const textInput = (key, val, placeholder = '') =>
+        `<input class="am-input" type="text" value="${escAttr(String(val||''))}" placeholder="${placeholder}" oninput="fbmeUpdateProp('${id}','${key}',this.value)">`;
+      const colorInput = (key, val) =>
+        `<div style="display:flex;gap:6px;align-items:center"><input type="color" value="${val||'#000000'}" style="width:32px;height:32px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;background:none;padding:2px" oninput="fbmeUpdateProp('${id}','${key}',this.value)"><input class="am-input" style="flex:1" type="text" value="${escAttr(val||'')}" oninput="fbmeUpdateProp('${id}','${key}',this.value)"></div>`;
+      const rangeInput = (key, val, min, max, label2 = '') =>
+        `<div style="display:flex;align-items:center;gap:8px"><input type="range" min="${min}" max="${max}" value="${val}" style="flex:1;accent-color:var(--cyan)" oninput="fbmeUpdateProp('${id}','${key}',+this.value);this.nextElementSibling.textContent=this.value+'${label2}'""><span style="font-size:11px;color:var(--text-3);min-width:30px;text-align:right">${val}${label2}</span></div>`;
+      const textareaInput = (key, val) =>
+        `<textarea class="am-input" rows="4" style="resize:vertical;min-height:70px" oninput="fbmeUpdateProp('${id}','${key}',this.value)">${escHtml(val||'')}</textarea>`;
+
+      let rows = [];
+      const typeName = (FBME_DEFS[block.type]?.label || block.type).toUpperCase();
+      rows.push(`<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--cyan);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07)">${typeName} BLOCK</div>`);
+
+      if (['header','text','footer'].includes(block.type)) {
+        rows.push(fld('Text', textareaInput('text', p.text)));
+        rows.push(fld('Font Size', rangeInput('fontSize', p.fontSize, 10, 48, 'px')));
+        rows.push(fld('Text Color', colorInput('color', p.color)));
+        rows.push(fld('Background', colorInput('bgColor', p.bgColor)));
+        rows.push(fld('Padding V', rangeInput('paddingV', p.paddingV, 0, 80, 'px')));
+        rows.push(fld('Padding H', rangeInput('paddingH', p.paddingH, 0, 80, 'px')));
+      }
+      if (block.type === 'button') {
+        rows.push(fld('Button Text', textInput('text', p.text)));
+        rows.push(fld('Link / URL', textInput('link', p.link, 'https://')));
+        rows.push(fld('Button Color', colorInput('btnBg', p.btnBg)));
+        rows.push(fld('Text Color', colorInput('btnColor', p.btnColor)));
+        rows.push(fld('Border Radius', rangeInput('borderRadius', p.borderRadius, 0, 40, 'px')));
+        rows.push(fld('Font Size', rangeInput('fontSize', p.fontSize, 10, 28, 'px')));
+        rows.push(fld('Background', colorInput('bgColor', p.bgColor || '#ffffff')));
+        rows.push(fld('Padding V', rangeInput('paddingV', p.paddingV, 0, 80, 'px')));
+      }
+      if (block.type === 'image') {
+        rows.push(fld('Image URL', textInput('src', p.src, 'https://...')));
+        rows.push(fld('Alt Text', textInput('alt', p.alt)));
+        rows.push(fld('Width %', rangeInput('width', p.width, 20, 100, '%')));
+        rows.push(fld('Border Radius', rangeInput('borderRadius', p.borderRadius, 0, 40, 'px')));
+        rows.push(fld('Background', colorInput('bgColor', p.bgColor)));
+      }
+      if (block.type === 'divider') {
+        rows.push(fld('Line Color', colorInput('color', p.color)));
+        rows.push(fld('Thickness', rangeInput('thickness', p.thickness, 1, 8, 'px')));
+        rows.push(fld('Background', colorInput('bgColor', p.bgColor)));
+      }
+      if (block.type === 'spacer') {
+        rows.push(fld('Height', rangeInput('height', p.height, 4, 120, 'px')));
+        rows.push(fld('Background', colorInput('bgColor', p.bgColor)));
+      }
+
+      rows.push(`<button class="am-test-btn" style="margin-top:16px" onclick="FBME.selectedId=null;renderMailingPanel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Mailing Settings
+      </button>`);
+
+      container.innerHTML = rows.join('');
+    }
+
+    function fbmeBuildMergeBar() {
+      const bar = document.getElementById('fbmeMergeBar');
+      if (!bar) return;
+      const fields = (_S.config?.fields || []).filter(f => f.type !== 'section_break' && f.type !== 'event_pass' && f.type !== 'image');
+      const builtIn = [
+        { tag: '{{name}}', label: 'name' },
+        { tag: '{{email}}', label: 'email' },
+        { tag: '{{form_title}}', label: 'form_title' },
+        { tag: '{{submission_date}}', label: 'date' },
+      ];
+      const fieldTags = fields.map(f => ({
+        tag: `{{${(f.label || f.id).toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')}}}`,
+        label: f.label || f.id,
+      }));
+      const all = [...builtIn, ...fieldTags];
+      bar.innerHTML = `<span class="fbme-merge-bar-label">Tags:</span>` +
+        all.map(t => `<span class="fbme-merge-tag" title="Click to copy" onclick="navigator.clipboard.writeText('${t.tag}');toast('Copied ${t.tag}','success',1200)">${t.tag}</span>`).join('');
+    }
+
+    function fbmeShowLeftPanel() {
+      // Swap the left panel's Add tab to show email blocks instead of form fields
+      const addBody = document.getElementById('ltabAddBody');
+      if (!addBody) return;
+      const blockDefs = [
+        { type: 'header',  label: 'Header',  svgPath: '<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>' },
+        { type: 'text',    label: 'Text',    svgPath: '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>' },
+        { type: 'button',  label: 'Button',  svgPath: '<rect x="3" y="8" width="18" height="8" rx="3"/>' },
+        { type: 'image',   label: 'Image',   svgPath: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>' },
+        { type: 'divider', label: 'Divider', svgPath: '<line x1="3" y1="12" x2="21" y2="12"/>' },
+        { type: 'spacer',  label: 'Spacer',  svgPath: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>' },
+        { type: 'footer',  label: 'Footer',  svgPath: '<line x1="3" y1="17" x2="21" y2="17"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="7" x2="21" y2="7"/>' },
+      ];
+      addBody.innerHTML = `
+        <div style="padding:8px 10px 4px;font-size:10.5px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.6px">
+          Email Blocks
+        </div>
+        <div style="padding:4px 8px 8px;font-size:11px;color:var(--text-3)">Click to add to canvas</div>
+        <div class="fbme-block-cards-grid">
+          ${blockDefs.map(b => `
+            <button class="fbme-block-card" onclick="fbmeAddBlock('${b.type}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${b.svgPath}</svg>
+              ${b.label}
+            </button>`).join('')}
+        </div>
+        <div style="padding:8px 10px 4px">
+          <button style="width:100%;padding:7px;border-radius:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);color:var(--text-3);font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font)"
+            onclick="fbmeExitEmailCanvas()">
+            ← Back to Form Fields
+          </button>
+        </div>
+      `;
+      switchLTab('add');
+    }
+
+    function fbmeExitEmailCanvas() {
+      switchCanvasTab('form');
+      // Restore original field cards in left panel
+      const addBody = document.getElementById('ltabAddBody');
+      if (addBody) addBody.innerHTML = document.getElementById('_ltabAddBodyTemplate')?.innerHTML || '';
+      switchLTab('add');
+      switchRTab('mailing');
     }
 
     function updateThemeColor(color) {
