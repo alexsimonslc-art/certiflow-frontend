@@ -3050,6 +3050,7 @@
       font-weight: 700;
       background: linear-gradient(90deg, #00d4ff, #7c3aed);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 6px;
       letter-spacing: -0.5px;
@@ -3772,6 +3773,8 @@
         <!-- Add Field tab: card grid -->
         <div class="gsfb-left-body" id="ltabAddBody">
           <div class="gsfb-field-cards-grid">
+          <div id="ltabAddFormFields">
+            <div class="gsfb-field-cards-grid">
             <button class="gsfb-field-card" onclick="addField('text')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="4 7 4 4 20 4 20 7" />
@@ -3882,6 +3885,43 @@
               </svg>
               Add New Page
             </button>
+          </div>
+          </div>
+          <div id="ltabAddEmailBlocks" style="display:none;">
+            <div style="padding:8px 10px 4px;font-size:10.5px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.6px">
+              Email Blocks
+            </div>
+            <div style="padding:4px 8px 8px;font-size:11px;color:var(--text-3)">Click to add to canvas</div>
+            <div class="fbme-block-cards-grid">
+              <button class="fbme-block-card" onclick="fbmeAddBlock('header')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                Header
+              </button>
+              <button class="fbme-block-card" onclick="fbmeAddBlock('text')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                Text
+              </button>
+              <button class="fbme-block-card" onclick="fbmeAddBlock('button')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="3"/></svg>
+                Button
+              </button>
+              <button class="fbme-block-card" onclick="fbmeAddBlock('image')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Image
+              </button>
+              <button class="fbme-block-card" onclick="fbmeAddBlock('divider')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg>
+                Divider
+              </button>
+              <button class="fbme-block-card" onclick="fbmeAddBlock('spacer')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                Spacer
+              </button>
+              <button class="fbme-block-card" onclick="fbmeAddBlock('footer')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="17" x2="21" y2="17"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="7" x2="21" y2="7"/></svg>
+                Footer
+              </button>
+            </div>
           </div>
         </div>
 
@@ -4502,6 +4542,7 @@
     function selectLayer(id) {
       selectedId = id;
       if (canvasTab === 'pass') switchCanvasTab('form');
+      if (canvasTab !== 'form') switchCanvasTab('form');
       switchRTab('field');
       renderLayers();
       renderPreview();
@@ -4621,8 +4662,25 @@
       document.getElementById('rtabMailingBody').style.display = tab === 'mailing' ? '' : 'none';
 
       if (tab === 'field') {
-        if (canvasTab === 'pass' || canvasTab === 'email') switchCanvasTab('form');
-        renderRightPanel();
+        if (canvasTab === 'pass') switchCanvasTab('form');
+        
+        if (canvasTab === 'email') {
+          const body = document.getElementById('rtabFieldBody');
+          if (FBME.selectedId) {
+            const block = FBME.blocks.find(b => b.id === FBME.selectedId);
+            if (block) {
+              if (!fbmeRenderSpecialBlockProps(block, body)) {
+                fbmeRenderProps(block, body);
+              }
+            } else {
+              body.innerHTML = `<div class="gsfb-no-sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><p>Select an email block<br>to edit it.</p></div>`;
+            }
+          } else {
+            body.innerHTML = `<div class="gsfb-no-sel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><p>Select an email block<br>to edit it.</p></div>`;
+          }
+        } else {
+          renderRightPanel();
+        }
       } else if (tab === 'settings') {
         if (canvasTab === 'pass' || canvasTab === 'email') switchCanvasTab('form');
         renderSettings();
@@ -5551,12 +5609,6 @@
       const emailFields = amEmailFields();
       const locked = !amHasEmailField();
 
-      // If we're in email canvas mode, show block props instead of panel settings
-      if (canvasTab === 'email' && FBME.selectedId) {
-        const block = FBME.blocks.find(b => b.id === FBME.selectedId);
-        if (block) { fbmeRenderProps(block, body); return; }
-      }
-
       const lockHtml = locked ? `
         <div class="am-lock-msg">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -5858,8 +5910,6 @@
       FBME.selectedId = null;
       fbmeRenderCanvas();
       fbmeBuildMergeBar();
-      // Show block-add panel in left sidebar
-      fbmeShowLeftPanel();
     }
 
     function fbmeRenderCanvas() {
@@ -5901,11 +5951,7 @@
       document.querySelectorAll('.fbme-block-wrap').forEach(el =>
         el.classList.toggle('selected', el.dataset.id === id)
       );
-      const block = FBME.blocks.find(b => b.id === id);
-      const body  = document.getElementById('rtabMailingBody');
-      if (!body || !block) return;
-      if (fbmeRenderSpecialBlockProps(block, body)) return;
-      fbmeRenderProps(block, body);
+      switchRTab('field');
     }
 
     function fbmeAddBlock(type) {
@@ -5924,7 +5970,7 @@
       FBME.blocks = FBME.blocks.filter(b => b.id !== id);
       if (FBME.selectedId === id) {
         FBME.selectedId = null;
-        renderMailingPanel();
+        switchRTab('field');
       }
       fbmeRenderCanvas();
       fbmeSaveBlocks();
@@ -6020,19 +6066,10 @@
         rows.push(fld('Background', colorInput('bgColor', p.bgColor)));
       }
 
-      rows.push(`<button class="am-test-btn" style="margin-top:16px" onclick="FBME.selectedId=null;renderMailingPanel()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><polyline points="15 18 9 12 15 6"/></svg>
-        Back to Mailing Settings
-      </button>`);
-
       container.innerHTML = rows.join('');
     }
 
     function fbmeRenderSpecialBlockProps(block, container) {
-      const backBtn = `<button class="am-test-btn" style="margin-top:12px" onclick="FBME.selectedId=null;renderMailingPanel()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><polyline points="15 18 9 12 15 6"/></svg>
-        Back to Mailing Settings
-      </button>`;
       if (block.type === 'entry_pass') {
         container.innerHTML = `
           <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--cyan);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07)">ENTRY PASS BLOCK</div>
@@ -6040,8 +6077,7 @@
           <div class="am-lock-msg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             Reorder freely on the canvas. Edit the pass design in the Entry Pass tab.
-          </div>
-          ${backBtn}`;
+          </div>`;
         return true;
       }
       if (block.type === 'response_summary') {
@@ -6051,8 +6087,7 @@
           <div class="am-lock-msg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             Reorder freely on the canvas. Content is auto-generated at send time.
-          </div>
-          ${backBtn}`;
+          </div>`;
         return true;
       }
       return false;
@@ -6075,50 +6110,6 @@
       const all = [...builtIn, ...fieldTags];
       bar.innerHTML = `<span class="fbme-merge-bar-label">Tags:</span>` +
         all.map(t => `<span class="fbme-merge-tag" title="Click to copy" onclick="navigator.clipboard.writeText('${t.tag}');toast('Copied ${t.tag}','success',1200)">${t.tag}</span>`).join('');
-    }
-
-    function fbmeShowLeftPanel() {
-      // Swap the left panel's Add tab to show email blocks instead of form fields
-      const addBody = document.getElementById('ltabAddBody');
-      if (!addBody) return;
-      const blockDefs = [
-        { type: 'header',  label: 'Header',  svgPath: '<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>' },
-        { type: 'text',    label: 'Text',    svgPath: '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>' },
-        { type: 'button',  label: 'Button',  svgPath: '<rect x="3" y="8" width="18" height="8" rx="3"/>' },
-        { type: 'image',   label: 'Image',   svgPath: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>' },
-        { type: 'divider', label: 'Divider', svgPath: '<line x1="3" y1="12" x2="21" y2="12"/>' },
-        { type: 'spacer',  label: 'Spacer',  svgPath: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>' },
-        { type: 'footer',  label: 'Footer',  svgPath: '<line x1="3" y1="17" x2="21" y2="17"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="7" x2="21" y2="7"/>' },
-      ];
-      addBody.innerHTML = `
-        <div style="padding:8px 10px 4px;font-size:10.5px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.6px">
-          Email Blocks
-        </div>
-        <div style="padding:4px 8px 8px;font-size:11px;color:var(--text-3)">Click to add to canvas</div>
-        <div class="fbme-block-cards-grid">
-          ${blockDefs.map(b => `
-            <button class="fbme-block-card" onclick="fbmeAddBlock('${b.type}')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${b.svgPath}</svg>
-              ${b.label}
-            </button>`).join('')}
-        </div>
-        <div style="padding:8px 10px 4px">
-          <button style="width:100%;padding:7px;border-radius:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);color:var(--text-3);font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--font)"
-            onclick="fbmeExitEmailCanvas()">
-            ← Back to Form Fields
-          </button>
-        </div>
-      `;
-      switchLTab('add');
-    }
-
-    function fbmeExitEmailCanvas() {
-      switchCanvasTab('form');
-      // Restore original field cards in left panel
-      const addBody = document.getElementById('ltabAddBody');
-      if (addBody) addBody.innerHTML = document.getElementById('_ltabAddBodyTemplate')?.innerHTML || '';
-      switchLTab('add');
-      switchRTab('mailing');
     }
 
     function updateThemeColor(color) {
