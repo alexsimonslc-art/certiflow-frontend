@@ -1491,8 +1491,8 @@
       color: rgba(255, 255, 255, 0.62) !important;
     }
 
-    .gsfb-right-body .gsfb-prop + .gsfb-settings-sec-title,
-    .gsfb-right-body .gsfb-settings-sec-title + .gsfb-prop {
+    .gsfb-right-body .gsfb-prop+.gsfb-settings-sec-title,
+    .gsfb-right-body .gsfb-settings-sec-title+.gsfb-prop {
       margin-top: 14px;
     }
 
@@ -3245,9 +3245,10 @@
       align-items: center;
       justify-content: space-between;
       padding: 10px 0 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
       margin-bottom: 14px;
     }
+
     .am-toggle-label {
       font-size: 13px;
       font-weight: 600;
@@ -3256,23 +3257,36 @@
       align-items: center;
       gap: 8px;
     }
-    .am-toggle-label svg { width: 15px; height: 15px; color: var(--cyan); }
+
+    .am-toggle-label svg {
+      width: 15px;
+      height: 15px;
+      color: var(--cyan);
+    }
+
     .am-toggle {
       position: relative;
       width: 40px;
       height: 22px;
       flex-shrink: 0;
     }
-    .am-toggle input { opacity: 0; width: 0; height: 0; }
+
+    .am-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
     .am-toggle-track {
       position: absolute;
       inset: 0;
       border-radius: 99px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
+
     .am-toggle-track::after {
       content: '';
       position: absolute;
@@ -3284,11 +3298,13 @@
       left: 2px;
       transition: transform 0.2s, background 0.2s;
     }
-    .am-toggle input:checked + .am-toggle-track {
-      background: rgba(0,212,255,0.18);
-      border-color: rgba(0,212,255,0.4);
+
+    .am-toggle input:checked+.am-toggle-track {
+      background: rgba(0, 212, 255, 0.18);
+      border-color: rgba(0, 212, 255, 0.4);
     }
-    .am-toggle input:checked + .am-toggle-track::after {
+
+    .am-toggle input:checked+.am-toggle-track::after {
       transform: translateX(18px);
       background: var(--cyan);
     }
@@ -3299,15 +3315,21 @@
       align-items: flex-start;
       gap: 9px;
       padding: 11px 13px;
-      background: rgba(245,158,11,0.07);
-      border: 1px solid rgba(245,158,11,0.2);
+      background: rgba(245, 158, 11, 0.07);
+      border: 1px solid rgba(245, 158, 11, 0.2);
       border-radius: 9px;
       font-size: 12px;
       color: var(--gold);
       line-height: 1.5;
       margin-bottom: 14px;
     }
-    .am-lock-msg svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+
+    .am-lock-msg svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
 
     /* Section headers inside mailing panel */
     .am-section-hdr {
@@ -3318,11 +3340,17 @@
       color: var(--text-3);
       margin: 16px 0 8px;
       padding-bottom: 5px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     /* Mailing panel prop rows */
-    .am-prop { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    .am-prop {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+
     .am-prop-label {
       font-size: 11px;
       font-weight: 700;
@@ -3330,11 +3358,12 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+
     .am-input {
       width: 100%;
       padding: 8px 11px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       color: var(--text);
       font-size: 12.5px;
@@ -3342,8 +3371,14 @@
       outline: none;
       transition: border-color 0.15s;
     }
-    .am-input:focus { border-color: rgba(0,212,255,0.4); }
-    .am-input::placeholder { color: var(--text-3); }
+
+    .am-input:focus {
+      border-color: rgba(0, 212, 255, 0.4);
+    }
+
+    .am-input::placeholder {
+      color: var(--text-3);
+    }
 
     /* Send toggles */
     .am-send-row {
@@ -3357,16 +3392,21 @@
       margin-bottom: 4px;
       border: 1px solid transparent;
     }
-    .am-send-row:hover { background: rgba(255,255,255,0.03); }
-    .am-send-row.active {
-      background: rgba(0,212,255,0.05);
-      border-color: rgba(0,212,255,0.15);
+
+    .am-send-row:hover {
+      background: rgba(255, 255, 255, 0.03);
     }
+
+    .am-send-row.active {
+      background: rgba(0, 212, 255, 0.05);
+      border-color: rgba(0, 212, 255, 0.15);
+    }
+
     .am-send-check {
       width: 17px;
       height: 17px;
       border-radius: 4px;
-      border: 1.5px solid rgba(255,255,255,0.2);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
       flex-shrink: 0;
       margin-top: 1px;
       display: flex;
@@ -3374,10 +3414,12 @@
       justify-content: center;
       transition: all 0.15s;
     }
+
     .am-send-row.active .am-send-check {
       background: var(--cyan);
       border-color: var(--cyan);
     }
+
     .am-send-row.active .am-send-check::after {
       content: '';
       width: 9px;
@@ -3387,30 +3429,52 @@
       transform: rotate(-45deg) translateY(-1px);
       display: block;
     }
-    .am-send-info { flex: 1; min-width: 0; }
-    .am-send-title { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-    .am-send-sub   { font-size: 11px;   color: var(--text-3); line-height: 1.4; }
-    .am-send-note  {
+
+    .am-send-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .am-send-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .am-send-sub {
+      font-size: 11px;
+      color: var(--text-3);
+      line-height: 1.4;
+    }
+
+    .am-send-note {
       display: flex;
       align-items: flex-start;
       gap: 7px;
       padding: 7px 10px;
-      background: rgba(245,158,11,0.06);
-      border: 1px solid rgba(245,158,11,0.15);
+      background: rgba(245, 158, 11, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.15);
       border-radius: 7px;
       font-size: 11px;
-      color: rgba(245,158,11,0.85);
+      color: rgba(245, 158, 11, 0.85);
       line-height: 1.45;
       margin-top: 4px;
     }
-    .am-send-note svg { width: 12px; height: 12px; flex-shrink: 0; margin-top: 1px; }
+
+    .am-send-note svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
 
     /* Email field mapping dropdown */
     .am-select {
       width: 100%;
       padding: 8px 11px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       color: var(--text);
       font-size: 12.5px;
@@ -3422,7 +3486,10 @@
       background-repeat: no-repeat;
       background-position: right 10px center;
     }
-    .am-select option { background: #0d1728; }
+
+    .am-select option {
+      background: #0d1728;
+    }
 
     /* Theme picker */
     .am-theme-grid {
@@ -3431,11 +3498,12 @@
       gap: 7px;
       margin-bottom: 4px;
     }
+
     .am-theme-card {
       border-radius: 8px;
       padding: 8px 6px;
       cursor: pointer;
-      border: 1.5px solid rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
       text-align: center;
       font-size: 10.5px;
       font-weight: 600;
@@ -3443,15 +3511,18 @@
       transition: all 0.15s;
       overflow: hidden;
     }
+
     .am-theme-card:hover {
-      border-color: rgba(255,255,255,0.2);
+      border-color: rgba(255, 255, 255, 0.2);
       color: var(--text);
     }
+
     .am-theme-card.active {
       border-color: var(--cyan);
       color: var(--cyan);
-      background: rgba(0,212,255,0.06);
+      background: rgba(0, 212, 255, 0.06);
     }
+
     .am-theme-swatch {
       height: 28px;
       border-radius: 5px;
@@ -3468,8 +3539,8 @@
       padding: 10px;
       margin-top: 14px;
       border-radius: 9px;
-      background: rgba(0,212,255,0.10);
-      border: 1px solid rgba(0,212,255,0.3);
+      background: rgba(0, 212, 255, 0.10);
+      border: 1px solid rgba(0, 212, 255, 0.3);
       color: var(--cyan);
       font-size: 12.5px;
       font-weight: 700;
@@ -3477,11 +3548,16 @@
       cursor: pointer;
       transition: all 0.15s;
     }
+
     .am-edit-email-btn:hover {
-      background: rgba(0,212,255,0.16);
-      box-shadow: 0 4px 16px rgba(0,212,255,0.15);
+      background: rgba(0, 212, 255, 0.16);
+      box-shadow: 0 4px 16px rgba(0, 212, 255, 0.15);
     }
-    .am-edit-email-btn svg { width: 14px; height: 14px; }
+
+    .am-edit-email-btn svg {
+      width: 14px;
+      height: 14px;
+    }
 
     /* Test email button */
     .am-test-btn {
@@ -3494,7 +3570,7 @@
       margin-top: 8px;
       border-radius: 8px;
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: var(--text-2);
       font-size: 12px;
       font-weight: 600;
@@ -3502,11 +3578,16 @@
       cursor: pointer;
       transition: all 0.15s;
     }
+
     .am-test-btn:hover {
-      border-color: rgba(255,255,255,0.25);
+      border-color: rgba(255, 255, 255, 0.25);
       color: var(--text);
     }
-    .am-test-btn svg { width: 13px; height: 13px; }
+
+    .am-test-btn svg {
+      width: 13px;
+      height: 13px;
+    }
 
     /* Email Canvas (center panel - Email tab) */
     #gsfbEmailCanvasWrap {
@@ -3525,11 +3606,12 @@
       gap: 6px;
       flex-wrap: wrap;
       padding: 8px 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 10px;
       margin-bottom: 14px;
     }
+
     .fbme-merge-bar-label {
       font-size: 10.5px;
       font-weight: 700;
@@ -3538,12 +3620,13 @@
       letter-spacing: 0.6px;
       flex-shrink: 0;
     }
+
     .fbme-merge-tag {
       display: inline-flex;
       align-items: center;
       padding: 3px 9px;
-      background: rgba(0,212,255,0.08);
-      border: 1px solid rgba(0,212,255,0.2);
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.2);
       border-radius: 5px;
       font-size: 11px;
       font-weight: 600;
@@ -3553,16 +3636,17 @@
       transition: all 0.13s;
       user-select: none;
     }
+
     .fbme-merge-tag:hover {
-      background: rgba(0,212,255,0.15);
-      border-color: rgba(0,212,255,0.4);
+      background: rgba(0, 212, 255, 0.15);
+      border-color: rgba(0, 212, 255, 0.4);
     }
 
     .fbme-canvas-wrap {
       width: 100%;
       max-width: 600px;
       background: #1a1a2e;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       overflow: hidden;
       min-height: 200px;
@@ -3575,8 +3659,14 @@
       outline-offset: -2px;
       transition: outline-color 0.12s;
     }
-    .fbme-block-wrap:hover   { outline-color: rgba(0,212,255,0.35); }
-    .fbme-block-wrap.selected { outline-color: var(--cyan); }
+
+    .fbme-block-wrap:hover {
+      outline-color: rgba(0, 212, 255, 0.35);
+    }
+
+    .fbme-block-wrap.selected {
+      outline-color: var(--cyan);
+    }
 
     .fbme-block-ctrl {
       position: absolute;
@@ -3585,14 +3675,18 @@
       display: none;
       align-items: center;
       gap: 2px;
-      background: rgba(4,8,20,0.9);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(4, 8, 20, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 6px;
       padding: 2px 3px;
       z-index: 10;
     }
+
     .fbme-block-wrap:hover .fbme-block-ctrl,
-    .fbme-block-wrap.selected .fbme-block-ctrl { display: flex; }
+    .fbme-block-wrap.selected .fbme-block-ctrl {
+      display: flex;
+    }
+
     .fbme-block-ctrl button {
       width: 22px;
       height: 22px;
@@ -3607,8 +3701,15 @@
       font-size: 12px;
       transition: color 0.12s, background 0.12s;
     }
-    .fbme-block-ctrl button:hover { color: var(--text); background: rgba(255,255,255,0.07); }
-    .fbme-block-ctrl button.del:hover { color: var(--red); }
+
+    .fbme-block-ctrl button:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .fbme-block-ctrl button.del:hover {
+      color: var(--red);
+    }
 
     .fbme-canvas-empty {
       display: flex;
@@ -3621,19 +3722,28 @@
       text-align: center;
       gap: 8px;
     }
-    .fbme-canvas-empty svg { width: 32px; height: 32px; opacity: 0.2; }
+
+    .fbme-canvas-empty svg {
+      width: 32px;
+      height: 32px;
+      opacity: 0.2;
+    }
 
     /* Left panel block-add grid (when in email tab) */
-    #ltabEmailAddBody { display: none; }
+    #ltabEmailAddBody {
+      display: none;
+    }
+
     .fbme-block-cards-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 7px;
       padding: 12px 10px;
     }
+
     .fbme-block-card {
-      background: rgba(255,255,255,0.025);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 10px;
       padding: 12px 6px 10px;
       color: var(--text-2);
@@ -3648,12 +3758,19 @@
       font-family: var(--font);
       text-align: center;
     }
+
     .fbme-block-card:hover {
-      background: rgba(0,212,255,0.07);
-      border-color: rgba(0,212,255,0.3);
+      background: rgba(0, 212, 255, 0.07);
+      border-color: rgba(0, 212, 255, 0.3);
       color: var(--text);
     }
-    .fbme-block-card svg { width: 18px; height: 18px; color: var(--cyan); opacity: 0.85; }
+
+    .fbme-block-card svg {
+      width: 18px;
+      height: 18px;
+      color: var(--cyan);
+      opacity: 0.85;
+    }
   </style>
 </head>
 
@@ -3704,33 +3821,40 @@
           Sheet
         </button>
         <!-- Responses -->
-        <button class="gsfb-tb-btn" id="responsesBtn" onclick="tbOpenResponses()" title="View form responses in database">
+        <button class="gsfb-tb-btn" id="responsesBtn" onclick="tbOpenResponses()"
+          title="View form responses in database">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
           </svg>
           Responses
         </button>
         <!-- Manage Passes -->
-        <button class="gsfb-tb-btn" id="managePassesBtn" style="display:none" onclick="tbOpenPasses()" title="Manage entry passes">
+        <button class="gsfb-tb-btn" id="managePassesBtn" style="display:none" onclick="tbOpenPasses()"
+          title="Manage entry passes">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-            <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+            <line x1="12" y1="12" x2="12" y2="16" />
+            <line x1="10" y1="14" x2="14" y2="14" />
           </svg>
           Passes
         </button>
         <!-- Dashboard -->
         <button class="gsfb-tb-btn" onclick="window.location.href='gs-database.html'" title="Open Dashboard & Database">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
           </svg>
           Dashboard
         </button>
         <!-- Scanner Tool -->
-        <button class="gsfb-tb-btn" id="scannerBtn" style="display:none" onclick="openStaffScannerShareDialog()" title="Share Staff Scanner">
+        <button class="gsfb-tb-btn" id="scannerBtn" style="display:none" onclick="openStaffScannerShareDialog()"
+          title="Share Staff Scanner">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
-            <line x1="3" y1="12" x2="21" y2="12" stroke-width="2.5"/>
+            <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
+            <line x1="3" y1="12" x2="21" y2="12" stroke-width="2.5" />
           </svg>
           Scanner
         </button>
@@ -3774,150 +3898,175 @@
         <div class="gsfb-left-body" id="ltabAddBody">
           <div id="ltabAddFormFields">
             <div class="gsfb-field-cards-grid">
-            <button class="gsfb-field-card" onclick="addField('text')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="4 7 4 4 20 4 20 7" />
-                <line x1="9" y1="20" x2="15" y2="20" />
-                <line x1="12" y1="4" x2="12" y2="20" />
-              </svg>
-              Short Text
-            </button>
-            <button class="gsfb-field-card" onclick="addField('textarea')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="17" y1="10" x2="3" y2="10" />
-                <line x1="21" y1="6" x2="3" y2="6" />
-                <line x1="21" y1="14" x2="3" y2="14" />
-                <line x1="17" y1="18" x2="3" y2="18" />
-              </svg>
-              Paragraph
-            </button>
-            <button class="gsfb-field-card" onclick="addField('email')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94" />
-              </svg>
-              Email
-            </button>
-            <button class="gsfb-field-card" onclick="addField('phone')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path
-                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-              </svg>
-              Phone
-            </button>
-            <button class="gsfb-field-card" onclick="addField('number')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="4" y1="9" x2="20" y2="9" />
-                <line x1="4" y1="15" x2="20" y2="15" />
-                <line x1="10" y1="3" x2="8" y2="21" />
-                <line x1="16" y1="3" x2="14" y2="21" />
-              </svg>
-              Number
-            </button>
-            <button class="gsfb-field-card" onclick="addField('date')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-              Date
-            </button>
-            <button class="gsfb-field-card" onclick="addField('time')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              Time
-            </button>
-            <button class="gsfb-field-card" onclick="addField('dropdown')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 9h18" />
-                <path d="M3 15h18" />
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
-              Dropdown
-            </button>
-            <button class="gsfb-field-card" onclick="addField('radio')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              Multiple Choice
-            </button>
-            <button class="gsfb-field-card" onclick="addField('checkbox')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9 11 12 14 22 4" />
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-              </svg>
-              Checkboxes
-            </button>
-            <button class="gsfb-field-card" onclick="addField('file_upload')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="16 16 12 12 8 16" />
-                <line x1="12" y1="12" x2="12" y2="21" />
-                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
-              </svg>
-              File Upload
-            </button>
-            <button class="gsfb-field-card" onclick="addField('linear_scale')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon
-                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-              Rating Scale
-            </button>
-            <button class="gsfb-field-card" onclick="addField('image')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
-              </svg>
-              Image
-            </button>
-            <button class="gsfb-field-card card-full" onclick="addField('section_break')"
-              style="color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="7" rx="1" />
-                <rect x="3" y="14" width="18" height="7" rx="1" />
-              </svg>
-              Add New Page
-            </button>
-          </div>
+              <button class="gsfb-field-card" onclick="addField('text')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="4 7 4 4 20 4 20 7" />
+                  <line x1="9" y1="20" x2="15" y2="20" />
+                  <line x1="12" y1="4" x2="12" y2="20" />
+                </svg>
+                Short Text
+              </button>
+              <button class="gsfb-field-card" onclick="addField('textarea')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="17" y1="10" x2="3" y2="10" />
+                  <line x1="21" y1="6" x2="3" y2="6" />
+                  <line x1="21" y1="14" x2="3" y2="14" />
+                  <line x1="17" y1="18" x2="3" y2="18" />
+                </svg>
+                Paragraph
+              </button>
+              <button class="gsfb-field-card" onclick="addField('email')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94" />
+                </svg>
+                Email
+              </button>
+              <button class="gsfb-field-card" onclick="addField('phone')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.26 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6.06 6.06l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                Phone
+              </button>
+              <button class="gsfb-field-card" onclick="addField('number')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="4" y1="9" x2="20" y2="9" />
+                  <line x1="4" y1="15" x2="20" y2="15" />
+                  <line x1="10" y1="3" x2="8" y2="21" />
+                  <line x1="16" y1="3" x2="14" y2="21" />
+                </svg>
+                Number
+              </button>
+              <button class="gsfb-field-card" onclick="addField('date')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                Date
+              </button>
+              <button class="gsfb-field-card" onclick="addField('time')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                Time
+              </button>
+              <button class="gsfb-field-card" onclick="addField('dropdown')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9h18" />
+                  <path d="M3 15h18" />
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
+                Dropdown
+              </button>
+              <button class="gsfb-field-card" onclick="addField('radio')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Multiple Choice
+              </button>
+              <button class="gsfb-field-card" onclick="addField('checkbox')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 11 12 14 22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+                Checkboxes
+              </button>
+              <button class="gsfb-field-card" onclick="addField('file_upload')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16 16 12 12 8 16" />
+                  <line x1="12" y1="12" x2="12" y2="21" />
+                  <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                </svg>
+                File Upload
+              </button>
+              <button class="gsfb-field-card" onclick="addField('linear_scale')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                Rating Scale
+              </button>
+              <button class="gsfb-field-card" onclick="addField('image')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
+                </svg>
+                Image
+              </button>
+              <button class="gsfb-field-card card-full" onclick="addField('section_break')"
+                style="color:#a78bfa;border-color:rgba(124,58,237,0.25);background:rgba(124,58,237,0.06)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="7" rx="1" />
+                  <rect x="3" y="14" width="18" height="7" rx="1" />
+                </svg>
+                Add New Page
+              </button>
+            </div>
           </div>
           <div id="ltabAddEmailBlocks" style="display:none;">
-            <div style="padding:8px 10px 4px;font-size:10.5px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.6px">
+            <div
+              style="padding:8px 10px 4px;font-size:10.5px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.6px">
               Email Blocks
             </div>
             <div style="padding:4px 8px 8px;font-size:11px;color:var(--text-3)">Click to add to canvas</div>
             <div class="fbme-block-cards-grid">
               <button class="fbme-block-card" onclick="fbmeAddBlock('header')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="4 7 4 4 20 4 20 7" />
+                  <line x1="9" y1="20" x2="15" y2="20" />
+                  <line x1="12" y1="4" x2="12" y2="20" />
+                </svg>
                 Header
               </button>
               <button class="fbme-block-card" onclick="fbmeAddBlock('text')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="17" y1="10" x2="3" y2="10" />
+                  <line x1="21" y1="6" x2="3" y2="6" />
+                  <line x1="21" y1="14" x2="3" y2="14" />
+                  <line x1="17" y1="18" x2="3" y2="18" />
+                </svg>
                 Text
               </button>
               <button class="fbme-block-card" onclick="fbmeAddBlock('button')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="3"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="8" width="18" height="8" rx="3" />
+                </svg>
                 Button
               </button>
               <button class="fbme-block-card" onclick="fbmeAddBlock('image')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
+                </svg>
                 Image
               </button>
               <button class="fbme-block-card" onclick="fbmeAddBlock('divider')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                </svg>
                 Divider
               </button>
               <button class="fbme-block-card" onclick="fbmeAddBlock('spacer')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <polyline points="19 12 12 19 5 12" />
+                </svg>
                 Spacer
               </button>
               <button class="fbme-block-card" onclick="fbmeAddBlock('footer')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="17" x2="21" y2="17"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="7" x2="21" y2="7"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="3" y1="17" x2="21" y2="17" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="7" x2="21" y2="7" />
+                </svg>
                 Footer
               </button>
             </div>
@@ -3957,8 +4106,8 @@
           </button>
           <button class="gsfb-ctab" id="ctabEmail" onclick="switchCanvasTab('email')" style="display:none">
             <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8">
-              <rect x="1" y="3" width="14" height="10" rx="1.5"/>
-              <polyline points="1,3 8,9.5 15,3"/>
+              <rect x="1" y="3" width="14" height="10" rx="1.5" />
+              <polyline points="1,3 8,9.5 15,3" />
             </svg>
             Email
           </button>
@@ -3986,7 +4135,8 @@
         <div id="gsfbPassCanvasWrap" style="display:none"></div>
 
         <!-- Email Canvas Editor (active on 'email' tab) -->
-        <div id="gsfbEmailCanvasWrap" style="display:none;flex-direction:column;align-items:center;width:100%;padding-bottom:40px;">
+        <div id="gsfbEmailCanvasWrap"
+          style="display:none;flex-direction:column;align-items:center;width:100%;padding-bottom:40px;">
           <!-- Merge tag bar -->
           <div class="fbme-merge-bar" id="fbmeMergeBar">
             <span class="fbme-merge-bar-label">Tags:</span>
@@ -3995,7 +4145,11 @@
           <!-- Block canvas -->
           <div class="fbme-canvas-wrap" id="fbmeCanvas">
             <div class="fbme-canvas-empty" id="fbmeCanvasEmpty">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <line x1="3" y1="9" x2="21" y2="9" />
+                <line x1="9" y1="21" x2="9" y2="9" />
+              </svg>
               <div>Add blocks from the left panel<br>to design your email</div>
             </div>
           </div>
@@ -4013,9 +4167,10 @@
           <button class="gsfb-rtab" id="rtabSettings" onclick="switchRTab('settings')">Settings</button>
           <button class="gsfb-rtab" id="rtabPass" onclick="switchRTab('pass')">Entry Pass</button>
           <button class="gsfb-rtab" id="rtabMailing" onclick="switchRTab('mailing')">
-            <svg viewBox="0 0 14 14" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" style="flex-shrink:0">
-              <rect x="1" y="2.5" width="12" height="9" rx="1.2"/>
-              <polyline points="1,2.5 7,8 13,2.5"/>
+            <svg viewBox="0 0 14 14" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8"
+              style="flex-shrink:0">
+              <rect x="1" y="2.5" width="12" height="9" rx="1.2" />
+              <polyline points="1,2.5 7,8 13,2.5" />
             </svg>
             Mailing
           </button>
@@ -4082,7 +4237,8 @@
   </div>
 
   <!-- Staff Scanner Share Modal -->
-  <div class="gsfb-modal-overlay" id="staffScannerShareModal" onclick="if(event.target===this)closeStaffScannerShareModal()">
+  <div class="gsfb-modal-overlay" id="staffScannerShareModal"
+    onclick="if(event.target===this)closeStaffScannerShareModal()">
     <div class="gsfb-qr-modal gsfb-staff-share-modal">
       <div class="gsfb-qr-title">Share Staff Scanner</div>
       <div class="gsfb-qr-sub">Send this message to staff members who will scan entry passes at the venue.</div>
@@ -4117,21 +4273,28 @@
   <!-- Leave Modal -->
   <div class="gsfb-modal-overlay" id="leaveModal">
     <div class="gsfb-leave-modal">
-      <div style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+      <div
+        style="width:48px;height:48px;border-radius:50%;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
         <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="width:22px;height:22px">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
       </div>
       <div class="gsfb-leave-title">Unsaved changes</div>
       <div class="gsfb-leave-sub">Your latest edits haven't been saved yet. What would you like to do?</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <button class="btn btn-primary btn-sm btn-full" onclick="saveAndLeave()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
           Save &amp; Leave
         </button>
         <button class="btn btn-danger btn-sm btn-full" onclick="leaveNow()">Leave without saving</button>
-        <button class="btn btn-secondary btn-sm btn-full" onclick="closeLeaveModal()" style="margin-top:2px">Keep Editing</button>
+        <button class="btn btn-secondary btn-sm btn-full" onclick="closeLeaveModal()" style="margin-top:2px">Keep
+          Editing</button>
       </div>
     </div>
   </div>
@@ -4662,7 +4825,7 @@
 
       if (tab === 'field') {
         if (canvasTab === 'pass') switchCanvasTab('form');
-        
+
         if (canvasTab === 'email') {
           const body = document.getElementById('rtabFieldBody');
           if (FBME.selectedId) {
@@ -4691,6 +4854,11 @@
         renderPassSettings();
       } else if (tab === 'mailing') {
         renderMailingPanel();
+        const am = amGet();
+        const locked = !amHasEmailField();
+        if (am.enabled && !locked && canvasTab !== 'email') {
+          switchCanvasTab('email');
+        }
       }
     }
 
@@ -5466,6 +5634,7 @@
        CANVAS TABS  (Form ↔ Pass)
     ════════════════════════════════════════════════════════════════ */
     function switchCanvasTab(tab) {
+      if (canvasTab === tab) return;
       canvasTab = tab;
       document.getElementById('ctabForm')?.classList.toggle('active', tab === 'form');
       document.getElementById('ctabPass')?.classList.toggle('active', tab === 'pass');
@@ -5473,12 +5642,30 @@
       document.getElementById('gsfbFormCanvasWrap').style.display = tab === 'form' ? '' : 'none';
       document.getElementById('gsfbPassCanvasWrap').style.display = tab === 'pass' ? '' : 'none';
       document.getElementById('gsfbEmailCanvasWrap').style.display = tab === 'email' ? 'flex' : 'none';
+
+      const addFormFields = document.getElementById('ltabAddFormFields');
+      const addEmailBlocks = document.getElementById('ltabAddEmailBlocks');
+      const ltabFields = document.getElementById('ltabFields');
+
+      if (tab === 'email') {
+        if (addFormFields) addFormFields.style.display = 'none';
+        if (addEmailBlocks) addEmailBlocks.style.display = 'block';
+        if (ltabFields) ltabFields.style.display = 'none';
+        switchLTab('add');
+      } else {
+        if (addFormFields) addFormFields.style.display = 'block';
+        if (addEmailBlocks) addEmailBlocks.style.display = 'none';
+        if (ltabFields) ltabFields.style.display = '';
+      }
+
       if (tab === 'pass') {
         renderPassCanvas();
         switchRTab('pass');
       } else if (tab === 'email') {
         fbmeInitCanvas();
-        switchRTab('mailing');
+        if (rightTab !== 'mailing' && rightTab !== 'field') {
+          switchRTab('field');
+        }
       }
     }
 
@@ -5593,12 +5780,12 @@
        MAILING PANEL — renderMailingPanel
     ════════════════════════════════════════════════════════════════ */
     const AM_THEMES = [
-      { id: 'classic',   name: 'Classic',   bg: '#ffffff', accent: '#00d4ff', swatchA: '#ffffff', swatchB: '#00d4ff' },
-      { id: 'dark',      name: 'Dark',      bg: '#0d1117', accent: '#00d4ff', swatchA: '#0d1117', swatchB: '#00d4ff' },
-      { id: 'warm',      name: 'Warm',      bg: '#fdf6ec', accent: '#f59e0b', swatchA: '#fdf6ec', swatchB: '#f59e0b' },
-      { id: 'minimal',   name: 'Minimal',   bg: '#f8fafc', accent: '#64748b', swatchA: '#f8fafc', swatchB: '#64748b' },
-      { id: 'bold',      name: 'Bold',      bg: '#1e1b4b', accent: '#a78bfa', swatchA: '#1e1b4b', swatchB: '#a78bfa' },
-      { id: 'formal',    name: 'Formal',    bg: '#0f172a', accent: '#f59e0b', swatchA: '#0f172a', swatchB: '#f59e0b' },
+      { id: 'classic', name: 'Classic', bg: '#ffffff', accent: '#00d4ff', swatchA: '#ffffff', swatchB: '#00d4ff' },
+      { id: 'dark', name: 'Dark', bg: '#0d1117', accent: '#00d4ff', swatchA: '#0d1117', swatchB: '#00d4ff' },
+      { id: 'warm', name: 'Warm', bg: '#fdf6ec', accent: '#f59e0b', swatchA: '#fdf6ec', swatchB: '#f59e0b' },
+      { id: 'minimal', name: 'Minimal', bg: '#f8fafc', accent: '#64748b', swatchA: '#f8fafc', swatchB: '#64748b' },
+      { id: 'bold', name: 'Bold', bg: '#1e1b4b', accent: '#a78bfa', swatchA: '#1e1b4b', swatchB: '#a78bfa' },
+      { id: 'formal', name: 'Formal', bg: '#0f172a', accent: '#f59e0b', swatchA: '#0f172a', swatchB: '#f59e0b' },
     ];
 
     function renderMailingPanel() {
@@ -5713,6 +5900,9 @@
       if (checked && !am.emailBlocks.length) {
         amApplyTheme(am.theme || 'classic');
       }
+      if (checked && canvasTab !== 'email') {
+        switchCanvasTab('email');
+      }
     }
 
     function amToggleSendOption(key, checked) {
@@ -5766,38 +5956,38 @@
       const configs = {
         classic: {
           headerBg: '#00d4ff', headerColor: '#000000',
-          bodyBg: '#ffffff',   bodyColor: '#1e293b',
-          btnBg: '#00d4ff',    btnColor: '#000000',
+          bodyBg: '#ffffff', bodyColor: '#1e293b',
+          btnBg: '#00d4ff', btnColor: '#000000',
           footerBg: '#f1f5f9', footerColor: '#94a3b8',
         },
         dark: {
           headerBg: '#0d1117', headerColor: '#00d4ff',
-          bodyBg: '#161b22',   bodyColor: '#e6edf3',
-          btnBg: '#00d4ff',    btnColor: '#000000',
+          bodyBg: '#161b22', bodyColor: '#e6edf3',
+          btnBg: '#00d4ff', btnColor: '#000000',
           footerBg: '#0d1117', footerColor: '#8b949e',
         },
         warm: {
           headerBg: '#f59e0b', headerColor: '#ffffff',
-          bodyBg: '#fdf6ec',   bodyColor: '#92400e',
-          btnBg: '#f59e0b',    btnColor: '#ffffff',
+          bodyBg: '#fdf6ec', bodyColor: '#92400e',
+          btnBg: '#f59e0b', btnColor: '#ffffff',
           footerBg: '#fef3c7', footerColor: '#a16207',
         },
         minimal: {
           headerBg: '#f8fafc', headerColor: '#0f172a',
-          bodyBg: '#ffffff',   bodyColor: '#475569',
-          btnBg: '#0f172a',    btnColor: '#ffffff',
+          bodyBg: '#ffffff', bodyColor: '#475569',
+          btnBg: '#0f172a', btnColor: '#ffffff',
           footerBg: '#f8fafc', footerColor: '#94a3b8',
         },
         bold: {
           headerBg: '#1e1b4b', headerColor: '#a78bfa',
-          bodyBg: '#2e2a5e',   bodyColor: '#e0d9ff',
-          btnBg: '#a78bfa',    btnColor: '#1e1b4b',
+          bodyBg: '#2e2a5e', bodyColor: '#e0d9ff',
+          btnBg: '#a78bfa', btnColor: '#1e1b4b',
           footerBg: '#1e1b4b', footerColor: '#6d63a8',
         },
         formal: {
           headerBg: '#0f172a', headerColor: '#f59e0b',
-          bodyBg: '#1e293b',   bodyColor: '#cbd5e1',
-          btnBg: '#f59e0b',    btnColor: '#0f172a',
+          bodyBg: '#1e293b', bodyColor: '#cbd5e1',
+          btnBg: '#f59e0b', btnColor: '#0f172a',
           footerBg: '#0f172a', footerColor: '#64748b',
         },
       };
@@ -5805,7 +5995,7 @@
       const nextId = () => 'b' + (FBME.nextId++);
       return [
         { id: nextId(), type: 'header', props: { ...FBME_DEFS.header.defaults(), text: title, bgColor: c.headerBg, color: c.headerColor } },
-        { id: nextId(), type: 'text',   props: { ...FBME_DEFS.text.defaults(),   text: 'Hi {{name}},\n\nThank you for registering! We\'re excited to have you.', bgColor: c.bodyBg, color: c.bodyColor } },
+        { id: nextId(), type: 'text', props: { ...FBME_DEFS.text.defaults(), text: 'Hi {{name}},\n\nThank you for registering! We\'re excited to have you.', bgColor: c.bodyBg, color: c.bodyColor } },
         { id: nextId(), type: 'button', props: { ...FBME_DEFS.button.defaults(), text: 'View Your Registration', link: '#', btnBg: c.btnBg, btnColor: c.btnColor } },
         { id: nextId(), type: 'footer', props: { ...FBME_DEFS.footer.defaults(), text: 'This email was sent automatically. Please do not reply.', bgColor: c.footerBg, color: c.footerColor } },
       ];
@@ -5822,14 +6012,14 @@
     };
 
     const FBME_DEFS = {
-      header:           { label: 'Header',           defaults: () => ({ text: 'Event Name', bgColor: '#00d4ff', color: '#000000', fontSize: 26, fontWeight: 700, align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
-      text:             { label: 'Text',             defaults: () => ({ text: 'Hello {{name}},', bgColor: '#ffffff', color: '#1e293b', fontSize: 15, fontWeight: 400, fontStyle: 'normal', align: 'left', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
-      button:           { label: 'Button',           defaults: () => ({ text: 'Click Here', link: '#', btnBg: '#00d4ff', btnColor: '#000000', fontSize: 15, borderRadius: 8, align: 'center', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
-      image:            { label: 'Image',            defaults: () => ({ src: '', alt: '', width: 100, borderRadius: 0, bgColor: '#ffffff', paddingV: 16, paddingH: 40 }) },
-      divider:          { label: 'Divider',          defaults: () => ({ color: '#e2e8f0', thickness: 1, bgColor: '#ffffff', paddingV: 8, paddingH: 40 }) },
-      spacer:           { label: 'Spacer',           defaults: () => ({ height: 24, bgColor: '#ffffff' }) },
-      footer:           { label: 'Footer',           defaults: () => ({ text: 'Sent via GalSol · The Grand Event Console', bgColor: '#f1f5f9', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 16, paddingH: 40, fontFamily: 'inherit' }) },
-      entry_pass:       { label: 'Entry Pass',       defaults: () => ({}) },
+      header: { label: 'Header', defaults: () => ({ text: 'Event Name', bgColor: '#00d4ff', color: '#000000', fontSize: 26, fontWeight: 700, align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
+      text: { label: 'Text', defaults: () => ({ text: 'Hello {{name}},', bgColor: '#ffffff', color: '#1e293b', fontSize: 15, fontWeight: 400, fontStyle: 'normal', align: 'left', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
+      button: { label: 'Button', defaults: () => ({ text: 'Click Here', link: '#', btnBg: '#00d4ff', btnColor: '#000000', fontSize: 15, borderRadius: 8, align: 'center', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
+      image: { label: 'Image', defaults: () => ({ src: '', alt: '', width: 100, borderRadius: 0, bgColor: '#ffffff', paddingV: 16, paddingH: 40 }) },
+      divider: { label: 'Divider', defaults: () => ({ color: '#e2e8f0', thickness: 1, bgColor: '#ffffff', paddingV: 8, paddingH: 40 }) },
+      spacer: { label: 'Spacer', defaults: () => ({ height: 24, bgColor: '#ffffff' }) },
+      footer: { label: 'Footer', defaults: () => ({ text: 'Sent via GalSol · The Grand Event Console', bgColor: '#f1f5f9', color: '#94a3b8', fontSize: 12, align: 'center', paddingV: 16, paddingH: 40, fontFamily: 'inherit' }) },
+      entry_pass: { label: 'Entry Pass', defaults: () => ({}) },
       response_summary: { label: 'Response Summary', defaults: () => ({}) },
     };
 
@@ -5838,26 +6028,26 @@
       const ff = p.fontFamily && p.fontFamily !== 'inherit' ? p.fontFamily : 'Arial,sans-serif';
       switch (block.type) {
         case 'header':
-          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};font-family:${ff};line-height:1.3">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};font-family:${ff};line-height:1.3">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
         case 'text':
-          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align||'left'}"><p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight||400};font-style:${p.fontStyle||'normal'};color:${p.color};font-family:${ff};line-height:1.7">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align || 'left'}"><p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 400};font-style:${p.fontStyle || 'normal'};color:${p.color};font-family:${ff};line-height:1.7">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
         case 'button':
-          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor||'#ffffff'};text-align:${p.align}"><a href="${p.link||'#'}" style="display:inline-block;padding:12px 28px;background:${p.btnBg};color:${p.btnColor};font-size:${p.fontSize}px;font-weight:700;font-family:${ff};text-decoration:none;border-radius:${p.borderRadius}px">${p.text||'Click Here'}</a></div>`;
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor || '#ffffff'};text-align:${p.align}"><a href="${p.link || '#'}" style="display:inline-block;padding:12px 28px;background:${p.btnBg};color:${p.btnColor};font-size:${p.fontSize}px;font-weight:700;font-family:${ff};text-decoration:none;border-radius:${p.borderRadius}px">${p.text || 'Click Here'}</a></div>`;
         case 'image':
-          return p.src ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt||''}" style="max-width:${p.width}%;border-radius:${p.borderRadius}px;display:inline-block"/></div>` : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center;color:#94a3b8;font-size:13px">No image set</div>`;
+          return p.src ? `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center"><img src="${p.src}" alt="${p.alt || ''}" style="max-width:${p.width}%;border-radius:${p.borderRadius}px;display:inline-block"/></div>` : `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:center;color:#94a3b8;font-size:13px">No image set</div>`;
         case 'divider':
           return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor}"><hr style="border:none;border-top:${p.thickness}px solid ${p.color};margin:0"/></div>`;
         case 'spacer':
           return `<div style="height:${p.height}px;background:${p.bgColor}"></div>`;
         case 'footer':
-          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align||'center'}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};font-family:${ff};line-height:1.6">${(p.text||'').replace(/\n/g,'<br/>')}</p></div>`;
+          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align || 'center'}"><p style="margin:0;font-size:${p.fontSize}px;color:${p.color};font-family:${ff};line-height:1.6">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
         case 'entry_pass': {
           const s = (typeof _S !== 'undefined' && _S?.config?.settings) ? _S.config.settings : {};
-          const primary  = s.passBannerColor || '#003087';
-          const evtName  = s.passEventName || (typeof _S !== 'undefined' ? _S.name : '') || 'Event Name';
-          const rawDate  = s.passDate || '';
-          const dateStr  = rawDate ? rawDate.split('-').reverse().map(Number).join('/') : 'Date TBD';
-          const venue    = s.passVenue || '';
+          const primary = s.passBannerColor || '#003087';
+          const evtName = s.passEventName || (typeof _S !== 'undefined' ? _S.name : '') || 'Event Name';
+          const rawDate = s.passDate || '';
+          const dateStr = rawDate ? rawDate.split('-').reverse().map(Number).join('/') : 'Date TBD';
+          const venue = s.passVenue || '';
           return `<div style="padding:20px 40px;background:#f0f4f9;text-align:center;font-family:Arial,sans-serif">
             <table width="240" cellpadding="0" cellspacing="0" style="margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.22)">
               <tr><td style="background:#ffffff;padding:10px 12px 0">
@@ -5877,7 +6067,7 @@
         }
         case 'response_summary': {
           const fields = (typeof _S !== 'undefined')
-            ? (_S.config?.fields || []).filter(f => !['section_break','event_pass','image'].includes(f.type)).slice(0, 3)
+            ? (_S.config?.fields || []).filter(f => !['section_break', 'event_pass', 'image'].includes(f.type)).slice(0, 3)
             : [];
           const rowsHtml = fields.map(f =>
             `<tr>
@@ -5913,7 +6103,7 @@
 
     function fbmeRenderCanvas() {
       const canvas = document.getElementById('fbmeCanvas');
-      const empty  = document.getElementById('fbmeCanvasEmpty');
+      const empty = document.getElementById('fbmeCanvasEmpty');
       if (!canvas) return;
       // Remove old block wraps (keep empty placeholder in DOM)
       canvas.querySelectorAll('.fbme-block-wrap').forEach(el => el.remove());
@@ -6018,19 +6208,19 @@
       const id = block.id;
       const fld = (label, inputHtml) => `<div class="am-prop"><label class="am-prop-label">${label}</label>${inputHtml}</div>`;
       const textInput = (key, val, placeholder = '') =>
-        `<input class="am-input" type="text" value="${escAttr(String(val||''))}" placeholder="${placeholder}" oninput="fbmeUpdateProp('${id}','${key}',this.value)">`;
+        `<input class="am-input" type="text" value="${escAttr(String(val || ''))}" placeholder="${placeholder}" oninput="fbmeUpdateProp('${id}','${key}',this.value)">`;
       const colorInput = (key, val) =>
-        `<div style="display:flex;gap:6px;align-items:center"><input type="color" value="${val||'#000000'}" style="width:32px;height:32px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;background:none;padding:2px" oninput="fbmeUpdateProp('${id}','${key}',this.value)"><input class="am-input" style="flex:1" type="text" value="${escAttr(val||'')}" oninput="fbmeUpdateProp('${id}','${key}',this.value)"></div>`;
+        `<div style="display:flex;gap:6px;align-items:center"><input type="color" value="${val || '#000000'}" style="width:32px;height:32px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;background:none;padding:2px" oninput="fbmeUpdateProp('${id}','${key}',this.value)"><input class="am-input" style="flex:1" type="text" value="${escAttr(val || '')}" oninput="fbmeUpdateProp('${id}','${key}',this.value)"></div>`;
       const rangeInput = (key, val, min, max, label2 = '') =>
         `<div style="display:flex;align-items:center;gap:8px"><input type="range" min="${min}" max="${max}" value="${val}" style="flex:1;accent-color:var(--cyan)" oninput="fbmeUpdateProp('${id}','${key}',+this.value);this.nextElementSibling.textContent=this.value+'${label2}'""><span style="font-size:11px;color:var(--text-3);min-width:30px;text-align:right">${val}${label2}</span></div>`;
       const textareaInput = (key, val) =>
-        `<textarea class="am-input" rows="4" style="resize:vertical;min-height:70px" oninput="fbmeUpdateProp('${id}','${key}',this.value)">${escHtml(val||'')}</textarea>`;
+        `<textarea class="am-input" rows="4" style="resize:vertical;min-height:70px" oninput="fbmeUpdateProp('${id}','${key}',this.value)">${escHtml(val || '')}</textarea>`;
 
       let rows = [];
       const typeName = (FBME_DEFS[block.type]?.label || block.type).toUpperCase();
       rows.push(`<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;color:var(--cyan);text-transform:uppercase;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07)">${typeName} BLOCK</div>`);
 
-      if (['header','text','footer'].includes(block.type)) {
+      if (['header', 'text', 'footer'].includes(block.type)) {
         rows.push(fld('Text', textareaInput('text', p.text)));
         rows.push(fld('Font Size', rangeInput('fontSize', p.fontSize, 10, 48, 'px')));
         rows.push(fld('Text Color', colorInput('color', p.color)));
@@ -6307,10 +6497,10 @@
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
           ${[
-            ['Title',     'headerFontSize',   th.headerFontSize   || 26, 16, 48, 'headerFontColor',   th.headerFontColor,   th.lightMode ? '#111827' : '#eef4ff'],
-            ['Questions', 'questionFontSize',  th.questionFontSize || 15, 11, 26, 'questionFontColor', th.questionFontColor, th.lightMode ? '#111827' : '#eef4ff'],
-            ['Text',      'textFontSize',      th.textFontSize     || 14, 11, 15, 'textFontColor',     th.textFontColor,     th.lightMode ? '#374151' : '#98b0cc'],
-          ].map(([lbl, sk, sv, smin, smax, ck, cv, cf]) => `
+          ['Title', 'headerFontSize', th.headerFontSize || 26, 16, 48, 'headerFontColor', th.headerFontColor, th.lightMode ? '#111827' : '#eef4ff'],
+          ['Questions', 'questionFontSize', th.questionFontSize || 15, 11, 26, 'questionFontColor', th.questionFontColor, th.lightMode ? '#111827' : '#eef4ff'],
+          ['Text', 'textFontSize', th.textFontSize || 14, 11, 15, 'textFontColor', th.textFontColor, th.lightMode ? '#374151' : '#98b0cc'],
+        ].map(([lbl, sk, sv, smin, smax, ck, cv, cf]) => `
             <div>
               <div style="font-size:10.5px;font-weight:700;color:var(--text-3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px">${lbl}</div>
               <div style="display:flex;align-items:center;gap:8px">
@@ -6943,10 +7133,12 @@
 
     function fmtAccept(acc) {
       if (!acc || acc === '*' || acc === '*/*') return 'Any file';
-      const MIME_NAMES = { 'image/*': 'Images', 'video/*': 'Videos', 'audio/*': 'Audio',
+      const MIME_NAMES = {
+        'image/*': 'Images', 'video/*': 'Videos', 'audio/*': 'Audio',
         'application/pdf': 'PDF', '.pdf': 'PDF', '.doc': 'Word', '.docx': 'Word',
         'application/msword': 'Word', 'application/zip': 'ZIP', '.zip': 'ZIP',
-        '.xls': 'Excel', '.xlsx': 'Excel', '.ppt': 'PPT', '.pptx': 'PPT' };
+        '.xls': 'Excel', '.xlsx': 'Excel', '.ppt': 'PPT', '.pptx': 'PPT'
+      };
       const parts = acc.split(',').map(s => s.trim());
       const names = [...new Set(parts.map(p => MIME_NAMES[p] || p.replace(/.*\//, '').replace(/^\./, '').toUpperCase()))];
       return names.slice(0, 3).join(', ') + (names.length > 3 ? '…' : '');
