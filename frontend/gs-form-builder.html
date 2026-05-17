@@ -640,7 +640,7 @@
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.10);
       border-radius: 8px;
-      color: var(--text-3);
+    color: #ffffff;
       font-size: 12.5px;
       font-weight: 600;
       cursor: pointer;
@@ -649,9 +649,9 @@
     }
 
     .gsfb-ctab:hover {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-2);
-      border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
     }
 
     .gsfb-ctab.active {
@@ -661,7 +661,7 @@
     }
 
     .gsfb-ctab svg {
-      opacity: 0.7;
+    opacity: 0.9;
     }
 
     .gsfb-ctab.active svg {
@@ -1278,7 +1278,7 @@
       border-radius: 8px 8px 0 0;
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-3);
+    color: #ffffff;
       cursor: pointer;
       transition: var(--transition);
       background: none;
@@ -1289,7 +1289,7 @@
     }
 
     .gsfb-rtab:hover {
-      color: var(--text-2);
+    color: #ffffff;
     }
 
     .gsfb-rtab.active {
@@ -1844,7 +1844,7 @@
       font-weight: 800;
       letter-spacing: 0.8px;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.82);
+    color: #ffffff;
       margin: 8px 0 14px;
       padding-bottom: 9px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.12);
@@ -3337,7 +3337,7 @@
       font-weight: 700;
       letter-spacing: 0.7px;
       text-transform: uppercase;
-      color: var(--text-3);
+    color: #ffffff;
       margin: 16px 0 8px;
       padding-bottom: 5px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -3354,7 +3354,7 @@
     .am-prop-label {
       font-size: 11px;
       font-weight: 700;
-      color: var(--text-3);
+    color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -3615,7 +3615,7 @@
     .fbme-merge-bar-label {
       font-size: 10.5px;
       font-weight: 700;
-      color: var(--text-3);
+    color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 0.6px;
       flex-shrink: 0;
@@ -4014,6 +4014,10 @@
             <div style="padding:8px 10px 4px;font-size:10.5px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.6px">Email Blocks</div>
             <div style="padding:2px 8px 6px;font-size:11px;color:var(--text-3)">Click to add to canvas</div>
             <div class="fbme-block-cards-grid">
+              <button class="fbme-block-card" onclick="fbmeAddBlock('logo_banner')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="2"/><path d="m3 17 5-5 4 4 3-3 6 6"/></svg>
+                Logo/Banner
+              </button>
               <button class="fbme-block-card" onclick="fbmeAddBlock('header')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
                 Header
@@ -6020,7 +6024,8 @@
     };
 
     const FBME_DEFS = {
-      header: { label: 'Header', defaults: () => ({ text: 'Event Name', bgColor: '#00d4ff', color: '#000000', fontSize: 26, fontWeight: 700, align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
+      logo_banner:      { label: 'Logo/Banner',      defaults: () => ({ logoSrc: '', logoWidth: 80, logoRadius: 10, title: 'Event Name', tagline: 'Your Event Tagline', bgColor: '#0d1117', titleColor: '#ffffff', taglineColor: '#94a3b8', titleSize: 24, taglineSize: 14, align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
+      header:           { label: 'Header',           defaults: () => ({ text: 'Event Name', bgColor: '#00d4ff', color: '#000000', fontSize: 26, fontWeight: 700, align: 'center', paddingV: 32, paddingH: 40, fontFamily: 'inherit' }) },
       text: { label: 'Text', defaults: () => ({ text: 'Hello {{name}},', bgColor: '#ffffff', color: '#1e293b', fontSize: 15, fontWeight: 400, fontStyle: 'normal', align: 'left', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
       button: { label: 'Button', defaults: () => ({ text: 'Click Here', link: '#', btnBg: '#00d4ff', btnColor: '#000000', fontSize: 15, borderRadius: 8, align: 'center', paddingV: 20, paddingH: 40, fontFamily: 'inherit' }) },
       image: { label: 'Image', defaults: () => ({ src: '', alt: '', width: 100, borderRadius: 0, bgColor: '#ffffff', paddingV: 16, paddingH: 40 }) },
@@ -6050,8 +6055,19 @@
       const p = block.props;
       const ff = p.fontFamily && p.fontFamily !== 'inherit' ? p.fontFamily : 'Arial,sans-serif';
       switch (block.type) {
+        case 'logo_banner': {
+          const lff = (p.fontFamily && p.fontFamily !== 'inherit') ? p.fontFamily : 'Arial,sans-serif';
+          const logoImg = p.logoSrc
+            ? `<div style="margin-bottom:${p.title||p.tagline ? 12 : 0}px"><img src="${p.logoSrc}" width="${p.logoWidth||80}" alt="Logo" style="display:inline-block;border-radius:${p.logoRadius||10}px;vertical-align:middle"/></div>`
+            : '';
+          const titleDiv   = p.title   ? `<div style="margin:0;font-size:${p.titleSize||24}px;font-weight:800;color:${p.titleColor||'#ffffff'};font-family:${lff};line-height:1.25">${p.title}</div>` : '';
+          const taglineDiv = p.tagline ? `<div style="margin-top:6px;font-size:${p.taglineSize||14}px;color:${p.taglineColor||'#94a3b8'};font-family:${lff};line-height:1.5">${p.tagline}</div>` : '';
+          return `<div style="padding:${p.paddingV||32}px ${p.paddingH||40}px;background:${p.bgColor||'#0d1117'};text-align:${p.align||'center'}">${logoImg}${titleDiv}${taglineDiv}</div>`;
+        }
         case 'header':
-          return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align}"><p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight};color:${p.color};font-family:${ff};line-height:1.3">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
+          return `<div style="padding:${p.paddingV||32}px ${p.paddingH||40}px;background:${p.bgColor||'#00d4ff'};text-align:${p.align||'center'}">
+        <p style="margin:0;font-size:${p.fontSize||26}px;font-weight:${p.fontWeight||700};color:${p.color||'#000'};font-family:${ff};line-height:1.3">${(p.text||'').replace(/\n/g,'<br/>')}</p>
+      </div>`;
         case 'text':
           return `<div style="padding:${p.paddingV}px ${p.paddingH}px;background:${p.bgColor};text-align:${p.align || 'left'}"><p style="margin:0;font-size:${p.fontSize}px;font-weight:${p.fontWeight || 400};font-style:${p.fontStyle || 'normal'};color:${p.color};font-family:${ff};line-height:1.7">${(p.text || '').replace(/\n/g, '<br/>')}</p></div>`;
         case 'button':
@@ -6190,12 +6206,14 @@
 
         const ctrl = document.createElement('div');
         ctrl.className = 'fbme-block-ctrl';
-        ctrl.innerHTML = `
-          <button title="Move up"    onclick="event.stopPropagation();fbmeMoveBlock('${block.id}',-1)">↑</button>
-          <button title="Move down"  onclick="event.stopPropagation();fbmeMoveBlock('${block.id}',1)">↓</button>
-          <button title="Duplicate"  onclick="event.stopPropagation();fbmeDuplicateBlock('${block.id}')">⧉</button>
-          <button title="Delete" class="del" onclick="event.stopPropagation();fbmeDeleteBlock('${block.id}')">✕</button>
-        `;
+        const _isFooter = block.type === 'footer';
+        ctrl.innerHTML = _isFooter
+          ? `<span style="font-size:9px;color:var(--text-3);padding:0 4px;user-select:none" title="Footer is locked at bottom">⚓</span>
+             <button title="Delete" class="del" onclick="event.stopPropagation();fbmeDeleteBlock('${block.id}')">✕</button>`
+          : `<button title="Move up"   onclick="event.stopPropagation();fbmeMoveBlock('${block.id}',-1)">↑</button>
+             <button title="Move down" onclick="event.stopPropagation();fbmeMoveBlock('${block.id}',1)">↓</button>
+             <button title="Duplicate" onclick="event.stopPropagation();fbmeDuplicateBlock('${block.id}')">⧉</button>
+             <button title="Delete" class="del" onclick="event.stopPropagation();fbmeDeleteBlock('${block.id}')">✕</button>`;
         const inner = document.createElement('div');
         inner.innerHTML = fbmeBlockToHtml(block);
 
@@ -6217,8 +6235,21 @@
     function fbmeAddBlock(type) {
       const def = FBME_DEFS[type];
       if (!def) return;
+      if (type === 'footer' && FBME.blocks.some(b => b.type === 'footer')) {
+        toast('Only one Footer block allowed.', 'warn'); return;
+      }
       const block = { id: 'b' + (FBME.nextId++), type, props: def.defaults() };
-      FBME.blocks.push(block);
+      // Apply theme bg to special blocks
+      if (type === 'entry_pass' || type === 'response_summary') {
+        block.props.bgColor = AM_THEME_BG[amGet().theme] || '#f0f4f9';
+      }
+      // All non-footer blocks insert before footer so footer stays last
+      const footerIdx = FBME.blocks.findIndex(b => b.type === 'footer');
+      if (type !== 'footer' && footerIdx >= 0) {
+        FBME.blocks.splice(footerIdx, 0, block);
+      } else {
+        FBME.blocks.push(block);
+      }
       fbmeRenderCanvas();
       fbmeSelectBlock(block.id);
       fbmeSaveBlocks();
@@ -6240,8 +6271,12 @@
       const idx = FBME.blocks.findIndex(b => b.id === id);
       if (idx < 0) return;
       const orig = FBME.blocks[idx];
+      if (orig.type === 'footer') { toast('Only one Footer block allowed.', 'warn'); return; }
       const copy = { id: 'b' + (FBME.nextId++), type: orig.type, props: JSON.parse(JSON.stringify(orig.props)) };
-      FBME.blocks.splice(idx + 1, 0, copy);
+      // Insert after current position but before any footer
+      const footerIdx = FBME.blocks.findIndex(b => b.type === 'footer');
+      const insertAt  = footerIdx >= 0 ? Math.min(idx + 1, footerIdx) : idx + 1;
+      FBME.blocks.splice(insertAt, 0, copy);
       fbmeRenderCanvas();
       fbmeSelectBlock(copy.id);
       fbmeSaveBlocks();
@@ -6250,8 +6285,11 @@
     function fbmeMoveBlock(id, dir) {
       const idx = FBME.blocks.findIndex(b => b.id === id);
       if (idx < 0) return;
+      const block = FBME.blocks[idx];
+      if (block.type === 'footer') return; // footer is locked at bottom
       const newIdx = idx + dir;
       if (newIdx < 0 || newIdx >= FBME.blocks.length) return;
+      if (FBME.blocks[newIdx]?.type === 'footer') return; // cannot swap with footer
       [FBME.blocks[idx], FBME.blocks[newIdx]] = [FBME.blocks[newIdx], FBME.blocks[idx]];
       fbmeRenderCanvas();
       fbmeSaveBlocks();
@@ -6272,6 +6310,26 @@
 
     function fbmeSaveBlocks() {
       amSave({ emailBlocks: JSON.parse(JSON.stringify(FBME.blocks)) });
+    }
+
+    function fbmeUploadImage(id, input, propKey = 'src') {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 1.5 * 1024 * 1024) {
+        toast('Image too large — keep under 1.5 MB for email compatibility.', 'warn');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        fbmeUpdateProp(id, propKey, e.target.result);
+        const block = FBME.blocks.find(b => b.id === id);
+        const body  = document.getElementById('rtabMailingBody');
+        if (body && block) {
+          if (fbmeRenderSpecialBlockProps(block, body)) return;
+          fbmeRenderProps(block, body);
+        }
+      };
+      reader.readAsDataURL(file);
     }
 
     function fbmeRenderProps(block, container) {
@@ -6309,8 +6367,41 @@
         rows.push(fld('Background', colorInput('bgColor', p.bgColor || '#ffffff')));
         rows.push(fld('Padding V', rangeInput('paddingV', p.paddingV, 0, 80, 'px')));
       }
+      if (block.type === 'logo_banner') {
+        const uploadBtn = (uploadId, propKey) =>
+          `<label style="display:flex;align-items:center;gap:7px;padding:7px 10px;background:rgba(0,212,255,0.06);border:1px dashed rgba(0,212,255,0.25);border-radius:7px;cursor:pointer;font-size:12px;color:var(--cyan);margin-bottom:6px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;flex-shrink:0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Logo
+            <input type="file" accept="image/*" style="display:none" onchange="fbmeUploadImage('${id}',this,'${propKey}')">
+          </label>`;
+        rows.push(fld('Logo', uploadBtn(id, 'logoSrc') + textInput('logoSrc', p.logoSrc, 'https://... or upload')));
+        rows.push(fld('Logo Width', rangeInput('logoWidth', p.logoWidth||80, 20, 300, 'px')));
+        rows.push(fld('Logo Radius', rangeInput('logoRadius', p.logoRadius||10, 0, 80, 'px')));
+        rows.push(fld('Title', textInput('title', p.title, 'Event Name')));
+        rows.push(fld('Tagline', textInput('tagline', p.tagline, 'Event tagline')));
+        rows.push(fld('Title Color', colorInput('titleColor', p.titleColor||'#ffffff')));
+        rows.push(fld('Tagline Color', colorInput('taglineColor', p.taglineColor||'#94a3b8')));
+        rows.push(fld('Title Size', rangeInput('titleSize', p.titleSize||24, 14, 48, 'px')));
+        rows.push(fld('Tagline Size', rangeInput('taglineSize', p.taglineSize||14, 10, 28, 'px')));
+        rows.push(fld('Background', colorInput('bgColor', p.bgColor||'#0d1117')));
+        rows.push(fld('Alignment',
+          `<div style="display:flex;gap:5px">
+            ${['left','center','right'].map(a =>
+              `<button style="flex:1;padding:5px;border-radius:6px;border:1px solid ${(p.align||'center')===a?'var(--cyan)':'rgba(255,255,255,0.1)'};background:${(p.align||'center')===a?'rgba(0,212,255,0.08)':'transparent'};color:${(p.align||'center')===a?'var(--cyan)':'var(--text-3)'};font-size:11px;cursor:pointer;font-family:var(--font)"
+              onclick="fbmeUpdateProp('${id}','align','${a}')">${a[0].toUpperCase()+a.slice(1)}</button>`
+            ).join('')}
+          </div>`));
+        rows.push(fld('Padding V', rangeInput('paddingV', p.paddingV||32, 0, 80, 'px')));
+        rows.push(fld('Padding H', rangeInput('paddingH', p.paddingH||40, 0, 80, 'px')));
+      }
       if (block.type === 'image') {
-        rows.push(fld('Image URL', textInput('src', p.src, 'https://...')));
+        rows.push(fld('Upload Image',
+          `<label style="display:flex;align-items:center;gap:7px;padding:8px 10px;background:rgba(0,212,255,0.06);border:1px dashed rgba(0,212,255,0.25);border-radius:8px;cursor:pointer;font-size:12px;color:var(--cyan)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Choose from device
+            <input type="file" accept="image/*" style="display:none" onchange="fbmeUploadImage('${id}',this,'src')">
+          </label>`));
+        rows.push(fld('Image URL', textInput('src', p.src, 'https://... or upload above')));
         rows.push(fld('Alt Text', textInput('alt', p.alt)));
         rows.push(fld('Width %', rangeInput('width', p.width, 20, 100, '%')));
         rows.push(fld('Border Radius', rangeInput('borderRadius', p.borderRadius, 0, 40, 'px')));
